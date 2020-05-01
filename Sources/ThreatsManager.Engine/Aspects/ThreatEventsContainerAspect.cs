@@ -1,0 +1,162 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
+using PostSharp.Aspects;
+using PostSharp.Aspects.Advices;
+using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Contracts;
+using PostSharp.Reflection;
+using PostSharp.Serialization;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities.Aspects.Engine;
+
+namespace ThreatsManager.Engine.Aspects
+{
+    //#region Additional placeholders required.
+    //private IThreatEventsContainer ThreatEventsContainer => this;
+    //private List<IThreatEvent> _threatEvents { get; set; }
+    //#endregion    
+
+    [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(IdentityAspect))]
+    public class ThreatEventsContainerAspect : InstanceLevelAspect
+    {
+        #region Imports from the extended class.
+        [ImportMember("Model", IsRequired=true)]
+        public Property<IThreatModel> Model;
+
+        [ImportMember("IsInitialized", IsRequired=true)]
+        public Property<bool> IsInitialized;
+
+        [ImportMember("ThreatEventsContainer", IsRequired=true)]
+        public Property<IThreatEventsContainer> ThreatEventsContainer;
+        #endregion
+
+        #region Extra elements to be added.
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
+            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
+        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
+            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
+        [JsonProperty("threatEvents")]
+        public List<IThreatEvent> _threatEvents { get; set; }
+        #endregion
+
+        #region Implementation of interface IThreatEventsContainer.
+        private Action<IThreatEventsContainer, IThreatEvent> _threatEventAdded;
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded
+        {
+            add
+            {
+                if (_threatEventAdded == null || !_threatEventAdded.GetInvocationList().Contains(value))
+                {
+                    _threatEventAdded += value;
+                }
+            }
+            remove
+            {
+                _threatEventAdded -= value;
+            }
+        }
+
+        private Action<IThreatEventsContainer, IThreatEvent> _threatEventRemoved;
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved
+        {
+            add
+            {
+                if (_threatEventRemoved == null || !_threatEventRemoved.GetInvocationList().Contains(value))
+                {
+                    _threatEventRemoved += value;
+                }
+            }
+            remove
+            {
+                _threatEventRemoved -= value;
+            }
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        [CopyCustomAttributes(typeof(JsonIgnoreAttribute), OverrideAction = CustomAttributeOverrideAction.Ignore)]
+        [JsonIgnore]
+        public IEnumerable<IThreatEvent> ThreatEvents => _threatEvents?.AsReadOnly();
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        public IThreatEvent GetThreatEvent(Guid id)
+        {
+            return _threatEvents?.FirstOrDefault(x => x.Id == id);
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        public IThreatEvent GetThreatEventByThreatType(Guid threatTypeId)
+        {
+            return _threatEvents?.FirstOrDefault(x => x.ThreatTypeId == threatTypeId);
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        public void Add(IThreatEvent threatEvent)
+        {
+            if (!(IsInitialized?.Get() ?? false))
+                return;
+            if (threatEvent == null)
+                throw new ArgumentNullException(nameof(threatEvent));
+            if (threatEvent is IThreatModelChild child && child.Model != Model?.Get())
+                throw new ArgumentException();
+
+            if (_threatEvents == null)
+                _threatEvents = new List<IThreatEvent>();
+
+            _threatEvents.Add(threatEvent);
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        public IThreatEvent AddThreatEvent(IThreatType threatType)
+        {
+            if (!(IsInitialized?.Get() ?? false))
+                return null;
+
+            IThreatEvent result = null;
+
+            var threatEventsContainer = ThreatEventsContainer?.Get();
+            if ((_threatEvents?.All(x => x.ThreatTypeId != threatType.Id) ?? true) &&
+                threatEventsContainer is IIdentity identity)
+            {
+                result = new ThreatEvent(Model?.Get(), threatType, identity);
+                if (_threatEvents == null)
+                    _threatEvents = new List<IThreatEvent>();
+                _threatEvents.Add(result);
+                Dirty.IsDirty = true;
+                _threatEventAdded?.Invoke(threatEventsContainer, result);
+            }
+
+            return result;
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        public bool RemoveThreatEvent(Guid id)
+        {
+            if (!(IsInitialized?.Get() ?? false))
+                return false;
+
+            bool result = false;
+
+            var threatEvent = GetThreatEvent(id);
+            if (threatEvent != null)
+            {
+                result = _threatEvents.Remove(threatEvent);
+                if (result)
+                {
+                    Dirty.IsDirty = true;
+                    _threatEventRemoved?.Invoke(ThreatEventsContainer?.Get(), threatEvent);
+                }
+            }
+
+            return result;
+        }
+        #endregion
+    }
+}

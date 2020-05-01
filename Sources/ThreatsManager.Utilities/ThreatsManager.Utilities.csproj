@@ -1,0 +1,946 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\PostSharp.6.5.4\build\PostSharp.props" Condition="Exists('..\packages\PostSharp.6.5.4\build\PostSharp.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{854E9BCA-48B5-41DC-BD0A-26FF5A1C8546}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ThreatsManager.Utilities</RootNamespace>
+    <AssemblyName>ThreatsManager.Utilities</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\ThreatsManager.Utilities.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\ThreatsManager.Interfaces\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=6.5.4.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Redist.6.5.4\lib\net45\PostSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.5.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.6.5.4\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Common, Version=6.5.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.5.4\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Model, Version=6.5.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.5.4\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Threading, Version=6.5.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.5.4\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ThreatsManager.Interfaces\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Aspects\AutoDirtyAttribute.cs" />
+    <Compile Include="Aspects\Dirty.cs" />
+    <Compile Include="Aspects\Engine\AssociatedPropertyClassAttribute.cs" />
+    <Compile Include="Aspects\Engine\LockableAspect.cs" />
+    <Compile Include="Aspects\Engine\IdentityAspect.cs" />
+    <Compile Include="Aspects\Engine\PropertiesContainerAspect.cs" />
+    <Compile Include="Aspects\Engine\ThreatModelChildAspect.cs" />
+    <Compile Include="ActionDefinition.cs" />
+    <Compile Include="AssessmentOutcome.cs" />
+    <Compile Include="QualityAnalyzerResult.cs" />
+    <Compile Include="QualityAnalyzersManager.cs" />
+    <Compile Include="ThreatModelExtensions.cs" />
+    <Compile Include="Training\Lesson.cs" />
+    <Compile Include="Training\TrainingExtensions.cs" />
+    <Compile Include="Training\LessonInfo.cs" />
+    <Compile Include="Training\TrainingLevel.cs" />
+    <Compile Include="Training\TrainingPillsAttribute.cs" />
+    <Compile Include="ImageConverter.cs" />
+    <Compile Include="CloningExtensions.cs" />
+    <Compile Include="CommandsBarDefinition.cs" />
+    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="Exceptions\ExistingModelException.cs" />
+    <Compile Include="Exceptions\ReadOnlyPropertyException.cs" />
+    <Compile Include="Exceptions\ThreatModelOpeningFailureException.cs" />
+    <Compile Include="ExtensionUtils.cs" />
+    <Compile Include="Aspects\InitializationRequired.cs" />
+    <Compile Include="KnownTypesBinder.cs" />
+    <Compile Include="ListItem.cs" />
+    <Compile Include="ImageExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Aspects\SimpleNotifyPropertyChangedAttribute.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StrengthComparer.cs" />
+    <Compile Include="SeverityComparer.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="TemplateManager.cs" />
+    <Compile Include="ThreatModelManager.cs" />
+    <Compile Include="Training\TrainingPillsManager.cs" />
+    <Compile Include="Training\TrainingsDefinition.cs" />
+    <Compile Include="Training\Section.cs" />
+    <Compile Include="Training\Topic.cs" />
+    <Compile Include="UserName.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PackagingLib\PackagingLib.csproj">
+      <Project>{cd25c49a-0c9d-4b32-ad17-58c53cf4d6b4}</Project>
+      <Name>PackagingLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj">
+      <Project>{3ae427f4-c1e3-4283-91a3-9ecaca448e4d}</Project>
+      <Name>ThreatsManager.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ThreatsManager.Interfaces\ThreatsManager.snk">
+      <Link>ThreatsManager.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Resources\flow_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pdf_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\actor_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitigations_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\model_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scenario_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\severity_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\standard_mitigations_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_huge - Copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_small - Copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_model_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_type_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_types.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_types_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_types_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_types_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\undefined.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\undefined_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\undefined_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\undefined_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strength_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_green_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_green_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_green_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_orange_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_orange_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_orange_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_yellow_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_yellow_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threats_circle_yellow_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_green_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_green_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_green_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_orange_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_orange_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_orange_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_yellow_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_yellow_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_circle_yellow_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_big_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_huge_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\external_small_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_big_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_huge_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flow_small_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_small_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_big_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\process_huge_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_big_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_huge_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\storage_small_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_small_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_big_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trust_boundary_huge_view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\genius.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\genius_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\genius_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\genius_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\graduate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\graduate_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\graduate_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\graduate_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teacher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teacher_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teacher_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teacher_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_events_big_delete.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\PostSharp.6.5.4\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.5.4\build\PostSharp.props'))" />
+    <Error Condition="!Exists('..\packages\PostSharp.6.5.4\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.5.4\build\PostSharp.targets'))" />
+  </Target>
+  <Import Project="..\packages\PostSharp.6.5.4\build\PostSharp.targets" Condition="Exists('..\packages\PostSharp.6.5.4\build\PostSharp.targets')" />
+</Project>
