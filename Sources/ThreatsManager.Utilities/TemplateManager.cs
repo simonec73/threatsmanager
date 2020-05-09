@@ -1,5 +1,5 @@
 ﻿using System;
-using PackagingLib;
+using ThreatsManager.Packaging;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities.Properties;

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 
 namespace ThreatsManager.Utilities.Training
@@ -24,13 +25,13 @@ namespace ThreatsManager.Utilities.Training
                     switch (size)
                     {
                         case ImageSize.Small:
-                            result = Properties.Resources.teacher_small;
+                            result = Resources.teacher_small;
                             break;
                         case ImageSize.Medium:
-                            result = Properties.Resources.teacher;
+                            result = Resources.teacher;
                             break;
                         case ImageSize.Big:
-                            result = Properties.Resources.teacher_big;
+                            result = Resources.teacher_big;
                             break;
                     }
                     break;
@@ -38,13 +39,13 @@ namespace ThreatsManager.Utilities.Training
                     switch (size)
                     {
                         case ImageSize.Small:
-                            result = Properties.Resources.graduate_small;
+                            result = Resources.graduate_small;
                             break;
                         case ImageSize.Medium:
-                            result = Properties.Resources.graduate;
+                            result = Resources.graduate;
                             break;
                         case ImageSize.Big:
-                            result = Properties.Resources.graduate_big;
+                            result = Resources.graduate_big;
                             break;
                     }
                     break;
@@ -52,13 +53,13 @@ namespace ThreatsManager.Utilities.Training
                     switch (size)
                     {
                         case ImageSize.Small:
-                            result = Properties.Resources.genius_small;
+                            result = Resources.genius_small;
                             break;
                         case ImageSize.Medium:
-                            result = Properties.Resources.genius;
+                            result = Resources.genius;
                             break;
                         case ImageSize.Big:
-                            result = Properties.Resources.genius_big;
+                            result = Resources.genius_big;
                             break;
                     }
                     break;

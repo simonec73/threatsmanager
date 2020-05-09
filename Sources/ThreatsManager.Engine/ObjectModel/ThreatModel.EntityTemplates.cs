@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.ObjectModel.Entities;
+using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -92,19 +93,19 @@ namespace ThreatsManager.Engine.ObjectModel
             switch (entityType)
             {
                 case EntityType.ExternalInteractor:
-                    result.BigImage = bigImage ?? Utilities.Properties.Resources.external_big;
-                    result.Image = image ?? Utilities.Properties.Resources.external;
-                    result.SmallImage = smallImage ?? Utilities.Properties.Resources.external_small;
+                    result.BigImage = bigImage ?? Resources.external_big;
+                    result.Image = image ?? Resources.external;
+                    result.SmallImage = smallImage ?? Resources.external_small;
                     break;
                 case EntityType.Process:
-                    result.BigImage = bigImage ?? Utilities.Properties.Resources.process_big;
-                    result.Image = image ?? Utilities.Properties.Resources.process;
-                    result.SmallImage = smallImage ?? Utilities.Properties.Resources.process_small;
+                    result.BigImage = bigImage ?? Resources.process_big;
+                    result.Image = image ?? Resources.process;
+                    result.SmallImage = smallImage ?? Resources.process_small;
                     break;
                 case EntityType.DataStore:
-                    result.BigImage = bigImage ?? Utilities.Properties.Resources.storage_big;
-                    result.Image = image ?? Utilities.Properties.Resources.storage;
-                    result.SmallImage = smallImage ?? Utilities.Properties.Resources.storage_small;
+                    result.BigImage = bigImage ?? Resources.storage_big;
+                    result.Image = image ?? Resources.storage;
+                    result.SmallImage = smallImage ?? Resources.storage_small;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null);

@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{854E9BCA-48B5-41DC-BD0A-26FF5A1C8546}</ProjectGuid>
+    <ProjectGuid>{CD25C49A-0C9D-4B32-AD17-58C53CF4D6B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThreatsManager.Utilities</RootNamespace>
-    <AssemblyName>ThreatsManager.Utilities</AssemblyName>
+    <RootNamespace>ThreatsManager.Packaging</RootNamespace>
+    <AssemblyName>ThreatsManager.Packaging</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -28,7 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\ThreatsManager.Utilities.xml</DocumentationFile>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -45,7 +46,6 @@
     <AssemblyOriginatorKeyFile>..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -61,90 +61,28 @@
     <Reference Include="PostSharp.Patterns.Model, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
       <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.6.7\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Threading, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.6.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ThreatsManager.Icons, Version=1.2.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Resources\ThreatsManager.Icons.dll</HintPath>
-    </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\ThreatsManager.Engine\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Aspects\AutoDirtyAttribute.cs" />
-    <Compile Include="Aspects\Dirty.cs" />
-    <Compile Include="Aspects\Engine\AssociatedPropertyClassAttribute.cs" />
-    <Compile Include="Aspects\Engine\LockableAspect.cs" />
-    <Compile Include="Aspects\Engine\IdentityAspect.cs" />
-    <Compile Include="Aspects\Engine\PropertiesContainerAspect.cs" />
-    <Compile Include="Aspects\Engine\ThreatModelChildAspect.cs" />
-    <Compile Include="ActionDefinition.cs" />
-    <Compile Include="AssessmentOutcome.cs" />
-    <Compile Include="QualityAnalyzerResult.cs" />
-    <Compile Include="QualityAnalyzersManager.cs" />
-    <Compile Include="ThreatModelExtensions.cs" />
-    <Compile Include="Training\Lesson.cs" />
-    <Compile Include="Training\TrainingExtensions.cs" />
-    <Compile Include="Training\LessonInfo.cs" />
-    <Compile Include="Training\TrainingLevel.cs" />
-    <Compile Include="Training\TrainingPillsAttribute.cs" />
-    <Compile Include="ImageConverter.cs" />
-    <Compile Include="CloningExtensions.cs" />
-    <Compile Include="CommandsBarDefinition.cs" />
-    <Compile Include="EnumExtensions.cs" />
-    <Compile Include="Exceptions\ExistingModelException.cs" />
-    <Compile Include="Exceptions\ReadOnlyPropertyException.cs" />
-    <Compile Include="Exceptions\ThreatModelOpeningFailureException.cs" />
-    <Compile Include="ExtensionUtils.cs" />
-    <Compile Include="Aspects\InitializationRequired.cs" />
-    <Compile Include="KnownTypesBinder.cs" />
-    <Compile Include="ListItem.cs" />
-    <Compile Include="ImageExtensions.cs" />
+    <Compile Include="EncryptionDetails.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Aspects\SimpleNotifyPropertyChangedAttribute.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StrengthComparer.cs" />
-    <Compile Include="SeverityComparer.cs" />
-    <Compile Include="StringExtensions.cs" />
-    <Compile Include="TemplateManager.cs" />
-    <Compile Include="ThreatModelManager.cs" />
-    <Compile Include="Training\TrainingPillsManager.cs" />
-    <Compile Include="Training\TrainingsDefinition.cs" />
-    <Compile Include="Training\Section.cs" />
-    <Compile Include="Training\Topic.cs" />
-    <Compile Include="UserName.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj">
-      <Project>{3ae427f4-c1e3-4283-91a3-9ecaca448e4d}</Project>
-      <Name>ThreatsManager.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ThreatsManager.Packaging\ThreatsManager.Packaging.csproj">
-      <Project>{cd25c49a-0c9d-4b32-ad17-58c53cf4d6b4}</Project>
-      <Name>ThreatsManager.Packaging</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\ThreatsManager.Engine\PostSharp.license">
       <Link>PostSharp.license</Link>
     </EmbeddedResource>
@@ -156,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
