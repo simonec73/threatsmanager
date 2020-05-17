@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{404D1232-CE3C-4BAA-B8F8-929D1F08BC84}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SampleWinFormExtensions</RootNamespace>
+    <AssemblyName>SampleWinFormExtensions</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <SkipPostSharp>True</SkipPostSharp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Fizzler, Version=1.1.21209.0, Culture=neutral, PublicKeyToken=4ebff4844e382110, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fizzler.1.1.0\lib\net35\Fizzler.dll</HintPath>
+    </Reference>
+    <Reference Include="Keyoti.RapidSpell.NET4, Version=6.0.19.705, Culture=neutral, PublicKeyToken=58d9fd2e9ec4dc0e, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.1.2.5\lib\net472\Keyoti.RapidSpell.NET4.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=6.6.7.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Redist.6.6.7\lib\net45\PostSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.6.6.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Common, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.6.7\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Model, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.6.7\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Threading, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.6.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg, Version=3.0.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.3.0.84\lib\net472\Svg.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="ThreatsManager.Icons, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.2.5\lib\net472\ThreatsManager.Icons.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Interfaces, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Interfaces.1.2.5\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Packaging, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.2.5\lib\net472\ThreatsManager.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.2.5\lib\net472\ThreatsManager.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities.WinForms, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.1.2.5\lib\net472\ThreatsManager.Utilities.WinForms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DefinitionContainer.cs" />
+    <Compile Include="ExtensionLibrary.cs" />
+    <Compile Include="Initializers\DefinitionsInitializer.cs" />
+    <Compile Include="Initializers\ExtensionInitializer.cs" />
+    <Compile Include="Panels\AzureDevOps\AzureDevOpsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\AzureDevOps\AzureDevOpsPanel.Designer.cs">
+      <DependentUpon>AzureDevOpsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\AzureDevOps\AzureDevOpsPanelFactory.cs" />
+    <Compile Include="Panels\AzureDevOps\AzureDevOpsPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\Definitions\DefinitionsPanelFactory.cs" />
+    <Compile Include="Panels\Definitions\DefinitionsPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\Definitions\DefinitionsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Definitions\DefinitionsPanel.Designer.cs">
+      <DependentUpon>DefinitionsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Validate\ValidatePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Validate\ValidatePanel.Designer.cs">
+      <DependentUpon>ValidatePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Validate\ValidatePanelFactory.cs" />
+    <Compile Include="Panels\Validate\ValidatePanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Schemas\DefinitionsPropertySchemaManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resources\devops.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Panels\AzureDevOps\AzureDevOpsPanel.resx">
+      <DependentUpon>AzureDevOpsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Definitions\DefinitionsPanel.resx">
+      <DependentUpon>DefinitionsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Validate\ValidatePanel.resx">
+      <DependentUpon>ValidatePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\devops_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\book_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\book_open_selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\book_open_big.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
