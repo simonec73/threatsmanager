@@ -29,6 +29,8 @@ namespace ThreatsManager.Engine
         private readonly List<string> _prefixes = new List<string>();
         private readonly List<string> _certificateThumbprints = new List<string>();
 
+        private static ConfigurationUserLevel _configurationUserLevel = ConfigurationUserLevel.PerUserRoamingAndLocal;
+
         private const string Entropy =
             "3gO2vG/wfDG9YyT3VWx4RWDwpXSOSHWBynsMvrHp31UYpF0mmDbpi8HALtKPP5jCYXVne4XjvvEP95LSvRO3AA==";
 
@@ -36,11 +38,15 @@ namespace ThreatsManager.Engine
         {
         }
 
+        public static void SetConfigurationUserLevel(ConfigurationUserLevel configurationUserLevel)
+        {
+            _configurationUserLevel = configurationUserLevel;
+        }
+
         internal void Initialize([NotNull] ExtensionsManager extensionsManager)
         {
             _extensionsManager = extensionsManager;
             _extensions = extensionsManager.GetExtensionIds();
-
             GetExtensionsConfiguration();
         }
 
@@ -344,8 +350,8 @@ namespace ThreatsManager.Engine
 
         public static ThreatsManagerConfigurationSection GetConfigurationSection()
         {
-            Configuration config = 
-                    ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            Configuration config =
+                    ConfigurationManager.OpenExeConfiguration(_configurationUserLevel);
 
             ThreatsManagerConfigurationSection configSection =
                 (ThreatsManagerConfigurationSection)config?.Sections["threatsManager"];

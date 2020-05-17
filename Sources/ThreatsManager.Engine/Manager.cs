@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -303,14 +304,17 @@ namespace ThreatsManager.Engine
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_ReflectionOnlyAssemblyResolve;
 
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-            var assemblies =
-                Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                    "Extensions"), "ThreatsManager.*.dll");
-            if (assemblies.Any())
+            var dir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Extensions");
+            if (Directory.Exists(dir))
             {
-                foreach (var assembly in assemblies)
+                var assemblies =
+                    Directory.GetFiles(dir, "ThreatsManager.*.dll");
+                if (assemblies.Any())
                 {
-                    _extensionsManager.AddExtensionsAssembly(assembly);
+                    foreach (var assembly in assemblies)
+                    {
+                        _extensionsManager.AddExtensionsAssembly(assembly);
+                    }
                 }
             }
 #pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
