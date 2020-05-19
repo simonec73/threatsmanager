@@ -102,7 +102,8 @@ namespace ThreatsManager.Engine
             return result;
         }
 
-        private void AddAssemblies(IEnumerable<string> folders, IEnumerable<string> prefixes, IEnumerable<CertificateConfig> certificates)
+        private void AddAssemblies(IEnumerable<string> folders, IEnumerable<string> prefixes, 
+            IEnumerable<CertificateConfig> certificates, Func<Assembly, bool> except)
         {
             if (folders?.Any() ?? false)
             {
@@ -127,14 +128,13 @@ namespace ThreatsManager.Engine
 
                                     bool skip = false;
                                     string reason = null;
-#if !MICROSOFT_EDITION
-                                    if (IsMicrosoftOnlyExtension(assembly))
+
+                                    if (except != null && except(assembly))
                                     {
                                         skip = true;
                                         reason =
-                                            $"Assembly {assembly.FullName} not loaded because it is reserved for Microsoft internal consumption.";
+                                            $"Assembly {assembly.FullName} has not been loaded because it is not designed for this client.";
                                     }
-#endif
 
                                     if (!skip && CheckVersion(platformVersion, assembly))
                                     {
@@ -169,13 +169,6 @@ namespace ThreatsManager.Engine
                     }
                 }
             }
-        }
-
-        private bool IsMicrosoftOnlyExtension([NotNull] Assembly assembly)
-        {
-            var attributeName = typeof(MicrosoftContainerAttribute).FullName;
-            return CustomAttributeData.GetCustomAttributes(assembly)
-                .Any(x => x.AttributeType.FullName == attributeName);
         }
 
         private bool CheckVersion([NotNull] Version platformVersion, [NotNull] Assembly assembly)
@@ -299,7 +292,7 @@ namespace ThreatsManager.Engine
 
         public bool IsDirty => Dirty.IsDirty;
 
-        public void LoadExtensions(ExecutionMode mode)
+        public void LoadExtensions(ExecutionMode mode, Func<Assembly, bool> except = null)
         {
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_ReflectionOnlyAssemblyResolve;
 
@@ -325,7 +318,7 @@ namespace ThreatsManager.Engine
             var folders = _configuration.Folders;
             var prefixes = _configuration.Prefixes;
             var certificates = _configuration.Certificates;
-            AddAssemblies(folders, prefixes, certificates);
+            AddAssemblies(folders, prefixes, certificates, except);
 
             _extensionsManager.Load();
             _extensionsManager.SetExecutionMode(mode);
