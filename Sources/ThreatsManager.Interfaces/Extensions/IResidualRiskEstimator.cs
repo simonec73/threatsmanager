@@ -25,6 +25,13 @@ namespace ThreatsManager.Interfaces.Extensions
         float Estimate(IThreatModel model, IEnumerable<Guid> mitigations, out float min, out float max);
 
         /// <summary>
+        /// Categorizes Mitigations belonging to a Threat Model based on their effectiveness.
+        /// </summary>
+        /// <param name="model">Reference Threat Model.</param>
+        /// <returns>Dictionary having as key the identifier of the Mitigation and as value its Effectiveness.</returns>
+        IDictionary<Guid, Effectiveness> CategorizeMitigations(IThreatModel model);
+
+        /// <summary>
         /// Get a list of parameters that can be used for calculating the Acceptable Risk.
         /// </summary>
         /// <param name="model">Model for which the parameters must be identified.</param>

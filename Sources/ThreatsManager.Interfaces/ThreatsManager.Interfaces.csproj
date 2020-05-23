@@ -82,6 +82,7 @@
     <Compile Include="Extensions\BugStatus.cs" />
     <Compile Include="Extensions\DevOpsField.cs" />
     <Compile Include="Extensions\DevOpsItemInfo.cs" />
+    <Compile Include="Extensions\Effectiveness.cs" />
     <Compile Include="Extensions\IdentityField.cs" />
     <Compile Include="Extensions\IdentityFieldType.cs" />
     <Compile Include="Extensions\IDevOpsConnector.cs" />
