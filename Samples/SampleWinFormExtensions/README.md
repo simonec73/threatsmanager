@@ -38,7 +38,7 @@ The project includes also the following notable classes:
 - DefinitionsPropertySchemaManager: a class to manage a new Property Schema designed to store the data required by the Definition functionality. It defines a Json Property used to store the DefinitionContainer.
 - DefinitionPanel: the main UI for this functionality.
 
-## Validate
+### Validate
 
 Follow the list of Extensions implemented to provide the experience for this scenario.
 
