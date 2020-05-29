@@ -1,6 +1,6 @@
 # Important
 
-The icons included in library ThreatsManager.Icons.dll are part of Incors Gmbh IconExperience I-Collection v2.0 (<http://incors.com/info/>) and are regulated by the following **License Agreement**.
+Most of the icons included in this folder are part of Incors Gmbh IconExperience I-Collection v2.0 (<http://incors.com/info/>) and are regulated by the following **License Agreement**.
 The MIT License does not apply to this library and to its content. This means that you are NOT allowed to use this library or its content outside of the Threats Manager Platform.
 
 ## License Agreement
