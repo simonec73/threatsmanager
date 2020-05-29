@@ -32,6 +32,26 @@ namespace SimpleThreatModelAnalyzer
                             $"Count External Interactors: {model.Entities.Count(x => x is IExternalInteractor)}");
                         Console.WriteLine($"Count Processes: {model.Entities.Count(x => x is IProcess)}");
                         Console.WriteLine($"Count Data Stores: {model.Entities.Count(x => x is IDataStore)}");
+                        Console.WriteLine($"Count Flows: {model.DataFlows.Count()}");
+                        Console.WriteLine();
+
+                        var threatTypesChecker = new IdentityChecker();
+                        threatTypesChecker.AddIdentities(model.ThreatTypes);
+                        var threatTypesDuplicates = threatTypesChecker.CountDuplicates;
+                        Console.WriteLine($"Threat Type duplicates: {threatTypesDuplicates}");
+                        if (threatTypesDuplicates > 0)
+                        {
+                            ShowDuplicates(threatTypesChecker.Duplicates);
+                        }
+
+                        var mitigationsChecker = new IdentityChecker();
+                        mitigationsChecker.AddIdentities(model.Mitigations);
+                        var mitigationsDuplicates = mitigationsChecker.CountDuplicates;
+                        Console.WriteLine($"Mitigation duplicates: {mitigationsDuplicates}");
+                        if (mitigationsDuplicates > 0)
+                        {
+                            ShowDuplicates(mitigationsChecker.Duplicates);
+                        }
                     }
                     else
                     {
@@ -45,5 +65,19 @@ namespace SimpleThreatModelAnalyzer
             }
         }
 
+        static void ShowDuplicates(IEnumerable<List<IIdentity>> duplicates)
+        {
+            var itemsList = duplicates?.ToArray();
+            if (itemsList?.Any() ?? false)
+            {
+                foreach (var items in itemsList)
+                {
+                    foreach (var item in items)
+                    {
+                        Console.WriteLine($"[{item.Id}] {item.Name}");
+                    }
+                }
+            }
+        }
     }
 }
