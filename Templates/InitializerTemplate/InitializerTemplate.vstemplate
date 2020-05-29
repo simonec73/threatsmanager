@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>Initializer</Name>
+    <Description>Extension to Initialize Threat Models in Threats Manager Platform.</Description>
+    <Icon>template.ico</Icon>
+    <TemplateID>ThreatsManagerPlatform.Initializer</TemplateID>
+    <TemplateGroupID>ThreatsManagerPlatform</TemplateGroupID>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>4.7.2</RequiredFrameworkVersion>
+    <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
+    <DefaultName>Initializer.cs</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <References>
+      <Reference>
+        <Assembly>System</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>ThreatsManager.Interfaces</Assembly>
+      </Reference>
+    </References>
+    <ProjectItem ReplaceParameters="true">Initializer.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>
