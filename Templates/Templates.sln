@@ -13,6 +13,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityActionTemplate", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatTypeMitigationActionTemplate", "ThreatTypeMitigationActionTemplate\ThreatTypeMitigationActionTemplate.csproj", "{4F7D90B0-FF4D-471B-9834-2DA00EDB1676}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanelTemplate", "PanelTemplate\PanelTemplate.csproj", "{A0491B26-CDDD-44FE-BA9A-F50471D62023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionInitializerTemplate", "ExtensionInitializerTemplate\ExtensionInitializerTemplate.csproj", "{BC3D153A-3348-47C7-8D12-5CEAF1C6078D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainRibbonExtensionTemplate", "MainRibbonExtensionTemplate\MainRibbonExtensionTemplate.csproj", "{B9B46F51-E595-467F-B80E-90B8E15465BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +45,18 @@ Global
 		{4F7D90B0-FF4D-471B-9834-2DA00EDB1676}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F7D90B0-FF4D-471B-9834-2DA00EDB1676}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F7D90B0-FF4D-471B-9834-2DA00EDB1676}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0491B26-CDDD-44FE-BA9A-F50471D62023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0491B26-CDDD-44FE-BA9A-F50471D62023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0491B26-CDDD-44FE-BA9A-F50471D62023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0491B26-CDDD-44FE-BA9A-F50471D62023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC3D153A-3348-47C7-8D12-5CEAF1C6078D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC3D153A-3348-47C7-8D12-5CEAF1C6078D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC3D153A-3348-47C7-8D12-5CEAF1C6078D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC3D153A-3348-47C7-8D12-5CEAF1C6078D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9B46F51-E595-467F-B80E-90B8E15465BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B46F51-E595-467F-B80E-90B8E15465BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B46F51-E595-467F-B80E-90B8E15465BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B46F51-E595-467F-B80E-90B8E15465BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

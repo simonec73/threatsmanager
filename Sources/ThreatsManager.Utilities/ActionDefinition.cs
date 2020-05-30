@@ -54,13 +54,13 @@ namespace ThreatsManager.Utilities
         /// <summary>
         /// Icon of the action.
         /// </summary>
-        /// <remarks>It must be a 32x32 image.</remarks>
+        /// <remarks>It must be a 64x64 pixels image.</remarks>
         public Bitmap Icon { get; }
 
         /// <summary>
         /// Small image of the action.
         /// </summary>
-        /// <remarks>It must be a 16x16 image.</remarks>
+        /// <remarks>It must be a 32x32 image.</remarks>
         public Bitmap SmallIcon { get; }
 
         /// <summary>

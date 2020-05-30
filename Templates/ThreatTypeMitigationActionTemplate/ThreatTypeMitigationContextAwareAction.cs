@@ -16,8 +16,7 @@ namespace $rootnamespace$
         "$itemname$ Context Aware Action", 100, ExecutionMode.Simplified)]
     public class $safeitemname$ : IThreatTypeMitigationContextAwareAction
     {
-        // TODO: specify the right scope.
-        public Scope Scope => Scope.All;    
+        public Scope Scope => Scope.ThreatTypeMitigation;    
         
         // TODO: select the label.
         public string Label => "$itemname$ Action"; 

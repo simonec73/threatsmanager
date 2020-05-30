@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>Panel and Panel Factory</Name>
+    <Description>Extension to show WinForms Panels in Threats Manager Platform.</Description>
+    <Icon>template.ico</Icon>
+    <TemplateID>ThreatsManagerPlatform.Panel</TemplateID>
+    <TemplateGroupID>ThreatsManagerPlatform</TemplateGroupID>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>4.7.2</RequiredFrameworkVersion>
+    <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
+    <DefaultName>Panel.cs</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <References>
+      <Reference>
+        <Assembly>System</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>System.Drawing</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>System.Windows.Forms</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>ThreatsManager.Interfaces</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>ThreatsManager.Utilities</Assembly>
+      </Reference>
+    </References>
+    <CustomParameters>
+      <CustomParameter Name="$chosenname$" Value="$fileinputname$"/>
+    </CustomParameters>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$Factory.cs">PanelFactory.cs</ProjectItem>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.cs" SubType="Form">Panel.cs</ProjectItem>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.Designer.cs">Panel.Designer.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

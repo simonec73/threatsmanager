@@ -61,6 +61,13 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.6.2051" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExtensionInitializerTemplate\ExtensionInitializerTemplate.csproj">
+      <Project>{BC3D153A-3348-47C7-8D12-5CEAF1C6078D}</Project>
+      <Name>ExtensionInitializerTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\IdentityActionTemplate\IdentityActionTemplate.csproj">
       <Project>{5E24E397-F909-4B1F-A225-20AB5AFAA3D2}</Project>
       <Name>IdentityActionTemplate</Name>
@@ -71,6 +78,20 @@
     <ProjectReference Include="..\InitializerTemplate\InitializerTemplate.csproj">
       <Project>{0A279CDB-9ED1-4894-8B4A-2ADCF531ABAF}</Project>
       <Name>InitializerTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\MainRibbonExtensionTemplate\MainRibbonExtensionTemplate.csproj">
+      <Project>{B9B46F51-E595-467F-B80E-90B8E15465BD}</Project>
+      <Name>MainRibbonExtensionTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\PanelTemplate\PanelTemplate.csproj">
+      <Project>{A0491B26-CDDD-44FE-BA9A-F50471D62023}</Project>
+      <Name>PanelTemplate</Name>
       <VSIXSubPath>ItemTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>

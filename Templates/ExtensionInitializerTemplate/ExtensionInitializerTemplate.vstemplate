@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
   <TemplateData>
-    <Name>ThreatTypeMitigation Context Aware Action</Name>
-    <Description>Extension to show context menu actions for ThreatTypeMitigations in Threats Manager Platform.</Description>
+    <Name>Extension Initializer</Name>
+    <Description>Extension to initialize the Extension Container after it is loaded by Threats Manager Platform.</Description>
     <Icon>template.ico</Icon>
-    <TemplateID>ThreatsManagerPlatform.ThreatTypeMitigationAction</TemplateID>
+    <TemplateID>ThreatsManagerPlatform.ExtensionInitializer</TemplateID>
     <TemplateGroupID>ThreatsManagerPlatform</TemplateGroupID>
     <ProjectType>CSharp</ProjectType>
     <RequiredFrameworkVersion>4.7.2</RequiredFrameworkVersion>
     <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
-    <DefaultName>ThreatTypeMitigationContextAwareAction.cs</DefaultName>
+    <DefaultName>ExtensionInitializer.cs</DefaultName>
   </TemplateData>
   <TemplateContent>
     <References>
@@ -17,12 +17,9 @@
         <Assembly>System</Assembly>
       </Reference>
       <Reference>
-        <Assembly>System.Drawing</Assembly>
-      </Reference>
-      <Reference>
         <Assembly>ThreatsManager.Interfaces</Assembly>
       </Reference>
     </References>
-    <ProjectItem ReplaceParameters="true">ThreatTypeMitigationContextAwareAction.cs</ProjectItem>
+    <ProjectItem ReplaceParameters="true">ExtensionInitializer.cs</ProjectItem>
   </TemplateContent>
 </VSTemplate>

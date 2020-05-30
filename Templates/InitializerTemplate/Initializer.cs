@@ -5,8 +5,11 @@ using ThreatsManager.Interfaces.ObjectModel;
 
 namespace $rootnamespace$
 {
+    /// <summary>
+    /// $safeitemname$ is used to Initialize a newly created Threat Model.
+    /// </summary>
     [Extension(typeof(IInitializer), "$guid1$", 
-        "$itemname$ $safeitemname$", 100, ExecutionMode.Simplified)]
+        "$itemname$ Initializer", 100, ExecutionMode.Simplified)]
     public class $safeitemname$ : IInitializer 
     {
         public void Initialize(IThreatModel model)

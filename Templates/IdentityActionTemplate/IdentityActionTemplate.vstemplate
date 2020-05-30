@@ -17,6 +17,9 @@
         <Assembly>System</Assembly>
       </Reference>
       <Reference>
+        <Assembly>System.Drawing</Assembly>
+      </Reference>
+      <Reference>
         <Assembly>ThreatsManager.Interfaces</Assembly>
       </Reference>
     </References>

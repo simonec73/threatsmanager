@@ -16,7 +16,7 @@ namespace $rootnamespace$
     public class $safeitemname$ : IIdentityContextAwareAction
     {
         // TODO: specify the right scope.
-        public Scope Scope => Scope.All;    
+        public Scope Scope => Scope.Entity;    
         
         // TODO: select the label.
         public string Label => "$itemname$ Action"; 
