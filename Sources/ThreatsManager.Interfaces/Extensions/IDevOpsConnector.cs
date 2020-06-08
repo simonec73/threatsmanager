@@ -37,6 +37,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         string Project { get; }
 
+        #if NEXT_VERSION
         /// <summary>
         /// Identifier of the Parent to be used for all the objects managed by the Connector.
         /// </summary>
@@ -48,6 +49,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <param name="filter">Filter to be used for the search. It must contain at least 3 characters.</param>
         /// <returns>Enumeration of the items whose name includes the three characters.</returns>
         IEnumerable<DevOpsItemInfo> GetItems(string filter);
+        #endif
 
         /// <summary>
         /// Check if the Connector is connected to the DevOps server.
@@ -61,6 +63,7 @@ namespace ThreatsManager.Interfaces.Extensions
         string Tag { get; set; }
 
         #region Bugs management.
+        #if NEXT_VERSION
         /// <summary>
         /// Get the current mapping between states supported by the DevOps system and the Bug Status.
         /// </summary>
@@ -98,6 +101,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         /// <returns>List of known DevOps fields.</returns>
         IEnumerable<DevOpsField> GetBugDevOpsFields();
+        #endif
 
         /// <summary>
         /// Create a Bug out of a Threat Event.
@@ -136,6 +140,7 @@ namespace ThreatsManager.Interfaces.Extensions
         #endregion
 
         #region Task management.
+        #if NEXT_VERSION
         /// <summary>
         /// Get the current mapping between the Task States and the states supported by the DevOps system.
         /// </summary>
@@ -173,6 +178,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         /// <returns>List of known DevOps fields.</returns>
         IEnumerable<DevOpsField> GetTaskDevOpsFields();
+        #endif
 
         /// <summary>
         /// Create a mitigation associated to a Task.
