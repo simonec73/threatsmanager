@@ -19,3 +19,13 @@ Threats Manager Platform makes use of a specific version of PostSharp. It will b
 
 Threats Manager Platform code is provided under the MIT license.
 The only exception is assembly ThreatsManager.Icons.dll, which contains icons part of Incors Gmbh IconExperience I-Collection v2.0 (<http://incors.com/info/>). Those icons are licensed by Incors and cannot be used outside of Threats Manager Platform. Further information in the **Resources** folder.
+
+## How to use
+
+The Threats Manager Platform core libraries are all available as NuGet packages.
+
+- ThreatsManager.Interfaces (<https://www.nuget.org/packages/ThreatsManager.Interfaces/>)
+- ThreatsManager.Utilities (<https://www.nuget.org/packages/ThreatsManager.Utilities/>)
+- ThreatsManager.Engine (<https://www.nuget.org/packages/ThreatsManager.Engine/>)
+
+There is also a fourth NuGet package, for additional utilities to cover WinForms platform: ThreatsManager.Utilities.WinForms (<https://www.nuget.org/packages/ThreatsManager.Utilities.WinForms/>).
