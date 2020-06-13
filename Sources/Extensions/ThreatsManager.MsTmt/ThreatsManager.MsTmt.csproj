@@ -118,9 +118,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\ThreatsManager.Engine\PostSharp.license">
+    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license">
       <Link>PostSharp.license</Link>
-    </None>
+    </EmbeddedResource>
     <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk">
       <Link>ThreatsManager.snk</Link>
     </None>
