@@ -5,16 +5,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8585EDEF-83FC-4818-805C-665112EFD84D}</ProjectGuid>
+    <ProjectGuid>{1DD66AAB-A2C1-4A1D-9074-FD9BBE59AFE6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThreatsManager.MsTmt</RootNamespace>
-    <AssemblyName>ThreatsManager.MsTmt</AssemblyName>
+    <RootNamespace>ThreatsManager.AutoThreatGeneration</RootNamespace>
+    <AssemblyName>ThreatsManager.AutoThreatGeneration</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,46 +43,11 @@
     <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ExtensionLibrary.cs" />
-    <Compile Include="Importer.cs" />
-    <Compile Include="Initializers\MsTmtSchemaInitializer.cs" />
-    <Compile Include="ListProviderExtension.cs" />
-    <Compile Include="Model\ElementInfo.cs" />
-    <Compile Include="Model\ElementType.cs" />
-    <Compile Include="Model\FlowInfo.cs" />
-    <Compile Include="Model\Info.cs" />
-    <Compile Include="Model\PropertyDefinition.cs" />
-    <Compile Include="Model\PropertyName.cs" />
-    <Compile Include="Model\Threat.cs" />
-    <Compile Include="Model\ThreatModel.cs" />
-    <Compile Include="Model\ThreatModel.Info.cs" />
-    <Compile Include="Model\ThreatModel.Load.cs" />
-    <Compile Include="Model\ThreatState.cs" />
-    <Compile Include="Model\ValidationResult.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Schemas\DataFlowsPropertySchemaManager.cs" />
-    <Compile Include="Schemas\ThreatsPropertySchemaManager.cs" />
-    <Compile Include="Schemas\EntitiesPropertySchemaManager.cs" />
-    <Compile Include="SolutionInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp, Version=6.6.7.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>packages\PostSharp.Redist.6.6.7\lib\net45\PostSharp.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="PostSharp.Patterns.Aggregation, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
       <HintPath>packages\PostSharp.Patterns.Aggregation.Redist.6.6.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
@@ -98,8 +63,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
     <Reference Include="ThreatsManager.Icons, Version=1.2.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <HintPath>packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Icons.dll</HintPath>
     </Reference>
@@ -114,14 +78,53 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license">
-      <Link>PostSharp.license</Link>
+    <Compile Include="Engine\TruismRuleNode.cs" />
+    <Compile Include="Engine\HasOutgoingRuleNode.cs" />
+    <Compile Include="Engine\HasIncomingRuleNode.cs" />
+    <Compile Include="Engine\CrossTrustBoundaryRuleNode.cs" />
+    <Compile Include="Engine\AndRuleNode.cs" />
+    <Compile Include="Engine\ComparisonOperator.cs" />
+    <Compile Include="Engine\BooleanRuleNode.cs" />
+    <Compile Include="Engine\EnumValueRuleNode.cs" />
+    <Compile Include="Engine\ComparisonRuleNode.cs" />
+    <Compile Include="Engine\MitigationSelectionRule.cs" />
+    <Compile Include="Engine\NaryRuleNode.cs" />
+    <Compile Include="Engine\NotRuleNode.cs" />
+    <Compile Include="Engine\OrRuleNode.cs" />
+    <Compile Include="Engine\RuleHelper.cs" />
+    <Compile Include="Engine\Scope.cs" />
+    <Compile Include="Engine\SelectionRule.cs" />
+    <Compile Include="Engine\SelectionRuleNode.cs" />
+    <Compile Include="Engine\UnaryRuleNode.cs" />
+    <Compile Include="ExtensionLibrary.cs" />
+    <Compile Include="Initializers\AutoGenRuleInitializer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PropertySchemasExtractors\AutoThreatGenPropertyTypesExtractor.cs" />
+    <Compile Include="PropertySchemasUpdaters\AutoThreatGenPropertyTypesUpdater.cs" />
+    <Compile Include="Schemas\AutoThreatGenPropertySchemaManager.cs" />
+    <Compile Include="SolutionInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\ThreatsManager.Engine\PostSharp.license">
+      <Link>PostSharp.license</Link>
+    </None>
     <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk">
       <Link>ThreatsManager.snk</Link>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
