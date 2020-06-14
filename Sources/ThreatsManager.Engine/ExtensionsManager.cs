@@ -157,6 +157,7 @@ namespace ThreatsManager.Engine
                         .Where(x => x != null)
                         .OrderBy(x => x.Priority)
                         .Select(x => x.Id)
+                        .Distinct()
                         .ToArray();
                     if (ids?.Any() ?? false)
                     {
@@ -269,7 +270,8 @@ namespace ThreatsManager.Engine
             }
 
             result = result?.Where(x => IsExecutionModeCompliant(x.Metadata.Mode))
-                .OrderBy(x => x.Metadata.Priority);
+                .OrderBy(x => x.Metadata.Priority)
+                .Distinct(new ExtensionMetadataEqualityComparer<T>());
 
             return result;
         }

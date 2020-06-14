@@ -112,6 +112,7 @@
     <Compile Include="Config\PropertyConfigElement.cs" />
     <Compile Include="Config\PropertyConfigurationCollection.cs" />
     <Compile Include="ExtensionDescriptionAttribute.cs" />
+    <Compile Include="ExtensionMetadataEqualityComparer.cs" />
     <Compile Include="ObjectModel\Entities\EntityTemplate.cs" />
     <Compile Include="ObjectModel\Properties\IdentityReferencePropertyType.cs" />
     <Compile Include="ObjectModel\Properties\ArrayPropertyType.cs" />

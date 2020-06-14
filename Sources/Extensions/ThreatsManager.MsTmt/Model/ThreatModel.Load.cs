@@ -41,11 +41,14 @@ namespace ThreatsManager.MsTmt.Model
 
                 foreach (XmlNode node in nodes)
                 {
-                    if (Guid.TryParse(node.ChildNodes[1].InnerText, out id))
+                    if (Guid.TryParse(node.SelectSingleNode("Guid")?.InnerText, out id))
                     {
-                        name = node.ChildNodes[5].InnerText;
-                        _pages.Add(id, name);
-                        _pagesGuids.Add(name, id);
+                        name = node.SelectSingleNode("Header")?.InnerText;
+                        if (name != null)
+                        {
+                            _pages.Add(id, name);
+                            _pagesGuids.Add(name, id);
+                        }
                     }
                 }
             }

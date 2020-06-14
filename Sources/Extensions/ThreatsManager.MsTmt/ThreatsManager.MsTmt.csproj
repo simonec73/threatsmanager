@@ -101,16 +101,16 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="ThreatsManager.Icons, Version=1.2.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Utilities.1.2.8\lib\net472\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=1.2.7.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>packages\ThreatsManager.Interfaces.1.2.7\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
+    <Reference Include="ThreatsManager.Interfaces, Version=1.2.8.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Interfaces.1.2.8\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Packaging, Version=1.2.7.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Packaging.dll</HintPath>
+    <Reference Include="ThreatsManager.Packaging, Version=1.2.8.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Utilities.1.2.8\lib\net472\ThreatsManager.Packaging.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=1.2.7.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Utilities.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities, Version=1.2.8.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Utilities.1.2.8\lib\net472\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +121,12 @@
       <Link>ThreatsManager.snk</Link>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj">
+      <Project>{1dd66aab-a2c1-4a1d-9074-fd9bbe59afe6}</Project>
+      <Name>ThreatsManager.AutoThreatGeneration</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
