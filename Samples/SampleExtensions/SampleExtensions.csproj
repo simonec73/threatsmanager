@@ -68,17 +68,17 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="ThreatsManager.Icons, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.1.2.5\lib\net472\ThreatsManager.Icons.dll</HintPath>
+    <Reference Include="ThreatsManager.Icons, Version=1.2.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Interfaces.1.2.5\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
+    <Reference Include="ThreatsManager.Interfaces, Version=1.2.7.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Interfaces.1.2.7\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Packaging, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.1.2.5\lib\net472\ThreatsManager.Packaging.dll</HintPath>
+    <Reference Include="ThreatsManager.Packaging, Version=1.2.7.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Packaging.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=1.2.5.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.1.2.5\lib\net472\ThreatsManager.Utilities.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities, Version=1.2.7.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.2.7\lib\net472\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
