@@ -1,6 +1,10 @@
 # The Sources
 
 This section includes the code for the Threats Manager Platform's Engine. The code published here is designed to allow the implementation of solutions based on .NET Framework to create applications on multiple platforms, including WinForms and ASP.NET.
+Those libraries are often referred as the "Core libraries" or simply as "Core", in the context of Threats Manager Platform.
+
+Folder Extensions contains also the code for logic implemented for some Extensions. The logic stored here is designed to be adopted for building solutions on multiple platforms, and represents the main logic implemented for the various Extensions built as part of the Windows Desktop experience of the Threats Manager Platform, which will be published soon.
+The said Windows Desktop experience will not available as Open Source, because it is based on various commercial components, but it will be freely downloadable and usable in all contexts, under a very permissive license.
 
 ## How to Build
 
@@ -22,7 +26,7 @@ The only exception is assembly ThreatsManager.Icons.dll, which contains icons pa
 
 ## How to use
 
-The Threats Manager Platform core libraries are all available as NuGet packages.
+The Threats Manager Platform Core libraries are all available as NuGet packages.
 
 - ThreatsManager.Interfaces (<https://www.nuget.org/packages/ThreatsManager.Interfaces/>)
 - ThreatsManager.Utilities (<https://www.nuget.org/packages/ThreatsManager.Utilities/>)
