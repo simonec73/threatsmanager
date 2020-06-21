@@ -1,4 +1,4 @@
-# Threats Manager Platform Engine Core libraries and SDK
+# Threats Manager Platform Core libraries and SDK
 
 ## Definition
 
