@@ -2,8 +2,12 @@
 {
     public enum ElementType
     {
+        Undefined,
         StencilRectangle,
         StencilEllipse,
-        StencilParallelLines
+        StencilParallelLines,
+        BorderBoundary,
+        Connector,
+        LineBoundary
     }
 }

@@ -40,19 +40,19 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         [InitializationRequired]
-        public IGroup AddGroup<T>() where T : IGroup
+        public T AddGroup<T>() where T : class, IGroup
         {
             return AddGroup<T>(GetFirstAvailableGroupName<T>());
         }
 
         [InitializationRequired]
-        public IGroup AddGroup<T>([Required] string name) where T : IGroup
+        public T AddGroup<T>([Required] string name) where T : class, IGroup
         {
-            IGroup result = null;
+            T result = default(T);
 
             if (typeof(T) == typeof(ITrustBoundary))
             {
-                result = new TrustBoundary(this, name);
+                result = new TrustBoundary(this, name) as T;
                 if (_groups == null)
                     _groups = new List<IGroup>();
                 _groups.Add(result);

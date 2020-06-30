@@ -19,7 +19,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// </summary>
         /// <typeparam name="T">Type of the group to be added. It is the interface derived from IGroup.</typeparam>
         /// <returns>New group.</returns>
-        IGroup AddGroup<T>() where T : IGroup;
+        T AddGroup<T>() where T : class, IGroup;
 
         /// <summary>
         /// Adds a group to the container.
@@ -27,7 +27,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// <typeparam name="T">Type of the group to be added. It is the interface derived from IGroup.</typeparam>
         /// <param name="name">Name of the group.</param>
         /// <returns>New entity.</returns>
-        IGroup AddGroup<T>(string name) where T : IGroup;
+        T AddGroup<T>(string name) where T : class, IGroup;
 
         /// <summary>
         /// Adds a group to the container.

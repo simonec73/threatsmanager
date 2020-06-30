@@ -179,7 +179,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         private void OnPropertyTypeAdded(IPropertySchema schema, IPropertyType propertyType)
         {
             var model = Model?.Get();
-            if (model != null && schema != null && propertyType != null)
+            if (model != null && schema != null && propertyType != null && !HasProperty(propertyType))
             {
                 if (_properties?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
                     InternalAddProperty(model, propertyType, null);

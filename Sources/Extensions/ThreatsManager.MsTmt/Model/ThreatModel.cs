@@ -10,6 +10,7 @@ namespace ThreatsManager.MsTmt.Model
         #region Private member variables.
         private readonly XmlDocument _document;
         private Dictionary<string, Threat> _threats;
+        private readonly Dictionary<string, ElementTypeInfo> _elementTypes = new Dictionary<string, ElementTypeInfo>();
         private readonly Dictionary<Guid, string> _pages = new Dictionary<Guid, string>();
         private readonly Dictionary<string, Guid> _pagesGuids = new Dictionary<string, Guid>();
         private readonly Dictionary<Guid, FlowInfo> _flows = new Dictionary<Guid, FlowInfo>();
@@ -31,6 +32,8 @@ namespace ThreatsManager.MsTmt.Model
         #endregion
 
         #region Public properties.
+        public IEnumerable<ElementTypeInfo> ElementTypes => _elementTypes.Values;
+
         public IEnumerable<Threat> Threats => _threats.Values;
 
         public IDictionary<string, List<Threat>> ThreatsPerType => _threatsPerType;

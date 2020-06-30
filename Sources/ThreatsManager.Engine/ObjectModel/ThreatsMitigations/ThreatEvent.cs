@@ -20,7 +20,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
     [Serializable]
-    [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
@@ -59,7 +58,34 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public bool IsInitialized => Model != null && _id != Guid.Empty && _threatTypeId != Guid.Empty;
 
+        public static bool UseThreatTypeInfo { get; set; }
+
         #region Specific implementation.
+        [JsonProperty("id")]
+        private Guid _id { get; set; }
+
+        public Guid Id => _id;
+
+        [JsonProperty("name")] 
+        private string _name { get; set; }
+
+        public string Name
+        {
+            get => UseThreatTypeInfo ? ThreatType?.Name : _name;
+
+            set => _name = value;
+        }
+
+        [JsonProperty("description")]
+        private string _description { get; set; }
+
+        public string Description         
+        {
+            get => UseThreatTypeInfo ? ThreatType?.Description : _description;
+
+            set => _description = value;
+        }
+
         [JsonProperty("parent")]
         private Guid _parentId;
 
@@ -217,9 +243,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         #endregion
 
         #region Default implementation.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
         public IThreatModel Model { get; }
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
@@ -297,7 +320,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         #endregion
 
         #region Additional placeholders required.
-        protected Guid _id { get; set; }
         private Guid _modelId { get; set; }
         private IThreatModel _model { get; set; }
         private IPropertiesContainer PropertiesContainer => this;

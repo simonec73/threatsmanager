@@ -26,6 +26,9 @@ namespace ThreatsManager.Engine.Config
         [XmlAttribute("mode")]
         public ExecutionMode Mode { get; set; }
 
+        [XmlAttribute("overrideThreatEvents")]
+        public bool OverrideThreatEventsInfo { get; set; }
+
         [XmlArray("knownDocuments")]
         [XmlArrayItem("doc")]
         public List<KnownDocumentInfo> KnownDocuments { get; set; }

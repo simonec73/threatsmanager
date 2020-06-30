@@ -379,6 +379,8 @@ namespace ThreatsManager.Engine
 
                         configSection.Setup = oldConfig?.ThreatsManagerConfig?.Setup ?? false;
                         configSection.Mode = oldConfig?.ThreatsManagerConfig?.Mode ?? ExecutionMode.Expert;
+                        configSection.OverrideThreatEventsInfo =
+                            oldConfig?.ThreatsManagerConfig?.OverrideThreatEventsInfo ?? false;
                         configSection.SmartSave = oldConfig?.ThreatsManagerConfig?.SmartSave ?? false;
                         configSection.SmartSaveCount = oldConfig?.ThreatsManagerConfig?.SmartSaveCount ?? 0;
                         configSection.SmartSaveInterval =

@@ -44,39 +44,27 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp, Version=6.6.7.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Redist.6.6.7\lib\net45\PostSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Redist.6.6.7\lib\net45\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Aggregation, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Aggregation.Redist.6.6.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Aggregation.Redist.6.6.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Common, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Common.Redist.6.6.7\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Common.Redist.6.6.7\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Model, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Model.Redist.6.6.7\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Model.Redist.6.6.7\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Threading, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Threading.Redist.6.6.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Threading.Redist.6.6.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="ThreatsManager.Icons, Version=1.2.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Utilities.1.2.8\lib\net472\ThreatsManager.Icons.dll</HintPath>
-    </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=1.2.8.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Interfaces.1.2.8\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ThreatsManager.Packaging, Version=1.2.8.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Utilities.1.2.8\lib\net472\ThreatsManager.Packaging.dll</HintPath>
-    </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=1.2.8.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\ThreatsManager.Utilities.1.2.8\lib\net472\ThreatsManager.Utilities.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\TruismRuleNode.cs" />
@@ -97,7 +85,7 @@
     <Compile Include="Engine\SelectionRule.cs" />
     <Compile Include="Engine\SelectionRuleNode.cs" />
     <Compile Include="Engine\UnaryRuleNode.cs" />
-    <Compile Include="ExtensionLibrary.cs" />
+    <Compile Include="ExtensionsContainer.cs" />
     <Compile Include="Initializers\AutoGenRuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -125,7 +113,16 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj">
+      <Project>{3ae427f4-c1e3-4283-91a3-9ecaca448e4d}</Project>
+      <Name>ThreatsManager.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj">
+      <Project>{854e9bca-48b5-41dc-bd0a-26ff5a1c8546}</Project>
+      <Name>ThreatsManager.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

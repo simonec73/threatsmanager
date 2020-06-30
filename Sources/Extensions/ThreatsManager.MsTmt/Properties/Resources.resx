@@ -123,22 +123,22 @@
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
   </data>
-  <data name="EntitiesPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema that collects the properties defined in the imported MS TMT document and must be applied to imported Entities.</value>
-  </data>
   <data name="ThreatsPropertySchemaDescription" xml:space="preserve">
     <value>Property Schema that collects the properties defined in the imported MS TMT document and must be applied to imported Threats.</value>
   </data>
   <data name="ThreatTitle" xml:space="preserve">
     <value>Title</value>
   </data>
-  <data name="ThreatModelEntityIdDescription" xml:space="preserve">
-    <value>Property used to store the ID of the Entity, as defined in the imported MS TMT Threat Model.</value>
+  <data name="ThreatModelObjectIdDescription" xml:space="preserve">
+    <value>Property used to store the ID of the object, as defined in the imported MS TMT Threat Model.</value>
   </data>
-  <data name="DataFlowsPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema that collects the properties defined in the imported MS TMT document and must be applied to imported Data Flows.</value>
+  <data name="TmtObjectPropertySchema" xml:space="preserve">
+    <value>Tmt</value>
   </data>
-  <data name="ThreatModelDataFlowIdDescription" xml:space="preserve">
-    <value>Property used to store the ID of the DataFlow, as defined in the imported MS TMT Threat Model.</value>
+  <data name="TmtObjectPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema to store the unique ID of the object, as defined in TMT.</value>
+  </data>
+  <data name="TmtPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects the properties defined in the imported TMT document for an entity.</value>
   </data>
 </root>

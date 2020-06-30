@@ -135,16 +135,6 @@
     <Compile Include="UserName.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj">
-      <Project>{3ae427f4-c1e3-4283-91a3-9ecaca448e4d}</Project>
-      <Name>ThreatsManager.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ThreatsManager.Packaging\ThreatsManager.Packaging.csproj">
-      <Project>{cd25c49a-0c9d-4b32-ad17-58c53cf4d6b4}</Project>
-      <Name>ThreatsManager.Packaging</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\ThreatsManager.Engine\PostSharp.license">
       <Link>PostSharp.license</Link>
     </EmbeddedResource>
@@ -159,6 +149,16 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj">
+      <Project>{3ae427f4-c1e3-4283-91a3-9ecaca448e4d}</Project>
+      <Name>ThreatsManager.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ThreatsManager.Packaging\ThreatsManager.Packaging.csproj">
+      <Project>{cd25c49a-0c9d-4b32-ad17-58c53cf4d6b4}</Project>
+      <Name>ThreatsManager.Packaging</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

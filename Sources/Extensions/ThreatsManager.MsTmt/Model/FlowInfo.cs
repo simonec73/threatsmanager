@@ -7,21 +7,17 @@ namespace ThreatsManager.MsTmt.Model
 {
     public class FlowInfo : Info
     {
-        public FlowInfo(string name) : base(name)
-        {
-            
-        }
-
-        public FlowInfo(Guid flowId, Guid sourceId, Guid targetId, 
-            [Required] string pageName, IEnumerable<XmlNode> nodes) : base(nodes)
+        public FlowInfo(Guid flowId, Guid sourceId, Guid targetId, string typeId,
+            [Required] string pageName, IEnumerable<XmlNode> properties) : base(properties)
         {
             FlowId = flowId;
             SourceGuid = sourceId;
             TargetGuid = targetId;
+            TypeId = typeId;
             PageName = pageName;
-
         }
 
+        public string TypeId { get; private set; } 
         public Guid FlowId { get; private set; }
         public Guid SourceGuid { get; private set; }
         public Guid TargetGuid { get; private set; }
