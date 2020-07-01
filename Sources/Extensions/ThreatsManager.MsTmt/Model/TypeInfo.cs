@@ -23,6 +23,8 @@ namespace ThreatsManager.MsTmt.Model
 
                     foreach (XmlNode node in nodesArray)
                     {
+                        string propertyKey = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
+                            node.SelectSingleNode("b:Name", nsManager)?.InnerText;
                         string propertyName = isTemplate ? node.SelectSingleNode("DisplayName")?.InnerText :
                             node.SelectSingleNode("b:DisplayName", nsManager)?.InnerText;
                         var nodeType = isTemplate ? node.SelectSingleNode("Type")?.InnerText :
@@ -39,6 +41,7 @@ namespace ThreatsManager.MsTmt.Model
 
                             _properties.Add(new Property()
                             {
+                                Key = propertyKey,
                                 Name = propertyName,
                                 Type = PropertyType.List,
                                 Values = values,

@@ -157,8 +157,14 @@ namespace ThreatsManager.Engine
                                     }
                                     else
                                     {
-                                        _showWarning?.Invoke(reason ?? $"Assembly {assembly.FullName} not loaded because it does not target this version of the Platform.");
+                                        _showWarning?.Invoke(
+                                            reason ??
+                                            $"Assembly {assembly.FullName} not loaded because it does not target this version of the Platform.");
                                     }
+                                }
+                                catch (FileLoadException)
+                                {
+                                    // Ignore: this could be caused by the fact that the library has been loaded from somewhere else. 
                                 }
                                 catch
                                 {

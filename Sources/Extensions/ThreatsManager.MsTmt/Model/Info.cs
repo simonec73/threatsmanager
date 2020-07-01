@@ -23,8 +23,9 @@ namespace ThreatsManager.MsTmt.Model
 
                     foreach (XmlNode node in nodesArray)
                     {
-                        string propertyName = node.SelectSingleNode("b:DisplayName", nsManager)?.InnerText;
-                        string propertyValue = node.SelectSingleNode("b:Value", nsManager)?.InnerText;
+                        var propertyKey = node.SelectSingleNode("b:Name", nsManager)?.InnerText;
+                        var propertyName = node.SelectSingleNode("b:DisplayName", nsManager)?.InnerText;
+                        var propertyValue = node.SelectSingleNode("b:Value", nsManager)?.InnerText;
                         if (String.CompareOrdinal(propertyName, "Name") == 0)
                         {
                             Name = propertyValue;
@@ -79,6 +80,7 @@ namespace ThreatsManager.MsTmt.Model
                             {
                                 _properties.Add(new Property()
                                 {
+                                    Key = propertyKey,
                                     Name = propertyName,
                                     Value = propertyValue,
                                     Type = propertyType,

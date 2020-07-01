@@ -130,7 +130,7 @@
     <value>Title</value>
   </data>
   <data name="ThreatModelObjectIdDescription" xml:space="preserve">
-    <value>Property used to store the ID of the object, as defined in the imported MS TMT Threat Model.</value>
+    <value>Property used to store the ID of the object, as defined in the imported MS TMT Threat Model. In Entities, Trust Boundaries, Flows and Threat Events, it refers to the parent object.</value>
   </data>
   <data name="TmtObjectPropertySchema" xml:space="preserve">
     <value>Tmt</value>
@@ -140,5 +140,8 @@
   </data>
   <data name="TmtPropertySchemaDescription" xml:space="preserve">
     <value>Property Schema that collects the properties defined in the imported TMT document for an entity.</value>
+  </data>
+  <data name="ThreatModelInstanceIdDescription" xml:space="preserve">
+    <value>Property used to store the ID of the instance, as defined in the imported MS TMT Threat Model.</value>
   </data>
 </root>

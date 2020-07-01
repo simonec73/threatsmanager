@@ -46,7 +46,7 @@
     <Compile Include="ExtensionsContainer.cs" />
     <Compile Include="Importer.cs" />
     <Compile Include="ListProviderExtension.cs" />
-    <Compile Include="Model\AutoThreatGen\MyVisitor.cs" />
+    <Compile Include="Model\AutoThreatGen\RuleVisitor.cs" />
     <Compile Include="Model\AutoThreatGen\TmtBaseListener.cs" />
     <Compile Include="Model\AutoThreatGen\TmtBaseVisitor.cs" />
     <Compile Include="Model\AutoThreatGen\TmtLexer.cs" />
@@ -57,6 +57,7 @@
     <Compile Include="Model\ElementType.cs" />
     <Compile Include="Model\ElementTypeInfo.cs" />
     <Compile Include="Model\FlowInfo.cs" />
+    <Compile Include="Model\ThreatType.cs" />
     <Compile Include="Model\TypeInfo.cs" />
     <Compile Include="Model\Info.cs" />
     <Compile Include="Model\Property.cs" />

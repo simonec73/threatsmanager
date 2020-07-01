@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.AutoThreatGeneration.Engine;
+using ThreatsManager.AutoThreatGeneration.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -10,6 +15,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.MsTmt.Extensions;
 using ThreatsManager.MsTmt.Model;
+using ThreatsManager.MsTmt.Model.AutoThreatGen;
 using ThreatsManager.MsTmt.Schemas;
 using ThreatsManager.Utilities;
 using Scope = ThreatsManager.Interfaces.Scope;
@@ -97,7 +103,11 @@ namespace ThreatsManager.MsTmt
                             var propertyType = schema.GetPropertyType(label);
                             if (propertyType != null)
                             {
-                                threatEvent.AddProperty(propertyType, threat.GetValueFromLabel(label));
+                                var property = threatEvent.GetProperty(propertyType);
+                                if (property == null)
+                                    threatEvent.AddProperty(propertyType, threat.GetValueFromLabel(label));
+                                else
+                                    property.StringValue = threat.GetValueFromLabel(label);
                             }
                             break;
                     }
@@ -191,8 +201,7 @@ namespace ThreatsManager.MsTmt
 
                         var outOfScope = elementSchema.AddPropertyType("Out of Scope", PropertyValueType.Boolean);
                         entityTemplate.AddProperty(outOfScope, false.ToString());
-                        var reasonOutOfScope =
-                            elementSchema.AddPropertyType("Reason For Out Of Scope", PropertyValueType.String);
+                        elementSchema.AddPropertyType("Reason For Out Of Scope", PropertyValueType.String);
 
                         if (!string.IsNullOrWhiteSpace(element.ParentTypeId) &&
                             source.ElementTypes.FirstOrDefault(x =>
@@ -227,7 +236,6 @@ namespace ThreatsManager.MsTmt
             if (elements?.Any() ?? false)
             {
                 var schemaManager = new ObjectPropertySchemaManager(target);
-                var schema = schemaManager.GetSchema();
 
                 var entities = new List<IEntity>();
                 var groups = new List<ITrustBoundary>();
@@ -271,7 +279,8 @@ namespace ThreatsManager.MsTmt
                     {
                         entities.Add(entity);
 
-                        schemaManager.SetObjectId(entity, element.Key.ToString());
+                        schemaManager.SetObjectId(entity, element.Value.TypeId);
+                        schemaManager.SetInstanceId(entity, element.Key.ToString());
                         var properties = element.Value.Properties?.ToArray();
 
                         var elementType = source.ElementTypes.FirstOrDefault(x =>
@@ -298,7 +307,8 @@ namespace ThreatsManager.MsTmt
                     {
                         groups.Add(boundary);
 
-                        schemaManager.SetObjectId(boundary, element.Key.ToString());
+                        schemaManager.SetObjectId(boundary, element.Value.TypeId);
+                        schemaManager.SetInstanceId(boundary, element.Key.ToString());
                         var properties = element.Value.Properties?.ToArray();
 
                         var elementType = source.ElementTypes.FirstOrDefault(x =>
@@ -346,7 +356,8 @@ namespace ThreatsManager.MsTmt
                         var dataFlow = target.AddDataFlow(flow.Name, sourceEntity.Id, targetEntity.Id);
                         if (dataFlow != null)
                         {
-                            schemaManager.SetObjectId(dataFlow, flow.FlowId.ToString());
+                            schemaManager.SetObjectId(dataFlow, flow.TypeId);
+                            schemaManager.SetInstanceId(dataFlow, flow.FlowId.ToString());
 
                             var properties = flow.Properties?.ToArray();
 
@@ -456,12 +467,12 @@ namespace ThreatsManager.MsTmt
 
                 foreach (var threatPerType in threatsPerType)
                 {
-                    var threatTypeName = source.GetThreatTypeName(threatPerType.Key);
+                    var tt = source.GetThreatType(threatPerType.Key);
                     IThreatType threatType = null;
-                    if (!string.IsNullOrWhiteSpace(threatTypeName))
+                    if (!string.IsNullOrWhiteSpace(tt.Name))
                     {
                         ISeverity severity;
-                        if (Enum.TryParse<DefaultSeverity>(source.GetThreatTypePriority(threatPerType.Key), out var severityId))
+                        if (Enum.TryParse<DefaultSeverity>(tt.Priority, out var severityId))
                         {
                             severity = target.GetMappedSeverity((int) severityId);
                         }
@@ -470,12 +481,11 @@ namespace ThreatsManager.MsTmt
                             severity = target.GetMappedSeverity((int) DefaultSeverity.High);
                         }
 
-                        threatType = target.AddThreatType(threatTypeName, severity);
+                        threatType = target.AddThreatType(tt.Name, severity);
                         if (threatType != null)
                         {
-                            threatType.Description = source.GetThreatTypeDescription(threatPerType.Key);
-
-                            var threatTypeProperties = source.GetThreatTypeProperties(threatPerType.Key);
+                            threatType.Description = tt.Description;
+                            var threatTypeProperties = tt.Properties?.ToArray();
                             if (threatTypeProperties?.Any() ?? false)
                             {
                                 foreach (var property in threatTypeProperties)
@@ -505,7 +515,7 @@ namespace ThreatsManager.MsTmt
                         else
                         {
                             threatType = target.ThreatTypes?
-                                .FirstOrDefault(x => string.CompareOrdinal(x.Name, threatTypeName) == 0);
+                                .FirstOrDefault(x => string.CompareOrdinal(x.Name, tt.Name) == 0);
                         }
                     }
                     else
@@ -534,6 +544,8 @@ namespace ThreatsManager.MsTmt
 
                     if (threatType != null)
                     {
+                        CreateGenerationRule(source, tt, threatType);
+
                         foreach (var threat in threatPerType.Value)
                         {
                             var flow = GetDataFlow(threat.FlowGuid.ToString(), target, schemaManager);
@@ -575,6 +587,81 @@ namespace ThreatsManager.MsTmt
                     }
                 }
             }
+        }
+
+        private void CreateGenerationRule([NotNull] ThreatModel model, 
+            [NotNull] ThreatType source, [NotNull] IThreatType target)
+        {
+            SelectionRuleNode include = AnalyzeGenerationRule(model, source.IncludeFilter);
+            SelectionRuleNode exclude = AnalyzeGenerationRule(model, source.ExcludeFilter);
+            SelectionRule rule = null;
+
+            if (include != null)
+            {
+                if (exclude != null)
+                {
+                    var andNode = new AndRuleNode()
+                    {
+                        Name = "AND"
+                    };
+                    andNode.Children.Add(include);
+                    andNode.Children.Add(new NotRuleNode()
+                    {
+                        Name = "NOT",
+                        Child = exclude
+                    });
+                    rule = new SelectionRule()
+                    {
+                        Root = andNode
+                    };
+                }
+                else
+                {
+                    rule = new SelectionRule()
+                    {
+                        Root = include
+                    };
+                }
+            }
+            else
+            {
+                if (exclude != null)
+                {
+                    rule = new SelectionRule()
+                    {
+                        Root = new NotRuleNode() {Child = exclude}
+                    };
+                }
+            }
+
+            if (rule != null)
+            {
+                var schemaManager = new AutoThreatGenPropertySchemaManager(target.Model);
+                var propertyType = schemaManager.GetPropertyType();
+                var property = target.GetProperty(propertyType) ?? target.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    jsonSerializableObject.Value = rule;
+            }
+        }
+
+        private SelectionRuleNode AnalyzeGenerationRule(ThreatModel model, string ruleText)
+        {
+            SelectionRuleNode result = null;
+
+            if (!string.IsNullOrWhiteSpace(ruleText))
+            {
+                ICharStream stream = CharStreams.fromstring(ruleText);
+                ITokenSource lexer = new TmtLexer(stream, TextWriter.Null, TextWriter.Null);
+                ITokenStream tokens = new CommonTokenStream(lexer);
+                TmtParser parser = new TmtParser(tokens);
+                parser.BuildParseTree = true;
+                IParseTree tree = parser.parse();
+                RuleVisitor visitor = new RuleVisitor(model);
+                visitor.Visit(tree);
+                result = visitor.Rule;
+            }
+
+            return result;
         }
 
         private void InitializeThreatsPropertySchema([NotNull] IPropertySchema schema, 
@@ -625,7 +712,7 @@ namespace ThreatsManager.MsTmt
             {
                 foreach (var entity in entities)
                 {
-                    var id = schemaManager.GetObjectId(entity);
+                    var id = schemaManager.GetInstanceId(entity);
                     if (string.CompareOrdinal(id, msEntityId) == 0)
                     {
                         result = entity;
@@ -647,7 +734,7 @@ namespace ThreatsManager.MsTmt
             {
                 foreach (var dataFlow in dataFlows)
                 {
-                    var id = schemaManager.GetObjectId(dataFlow);
+                    var id = schemaManager.GetInstanceId(dataFlow);
                     if (string.CompareOrdinal(id, msDataFlowId) == 0)
                     {
                         result = dataFlow;

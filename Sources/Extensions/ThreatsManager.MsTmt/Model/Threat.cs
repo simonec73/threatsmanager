@@ -28,19 +28,6 @@ namespace ThreatsManager.MsTmt.Model
             public string Label { get; private set; }
 
             public string Value { get; private set; }
-
-            public void SetValue(string value)
-            {
-                Value = value;
-                _node.ChildNodes[1].InnerText = value;
-
-                var attribute = _node.ChildNodes[1].Attributes.OfType<XmlAttribute>()
-                    .FirstOrDefault(x => string.CompareOrdinal(x.LocalName, "nil") == 0);
-                if (attribute != null)
-                {
-                    _node.ChildNodes[1].Attributes.Remove(attribute);
-                }
-            }
         }
 
         #region Member Variables.

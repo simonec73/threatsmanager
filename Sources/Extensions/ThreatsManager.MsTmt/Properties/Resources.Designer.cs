@@ -79,7 +79,16 @@ namespace ThreatsManager.MsTmt.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property used to store the ID of the object, as defined in the imported MS TMT Threat Model..
+        ///   Looks up a localized string similar to Property used to store the ID of the instance, as defined in the imported MS TMT Threat Model..
+        /// </summary>
+        internal static string ThreatModelInstanceIdDescription {
+            get {
+                return ResourceManager.GetString("ThreatModelInstanceIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property used to store the ID of the object, as defined in the imported MS TMT Threat Model. In Entities, Trust Boundaries, Flows and Threat Events, it refers to the parent object..
         /// </summary>
         internal static string ThreatModelObjectIdDescription {
             get {

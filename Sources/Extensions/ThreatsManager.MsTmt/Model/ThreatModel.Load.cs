@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Antlr4.Runtime.Misc;
 using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.MsTmt.Model
@@ -74,6 +75,19 @@ namespace ThreatsManager.MsTmt.Model
                             node.SelectSingleNode("a:Id", nsManager)?.InnerText;
                         parent = isTemplate ? node.SelectSingleNode("ParentElement")?.InnerText : 
                             node.SelectSingleNode("a:ParentId", nsManager)?.InnerText;
+
+                        var list = _hierarchy
+                            .Where(x => string.CompareOrdinal(parent, x.Key) == 0)?
+                            .Select(x => x.Value)
+                            .FirstOrDefault();
+                        if (list == null)
+                        {
+                            list = new List<string>();
+                            _hierarchy.Add(parent, list);
+                        }
+                        if (!list.Contains(id))
+                            list.Add(id);
+
                         name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
                             node.SelectSingleNode("a:Name", nsManager)?.InnerText;
                         description = isTemplate ? node.SelectSingleNode("Description")?.InnerText.Trim() :
@@ -118,16 +132,130 @@ namespace ThreatsManager.MsTmt.Model
                                 break;
                         }
 
-                        attributes = isTemplate ? node.SelectSingleNode("Attributes")?.OfType<XmlNode>() :
-                            node.SelectSingleNode("a:Attributes", nsManager)?.OfType<XmlNode>();
+                        attributes = isTemplate ? node.SelectSingleNode("Attributes")?.OfType<XmlNode>().ToArray() :
+                            node.SelectSingleNode("a:Attributes", nsManager)?.OfType<XmlNode>().ToArray();
                         if (!string.IsNullOrWhiteSpace(id) && elementType != ElementType.Undefined)
                         {
-                            _elementTypes.Add(id, new ElementTypeInfo(elementType, id, parent,
-                                name, description, image, attributes, isTemplate));
+                            var elementTypeInfo = new ElementTypeInfo(elementType, id, parent,
+                                name, description, image, attributes, isTemplate);
+                            _elementTypes.Add(id, elementTypeInfo);
+
+                            var properties = elementTypeInfo.Properties?.ToArray();
+                            if (elementTypeInfo.Properties?.Any() ?? false)
+                            {
+                                foreach (var property in properties)
+                                {
+                                    var schemas = _propertyEntityTypes
+                                        .Where(x => string.CompareOrdinal(property.Key, x.Key) == 0)
+                                        .Select(x => x.Value).FirstOrDefault();
+                                    if (schemas == null)
+                                    {
+                                        schemas = new List<string>();
+                                        _propertyEntityTypes.Add(property.Key, schemas);
+                                    }
+
+                                    if (!schemas.Contains(name))
+                                        schemas.Add(name);
+                                }
+                            }
                         }
                     }
                 }
             }
+        }
+ 
+        private void RetrieveThreatCategories(bool isTemplate)
+        {
+            var nodes =
+                _document.SelectNodes(
+                    $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='ThreatCategories']/*[local-name()='ThreatCategory']/*[local-name()='Name']")
+                    .OfType<XmlNode>().ToArray();
+            _categories.AddRange(nodes.Select(x => x.InnerText));
+        }
+
+        private void RetrieveThreatProperties(bool isTemplate)
+        {
+            var nodes =
+                _document.SelectNodes(
+                    $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='ThreatMetaData']/*[local-name()='PropertiesMetaData']/*[local-name()='ThreatMetaDatum']")
+                    .OfType<XmlNode>().ToArray();
+
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            nsManager.AddNamespace("ab", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model.Abstracts");
+            nsManager.AddNamespace("mo", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model");
+
+            foreach (XmlNode node in nodes)
+            {
+                var name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
+                    node.SelectSingleNode("mo:Name", nsManager)?.InnerText;
+
+                if (string.CompareOrdinal(name, "UserThreatCategory") == 0)
+                {
+                    _propertyDefinitions.Add(new PropertyDefinition(node, _categories, isTemplate));
+                }
+                else if (string.CompareOrdinal(name, "InteractionString") == 0)
+                {
+                    _propertyDefinitions.Add(new PropertyDefinition(node, true, isTemplate));
+                }
+                else
+                {
+                    _propertyDefinitions.Add(new PropertyDefinition(node, isTemplate));
+                }
+            }
+        }
+
+        private void RetrieveThreatTypesInfo(bool isTemplate)
+        {
+            var nodes =
+                _document.SelectNodes(
+                    $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='ThreatTypes']/*[local-name()='ThreatType']")
+                    .OfType<XmlNode>()
+                    .ToArray();
+            string key;
+            string name;
+            string priority;
+            string description;
+            XmlNode properties;
+            string includeFilter;
+            string excludeFilter;
+            IEnumerable<PropertyDefinition> propertyDefinitions;
+
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            nsManager.AddNamespace("a", "http://schemas.datacontract.org/2004/07/ThreatModeling.KnowledgeBase");
+
+            foreach (XmlNode node in nodes)
+            {
+                key = isTemplate ? node.SelectSingleNode("Id")?.InnerText :
+                    node.SelectSingleNode("a:Id", nsManager)?.InnerText;
+                name = Cleanup(isTemplate ? node.SelectSingleNode("ShortTitle")?.InnerText :
+                    node.SelectSingleNode("a:ShortTitle", nsManager)?.InnerText);
+                description = Cleanup(isTemplate ? node.SelectSingleNode("Description")?.InnerText.Trim() :
+                    node.SelectSingleNode("a:Description", nsManager)?.InnerText.Trim());
+                properties = isTemplate ? node.SelectSingleNode("PropertiesMetaData") :
+                    node.SelectSingleNode("a:PropertiesMetaData", nsManager);
+                priority = GetPriority(properties, isTemplate);
+                includeFilter = isTemplate
+                    ? node.SelectSingleNode("GenerationFilters/Include")?.InnerText
+                    : node.SelectSingleNode("a:GenerationFilters/a:Include", nsManager)?.InnerText;
+                excludeFilter = isTemplate
+                    ? node.SelectSingleNode("GenerationFilters/Exclude")?.InnerText
+                    : node.SelectSingleNode("a:GenerationFilters/a:Exclude", nsManager)?.InnerText;
+                propertyDefinitions = properties?.OfType<XmlNode>().Select(x => new PropertyDefinition(x, isTemplate));
+
+                _threatTypes.Add(new ThreatType(key, name, description, priority, includeFilter, excludeFilter, propertyDefinitions));
+
+                _threatTypeIDs.Add(name, key);
+                _threatsPerType.Add(key, new List<Threat>());
+            }
+        }
+
+        private string GetPriority(XmlNode nodeChildNode, bool isTemplate)
+        {
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            nsManager.AddNamespace("m", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model");
+
+            return isTemplate ? nodeChildNode?.SelectSingleNode("ThreatMetaDatum/Name[contains(text(),'Priority')]")?.ParentNode?.SelectSingleNode("Values")?.InnerText :
+                nodeChildNode?.SelectSingleNode("m:ThreatMetaDatum/m:Name[contains(text(),'Priority')]", nsManager)?.ParentNode?.SelectSingleNode("m:Values", nsManager)?.InnerText;
         }
         #endregion
 
@@ -224,16 +352,13 @@ namespace ThreatsManager.MsTmt.Model
             }
         }
 
-        private void AnalyzeThreats([NotNull] IEnumerable<Threat> threats)
+        private void AnalyzeThreats([PostSharp.Patterns.Contracts.NotNull] IEnumerable<Threat> threats)
         {
             _threats = new Dictionary<string, Threat>();
             foreach (var threat in threats)
             {
                 AnalyzeThreat(threat);
             }
-
-            _maxThreatPerTypeCount = _threatsPerType.Values.Max(x => x.Count);
-            _avgThreatPerTypeCount = _threatsPerType.Values.Average(x => x.Count);
         }
 
         private void GetElements()
@@ -268,7 +393,6 @@ namespace ThreatsManager.MsTmt.Model
                                     !IsAnnotationNode(valueNode, nsManager))
                                 {
                                     XmlNode propertiesNode = valueNode.SelectSingleNode("ab:Properties", nsManager);
-                                    var properties = propertiesNode?.ChildNodes;
                                     int left = Int32.Parse(
                                         valueNode.SelectSingleNode("ab:Left", nsManager)?.InnerText ?? "0");
                                     int top = Int32.Parse(valueNode.SelectSingleNode("ab:Top", nsManager)?.InnerText ??
@@ -280,9 +404,10 @@ namespace ThreatsManager.MsTmt.Model
                                             valueNode.SelectSingleNode("ab:Height", nsManager)?.InnerText ?? "0");
                                     var typeId = valueNode.SelectSingleNode("ab:TypeId", nsManager)?.InnerText;
 
+                                    var properties = Cleanup(propertiesNode?.ChildNodes.OfType<XmlNode>());
+
                                     _elements.Add(key,
-                                        new ElementInfo(page, top, left, width, height, type, typeId,
-                                            Cleanup(properties?.OfType<XmlNode>())));
+                                        new ElementInfo(page, top, left, width, height, type, typeId, properties));
                                 }
                             }
                         }
@@ -299,91 +424,23 @@ namespace ThreatsManager.MsTmt.Model
                     "b:HeaderDisplayAttribute") != 0);
         }
 
-        private bool IsAnnotationNode([NotNull] XmlNode node, [NotNull] XmlNamespaceManager nsManager)
+        private string Cleanup(string text)
+        {
+            string result = null;
+
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                result = text
+                    .Replace("{source.Name}", "Source")
+                    .Replace("{target.Name}", "Target");
+            }
+
+            return result;
+        }
+
+        private bool IsAnnotationNode([PostSharp.Patterns.Contracts.NotNull] XmlNode node, [PostSharp.Patterns.Contracts.NotNull] XmlNamespaceManager nsManager)
         {
             return string.CompareOrdinal(node.SelectSingleNode("ab:GenericTypeId", nsManager)?.InnerText, "GE.A") == 0;
-        }
-
-        private void RetrieveThreatCategories(bool isTemplate)
-        {
-            var nodes =
-                _document.SelectNodes(
-                    $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='ThreatCategories']/*[local-name()='ThreatCategory']/*[local-name()='Name']")
-                    .OfType<XmlNode>().ToArray();
-            _categories.AddRange(nodes.Select(x => x.InnerText));
-        }
-
-        private void RetrieveThreatProperties(bool isTemplate)
-        {
-            var nodes =
-                _document.SelectNodes(
-                    $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='ThreatMetaData']/*[local-name()='PropertiesMetaData']/*[local-name()='ThreatMetaDatum']")
-                    .OfType<XmlNode>().ToArray();
-
-            var nsManager = new XmlNamespaceManager(new NameTable());
-            nsManager.AddNamespace("ab", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model.Abstracts");
-            nsManager.AddNamespace("mo", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model");
-
-            foreach (XmlNode node in nodes)
-            {
-                var name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
-                    node.SelectSingleNode("mo:Name", nsManager)?.InnerText;
-
-                if (string.CompareOrdinal(name, "UserThreatCategory") == 0)
-                {
-                    _propertyDefinitions.Add(new PropertyDefinition(node, _categories, isTemplate));
-                }
-                else if (string.CompareOrdinal(name, "InteractionString") == 0)
-                {
-                    _propertyDefinitions.Add(new PropertyDefinition(node, true, isTemplate));
-                }
-                else
-                {
-                    _propertyDefinitions.Add(new PropertyDefinition(node, isTemplate));
-                }
-            }
-        }
-
-        private void RetrieveThreatTypesInfo(bool isTemplate)
-        {
-            var nodes =
-                _document.SelectNodes(
-                    $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='ThreatTypes']/*[local-name()='ThreatType']")
-                    .OfType<XmlNode>()
-                    .ToArray();
-            string key;
-            string name;
-            string priority;
-            string description;
-
-            var nsManager = new XmlNamespaceManager(new NameTable());
-            nsManager.AddNamespace("a", "http://schemas.datacontract.org/2004/07/ThreatModeling.KnowledgeBase");
-
-            foreach (XmlNode node in nodes)
-            {
-                key = isTemplate ? node.SelectSingleNode("Id")?.InnerText :
-                    node.SelectSingleNode("a:Id", nsManager)?.InnerText;
-                name = isTemplate ? node.SelectSingleNode("ShortTitle")?.InnerText :
-                    node.SelectSingleNode("a:ShortTitle", nsManager)?.InnerText;
-                description = isTemplate ? node.SelectSingleNode("Description")?.InnerText.Trim() :
-                    node.SelectSingleNode("a:Description", nsManager)?.InnerText.Trim();
-                var properties = isTemplate ? node.SelectSingleNode("PropertiesMetadata") :
-                    node.SelectSingleNode("a:PropertiesMetaData", nsManager);
-                priority = GetPriority(properties);
-
-                _threatTypeProperties.Add(key, properties?.OfType<XmlNode>().Select(x => new PropertyDefinition(x, isTemplate)));
-
-                _threatTypeNames.Add(key, name);
-                _threatTypeIDs.Add(name, key);
-                _threatTypeDescriptions.Add(key, description);
-                _threatTypePriorities.Add(key, priority);
-                _threatsPerType.Add(key, new List<Threat>());
-            }
-        }
-
-        private string GetPriority(XmlNode nodeChildNode)
-        {
-            return nodeChildNode?.ChildNodes[2].ChildNodes[3].InnerText;
         }
 
         private IEnumerable<Threat> GetThreats()
@@ -393,7 +450,7 @@ namespace ThreatsManager.MsTmt.Model
             return nodes?.OfType<XmlNode>().Select(x => new Threat(this, x));
         }
 
-        private void AnalyzeThreat([NotNull] Threat threat)
+        private void AnalyzeThreat([PostSharp.Patterns.Contracts.NotNull] Threat threat)
         {
             _threats.Add(threat.Key, threat);
 
