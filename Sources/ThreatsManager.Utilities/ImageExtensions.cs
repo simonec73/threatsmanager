@@ -44,7 +44,7 @@ namespace ThreatsManager.Utilities
             }
             else if (identity is IDataFlow)
             {
-                result = GetDataFlowImage(size);
+                result = GetFlowImage(size);
             }
             else if (identity is ITrustBoundary)
             {
@@ -53,6 +53,14 @@ namespace ThreatsManager.Utilities
             else if (identity is IEntityTemplate template)
             {
                 result = GetEntityTemplateImage(template, size);
+            }
+            else if (identity is IFlowTemplate)
+            {
+                result = GetFlowImage(size);
+            }
+            else if (identity is ITrustBoundaryTemplate)
+            {
+                result = GetTrustBoundaryImage(size);
             }
             else if (identity is IThreatModel)
             {
@@ -238,7 +246,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetDataFlowImage(ImageSize size)
+        private static Bitmap GetFlowImage(ImageSize size)
         {
             Bitmap result;
 
