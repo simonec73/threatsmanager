@@ -57,6 +57,9 @@ namespace ThreatsManager.Interfaces
         /// </summary>
         [EnumLabel("Trust Boundary Template")]
         TrustBoundaryTemplate = 4194304,
+        /// <summary>
+        /// Object Templates.
+        /// </summary>
         [UiHidden]
         ObjectTemplate = EntityTemplate | FlowTemplate | TrustBoundaryTemplate,
         /// <summary>
