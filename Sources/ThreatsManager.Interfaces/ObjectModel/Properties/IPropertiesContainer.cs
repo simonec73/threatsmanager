@@ -76,5 +76,10 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// <remarks>If the property is missing from the list, then it returns false.</remarks>
         /// <seealso cref="IPropertyType"/>
         bool RemoveProperty(Guid propertyTypeId);
+
+        /// <summary>
+        /// Remove all properties from the list.
+        /// </summary>
+        void ClearProperties();
     }
 }

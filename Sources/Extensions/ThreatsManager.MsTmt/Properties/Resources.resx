@@ -121,7 +121,7 @@
     <value>Argument is not defined</value>
   </data>
   <data name="DefaultNamespace" xml:space="preserve">
-    <value>https://www.simoneonsecurity.com/tm/2018</value>
+    <value>https://threatsmanager.com/tm/2020/</value>
   </data>
   <data name="ThreatsPropertySchemaDescription" xml:space="preserve">
     <value>Property Schema that collects the properties defined in the imported MS TMT document and must be applied to imported Threats.</value>
@@ -143,5 +143,11 @@
   </data>
   <data name="ThreatModelInstanceIdDescription" xml:space="preserve">
     <value>Property used to store the ID of the instance, as defined in the imported MS TMT Threat Model.</value>
+  </data>
+  <data name="FlowsPropertySchema" xml:space="preserve">
+    <value>TmtFlows</value>
+  </data>
+  <data name="FlowsPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects the properties defined in the imported TMT document for flows.</value>
   </data>
 </root>

@@ -144,6 +144,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public IThreatEvent ThreatEvent { get; }
         #endregion
 

@@ -77,6 +77,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Schemas\ListProvider.cs" />
+    <Compile Include="Schemas\FlowsPropertySchemaManager.cs" />
     <Compile Include="Schemas\TmtPropertySchemaManager.cs" />
     <Compile Include="Schemas\ObjectPropertySchemaManager.cs" />
     <Compile Include="Schemas\ThreatsPropertySchemaManager.cs" />

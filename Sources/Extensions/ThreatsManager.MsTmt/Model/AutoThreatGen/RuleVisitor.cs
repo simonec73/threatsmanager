@@ -2,6 +2,8 @@
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoThreatGeneration.Engine;
+using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.MsTmt.Properties;
 using ThreatsManager.MsTmt.Schemas;
 
@@ -9,11 +11,13 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
 {
     class RuleVisitor : TmtBaseVisitor<SelectionRuleNode>
     {
-        private readonly ThreatModel _model;
+        private readonly ThreatModel _source;
+        private readonly IThreatModel _target;
 
-        public RuleVisitor(ThreatModel model)
+        public RuleVisitor([NotNull] ThreatModel source, [NotNull] IThreatModel target)
         {
-            _model = model;
+            _source = source;
+            _target = target;
         }
 
         public SelectionRuleNode Rule { get; private set; }
@@ -81,7 +85,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                         result = GetIdComparisonRuleNode(id, Scope.Object);
                         break;
                     case "crosses":
-                        result = GetIdComparisonRuleNode(id, Scope.AnyTrustBoundary);
+                        result = new CrossTrustBoundaryRuleNode("Crosses Trust Boundary", true);
                         break;
                 }
 
@@ -101,7 +105,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                 Name = "NOT"
             };
             if (Rule == null)
-                Rule = result;
+                Rule = not;
             
             var expression = Visit(context.expression());
             if (expression != null)
@@ -206,7 +210,8 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
         {
             SelectionRuleNode result = null;
 
-            var children = _model.GetChildren(id)?.ToArray();
+            var children = _source.GetChildren(id)?.ToArray();
+            var entityTemplate = GetEntityTemplate(id);
 
             if (children?.Any() ?? false)
             {
@@ -215,68 +220,116 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                     Name = "OR"
                 };
 
-                or.Children.Add(new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
-                    Resources.DefaultNamespace, Resources.TmtObjectPropertySchema, ComparisonOperator.Exact, id)
+                if (entityTemplate != null)
                 {
-                    Scope = scope
-                });
-
-                foreach (var child in children)
+                    or.Children.Add(new EntityTemplateRuleNode(entityTemplate)
+                    {
+                        Scope = scope
+                    });
+                }
+                else
                 {
                     or.Children.Add(new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
-                        Resources.DefaultNamespace, Resources.TmtObjectPropertySchema, ComparisonOperator.Exact, child.TypeId)
+                        Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
+                        ComparisonOperator.Exact, id)
                     {
                         Scope = scope
                     });
                 }
 
+                foreach (var child in children)
+                {
+                    var childEntityTemplate = GetEntityTemplate(child.TypeId);
+
+                    if (childEntityTemplate != null)
+                    {
+                        or.Children.Add(new EntityTemplateRuleNode(childEntityTemplate)
+                        {
+                            Scope = scope
+                        });
+                    }
+                    else
+                    {
+                        or.Children.Add(new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
+                            Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
+                            ComparisonOperator.Exact, child.TypeId)
+                        {
+                            Scope = scope
+                        });
+                    }
+                }
+
                 result = or;
+            }
+            else if (entityTemplate != null)
+            {
+                result = new EntityTemplateRuleNode(entityTemplate)
+                {
+                    Scope = scope
+                };
             }
             else
             {
                 result = new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
-                    Resources.DefaultNamespace, Resources.TmtObjectPropertySchema, ComparisonOperator.Exact, id)
+                    Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
+                    ComparisonOperator.Exact, id)
                 {
                     Scope = scope
                 };
             }
 
 
+
             return result;
+        }
+
+        private IEntityTemplate GetEntityTemplate(string id)
+        {
+            var schemaManager = new ObjectPropertySchemaManager(_target);
+            return _target.EntityTemplates?.FirstOrDefault(x =>
+                string.CompareOrdinal(id, schemaManager.GetObjectId(x)) == 0);
         }
 
         private SelectionRuleNode GetComparisonRuleNode([Required] string propertyKey, string value, Scope scope)
         {
             SelectionRuleNode result = null;
 
-            var schemas = _model.GetElementTypesForProperty(propertyKey)?.ToArray();
+            var schemas = _source.GetElementTypesForProperty(propertyKey)?.ToArray();
 
             if (schemas?.Any() ?? false)
             {
-                if (schemas.Length == 1)
+                var schema = schemas.First();
+                var propertyName = _source.GetElementPropertyName(schema, propertyKey);
+                bool isFlow = false;
+                if (string.IsNullOrWhiteSpace(propertyName))
                 {
-                    var schema = schemas.First();
-                    var propertyName = _model.GetPropertyName(schema, propertyKey);
+                    propertyName = _source.GetFlowPropertyName(schema, propertyKey);
+                    schema = Resources.FlowsPropertySchema;
+                    isFlow = !string.IsNullOrWhiteSpace(propertyName);
+                }
+
+                if (isFlow || schemas.Length == 1)
+                {
                     result = new ComparisonRuleNode(propertyName,
                         Resources.DefaultNamespace, schema, ComparisonOperator.Exact, value)
                     {
                         Scope = scope
                     };
                 }
-                else
+                else if (schemas.Length > 1)
                 {
                     var or = new OrRuleNode()
                     {
                         Name = "OR"
                     };
 
-                    foreach (var schema in schemas)
+                    foreach (var s in schemas)
                     {
-                        var propertyName = _model.GetPropertyName(schema, propertyKey);
+                        propertyName = _source.GetElementPropertyName(s, propertyKey);
                         if (propertyName != null)
                         {
                             or.Children.Add(new ComparisonRuleNode(propertyName,
-                                Resources.DefaultNamespace, schema, ComparisonOperator.Exact, value)
+                                Resources.DefaultNamespace, s, ComparisonOperator.Exact, value)
                             {
                                 Scope = scope
                             });

@@ -73,6 +73,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return false;
         }
+
+        public void ClearProperties()
+        {
+        }
+
         #endregion
 
         #region Additional placeholders required.
@@ -177,6 +182,27 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
+        }
+
+        public void ApplyTo(IEntity entity)
+        {
+            entity.ClearProperties();
+            this.CloneProperties(entity);
+            switch (entity)
+            {
+                case ExternalInteractor externalInteractor:
+                    externalInteractor._templateId = Id;
+                    externalInteractor._template = this;
+                    break;
+                case Process process:
+                    process._templateId = Id;
+                    process._template = this;
+                    break;
+                case DataStore dataStore:
+                    dataStore._templateId = Id;
+                    dataStore._template = this;
+                    break;
+            }
         }
 
         public IEntityTemplate Clone([NotNull] IEntityTemplatesContainer container)

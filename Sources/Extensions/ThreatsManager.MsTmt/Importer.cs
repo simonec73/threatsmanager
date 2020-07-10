@@ -56,6 +56,7 @@ namespace ThreatsManager.MsTmt
 
             ImportModelInfo(model, threatModel);
             entityTypes = ImportEntityTemplates(model, threatModel);
+            ImportFlowTemplates(model, threatModel);
             ImportElements(model, threatModel, dpiFactor, out diagrams, 
                 out externalInteractors, out processes, out dataStores, out trustBoundaries);
             flows = ImportDataFlows(model, threatModel);
@@ -220,6 +221,52 @@ namespace ThreatsManager.MsTmt
             return result;
         }
 
+        private int ImportFlowTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        {
+            int result = 0;
+            var connectors = source.FlowTypes?
+                .ToArray();
+
+            if (connectors?.Any() ?? false)
+            {
+                foreach (var connector in connectors)
+                {
+                    var flowSchemaManager = new FlowsPropertySchemaManager(target);
+                    var flowSchema = flowSchemaManager.GetSchema();
+                    if (!(flowSchema.PropertyTypes?.Any(x =>
+                        string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
+                    {
+                        var outOfScope = flowSchema.AddPropertyType("Out of Scope",
+                            PropertyValueType.Boolean);
+                        if (outOfScope != null)
+                        {
+                            outOfScope.Priority = -2;
+                        }
+                    }
+
+                    if (!(flowSchema.PropertyTypes?.Any(x =>
+                        string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
+                    {
+                        var reasonOutOfScope =
+                            flowSchema.AddPropertyType("Reason For Out Of Scope",
+                                PropertyValueType.String);
+                        if (reasonOutOfScope != null)
+                            reasonOutOfScope.Priority = -1;
+                        if (source.ElementTypes.FirstOrDefault(x =>
+                                string.CompareOrdinal(connector.ParentTypeId, x.TypeId) == 0) is
+                            ElementTypeInfo parent)
+                        {
+                            AddProperties(flowSchema, null, parent.Properties);
+                        }
+                    }
+
+                    AddProperties(flowSchema, null, connector.Properties?.ToArray());
+                }
+            }
+
+            return result;
+        }
+
         private void ImportElements([NotNull] ThreatModel source, [NotNull] IThreatModel target, float dpiFactor,
             out int diagrams, out int externalInteractors, out int processes, out int dataStores, out int trustBoundaries)
         {
@@ -246,20 +293,28 @@ namespace ThreatsManager.MsTmt
                     ITrustBoundary boundary = null;
                     Interfaces.Scope scope = Scope.Undefined;
 
+                    var elementType = source.ElementTypes.FirstOrDefault(x =>
+                        string.CompareOrdinal(x.TypeId, element.Value.TypeId) == 0);
+                    var entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
+                        string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
+
                     switch (element.Value.ElementType)
                     {
                         case ElementType.StencilRectangle:
-                            entity = target.AddEntity<IExternalInteractor>(element.Value.Name);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
+                                target.AddEntity<IExternalInteractor>(element.Value.Name);
                             scope = Scope.ExternalInteractor;
                             externalInteractors++;
                             break;
                         case ElementType.StencilEllipse:
-                            entity = target.AddEntity<IProcess>(element.Value.Name);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
+                                target.AddEntity<IProcess>(element.Value.Name);
                             scope = Scope.Process;
                             processes++;
                             break;
                         case ElementType.StencilParallelLines:
-                            entity = target.AddEntity<IDataStore>(element.Value.Name);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
+                                target.AddEntity<IDataStore>(element.Value.Name);
                             scope = Scope.DataStore;
                             dataStores++;
                             break;
@@ -283,8 +338,6 @@ namespace ThreatsManager.MsTmt
                         schemaManager.SetInstanceId(entity, element.Key.ToString());
                         var properties = element.Value.Properties?.ToArray();
 
-                        var elementType = source.ElementTypes.FirstOrDefault(x =>
-                            string.CompareOrdinal(x.TypeId, element.Value.TypeId) == 0);
                         if (elementType != null)
                         {
                             entity.BigImage = elementType.Image;
@@ -311,8 +364,6 @@ namespace ThreatsManager.MsTmt
                         schemaManager.SetInstanceId(boundary, element.Key.ToString());
                         var properties = element.Value.Properties?.ToArray();
 
-                        var elementType = source.ElementTypes.FirstOrDefault(x =>
-                            string.CompareOrdinal(x.TypeId, element.Value.TypeId) == 0);
                         if (elementType != null)
                         {
                             var elementSchemaManager = new TmtPropertySchemaManager(target, elementType.Name, scope);
@@ -367,18 +418,30 @@ namespace ThreatsManager.MsTmt
                                     string.CompareOrdinal(x.TypeId, flow.TypeId) == 0);
                                 if (elementType != null)
                                 {
-                                    var flowSchemaManager = new TmtPropertySchemaManager(target, elementType.Name, Scope.DataFlow);
+                                    var flowSchemaManager = new FlowsPropertySchemaManager(target);
                                     var flowSchema = flowSchemaManager.GetSchema();
-                                    var outOfScope = flowSchema.AddPropertyType("Out of Scope", PropertyValueType.Boolean);
-                                    if (outOfScope != null)
+                                    if (!(flowSchema.PropertyTypes?.Any(x =>
+                                        string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
                                     {
-                                        outOfScope.Priority = -2;
-                                        dataFlow.AddProperty(outOfScope, false.ToString());
+                                        var outOfScope = flowSchema.AddPropertyType("Out of Scope",
+                                            PropertyValueType.Boolean);
+                                        if (outOfScope != null)
+                                        {
+                                            outOfScope.Priority = -2;
+                                            dataFlow.AddProperty(outOfScope, false.ToString());
+                                        }
                                     }
-                                    var reasonOutOfScope =
-                                        flowSchema.AddPropertyType("Reason For Out Of Scope", PropertyValueType.String);
-                                    if (reasonOutOfScope != null)
-                                        reasonOutOfScope.Priority = -1;
+
+                                    if (!(flowSchema.PropertyTypes?.Any(x =>
+                                        string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
+                                    {
+                                        var reasonOutOfScope =
+                                            flowSchema.AddPropertyType("Reason For Out Of Scope",
+                                                PropertyValueType.String);
+                                        if (reasonOutOfScope != null)
+                                            reasonOutOfScope.Priority = -1;
+                                    }
+
                                     if (source.ElementTypes.FirstOrDefault(x =>
                                             string.CompareOrdinal(elementType.ParentTypeId, x.TypeId) == 0) is
                                         ElementTypeInfo parent)
@@ -403,7 +466,7 @@ namespace ThreatsManager.MsTmt
         }
 
         private static void AddProperties([NotNull] IPropertySchema schema, 
-            [NotNull] IPropertiesContainer container, [NotNull] IEnumerable<Property> properties)
+            IPropertiesContainer container, [NotNull] IEnumerable<Property> properties)
         {
             foreach (var property in properties)
             {
@@ -434,7 +497,7 @@ namespace ThreatsManager.MsTmt
                         }
                     }
 
-                    if (propertyType != null)
+                    if (propertyType != null && container != null)
                     {
                         var containerProperty = container.GetProperty(propertyType);
                         if (containerProperty == null)
@@ -592,8 +655,8 @@ namespace ThreatsManager.MsTmt
         private void CreateGenerationRule([NotNull] ThreatModel model, 
             [NotNull] ThreatType source, [NotNull] IThreatType target)
         {
-            SelectionRuleNode include = AnalyzeGenerationRule(model, source.IncludeFilter);
-            SelectionRuleNode exclude = AnalyzeGenerationRule(model, source.ExcludeFilter);
+            SelectionRuleNode include = AnalyzeGenerationRule(model, target.Model, source.IncludeFilter);
+            SelectionRuleNode exclude = AnalyzeGenerationRule(model, target.Model, source.ExcludeFilter);
             SelectionRule rule = null;
 
             if (include != null)
@@ -644,7 +707,7 @@ namespace ThreatsManager.MsTmt
             }
         }
 
-        private SelectionRuleNode AnalyzeGenerationRule(ThreatModel model, string ruleText)
+        private SelectionRuleNode AnalyzeGenerationRule(ThreatModel source, IThreatModel target, string ruleText)
         {
             SelectionRuleNode result = null;
 
@@ -653,10 +716,9 @@ namespace ThreatsManager.MsTmt
                 ICharStream stream = CharStreams.fromstring(ruleText);
                 ITokenSource lexer = new TmtLexer(stream, TextWriter.Null, TextWriter.Null);
                 ITokenStream tokens = new CommonTokenStream(lexer);
-                TmtParser parser = new TmtParser(tokens);
-                parser.BuildParseTree = true;
+                TmtParser parser = new TmtParser(tokens) {BuildParseTree = true};
                 IParseTree tree = parser.parse();
-                RuleVisitor visitor = new RuleVisitor(model);
+                RuleVisitor visitor = new RuleVisitor(source, target);
                 visitor.Visit(tree);
                 result = visitor.Rule;
             }

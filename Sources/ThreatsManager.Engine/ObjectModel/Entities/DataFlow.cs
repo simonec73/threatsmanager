@@ -85,6 +85,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
@@ -142,6 +146,24 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("flowType")]
         [JsonConverter(typeof(StringEnumConverter))]
         public FlowType FlowType { get; set; }
+
+        [JsonProperty("template")]
+        internal Guid _templateId;
+
+        internal IFlowTemplate _template { get; set; }
+
+        public IFlowTemplate Template
+        {
+            get
+            {
+                if (_template == null && _templateId != Guid.Empty)
+                {
+                    _template = _model?.GetFlowTemplate(_templateId);
+                }
+
+                return _template;
+            }
+        }
 
         public IDataFlow Clone([NotNull] IDataFlowsContainer container)
         {

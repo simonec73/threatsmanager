@@ -113,6 +113,8 @@
     <Compile Include="Config\PropertyConfigurationCollection.cs" />
     <Compile Include="ExtensionDescriptionAttribute.cs" />
     <Compile Include="ExtensionMetadataEqualityComparer.cs" />
+    <Compile Include="ObjectModel\Entities\TrustBoundaryTemplate.cs" />
+    <Compile Include="ObjectModel\Entities\FlowTemplate.cs" />
     <Compile Include="ObjectModel\Entities\EntityTemplate.cs" />
     <Compile Include="ObjectModel\Properties\IdentityReferencePropertyType.cs" />
     <Compile Include="ObjectModel\Properties\ArrayPropertyType.cs" />
@@ -143,6 +145,8 @@
     <Compile Include="ObjectModel\Properties\ShadowPropertyString.cs" />
     <Compile Include="ObjectModel\Properties\ShadowPropertyTokens.cs" />
     <Compile Include="ObjectModel\Properties\SingleLineStringPropertyType.cs" />
+    <Compile Include="ObjectModel\ThreatModel.TrustBoundaryTemplates.cs" />
+    <Compile Include="ObjectModel\ThreatModel.FlowTemplates.cs" />
     <Compile Include="ObjectModel\ThreatModel.EntityTemplates.cs" />
     <Compile Include="ObjectModel\ThreatModel.Strengths.cs" />
     <Compile Include="ObjectModel\ThreatsMitigations\StrengthDefinition.cs" />

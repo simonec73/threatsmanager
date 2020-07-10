@@ -274,6 +274,24 @@ namespace ThreatsManager.Utilities
                 }
             }
 
+            var flowTemplates = model.FlowTemplates?.ToArray();
+            if (flowTemplates?.Any() ?? false)
+            {
+                foreach (var flowTemplate in flowTemplates)
+                {
+                    flowTemplate.CleanProperties(model);
+                }
+            }
+
+            var trustBoundaryTemplates = model.TrustBoundaryTemplates?.ToArray();
+            if (trustBoundaryTemplates?.Any() ?? false)
+            {
+                foreach (var trustBoundaryTemplate in trustBoundaryTemplates)
+                {
+                    trustBoundaryTemplate.CleanProperties(model);
+                }
+            }
+
             var groups = model.Groups?.ToArray();
             if (groups?.Any() ?? false)
             {

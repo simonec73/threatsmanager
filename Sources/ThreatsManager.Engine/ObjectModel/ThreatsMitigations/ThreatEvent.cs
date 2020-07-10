@@ -272,6 +272,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved;
 

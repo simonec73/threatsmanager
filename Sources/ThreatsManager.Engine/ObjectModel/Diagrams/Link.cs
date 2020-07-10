@@ -106,6 +106,11 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
             return false;
         }
+
+        public void ClearProperties()
+        {
+        }
+
         #endregion
     }
 }

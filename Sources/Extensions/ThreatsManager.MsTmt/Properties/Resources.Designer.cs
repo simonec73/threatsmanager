@@ -70,11 +70,29 @@ namespace ThreatsManager.MsTmt.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.simoneonsecurity.com/tm/2018.
+        ///   Looks up a localized string similar to https://threatsmanager.com/tm/2020/.
         /// </summary>
         internal static string DefaultNamespace {
             get {
                 return ResourceManager.GetString("DefaultNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TmtFlows.
+        /// </summary>
+        internal static string FlowsPropertySchema {
+            get {
+                return ResourceManager.GetString("FlowsPropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported TMT document for flows..
+        /// </summary>
+        internal static string FlowsPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("FlowsPropertySchemaDescription", resourceCulture);
             }
         }
         

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -21,25 +22,19 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
-    [EntitiesReadOnlyContainerAspect]
-    [GroupsReadOnlyContainerAspect]
-    [GroupElementAspect]
-    [TypeLabel("Trust Boundary")]
-    [TypeInitial("D")]
-    public class TrustBoundary : ITrustBoundary, IInitializableObject
+    [TypeLabel("Trust Boundary Template")]
+    public class TrustBoundaryTemplate : ITrustBoundaryTemplate, IInitializableObject
     {
-        public TrustBoundary()
+        public TrustBoundaryTemplate()
         {
         }
 
-        public TrustBoundary([NotNull] IThreatModel model, [Required] string name) : this()
+        public TrustBoundaryTemplate([NotNull] IThreatModel model, [Required] string name)
         {
             _modelId = model.Id;
             _model = model;
             _id = Guid.NewGuid();
             Name = name;
-  
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -49,6 +44,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public IThreatModel Model { get; }
+
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
@@ -81,35 +77,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public IEnumerable<IEntity> Entities { get; }
-        public IEntity GetEntity(Guid id)
-        {
-            return null;
-        }
-
-        public IEnumerable<IEntity> GetEntities(string name)
-        {
-            return null;
-        }
-
-        public IEnumerable<IEntity> SearchEntities(string filter)
-        {
-            return null;
-        }
-
-        public event Action<IGroupElement, IGroup, IGroup> ParentChanged;
-        public Guid ParentId { get; }
-        public IGroup Parent { get; }
-        public void SetParent(IGroup parent)
-        {
-        }
-        
-        public IEnumerable<IGroup> Groups => null;
-
-        public IGroup GetGroup(Guid id)
-        {
-            return null;
-        }
         #endregion
 
         #region Additional placeholders required.
@@ -118,48 +85,52 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         private IThreatModel _model { get; set; }
         private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
-        private Guid _parentId { get; set; }
-        private IGroupElement GroupElement => this;
-        #endregion
-
+        #endregion        
+ 
         #region Specific implementation.
-        [JsonProperty("template")]
-        internal Guid _templateId;
-
-        internal ITrustBoundaryTemplate _template { get; set; }
-
-        public ITrustBoundaryTemplate Template
-        {
-            get
-            {
-                if (_template == null && _templateId != Guid.Empty)
-                {
-                    _template = _model?.GetTrustBoundaryTemplate(_templateId);
-                }
-
-                return _template;
-            }
-        }
-
         public override string ToString()
         {
             return Name ?? "<undefined>";
         }
 
-        public IGroup Clone([NotNull] IGroupsContainer container)
+        [InitializationRequired]
+        public ITrustBoundary CreateTrustBoundary([Required] string name)
         {
-            IGroup result = null;
+            ITrustBoundary result = _model.AddGroup<ITrustBoundary>(name);
+
+            if (result != null)
+            {
+                result.Description = Description;
+                this.CloneProperties(result);
+            }
+
+            return result;
+        }
+
+        public void ApplyTo([NotNull] ITrustBoundary trustBoundary)
+        {
+            trustBoundary.ClearProperties();
+            this.CloneProperties(trustBoundary);
+            if (trustBoundary is TrustBoundary internalTb)
+            {
+                internalTb._templateId = Id;
+                internalTb._template = this;
+            }
+        }
+
+        public ITrustBoundaryTemplate Clone([NotNull] ITrustBoundaryTemplatesContainer container)
+        {
+            TrustBoundaryTemplate result = null;
 
             if (container is IThreatModel model)
             {
-                result = new TrustBoundary()
+                result = new TrustBoundaryTemplate()
                 {
-                    _modelId = model.Id,
-                    _model = model,
                     _id = Id,
                     Name = Name,
                     Description = Description,
-                    _parentId = _parentId,
+                    _model = model,
+                    _modelId = model.Id,
                 };
                 this.CloneProperties(result);
 

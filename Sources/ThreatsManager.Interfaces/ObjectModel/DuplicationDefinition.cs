@@ -178,5 +178,29 @@ namespace ThreatsManager.Interfaces.ObjectModel
         /// </summary>
         /// <remarks>If <see cref="AllEntityTemplates"/> is true, then this list will be ignored.</remarks>
         public IEnumerable<Guid> EntityTemplates;
+
+        /// <summary>
+        /// If true, all Flow Templates will be included.
+        /// </summary>
+        /// <remarks>If true, <see cref="FlowTemplates"/> will be ignored.</remarks>
+        public bool AllFlowTemplates;
+
+        /// <summary>
+        /// List of the Flow Templates to include.
+        /// </summary>
+        /// <remarks>If <see cref="AllFlowTemplates"/> is true, then this list will be ignored.</remarks>
+        public IEnumerable<Guid> FlowTemplates;
+
+        /// <summary>
+        /// If true, all Trust Boundary Templates will be included.
+        /// </summary>
+        /// <remarks>If true, <see cref="TrustBoundaryTemplates"/> will be ignored.</remarks>
+        public bool AllTrustBoundaryTemplates;
+
+        /// <summary>
+        /// List of the Trust Boundary Templates to include.
+        /// </summary>
+        /// <remarks>If <see cref="AllTrustBoundaryTemplates"/> is true, then this list will be ignored.</remarks>
+        public IEnumerable<Guid> TrustBoundaryTemplates;
     }
 }

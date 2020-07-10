@@ -1036,6 +1036,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 DuplicateThreatTypes(result, def.AllThreatTypes ? ThreatTypes?.Select(x => x.Id) : def.ThreatTypes);
                 DuplicateGroups(result, def.AllGroups ? Groups?.Select(x => x.Id) : def.Groups);
                 DuplicateEntityTemplates(result, def.AllEntityTemplates ? EntityTemplates?.Select(x => x.Id) : def.EntityTemplates);
+                DuplicateFlowTemplates(result, def.AllFlowTemplates ? FlowTemplates?.Select(x => x.Id) : def.FlowTemplates);
+                DuplicateTrustBoundaryTemplates(result, def.AllTrustBoundaryTemplates ? TrustBoundaryTemplates?.Select(x => x.Id) : def.TrustBoundaryTemplates);
                 DuplicateEntities(result, def.AllEntities ? Entities?.Select(x => x.Id) : def.Entities);
                 DuplicateDataFlows(result, def.AllDataFlows ? DataFlows?.Select(x => x.Id) : def.DataFlows);
                 DuplicateDiagrams(result, def.AllDiagrams ? Diagrams?.Select(x => x.Id) : def.Diagrams);
@@ -1194,6 +1196,30 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        private void DuplicateFlowTemplates([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        {
+            var templates = FlowTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
+            if (templates?.Any() ?? false)
+            {
+                foreach (var template in templates)
+                {
+                    template.Clone(dest);
+                }
+            }
+        }
+
+        private void DuplicateTrustBoundaryTemplates([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        {
+            var templates = TrustBoundaryTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
+            if (templates?.Any() ?? false)
+            {
+                foreach (var template in templates)
+                {
+                    template.Clone(dest);
+                }
+            }
+        }
+
         private void DuplicateEntities([NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var entities = Entities?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
@@ -1286,6 +1312,20 @@ namespace ThreatsManager.Engine.ObjectModel
                 r.Add("One or more Entity Templates are associated to an object which has not been selected.");
             }
             AddIdentities(known, def.AllEntityTemplates, def.EntityTemplates, _entityTemplates);              
+
+            if (!Check(known, knownSeverities, knownStrengths, def.AllFlowTemplates, def.FlowTemplates, _flowTemplates))
+            {
+                result = false;
+                r.Add("One or more Flow Templates are associated to an object which has not been selected.");
+            }
+            AddIdentities(known, def.AllFlowTemplates, def.FlowTemplates, _flowTemplates);              
+
+            if (!Check(known, knownSeverities, knownStrengths, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, _trustBoundaryTemplates))
+            {
+                result = false;
+                r.Add("One or more Trust Boundary Templates are associated to an object which has not been selected.");
+            }
+            AddIdentities(known, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, _trustBoundaryTemplates);              
 
             if (!Check(known, knownSeverities, knownStrengths, def.AllEntities, def.Entities, _entities))
             {
@@ -1619,6 +1659,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     result = true;
                     MergeSchemas(source, def.AllPropertySchemas, def.PropertySchemas);
                     MergeEntityTemplates(source, def.AllEntityTemplates, def.EntityTemplates);
+                    MergeFlowTemplates(source, def.AllFlowTemplates, def.FlowTemplates);
+                    MergeTrustBoundaryTemplates(source, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates);
                     MergeSeverities(source, def.AllSeverities, def.Severities);
                     MergeStrengths(source, def.AllSeverities, def.Severities);
                     MergeThreatActors(source, def.AllThreatActors, def.ThreatActors);
@@ -1682,6 +1724,56 @@ namespace ThreatsManager.Engine.ObjectModel
             else
             {
                 existing.MergeProperties(entityTemplate);
+            }
+        }
+
+        private void MergeFlowTemplates([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        {
+            var selected = source.FlowTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
+            if (selected?.Any() ?? false)
+            {
+                foreach (var flowTemplate in selected)
+                {
+                    MergeFlowTemplate(flowTemplate);
+                }
+            }
+        }
+
+        private void MergeFlowTemplate([NotNull] IFlowTemplate flowTemplate)
+        {
+            var existing = FlowTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, flowTemplate.Name) == 0);
+            if (existing == null)
+            {
+                flowTemplate.Clone(this);
+            }
+            else
+            {
+                existing.MergeProperties(flowTemplate);
+            }
+        }
+
+        private void MergeTrustBoundaryTemplates([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        {
+            var selected = source.TrustBoundaryTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
+            if (selected?.Any() ?? false)
+            {
+                foreach (var trustBoundaryTemplate in selected)
+                {
+                    MergeTrustBoundaryTemplate(trustBoundaryTemplate);
+                }
+            }
+        }
+
+        private void MergeTrustBoundaryTemplate([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
+        {
+            var existing = TrustBoundaryTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, trustBoundaryTemplate.Name) == 0);
+            if (existing == null)
+            {
+                trustBoundaryTemplate.Clone(this);
+            }
+            else
+            {
+                existing.MergeProperties(trustBoundaryTemplate);
             }
         }
 
@@ -1852,6 +1944,10 @@ namespace ThreatsManager.Engine.ObjectModel
         public bool RemoveProperty(Guid propertyTypeId)
         {
             return false;
+        }
+
+        public void ClearProperties()
+        {
         }
 
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;

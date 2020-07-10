@@ -180,6 +180,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public IThreatModel Model { get; }
         #endregion
 

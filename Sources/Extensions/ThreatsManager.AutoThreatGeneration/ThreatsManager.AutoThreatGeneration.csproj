@@ -67,6 +67,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\EntityTemplateRuleNode.cs" />
     <Compile Include="Engine\TruismRuleNode.cs" />
     <Compile Include="Engine\HasOutgoingRuleNode.cs" />
     <Compile Include="Engine\HasIncomingRuleNode.cs" />
@@ -105,9 +106,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\ThreatsManager.Engine\PostSharp.license">
+    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license">
       <Link>PostSharp.license</Link>
-    </None>
+    </EmbeddedResource>
     <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk">
       <Link>ThreatsManager.snk</Link>
     </None>

@@ -138,7 +138,10 @@ namespace ThreatsManager.MsTmt.Model
                         {
                             var elementTypeInfo = new ElementTypeInfo(elementType, id, parent,
                                 name, description, image, attributes, isTemplate);
-                            _elementTypes.Add(id, elementTypeInfo);
+                            if (elementType == ElementType.Connector)
+                                _flowTypes.Add(id, elementTypeInfo);
+                            else
+                                _elementTypes.Add(id, elementTypeInfo);
 
                             var properties = elementTypeInfo.Properties?.ToArray();
                             if (elementTypeInfo.Properties?.Any() ?? false)

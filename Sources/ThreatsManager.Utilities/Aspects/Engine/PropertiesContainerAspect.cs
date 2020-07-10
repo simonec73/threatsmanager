@@ -233,6 +233,23 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
             return result;
         }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        public void ClearProperties()
+        {
+            var properties = _properties?.ToArray();
+
+            if (properties?.Any() ?? false)
+            {
+                foreach (var property in properties)
+                {
+                    _propertyRemoved?.Invoke(PropertiesContainer?.Get(), property);
+                }
+
+                _properties?.Clear();
+                Dirty.IsDirty = true;
+            }
+        }
         #endregion
 
         [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7, 

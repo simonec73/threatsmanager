@@ -19,9 +19,13 @@ namespace ThreatsManager.MsTmt.Model
         /// </summary>
         private Dictionary<string, Threat> _threats;
         /// <summary>
-        /// Element Types (Entity Types + flows definitions)
+        /// Element Types for Entity Types.
         /// </summary>
         private readonly Dictionary<string, ElementTypeInfo> _elementTypes = new Dictionary<string, ElementTypeInfo>();
+        /// <summary>
+        /// Element Types foe flows definitions.
+        /// </summary>
+        private readonly Dictionary<string, ElementTypeInfo> _flowTypes = new Dictionary<string, ElementTypeInfo>();
         /// <summary>
         /// Hierarchy of the Element Types.
         /// </summary>
@@ -47,6 +51,8 @@ namespace ThreatsManager.MsTmt.Model
         #region Public properties.
         public IEnumerable<ElementTypeInfo> ElementTypes => _elementTypes.Values;
 
+        public IEnumerable<ElementTypeInfo> FlowTypes => _flowTypes.Values;
+
         public IDictionary<string, List<Threat>> ThreatsPerType => _threatsPerType;
 
         public IEnumerable<FlowInfo> Flows => _flows.Values;
@@ -69,9 +75,18 @@ namespace ThreatsManager.MsTmt.Model
                 .Select(x => x.Value).FirstOrDefault()?.ToArray();
         }
 
-        public string GetPropertyName([Required] string elementType, [Required] string propertyKey)
+        public string GetElementPropertyName([Required] string elementType, [Required] string propertyKey)
         {
             return _elementTypes.Values
+                .FirstOrDefault(x => string.CompareOrdinal(x.Name, elementType) == 0)?
+                .Properties?
+                .FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0)?
+                .Name;
+        }
+        
+        public string GetFlowPropertyName([Required] string elementType, [Required] string propertyKey)
+        {
+            return _flowTypes.Values
                 .FirstOrDefault(x => string.CompareOrdinal(x.Name, elementType) == 0)?
                 .Properties?
                 .FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0)?
@@ -100,6 +115,39 @@ namespace ThreatsManager.MsTmt.Model
                     {
                         found.Add(item);
                         var itemItems = GetChildren(item.TypeId)?.ToArray();
+                        if (itemItems?.Any() ?? false)
+                            found.AddRange(itemItems);
+                    }
+                }
+
+                result = found.ToArray();
+            }
+
+            return result;
+        }
+
+        public IEnumerable<ElementTypeInfo> GetFlowChildren([Required] string parentKey)
+        {
+            IEnumerable<ElementTypeInfo> result = null;
+
+            if (_hierarchy.TryGetValue(parentKey, out var list))
+            {
+                List<ElementTypeInfo> found = new List<ElementTypeInfo>();
+
+                var items = list
+                    .Select(x => _flowTypes
+                        .Where(y => string.CompareOrdinal(y.Key, x) == 0)
+                        .Select(y => y.Value)
+                        .FirstOrDefault())
+                    .Where(x => x != null)?
+                    .ToArray();
+
+                if (items.Any())
+                {
+                    foreach (var item in items)
+                    {
+                        found.Add(item);
+                        var itemItems = GetFlowChildren(item.TypeId)?.ToArray();
                         if (itemItems?.Any() ?? false)
                             found.AddRange(itemItems);
                     }

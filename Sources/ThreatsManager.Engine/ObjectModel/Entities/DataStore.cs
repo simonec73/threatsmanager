@@ -86,6 +86,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
@@ -196,7 +200,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId;
 
-        private IEntityTemplate _template { get; set; }
+        internal IEntityTemplate _template { get; set; }
 
         public IEntityTemplate Template
         {

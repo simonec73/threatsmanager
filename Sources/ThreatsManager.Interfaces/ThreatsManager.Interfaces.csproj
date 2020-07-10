@@ -118,10 +118,15 @@
     <Compile Include="ImageSize.cs" />
     <Compile Include="ObjectModel\DuplicationDefinition.cs" />
     <Compile Include="ObjectModel\Entities\EntityType.cs" />
+    <Compile Include="ObjectModel\Entities\ITrustBoundaryTemplatesContainer.cs" />
+    <Compile Include="ObjectModel\Entities\IFlowTemplatesContainer.cs" />
+    <Compile Include="ObjectModel\Entities\IFlowTemplate.cs" />
     <Compile Include="ObjectModel\Entities\IEntityTemplatesContainer.cs" />
     <Compile Include="ObjectModel\Entities\IEntityTemplate.cs" />
     <Compile Include="ObjectModel\Entities\IGroupsReadOnlyContainer.cs" />
     <Compile Include="ObjectModel\Entities\IImagesContainer.cs" />
+    <Compile Include="ObjectModel\Entities\IItemTemplate.cs" />
+    <Compile Include="ObjectModel\Entities\ITrustBoundaryTemplate.cs" />
     <Compile Include="ObjectModel\ILockable.cs" />
     <Compile Include="ObjectModel\Properties\IDecimalPropertyType.cs" />
     <Compile Include="ObjectModel\Properties\IIdentityReferencePropertyType.cs" />

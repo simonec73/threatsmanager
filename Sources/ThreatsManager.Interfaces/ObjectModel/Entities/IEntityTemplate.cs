@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Drawing;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Interfaces.ObjectModel.Entities
 {
     /// <summary>
     /// Template for Entities.
     /// </summary>
-    public interface IEntityTemplate : IIdentity, IThreatModelChild, IImagesContainer,
-        IPropertiesContainer //, ILockable
+    public interface IEntityTemplate : IItemTemplate, IImagesContainer
     {
         /// <summary>
         /// Event raised when an Image for the Entity Template changes.
@@ -28,10 +26,17 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         IEntity CreateEntity(string name);
 
         /// <summary>
-        /// Creates a duplicate of the current Entity Template and attaches it to the Container passed as argument.
+        /// Apply the Template to an existing Entity.
+        /// </summary>
+        /// <param name="entity">Entity which needs to receive the Template.</param>
+        /// <remarks>Applies all the properties to the Entity and changes its Template to point to the new one.</remarks>
+        void ApplyTo(IEntity entity);
+
+        /// <summary>
+        /// Creates a duplicate of the current Template and attaches it to the Container passed as argument.
         /// </summary>
         /// <param name="container">Destination container.</param>
-        /// <returns>Freshly created Entity Template.</returns>
+        /// <returns>Freshly created Template.</returns>
         IEntityTemplate Clone(IEntityTemplatesContainer container);
     }
 }

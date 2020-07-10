@@ -31,10 +31,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         IEntity Target { get; }
 
         /// <summary>
-        /// Type of Data Flow.
+        /// Type of Flow.
         /// </summary>
         FlowType FlowType { get; set; }
  
+        /// <summary>
+        /// Template used to generate the Flow.
+        /// </summary>
+        /// <remarks>It returns null if there is no known Template which generated the Flow.</remarks>
+        IFlowTemplate Template { get; }
+
         /// <summary>
         /// Creates a duplicate of the current Data Flow and attaches it to the Container passed as argument.
         /// </summary>
