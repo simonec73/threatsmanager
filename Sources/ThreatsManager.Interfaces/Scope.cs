@@ -58,10 +58,10 @@ namespace ThreatsManager.Interfaces
         [EnumLabel("Trust Boundary Template")]
         TrustBoundaryTemplate = 4194304,
         /// <summary>
-        /// Object Templates.
+        /// Item Templates.
         /// </summary>
         [UiHidden]
-        ObjectTemplate = EntityTemplate | FlowTemplate | TrustBoundaryTemplate,
+        ItemTemplate = EntityTemplate | FlowTemplate | TrustBoundaryTemplate,
         /// <summary>
         /// Logical Group.
         /// </summary>
@@ -158,7 +158,7 @@ namespace ThreatsManager.Interfaces
         /// Everything.
         /// </summary>
         [UiHidden]
-        All = Entity | ObjectTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor | 
+        All = Entity | ItemTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor | 
               Severity | PropertyType | PropertySchema | Diagram | 
               EntityShape | GroupShape | Link | ThreatModel
     }
