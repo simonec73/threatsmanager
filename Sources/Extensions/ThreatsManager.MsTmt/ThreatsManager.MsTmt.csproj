@@ -77,7 +77,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Schemas\ListProvider.cs" />
-    <Compile Include="Schemas\FlowsPropertySchemaManager.cs" />
+    <Compile Include="Schemas\BaseProcessPropertySchemaManager.cs" />
+    <Compile Include="Schemas\BaseDataStorePropertySchemaManager.cs" />
+    <Compile Include="Schemas\BaseTrustBoundaryPropertySchemaManager.cs" />
+    <Compile Include="Schemas\BaseExternalInteractorPropertySchemaManager.cs" />
+    <Compile Include="Schemas\BaseFlowPropertySchemaManager.cs" />
     <Compile Include="Schemas\TmtPropertySchemaManager.cs" />
     <Compile Include="Schemas\ObjectPropertySchemaManager.cs" />
     <Compile Include="Schemas\ThreatsPropertySchemaManager.cs" />

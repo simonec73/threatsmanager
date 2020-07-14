@@ -96,7 +96,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [InitializationRequired]
         public ITrustBoundary CreateTrustBoundary([Required] string name)
         {
-            ITrustBoundary result = _model.AddGroup<ITrustBoundary>(name);
+            ITrustBoundary result = _model.AddTrustBoundary(name, this);
 
             if (result != null)
             {

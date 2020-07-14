@@ -78,10 +78,10 @@ namespace ThreatsManager.MsTmt.Model
         public string GetElementPropertyName([Required] string elementType, [Required] string propertyKey)
         {
             return _elementTypes.Values
-                .FirstOrDefault(x => string.CompareOrdinal(x.Name, elementType) == 0)?
-                .Properties?
-                .FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0)?
-                .Name;
+                        .FirstOrDefault(x => string.CompareOrdinal(x.Name, elementType) == 0)?
+                        .Properties?
+                        .FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0)?
+                        .Name;
         }
         
         public string GetFlowPropertyName([Required] string elementType, [Required] string propertyKey)

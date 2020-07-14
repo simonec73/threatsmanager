@@ -8,7 +8,7 @@ namespace ThreatsManager.MsTmt.Model
     public class ElementTypeInfo : TypeInfo
     {
         public ElementTypeInfo(ElementType elementType, string typeId, string parentTypeId, string name, string description, 
-            Bitmap image, [NotNull] IEnumerable<XmlNode> properties, bool isTemplate) : base(properties, isTemplate)
+            Bitmap image, [NotNull] IEnumerable<XmlNode> properties, bool isGeneric, bool isTemplate) : base(properties, isTemplate)
         {
             ElementType = elementType;
             TypeId = typeId;
@@ -16,6 +16,7 @@ namespace ThreatsManager.MsTmt.Model
             Name = name;
             Description = description;
             Image = image;
+            IsGeneric = isGeneric;
         }
 
         public ElementType ElementType { get; private set; }
@@ -29,5 +30,7 @@ namespace ThreatsManager.MsTmt.Model
         public Bitmap Image { get; private set; }
 
         public string Description { get; private set; }
+
+        public bool IsGeneric { get; private set; }
     }
 }

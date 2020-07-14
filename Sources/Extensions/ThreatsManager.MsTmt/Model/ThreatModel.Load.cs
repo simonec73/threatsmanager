@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Configuration;
 using System.Xml;
 using Antlr4.Runtime.Misc;
 using PostSharp.Patterns.Contracts;
@@ -43,13 +44,13 @@ namespace ThreatsManager.MsTmt.Model
         #region Analyze knowledgebase.
         private void GetEntityTypes(bool isTemplate)
         {
-            GetEntityTypes(isTemplate, _document.SelectNodes(
+            GetEntityTypes(isTemplate, true, _document.SelectNodes(
                 $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='GenericElements']/*[local-name()='ElementType']")?.OfType<XmlNode>());
-            GetEntityTypes(isTemplate, _document.SelectNodes(
+            GetEntityTypes(isTemplate, false, _document.SelectNodes(
                     $"{(isTemplate ? "" : "/*[local-name()='ThreatModel']")}/*[local-name()='KnowledgeBase']/*[local-name()='StandardElements']/*[local-name()='ElementType']")?.OfType<XmlNode>());
         }
         
-        private void GetEntityTypes(bool isTemplate, IEnumerable<XmlNode> nodes)
+        private void GetEntityTypes(bool isTemplate, bool isGeneric, IEnumerable<XmlNode> nodes)
         {
             var nodeList = nodes?.ToArray();
             if (nodeList != null)
@@ -127,6 +128,12 @@ namespace ThreatsManager.MsTmt.Model
                             case "Line":
                                 elementType = ElementType.Connector;
                                 break;
+                            case "LineBoundary":
+                                elementType = ElementType.LineBoundary;
+                                break;
+                            case "BorderBoundary":
+                                elementType = ElementType.BorderBoundary;
+                                break;
                             default:
                                 elementType = ElementType.Undefined;
                                 break;
@@ -136,8 +143,9 @@ namespace ThreatsManager.MsTmt.Model
                             node.SelectSingleNode("a:Attributes", nsManager)?.OfType<XmlNode>().ToArray();
                         if (!string.IsNullOrWhiteSpace(id) && elementType != ElementType.Undefined)
                         {
-                            var elementTypeInfo = new ElementTypeInfo(elementType, id, parent,
-                                name, description, image, attributes, isTemplate);
+                            var elementTypeInfo = new ElementTypeInfo(elementType, 
+                                id, parent, name, description, image, 
+                                attributes, isGeneric, isTemplate);
                             if (elementType == ElementType.Connector)
                                 _flowTypes.Add(id, elementTypeInfo);
                             else

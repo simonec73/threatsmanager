@@ -35,6 +35,7 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// Entity Template.
         /// </summary>
+        [UiHidden]
         [EnumLabel("Entity Template")]
         EntityTemplate = 8,
         /// <summary>
@@ -45,6 +46,7 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// Flow Template,
         /// </summary>
+        [UiHidden]
         [EnumLabel("Flow Template")]
         FlowTemplate = 131072,
         /// <summary>
@@ -55,6 +57,7 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// Trust Boundary Template.
         /// </summary>
+        [UiHidden]
         [EnumLabel("Trust Boundary Template")]
         TrustBoundaryTemplate = 4194304,
         /// <summary>
@@ -93,7 +96,6 @@ namespace ThreatsManager.Interfaces
         /// Threat Event Mitigation.
         /// </summary>
         [EnumLabel("Threat Event Mitigation")]
-        [UiHidden]
         ThreatEventMitigation = 1024,
         /// <summary>
         /// Everything related to Threats.
@@ -109,7 +111,6 @@ namespace ThreatsManager.Interfaces
         /// Threat Type Mitigation.
         /// </summary>
         [EnumLabel("Threat Type Mitigation")]
-        [UiHidden]
         ThreatTypeMitigation = 4096,
         /// <summary>
         /// Threat Actor.

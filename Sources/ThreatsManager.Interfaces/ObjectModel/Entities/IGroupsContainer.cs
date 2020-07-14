@@ -26,8 +26,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// </summary>
         /// <typeparam name="T">Type of the group to be added. It is the interface derived from IGroup.</typeparam>
         /// <param name="name">Name of the group.</param>
-        /// <returns>New entity.</returns>
+        /// <returns>New group.</returns>
         T AddGroup<T>(string name) where T : class, IGroup;
+        
+        /// <summary>
+        /// Adds a Trust Boundary to the container and associating it to the Trust Boundary Template passed as argument.
+        /// </summary>
+        /// <param name="name">Name of the group.</param>
+        /// <param name="template">Template to associate to the Trust Boundary.</param>
+        /// <returns>New Trust Boundary.</returns>
+        ITrustBoundary AddTrustBoundary(string name, ITrustBoundaryTemplate template);
 
         /// <summary>
         /// Adds a group to the container.

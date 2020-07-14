@@ -63,6 +63,24 @@ namespace ThreatsManager.Engine.ObjectModel
 
             return result;
         }
+        
+        [InitializationRequired]
+        public ITrustBoundary AddTrustBoundary([Required] string name, ITrustBoundaryTemplate template)
+        {
+            ITrustBoundary result = new TrustBoundary(this, name)
+            {
+                _templateId = template?.Id ?? Guid.Empty
+            };
+            
+            if (_groups == null)
+                _groups = new List<IGroup>();
+            _groups.Add(result);
+            RegisterEvents(result);
+            Dirty.IsDirty = true;
+            ChildCreated?.Invoke(result);
+
+            return result;
+        }
 
         [InitializationRequired]
         public void AddGroup([NotNull] IGroup group)

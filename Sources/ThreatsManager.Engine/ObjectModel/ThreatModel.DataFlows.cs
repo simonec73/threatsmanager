@@ -96,6 +96,24 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
+        [InitializationRequired]
+        public IDataFlow AddDataFlow([Required] string name, Guid sourceId, Guid targetId, IFlowTemplate template)
+        {
+            IDataFlow result = new DataFlow(this, name, sourceId, targetId)
+            {
+                _templateId = template?.Id ?? Guid.Empty
+            };
+
+            if (_dataFlows == null)
+                _dataFlows = new List<IDataFlow>();
+            _dataFlows.Add(result);
+            RegisterEvents(result);
+            Dirty.IsDirty = true;
+            ChildCreated?.Invoke(result);
+
+            return result;
+        }
+
         private void OnThreatEventRemovedFromDataFlow([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             _threatEventRemovedFromDataFlow?.Invoke(container, threatEvent);

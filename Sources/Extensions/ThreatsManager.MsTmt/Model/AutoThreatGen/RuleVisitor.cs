@@ -304,7 +304,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                 if (string.IsNullOrWhiteSpace(propertyName))
                 {
                     propertyName = _source.GetFlowPropertyName(schema, propertyKey);
-                    schema = Resources.FlowsPropertySchema;
+                    schema = Resources.TmtFlowPropertySchema;
                     isFlow = !string.IsNullOrWhiteSpace(propertyName);
                 }
 

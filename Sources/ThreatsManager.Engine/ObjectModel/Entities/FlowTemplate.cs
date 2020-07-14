@@ -100,7 +100,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [InitializationRequired]
         public IDataFlow CreateFlow([Required] string name, Guid sourceId, Guid targetId)
         {
-            IDataFlow result = _model.AddDataFlow(name, sourceId, targetId);
+            IDataFlow result = _model.AddDataFlow(name, sourceId, targetId, this);
 
             if (result != null)
             {

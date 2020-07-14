@@ -54,6 +54,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// <param name="targetId">Identifier of the Target.</param>
         /// <returns>New Data Flow. If a Data Flow having the same Source and Target already exist, then the new instance is not created and it returns null.</returns>
         IDataFlow AddDataFlow(string name, Guid sourceId, Guid targetId);
+        
+        /// <summary>
+        /// Add a Data Flow to the Container and associating it to the Flow Template passed as argument.
+        /// </summary>
+        /// <param name="name">Name of the Data Flow.</param>
+        /// <param name="sourceId">Identifier of the Source.</param>
+        /// <param name="targetId">Identifier of the Target.</param>
+        /// <param name="template">Template to associate to the Data Flow.</param>
+        /// <returns>New Data Flow. If a Data Flow having the same Source and Target already exist, then the new instance is not created and it returns null.</returns>
+        IDataFlow AddDataFlow(string name, Guid sourceId, Guid targetId, IFlowTemplate template);
 
         /// <summary>
         /// Remove the Data Flow whose identifier is passed as argument.

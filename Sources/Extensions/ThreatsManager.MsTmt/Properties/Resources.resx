@@ -144,10 +144,28 @@
   <data name="ThreatModelInstanceIdDescription" xml:space="preserve">
     <value>Property used to store the ID of the instance, as defined in the imported MS TMT Threat Model.</value>
   </data>
-  <data name="FlowsPropertySchema" xml:space="preserve">
-    <value>TmtFlows</value>
+  <data name="TmtFlowPropertySchema" xml:space="preserve">
+    <value>Threat Modeling Tool Flow</value>
   </data>
   <data name="FlowsPropertySchemaDescription" xml:space="preserve">
     <value>Property Schema that collects the properties defined in the imported TMT document for flows.</value>
+  </data>
+  <data name="EntityPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects the properties defined in the imported TMT document for a base entity.</value>
+  </data>
+  <data name="TmtDataStorePropertySchema" xml:space="preserve">
+    <value>Threat Modeling Tool Data Store</value>
+  </data>
+  <data name="TmtExternalInteractorPropertySchema" xml:space="preserve">
+    <value>Threat Modeling Tool External Interactor</value>
+  </data>
+  <data name="TmtProcessPropertySchema" xml:space="preserve">
+    <value>Threat Modeling Tool Process</value>
+  </data>
+  <data name="TmtTrustBoundaryPropertySchema" xml:space="preserve">
+    <value>Threat Modeling Tool Trust Boundary</value>
+  </data>
+  <data name="TrustBoundaryPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects the properties defined in the imported TMT document for a base trust boundary.</value>
   </data>
 </root>

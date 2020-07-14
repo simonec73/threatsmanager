@@ -186,6 +186,9 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public void ApplyTo(IEntity entity)
         {
+            entity.BigImage = this.GetImage(ImageSize.Big);
+            entity.Image = this.GetImage(ImageSize.Medium);
+            entity.SmallImage = this.GetImage(ImageSize.Small);
             entity.ClearProperties();
             this.CloneProperties(entity);
             switch (entity)
