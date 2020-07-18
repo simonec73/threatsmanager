@@ -33,6 +33,7 @@ namespace ThreatsManager.AutoThreatGeneration.Initializers
             KnownTypesBinder.AddKnownType(typeof(HasOutgoingRuleNode));
             KnownTypesBinder.AddKnownType(typeof(TruismRuleNode));
             KnownTypesBinder.AddKnownType(typeof(EntityTemplateRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(TrustBoundaryTemplateRuleNode));
         }
     }
 }

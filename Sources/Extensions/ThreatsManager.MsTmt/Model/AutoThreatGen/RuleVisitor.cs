@@ -85,7 +85,9 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                         result = GetIdComparisonRuleNode(id, Scope.Object);
                         break;
                     case "crosses":
-                        result = new CrossTrustBoundaryRuleNode("Crosses Trust Boundary", true);
+                        var template = GetTrustBoundaryTemplate(id);
+                        if (template != null)
+                            result = new TrustBoundaryTemplateRuleNode(template);
                         break;
                 }
 
@@ -210,56 +212,39 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
         {
             SelectionRuleNode result = null;
 
-            var children = _source.GetChildren(id)?.ToArray();
+            var elementType = _source.ElementTypes?.FirstOrDefault(x => string.CompareOrdinal(x.TypeId, id) == 0);
+
             var entityTemplate = GetEntityTemplate(id);
 
-            if (children?.Any() ?? false)
+            if (elementType?.IsGeneric ?? false)
             {
-                var or = new OrRuleNode()
+                switch (elementType.ElementType)
                 {
-                    Name = "OR"
-                };
-
-                if (entityTemplate != null)
-                {
-                    or.Children.Add(new EntityTemplateRuleNode(entityTemplate)
-                    {
-                        Scope = scope
-                    });
-                }
-                else
-                {
-                    or.Children.Add(new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
-                        Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
-                        ComparisonOperator.Exact, id)
-                    {
-                        Scope = scope
-                    });
-                }
-
-                foreach (var child in children)
-                {
-                    var childEntityTemplate = GetEntityTemplate(child.TypeId);
-
-                    if (childEntityTemplate != null)
-                    {
-                        or.Children.Add(new EntityTemplateRuleNode(childEntityTemplate)
+                    case ElementType.StencilRectangle:
+                        result = new EnumValueRuleNode("Object Type", null, null,
+                            new[] { "External Interactor", "Process", "Data Store" },
+                            "External Interactor")
                         {
                             Scope = scope
-                        });
-                    }
-                    else
-                    {
-                        or.Children.Add(new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
-                            Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
-                            ComparisonOperator.Exact, child.TypeId)
+                        };
+                        break;
+                    case ElementType.StencilEllipse:
+                        result = new EnumValueRuleNode("Object Type", null, null,
+                            new[] { "External Interactor", "Process", "Data Store" },
+                            "Process")
                         {
                             Scope = scope
-                        });
-                    }
+                        };
+                        break;
+                    case ElementType.StencilParallelLines:
+                        result = new EnumValueRuleNode("Object Type", null, null,
+                            new[] { "External Interactor", "Process", "Data Store" },
+                            "Data Store")
+                        {
+                            Scope = scope
+                        };
+                        break;
                 }
-
-                result = or;
             }
             else if (entityTemplate != null)
             {
@@ -287,6 +272,13 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
         {
             var schemaManager = new ObjectPropertySchemaManager(_target);
             return _target.EntityTemplates?.FirstOrDefault(x =>
+                string.CompareOrdinal(id, schemaManager.GetObjectId(x)) == 0);
+        }
+
+        private ITrustBoundaryTemplate GetTrustBoundaryTemplate(string id)
+        {
+            var schemaManager = new ObjectPropertySchemaManager(_target);
+            return _target.TrustBoundaryTemplates?.FirstOrDefault(x =>
                 string.CompareOrdinal(id, schemaManager.GetObjectId(x)) == 0);
         }
 

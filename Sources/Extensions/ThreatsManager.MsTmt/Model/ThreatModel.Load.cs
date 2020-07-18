@@ -77,17 +77,17 @@ namespace ThreatsManager.MsTmt.Model
                         parent = isTemplate ? node.SelectSingleNode("ParentElement")?.InnerText : 
                             node.SelectSingleNode("a:ParentId", nsManager)?.InnerText;
 
-                        var list = _hierarchy
-                            .Where(x => string.CompareOrdinal(parent, x.Key) == 0)?
-                            .Select(x => x.Value)
-                            .FirstOrDefault();
-                        if (list == null)
-                        {
-                            list = new List<string>();
-                            _hierarchy.Add(parent, list);
-                        }
-                        if (!list.Contains(id))
-                            list.Add(id);
+                        //var list = _hierarchy
+                        //    .Where(x => string.CompareOrdinal(parent, x.Key) == 0)?
+                        //    .Select(x => x.Value)
+                        //    .FirstOrDefault();
+                        //if (list == null)
+                        //{
+                        //    list = new List<string>();
+                        //    _hierarchy.Add(parent, list);
+                        //}
+                        //if (!list.Contains(id))
+                        //    list.Add(id);
 
                         name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
                             node.SelectSingleNode("a:Name", nsManager)?.InnerText;

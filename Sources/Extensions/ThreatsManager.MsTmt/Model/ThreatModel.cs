@@ -30,7 +30,7 @@ namespace ThreatsManager.MsTmt.Model
         /// Hierarchy of the Element Types.
         /// </summary>
         /// <remarks>The key contains the Element Key of the parent, and the value represents the Element Key for the children.</remarks>
-        private readonly Dictionary<string, List<string>> _hierarchy = new Dictionary<string, List<string>>();
+        //private readonly Dictionary<string, List<string>> _hierarchy = new Dictionary<string, List<string>>();
 
         private readonly List<ThreatType> _threatTypes = new List<ThreatType>();
         private readonly Dictionary<string, string> _threatTypeIDs = new Dictionary<string, string>();
@@ -93,71 +93,71 @@ namespace ThreatsManager.MsTmt.Model
                 .Name;
         }
 
-        public IEnumerable<ElementTypeInfo> GetChildren([Required] string parentKey)
-        {
-            IEnumerable<ElementTypeInfo> result = null;
+        //public IEnumerable<ElementTypeInfo> GetChildren([Required] string parentKey)
+        //{
+        //    IEnumerable<ElementTypeInfo> result = null;
 
-            if (_hierarchy.TryGetValue(parentKey, out var list))
-            {
-                List<ElementTypeInfo> found = new List<ElementTypeInfo>();
+        //    if (_hierarchy.TryGetValue(parentKey, out var list))
+        //    {
+        //        List<ElementTypeInfo> found = new List<ElementTypeInfo>();
 
-                var items = list
-                    .Select(x => _elementTypes
-                        .Where(y => string.CompareOrdinal(y.Key, x) == 0)
-                        .Select(y => y.Value)
-                        .FirstOrDefault())
-                    .Where(x => x != null)?
-                    .ToArray();
+        //        var items = list
+        //            .Select(x => _elementTypes
+        //                .Where(y => string.CompareOrdinal(y.Key, x) == 0)
+        //                .Select(y => y.Value)
+        //                .FirstOrDefault())
+        //            .Where(x => x != null)?
+        //            .ToArray();
 
-                if (items.Any())
-                {
-                    foreach (var item in items)
-                    {
-                        found.Add(item);
-                        var itemItems = GetChildren(item.TypeId)?.ToArray();
-                        if (itemItems?.Any() ?? false)
-                            found.AddRange(itemItems);
-                    }
-                }
+        //        if (items.Any())
+        //        {
+        //            foreach (var item in items)
+        //            {
+        //                found.Add(item);
+        //                var itemItems = GetChildren(item.TypeId)?.ToArray();
+        //                if (itemItems?.Any() ?? false)
+        //                    found.AddRange(itemItems);
+        //            }
+        //        }
 
-                result = found.ToArray();
-            }
+        //        result = found.ToArray();
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public IEnumerable<ElementTypeInfo> GetFlowChildren([Required] string parentKey)
-        {
-            IEnumerable<ElementTypeInfo> result = null;
+        //public IEnumerable<ElementTypeInfo> GetFlowChildren([Required] string parentKey)
+        //{
+        //    IEnumerable<ElementTypeInfo> result = null;
 
-            if (_hierarchy.TryGetValue(parentKey, out var list))
-            {
-                List<ElementTypeInfo> found = new List<ElementTypeInfo>();
+        //    if (_hierarchy.TryGetValue(parentKey, out var list))
+        //    {
+        //        List<ElementTypeInfo> found = new List<ElementTypeInfo>();
 
-                var items = list
-                    .Select(x => _flowTypes
-                        .Where(y => string.CompareOrdinal(y.Key, x) == 0)
-                        .Select(y => y.Value)
-                        .FirstOrDefault())
-                    .Where(x => x != null)?
-                    .ToArray();
+        //        var items = list
+        //            .Select(x => _flowTypes
+        //                .Where(y => string.CompareOrdinal(y.Key, x) == 0)
+        //                .Select(y => y.Value)
+        //                .FirstOrDefault())
+        //            .Where(x => x != null)?
+        //            .ToArray();
 
-                if (items.Any())
-                {
-                    foreach (var item in items)
-                    {
-                        found.Add(item);
-                        var itemItems = GetFlowChildren(item.TypeId)?.ToArray();
-                        if (itemItems?.Any() ?? false)
-                            found.AddRange(itemItems);
-                    }
-                }
+        //        if (items.Any())
+        //        {
+        //            foreach (var item in items)
+        //            {
+        //                found.Add(item);
+        //                var itemItems = GetFlowChildren(item.TypeId)?.ToArray();
+        //                if (itemItems?.Any() ?? false)
+        //                    found.AddRange(itemItems);
+        //            }
+        //        }
 
-                result = found.ToArray();
-            }
+        //        result = found.ToArray();
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
         #endregion
     }
 }
