@@ -15,7 +15,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
 
         public EntityTemplateRuleNode(IEntityTemplate entityTemplate)
         {
-            this.Name = "Entity Type";
+            this.Name = "Entity Template";
             this.EntityTemplate = entityTemplate?.Id ?? Guid.Empty;
         }
 

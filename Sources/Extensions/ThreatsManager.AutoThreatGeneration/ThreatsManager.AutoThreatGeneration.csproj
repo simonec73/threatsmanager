@@ -67,6 +67,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\FlowTemplateRuleNode.cs" />
     <Compile Include="Engine\TrustBoundaryTemplateRuleNode.cs" />
     <Compile Include="Engine\EntityTemplateRuleNode.cs" />
     <Compile Include="Engine\TruismRuleNode.cs" />

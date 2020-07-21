@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.XPath;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoThreatGeneration.Engine;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -88,6 +89,13 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                         var template = GetTrustBoundaryTemplate(id);
                         if (template != null)
                             result = new TrustBoundaryTemplateRuleNode(template);
+                        else
+                        {
+                            if (_source.ElementTypes?.Any(x => x.IsGeneric &&
+                                                               (x.ElementType == ElementType.BorderBoundary || x.ElementType == ElementType.LineBoundary) &&
+                                                               string.CompareOrdinal(x.TypeId, id) == 0) ?? false)
+                                result = new CrossTrustBoundaryRuleNode("Crosses Trust Boundary", true);
+                        }
                         break;
                 }
 
@@ -255,12 +263,20 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             }
             else
             {
-                result = new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
-                    Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
-                    ComparisonOperator.Exact, id)
+                var flowTemplate = GetFlowTemplate(id);
+                if (flowTemplate != null)
                 {
-                    Scope = scope
-                };
+                    result = new FlowTemplateRuleNode(flowTemplate);
+                }
+                else
+                {
+                    result = new ComparisonRuleNode(ObjectPropertySchemaManager.ThreatModelObjectId,
+                        Resources.DefaultNamespace, Resources.TmtObjectPropertySchema,
+                        ComparisonOperator.Exact, id)
+                    {
+                        Scope = scope
+                    };
+                }
             }
 
 
@@ -272,6 +288,13 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
         {
             var schemaManager = new ObjectPropertySchemaManager(_target);
             return _target.EntityTemplates?.FirstOrDefault(x =>
+                string.CompareOrdinal(id, schemaManager.GetObjectId(x)) == 0);
+        }
+
+        private IFlowTemplate GetFlowTemplate(string id)
+        {
+            var schemaManager = new ObjectPropertySchemaManager(_target);
+            return _target.FlowTemplates?.FirstOrDefault(x =>
                 string.CompareOrdinal(id, schemaManager.GetObjectId(x)) == 0);
         }
 
