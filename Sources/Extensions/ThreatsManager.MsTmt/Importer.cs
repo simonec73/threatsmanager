@@ -618,7 +618,7 @@ namespace ThreatsManager.MsTmt
                             schema = new TmtPropertySchemaManager(model, schemaName, scope).GetSchema();
 
                         propertyType = schema.GetPropertyType(property.Name);
-                        if (propertyType != null)
+                        if (propertyType == null)
                         {
                             switch (property.Type)
                             {
@@ -841,46 +841,37 @@ namespace ThreatsManager.MsTmt
             SelectionRuleNode exclude = AnalyzeGenerationRule(model, target.Model, source.ExcludeFilter);
             SelectionRule rule = null;
 
+            var andNode = new AndRuleNode()
+            {
+                Name = "AND"
+            };
+
             if (include != null)
             {
-                if (exclude != null)
-                {
-                    var andNode = new AndRuleNode()
-                    {
-                        Name = "AND"
-                    };
-                    andNode.Children.Add(include);
-                    andNode.Children.Add(new NotRuleNode()
-                    {
-                        Name = "NOT",
-                        Child = exclude
-                    });
-                    rule = new SelectionRule()
-                    {
-                        Root = andNode
-                    };
-                }
-                else
-                {
-                    rule = new SelectionRule()
-                    {
-                        Root = include
-                    };
-                }
-            }
-            else
-            {
-                if (exclude != null)
-                {
-                    rule = new SelectionRule()
-                    {
-                        Root = new NotRuleNode() {Child = exclude}
-                    };
-                }
+                andNode.Children.Add(include);
             }
 
-            if (rule != null)
+            if (exclude != null)
             {
+                andNode.Children.Add(new NotRuleNode()
+                {
+                    Name = "NOT",
+                    Child = exclude
+                });
+            }
+
+            if (andNode.Children.Any())
+            {
+                andNode.Children.Add(new BooleanRuleNode("Out of Scope", Resources.DefaultNamespace, Resources.TmtFlowPropertySchema, false)
+                {
+                    Scope = AutoThreatGeneration.Engine.Scope.Object
+                });
+
+                rule = new SelectionRule()
+                {
+                    Root = andNode
+                };
+
                 var schemaManager = new AutoThreatGenPropertySchemaManager(target.Model);
                 var propertyType = schemaManager.GetPropertyType();
                 var property = target.GetProperty(propertyType) ?? target.AddProperty(propertyType, null);

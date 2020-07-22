@@ -309,49 +309,82 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
         {
             SelectionRuleNode result = null;
 
-            var schemas = _source.GetElementTypesForProperty(propertyKey)?.ToArray();
+            var elementSchemas = _source.GetElementTypesForProperty(propertyKey)?.ToArray();
+            var flowSchemas = _source.GetFlowTypesForProperty(propertyKey)?.ToArray();
 
-            if (schemas?.Any() ?? false)
+            var schema = elementSchemas?.FirstOrDefault();
+            var property = schema?.Properties?.FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0);
+            string schemaName;
+            if (schema != null && schema.IsGeneric)
             {
-                var schema = schemas.First();
-                var propertyName = _source.GetElementPropertyName(schema, propertyKey);
-                bool isFlow = false;
-                if (string.IsNullOrWhiteSpace(propertyName))
+                switch (schema.ElementType)
                 {
-                    propertyName = _source.GetFlowPropertyName(schema, propertyKey);
-                    schema = Resources.TmtFlowPropertySchema;
-                    isFlow = !string.IsNullOrWhiteSpace(propertyName);
+                    case ElementType.StencilRectangle:
+                        schemaName = Resources.TmtExternalInteractorPropertySchema;
+                        break;
+                    case ElementType.StencilEllipse:
+                        schemaName = Resources.TmtProcessPropertySchema;
+                        break;
+                    case ElementType.StencilParallelLines:
+                        schemaName = Resources.TmtDataStorePropertySchema;
+                        break;
+                    case ElementType.BorderBoundary:
+                        schemaName = Resources.TmtTrustBoundaryPropertySchema;
+                        break;
+                    case ElementType.Connector:
+                        schemaName = Resources.TmtFlowPropertySchema;
+                        break;
+                    case ElementType.LineBoundary:
+                        schemaName = Resources.TmtTrustBoundaryPropertySchema;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
+            }
+            else
+            {
+                schemaName = schema?.Name;
+            }
 
-                if (isFlow || schemas.Length == 1)
+            if (property == null)
+            {
+                schema = flowSchemas?.FirstOrDefault();
+                property = schema?.Properties?.FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0);
+                if (schema?.IsGeneric ?? false)
+                    schemaName = Resources.TmtFlowPropertySchema;
+                else
                 {
-                    result = new ComparisonRuleNode(propertyName,
-                        Resources.DefaultNamespace, schema, ComparisonOperator.Exact, value)
-                    {
-                        Scope = scope
-                    };
+                    schemaName = schema?.Name;
                 }
-                else if (schemas.Length > 1)
-                {
-                    var or = new OrRuleNode()
-                    {
-                        Name = "OR"
-                    };
+            }
 
-                    foreach (var s in schemas)
-                    {
-                        propertyName = _source.GetElementPropertyName(s, propertyKey);
-                        if (propertyName != null)
+            if (schemaName != null && property != null)
+            {
+                switch (property.Type)
+                {
+                    case PropertyType.String:
+                        result = new ComparisonRuleNode(property.Name,
+                            Resources.DefaultNamespace, schemaName, ComparisonOperator.Exact, value)
                         {
-                            or.Children.Add(new ComparisonRuleNode(propertyName,
-                                Resources.DefaultNamespace, s, ComparisonOperator.Exact, value)
+                            Scope = scope
+                        };
+                        break;
+                    case PropertyType.Boolean:
+                        if (bool.TryParse(value, out var boolValue))
+                            result = new BooleanRuleNode(property.Name, Resources.DefaultNamespace, schemaName, boolValue)
                             {
                                 Scope = scope
-                            });
-                        }
-                    }
-
-                    result = or;
+                            };
+                        break;
+                    case PropertyType.List:
+                        result = new EnumValueRuleNode(property.Name, Resources.DefaultNamespace, schemaName,
+                            property.Values, value)
+                        {
+                            Scope = scope
+                        };
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 

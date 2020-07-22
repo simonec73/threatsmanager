@@ -26,12 +26,7 @@ namespace ThreatsManager.MsTmt.Model
         /// Element Types foe flows definitions.
         /// </summary>
         private readonly Dictionary<string, ElementTypeInfo> _flowTypes = new Dictionary<string, ElementTypeInfo>();
-        /// <summary>
-        /// Hierarchy of the Element Types.
-        /// </summary>
-        /// <remarks>The key contains the Element Key of the parent, and the value represents the Element Key for the children.</remarks>
-        //private readonly Dictionary<string, List<string>> _hierarchy = new Dictionary<string, List<string>>();
-
+ 
         private readonly List<ThreatType> _threatTypes = new List<ThreatType>();
         private readonly Dictionary<string, string> _threatTypeIDs = new Dictionary<string, string>();
         private readonly Dictionary<string, List<Threat>> _threatsPerType = new Dictionary<string, List<Threat>>();
@@ -44,7 +39,6 @@ namespace ThreatsManager.MsTmt.Model
         private readonly Dictionary<Guid, ElementInfo> _elements = new Dictionary<Guid, ElementInfo>(); 
         private readonly List<string> _categories = new List<string>(); 
         private readonly List<PropertyDefinition> _propertyDefinitions = new List<PropertyDefinition>();
-        private readonly Dictionary<string, List<string>> _propertyEntityTypes = new Dictionary<string, List<string>>();
         #endregion
         #endregion
 
@@ -68,29 +62,36 @@ namespace ThreatsManager.MsTmt.Model
             return _threatTypes.FirstOrDefault(x => string.CompareOrdinal(threatTypeId, x.Key) == 0);
         }
 
-        public IEnumerable<string> GetElementTypesForProperty([Required] string propertyKey)
+        public IEnumerable<ElementTypeInfo> GetElementTypesForProperty([Required] string propertyKey)
         {
-            return _propertyEntityTypes
-                .Where(x => string.CompareOrdinal(propertyKey, x.Key) == 0)
-                .Select(x => x.Value).FirstOrDefault()?.ToArray();
+            IEnumerable<ElementTypeInfo> result = _elementTypes.Values
+                .Where(x => x.IsGeneric && (x.Properties?.Any(y => string.CompareOrdinal(propertyKey, y.Key) == 0) ?? false))
+                .ToArray();
+
+            if (!result.Any())
+            {
+                result = _elementTypes.Values
+                    .Where(x => !x.IsGeneric && (x.Properties?.Any(y => string.CompareOrdinal(propertyKey, y.Key) == 0) ?? false))
+                    .ToArray();
+            }
+
+            return result;
         }
 
-        public string GetElementPropertyName([Required] string elementType, [Required] string propertyKey)
+        public IEnumerable<ElementTypeInfo> GetFlowTypesForProperty([Required] string propertyKey)
         {
-            return _elementTypes.Values
-                        .FirstOrDefault(x => string.CompareOrdinal(x.Name, elementType) == 0)?
-                        .Properties?
-                        .FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0)?
-                        .Name;
-        }
-        
-        public string GetFlowPropertyName([Required] string elementType, [Required] string propertyKey)
-        {
-            return _flowTypes.Values
-                .FirstOrDefault(x => string.CompareOrdinal(x.Name, elementType) == 0)?
-                .Properties?
-                .FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0)?
-                .Name;
+            IEnumerable<ElementTypeInfo> result = _flowTypes.Values
+                .Where(x => x.IsGeneric && (x.Properties?.Any(y => string.CompareOrdinal(propertyKey, y.Key) == 0) ?? false))
+                .ToArray();
+
+            if (!result.Any())
+            {
+                result = _flowTypes.Values
+                    .Where(x => !x.IsGeneric && (x.Properties?.Any(y => string.CompareOrdinal(propertyKey, y.Key) == 0) ?? false))
+                    .ToArray();
+            }
+
+            return result;
         }
         #endregion
     }

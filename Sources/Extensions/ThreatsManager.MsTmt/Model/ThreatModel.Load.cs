@@ -135,34 +135,21 @@ namespace ThreatsManager.MsTmt.Model
                                 id, parent, name, description, image, 
                                 attributes, isGeneric, isTemplate);
                             if (elementType == ElementType.Connector)
-                                _flowTypes.Add(id, elementTypeInfo);
-                            else
-                                _elementTypes.Add(id, elementTypeInfo);
-
-                            var properties = elementTypeInfo.Properties?.ToArray();
-                            if (elementTypeInfo.Properties?.Any() ?? false)
                             {
-                                foreach (var property in properties)
-                                {
-                                    var schemas = _propertyEntityTypes
-                                        .Where(x => string.CompareOrdinal(property.Key, x.Key) == 0)
-                                        .Select(x => x.Value).FirstOrDefault();
-                                    if (schemas == null)
-                                    {
-                                        schemas = new List<string>();
-                                        _propertyEntityTypes.Add(property.Key, schemas);
-                                    }
-
-                                    if (!schemas.Contains(name))
-                                        schemas.Add(name);
-                                }
+                                if (!_flowTypes.ContainsKey(id))
+                                    _flowTypes.Add(id, elementTypeInfo);
+                            }
+                            else
+                            {
+                                if (!_elementTypes.ContainsKey(id))
+                                    _elementTypes.Add(id, elementTypeInfo);
                             }
                         }
                     }
                 }
             }
         }
- 
+
         private void RetrieveThreatCategories(bool isTemplate)
         {
             var nodes =
