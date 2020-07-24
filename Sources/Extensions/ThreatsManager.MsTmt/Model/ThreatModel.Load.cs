@@ -122,6 +122,13 @@ namespace ThreatsManager.MsTmt.Model
                             case "BorderBoundary":
                                 elementType = ElementType.BorderBoundary;
                                 break;
+                            case "Inherited":
+                                elementType = _elementTypes.Values
+                                    .FirstOrDefault(x => string.CompareOrdinal(parent, x.TypeId) == 0)?.ElementType ?? 
+                                              _flowTypes.Values
+                                    .FirstOrDefault(x => string.CompareOrdinal(parent, x.TypeId) == 0)?.ElementType ??
+                                    ElementType.Undefined;
+                                break;
                             default:
                                 elementType = ElementType.Undefined;
                                 break;
