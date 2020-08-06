@@ -56,7 +56,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_groups == null)
                     _groups = new List<IGroup>();
                 _groups.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -76,7 +76,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 _groups = new List<IGroup>();
             _groups.Add(result);
             RegisterEvents(result);
-            Dirty.IsDirty = true;
+            SetDirty();
             ChildCreated?.Invoke(result);
 
             return result;
@@ -91,7 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (_groups == null)
                 _groups = new List<IGroup>();
             _groups.Add(group);
-            Dirty.IsDirty = true;
+            SetDirty();
             RegisterEvents(group);
             ChildCreated?.Invoke(group);
         }
@@ -170,7 +170,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(item);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(item);
                 }
             }

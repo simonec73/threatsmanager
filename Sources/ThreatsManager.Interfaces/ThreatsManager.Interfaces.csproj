@@ -127,6 +127,7 @@
     <Compile Include="ObjectModel\Entities\IImagesContainer.cs" />
     <Compile Include="ObjectModel\Entities\IItemTemplate.cs" />
     <Compile Include="ObjectModel\Entities\ITrustBoundaryTemplate.cs" />
+    <Compile Include="ObjectModel\IDirty.cs" />
     <Compile Include="ObjectModel\ILockable.cs" />
     <Compile Include="ObjectModel\Properties\IDecimalPropertyType.cs" />
     <Compile Include="ObjectModel\Properties\IIdentityReferencePropertyType.cs" />

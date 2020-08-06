@@ -17,9 +17,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
@@ -78,13 +79,30 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
         private Guid _modelId { get; set; }
         private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
         #endregion        
  

@@ -435,7 +435,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     _schemas = new List<IPropertySchema>();
                 result = new PropertySchema(name, nspace);
                 _schemas.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -483,7 +483,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(schema);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(schema);
                 }
             }

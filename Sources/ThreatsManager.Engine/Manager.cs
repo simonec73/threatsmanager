@@ -296,8 +296,6 @@ namespace ThreatsManager.Engine
 
         public ExtensionsConfigurationManager Configuration => _configuration;
 
-        public bool IsDirty => Dirty.IsDirty;
-
         public void LoadExtensions(ExecutionMode mode, Func<Assembly, bool> except = null)
         {
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_ReflectionOnlyAssemblyResolve;

@@ -15,9 +15,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     public class Link : ILink, IThreatModelChild, IInitializableObject
@@ -111,6 +112,24 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
         }
 
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
     }
 }

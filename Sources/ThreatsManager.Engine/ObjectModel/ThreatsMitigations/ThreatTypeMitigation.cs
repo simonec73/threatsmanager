@@ -13,9 +13,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     public class ThreatTypeMitigation : IThreatTypeMitigation, IInitializableObject
@@ -77,7 +78,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 {
                     _strength = value;
                     _strengthId = value.Id;
-                    Dirty.IsDirty = true;
+                    SetDirty();
                 }
             }
         }
@@ -144,6 +145,24 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.

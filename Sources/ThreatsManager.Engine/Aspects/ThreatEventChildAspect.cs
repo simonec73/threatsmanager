@@ -18,14 +18,8 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class ThreatEventChildAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -45,9 +39,11 @@ namespace ThreatsManager.Engine.Aspects
         {
             get
             {
+                var model = (Instance as IThreatModelChild)?.Model;
+
                 if (_threatEvent == null)
                 {
-                    var entities = Model?.Get().Entities?.ToArray();
+                    var entities = model?.Entities?.ToArray();
                     if (entities?.Any() ?? false)
                     {
                         foreach (var entity in entities)
@@ -61,7 +57,7 @@ namespace ThreatsManager.Engine.Aspects
 
                 if (_threatEvent == null)
                 {
-                    var dataFlows = Model?.Get().DataFlows?.ToArray();
+                    var dataFlows = model?.DataFlows?.ToArray();
                     if (dataFlows?.Any() ?? false)
                     {
                         foreach (var dataFlow in dataFlows)
@@ -75,7 +71,7 @@ namespace ThreatsManager.Engine.Aspects
 
                 if (_threatEvent == null)
                 {
-                    _threatEvent = Model?.Get().ThreatEvents?.FirstOrDefault(x => x.Id == _threatEventId);
+                    _threatEvent = model?.ThreatEvents?.FirstOrDefault(x => x.Id == _threatEventId);
                 }
 
                 return _threatEvent;

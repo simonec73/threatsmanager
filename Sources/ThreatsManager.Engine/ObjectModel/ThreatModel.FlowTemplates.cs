@@ -38,11 +38,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _flowTemplates.Add(flowTemplate);
  
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                ChildCreated?.Invoke(flowTemplate);
-            }
+            SetDirty();
+            ChildCreated?.Invoke(flowTemplate);
         }
 
         [InitializationRequired]
@@ -71,7 +68,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _flowTemplates.Remove(template);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(template);
                 }
             }

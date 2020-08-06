@@ -19,9 +19,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [GroupElementAspect]
@@ -118,20 +119,37 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return false;
         }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
         private Guid _modelId { get; set; }
         private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
         private List<IThreatEvent> _threatEvents { get; set; }
-        private IThreatEventsContainer ThreatEventsContainer => this;
         private Guid _parentId { get; set; }
-        private IGroupElement GroupElement => this;
+        private IGroup _parent { get; set; }
         #endregion
- 
+
         #region Specific implementation.
         public override string ToString()
         {

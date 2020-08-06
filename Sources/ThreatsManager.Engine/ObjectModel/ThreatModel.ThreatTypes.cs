@@ -98,11 +98,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _threatTypes.Add(threatType);
 
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                ChildCreated?.Invoke(threatType);
-            }
+            SetDirty();
+            ChildCreated?.Invoke(threatType);
         }
 
         [InitializationRequired]
@@ -135,7 +132,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(threatType);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(threatType);
                 }
             }

@@ -16,14 +16,8 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class PropertyAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Family)]
@@ -41,7 +35,7 @@ namespace ThreatsManager.Engine.Aspects
         public Guid PropertyTypeId { get; set; }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IPropertyType PropertyType => Model?.Get()?.GetPropertyType(PropertyTypeId);
+        public IPropertyType PropertyType => (Instance as IThreatModelChild)?.Model?.GetPropertyType(PropertyTypeId);
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public Guid Id => _id;

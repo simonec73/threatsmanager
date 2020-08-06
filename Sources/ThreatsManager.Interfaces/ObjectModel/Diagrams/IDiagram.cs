@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Diagrams
     /// Interface implemented by the Diagrams.
     /// </summary>
     public interface IDiagram : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IEntityShapesContainer, IGroupShapesContainer, ILinksContainer
+        IEntityShapesContainer, IGroupShapesContainer, ILinksContainer, IDirty
     {
         /// <summary>
         /// Order of the diagram.

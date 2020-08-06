@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// Interface implemented by Data Flows.
     /// </summary>
     public interface IDataFlow : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IThreatEventsContainer//, ILockable
+        IThreatEventsContainer, IDirty//, ILockable
     {
         /// <summary>
         /// Identifier of the Source.

@@ -35,10 +35,10 @@ namespace ThreatsManager.Utilities
         /// </summary>
         public static Color ThreatsColor = Color.FromArgb(0xE5, 0x39, 0x35);
 
-            /// <summary>
-        /// Main Threat Model for the Application.
-        /// </summary>
-        public static IThreatModel Model { get; set; }
+        ///// <summary>
+        ///// Main Threat Model for the Application.
+        ///// </summary>
+        //public static IThreatModel Model { get; set; }
 
         /// <summary>
         /// Creates a new Default Instance of the Threat Model.
@@ -132,14 +132,15 @@ namespace ThreatsManager.Utilities
 
             if (result != null)
             {
-                result.Cleanup();
-
                 if (_instances.Any(x => x.Id == result.Id))
                 {
                     throw new ExistingModelException(result);
                 }
                 else
                 {
+                    result.Cleanup();
+                    result.PropertySchemasNormalization();
+
                     _instances.Add(result);
 
                     var method = result.GetType()
@@ -215,6 +216,33 @@ namespace ThreatsManager.Utilities
                         _locations[model.Id] = location;
                 }
             }
+        }
+
+        #region Post-deserialize normalization activities.
+
+        private static void PropertySchemasNormalization(this IThreatModel model)
+        {
+            var propertySchemas = model.Schemas?.ToArray();
+            if (propertySchemas?.Any() ?? false)
+            {
+                foreach (var schema in propertySchemas)
+                {
+                    schema.SetModelId(model.Id);
+
+                    var propertyTypes = schema.PropertyTypes?.ToArray();
+                    if (propertyTypes?.Any() ?? false)
+                    {
+                        foreach (var propertyType in propertyTypes)
+                            propertyType.SetModelId(model.Id);
+                    }
+                }
+            }
+        }
+
+        private static void SetModelId(this object item, Guid modelId)
+        {
+            PropertyInfo property = item.GetType().GetProperty("_modelId", BindingFlags.NonPublic | BindingFlags.Instance);
+            property?.GetSetMethod(true).Invoke(item, new object[] { modelId });
         }
 
         private static void Cleanup(this IThreatModel model)
@@ -393,5 +421,6 @@ namespace ThreatsManager.Utilities
                     threatEvent.CleanProperties(model);
             }
         }
+        #endregion
     }
 }

@@ -89,11 +89,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _severities.Add(severity);
 
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                _severityCreated?.Invoke(severity);
-            }
+            SetDirty();
+            _severityCreated?.Invoke(severity);
         }
 
         [InitializationRequired]
@@ -136,7 +133,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(definition);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     _severityRemoved?.Invoke(definition);
                 }
             }

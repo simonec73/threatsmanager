@@ -5,7 +5,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
     /// <summary>
     /// Generic interface implemented by Properties.
     /// </summary>
-    public interface IProperty : IThreatModelChild
+    public interface IProperty : IThreatModelChild, IDirty
     {
         /// <summary>
         /// Identifier of the Property.

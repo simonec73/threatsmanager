@@ -17,9 +17,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
@@ -129,7 +130,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 {
                     _severity = value;
                     _severityId = value.Id;
-                    Dirty.IsDirty = true;
+                    SetDirty();
                 }
             }
         }
@@ -225,7 +226,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         if (_properties == null)
                             _properties = new List<IProperty>();
                         _properties.Add(shadowProperty);
-                        Dirty.IsDirty = true;
+                        SetDirty();
                         PropertyAdded?.Invoke(this, shadowProperty);
                         shadowProperty.Changed += delegate(IProperty prop)
                         {
@@ -321,18 +322,33 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return false;
         }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
         private Guid _modelId { get; set; }
         private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
         private List<IThreatEventScenario> _scenarios { get; set; }
-        private IThreatEventScenariosContainer ScenariosContainer => this; 
-        private IThreatEvent MySelf => this;
         private List<IThreatEventMitigation> _mitigations { get; set; }
-        private IThreatEventMitigationsContainer MitigationsContainer => this;
         #endregion
     }
 }

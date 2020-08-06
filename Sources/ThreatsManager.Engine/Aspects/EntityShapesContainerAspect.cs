@@ -5,39 +5,22 @@ using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
-using PostSharp.Patterns.Contracts;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Utilities.Aspects;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
     //private List<IEntityShape> _entities { get; set; }
-    //private IEntityShapesContainer EntityShapesContainer => this;
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class EntityShapesContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-
-        [ImportMember("EntityShapesContainer", IsRequired=true)]
-        public Property<IEntityShapesContainer> EntityShapesContainer;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -49,7 +32,7 @@ namespace ThreatsManager.Engine.Aspects
 
         #region Implementation of interface IEntityShapesContainer.
         private Action<IEntityShapesContainer, IEntityShape> _entityShapeAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 4)]
         public event Action<IEntityShapesContainer, IEntityShape> EntityShapeAdded
         {
             add
@@ -66,7 +49,7 @@ namespace ThreatsManager.Engine.Aspects
         }
 
         private Action<IEntityShapesContainer, IEntity> _entityShapeRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 4)]
         public event Action<IEntityShapesContainer, IEntity> EntityShapeRemoved
         {
             add
@@ -94,20 +77,15 @@ namespace ThreatsManager.Engine.Aspects
             return GetEntityShape(entity.Id);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IEntityShape GetEntityShape(Guid entityId)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
-
             return _entities?.FirstOrDefault(x => x.AssociatedId == entityId);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
         public void Add(IEntityShape entityShape)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return;
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
@@ -117,55 +95,52 @@ namespace ThreatsManager.Engine.Aspects
             _entities.Add(entityShape);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 14)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 13)]
         public IEntityShape AddShape(IEntity entity, PointF position)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
             IEntityShape result = null;
 
-            if (GetEntityShape(entity.Id) == null)
+            if (Instance is IEntityShapesContainer container && Instance is IThreatModelChild child && GetEntityShape(entity.Id) == null)
             {
                 if (_entities == null)
                     _entities = new List<IEntityShape>();
-                result = new EntityShape(Model?.Get(), entity)
+                result = new EntityShape(child.Model, entity)
                 {
                     Position = position
                 };
                 _entities.Add(result);
-                Dirty.IsDirty = true;
-                _entityShapeAdded?.Invoke(EntityShapesContainer?.Get(), result);
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                _entityShapeAdded?.Invoke(container, result);
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
         public IEntityShape AddEntityShape(Guid entityId, PointF position)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
-
-            var entity = Model?.Get().Entities.FirstOrDefault(x => x.Id == entityId);
-
             IEntityShape result = null;
-            if (entity != null)
+
+            if (Instance is IThreatModelChild child)
             {
-                result = AddShape(entity, position);
+                var entity = child.Model?.Entities.FirstOrDefault(x => x.Id == entityId);
+
+                if (entity != null)
+                {
+                    result = AddShape(entity, position);
+                }
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveEntityShape(Guid entityId)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
-
             bool result = false;
 
             var entityShape = GetEntityShape(entityId);
@@ -174,9 +149,10 @@ namespace ThreatsManager.Engine.Aspects
                 result = _entities.Remove(entityShape);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    if (entityShape.Identity is IEntity entity)
-                        _entityShapeRemoved?.Invoke(EntityShapesContainer?.Get(), entity);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
+                        _entityShapeRemoved?.Invoke(container, entity);
                 }
             }
 
@@ -186,8 +162,6 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12)]
         public bool RemoveShape(IEntity entity)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
@@ -199,28 +173,29 @@ namespace ThreatsManager.Engine.Aspects
                 result = _entities.Remove(entityShape);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    _entityShapeRemoved?.Invoke(EntityShapesContainer?.Get(), entity);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (Instance is IEntityShapesContainer container)
+                        _entityShapeRemoved?.Invoke(container, entity);
                 }
             }
  
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public bool RemoveShape(IEntityShape entityShape)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
             var result = _entities?.Remove(entityShape) ?? false;
             if (result)
             {
-                Dirty.IsDirty = true;
-                if (entityShape.Identity is IEntity entity)
-                    _entityShapeRemoved?.Invoke(EntityShapesContainer?.Get(), entity);
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
+                    _entityShapeRemoved?.Invoke(container, entity);
             }
 
             return result;

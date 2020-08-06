@@ -14,28 +14,12 @@ using ThreatsManager.Utilities.Aspects;
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //private IThreatEvent MySelf => this;
     //private List<IThreatEventMitigation> _mitigations { get; set; }
-    //private IThreatEventMitigationsContainer MitigationsContainer => this;
     //#endregion    
 
     [PSerializable]
     public class ThreatEventMitigationsContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-
-        [ImportMember("MySelf", IsRequired=true)]
-        public Property<IThreatEvent> MySelf;
-
-        [ImportMember("MitigationsContainer", IsRequired=true)]
-        public Property<IThreatEventMitigationsContainer> MitigationsContainer;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -47,7 +31,7 @@ namespace ThreatsManager.Engine.Aspects
 
         #region Implementation of interface IThreatEventMitigationsContainer.
         private Action<IThreatEventMitigationsContainer, IThreatEventMitigation> _threatEventMitigationAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded
         {
             add
@@ -64,7 +48,7 @@ namespace ThreatsManager.Engine.Aspects
         }
 
         private Action<IThreatEventMitigationsContainer, IThreatEventMitigation> _threatEventMitigationRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved
         {
             add
@@ -86,21 +70,15 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IThreatEventMitigation GetMitigation(Guid mitigationId)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
-
             return _mitigations?.FirstOrDefault(x => x.MitigationId == mitigationId);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
         public void Add(IThreatEventMitigation mitigation)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return;
             if (mitigation == null)
                 throw new ArgumentNullException(nameof(mitigation));
-            if (mitigation.Mitigation is IThreatModelChild child &&
-                child.Model != Model?.Get())
+            if (mitigation.Mitigation is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
             if (_mitigations == null)
@@ -109,38 +87,35 @@ namespace ThreatsManager.Engine.Aspects
             _mitigations.Add(mitigation);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 13)]
         public IThreatEventMitigation AddMitigation(IMitigation mitigation, IStrength strength, 
             MitigationStatus status = MitigationStatus.Proposed, string directives = null)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
             if (mitigation == null)
                 throw new ArgumentNullException(nameof(mitigation));
 
             IThreatEventMitigation result = null;
 
-            if (GetMitigation(mitigation.Id) == null)
+            if (GetMitigation(mitigation.Id) == null && Instance is IThreatEvent threatEvent)
             {
-                result = new ThreatEventMitigation(MySelf?.Get(), mitigation, strength);
-                result.Status = status;
-                result.Directives = directives;
+                result = new ThreatEventMitigation(threatEvent, mitigation, strength)
+                {
+                    Status = status, Directives = directives
+                };
                 if (_mitigations == null)
                     _mitigations = new List<IThreatEventMitigation>();
                 _mitigations.Add(result);
-                Dirty.IsDirty = true;
-                _threatEventMitigationAdded?.Invoke(MitigationsContainer?.Get(), result);
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                _threatEventMitigationAdded?.Invoke(threatEvent, result);
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveMitigation(Guid mitigationId)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
-
             bool result = false;
 
             var mitigation = GetMitigation(mitigationId);
@@ -149,8 +124,10 @@ namespace ThreatsManager.Engine.Aspects
                 result = _mitigations.Remove(mitigation);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    _threatEventMitigationRemoved?.Invoke(MitigationsContainer?.Get(), mitigation);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (Instance is IThreatEventMitigationsContainer container)
+                        _threatEventMitigationRemoved?.Invoke(container, mitigation);
                 }
             }
 

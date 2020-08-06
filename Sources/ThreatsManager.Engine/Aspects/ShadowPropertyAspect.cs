@@ -5,6 +5,7 @@ using PostSharp.Aspects.Advices;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 
 namespace ThreatsManager.Engine.Aspects
@@ -19,10 +20,7 @@ namespace ThreatsManager.Engine.Aspects
     public class ShadowPropertyAspect : InstanceLevelAspect
     {
         #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("InvokeChanged", IsRequired=true)]
+        [ImportMember("InvokeChanged", IsRequired = true)]
         public Action InvokeChanged;
         #endregion
 
@@ -48,12 +46,12 @@ namespace ThreatsManager.Engine.Aspects
 
         #region Implementation of interface IShadowProperty.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IProperty Original => _original ?? (_original = Model?.Get()?.FindProperty(_originalId));
+        public IProperty Original => _original ?? (_original = (Instance as IThreatModelChild)?.Model?.FindProperty(_originalId));
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public bool IsOverridden => _overridden;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public void RevertToOriginal()
         {
             if (_overridden)

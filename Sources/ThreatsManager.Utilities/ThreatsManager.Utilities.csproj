@@ -88,8 +88,8 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Aspects\AutoDirtyAttribute.cs" />
-    <Compile Include="Aspects\Dirty.cs" />
     <Compile Include="Aspects\Engine\AssociatedPropertyClassAttribute.cs" />
+    <Compile Include="Aspects\Engine\DirtyAspect.cs" />
     <Compile Include="Aspects\Engine\LockableAspect.cs" />
     <Compile Include="Aspects\Engine\IdentityAspect.cs" />
     <Compile Include="Aspects\Engine\PropertiesContainerAspect.cs" />

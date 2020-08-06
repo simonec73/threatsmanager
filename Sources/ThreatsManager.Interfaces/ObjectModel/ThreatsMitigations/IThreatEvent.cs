@@ -7,7 +7,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// Interface implemented by Threat Events, that is Threats that are associated to Entities or Data Flow.
     /// </summary>
     public interface IThreatEvent : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IThreatEventScenariosContainer, IThreatEventMitigationsContainer
+        IThreatEventScenariosContainer, IThreatEventMitigationsContainer, IDirty
     {
         /// <summary>
         /// Identifier of the Parent Identity.

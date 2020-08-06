@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.Aspects;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
@@ -9,11 +10,13 @@ using ThreatsManager.Utilities.Aspects.Engine;
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [PropertyTypeAspect]
     [IdentityAspect]
+    [ThreatModelChildAspect]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyString, ThreatsManager.Engine")]
     public class StringPropertyType : IStringPropertyType
     {
@@ -30,17 +33,39 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             Visible = true;
         }
 
-        #region Placeholder for IStringPropertyType.
+        #region Default implementation.
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public IThreatModel Model { get; }
         public Guid SchemaId { get; }
         public int Priority { get; set; }
         public bool Visible { get; set; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
-        
+
         #region Additional placeholders required.
         protected Guid _id { get; set; }
+        private Guid _modelId { get; set; }
+        private IThreatModel _model { get; set; }
         protected Guid _schemaId { get; set; }
         #endregion
 

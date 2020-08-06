@@ -3,16 +3,16 @@ using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Extensibility;
 using PostSharp.Serialization;
+using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Utilities.Aspects
 {
     /// <summary>
-    /// Attribute applied to automatically change the status to Dirty when a Property is set.
+    /// Attribute applied to automatically change the status of IDirty objects to Dirty when a Property is set.
     /// </summary>
     /// <remarks>PostSharp is required to make this attribute effective.
     /// <para>If PostSharp is not used, then the same result may be achieved by specifying
-    /// <example>Dirty.IsDirty = true</example> whenever there is the need to set the Dirty flag.</para></remarks>
-    /// <seealso cref="Dirty"/>
+    /// <example>IsDirty = true</example> in the interested object.</para></remarks>
     [PSerializable]
     [ProvideAspectRole("Dirty")]
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Multicast)]
@@ -35,7 +35,8 @@ namespace ThreatsManager.Utilities.Aspects
             // Actually sets the value.
             args.ProceedSetValue();
 
-            Dirty.IsDirty = true;
+            if (Instance is IDirty dirtyObject)
+                dirtyObject.SetDirty();
         }
     }
 }

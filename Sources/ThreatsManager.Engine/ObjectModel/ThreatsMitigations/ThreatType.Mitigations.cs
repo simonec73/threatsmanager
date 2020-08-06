@@ -65,7 +65,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 if (_mitigations == null)
                     _mitigations = new List<IThreatTypeMitigation>();
                 _mitigations.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 _threatTypeMitigationAdded?.Invoke(this, result);
             }
 
@@ -83,7 +83,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 result = _mitigations.Remove(mitigation);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     _threatTypeMitigationRemoved?.Invoke(this, mitigation);
                 }
             }
