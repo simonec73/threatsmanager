@@ -34,7 +34,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             _modelId = model.Id;
             _model = model;
             _group = group;
-            _model = group.Model;
             _associatedId = group.Id;
         }
 

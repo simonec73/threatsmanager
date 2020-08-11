@@ -23,7 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [DirtyAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
-    public class SeverityDefinition : ISeverity, IThreatModelChild, IInitializableObject
+    public class SeverityDefinition : ISeverity, IInitializableObject
     {
         public SeverityDefinition()
         {

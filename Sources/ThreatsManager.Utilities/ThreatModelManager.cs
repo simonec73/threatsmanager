@@ -35,11 +35,6 @@ namespace ThreatsManager.Utilities
         /// </summary>
         public static Color ThreatsColor = Color.FromArgb(0xE5, 0x39, 0x35);
 
-        ///// <summary>
-        ///// Main Threat Model for the Application.
-        ///// </summary>
-        //public static IThreatModel Model { get; set; }
-
         /// <summary>
         /// Creates a new Default Instance of the Threat Model.
         /// </summary>
@@ -132,28 +127,37 @@ namespace ThreatsManager.Utilities
 
             if (result != null)
             {
-                if (_instances.Any(x => x.Id == result.Id))
+                try
                 {
-                    throw new ExistingModelException(result);
-                }
-                else
-                {
-                    result.Cleanup();
-                    result.PropertySchemasNormalization();
+                    result.SuspendDirty();
 
-                    _instances.Add(result);
-
-                    var method = result.GetType()
-                            .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] {}, null);
-                    if (method != null)
-                        method.Invoke(result, null);
-
-                    var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
-                    if (processors?.Any() ?? false)
+                    if (_instances.Any(x => x.Id == result.Id))
                     {
-                        foreach (var processor in processors)
-                            processor.Process(result);
+                        throw new ExistingModelException(result);
                     }
+                    else
+                    {
+                        result.Cleanup();
+                        result.PropertySchemasNormalization();
+
+                        _instances.Add(result);
+
+                        var method = result.GetType()
+                            .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] { }, null);
+                        if (method != null)
+                            method.Invoke(result, null);
+
+                        var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
+                        if (processors?.Any() ?? false)
+                        {
+                            foreach (var processor in processors)
+                                processor.Process(result);
+                        }
+                    }
+                }
+                finally
+                {
+                    result.ResumeDirty();
                 }
             }
 

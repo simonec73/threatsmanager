@@ -32,14 +32,16 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             _id = Guid.NewGuid();
             _schemaId = schema.Id;
+            _model = schema.Model;
+            _modelId = schema.Model?.Id ?? Guid.Empty;
             Name = name;
             Visible = true;
         }
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         protected Guid _schemaId { get; set; }
         #endregion
 

@@ -8,6 +8,10 @@ namespace ThreatsManager.Interfaces.Extensions
     /// </summary>
     public class DevOpsItemInfo
     {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="name">Name of the Item.</param>
         public DevOpsItemInfo([RegularExpression(@"(?<Id>[\d]+)#(?<Name>.*)")] string name)
         {
             var regex = new Regex(@"(?<Id>[\d]+)#(?<Name>.*)");
@@ -40,11 +44,19 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Serialize the content of the object.
+        /// </summary>
+        /// <returns>Serialized object.</returns>
         public string Serialize()
         {
             return $"{Id}#{Name}";
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return Name;

@@ -28,11 +28,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertySchema([Required] string name, [Required] string nspace, int priority = 50) : this()
+        public PropertySchema([Required] IThreatModel model, [Required] string name, [Required] string nspace, int priority = 50) : this()
         {
             _id = Guid.NewGuid();
             Name = name;
             Namespace = nspace;
+            _model = model;
+            _modelId = model.Id;
             Priority = priority;
             RequiredExecutionMode = ExecutionMode.Business;
             Visible = true;
@@ -79,6 +81,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     _id = Id,
                     Name = Name,
                     Description = Description,
+                    _model = model,
+                    _modelId = model.Id,
                     Namespace = Namespace,
                     AppliesTo = AppliesTo,
                     AutoApply = AutoApply,

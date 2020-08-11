@@ -21,7 +21,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [DirtyAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
-    public class StrengthDefinition : IStrength, IThreatModelChild, IInitializableObject
+    public class StrengthDefinition : IStrength, IInitializableObject
     {
         public StrengthDefinition()
         {

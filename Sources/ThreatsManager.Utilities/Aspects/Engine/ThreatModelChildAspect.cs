@@ -17,14 +17,14 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     public class ThreatModelChildAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
+        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
         [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
             OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         [JsonProperty("modelId")]
         public Guid _modelId { get; set; }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
+        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, 
             LinesOfCodeAvoided = 0, Visibility = Visibility.Private)]
         public IThreatModel _model { get; set; }
         #endregion

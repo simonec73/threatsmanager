@@ -29,6 +29,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             _id = Guid.NewGuid();
             _schemaId = schema.Id;
+            _model = schema.Model;
+            _modelId = schema.Model?.Id ?? Guid.Empty;
             Name = name;
             Visible = true;
         }
@@ -86,6 +88,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 {
                     _id = _id,
                     _schemaId = schema.Id,
+                    _model = schema.Model,
+                    _modelId = schema.Model?.Id ?? Guid.Empty,
                     Name = Name,
                     Description = Description,
                     Visible = Visible,

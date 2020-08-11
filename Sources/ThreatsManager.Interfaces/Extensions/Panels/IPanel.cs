@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace ThreatsManager.Interfaces.Extensions.Panels
 {
@@ -8,10 +9,18 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     public interface IPanel
     {
         /// <summary>
+        /// Identifier of the Panel.
+        /// </summary>
+        Guid Id { get; }
+
+        /// <summary>
         /// Form containing the Panel.
         /// </summary>
         Form ContainingForm { get; set; }
 
-        IActionDefinition ActionDefinition { get; }
+        ///// <summary>
+        ///// Definition of the action associated to the Panel.
+        ///// </summary>
+        //IActionDefinition ActionDefinition { get; }
     }
 }
