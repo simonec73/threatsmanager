@@ -83,6 +83,7 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Aspects\AutoDirtyAttribute.cs" />
+    <Compile Include="Aspects\AutoDirtyIgnoreAttribute.cs" />
     <Compile Include="Aspects\Engine\AssociatedPropertyClassAttribute.cs" />
     <Compile Include="Aspects\Engine\DirtyAspect.cs" />
     <Compile Include="Aspects\Engine\LockableAspect.cs" />

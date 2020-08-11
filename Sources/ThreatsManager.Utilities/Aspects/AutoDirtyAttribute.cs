@@ -1,4 +1,5 @@
-﻿using PostSharp.Aspects;
+﻿using System.Linq;
+using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Extensibility;
@@ -34,6 +35,11 @@ namespace ThreatsManager.Utilities.Aspects
 
             // Actually sets the value.
             args.ProceedSetValue();
+
+            // Ignore properties with AutoDirtyIgnoreAttribute.
+            var propertyInfo = args.Location.PropertyInfo;
+            if (propertyInfo.GetCustomAttributes(typeof(AutoDirtyIgnoreAttribute), true).Any())
+                return;
 
             if (Instance is IDirty dirtyObject)
                 dirtyObject.SetDirty();

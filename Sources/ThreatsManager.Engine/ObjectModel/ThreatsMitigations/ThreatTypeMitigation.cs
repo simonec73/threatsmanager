@@ -166,8 +166,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         #endregion
 
         #region Additional placeholders required.
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
         #endregion

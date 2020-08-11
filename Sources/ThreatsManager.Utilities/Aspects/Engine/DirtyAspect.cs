@@ -105,7 +105,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         /// Dirty has been suspended.
         /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 0, Visibility = Visibility.Public)]
+            LinesOfCodeAvoided = 1, Visibility = Visibility.Public)]
+        [CopyCustomAttributes(typeof(AutoDirtyIgnoreAttribute),
+            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         public bool IsDirtySuspended { get; private set; }
 
         /// <summary>

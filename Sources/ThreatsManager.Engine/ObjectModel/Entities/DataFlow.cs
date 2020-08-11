@@ -140,8 +140,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected Guid _id { get; set; }
         private List<IProperty> _properties { get; set; }
         private List<IThreatEvent> _threatEvents { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         #endregion    
 
         #region Specific implementation.

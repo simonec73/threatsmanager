@@ -12,8 +12,16 @@ namespace ThreatsManager.Engine
         public IThreatModel CreateNewThreatModel([Required] string name)
         {
             _model = new ThreatModel(name);
-            
-            ApplyInitializers();
+
+            try
+            {
+                _model.SuspendDirty();
+                ApplyInitializers();
+            }
+            finally
+            {
+                _model.ResumeDirty();
+            }
 
             return _model;
         }

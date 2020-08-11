@@ -429,8 +429,10 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public ThreatModel([Required] string name) : this()
         {
+            SuspendDirty();
             _id = Guid.NewGuid();
             Name = name;
+            ResumeDirty();
         }
         #endregion
 
@@ -1958,6 +1960,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [AutoDirtyIgnore]
         public bool IsDirtySuspended { get; private set; }
 
         public void SuspendDirty()

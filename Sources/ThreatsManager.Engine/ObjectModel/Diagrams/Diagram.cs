@@ -202,8 +202,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private List<IEntityShape> _entities { get; set; }
         private List<IGroupShape> _groups { get; set; }
         private List<ILink> _links { get; set; }

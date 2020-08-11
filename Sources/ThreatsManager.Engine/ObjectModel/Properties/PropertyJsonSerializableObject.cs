@@ -35,8 +35,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         #region Additional placeholders required.
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         protected Guid _id { get; set; }
         #endregion
         

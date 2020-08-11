@@ -9,23 +9,23 @@ using ThreatsManager.Interfaces.ObjectModel;
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
-    //private Guid _modelId { get; set; }
-    //private IThreatModel _model { get; set; }
+    //protected Guid _modelId { get; set; }
+    //protected IThreatModel _model { get; set; }
     //#endregion    
 
     [PSerializable]
     public class ThreatModelChildAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
+            LinesOfCodeAvoided = 1, Visibility = Visibility.Family)]
         [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
             OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         [JsonProperty("modelId")]
         public Guid _modelId { get; set; }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, 
-            LinesOfCodeAvoided = 0, Visibility = Visibility.Private)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore, 
+            LinesOfCodeAvoided = 0, Visibility = Visibility.Family)]
         public IThreatModel _model { get; set; }
         #endregion
 
