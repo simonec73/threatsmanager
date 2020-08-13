@@ -22,6 +22,11 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         IEntityTemplate Template { get; }
 
         /// <summary>
+        /// Disassociate the Entity from the underlying Template.
+        /// </summary>
+        void ResetTemplate();
+
+        /// <summary>
         /// Creates a duplicate of the current Entity and attaches it to the Container passed as argument.
         /// </summary>
         /// <param name="container">Destination container.</param>

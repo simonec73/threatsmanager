@@ -42,7 +42,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         /// Property to get or set the Dirty status.
         /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 0, Visibility = Visibility.Public)]
+            LinesOfCodeAvoided = 1, Visibility = Visibility.Public)]
+        [CopyCustomAttributes(typeof(AutoDirtyIgnoreAttribute),
+            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         public bool IsDirty { get; private set; }
 
         /// <summary>

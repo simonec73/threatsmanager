@@ -26,6 +26,8 @@ namespace ThreatsManager.Utilities
                 _knownTypes.Add(name, type);
         }
 
+        public bool HasUnknownTypes { get; private set; }
+
         public Type BindToType(string assemblyName, [Required] string typeName)
         {
             Type result;
@@ -63,6 +65,7 @@ namespace ThreatsManager.Utilities
             catch
             {
                 result = typeof(object);
+                HasUnknownTypes = true;
                 TypeNotFound?.Invoke(assemblyName, typeName);
             }
 

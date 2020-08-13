@@ -183,6 +183,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        public void ResetTemplate()
+        {
+            this.ClearProperties();
+            _model.AutoApplySchemas(this);
+
+           _templateId = Guid.Empty;
+           _template = null;
+        }
+
         public IDataFlow Clone([NotNull] IDataFlowsContainer container)
         {
             DataFlow result = null;
@@ -198,6 +207,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     _modelId = model.Id,
                     _sourceId = _sourceId,
                     _targetId = _targetId,
+                    _templateId = _templateId,
                     FlowType = FlowType
                 };
                 this.CloneProperties(result);

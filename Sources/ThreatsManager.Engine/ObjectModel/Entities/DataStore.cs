@@ -232,6 +232,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        public void ResetTemplate()
+        {
+            this.BigImage = EntityType.DataStore.GetEntityImage(ImageSize.Big);
+            this.Image = EntityType.DataStore.GetEntityImage(ImageSize.Medium);
+            this.SmallImage = EntityType.DataStore.GetEntityImage(ImageSize.Small);
+            this.ClearProperties();
+            _model.AutoApplySchemas(this);
+
+            _templateId = Guid.Empty;
+            _template = null;
+        }
+
         public IEntity Clone([NotNull] IEntitiesContainer container)
         {
             DataStore result = null;

@@ -114,6 +114,8 @@ namespace ThreatsManager.Utilities
                 }
             }
 
+            var binder = new KnownTypesBinder();
+
             var result = JsonConvert.DeserializeObject(jsonText, new JsonSerializerSettings()
             {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
@@ -121,7 +123,7 @@ namespace ThreatsManager.Utilities
                 TypeNameHandling = TypeNameHandling.All,
 #pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                SerializationBinder = new KnownTypesBinder(),
+                SerializationBinder = binder,
                 MissingMemberHandling = ignoreMissingMembers ? MissingMemberHandling.Ignore : MissingMemberHandling.Error
             }) as IThreatModel;
 
@@ -129,6 +131,9 @@ namespace ThreatsManager.Utilities
             {
                 try
                 {
+                    if (!binder.HasUnknownTypes)
+                        result.ResetDirty();
+
                     result.SuspendDirty();
 
                     if (_instances.Any(x => x.Id == result.Id))

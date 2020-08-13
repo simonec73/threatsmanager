@@ -1926,6 +1926,7 @@ namespace ThreatsManager.Engine.ObjectModel
         #region Implementation of Dirty.
         public event Action<IDirty, bool> DirtyChanged;
 
+        [AutoDirtyIgnore]
         public bool IsDirty { get; private set; }
 
         public void SetDirty()

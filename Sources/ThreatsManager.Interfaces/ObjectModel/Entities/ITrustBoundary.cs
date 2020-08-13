@@ -10,5 +10,10 @@
         /// </summary>
         /// <remarks>It returns null if there is no known Template which generated the Trust Boundary.</remarks>
         ITrustBoundaryTemplate Template { get; }
+
+        /// <summary>
+        /// Disassociate the Trust Boundary from the underlying Template.
+        /// </summary>
+        void ResetTemplate();
     }
 }

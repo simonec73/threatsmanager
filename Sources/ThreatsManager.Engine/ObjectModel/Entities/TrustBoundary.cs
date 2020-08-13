@@ -160,6 +160,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        public void ResetTemplate()
+        {
+            this.ClearProperties();
+            _model.AutoApplySchemas(this);
+
+            _templateId = Guid.Empty;
+            _template = null;
+        }
+
         public override string ToString()
         {
             return Name ?? "<undefined>";
@@ -179,6 +188,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     Name = Name,
                     Description = Description,
                     _parentId = _parentId,
+                    _templateId = _templateId
                 };
                 this.CloneProperties(result);
 

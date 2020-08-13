@@ -42,6 +42,11 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         IFlowTemplate Template { get; }
 
         /// <summary>
+        /// Disassociate the Flow from the underlying Template.
+        /// </summary>
+        void ResetTemplate();
+
+        /// <summary>
         /// Creates a duplicate of the current Data Flow and attaches it to the Container passed as argument.
         /// </summary>
         /// <param name="container">Destination container.</param>
