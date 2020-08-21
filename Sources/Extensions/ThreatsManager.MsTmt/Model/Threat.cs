@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using PostSharp.Patterns.Contracts;
@@ -132,7 +131,7 @@ namespace ThreatsManager.MsTmt.Model
         #endregion
 
         #region Private methods.
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private void AnalyzeValue([NotNull] XmlNode xmlNode)
         {
             foreach (XmlNode node in xmlNode.ChildNodes)

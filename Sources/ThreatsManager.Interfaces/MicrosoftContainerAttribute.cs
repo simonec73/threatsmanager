@@ -1,5 +1,4 @@
 ﻿using System;
-using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.Interfaces
 {

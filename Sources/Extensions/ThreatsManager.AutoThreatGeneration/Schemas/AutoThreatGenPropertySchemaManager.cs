@@ -1,5 +1,4 @@
-﻿using System.Runtime.Remoting.Messaging;
-using PostSharp.Patterns.Contracts;
+﻿using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoThreatGeneration.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;

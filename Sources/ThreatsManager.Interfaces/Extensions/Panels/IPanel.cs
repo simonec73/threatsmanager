@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace ThreatsManager.Interfaces.Extensions.Panels
 {
@@ -16,11 +15,7 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
         /// <summary>
         /// Form containing the Panel.
         /// </summary>
-        Form ContainingForm { get; set; }
-
-        ///// <summary>
-        ///// Definition of the action associated to the Panel.
-        ///// </summary>
-        //IActionDefinition ActionDefinition { get; }
+        /// <remarks>It may be a Windows Form, but not necessarily.</remarks>
+        object ContainingForm { get; set; }
     }
 }

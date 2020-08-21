@@ -141,7 +141,7 @@ namespace ThreatsManager.Engine
                                         if (certificates?.Any() ?? false)
                                         {
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-                                            var certificate = assembly.GetModules().First().GetSignerCertificate();
+                                            var certificate = X509Certificate.CreateFromSignedFile(dll);
                                             if (certificate != null &&
                                                 certificates.Any(x =>
                                                     string.Compare(x.Thumbprint,

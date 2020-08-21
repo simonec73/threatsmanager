@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
@@ -206,7 +205,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void RegisterEvents([NotNull] IEntity entity)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IEntity entity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) entity).PropertyChanged += OnPropertyChanged;
@@ -217,7 +216,7 @@ namespace ThreatsManager.Engine.ObjectModel
             entity.ThreatEventRemoved += OnThreatEventRemovedFromEntity;
         }
 
-        private void UnregisterEvents([NotNull] IEntity entity)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IEntity entity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) entity).PropertyChanged -= OnPropertyChanged;
@@ -228,7 +227,7 @@ namespace ThreatsManager.Engine.ObjectModel
             entity.ThreatEventRemoved -= OnThreatEventRemovedFromEntity;
         }
 
-        private void RegisterEvents([NotNull] IGroup group)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IGroup group)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) group).PropertyChanged += OnPropertyChanged;
@@ -237,7 +236,7 @@ namespace ThreatsManager.Engine.ObjectModel
             group.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IGroup group)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IGroup group)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) group).PropertyChanged -= OnPropertyChanged;
@@ -246,7 +245,7 @@ namespace ThreatsManager.Engine.ObjectModel
             group.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IDataFlow dataFlow)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IDataFlow dataFlow)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) dataFlow).PropertyChanged += OnPropertyChanged;
@@ -257,7 +256,7 @@ namespace ThreatsManager.Engine.ObjectModel
             dataFlow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
         }
 
-        private void UnregisterEvents([NotNull] IDataFlow dataFlow)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IDataFlow dataFlow)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) dataFlow).PropertyChanged -= OnPropertyChanged;
@@ -268,19 +267,19 @@ namespace ThreatsManager.Engine.ObjectModel
             dataFlow.ThreatEventRemoved -= OnThreatEventRemovedFromDataFlow;
         }
 
-        private void RegisterEvents([NotNull] IPropertySchema schema)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IPropertySchema schema)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) schema).PropertyChanged += OnPropertyChanged;
         }
 
-        private void UnregisterEvents([NotNull] IPropertySchema schema)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IPropertySchema schema)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) schema).PropertyChanged -= OnPropertyChanged;
         }
 
-        private void RegisterEvents([NotNull] IDiagram diagram)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IDiagram diagram)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) diagram).PropertyChanged += OnPropertyChanged;
@@ -295,7 +294,7 @@ namespace ThreatsManager.Engine.ObjectModel
             diagram.LinkRemoved += OnLinkRemoved;
         }
 
-        private void UnregisterEvents([NotNull] IDiagram diagram)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IDiagram diagram)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) diagram).PropertyChanged -= OnPropertyChanged;
@@ -310,7 +309,7 @@ namespace ThreatsManager.Engine.ObjectModel
             diagram.LinkRemoved -= OnLinkRemoved;
         }
 
-        private void RegisterEvents([NotNull] ISeverity severity)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) severity).PropertyChanged += OnPropertyChanged;
@@ -319,7 +318,7 @@ namespace ThreatsManager.Engine.ObjectModel
             severity.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] ISeverity severity)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) severity).PropertyChanged -= OnPropertyChanged;
@@ -328,7 +327,7 @@ namespace ThreatsManager.Engine.ObjectModel
             severity.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IThreatType threatType)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatType threatType)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) threatType).PropertyChanged += OnPropertyChanged;
@@ -337,7 +336,7 @@ namespace ThreatsManager.Engine.ObjectModel
             threatType.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IThreatType threatType)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatType threatType)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) threatType).PropertyChanged -= OnPropertyChanged;
@@ -346,7 +345,7 @@ namespace ThreatsManager.Engine.ObjectModel
             threatType.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IMitigation mitigation)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) mitigation).PropertyChanged += OnPropertyChanged;
@@ -355,7 +354,7 @@ namespace ThreatsManager.Engine.ObjectModel
             mitigation.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IMitigation mitigation)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) mitigation).PropertyChanged -= OnPropertyChanged;
@@ -364,7 +363,7 @@ namespace ThreatsManager.Engine.ObjectModel
             mitigation.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IThreatActor actor)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatActor actor)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) actor).PropertyChanged += OnPropertyChanged;
@@ -373,7 +372,7 @@ namespace ThreatsManager.Engine.ObjectModel
             actor.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IThreatActor actor)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatActor actor)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) actor).PropertyChanged -= OnPropertyChanged;
@@ -390,7 +389,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void OnPropertyAdded([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        private void OnPropertyAdded([PostSharp.Patterns.Contracts.NotNull] IPropertiesContainer container, [PostSharp.Patterns.Contracts.NotNull] IProperty property)
         {
             if (container is IIdentity identity)
             {
@@ -398,7 +397,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void OnPropertyRemoved([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        private void OnPropertyRemoved([PostSharp.Patterns.Contracts.NotNull] IPropertiesContainer container, [PostSharp.Patterns.Contracts.NotNull] IProperty property)
         {
             if (container is IIdentity identity)
             {
@@ -406,7 +405,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void OnPropertyValueChanged([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        private void OnPropertyValueChanged([PostSharp.Patterns.Contracts.NotNull] IPropertiesContainer container, [PostSharp.Patterns.Contracts.NotNull] IProperty property)
         {
             if (container is IIdentity identity)
             {
@@ -615,7 +614,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        public string GetIdentityTypeName([NotNull] IIdentity identity)
+        public string GetIdentityTypeName([PostSharp.Patterns.Contracts.NotNull] IIdentity identity)
         {
             return GetIdentityTypeName(identity.GetType());
         }
@@ -628,7 +627,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return attribs?.Length > 0 ? attribs[0].Label : type.Name;
         }
 
-        public string GetIdentityTypeInitial([NotNull] IIdentity identity)
+        public string GetIdentityTypeInitial([PostSharp.Patterns.Contracts.NotNull] IIdentity identity)
         {
             return GetIdentityTypeInitial(identity.GetType());
         }
@@ -730,7 +729,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public int NotMitigatedThreatEvents => GetThreatEvents()?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
 
-        public int CountThreatEvents([NotNull] ISeverity severity)
+        public int CountThreatEvents([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             return CountThreatEvents(severity.Id);
         }
@@ -747,7 +746,7 @@ namespace ThreatsManager.Engine.ObjectModel
                                              .Count() ?? 0) ?? 0);
         }
 
-        public int CountThreatEventsByType([NotNull] ISeverity severity)
+        public int CountThreatEventsByType([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             return CountThreatEventsByType(severity.Id);
         }
@@ -822,7 +821,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations([NotNull] IMitigation mitigation)
+        public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             var result = new List<IThreatEventMitigation>();
 
@@ -877,7 +876,7 @@ namespace ThreatsManager.Engine.ObjectModel
         
         private void GetThreatEvents(IEnumerable<IThreatEventsContainer> containers, 
             IThreatType reference,
-            [NotNull] List<IThreatEvent> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEvent> list)
         {
             var cs = containers?.ToArray();
             if (cs?.Any() ?? false)
@@ -891,7 +890,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void GetThreatEvents(IThreatEventsContainer container, 
             IThreatType reference,
-            [NotNull] List<IThreatEvent> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEvent> list)
         {
             var threats = container?.ThreatEvents?
                 .Where(x => (reference == null) || (x.ThreatTypeId == reference.Id)).ToArray();
@@ -903,7 +902,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private static void GetMitigations(
             IEnumerable<IEnumerable<IEnumerable<IThreatEventMitigation>>> arrayOfArraysOfEnumerables, 
-            [NotNull] List<IMitigation> mitigations)
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
         {
             if (arrayOfArraysOfEnumerables?.Any() ?? false)
             {
@@ -915,7 +914,7 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         private static void GetMitigations(IEnumerable<IEnumerable<IThreatEventMitigation>> arrayOfEnumerables, 
-            [NotNull] List<IMitigation> mitigations)
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
         {
             if (arrayOfEnumerables?.Any() ?? false)
             {
@@ -934,7 +933,7 @@ namespace ThreatsManager.Engine.ObjectModel
         }
         
         private void GetMitigations(IEnumerable<IThreatEventsContainer> containers, IMitigation reference,
-            [NotNull] List<IThreatEventMitigation> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEventMitigation> list)
         {
             var cs = containers?.ToArray();
             if (cs?.Any() ?? false)
@@ -947,7 +946,7 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         private void GetMitigations(IThreatEventsContainer container, IMitigation reference,
-            [NotNull] List<IThreatEventMitigation> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEventMitigation> list)
         {
             var threats = container?.ThreatEvents?.ToArray();
             if (threats?.Any() ?? false)
@@ -1015,7 +1014,7 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Implementation of Threat Model Duplication.
-        public IThreatModel Duplicate([Required] string name, [NotNull] DuplicationDefinition def)
+        public IThreatModel Duplicate([Required] string name, [PostSharp.Patterns.Contracts.NotNull] DuplicationDefinition def)
         {
             if (!Validate(def, out var reasons))
                 throw new InvalidDuplicationDefinitionException(reasons);
@@ -1056,7 +1055,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private void DuplicateContributors([NotNull] ThreatModel dest)
+        private void DuplicateContributors([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest)
         {
             var list = Contributors?.ToArray();
             if (list?.Any() ?? false)
@@ -1068,7 +1067,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateAssumptions([NotNull] ThreatModel dest)
+        private void DuplicateAssumptions([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest)
         {
             var list = Assumptions?.ToArray();
             if (list?.Any() ?? false)
@@ -1080,7 +1079,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateDependencies([NotNull] ThreatModel dest)
+        private void DuplicateDependencies([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest)
         {
             var list = ExternalDependencies?.ToArray();
             if (list?.Any() ?? false)
@@ -1092,7 +1091,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateSeverities([NotNull] ThreatModel dest, IEnumerable<int> list)
+        private void DuplicateSeverities([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<int> list)
         {
             var severities = Severities?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (severities?.Any() ?? false)
@@ -1104,7 +1103,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateStrengths([NotNull] ThreatModel dest, IEnumerable<int> list)
+        private void DuplicateStrengths([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<int> list)
         {
             var strengths = Strengths?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (strengths?.Any() ?? false)
@@ -1116,7 +1115,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicatePropertySchemas([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicatePropertySchemas([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var schemas = Schemas?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (schemas?.Any() ?? false)
@@ -1128,7 +1127,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateProperties([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateProperties([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var properties = Properties?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (properties?.Any() ?? false)
@@ -1142,7 +1141,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateThreatActors([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateThreatActors([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var actors = ThreatActors?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (actors?.Any() ?? false)
@@ -1154,7 +1153,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateMitigations([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateMitigations([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var mitigations = Mitigations?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (mitigations?.Any() ?? false)
@@ -1166,7 +1165,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateThreatTypes([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateThreatTypes([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var threatTypes = ThreatTypes?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (threatTypes?.Any() ?? false)
@@ -1178,7 +1177,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateGroups([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateGroups([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var groups = Groups?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (groups?.Any() ?? false)
@@ -1190,7 +1189,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateEntityTemplates([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateEntityTemplates([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var templates = EntityTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (templates?.Any() ?? false)
@@ -1202,7 +1201,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateFlowTemplates([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateFlowTemplates([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var templates = FlowTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (templates?.Any() ?? false)
@@ -1214,7 +1213,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateTrustBoundaryTemplates([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateTrustBoundaryTemplates([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var templates = TrustBoundaryTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (templates?.Any() ?? false)
@@ -1226,7 +1225,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateEntities([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateEntities([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var entities = Entities?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (entities?.Any() ?? false)
@@ -1238,7 +1237,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateDataFlows([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateDataFlows([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var dataFlows = DataFlows?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (dataFlows?.Any() ?? false)
@@ -1250,7 +1249,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateDiagrams([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateDiagrams([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var diagrams = Diagrams?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (diagrams?.Any() ?? false)
@@ -1262,7 +1261,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private bool Validate([NotNull] DuplicationDefinition def, out IEnumerable<string> reasons)
+        private bool Validate([PostSharp.Patterns.Contracts.NotNull] DuplicationDefinition def, out IEnumerable<string> reasons)
         {
             bool result = true;
 
@@ -1358,8 +1357,8 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<int> knownStrengths, bool all, IEnumerable<Guid> selected, 
             IEnumerable<IIdentity> identities)
         {
@@ -1441,7 +1440,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
         
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownStrengths, 
             IEnumerable<IThreatTypeMitigation> mitigations)
         {
             bool result = true;
@@ -1464,7 +1463,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<IEntity> entities)
         {
             bool result = true;
@@ -1485,7 +1484,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
         
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<IDataFlow> dataFlows)
         {
             bool result = true;
@@ -1507,7 +1506,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<IThreatEvent> threatEvents)
         {
             bool result = true;
@@ -1530,7 +1529,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
             IEnumerable<IThreatEventMitigation> mitigations)
         {
             bool result = true;
@@ -1552,7 +1551,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<IEntityShape> container)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<IEntityShape> container)
         {
             bool result = true;
 
@@ -1572,7 +1571,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<IGroupShape> container)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<IGroupShape> container)
         {
             bool result = true;
 
@@ -1592,7 +1591,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<ILink> container)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<ILink> container)
         {
             bool result = true;
 
@@ -1612,7 +1611,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, bool all, IEnumerable<Guid> selected, IEnumerable<IProperty> properties)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, bool all, IEnumerable<Guid> selected, IEnumerable<IProperty> properties)
         {
             bool result = true;
 
@@ -1632,7 +1631,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private void AddIdentities([NotNull] List<Guid> known, 
+        private void AddIdentities([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, 
             bool all, IEnumerable<Guid> selected, IEnumerable<IIdentity> identities)
         {
             var list = identities?.Where(x => all || (selected?.Contains(x.Id) ?? false)).ToArray();
@@ -1654,7 +1653,7 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Implementation of Threat Model Merge.
-        public bool Merge([NotNull] IThreatModel source, [NotNull] DuplicationDefinition def)
+        public bool Merge([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, [PostSharp.Patterns.Contracts.NotNull] DuplicationDefinition def)
         {
             bool result = false;
 
@@ -1678,7 +1677,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private void MergeSchemas([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeSchemas([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.Schemas?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1690,7 +1689,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeSchema([NotNull] IPropertySchema schema)
+        private void MergeSchema([PostSharp.Patterns.Contracts.NotNull] IPropertySchema schema)
         {
             var existing = GetSchema(schema.Name, schema.Namespace);
             if (existing == null)
@@ -1708,7 +1707,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeEntityTemplates([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeEntityTemplates([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.EntityTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1720,7 +1719,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeEntityTemplate([NotNull] IEntityTemplate entityTemplate)
+        private void MergeEntityTemplate([PostSharp.Patterns.Contracts.NotNull] IEntityTemplate entityTemplate)
         {
             var existing = EntityTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, entityTemplate.Name) == 0);
             if (existing == null)
@@ -1733,7 +1732,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeFlowTemplates([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeFlowTemplates([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.FlowTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1745,7 +1744,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeFlowTemplate([NotNull] IFlowTemplate flowTemplate)
+        private void MergeFlowTemplate([PostSharp.Patterns.Contracts.NotNull] IFlowTemplate flowTemplate)
         {
             var existing = FlowTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, flowTemplate.Name) == 0);
             if (existing == null)
@@ -1758,7 +1757,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeTrustBoundaryTemplates([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeTrustBoundaryTemplates([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.TrustBoundaryTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1770,7 +1769,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeTrustBoundaryTemplate([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
+        private void MergeTrustBoundaryTemplate([PostSharp.Patterns.Contracts.NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
         {
             var existing = TrustBoundaryTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, trustBoundaryTemplate.Name) == 0);
             if (existing == null)
@@ -1783,7 +1782,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeSeverities([NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
+        private void MergeSeverities([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
         {
             var selected = source.Severities?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1795,7 +1794,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeSeverity([NotNull] ISeverity severity)
+        private void MergeSeverity([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             var existing = Severities?.FirstOrDefault(x => x.Id == severity.Id);
             if (existing == null)
@@ -1808,7 +1807,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeStrengths([NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
+        private void MergeStrengths([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
         {
             var selected = source.Strengths?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1820,7 +1819,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeStrength([NotNull] IStrength strength)
+        private void MergeStrength([PostSharp.Patterns.Contracts.NotNull] IStrength strength)
         {
             var existing = Strengths?.FirstOrDefault(x => x.Id == strength.Id);
             if (existing == null)
@@ -1833,7 +1832,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatActors([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeThreatActors([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.ThreatActors?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1845,7 +1844,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatActor([NotNull] IThreatActor threatActor)
+        private void MergeThreatActor([PostSharp.Patterns.Contracts.NotNull] IThreatActor threatActor)
         {
             var existing = ThreatActors?.FirstOrDefault(x => string.CompareOrdinal(x.Name, threatActor.Name) == 0);
             if (existing == null)
@@ -1858,7 +1857,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeMitigations([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeMitigations([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.Mitigations?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1870,7 +1869,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeMitigation([NotNull] IMitigation mitigation)
+        private void MergeMitigation([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             var existing = Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, mitigation.Name) == 0);
             if (existing == null)
@@ -1883,7 +1882,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatTypes([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeThreatTypes([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.ThreatTypes?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1895,7 +1894,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatType([NotNull] IThreatType threatType)
+        private void MergeThreatType([PostSharp.Patterns.Contracts.NotNull] IThreatType threatType)
         {
             var existing = ThreatTypes?.FirstOrDefault(x => string.CompareOrdinal(x.Name, threatType.Name) == 0);
             if (existing == null)

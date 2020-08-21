@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Configuration;
 using System.Xml;
-using Antlr4.Runtime.Misc;
 using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.MsTmt.Model

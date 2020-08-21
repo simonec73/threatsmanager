@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Xml;
-using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.MsTmt.Model
 {
     public class ElementTypeInfo : TypeInfo
     {
         public ElementTypeInfo(ElementType elementType, string typeId, string parentTypeId, string name, string description, 
-            Bitmap image, [NotNull] IEnumerable<XmlNode> properties, bool isGeneric, bool isTemplate) : base(properties, isTemplate)
+            Bitmap image, IEnumerable<XmlNode> properties, bool isGeneric, bool isTemplate) : base(properties, isTemplate)
         {
             ElementType = elementType;
             TypeId = typeId;

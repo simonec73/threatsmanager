@@ -1,161 +1,50 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\PostSharp.6.6.7\build\PostSharp.props" Condition="Exists('packages\PostSharp.6.6.7\build\PostSharp.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8585EDEF-83FC-4818-805C-665112EFD84D}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThreatsManager.MsTmt</RootNamespace>
-    <AssemblyName>ThreatsManager.MsTmt</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <Description>Threats Manager Platform Microsoft Threat Modeling Tool Importmport library.</Description>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <Authors>Simone Curzi</Authors>
+    <Company>Simone Curzi</Company>
+    <Product>Threats Manager Platform</Product>
+    <Copyright>Copyright © Simone Curzi, 2018-2020. All Rights Reserved.</Copyright>
+    <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
+    <FileVersion>1.3.0.0</FileVersion>
+    <Version>1.3.0</Version>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="ExtensionsContainer.cs" />
-    <Compile Include="Importer.cs" />
-    <Compile Include="ListProviderExtension.cs" />
-    <Compile Include="Model\AutoThreatGen\RuleVisitor.cs" />
-    <Compile Include="Model\AutoThreatGen\TmtBaseListener.cs" />
-    <Compile Include="Model\AutoThreatGen\TmtBaseVisitor.cs" />
-    <Compile Include="Model\AutoThreatGen\TmtLexer.cs" />
-    <Compile Include="Model\AutoThreatGen\TmtListener.cs" />
-    <Compile Include="Model\AutoThreatGen\TmtParser.cs" />
-    <Compile Include="Model\AutoThreatGen\TmtVisitor.cs" />
-    <Compile Include="Model\ElementInfo.cs" />
-    <Compile Include="Model\ElementType.cs" />
-    <Compile Include="Model\ElementTypeInfo.cs" />
-    <Compile Include="Model\FlowInfo.cs" />
-    <Compile Include="Model\ThreatType.cs" />
-    <Compile Include="Model\TypeInfo.cs" />
-    <Compile Include="Model\Info.cs" />
-    <Compile Include="Model\Property.cs" />
-    <Compile Include="Model\PropertyDefinition.cs" />
-    <Compile Include="Model\PropertyName.cs" />
-    <Compile Include="Model\PropertyType.cs" />
-    <Compile Include="Model\Threat.cs" />
-    <Compile Include="Model\ThreatModel.cs" />
-    <Compile Include="Model\ThreatModel.Info.cs" />
-    <Compile Include="Model\ThreatModel.Load.cs" />
-    <Compile Include="Model\ThreatState.cs" />
-    <Compile Include="Model\ValidationResult.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license" Link="PostSharp.license" />
+    <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
+    <PackageReference Include="PostSharp" Version="6.6.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
+    <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
+    <ProjectReference Include="..\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Schemas\ListProvider.cs" />
-    <Compile Include="Schemas\BaseProcessPropertySchemaManager.cs" />
-    <Compile Include="Schemas\BaseDataStorePropertySchemaManager.cs" />
-    <Compile Include="Schemas\BaseTrustBoundaryPropertySchemaManager.cs" />
-    <Compile Include="Schemas\BaseExternalInteractorPropertySchemaManager.cs" />
-    <Compile Include="Schemas\BaseFlowPropertySchemaManager.cs" />
-    <Compile Include="Schemas\TmtPropertySchemaManager.cs" />
-    <Compile Include="Schemas\ObjectPropertySchemaManager.cs" />
-    <Compile Include="Schemas\ThreatsPropertySchemaManager.cs" />
-    <Compile Include="SolutionInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Antlr4.Runtime.Standard, Version=4.8.0.0, Culture=neutral, PublicKeyToken=e78b2c5abd1fcb3f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\Antlr4.Runtime.Standard.4.8.0\lib\net35\Antlr4.Runtime.Standard.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp, Version=6.6.7.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Redist.6.6.7\lib\net45\PostSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Aggregation.Redist.6.6.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp.Patterns.Common, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Common.Redist.6.6.7\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp.Patterns.Model, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Model.Redist.6.6.7\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp.Patterns.Threading, Version=6.6.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Threats Manager Platform\Dev\packages\PostSharp.Patterns.Threading.Redist.6.6.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license">
-      <Link>PostSharp.license</Link>
-    </EmbeddedResource>
-    <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk">
-      <Link>ThreatsManager.snk</Link>
-    </None>
-    <None Include="Model\AutoThreatGen\Tmt.g4" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj">
-      <Project>{3ae427f4-c1e3-4283-91a3-9ecaca448e4d}</Project>
-      <Name>ThreatsManager.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj">
-      <Project>{854e9bca-48b5-41dc-bd0a-26ff5a1c8546}</Project>
-      <Name>ThreatsManager.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj">
-      <Project>{1dd66aab-a2c1-4a1d-9074-fd9bbe59afe6}</Project>
-      <Name>ThreatsManager.AutoThreatGeneration</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\PostSharp.6.6.7\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.6.6.7\build\PostSharp.props'))" />
-    <Error Condition="!Exists('packages\PostSharp.6.6.7\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.6.6.7\build\PostSharp.targets'))" />
-  </Target>
-  <Import Project="packages\PostSharp.6.6.7\build\PostSharp.targets" Condition="Exists('packages\PostSharp.6.6.7\build\PostSharp.targets')" />
+
 </Project>
