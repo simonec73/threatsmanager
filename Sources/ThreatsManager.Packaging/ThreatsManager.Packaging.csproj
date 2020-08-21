@@ -16,6 +16,10 @@
     <AssemblyOriginatorKeyFile>..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <SkipPostSharp>True</SkipPostSharp>
+  </PropertyGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="..\ThreatsManager.Engine\PostSharp.license" Link="PostSharp.license" />
     <None Include="..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
@@ -23,8 +27,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="PostSharp" Version="6.6.12" />
-    <PackageReference Include="PostSharp.Patterns.Aggregation" Version="6.6.12" />
+    <PackageReference Include="PostSharp" Version="6.6.13" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="6.6.13" />
     <PackageReference Include="System.IO.Packaging" Version="4.7.0" />
   </ItemGroup>
 
