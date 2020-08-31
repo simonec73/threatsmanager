@@ -10,9 +10,11 @@ using ThreatsManager.Utilities;
 
 namespace SampleWinFormExtensions.Panels.AzureDevOps
 {
-    public partial class AzureDevOpsPanel : UserControl, IShowThreatModelPanel
+    public partial class AzureDevOpsPanel : UserControl, IShowThreatModelPanel<Form>
     {
+        private readonly Guid _id = Guid.NewGuid();
         private readonly Random _rand = new Random();
+
 
         public AzureDevOpsPanel()
         {
@@ -20,7 +22,9 @@ namespace SampleWinFormExtensions.Panels.AzureDevOps
         }
 
         #region Implementation of interface IShowThreatModelPanel.
-        public Form ContainingForm { get; set; }
+        public Guid Id => _id;
+
+        public Form PanelContainer { get; set; }
 
         public void SetThreatModel(IThreatModel model)
         {

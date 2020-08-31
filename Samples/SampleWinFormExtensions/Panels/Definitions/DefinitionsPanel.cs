@@ -10,8 +10,9 @@ using ThreatsManager.Utilities;
 
 namespace SampleWinFormExtensions.Panels.Definitions
 {
-    public partial class DefinitionsPanel : UserControl, IShowThreatModelPanel
+    public partial class DefinitionsPanel : UserControl, IShowThreatModelPanel<Form>
     {
+        private readonly Guid _id = Guid.NewGuid();
         private DefinitionContainer _container;
         private bool _loading = true;
 
@@ -21,7 +22,9 @@ namespace SampleWinFormExtensions.Panels.Definitions
         }
 
         #region Implementation of interface IShowThreatModelPanel.
-        public Form ContainingForm { get; set; }
+        public Guid Id => _id;
+
+        public Form PanelContainer { get; set; }
 
         public void SetThreatModel(IThreatModel model)
         {

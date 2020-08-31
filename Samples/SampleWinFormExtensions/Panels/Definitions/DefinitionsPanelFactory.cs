@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Windows.Forms;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -9,7 +10,7 @@ namespace SampleWinFormExtensions.Panels.Definitions
 {
     [Extension(typeof(IPanelFactory), "2ED5A24F-1666-4171-B4AB-07FF00AAD2D6",
         "Definitions Editor Panel", 1000, ExecutionMode.Business)]
-    public partial class DefinitionsPanelFactory : IPanelFactory, IMainRibbonExtension, IPanelFactoryActionsRequestor
+    public partial class DefinitionsPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.
         /// <summary>
@@ -17,7 +18,7 @@ namespace SampleWinFormExtensions.Panels.Definitions
         /// </summary>
         public InstanceMode Behavior => InstanceMode.Single;
 
-        public IPanel Create(IIdentity identity, out IActionDefinition action)
+        public IPanel<Form> Create(IIdentity identity, out IActionDefinition action)
         {
             var result = new DefinitionsPanel();
 
@@ -26,7 +27,7 @@ namespace SampleWinFormExtensions.Panels.Definitions
             return result;
         }
 
-        public IPanel Create(IActionDefinition action)
+        public IPanel<Form> Create(IActionDefinition action)
         {
             return new DefinitionsPanel();
         }

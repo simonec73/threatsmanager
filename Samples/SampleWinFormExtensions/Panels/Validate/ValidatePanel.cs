@@ -9,15 +9,19 @@ using ThreatsManager.Utilities;
 
 namespace SampleWinFormExtensions.Panels.Validate
 {
-    public partial class ValidatePanel : UserControl, IShowThreatModelPanel
+    public partial class ValidatePanel : UserControl, IShowThreatModelPanel<Form>
     {
+        private readonly Guid _id = Guid.NewGuid();
+
         public ValidatePanel()
         {
             InitializeComponent();
         }
 
         #region Implementation of interface IShowThreatModelPanel.
-        public Form ContainingForm { get; set; }
+        public Guid Id => _id;
+
+        public Form PanelContainer { get; set; }
 
         public void SetThreatModel(IThreatModel model)
         {
