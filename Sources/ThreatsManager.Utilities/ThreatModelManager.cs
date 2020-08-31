@@ -7,6 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -49,12 +50,11 @@ namespace ThreatsManager.Utilities
             {
                 var instance = property.GetValue(null);
                 result = type.InvokeMember("CreateNewThreatModel", BindingFlags.InvokeMethod, null, instance,
-                    new object[] {"Default Threat Model"}) as IThreatModel;
+                    new object[] { "Default Threat Model" }) as IThreatModel;
 
                 if (result != null)
                 {
                     _instances.Add(result);
-                    type.GetMethod("RegisterEvents")?.Invoke(result, null);
                 }
             }
 

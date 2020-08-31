@@ -23,11 +23,12 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
-    <PackageReference Include="PostSharp" Version="6.6.12" />
+    <PackageReference Include="PostSharp" Version="6.6.13" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
+    <ProjectReference Include="..\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

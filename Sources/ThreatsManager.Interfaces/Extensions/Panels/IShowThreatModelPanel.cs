@@ -5,7 +5,8 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     /// <summary>
     /// Interface representing a Panel handling IThreatModels.
     /// </summary>
-    public interface IShowThreatModelPanel : IPanel
+    /// <typeparam name="T">Type representing the Form containing the Panel.</typeparam>
+    public interface IShowThreatModelPanel<T> : IPanel<T>
     {
         /// <summary>
         /// Method to initialize the Panel with the Threat Model.

@@ -47,7 +47,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public event Action<string> DependencyRemoved;
         public event Action<string, string> DependencyChanged;
 
-        private void RegisterEvents()
+        internal void RegisterEvents()
         {
             PropertyAdded += OnPropertyAdded;
             PropertyRemoved += OnPropertyRemoved;

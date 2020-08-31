@@ -3,7 +3,7 @@
 namespace ThreatsManager.Interfaces.Extensions.Panels
 {
     /// <summary>
-    /// Interface representing a Panel.
+    /// Base interface representing a Panel.
     /// </summary>
     public interface IPanel
     {
@@ -11,11 +11,19 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
         /// Identifier of the Panel.
         /// </summary>
         Guid Id { get; }
+    }
 
+    /// <summary>
+    /// Interface representing a Panel.
+    /// </summary>
+    /// <typeparam name="T">Type representing the Form containing the Panel.</typeparam>
+    public interface IPanel<T> : IPanel
+    {
         /// <summary>
-        /// Form containing the Panel.
+        /// Container of the Panel.
         /// </summary>
-        /// <remarks>It may be a Windows Form, but not necessarily.</remarks>
-        object ContainingForm { get; set; }
+        /// <remarks>For Windows Forms-based solutions like Threats Manager Studio, it would be Windows Form.
+        /// For Web-based solutions, it would be something else.</remarks>
+        T Container { get; set; }
     }
 }

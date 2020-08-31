@@ -17,6 +17,7 @@ namespace ThreatsManager.Engine
             {
                 _model.SuspendDirty();
                 ApplyInitializers();
+                _model.RegisterEvents();
             }
             finally
             {
