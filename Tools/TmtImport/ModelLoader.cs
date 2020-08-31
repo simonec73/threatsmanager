@@ -28,25 +28,7 @@ namespace TmtImport
 
         private void OnTypeNotFound(string assemblyName, string typeName)
         {
-#if NETCOREAPP
-            if (assemblyName == "mscorelib")
-                assemblyName = "System.Private.CoreLib";
-#else
-            if (assemblyName == "System.Private.CoreLib")
-                assemblyName = "mscorelib";
-#endif
-
-            if (string.CompareOrdinal(assemblyName, "mscorlib") == 0)
-            {
-                var regex = new Regex(@"\[\[(?<class>[.\w]*), (?<assembly>[.\w]*)\]\]");
-                var match = regex.Match(typeName);
-                if (match.Success)
-                {
-                    assemblyName = match.Groups["assembly"].Value;
-                    typeName = match.Groups["class"].Value;
-                }
-            }
-            else if (string.CompareOrdinal(assemblyName, "System.Private.CoreLib") == 0)
+            if (string.CompareOrdinal(assemblyName, "mscorlib") == 0 || string.CompareOrdinal(assemblyName, "System.Private.CoreLib") == 0)
             {
                 var regex = new Regex(@"\[\[(?<class>[.\w]*), (?<assembly>[.\w]*)\]\]");
                 var match = regex.Match(typeName);

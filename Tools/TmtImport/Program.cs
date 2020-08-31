@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using ThreatsManager.Engine.Config;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Packaging;
 using ThreatsManager.Utilities;
 
