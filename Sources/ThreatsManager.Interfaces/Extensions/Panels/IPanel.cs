@@ -24,6 +24,6 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
         /// </summary>
         /// <remarks>For Windows Forms-based solutions like Threats Manager Studio, it would be Windows Form.
         /// For Web-based solutions, it would be something else.</remarks>
-        T Container { get; set; }
+        T PanelContainer { get; set; }
     }
 }
