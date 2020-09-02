@@ -33,6 +33,9 @@ namespace ThreatsManager.AutoThreatGeneration.Initializers
             KnownTypesBinder.AddKnownType(typeof(HasOutgoingRuleNode));
             KnownTypesBinder.AddKnownType(typeof(TruismRuleNode));
             KnownTypesBinder.AddKnownType(typeof(EntityTemplateRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(ExternalInteractorTemplateRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(ProcessTemplateRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(DataStoreTemplateRuleNode));
             KnownTypesBinder.AddKnownType(typeof(FlowTemplateRuleNode));
             KnownTypesBinder.AddKnownType(typeof(TrustBoundaryTemplateRuleNode));
         }

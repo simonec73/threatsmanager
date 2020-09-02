@@ -53,7 +53,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
 
         public override string ToString()
         {
-            return $"{Scope}:Is an instance of Entity Template with ID '{EntityTemplate:D}";
+            return $"{Scope}:Is an instance of {Name} with ID '{EntityTemplate:D}";
         }
     }
 }

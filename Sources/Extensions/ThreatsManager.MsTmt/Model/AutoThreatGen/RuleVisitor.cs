@@ -256,10 +256,30 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             }
             else if (entityTemplate != null)
             {
-                result = new EntityTemplateRuleNode(entityTemplate)
+                switch (entityTemplate.EntityType)
                 {
-                    Scope = scope
-                };
+                    case EntityType.ExternalInteractor:
+                        result = new ExternalInteractorTemplateRuleNode(entityTemplate)
+                        {
+                            Scope = scope
+                        };
+                        break;
+                    case EntityType.Process:
+                        result = new ProcessTemplateRuleNode(entityTemplate)
+                        {
+                            Scope = scope
+                        };
+                        break;
+                    case EntityType.DataStore:
+                        result = new DataStoreTemplateRuleNode(entityTemplate)
+                        {
+                            Scope = scope
+                        };
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                
             }
             else
             {
