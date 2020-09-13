@@ -27,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [GroupElementAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
+    [VulnerabilitiesContainerAspect]
     [TypeLabel("External Interactor")]
     [TypeInitial("E")]
     public class ExternalInteractor : IExternalInteractor, IInitializableObject
@@ -133,6 +134,33 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public void ResumeDirty()
         {
         }
+
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        public IEnumerable<IVulnerability> Vulnerabilities { get; }
+        public IVulnerability GetVulnerability(Guid id)
+        {
+            return null;
+        }
+
+        public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
+        {
+            return null;
+        }
+
+        public void Add(IVulnerability vulnerability)
+        {
+        }
+
+        public IVulnerability AddVulnerability(IWeakness weakness)
+        {
+            return null;
+        }
+
+        public bool RemoveVulnerability(Guid id)
+        {
+            return false;
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -141,6 +169,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected IThreatModel _model { get; set; }
         private List<IProperty> _properties { get; set; }
         private List<IThreatEvent> _threatEvents { get; set; }
+        private List<IVulnerability> _vulnerabilities { get; set; }
         private Guid _parentId { get; set; }
         private IGroup _parent { get; set; }
         #endregion

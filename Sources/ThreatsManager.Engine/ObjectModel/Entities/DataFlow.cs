@@ -25,6 +25,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [ThreatEventsContainerAspect]
+    [VulnerabilitiesContainerAspect]
     [TypeLabel("Flow")]
     [TypeInitial("F")]
     public class DataFlow : IDataFlow, IInitializableObject
@@ -134,12 +135,40 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public void ResumeDirty()
         {
         }
+
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        public IEnumerable<IVulnerability> Vulnerabilities { get; }
+        public IVulnerability GetVulnerability(Guid id)
+        {
+            return null;
+        }
+
+        public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
+        {
+            return null;
+        }
+
+        public void Add(IVulnerability vulnerability)
+        {
+        }
+
+        public IVulnerability AddVulnerability(IWeakness weakness)
+        {
+            return null;
+        }
+
+        public bool RemoveVulnerability(Guid id)
+        {
+            return false;
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
         private List<IProperty> _properties { get; set; }
         private List<IThreatEvent> _threatEvents { get; set; }
+        private List<IVulnerability> _vulnerabilities { get; set; }
         protected Guid _modelId { get; set; }
         protected IThreatModel _model { get; set; }
         #endregion    

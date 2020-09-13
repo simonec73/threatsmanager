@@ -11,7 +11,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// Finds a property given its Identifier.
         /// </summary>
         /// <param name="id">Identifier of the Property.</param>
-        /// <returns>Property, if found, otherwise false.</returns>
+        /// <returns>Property, if found, otherwise null.</returns>
         /// <remarks>The property is searched in any object associated to the Property Finder.</remarks>
         IProperty FindProperty(Guid id);
     }

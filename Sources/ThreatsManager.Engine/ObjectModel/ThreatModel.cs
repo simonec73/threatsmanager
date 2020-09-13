@@ -26,6 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
+    [VulnerabilitiesContainerAspect]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
     public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
@@ -124,6 +125,14 @@ namespace ThreatsManager.Engine.ObjectModel
                     RegisterEvents(threatType);
                 }
             }
+
+            if (_weaknesses?.Any() ?? false)
+            {
+                foreach (var weakness in _weaknesses)
+                {
+                    RegisterEvents(weakness);
+                }
+            }
         }
 
         private void UnregisterEvents()
@@ -201,6 +210,14 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var threatType in _threatTypes)
                 {
                     UnregisterEvents(threatType);
+                }
+            }
+
+            if (_weaknesses?.Any() ?? false)
+            {
+                foreach (var weakness in _weaknesses)
+                {
+                    UnregisterEvents(weakness);
                 }
             }
         }
@@ -343,6 +360,24 @@ namespace ThreatsManager.Engine.ObjectModel
             threatType.PropertyAdded -= OnPropertyAdded;
             threatType.PropertyRemoved -= OnPropertyRemoved;
             threatType.PropertyValueChanged -= OnPropertyValueChanged;
+        }
+
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IWeakness weakness)
+        {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            ((INotifyPropertyChanged)weakness).PropertyChanged += OnPropertyChanged;
+            weakness.PropertyAdded += OnPropertyAdded;
+            weakness.PropertyRemoved += OnPropertyRemoved;
+            weakness.PropertyValueChanged += OnPropertyValueChanged;
+        }
+
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IWeakness weakness)
+        {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            ((INotifyPropertyChanged)weakness).PropertyChanged -= OnPropertyChanged;
+            weakness.PropertyAdded -= OnPropertyAdded;
+            weakness.PropertyRemoved -= OnPropertyRemoved;
+            weakness.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
         private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
@@ -669,11 +704,93 @@ namespace ThreatsManager.Engine.ObjectModel
 
             return result ?? GetThreatActor(id);
         }
+        
+        public override string ToString()
+        {
+            return Name;
+        }
 
+        public IVulnerability FindVulnerability(Guid id)
+        {
+            IVulnerability result = null;
+
+            result = _vulnerabilities?.FirstOrDefault(x => x.Id == id);
+
+            if (result == null)
+            {
+                var entities = _entities?.ToArray();
+                if (entities?.Any() ?? false)
+                {
+                    foreach (var entity in entities)
+                    {
+                        result = entity.Vulnerabilities?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            if (result == null)
+            {
+                var dataFlows = _dataFlows?.ToArray();
+                if (dataFlows?.Any() ?? false)
+                {
+                    foreach (var dataFlow in dataFlows)
+                    {
+                        result = dataFlow.Vulnerabilities?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public IThreatEvent FindThreatEvent(Guid id)
+        {
+            IThreatEvent result = null;
+
+            result = _threatEvents?.FirstOrDefault(x => x.Id == id);
+
+            if (result == null)
+            {
+                var entities = _entities?.ToArray();
+                if (entities?.Any() ?? false)
+                {
+                    foreach (var entity in entities)
+                    {
+                        result = entity.ThreatEvents?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            if (result == null)
+            {
+                var dataFlows = _dataFlows?.ToArray();
+                if (dataFlows?.Any() ?? false)
+                {
+                    foreach (var dataFlow in dataFlows)
+                    {
+                        result = dataFlow.ThreatEvents?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Advanced Threats & Mitigations properties and functions.
         public int AssignedThreatTypes => CountThreatTypes();
         public int FullyMitigatedThreatTypes => _threatTypes?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
-        
+
         public int PartiallyMitigatedThreatTypes
         {
             get
@@ -773,19 +890,16 @@ namespace ThreatsManager.Engine.ObjectModel
         public int CountMitigationsByStatus(MitigationStatus status)
         {
             return (_threatEvents?.Sum(x => x.Mitigations?.Where(y => y.Status == status).Count() ?? 0) ?? 0) +
+                   (_vulnerabilities?.Sum(x => x.Mitigations?.Where(y => y.Status == status).Count() ?? 0) ?? 0) +
                    (_entities?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0);
+                   (_entities?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0);
         }
 
         public IEnumerable<IThreatEvent> GetThreatEvents()
         {
-            var threatEvents = new List<IThreatEvent>();
-
-            GetThreatEvents(this, null, threatEvents);
-            GetThreatEvents(_entities, null, threatEvents);
-            GetThreatEvents(_dataFlows, null, threatEvents);
-
-            return threatEvents;
+            return GetThreatEvents(null);
         }
 
         public IEnumerable<IThreatEvent> GetThreatEvents(IThreatType threatType)
@@ -804,24 +918,21 @@ namespace ThreatsManager.Engine.ObjectModel
             var mitigations = new List<IMitigation>();
 
             GetMitigations(_threatEvents?.Select(x => x.Mitigations), mitigations);
+            GetMitigations(_vulnerabilities?.Select(x => x.Mitigations), mitigations);
             GetMitigations(_entities?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
+            GetMitigations(_entities?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
             GetMitigations(_dataFlows?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
+            GetMitigations(_dataFlows?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
 
             return mitigations;
         }
 
         public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations()
         {
-            var result = new List<IThreatEventMitigation>();
-
-            GetMitigations(this, null, result);
-            GetMitigations(_entities, null, result);
-            GetMitigations(_dataFlows, null, result);
-
-            return result;
+            return GetThreatEventMitigations(null);
         }
 
-        public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
+        public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations(IMitigation mitigation)
         {
             var result = new List<IThreatEventMitigation>();
 
@@ -873,8 +984,8 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_entities?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0) +
                    (_dataFlows?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0);
         }
-        
-        private void GetThreatEvents(IEnumerable<IThreatEventsContainer> containers, 
+
+        private void GetThreatEvents(IEnumerable<IThreatEventsContainer> containers,
             IThreatType reference,
             [PostSharp.Patterns.Contracts.NotNull] List<IThreatEvent> list)
         {
@@ -888,7 +999,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void GetThreatEvents(IThreatEventsContainer container, 
+        private void GetThreatEvents(IThreatEventsContainer container,
             IThreatType reference,
             [PostSharp.Patterns.Contracts.NotNull] List<IThreatEvent> list)
         {
@@ -901,7 +1012,7 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         private static void GetMitigations(
-            IEnumerable<IEnumerable<IEnumerable<IThreatEventMitigation>>> arrayOfArraysOfEnumerables, 
+            IEnumerable<IEnumerable<IEnumerable<IThreatEventMitigation>>> arrayOfArraysOfEnumerables,
             [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
         {
             if (arrayOfArraysOfEnumerables?.Any() ?? false)
@@ -913,7 +1024,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private static void GetMitigations(IEnumerable<IEnumerable<IThreatEventMitigation>> arrayOfEnumerables, 
+        private static void GetMitigations(IEnumerable<IEnumerable<IThreatEventMitigation>> arrayOfEnumerables,
             [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
         {
             if (arrayOfEnumerables?.Any() ?? false)
@@ -931,7 +1042,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
         }
-        
+
         private void GetMitigations(IEnumerable<IThreatEventsContainer> containers, IMitigation reference,
             [PostSharp.Patterns.Contracts.NotNull] List<IThreatEventMitigation> list)
         {
@@ -960,10 +1071,267 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
         }
+        #endregion
 
-        public override string ToString()
+        #region Advanced Weaknesses & Mitigations properties and functions.
+        public int AssignedWeaknesses => CountWeaknesses();
+
+        public int FullyMitigatedWeaknesses => _weaknesses?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
+
+        public int PartiallyMitigatedWeaknesses
         {
-            return Name;
+            get
+            {
+                var result = 0;
+
+                var weaknesses = _weaknesses?.ToArray();
+                if (weaknesses?.Any() ?? false)
+                {
+                    foreach (var weakness in weaknesses)
+                    {
+                        var totalStrength = weakness.Mitigations?.Sum(x => x.StrengthId) ?? 0;
+                        if (totalStrength > 0 && totalStrength < 100)
+                            result++;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public int NotMitigatedWeaknesses => _weaknesses?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
+
+        public int TotalVulnerabilities => CountVulnerabilities();
+
+        public int FullyMitigatedVulnerabilities => GetVulnerabilities()?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
+
+        public int PartiallyMitigatedVulnerabilities
+        {
+            get
+            {
+                var result = 0;
+
+                var vulnerabilities = GetVulnerabilities()?.ToArray();
+                if (vulnerabilities?.Any() ?? false)
+                {
+                    foreach (var vulnerability in vulnerabilities)
+                    {
+                        var totalStrength = vulnerability.Mitigations?.Sum(x => x.StrengthId) ?? 0;
+                        if (totalStrength > 0 && totalStrength < 100)
+                            result++;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public int NotMitigatedVulnerabilities => GetVulnerabilities()?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
+
+        public int CountVulnerabilities([PostSharp.Patterns.Contracts.NotNull]  ISeverity severity)
+        {
+            return CountVulnerabilities(severity.Id);
+        }
+
+        public int CountVulnerabilities(int severityId)
+        {
+            return (_vulnerabilities?
+                       .Where(x => x.Severity != null && x.SeverityId == severityId).Count() ?? 0) +
+                   (_entities?.Sum(x => x.Vulnerabilities?
+                       .Where(y => y.Severity != null && y.SeverityId == severityId)
+                       .Count() ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.Vulnerabilities?
+                       .Where(y => y.Severity != null && y.SeverityId == severityId)
+                       .Count() ?? 0) ?? 0);
+        }
+
+        public int CountVulnerabilitiesByType([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
+        {
+            return CountVulnerabilitiesByType(severity.Id);
+        }
+
+        public int CountVulnerabilitiesByType(int severityId)
+        {
+            int result = 0;
+
+            var types = _weaknesses?.ToArray();
+
+            if (types?.Any() ?? false)
+            {
+                foreach (var type in types)
+                {
+                    var severity = type.GetTopSeverity();
+                    if (severity != null && severity.Id == severityId)
+                        result++;
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<IVulnerability> GetVulnerabilities()
+        {
+            return GetVulnerabilities(null);
+        }
+
+        public IEnumerable<IVulnerability> GetVulnerabilities(IWeakness weakness)
+        {
+            var vulnerabilities = new List<IVulnerability>();
+
+            GetVulnerabilities(this, weakness, vulnerabilities);
+            GetVulnerabilities(_entities, weakness, vulnerabilities);
+            GetVulnerabilities(_dataFlows, weakness, vulnerabilities);
+
+            return vulnerabilities;
+        }
+
+        public IEnumerable<IVulnerabilityMitigation> GetVulnerabilityMitigations()
+        {
+            return GetVulnerabilityMitigations(null);
+        }
+
+        public IEnumerable<IVulnerabilityMitigation> GetVulnerabilityMitigations(IMitigation mitigation)
+        {
+            var result = new List<IVulnerabilityMitigation>();
+
+            GetMitigations(this, mitigation, result);
+            GetMitigations(_entities, mitigation, result);
+            GetMitigations(_dataFlows, mitigation, result);
+
+            return result;
+        }
+
+        private int CountWeaknesses()
+        {
+            List<Guid> weaknesses = new List<Guid>();
+
+            GetWeaknesses(_vulnerabilities, weaknesses);
+            GetWeaknesses(_entities?.Select(x => x.Vulnerabilities), weaknesses);
+            GetWeaknesses(_dataFlows?.Select(x => x.Vulnerabilities), weaknesses);
+
+            return weaknesses.Count();
+        }
+
+        private static void GetWeaknesses(
+            IEnumerable<IEnumerable<IVulnerability>> arraysOfEnumerables, List<Guid> weaknesses)
+        {
+            if (arraysOfEnumerables?.Any() ?? false)
+            {
+                foreach (var enumerables in arraysOfEnumerables)
+                {
+                    GetWeaknesses(enumerables, weaknesses);
+                }
+            }
+        }
+
+        private static void GetWeaknesses(IEnumerable<IVulnerability> enumerables, List<Guid> weaknesses)
+        {
+            if (enumerables?.Any() ?? false)
+            {
+                foreach (var enumerable in enumerables)
+                {
+                    if (!weaknesses.Contains(enumerable.WeaknessId))
+                        weaknesses.Add(enumerable.WeaknessId);
+                }
+            }
+        }
+
+        private int CountVulnerabilities()
+        {
+            return (_vulnerabilities?.Count() ?? 0) +
+                   (_entities?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0);
+        }
+
+        private void GetVulnerabilities(IEnumerable<IVulnerabilitiesContainer> containers,
+            IWeakness reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerability> list)
+        {
+            var cs = containers?.ToArray();
+            if (cs?.Any() ?? false)
+            {
+                foreach (var container in cs)
+                {
+                    GetVulnerabilities(container, reference, list);
+                }
+            }
+        }
+
+        private void GetVulnerabilities(IVulnerabilitiesContainer container,
+            IWeakness reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerability> list)
+        {
+            var threats = container?.Vulnerabilities?
+                .Where(x => (reference == null) || (x.WeaknessId == reference.Id)).ToArray();
+            if (threats?.Any() ?? false)
+            {
+                list.AddRange(threats);
+            }
+        }
+
+        private static void GetMitigations(
+            IEnumerable<IEnumerable<IEnumerable<IVulnerabilityMitigation>>> arrayOfArraysOfEnumerables,
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
+        {
+            if (arrayOfArraysOfEnumerables?.Any() ?? false)
+            {
+                foreach (var arrayOfEnumerables in arrayOfArraysOfEnumerables)
+                {
+                    GetMitigations(arrayOfEnumerables, mitigations);
+                }
+            }
+        }
+
+        private static void GetMitigations(IEnumerable<IEnumerable<IVulnerabilityMitigation>> arrayOfEnumerables,
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
+        {
+            if (arrayOfEnumerables?.Any() ?? false)
+            {
+                foreach (var enumerable in arrayOfEnumerables)
+                {
+                    if (enumerable?.Any() ?? false)
+                    {
+                        foreach (var mitigation in enumerable)
+                        {
+                            if (!mitigations.Contains(mitigation.Mitigation))
+                                mitigations.Add(mitigation.Mitigation);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void GetMitigations(IEnumerable<IVulnerabilitiesContainer> containers, IMitigation reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerabilityMitigation> list)
+        {
+            var cs = containers?.ToArray();
+            if (cs?.Any() ?? false)
+            {
+                foreach (var container in cs)
+                {
+                    GetMitigations(container, reference, list);
+                }
+            }
+        }
+
+        private void GetMitigations(IVulnerabilitiesContainer container, IMitigation reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerabilityMitigation> list)
+        {
+            var vulnerabilities = container?.Vulnerabilities?.ToArray();
+            if (vulnerabilities?.Any() ?? false)
+            {
+                foreach (var vulnerability in vulnerabilities)
+                {
+                    var mitigations = vulnerability.Mitigations?
+                        .Where(x => (reference == null) || x.MitigationId == reference.Id).ToArray();
+                    if (mitigations?.Any() ?? false)
+                        list.AddRange(mitigations);
+                }
+            }
         }
         #endregion
 
@@ -2061,12 +2429,40 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             return false;
         }
+
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        public IEnumerable<IVulnerability> Vulnerabilities { get; }
+        public IVulnerability GetVulnerability(Guid id)
+        {
+            return null;
+        }
+
+        public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
+        {
+            return null;
+        }
+
+        public void Add(IVulnerability vulnerability)
+        {
+        }
+
+        public IVulnerability AddVulnerability(IWeakness weakness)
+        {
+            return null;
+        }
+
+        public bool RemoveVulnerability(Guid id)
+        {
+            return false;
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
         private List<IProperty> _properties { get; set; }
         private List<IThreatEvent> _threatEvents { get; set; }
+        private List<IVulnerability> _vulnerabilities { get; set; }
         #endregion
     }
 }

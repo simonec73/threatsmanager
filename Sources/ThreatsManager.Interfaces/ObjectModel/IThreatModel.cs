@@ -15,7 +15,8 @@ namespace ThreatsManager.Interfaces.ObjectModel
         IPropertySchemasContainer, IDiagramsContainer, ISeveritiesContainer, 
         IThreatTypesContainer, IStrengthsContainer, IMitigationsContainer, 
         IThreatActorsContainer, IEntityTemplatesContainer, IFlowTemplatesContainer,
-        ITrustBoundaryTemplatesContainer, IThreatEventsContainer, IDirty
+        ITrustBoundaryTemplatesContainer, IThreatEventsContainer, IThreatEventFinder,
+        IWeaknessesContainer, IVulnerabilitiesContainer, IVulnerabilityFinder, IDirty
     {
         #region Events.
         /// <summary>
@@ -288,6 +289,7 @@ namespace ThreatsManager.Interfaces.ObjectModel
         /// <summary>
         /// Counter of the unique assigned mitigations in the Threat Model.
         /// </summary>
+        /// <remarks>It includes the Mitigations associated to Threat Events and Vulnerabilities.</remarks>
         int UniqueMitigations { get; }
 
         /// <summary>
@@ -338,7 +340,7 @@ namespace ThreatsManager.Interfaces.ObjectModel
         /// </summary>
         /// <param name="status">Status.</param>
         /// <returns>Number of Mitigations with the specified status.</returns>
-        /// <remarks>The result is related to the single mitigations.
+        /// <remarks>The result is related to the single mitigations, applied to Threat Events or Vulnerabilities.
         /// This means that summing up all the values obtained applying the various states,
         /// the resulting value would generally be higher than what returned by <see cref="UniqueMitigations"/>.</remarks>
         int CountMitigationsByStatus(MitigationStatus status);
@@ -356,11 +358,11 @@ namespace ThreatsManager.Interfaces.ObjectModel
         /// <returns>Enumeration of the Threat Events associated to the given Threat Type.</returns>
         IEnumerable<IThreatEvent> GetThreatEvents(IThreatType threatType);
 
-
         /// <summary>
         /// Get the list of unique assigned mitigations in the Threat Model.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Enumeration of the Mitigations adopted within the Threat Model,
+        /// because associated to at least to a Threat Event or Vulnerability.</returns>
         IEnumerable<IMitigation> GetUniqueMitigations();
 
         /// <summary>
@@ -370,11 +372,107 @@ namespace ThreatsManager.Interfaces.ObjectModel
         IEnumerable<IThreatEventMitigation> GetThreatEventMitigations();
 
         /// <summary>
-        /// Get all the Threat Event Mitigations associated to a give Mitigation, inspecting the whole Threat Model.
+        /// Get all the Threat Event Mitigations associated to a given Mitigation, inspecting the whole Threat Model.
         /// </summary>
         /// <param name="mitigation">Reference mitigation.</param>
         /// <returns>Enumeration of the associations found.</returns>
         IEnumerable<IThreatEventMitigation> GetThreatEventMitigations(IMitigation mitigation);
+        #endregion
+
+        #region Advanced Weaknesses & Mitigations properties and functions.
+        /// <summary>
+        /// Counter of the Weaknesses that are associated to at least a Vulnerability in the Threat Model.
+        /// </summary>
+        int AssignedWeaknesses { get; }
+
+        /// <summary>
+        /// Counter of the number of Weaknesses that are fully Mitigated.
+        /// </summary>
+        int FullyMitigatedWeaknesses { get; }
+
+        /// <summary>
+        /// Counter of the number of Weaknesses that are partially Mitigated.
+        /// </summary>
+        int PartiallyMitigatedWeaknesses { get; }
+
+        /// <summary>
+        /// Counter of the number of Weaknesses that have not been Mitigated.
+        /// </summary>
+        int NotMitigatedWeaknesses { get; }
+
+        /// <summary>
+        /// Counter of the total number of Vulnerabilities defined in the Threat Model.
+        /// </summary>
+        int TotalVulnerabilities { get; }
+
+        /// <summary>
+        /// Counter of the number of Vulnerabilities that are fully Mitigated.
+        /// </summary>
+        int FullyMitigatedVulnerabilities { get; }
+
+        /// <summary>
+        /// Counter of the number of Vulnerabilities that are partially Mitigated.
+        /// </summary>
+        int PartiallyMitigatedVulnerabilities { get; }
+
+        /// <summary>
+        /// Counter of the number of Vulnerabilities that have not been Mitigated.
+        /// </summary>
+        int NotMitigatedVulnerabilities { get; }
+
+        /// <summary>
+        /// Count the Vulnerabilities by a specific severity.
+        /// </summary>
+        /// <param name="severity">Reference severity.</param>
+        /// <returns>Number of Vulnerabilities with the specified severity.</returns>
+        int CountVulnerabilities(ISeverity severity);
+
+        /// <summary>
+        /// Count the Vulnerabilities by a specific severity.
+        /// </summary>
+        /// <param name="severityId">Identified of the reference severity.</param>
+        /// <returns>Number of Vulnerabilities with the specified severity.</returns>
+        int CountVulnerabilities(int severityId);
+
+        /// <summary>
+        /// Count the Weaknesses associated to Vulnerabilities with a specified maximum severity.
+        /// </summary>
+        /// <param name="severity">Reference severity.</param>
+        /// <returns>Number of Weaknesses with the specified maximum severity.</returns>
+        int CountVulnerabilitiesByType(ISeverity severity);
+
+        /// <summary>
+        /// Count the Weaknesses associated to Vulnerabilities with a specified maximum severity.
+        /// </summary>
+        /// <param name="severityId">Identified of the reference severity.</param>
+        /// <returns>Number of Weaknesses with the specified maximum severity.</returns>
+        int CountVulnerabilitiesByType(int severityId);
+
+        /// <summary>
+        /// Get the Vulnerabilities, inspecting the whole Threat Model.
+        /// </summary>
+        /// <returns>Enumeration of the Vulnerabilities defined within the Threat Model.</returns>
+        IEnumerable<IVulnerability> GetVulnerabilities();
+
+        /// <summary>
+        /// Get the Vulnerabilities that are associated to a specific Weakness, inspecting the whole Threat Model.
+        /// </summary>
+        /// <param name="weakness">Reference Weakness.</param>
+        /// <returns>Enumeration of the Vulnerabilities associated to the given Weakness.</returns>
+        IEnumerable<IVulnerability> GetVulnerabilities(IWeakness weakness);
+
+        /// <summary>
+        /// Get the Vulnerability Mitigations, inspecting the whole Threat Model.
+        /// </summary>
+        /// <returns>Enumeration of the Vulnerability Mitigations defined within the Threat Model.</returns>
+        IEnumerable<IVulnerabilityMitigation> GetVulnerabilityMitigations();
+
+        /// <summary>
+        /// Get all the Vulnerability Mitigations associated to a given Mitigation, inspecting the whole Threat Model.
+        /// </summary>
+        /// <param name="mitigation">Reference mitigation.</param>
+        /// <returns>Enumeration of the associations found.</returns>
+        IEnumerable<IVulnerabilityMitigation> GetVulnerabilityMitigations(IMitigation mitigation);
         #endregion
     }
 }
