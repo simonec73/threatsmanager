@@ -64,7 +64,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (_severities?.Any() ?? false)
             {
-                var severities = _severities?.OrderBy(x => x.Id).ToArray();
+                var severities = _severities?.Where(x => x.Visible).OrderBy(x => x.Id).ToArray();
                 foreach (var severity in severities)
                 {
                     if (severity.Id >= id)
