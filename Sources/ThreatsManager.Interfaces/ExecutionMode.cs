@@ -17,7 +17,12 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// This is the mode which includes all possible Extensions.
         /// </summary>
-        [EnumDescription("Expert mode is the most complete view, which includes all the installed Extensions.\nIt is designed for the most Expert users.")]
+        [EnumDescription("Pioneer mode is the most complete view, which includes all the installed Extensions.\nIt provides advanced features designed for the most Expert users.")]
+        Pioneer,
+        /// <summary>
+        /// This is the mode which includes all possible Extensions.
+        /// </summary>
+        [EnumDescription("Expert mode provides a complete Threat Modeling experience,\nwhich includes most of the installed Extensions.\nIt is designed for the advanced users.")]
         Expert,
         /// <summary>
         /// This is a simplified mode which allows beginners to focus on a reduced set of capabilities.
@@ -32,7 +37,7 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// This is a view that includes only Extensions suitable for Business decision makers.
         /// </summary>
-        [EnumDescription("Non-technical mode, offering read only access to the Threat Model through a few capabilities targeted to the Business Decision Maker.")]
+        [EnumDescription("Non-technical mode, offering read only access to the Threat Model\nthrough a few capabilities targeted to the Business Decision Maker.")]
         Business
     }
 }
