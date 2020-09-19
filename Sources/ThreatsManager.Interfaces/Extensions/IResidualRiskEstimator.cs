@@ -37,7 +37,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <param name="model">Threat Model to be evaluated.</param>
         /// <param name="mitigations">Identifiers of the implemented Mitigations.</param>
         /// <returns>Dictionary with the identifiers of the Threat Types as key and the identifier of the projected severity as value.</returns>
-        IDictionary<Guid, int> ProjectThreatTypesResidualRisk(IThreatModel model, IEnumerable<Guid> mitigations);
+        IDictionary<Guid, int> GetProjectedThreatTypesResidualRisk(IThreatModel model, IEnumerable<Guid> mitigations);
 
         /// <summary>
         /// Get a list of parameters that can be used for calculating the Acceptable Risk.
