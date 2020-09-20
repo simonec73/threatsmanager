@@ -41,3 +41,5 @@ The Samples include the following project which shows how to rehost the Engine.
 |Sample                   |Project Type  |
 |-------------------------|--------------|
 |SimpleThreatModelAnalyzer|Console       |
+
+Tool TmtImport in https://github.com/simonec73/threatsmanager/tree/master/Tools/TmtImport is another example of Engine rehosting.
