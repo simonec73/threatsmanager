@@ -6,7 +6,7 @@ Those libraries are often referred as the "Core libraries" or simply as "Core", 
 Folder Extensions contains also the code for logic implemented for some Extensions. The logic stored here is designed to be adopted for building solutions on multiple platforms, and represents the main logic implemented for the various Extensions built as part of the Windows Desktop experience of the Threats Manager Platform, which will be published soon.
 The said Windows Desktop experience will not available as Open Source, because it is based on various commercial components, but it will be freely downloadable and usable in all contexts, under a very permissive license.
 
-** Now it supports both .NET 4.7.2 and .NET Core 3.1! **
+**Now it supports both .NET 4.7.2 and .NET Core 3.1!**
 
 ## How to Build
 
