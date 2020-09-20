@@ -7,6 +7,7 @@ using PostSharp.Aspects.Advices;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities.Aspects;
@@ -15,20 +16,11 @@ namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
     //private List<ILink> _links { get; set; }
-    //private ILinksContainer LinksContainer => this;
     //#endregion    
 
     [PSerializable]
     public class LinksContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-
-        [ImportMember("LinksContainer", IsRequired=true)]
-        public Property<ILinksContainer> LinksContainer;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -76,20 +68,15 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IEnumerable<ILink> Links => _links?.AsReadOnly();
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public ILink GetLink(Guid dataFlowId)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
-
             return _links?.FirstOrDefault(x => x.AssociatedId == dataFlowId);
         }
         
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
         public void Add(ILink link)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return;
             if (link == null)
                 throw new ArgumentNullException(nameof(link));
 
@@ -102,8 +89,6 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 13)]
         public ILink AddLink(IDataFlow dataFlow)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
             if (dataFlow == null)
                 throw new ArgumentNullException(nameof(dataFlow));
 
@@ -115,19 +100,18 @@ namespace ThreatsManager.Engine.Aspects
                     _links = new List<ILink>();
                 result = new Link(dataFlow);
                 _links.Add(result);
-                Dirty.IsDirty = true;
-                _linkAdded?.Invoke(LinksContainer?.Get(), result);
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                if (Instance is ILinksContainer container)
+                    _linkAdded?.Invoke(container, result);
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveLink(Guid dataFlowId)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
-
             bool result = false;
 
             var link = _links?.FirstOrDefault(x => x.AssociatedId == dataFlowId);
@@ -136,9 +120,10 @@ namespace ThreatsManager.Engine.Aspects
                 result = _links.Remove(link);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    if (link.DataFlow is IDataFlow flow)
-                        _linkRemoved?.Invoke(LinksContainer?.Get(), flow);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
+                        _linkRemoved?.Invoke(container, flow);
                 }
             }
 

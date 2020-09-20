@@ -10,7 +10,6 @@ using ThreatsManager.Interfaces.ObjectModel;
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
-    //private object Me => this;
     //protected Guid _id { get; set; }
     //private string _lockingKey { get; set; }
     //#endregion
@@ -48,23 +47,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         [JsonProperty("lockKey")]
         public string _lockingKey { get; set; }
-        #endregion
-
-        #region Implementation of interface IIdentity.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public Guid Id => _id;
-
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,LinesOfCodeAvoided = 1)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("description")]
-        public string Description { get; set; }
         #endregion
 
         #region Implementation of interface ILocked.

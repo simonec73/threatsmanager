@@ -17,25 +17,12 @@ using ThreatsManager.Utilities.Aspects.Engine;
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //private IThreatEventsContainer ThreatEventsContainer => this;
     //private List<IThreatEvent> _threatEvents { get; set; }
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(IdentityAspect))]
     public class ThreatEventsContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-
-        [ImportMember("ThreatEventsContainer", IsRequired=true)]
-        public Property<IThreatEventsContainer> ThreatEventsContainer;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -47,7 +34,7 @@ namespace ThreatsManager.Engine.Aspects
 
         #region Implementation of interface IThreatEventsContainer.
         private Action<IThreatEventsContainer, IThreatEvent> _threatEventAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded
         {
             add
@@ -64,7 +51,7 @@ namespace ThreatsManager.Engine.Aspects
         }
 
         private Action<IThreatEventsContainer, IThreatEvent> _threatEventRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved
         {
             add
@@ -97,14 +84,12 @@ namespace ThreatsManager.Engine.Aspects
             return _threatEvents?.FirstOrDefault(x => x.ThreatTypeId == threatTypeId);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
         public void Add(IThreatEvent threatEvent)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return;
             if (threatEvent == null)
                 throw new ArgumentNullException(nameof(threatEvent));
-            if (threatEvent is IThreatModelChild child && child.Model != Model?.Get())
+            if (threatEvent is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
             if (_threatEvents == null)
@@ -113,35 +98,37 @@ namespace ThreatsManager.Engine.Aspects
             _threatEvents.Add(threatEvent);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 14)]
         public IThreatEvent AddThreatEvent(IThreatType threatType)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
-
             IThreatEvent result = null;
 
-            var threatEventsContainer = ThreatEventsContainer?.Get();
-            if ((_threatEvents?.All(x => x.ThreatTypeId != threatType.Id) ?? true) &&
-                threatEventsContainer is IIdentity identity)
+            if (Instance is IIdentity identity)
             {
-                result = new ThreatEvent(Model?.Get(), threatType, identity);
-                if (_threatEvents == null)
-                    _threatEvents = new List<IThreatEvent>();
-                _threatEvents.Add(result);
-                Dirty.IsDirty = true;
-                _threatEventAdded?.Invoke(threatEventsContainer, result);
+                IThreatModel model = (Instance as IThreatModel) ?? (Instance as IThreatModelChild)?.Model;
+
+                if (model != null)
+                {
+                    if (_threatEvents?.All(x => x.ThreatTypeId != threatType.Id) ?? true)
+                    {
+                        result = new ThreatEvent(model, threatType, identity);
+                        if (_threatEvents == null)
+                            _threatEvents = new List<IThreatEvent>();
+                        _threatEvents.Add(result);
+                        if (Instance is IDirty dirtyObject)
+                            dirtyObject.SetDirty();
+                        if (Instance is IThreatEventsContainer container)
+                            _threatEventAdded?.Invoke(container, result);
+                    }
+                }
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveThreatEvent(Guid id)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
-
             bool result = false;
 
             var threatEvent = GetThreatEvent(id);
@@ -150,8 +137,10 @@ namespace ThreatsManager.Engine.Aspects
                 result = _threatEvents.Remove(threatEvent);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    _threatEventRemoved?.Invoke(ThreatEventsContainer?.Get(), threatEvent);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (Instance is IThreatEventsContainer container)
+                        _threatEventRemoved?.Invoke(container, threatEvent);
                 }
             }
 

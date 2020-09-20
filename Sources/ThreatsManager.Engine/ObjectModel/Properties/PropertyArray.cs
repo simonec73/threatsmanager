@@ -15,9 +15,10 @@ using ThreatsManager.Utilities.Exceptions;
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertyAspect]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyArray, ThreatsManager.Engine")]
@@ -39,11 +40,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public bool IsInitialized => Model != null && _id != Guid.Empty && PropertyTypeId != Guid.Empty;
 
         #region Additional placeholders required.
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         protected Guid _id { get; set; }
         #endregion
-        
+
         #region Default implementation.
         public Guid Id { get; }
         public event Action<IProperty> Changed;
@@ -51,6 +52,25 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
         public IThreatModel Model { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Specific implementation.

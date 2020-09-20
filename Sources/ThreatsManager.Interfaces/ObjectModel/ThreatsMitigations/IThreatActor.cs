@@ -5,7 +5,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface representing a Threat Actor.
     /// </summary>
-    public interface IThreatActor : IIdentity, IPropertiesContainer, IThreatModelChild
+    public interface IThreatActor : IIdentity, IPropertiesContainer, IThreatModelChild, IDirty
     {
         /// <summary>
         /// Type of Threat Actor.

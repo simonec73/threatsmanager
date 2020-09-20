@@ -141,7 +141,7 @@ namespace ThreatsManager.Engine
                                         if (certificates?.Any() ?? false)
                                         {
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-                                            var certificate = assembly.GetModules().First().GetSignerCertificate();
+                                            var certificate = X509Certificate.CreateFromSignedFile(dll);
                                             if (certificate != null &&
                                                 certificates.Any(x =>
                                                     string.Compare(x.Thumbprint,
@@ -157,8 +157,14 @@ namespace ThreatsManager.Engine
                                     }
                                     else
                                     {
-                                        _showWarning?.Invoke(reason ?? $"Assembly {assembly.FullName} not loaded because it does not target this version of the Platform.");
+                                        _showWarning?.Invoke(
+                                            reason ??
+                                            $"Assembly {assembly.FullName} not loaded because it does not target this version of the Platform.");
                                     }
+                                }
+                                catch (FileLoadException)
+                                {
+                                    // Ignore: this could be caused by the fact that the library has been loaded from somewhere else. 
                                 }
                                 catch
                                 {
@@ -289,8 +295,6 @@ namespace ThreatsManager.Engine
         public static Manager Instance => _instance;
 
         public ExtensionsConfigurationManager Configuration => _configuration;
-
-        public bool IsDirty => Dirty.IsDirty;
 
         public void LoadExtensions(ExecutionMode mode, Func<Assembly, bool> except = null)
         {

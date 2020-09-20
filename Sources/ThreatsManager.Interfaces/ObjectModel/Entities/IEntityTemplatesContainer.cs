@@ -25,7 +25,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Get the Entity Templates of a specific Entity Type.
         /// </summary>
         /// <param name="type">Type of the Entity Template.</param>
-        /// <returns>Enumeration of the Data Flows.</returns>
+        /// <returns>Enumeration of the Entity Templates.</returns>
         IEnumerable<IEntityTemplate> GetEntityTemplates(EntityType type);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Add an Entity Template to the Container.
         /// </summary>
         /// <param name="name">Name of the Entity Template.</param>
-        /// <param name="description">Identifier of the Source.</param>
+        /// <param name="description">Description of the Entity Template.</param>
         /// <param name="source">Source Entity for the Template.</param>
         /// <returns>New Entity Template.</returns>
         IEntityTemplate AddEntityTemplate(string name, string description, IEntity source);
@@ -48,7 +48,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Add an Entity Template to the Container.
         /// </summary>
         /// <param name="name">Name of the Entity Template.</param>
-        /// <param name="description">Identifier of the Source.</param>
+        /// <param name="description">Description of the Entity Template.</param>
         /// <param name="bigImage">Big-sized image to be used for the Template. This should be 64x64 bits.</param>
         /// <param name="image">Mid-sized image to be used for the Template. This should be 32x32 bits.</param>
         /// <param name="smallImage">Small image to be used for the Template. This should be 16x16 bits.</param>
@@ -61,7 +61,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Add an Entity Template to the Container.
         /// </summary>
         /// <param name="name">Name of the Entity Template.</param>
-        /// <param name="description">Identifier of the Source.</param>
+        /// <param name="description">Description of the Entity Template.</param>
         /// <param name="entityType">Type of the Entity to be created from the Template.</param>
         /// <returns>New Entity Template.</returns>
         IEntityTemplate AddEntityTemplate(string name, string description, EntityType entityType);
@@ -70,7 +70,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Add an Entity Template to the Container.
         /// </summary>
         /// <param name="name">Name of the Entity Template.</param>
-        /// <param name="description">Identifier of the Source.</param>
+        /// <param name="description">Description of the Entity Template.</param>
         /// <param name="bigImage">Big-sized image to be used for the Template. This should be 64x64 bits.</param>
         /// <param name="image">Mid-sized image to be used for the Template. This should be 32x32 bits.</param>
         /// <param name="smallImage">Small image to be used for the Template. This should be 16x16 bits.</param>

@@ -37,11 +37,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _actors.Add(actor);
 
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                ChildCreated?.Invoke(actor);
-            }
+            SetDirty();
+            ChildCreated?.Invoke(actor);
         }
 
         [InitializationRequired]
@@ -90,7 +87,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(actor);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(actor);
                 }
             }

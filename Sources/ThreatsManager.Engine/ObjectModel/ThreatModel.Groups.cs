@@ -40,26 +40,44 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         [InitializationRequired]
-        public IGroup AddGroup<T>() where T : IGroup
+        public T AddGroup<T>() where T : class, IGroup
         {
             return AddGroup<T>(GetFirstAvailableGroupName<T>());
         }
 
         [InitializationRequired]
-        public IGroup AddGroup<T>([Required] string name) where T : IGroup
+        public T AddGroup<T>([Required] string name) where T : class, IGroup
         {
-            IGroup result = null;
+            T result = default(T);
 
             if (typeof(T) == typeof(ITrustBoundary))
             {
-                result = new TrustBoundary(this, name);
+                result = new TrustBoundary(this, name) as T;
                 if (_groups == null)
                     _groups = new List<IGroup>();
                 _groups.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
+
+            return result;
+        }
+        
+        [InitializationRequired]
+        public ITrustBoundary AddTrustBoundary([Required] string name, ITrustBoundaryTemplate template)
+        {
+            ITrustBoundary result = new TrustBoundary(this, name)
+            {
+                _templateId = template?.Id ?? Guid.Empty
+            };
+            
+            if (_groups == null)
+                _groups = new List<IGroup>();
+            _groups.Add(result);
+            RegisterEvents(result);
+            SetDirty();
+            ChildCreated?.Invoke(result);
 
             return result;
         }
@@ -73,7 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (_groups == null)
                 _groups = new List<IGroup>();
             _groups.Add(group);
-            Dirty.IsDirty = true;
+            SetDirty();
             RegisterEvents(group);
             ChildCreated?.Invoke(group);
         }
@@ -152,7 +170,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(item);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(item);
                 }
             }

@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.AutoThreatGeneration.Engine;
+using ThreatsManager.AutoThreatGeneration.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -10,8 +15,11 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.MsTmt.Extensions;
 using ThreatsManager.MsTmt.Model;
+using ThreatsManager.MsTmt.Model.AutoThreatGen;
+using ThreatsManager.MsTmt.Properties;
 using ThreatsManager.MsTmt.Schemas;
 using ThreatsManager.Utilities;
+using Scope = ThreatsManager.Interfaces.Scope;
 
 namespace ThreatsManager.MsTmt
 {
@@ -25,24 +33,35 @@ namespace ThreatsManager.MsTmt
         /// </summary>
         /// <param name="threatModel">Destination Threat Model.</param>
         /// <param name="fileName">Name of the TMT file to be imported.</param>
-        /// <param name="unassignedThreatHandler">Function to be manage custom Threats, that have not been assigned to any flow.</param>
+        /// <param name="dpiFactor">Factor for the Dpi representation. 1 represents the standard 96 dpi, 2 doubles it.</param>
+        /// <param name="unassignedThreatHandler">Function to be manage custom Threats, that have not been assigned to any flow.
+        /// <para>If null, the custom Threats will be associated to the Threat Model itself.</para></param>
+        /// <param name="diagrams">[out] Counter of the Diagrams.</param>
         /// <param name="externalInteractors">[out] Counter of the External Interactors.</param>
-        /// <param name="process">[out] Counter of the Processes.</param>
-        /// <param name="dataStore">[out] Counter of the Data Stores.</param>
+        /// <param name="processes">[out] Counter of the Processes.</param>
+        /// <param name="dataStores">[out] Counter of the Data Stores.</param>
         /// <param name="flows">[out] Counter of the Flows.</param>
+        /// <param name="trustBoundaries">[out] Counter of the Trust Boundaries.</param>
+        /// <param name="itemTypes">[out] Counter of the Item Types.</param>
         /// <param name="threatTypes">[out] Counter of the Threat Types.</param>
         /// <param name="customThreatTypes">[out] Counter of the custom Threat Types, managed through the Unassigned Threat Handler.</param>
         /// <param name="threats">[out] Counter of the generated Threat Events.</param>
         /// <param name="missingThreats">[out] Counter of the Threat Events that has not been possible to generate.</param>
-        public void Import([NotNull] IThreatModel threatModel, [Required] string fileName,
+        public void Import([NotNull] IThreatModel threatModel, [Required] string fileName, float dpiFactor,
             Func<IThreatModel, Threat, IThreatType, IPropertySchema, bool> unassignedThreatHandler,
-            out int externalInteractors, out int process, out int dataStore, out int flows,
-            out int threatTypes, out int customThreatTypes, out int threats, out int missingThreats)
+            out int diagrams, out int externalInteractors, out int processes, out int dataStores, out int flows,
+            out int trustBoundaries, out int itemTypes, out int threatTypes, out int customThreatTypes, out int threats, 
+            out int missingThreats)
         {
             var model = new ThreatModel(fileName);
 
             ImportModelInfo(model, threatModel);
-            ImportElements(model, threatModel, out externalInteractors, out process, out dataStore);
+            ImportBaseElementTemplates(model, threatModel);
+            ImportBaseFlowTemplates(model, threatModel);
+            itemTypes = ImportEntityTemplates(model, threatModel);
+            itemTypes += ImportFlowTemplates(model, threatModel);
+            ImportElements(model, threatModel, dpiFactor, out diagrams, 
+                out externalInteractors, out processes, out dataStores, out trustBoundaries);
             flows = ImportDataFlows(model, threatModel);
             ImportThreats(model, threatModel, unassignedThreatHandler, out threatTypes, out customThreatTypes, out threats, out missingThreats);
         }
@@ -88,7 +107,11 @@ namespace ThreatsManager.MsTmt
                             var propertyType = schema.GetPropertyType(label);
                             if (propertyType != null)
                             {
-                                threatEvent.AddProperty(propertyType, threat.GetValueFromLabel(label));
+                                var property = threatEvent.GetProperty(propertyType);
+                                if (property == null)
+                                    threatEvent.AddProperty(propertyType, threat.GetValueFromLabel(label));
+                                else
+                                    property.StringValue = threat.GetValueFromLabel(label);
                             }
                             break;
                     }
@@ -130,56 +153,334 @@ namespace ThreatsManager.MsTmt
             }
         }
 
-        private void ImportElements([NotNull] ThreatModel source, [NotNull] IThreatModel target,
-            out int externalInteractors, out int process, out int dataStore)
+        private void ImportBaseElementTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
         {
-            externalInteractors = 0;
-            process = 0;
-            dataStore = 0;
-
-            var elements = source.Elements?.ToArray();
+            var elements = source.ElementTypes?
+                .Where(x => x.IsGeneric)
+                .ToArray();
 
             if (elements?.Any() ?? false)
             {
-                var schemaManager = new EntitiesPropertySchemaManager(target);
-                var schema = schemaManager.GetSchema();
+                IPropertySchema schema = null;
+                var baseEISchema = new BaseExternalInteractorPropertySchemaManager(target).GetSchema();
+                var basePSchema = new BaseProcessPropertySchemaManager(target).GetSchema();
+                var baseDSSchema = new BaseDataStorePropertySchemaManager(target).GetSchema();
+                var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
 
                 foreach (var element in elements)
                 {
-                    IEntity entity;
+                    switch (element.ElementType)
+                    {
+                        case ElementType.StencilRectangle:
+                            schema = baseEISchema;
+                            break;
+                        case ElementType.StencilEllipse:
+                            schema = basePSchema;
+                            break;
+                        case ElementType.StencilParallelLines:
+                            schema = baseDSSchema;
+                            break;
+                        case ElementType.BorderBoundary:
+                        case ElementType.LineBoundary:
+                            schema = baseTBSchema;
+                            break;
+                    }
 
+                    if (schema != null)
+                    {
+                        var properties = element.Properties?.ToArray();
+
+                        var outOfScope = schema.GetPropertyType("Out of Scope") ?? 
+                                         schema.AddPropertyType("Out of Scope", PropertyValueType.Boolean);
+                        var reason = schema.GetPropertyType("Reason For Out Of Scope") ?? 
+                                     schema.AddPropertyType("Reason For Out Of Scope", PropertyValueType.String);
+
+                        AddProperties(schema, null, properties);
+                    }
+                }
+            }
+        }
+
+        private void ImportBaseFlowTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        {
+            var connectors = source.FlowTypes?
+                .Where(x => x.IsGeneric)
+                .ToArray();
+
+            if (connectors?.Any() ?? false)
+            {
+                var schema = new BaseFlowPropertySchemaManager(target).GetSchema();
+
+                if (!(schema.PropertyTypes?.Any(x =>
+                    string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
+                {
+                    var outOfScope = schema.AddPropertyType("Out of Scope",
+                        PropertyValueType.Boolean);
+                    if (outOfScope != null)
+                    {
+                        outOfScope.Priority = -2;
+                    }
+                }
+
+                if (!(schema.PropertyTypes?.Any(x =>
+                    string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
+                {
+                    var reasonOutOfScope =
+                        schema.AddPropertyType("Reason For Out Of Scope",
+                            PropertyValueType.String);
+                    if (reasonOutOfScope != null)
+                        reasonOutOfScope.Priority = -1;
+                }
+
+                foreach (var connector in connectors)
+                {
+                    AddProperties(schema, null, connector.Properties?.ToArray());
+                }
+            }
+        }
+
+        private int ImportEntityTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        {
+            int result = 0;
+            var elements = source.ElementTypes?
+                .Where(x => !x.IsGeneric)
+                .ToArray();
+
+            if (elements?.Any() ?? false)
+            {
+                var schemaManager = new ObjectPropertySchemaManager(target);
+
+                IEntityTemplate entityTemplate;
+                ITrustBoundaryTemplate trustBoundaryTemplate;
+                Interfaces.Scope scope;
+                IPropertySchema baseSchema;
+                var baseEISchema = new BaseExternalInteractorPropertySchemaManager(target).GetSchema();
+                var basePSchema = new BaseProcessPropertySchemaManager(target).GetSchema();
+                var baseDSSchema = new BaseDataStorePropertySchemaManager(target).GetSchema();
+                var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
+
+                foreach (var element in elements)
+                {
+                    switch (element.ElementType)
+                    {
+                        case ElementType.StencilRectangle:
+                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
+                                element.Image, element.Image, element.Image,
+                                EntityType.ExternalInteractor);
+                            trustBoundaryTemplate = null;
+                            scope = Scope.ExternalInteractor;
+                            baseSchema = baseEISchema;
+                            result++;
+                            break;
+                        case ElementType.StencilEllipse:
+                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
+                                element.Image, element.Image, element.Image,
+                                EntityType.Process);
+                            trustBoundaryTemplate = null;
+                            scope = Scope.Process;
+                            baseSchema = basePSchema;
+                            result++;
+                            break;
+                        case ElementType.StencilParallelLines:
+                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
+                                element.Image, element.Image, element.Image,
+                                EntityType.DataStore);
+                            trustBoundaryTemplate = null;
+                            scope = Scope.DataStore;
+                            baseSchema = baseDSSchema;
+                            result++;
+                            break;
+                        case ElementType.LineBoundary:
+                        case ElementType.BorderBoundary:
+                            entityTemplate = null;
+                            trustBoundaryTemplate = target.AddTrustBoundaryTemplate(element.Name, element.Description);
+                            scope = Scope.TrustBoundary;
+                            baseSchema = baseTBSchema;
+                            result++;
+                            break;
+                        default:
+                            entityTemplate = null;
+                            trustBoundaryTemplate = null;
+                            scope = Scope.Undefined;
+                            baseSchema = null;
+                            break;
+                    }
+
+                    if (entityTemplate != null)
+                    {
+                        InitializeBaseSchema(entityTemplate, baseSchema);
+                        schemaManager.SetObjectId(entityTemplate, element.TypeId);
+                        var properties = element.Properties?.ToArray();
+
+                        AddProperties(target, element.Name, scope, baseSchema, entityTemplate, properties);
+                    } else if (trustBoundaryTemplate != null)
+                    {
+                        InitializeBaseSchema(trustBoundaryTemplate, baseSchema);
+                        schemaManager.SetObjectId(trustBoundaryTemplate, element.TypeId);
+                        var properties = element.Properties?.ToArray();
+
+                        AddProperties(target, element.Name, scope, baseSchema, trustBoundaryTemplate, properties);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private int ImportFlowTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        {
+            int result = 0;
+            var connectors = source.FlowTypes?
+                .Where(x => !x.IsGeneric)
+                .ToArray();
+
+            if (connectors?.Any() ?? false)
+            {
+                var schemaManager = new ObjectPropertySchemaManager(target);
+                var baseSchema = new BaseFlowPropertySchemaManager(target).GetSchema();
+
+                foreach (var connector in connectors)
+                {
+                    var template = target.AddFlowTemplate(connector.Name, connector.Description);
+                    if (template != null)
+                    {
+                        result++;
+
+                        InitializeBaseSchema(template, baseSchema);
+                        schemaManager.SetObjectId(template, connector.TypeId);
+                        var properties = connector.Properties?.ToArray();
+
+                        AddProperties(target, connector.Name, Scope.DataFlow, baseSchema, template, properties);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void ImportElements([NotNull] ThreatModel source, [NotNull] IThreatModel target, float dpiFactor,
+            out int diagrams, out int externalInteractors, out int processes, out int dataStores, out int trustBoundaries)
+        {
+            diagrams = 0;
+            externalInteractors = 0;
+            processes = 0;
+            dataStores = 0;
+            trustBoundaries = 0;
+
+            var elements = source.Elements?
+                .OrderBy(x => (int)x.Value.ElementType)
+                .ToArray();
+
+            if (elements?.Any() ?? false)
+            {
+                var schemaManager = new ObjectPropertySchemaManager(target);
+
+                IEntity entity;
+                ITrustBoundary boundary;
+                IEntityTemplate entityTemplate;
+                ITrustBoundaryTemplate trustBoundaryTemplate;
+                IPropertySchema schema;
+                IPropertySchema secondarySchema;
+                var baseEISchema = new BaseExternalInteractorPropertySchemaManager(target).GetSchema();
+                var basePSchema = new BaseProcessPropertySchemaManager(target).GetSchema();
+                var baseDSSchema = new BaseDataStorePropertySchemaManager(target).GetSchema();
+                var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
+
+                foreach (var element in elements)
+                {
                     switch (element.Value.ElementType)
                     {
                         case ElementType.StencilRectangle:
-                            entity = target.AddEntity<IExternalInteractor>(element.Value.Name);
+                            entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
+                                string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
+                                target.AddEntity<IExternalInteractor>(element.Value.Name);
+                            boundary = null;
+                            schema = baseEISchema;
+                            secondarySchema = entityTemplate != null ? 
+                                target.GetSchema(entityTemplate.Name, Resources.DefaultNamespace) : null;
                             externalInteractors++;
                             break;
                         case ElementType.StencilEllipse:
-                            entity = target.AddEntity<IProcess>(element.Value.Name);
-                            process++;
+                            entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
+                                string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
+                                target.AddEntity<IProcess>(element.Value.Name);
+                            boundary = null;
+                            schema = basePSchema;
+                            secondarySchema = entityTemplate != null ? 
+                                target.GetSchema(entityTemplate.Name, Resources.DefaultNamespace) : null;
+                            processes++;
                             break;
                         case ElementType.StencilParallelLines:
-                            entity = target.AddEntity<IDataStore>(element.Value.Name);
-                            dataStore++;
+                            entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
+                                string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
+                                target.AddEntity<IDataStore>(element.Value.Name);
+                            boundary = null;
+                            schema = baseDSSchema;
+                            secondarySchema = entityTemplate != null ? 
+                                target.GetSchema(entityTemplate.Name, Resources.DefaultNamespace) : null;
+                            dataStores++;
+                            break;
+                        case ElementType.BorderBoundary:
+                        case ElementType.LineBoundary:
+                            trustBoundaryTemplate = target.TrustBoundaryTemplates?.FirstOrDefault(x =>
+                                string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
+                            entity = null;
+                            boundary = trustBoundaryTemplate != null ? trustBoundaryTemplate.CreateTrustBoundary(element.Value.Name) :
+                                target.AddGroup<ITrustBoundary>(element.Value.Name);
+                            schema = baseTBSchema;
+                            secondarySchema = trustBoundaryTemplate != null ? 
+                                target.GetSchema(trustBoundaryTemplate.Name, Resources.DefaultNamespace) : null;
+                            trustBoundaries++;
                             break;
                         default:
                             entity = null;
+                            boundary = null;
+                            schema = null;
+                            secondarySchema = null;
                             break;
                     }
 
                     if (entity != null)
                     {
-                        schemaManager.SetMsTmtEntityId(entity, element.Key.ToString());
+                        schemaManager.SetObjectId(entity, element.Value.TypeId);
+                        schemaManager.SetInstanceId(entity, element.Key.ToString());
                         var properties = element.Value.Properties?.ToArray();
-                        AddProperties(schema, entity, properties);
+                        AddProperties(target, schema, secondarySchema, entity, properties);
 
-                        IDiagram diagram = target.Diagrams?.FirstOrDefault(x =>
+                        var diagram = target.Diagrams?.FirstOrDefault(x =>
                             string.CompareOrdinal(x.Name, element.Value.Page) == 0);
                         if (diagram == null)
                         {
                             diagram = target.AddDiagram(element.Value.Page);
+                            diagrams++;
                         }
-                        diagram.AddEntityShape(entity.Id, new PointF(element.Value.Position.X * 2f, element.Value.Position.Y * 2f));
+
+                        diagram.AddEntityShape(entity.Id, 
+                            new PointF((element.Value.Position.X + element.Value.Size.Width / 2f) * dpiFactor, (element.Value.Position.Y + element.Value.Size.Height / 2f) * dpiFactor));
+                    } else if (boundary != null)
+                    {
+                        schemaManager.SetObjectId(boundary, element.Value.TypeId);
+                        schemaManager.SetInstanceId(boundary, element.Key.ToString());
+                        var properties = element.Value.Properties?.ToArray();
+                        AddProperties(target, schema, secondarySchema, entity, properties);
+
+                        if (element.Value.ElementType == ElementType.BorderBoundary)
+                        {
+                            var diagram = target.Diagrams?.FirstOrDefault(x =>
+                                string.CompareOrdinal(x.Name, element.Value.Page) == 0);
+                            if (diagram == null)
+                            {
+                                diagram = target.AddDiagram(element.Value.Page);
+                                diagrams++;
+                            }
+
+                            diagram.AddGroupShape(boundary.Id,
+                                new PointF((element.Value.Position.X + element.Value.Size.Width / 2f) * dpiFactor, (element.Value.Position.Y + element.Value.Size.Height / 2f) * dpiFactor),
+                                new SizeF(element.Value.Size.Width * dpiFactor, element.Value.Size.Height * dpiFactor));
+                        }
                     }
                 }
             }
@@ -189,26 +490,32 @@ namespace ThreatsManager.MsTmt
         {
             int result = 0;
 
-            var flows = source.Flows;
+            var flows = source.Flows?.ToArray();
+
             if (flows?.Any() ?? false)
             {
-                var entitiesSchemaManager = new EntitiesPropertySchemaManager(target);
-                var dataFlowsSchemaManager = new DataFlowsPropertySchemaManager(target);
-                var schema = dataFlowsSchemaManager.GetSchema();
+                var schemaManager = new ObjectPropertySchemaManager(target);
+                var baseSchema = new BaseFlowPropertySchemaManager(target).GetSchema();
 
                 foreach (var flow in flows)
                 {
-                    var sourceEntity = GetEntity(flow.SourceGuid.ToString(), target, entitiesSchemaManager);
-                    var targetEntity = GetEntity(flow.TargetGuid.ToString(), target, entitiesSchemaManager);
+                    var sourceEntity = GetEntity(flow.SourceGuid.ToString(), target, schemaManager);
+                    var targetEntity = GetEntity(flow.TargetGuid.ToString(), target, schemaManager);
                     if (sourceEntity != null && targetEntity != null)
                     {
-                        var dataFlow = target.AddDataFlow(flow.Name, sourceEntity.Id, targetEntity.Id);
+                        var flowTemplate = target.FlowTemplates?.FirstOrDefault(x =>
+                            string.CompareOrdinal(schemaManager.GetObjectId(x), flow.TypeId) == 0);
+                        var secondarySchema = flowTemplate != null ?
+                            target.GetSchema(flowTemplate.Name, Resources.DefaultNamespace) : null;
+                        var dataFlow = flowTemplate != null ? flowTemplate.CreateFlow(flow.Name, sourceEntity.Id, targetEntity.Id) :
+                            target.AddDataFlow(flow.Name, sourceEntity.Id, targetEntity.Id);
                         if (dataFlow != null)
                         {
-                            dataFlowsSchemaManager.SetMsTmtDataFlowId(dataFlow, flow.FlowId.ToString());
+                            schemaManager.SetObjectId(dataFlow, flow.TypeId);
+                            schemaManager.SetInstanceId(dataFlow, flow.FlowId.ToString());
 
                             var properties = flow.Properties?.ToArray();
-                            AddProperties(schema, dataFlow, properties);
+                            AddProperties(target, baseSchema, secondarySchema, dataFlow, properties);
                         }
                         
                         IDiagram diagram = target.Diagrams?.FirstOrDefault(x =>
@@ -223,7 +530,7 @@ namespace ThreatsManager.MsTmt
         }
 
         private static void AddProperties([NotNull] IPropertySchema schema, 
-            [NotNull] IPropertiesContainer container, [NotNull] IEnumerable<Property> properties)
+            IPropertiesContainer container, [NotNull] IEnumerable<Property> properties)
         {
             foreach (var property in properties)
             {
@@ -250,15 +557,136 @@ namespace ThreatsManager.MsTmt
                                     listPropertyType.Context = property.Values.TagConcat();
                                     listPropertyType.SetListProvider(new ListProviderExtension());
                                 }
-
                                 break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
                         }
                     }
 
-                    var current = container.GetProperty(propertyType) ??
-                                  container.AddProperty(propertyType, property.Value);
+                    if (propertyType != null && container != null)
+                    {
+                        var value = property.Value;
+                        if (string.IsNullOrWhiteSpace(value) && propertyType is IListPropertyType listPropertyType)
+                        {
+                            value = listPropertyType.Values.FirstOrDefault()?.Id;
+                        }
+
+                        var containerProperty = container.GetProperty(propertyType);
+                        if (containerProperty == null)
+                            container.AddProperty(propertyType, value);
+                        else
+                            containerProperty.StringValue = value;
+                    }
+                }
+            }
+        }
+
+        private static void InitializeBaseSchema([NotNull] IItemTemplate template, [NotNull] IPropertySchema baseSchema)
+        {
+            var propertyTypes = baseSchema.PropertyTypes?.ToArray();
+            if (propertyTypes?.Any() ?? false)
+            {
+                foreach (var propertyType in propertyTypes)
+                {
+                    string value = null;
+                    if (propertyType is IListPropertyType listPropertyType)
+                    {
+                        value = listPropertyType.Values.FirstOrDefault()?.Id;
+                    }
+
+                    var containerProperty = template.GetProperty(propertyType);
+                    if (containerProperty == null)
+                        template.AddProperty(propertyType, value);
+                    else
+                        containerProperty.StringValue = value;
+                }
+            }
+        }
+
+        private static void AddProperties([NotNull] IThreatModel model,
+            [NotNull] string schemaName, Scope scope, [NotNull] IPropertySchema baseSchema,
+            IPropertiesContainer container, [NotNull] IEnumerable<Property> properties)
+        {
+            IPropertySchema schema = null;
+
+            foreach (var property in properties)
+            {
+                if (!string.IsNullOrWhiteSpace(property.Name))
+                {
+                    var propertyType = baseSchema.GetPropertyType(property.Name);
+                    if (propertyType == null)
+                    {
+                        if (schema == null)
+                            schema = new TmtPropertySchemaManager(model, schemaName, scope).GetSchema();
+
+                        propertyType = schema.GetPropertyType(property.Name);
+                        if (propertyType == null)
+                        {
+                            switch (property.Type)
+                            {
+                                case PropertyType.String:
+                                    propertyType = schema.AddPropertyType(property.Name,
+                                        PropertyValueType.String);
+                                    break;
+                                case PropertyType.Boolean:
+                                    propertyType = schema.AddPropertyType(property.Name,
+                                        PropertyValueType.Boolean);
+                                    break;
+                                case PropertyType.List:
+                                    propertyType =
+                                        schema.AddPropertyType(property.Name, PropertyValueType.List);
+                                    if (propertyType is IListPropertyType listPropertyType)
+                                    {
+                                        listPropertyType.Context = property.Values.TagConcat();
+                                        listPropertyType.SetListProvider(new ListProviderExtension());
+                                    }
+
+                                    break;
+                            }
+                        }
+                    }
+
+                    if (propertyType != null && container != null)
+                    {
+                        var value = property.Value;
+                        if (string.IsNullOrWhiteSpace(value) && propertyType is IListPropertyType listPropertyType)
+                        {
+                            value = listPropertyType.Values.FirstOrDefault()?.Id;
+                        }
+
+                        var containerProperty = container.GetProperty(propertyType);
+                        if (containerProperty == null)
+                            container.AddProperty(propertyType, value);
+                        else
+                            containerProperty.StringValue = value;
+                    }
+                }
+            }
+        }
+
+        private static void AddProperties([NotNull] IThreatModel model,
+            [NotNull] IPropertySchema baseSchema, IPropertySchema secondarySchema,
+            IPropertiesContainer container, [NotNull] IEnumerable<Property> properties)
+        {
+            foreach (var property in properties)
+            {
+                if (!string.IsNullOrWhiteSpace(property.Name))
+                {
+                    var propertyType = baseSchema.GetPropertyType(property.Name) ??
+                        secondarySchema?.GetPropertyType(property.Name);
+
+                    if (propertyType != null && container != null)
+                    {
+                        var value = property.Value;
+                        if (string.IsNullOrWhiteSpace(value) && propertyType is IListPropertyType listPropertyType)
+                        {
+                            value = listPropertyType.Values.FirstOrDefault()?.Id;
+                        }
+
+                        var containerProperty = container.GetProperty(propertyType);
+                        if (containerProperty == null)
+                            container.AddProperty(propertyType, value);
+                        else
+                            containerProperty.StringValue = value;
+                    }
                 }
             }
         }
@@ -278,18 +706,18 @@ namespace ThreatsManager.MsTmt
             {
                 var schema = new ThreatsPropertySchemaManager(target).GetSchema();
                 InitializeThreatsPropertySchema(schema, source.Properties);
-                var dataFlowsSchemaManager = new DataFlowsPropertySchemaManager(target);
+                var schemaManager = new ObjectPropertySchemaManager(target);
 
                 var defaultSeverity = target.GetMappedSeverity(0);
 
                 foreach (var threatPerType in threatsPerType)
                 {
-                    var threatTypeName = source.GetThreatTypeName(threatPerType.Key);
+                    var tt = source.GetThreatType(threatPerType.Key);
                     IThreatType threatType = null;
-                    if (!string.IsNullOrWhiteSpace(threatTypeName))
+                    if (!string.IsNullOrWhiteSpace(tt.Name))
                     {
                         ISeverity severity;
-                        if (Enum.TryParse<DefaultSeverity>(source.GetThreatTypePriority(threatPerType.Key), out var severityId))
+                        if (Enum.TryParse<DefaultSeverity>(tt.Priority, out var severityId))
                         {
                             severity = target.GetMappedSeverity((int) severityId);
                         }
@@ -298,30 +726,32 @@ namespace ThreatsManager.MsTmt
                             severity = target.GetMappedSeverity((int) DefaultSeverity.High);
                         }
 
-                        threatType = target.AddThreatType(threatTypeName, severity);
+                        threatType = target.AddThreatType(tt.Name, severity);
                         if (threatType != null)
                         {
-                            threatType.Description = source.GetThreatTypeDescription(threatPerType.Key);
-
-                            var threatTypeProperties = source.GetThreatTypeProperties(threatPerType.Key);
-                            foreach (var property in threatTypeProperties)
+                            threatType.Description = tt.Description;
+                            var threatTypeProperties = tt.Properties?.ToArray();
+                            if (threatTypeProperties?.Any() ?? false)
                             {
-                                switch (property.Name)
+                                foreach (var property in threatTypeProperties)
                                 {
-                                    case "Title":
-                                        break;
-                                    case "UserThreatDescription":
-                                        break;
-                                    case "Priority":
-                                        break;
-                                    default:
-                                        var propertyType = schema.GetPropertyType(property.Label);
-                                        if (propertyType != null)
-                                        {
-                                            threatType.AddProperty(propertyType, property.Values.FirstOrDefault());
-                                        }
+                                    switch (property.Name)
+                                    {
+                                        case "Title":
+                                            break;
+                                        case "UserThreatDescription":
+                                            break;
+                                        case "Priority":
+                                            break;
+                                        default:
+                                            var propertyType = schema.GetPropertyType(property.Label);
+                                            if (propertyType != null)
+                                            {
+                                                threatType.AddProperty(propertyType, property.Values.FirstOrDefault());
+                                            }
 
-                                        break;
+                                            break;
+                                    }
                                 }
                             }
 
@@ -330,7 +760,7 @@ namespace ThreatsManager.MsTmt
                         else
                         {
                             threatType = target.ThreatTypes?
-                                .FirstOrDefault(x => string.CompareOrdinal(x.Name, threatTypeName) == 0);
+                                .FirstOrDefault(x => string.CompareOrdinal(x.Name, tt.Name) == 0);
                         }
                     }
                     else
@@ -359,9 +789,11 @@ namespace ThreatsManager.MsTmt
 
                     if (threatType != null)
                     {
+                        CreateGenerationRule(source, tt, threatType);
+
                         foreach (var threat in threatPerType.Value)
                         {
-                            var flow = GetDataFlow(threat.FlowGuid.ToString(), target, dataFlowsSchemaManager);
+                            var flow = GetDataFlow(threat.FlowGuid.ToString(), target, schemaManager);
                             if (flow != null)
                             {
                                 var threatEvent = flow.AddThreatEvent(threatType);
@@ -376,15 +808,95 @@ namespace ThreatsManager.MsTmt
                             }
                             else
                             {
-                                if (unassignedThreatHandler(target, threat, threatType, schema))
-                                    threats++;
+                                if (unassignedThreatHandler != null)
+                                {
+                                    if (unassignedThreatHandler(target, threat, threatType, schema))
+                                        threats++;
+                                    else
+                                        missingThreats++;
+                                }
                                 else
-                                    missingThreats++;
+                                {
+                                    var threatEvent = target.AddThreatEvent(threatType);
+
+                                    if (threatEvent != null)
+                                    {
+                                        AddProperties(threatEvent, threat, schema);
+                                        threats++;
+                                    }
+                                    else
+                                        missingThreats++;
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+
+        private void CreateGenerationRule([NotNull] ThreatModel model, 
+            [NotNull] ThreatType source, [NotNull] IThreatType target)
+        {
+            SelectionRuleNode include = AnalyzeGenerationRule(model, target.Model, source.IncludeFilter);
+            SelectionRuleNode exclude = AnalyzeGenerationRule(model, target.Model, source.ExcludeFilter);
+            SelectionRule rule = null;
+
+            var andNode = new AndRuleNode()
+            {
+                Name = "AND"
+            };
+
+            if (include != null)
+            {
+                andNode.Children.Add(include);
+            }
+
+            if (exclude != null)
+            {
+                andNode.Children.Add(new NotRuleNode()
+                {
+                    Name = "NOT",
+                    Child = exclude
+                });
+            }
+
+            if (andNode.Children.Any())
+            {
+                andNode.Children.Add(new BooleanRuleNode("Out of Scope", Resources.DefaultNamespace, Resources.TmtFlowPropertySchema, false)
+                {
+                    Scope = AutoThreatGeneration.Engine.Scope.Object
+                });
+
+                rule = new SelectionRule()
+                {
+                    Root = andNode
+                };
+
+                var schemaManager = new AutoThreatGenPropertySchemaManager(target.Model);
+                var propertyType = schemaManager.GetPropertyType();
+                var property = target.GetProperty(propertyType) ?? target.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    jsonSerializableObject.Value = rule;
+            }
+        }
+
+        private SelectionRuleNode AnalyzeGenerationRule(ThreatModel source, IThreatModel target, string ruleText)
+        {
+            SelectionRuleNode result = null;
+
+            if (!string.IsNullOrWhiteSpace(ruleText))
+            {
+                ICharStream stream = CharStreams.fromstring(ruleText);
+                ITokenSource lexer = new TmtLexer(stream, TextWriter.Null, TextWriter.Null);
+                ITokenStream tokens = new CommonTokenStream(lexer);
+                TmtParser parser = new TmtParser(tokens) {BuildParseTree = true};
+                IParseTree tree = parser.parse();
+                RuleVisitor visitor = new RuleVisitor(source, target);
+                visitor.Visit(tree);
+                result = visitor.Rule;
+            }
+
+            return result;
         }
 
         private void InitializeThreatsPropertySchema([NotNull] IPropertySchema schema, 
@@ -426,7 +938,7 @@ namespace ThreatsManager.MsTmt
         }
 
         private IEntity GetEntity([Required] string msEntityId, [NotNull] IThreatModel model,
-            [NotNull] EntitiesPropertySchemaManager schemaManager)
+            [NotNull] ObjectPropertySchemaManager schemaManager)
         {
             IEntity result = null;
 
@@ -435,7 +947,7 @@ namespace ThreatsManager.MsTmt
             {
                 foreach (var entity in entities)
                 {
-                    var id = schemaManager.GetMsTmtEntityId(entity);
+                    var id = schemaManager.GetInstanceId(entity);
                     if (string.CompareOrdinal(id, msEntityId) == 0)
                     {
                         result = entity;
@@ -448,7 +960,7 @@ namespace ThreatsManager.MsTmt
         }
 
         private IDataFlow GetDataFlow([Required] string msDataFlowId, [NotNull] IThreatModel model,
-            [NotNull] DataFlowsPropertySchemaManager schemaManager)
+            [NotNull] ObjectPropertySchemaManager schemaManager)
         {
             IDataFlow result = null;
 
@@ -457,7 +969,7 @@ namespace ThreatsManager.MsTmt
             {
                 foreach (var dataFlow in dataFlows)
                 {
-                    var id = schemaManager.GetMsTmtDataFlowId(dataFlow);
+                    var id = schemaManager.GetInstanceId(dataFlow);
                     if (string.CompareOrdinal(id, msDataFlowId) == 0)
                     {
                         result = dataFlow;

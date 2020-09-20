@@ -1,4 +1,5 @@
-﻿using ThreatsManager.Interfaces;
+﻿using System.Windows.Forms;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -8,7 +9,7 @@ namespace SampleWinFormExtensions.Panels.AzureDevOps
 {
     [Extension(typeof(IPanelFactory), "9A97643C-278A-4F39-BCCE-6D447203C12A",
         "Simulated Azure DevOps Integration", 1000, ExecutionMode.Management)]
-    public partial class AzureDevOpsPanelFactory : IPanelFactory, IMainRibbonExtension, IPanelFactoryActionsRequestor
+    public partial class AzureDevOpsPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.
         /// <summary>
@@ -16,7 +17,7 @@ namespace SampleWinFormExtensions.Panels.AzureDevOps
         /// </summary>
         public InstanceMode Behavior => InstanceMode.Single;
 
-        public IPanel Create(IIdentity identity, out IActionDefinition action)
+        public IPanel<Form> Create(IIdentity identity, out IActionDefinition action)
         {
             var result = new AzureDevOpsPanel();
 
@@ -25,7 +26,7 @@ namespace SampleWinFormExtensions.Panels.AzureDevOps
             return result;
         }
 
-        public IPanel Create(IActionDefinition action)
+        public IPanel<Form> Create(IActionDefinition action)
         {
             return new AzureDevOpsPanel();
         }

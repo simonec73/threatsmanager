@@ -14,17 +14,24 @@ namespace ThreatsManager.MsTmt.Model
         private readonly bool _hideFromUi;
         private readonly List<string> _values;
 
-        public PropertyDefinition(XmlNode node)
+        public PropertyDefinition(XmlNode node, bool isTemplate)
         {
             if (node == null)
                 throw new ArgumentNullException(nameof(node));
 
-            _name = node.ChildNodes[0].InnerText;
-            _label = node.ChildNodes[1].InnerText;
-            bool.TryParse(node.ChildNodes[2].InnerText, out _hideFromUi);
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            nsManager.AddNamespace("m", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model");
 
-            var values = node.ChildNodes[3];
-            if (values.HasChildNodes)
+            _name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
+                node.SelectSingleNode("m:Name", nsManager)?.InnerText;
+            _label = isTemplate ? node.SelectSingleNode("Label")?.InnerText :
+                node.SelectSingleNode("m:Label", nsManager)?.InnerText;
+            bool.TryParse(isTemplate ? node.SelectSingleNode("HideFromUI")?.InnerText :
+                node.SelectSingleNode("m:HideFromUI", nsManager)?.InnerText, out _hideFromUi);
+
+            var values = isTemplate ? node.SelectSingleNode("Values") :
+                node.SelectSingleNode("m:Values", nsManager);
+            if (values?.HasChildNodes ?? false)
             {
                 _values = new List<string>(values.ChildNodes
                     .OfType<XmlNode>().Select(x => x.InnerText)
@@ -32,14 +39,20 @@ namespace ThreatsManager.MsTmt.Model
             }
         }
 
-        public PropertyDefinition(XmlNode node, IEnumerable<string> values)
+        public PropertyDefinition(XmlNode node, IEnumerable<string> values, bool isTemplate)
         {
             if (node == null)
                 throw new ArgumentNullException(nameof(node));
 
-            _name = node.ChildNodes[0].InnerText;
-            _label = node.ChildNodes[1].InnerText;
-            bool.TryParse(node.ChildNodes[2].InnerText, out _hideFromUi);
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            nsManager.AddNamespace("m", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model");
+
+            _name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
+                node.SelectSingleNode("m:Name", nsManager)?.InnerText;
+            _label = isTemplate ? node.SelectSingleNode("Label")?.InnerText :
+                node.SelectSingleNode("m:Label", nsManager)?.InnerText;
+            bool.TryParse(isTemplate ? node.SelectSingleNode("HideFromUI")?.InnerText :
+                node.SelectSingleNode("m:HideFromUI", nsManager)?.InnerText, out _hideFromUi);
 
             if (values != null && values.Any())
             {
@@ -47,17 +60,23 @@ namespace ThreatsManager.MsTmt.Model
             }
         }
 
-        public PropertyDefinition(XmlNode node, bool hidden)
+        public PropertyDefinition(XmlNode node, bool hidden, bool isTemplate)
         {
             if (node == null)
                 throw new ArgumentNullException(nameof(node));
 
-            _name = node.ChildNodes[0].InnerText;
-            _label = node.ChildNodes[1].InnerText;
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            nsManager.AddNamespace("m", "http://schemas.datacontract.org/2004/07/ThreatModeling.Model");
+
+            _name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
+                node.SelectSingleNode("m:Name", nsManager)?.InnerText;
+            _label = isTemplate ? node.SelectSingleNode("Label")?.InnerText :
+                node.SelectSingleNode("m:Label", nsManager)?.InnerText;
             _hideFromUi = hidden;
 
-            var values = node.ChildNodes[3];
-            if (values.HasChildNodes)
+            var values = isTemplate ? node.SelectSingleNode("Values") :
+                node.SelectSingleNode("m:Values", nsManager);
+            if (values?.HasChildNodes ?? false)
             {
                 _values = new List<string>(values.ChildNodes
                     .OfType<XmlNode>().Select(x => x.InnerText)

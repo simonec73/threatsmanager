@@ -15,9 +15,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
@@ -77,6 +78,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public IEnumerable<IEntity> Entities { get; }
         public IEntity GetEntity(Guid id)
         {
@@ -106,19 +111,64 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return null;
         }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private List<IProperty> _properties { get; set; }
         private Guid _parentId { get; set; }
-        private IGroupElement GroupElement => this;
+        private IGroup _parent { get; set; }
         #endregion
 
         #region Specific implementation.
+        [JsonProperty("template")]
+        internal Guid _templateId;
+
+        internal ITrustBoundaryTemplate _template { get; set; }
+
+        public ITrustBoundaryTemplate Template
+        {
+            get
+            {
+                if (_template == null && _templateId != Guid.Empty)
+                {
+                    _template = _model?.GetTrustBoundaryTemplate(_templateId);
+                }
+
+                return _template;
+            }
+        }
+
+        public void ResetTemplate()
+        {
+            this.ClearProperties();
+            _model.AutoApplySchemas(this);
+
+            _templateId = Guid.Empty;
+            _template = null;
+        }
+
         public override string ToString()
         {
             return Name ?? "<undefined>";
@@ -138,6 +188,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     Name = Name,
                     Description = Description,
                     _parentId = _parentId,
+                    _templateId = _templateId
                 };
                 this.CloneProperties(result);
 

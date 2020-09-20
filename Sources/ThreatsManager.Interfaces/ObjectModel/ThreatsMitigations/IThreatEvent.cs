@@ -1,13 +1,16 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
 {
     /// <summary>
-    /// Interface implemented by Threat Events, that is Threats that are associated to Entities or Data Flow.
+    /// Interface implemented by Threat Events, that is Threats that are associated to Entities, Data Flows or the Threat Model as a whole.
     /// </summary>
     public interface IThreatEvent : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IThreatEventScenariosContainer, IThreatEventMitigationsContainer
+        IThreatEventScenariosContainer, IThreatEventMitigationsContainer, 
+        IThreatEventVulnerabilitiesContainer, IDirty
     {
         /// <summary>
         /// Identifier of the Parent Identity.

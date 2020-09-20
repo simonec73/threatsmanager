@@ -15,10 +15,12 @@ using ThreatsManager.Utilities.Aspects.Engine;
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [IdentityAspect]
+    [ThreatModelChildAspect]
     public partial class PropertySchema : IPropertySchema
     {
         public PropertySchema()
@@ -26,11 +28,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertySchema([Required] string name, [Required] string nspace, int priority = 50) : this()
+        public PropertySchema([Required] IThreatModel model, [Required] string name, [Required] string nspace, int priority = 50) : this()
         {
             _id = Guid.NewGuid();
             Name = name;
             Namespace = nspace;
+            _model = model;
+            _modelId = model.Id;
             Priority = priority;
             RequiredExecutionMode = ExecutionMode.Business;
             Visible = true;
@@ -38,7 +42,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        #endregion    
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
+        #endregion
 
         #region Specific implementation.
         [JsonProperty("namespace")]
@@ -75,10 +81,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     _id = Id,
                     Name = Name,
                     Description = Description,
+                    _model = model,
+                    _modelId = model.Id,
                     Namespace = Namespace,
                     AppliesTo = AppliesTo,
                     AutoApply = AutoApply,
                     Priority = Priority,
+                    RequiredExecutionMode = RequiredExecutionMode,
                     Visible = Visible,
                     System = System,
                 };
@@ -90,15 +99,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             return result;
         }
 
-        #endregion
-
-        #region Default implementation.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        #endregion
-
-        #region Specific implementation.
         public override string ToString()
         {
             return $"{Name} ({Namespace})";
@@ -110,6 +110,33 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 _propertyTypes = new List<IPropertyType>();
 
             _propertyTypes.Add(propertyType);
+        }
+        #endregion
+
+        #region Default implementation.
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public IThreatModel Model { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
         }
         #endregion
     }

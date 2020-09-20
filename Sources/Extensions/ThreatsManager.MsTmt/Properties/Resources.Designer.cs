@@ -70,16 +70,7 @@ namespace ThreatsManager.MsTmt.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported MS TMT document and must be applied to imported Data Flows..
-        /// </summary>
-        internal static string DataFlowsPropertySchemaDescription {
-            get {
-                return ResourceManager.GetString("DataFlowsPropertySchemaDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://www.simoneonsecurity.com/tm/2018.
+        ///   Looks up a localized string similar to https://threatsmanager.com/tm/2020/.
         /// </summary>
         internal static string DefaultNamespace {
             get {
@@ -88,29 +79,38 @@ namespace ThreatsManager.MsTmt.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported MS TMT document and must be applied to imported Entities..
+        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported TMT document for a base entity..
         /// </summary>
-        internal static string EntitiesPropertySchemaDescription {
+        internal static string EntityPropertySchemaDescription {
             get {
-                return ResourceManager.GetString("EntitiesPropertySchemaDescription", resourceCulture);
+                return ResourceManager.GetString("EntityPropertySchemaDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property used to store the ID of the DataFlow, as defined in the imported MS TMT Threat Model..
+        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported TMT document for flows..
         /// </summary>
-        internal static string ThreatModelDataFlowIdDescription {
+        internal static string FlowsPropertySchemaDescription {
             get {
-                return ResourceManager.GetString("ThreatModelDataFlowIdDescription", resourceCulture);
+                return ResourceManager.GetString("FlowsPropertySchemaDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property used to store the ID of the Entity, as defined in the imported MS TMT Threat Model..
+        ///   Looks up a localized string similar to Property used to store the ID of the instance, as defined in the imported MS TMT Threat Model..
         /// </summary>
-        internal static string ThreatModelEntityIdDescription {
+        internal static string ThreatModelInstanceIdDescription {
             get {
-                return ResourceManager.GetString("ThreatModelEntityIdDescription", resourceCulture);
+                return ResourceManager.GetString("ThreatModelInstanceIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property used to store the ID of the object, as defined in the imported MS TMT Threat Model. In Entities, Trust Boundaries, Flows and Threat Events, it refers to the parent object..
+        /// </summary>
+        internal static string ThreatModelObjectIdDescription {
+            get {
+                return ResourceManager.GetString("ThreatModelObjectIdDescription", resourceCulture);
             }
         }
         
@@ -129,6 +129,87 @@ namespace ThreatsManager.MsTmt.Properties {
         internal static string ThreatTitle {
             get {
                 return ResourceManager.GetString("ThreatTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threat Modeling Tool Data Store.
+        /// </summary>
+        internal static string TmtDataStorePropertySchema {
+            get {
+                return ResourceManager.GetString("TmtDataStorePropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threat Modeling Tool External Interactor.
+        /// </summary>
+        internal static string TmtExternalInteractorPropertySchema {
+            get {
+                return ResourceManager.GetString("TmtExternalInteractorPropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threat Modeling Tool Flow.
+        /// </summary>
+        internal static string TmtFlowPropertySchema {
+            get {
+                return ResourceManager.GetString("TmtFlowPropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tmt.
+        /// </summary>
+        internal static string TmtObjectPropertySchema {
+            get {
+                return ResourceManager.GetString("TmtObjectPropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema to store the unique ID of the object, as defined in TMT..
+        /// </summary>
+        internal static string TmtObjectPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("TmtObjectPropertySchemaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threat Modeling Tool Process.
+        /// </summary>
+        internal static string TmtProcessPropertySchema {
+            get {
+                return ResourceManager.GetString("TmtProcessPropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported TMT document for an entity..
+        /// </summary>
+        internal static string TmtPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("TmtPropertySchemaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threat Modeling Tool Trust Boundary.
+        /// </summary>
+        internal static string TmtTrustBoundaryPropertySchema {
+            get {
+                return ResourceManager.GetString("TmtTrustBoundaryPropertySchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects the properties defined in the imported TMT document for a base trust boundary..
+        /// </summary>
+        internal static string TrustBoundaryPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("TrustBoundaryPropertySchemaDescription", resourceCulture);
             }
         }
     }

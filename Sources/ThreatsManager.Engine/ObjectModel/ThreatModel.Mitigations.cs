@@ -4,9 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -40,11 +38,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _mitigations.Add(mitigation);
 
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                ChildCreated?.Invoke(mitigation);
-            }
+            SetDirty();
+            ChildCreated?.Invoke(mitigation);
         }
 
         [InitializationRequired]
@@ -76,7 +71,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(mitigation);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(mitigation);
                 }
             }

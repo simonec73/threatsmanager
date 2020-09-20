@@ -20,9 +20,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
@@ -174,19 +175,38 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
             return false;
         }
+
+        public void ClearProperties()
+        {
+        }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private List<IEntityShape> _entities { get; set; }
-        private IEntityShapesContainer EntityShapesContainer => this;
         private List<IGroupShape> _groups { get; set; }
-        private IGroupShapesContainer GroupShapesContainer => this;
         private List<ILink> _links { get; set; }
-        private ILinksContainer LinksContainer => this;
-        private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
         #endregion
 

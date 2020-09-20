@@ -15,9 +15,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     public class Link : ILink, IThreatModelChild, IInitializableObject
@@ -70,9 +71,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #endregion
 
         #region Additional placeholders required.
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private List<IProperty> _properties { get; set; }
         #endregion
 
@@ -105,6 +105,29 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public bool RemoveProperty(Guid propertyTypeId)
         {
             return false;
+        }
+
+        public void ClearProperties()
+        {
+        }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
         }
         #endregion
     }

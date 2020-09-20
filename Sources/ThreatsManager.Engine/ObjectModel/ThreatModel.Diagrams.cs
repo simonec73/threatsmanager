@@ -209,7 +209,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     Order = _diagrams.Any() ? _diagrams.Max(x => x.Order) + 1 : 1
                 };
                 _diagrams.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -229,7 +229,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(diagram);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(diagram);
                 }
             }

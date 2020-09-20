@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TmtImport": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\simon\\OneDrive\\Documenti\\Threats Manager Platform\""
+    }
+  }
+}

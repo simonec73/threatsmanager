@@ -54,7 +54,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         _propertyTypes = new List<IPropertyType>();
 
                     _propertyTypes.Add(result);
-                    Dirty.IsDirty = true;
+                    SetDirty();
 
                     PropertyTypeAdded?.Invoke(this, result);
                 }
@@ -74,7 +74,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 result = _propertyTypes.Remove(propertyType);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     PropertyTypeRemoved?.Invoke(this, propertyType);
                 }
             }

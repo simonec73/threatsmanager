@@ -11,7 +11,7 @@ The said Windows Desktop experience will not available as Open Source, because i
 The code has been thought to be opened with Visual Studio 2019. The Community Edition would be enough.
 You need also to install the following prerequisites:
 
-- PostSharp Tools for Visual Studio **v6.6.7** (<https://www.postsharp.net/downloads/postsharp-6.6/v6.6.7>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
+- PostSharp Tools for Visual Studio **v6.6.13** (<https://www.postsharp.net/downloads/postsharp-6.6/v6.6.13>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
 
 ### PostSharp
 
@@ -32,4 +32,14 @@ The Threats Manager Platform Core libraries are all available as NuGet packages.
 - ThreatsManager.Utilities (<https://www.nuget.org/packages/ThreatsManager.Utilities/>)
 - ThreatsManager.Engine (<https://www.nuget.org/packages/ThreatsManager.Engine/>)
 
-There is also a fourth NuGet package, for additional utilities to cover WinForms platform: ThreatsManager.Utilities.WinForms (<https://www.nuget.org/packages/ThreatsManager.Utilities.WinForms/>).
+There is also a fourth NuGet package, for additional utilities to cover WinForms platform: ThreatsManager.Utilities.WinForms (<https://www.nuget.org/packages/ThreatsManager.Utilities.WinForms/>). This library is not part of this Repo.
+
+## The available Extensions
+
+The sources include the sources for some Extensions. The code collected here does not provide any UI-specific code and is intended to be used for building other tools and Extensions.
+
+|Extension                          |Description   |
+|-----------------------------------|--------------|
+|ThreatsManager.AutoThreatGeneration|Library to support automatic Threat Generation and Mitigation association.|
+|ThreatsManager.MsTmt               |Library to support conversion of Microsoft Threat Modeling Tool documents and Templates to the Threats Manager Platform format|
+

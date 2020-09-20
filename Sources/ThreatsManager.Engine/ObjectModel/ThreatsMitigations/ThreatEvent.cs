@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
@@ -12,15 +13,16 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
-    [IdentityAspect]
+    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
@@ -59,7 +61,34 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public bool IsInitialized => Model != null && _id != Guid.Empty && _threatTypeId != Guid.Empty;
 
+        public static bool UseThreatTypeInfo { get; set; }
+
         #region Specific implementation.
+        [JsonProperty("id")]
+        private Guid _id { get; set; }
+
+        public Guid Id => _id;
+
+        [JsonProperty("name")] 
+        private string _name { get; set; }
+
+        public string Name
+        {
+            get => UseThreatTypeInfo ? ThreatType?.Name : _name;
+
+            set => _name = value;
+        }
+
+        [JsonProperty("description")]
+        private string _description { get; set; }
+
+        public string Description         
+        {
+            get => UseThreatTypeInfo ? ThreatType?.Description : _description;
+
+            set => _description = value;
+        }
+
         [JsonProperty("parent")]
         private Guid _parentId;
 
@@ -103,7 +132,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 {
                     _severity = value;
                     _severityId = value.Id;
-                    Dirty.IsDirty = true;
+                    SetDirty();
                 }
             }
         }
@@ -199,7 +228,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         if (_properties == null)
                             _properties = new List<IProperty>();
                         _properties.Add(shadowProperty);
-                        Dirty.IsDirty = true;
+                        SetDirty();
                         PropertyAdded?.Invoke(this, shadowProperty);
                         shadowProperty.Changed += delegate(IProperty prop)
                         {
@@ -217,9 +246,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         #endregion
 
         #region Default implementation.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
         public IThreatModel Model { get; }
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
@@ -247,6 +273,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool RemoveProperty(Guid propertyTypeId)
         {
             return false;
+        }
+
+        public void ClearProperties()
+        {
         }
 
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
@@ -294,19 +324,179 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return false;
         }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
-        protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private List<IProperty> _properties { get; set; }
         private List<IThreatEventScenario> _scenarios { get; set; }
-        private IThreatEventScenariosContainer ScenariosContainer => this; 
-        private IThreatEvent MySelf => this;
         private List<IThreatEventMitigation> _mitigations { get; set; }
-        private IThreatEventMitigationsContainer MitigationsContainer => this;
+        #endregion
+
+        #region Implementation of interface IThreatEventVulnerabilitiesContainer.
+        private Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> _threatEventVulnerabilityAdded;
+        public event Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> ThreatEventVulnerabilityAdded
+        {
+            add
+            {
+                if (_threatEventVulnerabilityAdded == null || !_threatEventVulnerabilityAdded.GetInvocationList().Contains(value))
+                {
+                    _threatEventVulnerabilityAdded += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_threatEventVulnerabilityAdded != null) _threatEventVulnerabilityAdded -= value;
+            }
+        }
+
+        private Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> _threatEventVulnerabilityRemoved;
+        public event Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> ThreatEventVulnerabilityRemoved
+        {
+            add
+            {
+                if (_threatEventVulnerabilityRemoved == null || !_threatEventVulnerabilityRemoved.GetInvocationList().Contains(value))
+                {
+                    _threatEventVulnerabilityRemoved += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_threatEventVulnerabilityRemoved != null) _threatEventVulnerabilityRemoved -= value;
+            }
+        }
+
+        [JsonProperty("threatEventVulnerabilities")]
+        private List<IThreatEventVulnerability> _vulnerabilities { get; set; }
+
+        public IEnumerable<IThreatEventVulnerability> ThreatEventVulnerabilities => _vulnerabilities?.AsReadOnly();
+
+        public IThreatEventVulnerability GetThreatEventVulnerability(Guid vulnerabilityId)
+        {
+            return _vulnerabilities?.FirstOrDefault(x => x.VulnerabilityId == vulnerabilityId);
+        }
+
+        public void Add([NotNull] IThreatEventVulnerability association)
+        {
+            if (_vulnerabilities == null)
+                _vulnerabilities = new List<IThreatEventVulnerability>();
+            if (association.ThreatEvent != this || Model.FindVulnerability(association.VulnerabilityId) == null)
+                throw new ArgumentException();
+
+            _vulnerabilities.Add(association);
+        }
+
+        public IThreatEventVulnerability AddThreatEventVulnerability([NotNull] IVulnerability vulnerability)
+        {
+            IThreatEventVulnerability result = null;
+
+            result = new ThreatEventVulnerability(this, vulnerability);
+            if (_vulnerabilities == null)
+                _vulnerabilities = new List<IThreatEventVulnerability>();
+            _vulnerabilities.Add(result);
+            if (Model is IDirty dirtyObject)
+                dirtyObject.SetDirty();
+            _threatEventVulnerabilityAdded?.Invoke(this, result);
+
+            return result;
+        }
+
+        public bool RemoveThreatEventVulnerability(Guid vulnerabilityId)
+        {
+            bool result = false;
+
+            var vulnerability = GetThreatEventVulnerability(vulnerabilityId);
+            if (vulnerability != null)
+            {
+                result = _vulnerabilities.Remove(vulnerability);
+                if (result)
+                {
+                    if (Model is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    _threatEventVulnerabilityRemoved?.Invoke(this, vulnerability);
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<IThreatEventMitigation> GetEffectiveMitigations()
+        {
+            IEnumerable<IThreatEventMitigation> result = null;
+
+            var list = new List<IThreatEventMitigation>();
+            if (_mitigations?.Any() ?? false)
+                list.AddRange(_mitigations);
+
+            var vulnerabilities = _vulnerabilities?.ToArray();
+            if (vulnerabilities?.Any() ?? false)
+            {
+                Dictionary<Guid, IVulnerabilityMitigation> selected = new Dictionary<Guid, IVulnerabilityMitigation>();
+
+                foreach (var vulnerability in vulnerabilities)
+                {
+                    var mitigations = vulnerability.Vulnerability?.Mitigations?.ToArray();
+                    if (mitigations?.Any() ?? false)
+                    {
+                        foreach (var mitigation in mitigations)
+                        {
+                            var current = selected.Where(x => x.Key == mitigation.MitigationId)
+                                .Select(x => x.Value).FirstOrDefault();
+
+                            if (current == null)
+                            {
+                                selected.Add(mitigation.MitigationId, mitigation);
+                            }
+                            else if ((mitigation.Strength?.Id ?? 0) > (current.Strength?.Id ?? 0))
+                            {
+                                selected[mitigation.MitigationId] = mitigation;
+                            }
+                        }
+                    }
+                }
+
+                if (selected.Any())
+                {
+                    foreach (var item in selected.Values)
+                    {
+                        if (list.All(x => x.MitigationId != item.MitigationId))
+                        {
+                            list.Add(new ThreatEventMitigation(this, item.Mitigation, item.Strength)
+                            {
+                                Directives = "Mitigation inherited from Vulnerabilities"
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (list.Any())
+                result = list.AsReadOnly();
+
+            return result;
+        }
         #endregion
     }
 }

@@ -26,6 +26,8 @@ namespace ThreatsManager.Utilities
                 _knownTypes.Add(name, type);
         }
 
+        public bool HasUnknownTypes { get; private set; }
+
         public Type BindToType(string assemblyName, [Required] string typeName)
         {
             Type result;
@@ -36,6 +38,17 @@ namespace ThreatsManager.Utilities
                     result = _knownTypes[typeName];
                 else
                 {
+#if NETCOREAPP
+                    if (string.CompareOrdinal(assemblyName, "mscorlib") == 0)
+                    {
+                        assemblyName = "System.Private.CoreLib";
+                    }
+#else
+                    if (string.CompareOrdinal(assemblyName, "System.Private.CoreLib") == 0)
+                    {
+                        assemblyName = "mscorlib";
+                    }
+#endif
                     var assembly = Assembly.Load(assemblyName);
                     result = GetGenericType(typeName, assembly);
 
@@ -63,6 +76,7 @@ namespace ThreatsManager.Utilities
             catch
             {
                 result = typeof(object);
+                HasUnknownTypes = true;
                 TypeNotFound?.Invoke(assemblyName, typeName);
             }
 

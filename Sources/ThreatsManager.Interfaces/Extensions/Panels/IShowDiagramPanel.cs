@@ -5,7 +5,8 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     /// <summary>
     /// Interface representing a Panel handling IDiagrams.
     /// </summary>
-    public interface IShowDiagramPanel : IPanel
+    /// <typeparam name="T">Type representing the Form containing the Panel.</typeparam>
+    public interface IShowDiagramPanel<T> : IPanel<T>
     {
         /// <summary>
         /// Diagram associated to the Panel.

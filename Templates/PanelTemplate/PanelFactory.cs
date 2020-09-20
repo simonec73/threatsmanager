@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -16,13 +17,13 @@ namespace $rootnamespace$
     // TODO: Change Label, Priority and ExecutionMode. 
     [Extension(typeof(IContextAwareAction), "$guid1$", 
         "$itemname$ Context Aware Action", 100, ExecutionMode.Simplified)]
-	public class $safeitemrootname$ : IPanelFactory, IMainRibbonExtension, IPanelFactoryActionsRequestor
+	public class $safeitemrootname$ : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
 	{
         #region IPanelFactory implementation.
         // TODO: choose the correct InstanceMode.
         public InstanceMode Behavior => InstanceMode.Single;
 
-        public IPanel Create(IIdentity identity, out IActionDefinition action)
+        public IPanel<Form> Create(IIdentity identity, out IActionDefinition action)
         {
             var result = new $chosenname$();
 
@@ -31,7 +32,7 @@ namespace $rootnamespace$
             return result;
         }
 
-        public IPanel Create(IActionDefinition action)
+        public IPanel<Form> Create(IActionDefinition action)
         {
             return new $chosenname$();
         }
@@ -48,10 +49,9 @@ namespace $rootnamespace$
         #region IMainRibbonExtension implementation.
         public event Action<IMainRibbonExtension, string, bool> ChangeRibbonActionStatus;
         public event Action<IPanelFactory> ClosePanels;
-
         public event Action<IMainRibbonExtension> IteratePanels;
-                
         public event Action<IMainRibbonExtension> RefreshPanels;
+
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
         // TODO: select the right Ribbon.

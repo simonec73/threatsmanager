@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Collections.Generic;using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.ObjectModel.Properties;
@@ -303,7 +301,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private void ApplySchema<T>([NotNull] IPropertySchema schema) where T : IEntity
         {
             var list = _entities?.Where(x => x is T).ToArray();
@@ -433,9 +431,9 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 if (_schemas == null)
                     _schemas = new List<IPropertySchema>();
-                result = new PropertySchema(name, nspace);
+                result = new PropertySchema(this, name, nspace);
                 _schemas.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -483,7 +481,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(schema);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(schema);
                 }
             }

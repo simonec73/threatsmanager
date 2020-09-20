@@ -69,6 +69,60 @@ namespace ThreatsManager.Utilities
         }
 
         /// <summary>
+        /// Get the maximum severity applied to the Vulnerabilities derived from the specific Weakness.
+        /// </summary>
+        /// <param name="weakness">Weakness to be analyzed.</param>
+        /// <returns>Maximum severity applied to Vulnerabilities derived from the Weakness.</returns>
+        public static ISeverity GetTopSeverity(this IWeakness weakness)
+        {
+            ISeverity result = null;
+
+            var model = weakness.Model;
+
+            if (model != null)
+            {
+                var modelV = model.Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id)
+                    .OrderByDescending(x => x.SeverityId).FirstOrDefault();
+                if (modelV != null)
+                {
+                    result = modelV.Severity;
+                }
+
+                var entitiesV = model.Entities?
+                    .Select(e => e.Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id)
+                        .OrderByDescending(x => x.SeverityId).FirstOrDefault())
+                    .Where(x => x != null).ToArray();
+                if (entitiesV?.Any() ?? false)
+                {
+                    foreach (var entityV in entitiesV)
+                    {
+                        if (result == null || entityV.SeverityId > result.Id)
+                        {
+                            result = entityV.Severity;
+                        }
+                    }
+                }
+
+                var flowsV = model.DataFlows?
+                    .Select(e => e.Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id)
+                        .OrderByDescending(x => x.SeverityId).FirstOrDefault())
+                    .Where(x => x != null).ToArray();
+                if (flowsV?.Any() ?? false)
+                {
+                    foreach (var flowV in flowsV)
+                    {
+                        if (result == null || flowV.SeverityId > result.Id)
+                        {
+                            result = flowV.Severity;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Verifies if the Identity should be picked, based on the filter passed as argument.
         /// </summary>
         /// <param name="identity">Identity to be analyzed.</param>

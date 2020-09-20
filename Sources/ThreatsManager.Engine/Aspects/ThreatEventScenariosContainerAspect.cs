@@ -17,28 +17,12 @@ namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
     //private List<IThreatEventScenario> _scenarios { get; set; }
-    //private IThreatEventScenariosContainer ScenariosContainer => this;
-    //private IThreatEvent MySelf => this;
     //#endregion    
 
     [PSerializable]
     [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class ThreatEventScenariosContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-
-        [ImportMember("ScenariosContainer", IsRequired=true)]
-        public Property<IThreatEventScenariosContainer> ScenariosContainer;
-
-        [ImportMember("MySelf", IsRequired=true)]
-        public Property<IThreatEvent> MySelf;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -50,7 +34,7 @@ namespace ThreatsManager.Engine.Aspects
 
         #region Implementation of interface IThreatEventScenariosContainer.
         private Action<IThreatEventScenariosContainer, IThreatEventScenario> _threatEventScenarioAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded
         {
             add
@@ -67,7 +51,7 @@ namespace ThreatsManager.Engine.Aspects
         }
 
         private Action<IThreatEventScenariosContainer, IThreatEventScenario> _threatEventScenarioRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved
         {
             add
@@ -86,50 +70,48 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IEnumerable<IThreatEventScenario> Scenarios => _scenarios?.AsReadOnly();
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IThreatEventScenario GetScenario(Guid id)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
-
             return _scenarios?.FirstOrDefault(x => x.Id == id);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 14)]
-        public IThreatEventScenario AddScenario(IThreatActor threatActor, ISeverity severity,
-            string name = null)
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 16)]
+        public IThreatEventScenario AddScenario(IThreatActor threatActor, ISeverity severity, string name = null)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
             if (threatActor == null)
                 throw new ArgumentNullException(nameof(threatActor));
             if (severity == null)
                 throw new ArgumentNullException(nameof(severity));
 
-            IThreatEventScenario result = new ThreatEventScenario(MySelf?.Get(), threatActor, name)
+            IThreatEventScenario result = null;
+
+            if (Instance is IThreatEvent threatEvent)
             {
-                Severity = severity
-            };
+                result = new ThreatEventScenario(threatEvent, threatActor, name)
+                {
+                    Severity = severity
+                };
 
-            if (_scenarios == null)
-                _scenarios = new List<IThreatEventScenario>();
+                if (_scenarios == null)
+                    _scenarios = new List<IThreatEventScenario>();
 
-            _scenarios.Add(result);
-            Dirty.IsDirty = true;
-            _threatEventScenarioAdded?.Invoke(ScenariosContainer?.Get(), result);
+                _scenarios.Add(result);
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                if (Instance is IThreatEventScenariosContainer container)
+                    _threatEventScenarioAdded?.Invoke(container, result);
+            }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
         public void Add(IThreatEventScenario scenario)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return;
             if (scenario == null)
                 throw new ArgumentNullException(nameof(scenario));
-            if (scenario.ThreatEvent is IThreatModelChild child &&
-                child.Model != Model?.Get())
+            if (scenario.ThreatEvent is IThreatModelChild child && child.Model != (Instance as IThreatEvent)?.Model)
                 throw new ArgumentException();
 
             if (_scenarios == null)
@@ -138,12 +120,9 @@ namespace ThreatsManager.Engine.Aspects
             _scenarios.Add(scenario);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveScenario(Guid id)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return false;
-
             bool result = false;
 
             var scenario = GetScenario(id);
@@ -152,8 +131,10 @@ namespace ThreatsManager.Engine.Aspects
                 result = _scenarios.Remove(scenario);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    _threatEventScenarioRemoved?.Invoke(ScenariosContainer?.Get(), scenario);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (Instance is IThreatEvent threatEvent)
+                        _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
                 }
             }
 

@@ -35,6 +35,7 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// Entity Template.
         /// </summary>
+        [UiHidden]
         [EnumLabel("Entity Template")]
         EntityTemplate = 8,
         /// <summary>
@@ -43,10 +44,27 @@ namespace ThreatsManager.Interfaces
         [EnumLabel("Flow")]
         DataFlow = 16,
         /// <summary>
+        /// Flow Template,
+        /// </summary>
+        [UiHidden]
+        [EnumLabel("Flow Template")]
+        FlowTemplate = 131072,
+        /// <summary>
         /// Trust Boundary.
         /// </summary>
         [EnumLabel("Trust Boundary")]
         TrustBoundary = 32,
+        /// <summary>
+        /// Trust Boundary Template.
+        /// </summary>
+        [UiHidden]
+        [EnumLabel("Trust Boundary Template")]
+        TrustBoundaryTemplate = 4194304,
+        /// <summary>
+        /// Item Templates.
+        /// </summary>
+        [UiHidden]
+        ItemTemplate = EntityTemplate | FlowTemplate | TrustBoundaryTemplate,
         /// <summary>
         /// Logical Group.
         /// </summary>
@@ -78,7 +96,6 @@ namespace ThreatsManager.Interfaces
         /// Threat Event Mitigation.
         /// </summary>
         [EnumLabel("Threat Event Mitigation")]
-        [UiHidden]
         ThreatEventMitigation = 1024,
         /// <summary>
         /// Everything related to Threats.
@@ -94,7 +111,6 @@ namespace ThreatsManager.Interfaces
         /// Threat Type Mitigation.
         /// </summary>
         [EnumLabel("Threat Type Mitigation")]
-        [UiHidden]
         ThreatTypeMitigation = 4096,
         /// <summary>
         /// Threat Actor.
@@ -143,7 +159,7 @@ namespace ThreatsManager.Interfaces
         /// Everything.
         /// </summary>
         [UiHidden]
-        All = Entity | EntityTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor | 
+        All = Entity | ItemTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor | 
               Severity | PropertyType | PropertySchema | Diagram | 
               EntityShape | GroupShape | Link | ThreatModel
     }

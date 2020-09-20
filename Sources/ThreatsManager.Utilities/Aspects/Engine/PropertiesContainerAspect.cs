@@ -15,23 +15,13 @@ using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
-    //private IPropertiesContainer PropertiesContainer => this;
     //private List<IProperty> _properties { get; set; }
     //#endregion    
 
     [PSerializable]
     public class PropertiesContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired = true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("PropertiesContainer", IsRequired = true)]
-        public Property<IPropertiesContainer> PropertiesContainer;
-        #endregion
-
         #region Extra elements to be added.
-
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
         [CopyCustomAttributes(typeof(JsonPropertyAttribute),
@@ -40,15 +30,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         public List<IProperty> _properties { get; set; }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
+            LinesOfCodeAvoided = 2, Visibility = Visibility.Private)]
         public void OnPropertyChanged(IProperty property)
         {
             if (property == null)
                 throw new ArgumentNullException(nameof(property));
 
-            _propertyValueChanged?.Invoke(PropertiesContainer?.Get(), property);
+            if (Instance is IPropertiesContainer container)
+                _propertyValueChanged?.Invoke(container, property);
         }
-
         #endregion
 
         #region Implementation of interface IPropertiesContainer.
@@ -121,7 +111,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 20)]
         public IProperty AddProperty(IPropertyType propertyType, string value)
         {
-            var model = Model?.Get();
+            var model = GetModel();
 
             IProperty result = null;
             if (model != null)
@@ -163,8 +153,11 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     _properties = new List<IProperty>();
                 result.StringValue = value;
                 _properties.Add(result);
-                Dirty.IsDirty = true;
-                _propertyAdded?.Invoke(PropertiesContainer?.Get(), result);
+
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                if (Instance is IPropertiesContainer container)
+                    _propertyAdded?.Invoke(container, result);
                 result.Changed += OnPropertyChanged;
             }
 
@@ -178,15 +171,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
         private void OnPropertyTypeAdded(IPropertySchema schema, IPropertyType propertyType)
         {
-            var model = Model?.Get();
-            if (model != null && schema != null && propertyType != null)
+            var model = GetModel();
+            if (model != null && schema != null && propertyType != null && !HasProperty(propertyType))
             {
                 if (_properties?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
                     InternalAddProperty(model, propertyType, null);
             }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12)]
         public bool RemoveProperty(IPropertyType propertyType)
         {
             if (propertyType == null)
@@ -200,15 +193,17 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 result = _properties?.Remove(property) ?? false;
                 if (result)
                 {
-                    Dirty.IsDirty = true;
-                    _propertyRemoved?.Invoke(PropertiesContainer?.Get(), property);
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
+                    if (Instance is IPropertiesContainer container)
+                        _propertyRemoved?.Invoke(container, property);
                 }
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public bool RemoveProperty(Guid propertyTypeId)
         {
             bool result = false;
@@ -220,18 +215,39 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     if (_properties.Remove(property))
                     {
-                        _propertyRemoved?.Invoke(PropertiesContainer?.Get(), property);
+                        if (Instance is IPropertiesContainer container)
+                            _propertyRemoved?.Invoke(container, property);
                         result = true;
                     }
                 }
 
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    if (Instance is IDirty dirtyObject)
+                        dirtyObject.SetDirty();
                 }
             }
 
             return result;
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        public void ClearProperties()
+        {
+            var properties = _properties?.ToArray();
+
+            if (properties?.Any() ?? false)
+            {
+                foreach (var property in properties)
+                {
+                    if (Instance is IPropertiesContainer container)
+                        _propertyRemoved?.Invoke(container, property);
+                }
+
+                _properties?.Clear();
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+            }
         }
         #endregion
 
@@ -249,7 +265,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
             if (schemas?.Any() ?? false)
             {
-                var model = Model.Get();
+                var model = GetModel();
                 if (model != null)
                 {
                     foreach (var schemaId in schemas)
@@ -260,6 +276,18 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     }
                 }
             }
+        }
+
+        private IThreatModel GetModel()
+        {
+            IThreatModel result = null;
+
+            if (Instance is IThreatModelChild modelChild)
+                result = modelChild.Model;
+            else if (Instance is IThreatModel model)
+                result = model;
+
+            return result;
         }
     }
 }

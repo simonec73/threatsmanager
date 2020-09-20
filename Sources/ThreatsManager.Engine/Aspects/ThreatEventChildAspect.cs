@@ -18,14 +18,8 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class ThreatEventChildAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -40,42 +34,16 @@ namespace ThreatsManager.Engine.Aspects
         #endregion
 
         #region Implementation of interface IThreatEventChild.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 4)]
         public IThreatEvent ThreatEvent
         {
             get
             {
-                if (_threatEvent == null)
-                {
-                    var entities = Model?.Get().Entities?.ToArray();
-                    if (entities?.Any() ?? false)
-                    {
-                        foreach (var entity in entities)
-                        {
-                            _threatEvent = entity.ThreatEvents?.FirstOrDefault(x => x.Id == _threatEventId);
-                            if (_threatEvent != null)
-                                break;
-                        }
-                    }
-                }
+                var model = (Instance as IThreatModelChild)?.Model;
 
                 if (_threatEvent == null)
                 {
-                    var dataFlows = Model?.Get().DataFlows?.ToArray();
-                    if (dataFlows?.Any() ?? false)
-                    {
-                        foreach (var dataFlow in dataFlows)
-                        {
-                            _threatEvent = dataFlow.ThreatEvents?.FirstOrDefault(x => x.Id == _threatEventId);
-                            if (_threatEvent != null)
-                                break;
-                        }
-                    }
-                }
-
-                if (_threatEvent == null)
-                {
-                    _threatEvent = Model?.Get().ThreatEvents?.FirstOrDefault(x => x.Id == _threatEventId);
+                    _threatEvent = model?.FindThreatEvent(_threatEventId);
                 }
 
                 return _threatEvent;

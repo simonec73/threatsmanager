@@ -1,17 +1,29 @@
-﻿using System.Windows.Forms;
+﻿using System;
 
 namespace ThreatsManager.Interfaces.Extensions.Panels
 {
     /// <summary>
-    /// Interface representing a Panel.
+    /// Base interface representing a Panel.
     /// </summary>
     public interface IPanel
     {
         /// <summary>
-        /// Form containing the Panel.
+        /// Identifier of the Panel.
         /// </summary>
-        Form ContainingForm { get; set; }
+        Guid Id { get; }
+    }
 
-        IActionDefinition ActionDefinition { get; }
+    /// <summary>
+    /// Interface representing a Panel.
+    /// </summary>
+    /// <typeparam name="T">Type representing the Form containing the Panel.</typeparam>
+    public interface IPanel<T> : IPanel
+    {
+        /// <summary>
+        /// Container of the Panel.
+        /// </summary>
+        /// <remarks>For Windows Forms-based solutions like Threats Manager Studio, it would be Windows Form.
+        /// For Web-based solutions, it would be something else.</remarks>
+        T PanelContainer { get; set; }
     }
 }

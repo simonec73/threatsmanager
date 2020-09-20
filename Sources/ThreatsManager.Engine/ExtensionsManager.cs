@@ -299,15 +299,21 @@ namespace ThreatsManager.Engine
 
             switch (requiredMode)
             {
+                case ExecutionMode.Pioneer:
+                    result = _executionMode == ExecutionMode.Pioneer;
+                    break;
                 case ExecutionMode.Expert:
-                    result = _executionMode == ExecutionMode.Expert;
+                    result = _executionMode == ExecutionMode.Pioneer ||
+                             _executionMode == ExecutionMode.Expert;
                     break;
                 case ExecutionMode.Simplified:
-                    result = _executionMode == ExecutionMode.Expert ||
+                    result = _executionMode == ExecutionMode.Pioneer ||
+                             _executionMode == ExecutionMode.Expert ||
                              _executionMode == ExecutionMode.Simplified;
                     break;
                 case ExecutionMode.Management:
-                    result = _executionMode == ExecutionMode.Expert ||
+                    result = _executionMode == ExecutionMode.Pioneer ||
+                             _executionMode == ExecutionMode.Expert ||
                              _executionMode == ExecutionMode.Simplified || 
                              _executionMode == ExecutionMode.Management;
                     break;

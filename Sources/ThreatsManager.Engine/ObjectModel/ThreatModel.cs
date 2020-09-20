@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Windows.Forms;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.Aspects;
@@ -28,6 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
+    [VulnerabilitiesContainerAspect]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
     public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
@@ -49,7 +48,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public event Action<string> DependencyRemoved;
         public event Action<string, string> DependencyChanged;
 
-        private void RegisterEvents()
+        internal void RegisterEvents()
         {
             PropertyAdded += OnPropertyAdded;
             PropertyRemoved += OnPropertyRemoved;
@@ -124,6 +123,14 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var threatType in _threatTypes)
                 {
                     RegisterEvents(threatType);
+                }
+            }
+
+            if (_weaknesses?.Any() ?? false)
+            {
+                foreach (var weakness in _weaknesses)
+                {
+                    RegisterEvents(weakness);
                 }
             }
         }
@@ -205,9 +212,17 @@ namespace ThreatsManager.Engine.ObjectModel
                     UnregisterEvents(threatType);
                 }
             }
+
+            if (_weaknesses?.Any() ?? false)
+            {
+                foreach (var weakness in _weaknesses)
+                {
+                    UnregisterEvents(weakness);
+                }
+            }
         }
 
-        private void RegisterEvents([NotNull] IEntity entity)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IEntity entity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) entity).PropertyChanged += OnPropertyChanged;
@@ -218,7 +233,7 @@ namespace ThreatsManager.Engine.ObjectModel
             entity.ThreatEventRemoved += OnThreatEventRemovedFromEntity;
         }
 
-        private void UnregisterEvents([NotNull] IEntity entity)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IEntity entity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) entity).PropertyChanged -= OnPropertyChanged;
@@ -229,7 +244,7 @@ namespace ThreatsManager.Engine.ObjectModel
             entity.ThreatEventRemoved -= OnThreatEventRemovedFromEntity;
         }
 
-        private void RegisterEvents([NotNull] IGroup group)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IGroup group)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) group).PropertyChanged += OnPropertyChanged;
@@ -238,7 +253,7 @@ namespace ThreatsManager.Engine.ObjectModel
             group.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IGroup group)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IGroup group)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) group).PropertyChanged -= OnPropertyChanged;
@@ -247,7 +262,7 @@ namespace ThreatsManager.Engine.ObjectModel
             group.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IDataFlow dataFlow)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IDataFlow dataFlow)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) dataFlow).PropertyChanged += OnPropertyChanged;
@@ -258,7 +273,7 @@ namespace ThreatsManager.Engine.ObjectModel
             dataFlow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
         }
 
-        private void UnregisterEvents([NotNull] IDataFlow dataFlow)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IDataFlow dataFlow)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) dataFlow).PropertyChanged -= OnPropertyChanged;
@@ -269,19 +284,19 @@ namespace ThreatsManager.Engine.ObjectModel
             dataFlow.ThreatEventRemoved -= OnThreatEventRemovedFromDataFlow;
         }
 
-        private void RegisterEvents([NotNull] IPropertySchema schema)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IPropertySchema schema)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) schema).PropertyChanged += OnPropertyChanged;
         }
 
-        private void UnregisterEvents([NotNull] IPropertySchema schema)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IPropertySchema schema)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) schema).PropertyChanged -= OnPropertyChanged;
         }
 
-        private void RegisterEvents([NotNull] IDiagram diagram)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IDiagram diagram)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) diagram).PropertyChanged += OnPropertyChanged;
@@ -296,7 +311,7 @@ namespace ThreatsManager.Engine.ObjectModel
             diagram.LinkRemoved += OnLinkRemoved;
         }
 
-        private void UnregisterEvents([NotNull] IDiagram diagram)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IDiagram diagram)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) diagram).PropertyChanged -= OnPropertyChanged;
@@ -311,7 +326,7 @@ namespace ThreatsManager.Engine.ObjectModel
             diagram.LinkRemoved -= OnLinkRemoved;
         }
 
-        private void RegisterEvents([NotNull] ISeverity severity)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) severity).PropertyChanged += OnPropertyChanged;
@@ -320,7 +335,7 @@ namespace ThreatsManager.Engine.ObjectModel
             severity.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] ISeverity severity)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) severity).PropertyChanged -= OnPropertyChanged;
@@ -329,7 +344,7 @@ namespace ThreatsManager.Engine.ObjectModel
             severity.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IThreatType threatType)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatType threatType)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) threatType).PropertyChanged += OnPropertyChanged;
@@ -338,7 +353,7 @@ namespace ThreatsManager.Engine.ObjectModel
             threatType.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IThreatType threatType)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatType threatType)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) threatType).PropertyChanged -= OnPropertyChanged;
@@ -347,7 +362,25 @@ namespace ThreatsManager.Engine.ObjectModel
             threatType.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IMitigation mitigation)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IWeakness weakness)
+        {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            ((INotifyPropertyChanged)weakness).PropertyChanged += OnPropertyChanged;
+            weakness.PropertyAdded += OnPropertyAdded;
+            weakness.PropertyRemoved += OnPropertyRemoved;
+            weakness.PropertyValueChanged += OnPropertyValueChanged;
+        }
+
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IWeakness weakness)
+        {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            ((INotifyPropertyChanged)weakness).PropertyChanged -= OnPropertyChanged;
+            weakness.PropertyAdded -= OnPropertyAdded;
+            weakness.PropertyRemoved -= OnPropertyRemoved;
+            weakness.PropertyValueChanged -= OnPropertyValueChanged;
+        }
+
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) mitigation).PropertyChanged += OnPropertyChanged;
@@ -356,7 +389,7 @@ namespace ThreatsManager.Engine.ObjectModel
             mitigation.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IMitigation mitigation)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) mitigation).PropertyChanged -= OnPropertyChanged;
@@ -365,7 +398,7 @@ namespace ThreatsManager.Engine.ObjectModel
             mitigation.PropertyValueChanged -= OnPropertyValueChanged;
         }
 
-        private void RegisterEvents([NotNull] IThreatActor actor)
+        private void RegisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatActor actor)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) actor).PropertyChanged += OnPropertyChanged;
@@ -374,7 +407,7 @@ namespace ThreatsManager.Engine.ObjectModel
             actor.PropertyValueChanged += OnPropertyValueChanged;
         }
 
-        private void UnregisterEvents([NotNull] IThreatActor actor)
+        private void UnregisterEvents([PostSharp.Patterns.Contracts.NotNull] IThreatActor actor)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged) actor).PropertyChanged -= OnPropertyChanged;
@@ -391,7 +424,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void OnPropertyAdded([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        private void OnPropertyAdded([PostSharp.Patterns.Contracts.NotNull] IPropertiesContainer container, [PostSharp.Patterns.Contracts.NotNull] IProperty property)
         {
             if (container is IIdentity identity)
             {
@@ -399,7 +432,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void OnPropertyRemoved([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        private void OnPropertyRemoved([PostSharp.Patterns.Contracts.NotNull] IPropertiesContainer container, [PostSharp.Patterns.Contracts.NotNull] IProperty property)
         {
             if (container is IIdentity identity)
             {
@@ -407,7 +440,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void OnPropertyValueChanged([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        private void OnPropertyValueChanged([PostSharp.Patterns.Contracts.NotNull] IPropertiesContainer container, [PostSharp.Patterns.Contracts.NotNull] IProperty property)
         {
             if (container is IIdentity identity)
             {
@@ -430,12 +463,19 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public ThreatModel([Required] string name) : this()
         {
+            SuspendDirty();
             _id = Guid.NewGuid();
             Name = name;
+            ResumeDirty();
         }
         #endregion
 
         public bool IsInitialized => Id != Guid.Empty;
+
+        public void Dispose()
+        {
+            UnregisterEvents();
+        }
 
         #region General properties and methods.
         [JsonProperty("owner")]
@@ -455,7 +495,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_contributors == null)
                     _contributors = new List<string>();
                 _contributors.Add(name);
-                Dirty.IsDirty = true;
+                SetDirty();
                 result = true;
                 ContributorAdded?.Invoke(name);
             }
@@ -472,7 +512,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _contributors.Remove(name);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ContributorRemoved?.Invoke(name);
                 }
             }
@@ -489,7 +529,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 // ReSharper disable once PossibleNullReferenceException
                 _contributors[index] = newName;
-                Dirty.IsDirty = true;
+                SetDirty();
                 result = true;
                 ContributorChanged?.Invoke(oldName, newName);
             }
@@ -511,7 +551,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_assumptions == null)
                     _assumptions = new List<string>();
                 _assumptions.Add(text);
-                Dirty.IsDirty = true;
+                SetDirty();
                 result = true;
                 AssumptionAdded?.Invoke(text);
             }
@@ -528,7 +568,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _assumptions.Remove(text);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     AssumptionRemoved?.Invoke(text);
                 }
             }
@@ -545,7 +585,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 // ReSharper disable once PossibleNullReferenceException
                 _assumptions[index] = newText;
-                Dirty.IsDirty = true;
+                SetDirty();
                 result = true;
                 AssumptionChanged?.Invoke(oldText, newText);
             }
@@ -567,7 +607,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_dependencies == null)
                     _dependencies = new List<string>();
                 _dependencies.Add(text);
-                Dirty.IsDirty = true;
+                SetDirty();
                 result = true;
                 DependencyAdded?.Invoke(text);
             }
@@ -584,7 +624,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _dependencies.Remove(text);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     DependencyRemoved?.Invoke(text);
                 }
             }
@@ -601,7 +641,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 // ReSharper disable once PossibleNullReferenceException
                 _dependencies[index] = newText;
-                Dirty.IsDirty = true;
+                SetDirty();
                 result = true;
                 DependencyChanged?.Invoke(oldText, newText);
             }
@@ -609,7 +649,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        public string GetIdentityTypeName([NotNull] IIdentity identity)
+        public string GetIdentityTypeName([PostSharp.Patterns.Contracts.NotNull] IIdentity identity)
         {
             return GetIdentityTypeName(identity.GetType());
         }
@@ -622,7 +662,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return attribs?.Length > 0 ? attribs[0].Label : type.Name;
         }
 
-        public string GetIdentityTypeInitial([NotNull] IIdentity identity)
+        public string GetIdentityTypeInitial([PostSharp.Patterns.Contracts.NotNull] IIdentity identity)
         {
             return GetIdentityTypeInitial(identity.GetType());
         }
@@ -664,11 +704,93 @@ namespace ThreatsManager.Engine.ObjectModel
 
             return result ?? GetThreatActor(id);
         }
+        
+        public override string ToString()
+        {
+            return Name;
+        }
 
+        public IVulnerability FindVulnerability(Guid id)
+        {
+            IVulnerability result = null;
+
+            result = _vulnerabilities?.FirstOrDefault(x => x.Id == id);
+
+            if (result == null)
+            {
+                var entities = _entities?.ToArray();
+                if (entities?.Any() ?? false)
+                {
+                    foreach (var entity in entities)
+                    {
+                        result = entity.Vulnerabilities?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            if (result == null)
+            {
+                var dataFlows = _dataFlows?.ToArray();
+                if (dataFlows?.Any() ?? false)
+                {
+                    foreach (var dataFlow in dataFlows)
+                    {
+                        result = dataFlow.Vulnerabilities?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public IThreatEvent FindThreatEvent(Guid id)
+        {
+            IThreatEvent result = null;
+
+            result = _threatEvents?.FirstOrDefault(x => x.Id == id);
+
+            if (result == null)
+            {
+                var entities = _entities?.ToArray();
+                if (entities?.Any() ?? false)
+                {
+                    foreach (var entity in entities)
+                    {
+                        result = entity.ThreatEvents?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            if (result == null)
+            {
+                var dataFlows = _dataFlows?.ToArray();
+                if (dataFlows?.Any() ?? false)
+                {
+                    foreach (var dataFlow in dataFlows)
+                    {
+                        result = dataFlow.ThreatEvents?.FirstOrDefault(x => x.Id == id);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Advanced Threats & Mitigations properties and functions.
         public int AssignedThreatTypes => CountThreatTypes();
         public int FullyMitigatedThreatTypes => _threatTypes?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
-        
+
         public int PartiallyMitigatedThreatTypes
         {
             get
@@ -724,7 +846,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public int NotMitigatedThreatEvents => GetThreatEvents()?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
 
-        public int CountThreatEvents([NotNull] ISeverity severity)
+        public int CountThreatEvents([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             return CountThreatEvents(severity.Id);
         }
@@ -741,7 +863,7 @@ namespace ThreatsManager.Engine.ObjectModel
                                              .Count() ?? 0) ?? 0);
         }
 
-        public int CountThreatEventsByType([NotNull] ISeverity severity)
+        public int CountThreatEventsByType([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             return CountThreatEventsByType(severity.Id);
         }
@@ -768,19 +890,16 @@ namespace ThreatsManager.Engine.ObjectModel
         public int CountMitigationsByStatus(MitigationStatus status)
         {
             return (_threatEvents?.Sum(x => x.Mitigations?.Where(y => y.Status == status).Count() ?? 0) ?? 0) +
+                   (_vulnerabilities?.Sum(x => x.Mitigations?.Where(y => y.Status == status).Count() ?? 0) ?? 0) +
                    (_entities?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0);
+                   (_entities?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0);
         }
 
         public IEnumerable<IThreatEvent> GetThreatEvents()
         {
-            var threatEvents = new List<IThreatEvent>();
-
-            GetThreatEvents(this, null, threatEvents);
-            GetThreatEvents(_entities, null, threatEvents);
-            GetThreatEvents(_dataFlows, null, threatEvents);
-
-            return threatEvents;
+            return GetThreatEvents(null);
         }
 
         public IEnumerable<IThreatEvent> GetThreatEvents(IThreatType threatType)
@@ -799,24 +918,21 @@ namespace ThreatsManager.Engine.ObjectModel
             var mitigations = new List<IMitigation>();
 
             GetMitigations(_threatEvents?.Select(x => x.Mitigations), mitigations);
+            GetMitigations(_vulnerabilities?.Select(x => x.Mitigations), mitigations);
             GetMitigations(_entities?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
+            GetMitigations(_entities?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
             GetMitigations(_dataFlows?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
+            GetMitigations(_dataFlows?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
 
             return mitigations;
         }
 
         public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations()
         {
-            var result = new List<IThreatEventMitigation>();
-
-            GetMitigations(this, null, result);
-            GetMitigations(_entities, null, result);
-            GetMitigations(_dataFlows, null, result);
-
-            return result;
+            return GetThreatEventMitigations(null);
         }
 
-        public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations([NotNull] IMitigation mitigation)
+        public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations(IMitigation mitigation)
         {
             var result = new List<IThreatEventMitigation>();
 
@@ -868,10 +984,10 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_entities?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0) +
                    (_dataFlows?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0);
         }
-        
-        private void GetThreatEvents(IEnumerable<IThreatEventsContainer> containers, 
+
+        private void GetThreatEvents(IEnumerable<IThreatEventsContainer> containers,
             IThreatType reference,
-            [NotNull] List<IThreatEvent> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEvent> list)
         {
             var cs = containers?.ToArray();
             if (cs?.Any() ?? false)
@@ -883,9 +999,9 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void GetThreatEvents(IThreatEventsContainer container, 
+        private void GetThreatEvents(IThreatEventsContainer container,
             IThreatType reference,
-            [NotNull] List<IThreatEvent> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEvent> list)
         {
             var threats = container?.ThreatEvents?
                 .Where(x => (reference == null) || (x.ThreatTypeId == reference.Id)).ToArray();
@@ -896,8 +1012,8 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         private static void GetMitigations(
-            IEnumerable<IEnumerable<IEnumerable<IThreatEventMitigation>>> arrayOfArraysOfEnumerables, 
-            [NotNull] List<IMitigation> mitigations)
+            IEnumerable<IEnumerable<IEnumerable<IThreatEventMitigation>>> arrayOfArraysOfEnumerables,
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
         {
             if (arrayOfArraysOfEnumerables?.Any() ?? false)
             {
@@ -908,8 +1024,8 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private static void GetMitigations(IEnumerable<IEnumerable<IThreatEventMitigation>> arrayOfEnumerables, 
-            [NotNull] List<IMitigation> mitigations)
+        private static void GetMitigations(IEnumerable<IEnumerable<IThreatEventMitigation>> arrayOfEnumerables,
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
         {
             if (arrayOfEnumerables?.Any() ?? false)
             {
@@ -926,9 +1042,9 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
         }
-        
+
         private void GetMitigations(IEnumerable<IThreatEventsContainer> containers, IMitigation reference,
-            [NotNull] List<IThreatEventMitigation> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEventMitigation> list)
         {
             var cs = containers?.ToArray();
             if (cs?.Any() ?? false)
@@ -941,7 +1057,7 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         private void GetMitigations(IThreatEventsContainer container, IMitigation reference,
-            [NotNull] List<IThreatEventMitigation> list)
+            [PostSharp.Patterns.Contracts.NotNull] List<IThreatEventMitigation> list)
         {
             var threats = container?.ThreatEvents?.ToArray();
             if (threats?.Any() ?? false)
@@ -955,10 +1071,267 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
         }
+        #endregion
 
-        public override string ToString()
+        #region Advanced Weaknesses & Mitigations properties and functions.
+        public int AssignedWeaknesses => CountWeaknesses();
+
+        public int FullyMitigatedWeaknesses => _weaknesses?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
+
+        public int PartiallyMitigatedWeaknesses
         {
-            return Name;
+            get
+            {
+                var result = 0;
+
+                var weaknesses = _weaknesses?.ToArray();
+                if (weaknesses?.Any() ?? false)
+                {
+                    foreach (var weakness in weaknesses)
+                    {
+                        var totalStrength = weakness.Mitigations?.Sum(x => x.StrengthId) ?? 0;
+                        if (totalStrength > 0 && totalStrength < 100)
+                            result++;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public int NotMitigatedWeaknesses => _weaknesses?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
+
+        public int TotalVulnerabilities => CountVulnerabilities();
+
+        public int FullyMitigatedVulnerabilities => GetVulnerabilities()?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
+
+        public int PartiallyMitigatedVulnerabilities
+        {
+            get
+            {
+                var result = 0;
+
+                var vulnerabilities = GetVulnerabilities()?.ToArray();
+                if (vulnerabilities?.Any() ?? false)
+                {
+                    foreach (var vulnerability in vulnerabilities)
+                    {
+                        var totalStrength = vulnerability.Mitigations?.Sum(x => x.StrengthId) ?? 0;
+                        if (totalStrength > 0 && totalStrength < 100)
+                            result++;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public int NotMitigatedVulnerabilities => GetVulnerabilities()?
+            .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
+
+        public int CountVulnerabilities([PostSharp.Patterns.Contracts.NotNull]  ISeverity severity)
+        {
+            return CountVulnerabilities(severity.Id);
+        }
+
+        public int CountVulnerabilities(int severityId)
+        {
+            return (_vulnerabilities?
+                       .Where(x => x.Severity != null && x.SeverityId == severityId).Count() ?? 0) +
+                   (_entities?.Sum(x => x.Vulnerabilities?
+                       .Where(y => y.Severity != null && y.SeverityId == severityId)
+                       .Count() ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.Vulnerabilities?
+                       .Where(y => y.Severity != null && y.SeverityId == severityId)
+                       .Count() ?? 0) ?? 0);
+        }
+
+        public int CountVulnerabilitiesByType([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
+        {
+            return CountVulnerabilitiesByType(severity.Id);
+        }
+
+        public int CountVulnerabilitiesByType(int severityId)
+        {
+            int result = 0;
+
+            var types = _weaknesses?.ToArray();
+
+            if (types?.Any() ?? false)
+            {
+                foreach (var type in types)
+                {
+                    var severity = type.GetTopSeverity();
+                    if (severity != null && severity.Id == severityId)
+                        result++;
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<IVulnerability> GetVulnerabilities()
+        {
+            return GetVulnerabilities(null);
+        }
+
+        public IEnumerable<IVulnerability> GetVulnerabilities(IWeakness weakness)
+        {
+            var vulnerabilities = new List<IVulnerability>();
+
+            GetVulnerabilities(this, weakness, vulnerabilities);
+            GetVulnerabilities(_entities, weakness, vulnerabilities);
+            GetVulnerabilities(_dataFlows, weakness, vulnerabilities);
+
+            return vulnerabilities;
+        }
+
+        public IEnumerable<IVulnerabilityMitigation> GetVulnerabilityMitigations()
+        {
+            return GetVulnerabilityMitigations(null);
+        }
+
+        public IEnumerable<IVulnerabilityMitigation> GetVulnerabilityMitigations(IMitigation mitigation)
+        {
+            var result = new List<IVulnerabilityMitigation>();
+
+            GetMitigations(this, mitigation, result);
+            GetMitigations(_entities, mitigation, result);
+            GetMitigations(_dataFlows, mitigation, result);
+
+            return result;
+        }
+
+        private int CountWeaknesses()
+        {
+            List<Guid> weaknesses = new List<Guid>();
+
+            GetWeaknesses(_vulnerabilities, weaknesses);
+            GetWeaknesses(_entities?.Select(x => x.Vulnerabilities), weaknesses);
+            GetWeaknesses(_dataFlows?.Select(x => x.Vulnerabilities), weaknesses);
+
+            return weaknesses.Count();
+        }
+
+        private static void GetWeaknesses(
+            IEnumerable<IEnumerable<IVulnerability>> arraysOfEnumerables, List<Guid> weaknesses)
+        {
+            if (arraysOfEnumerables?.Any() ?? false)
+            {
+                foreach (var enumerables in arraysOfEnumerables)
+                {
+                    GetWeaknesses(enumerables, weaknesses);
+                }
+            }
+        }
+
+        private static void GetWeaknesses(IEnumerable<IVulnerability> enumerables, List<Guid> weaknesses)
+        {
+            if (enumerables?.Any() ?? false)
+            {
+                foreach (var enumerable in enumerables)
+                {
+                    if (!weaknesses.Contains(enumerable.WeaknessId))
+                        weaknesses.Add(enumerable.WeaknessId);
+                }
+            }
+        }
+
+        private int CountVulnerabilities()
+        {
+            return (_vulnerabilities?.Count() ?? 0) +
+                   (_entities?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0) +
+                   (_dataFlows?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0);
+        }
+
+        private void GetVulnerabilities(IEnumerable<IVulnerabilitiesContainer> containers,
+            IWeakness reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerability> list)
+        {
+            var cs = containers?.ToArray();
+            if (cs?.Any() ?? false)
+            {
+                foreach (var container in cs)
+                {
+                    GetVulnerabilities(container, reference, list);
+                }
+            }
+        }
+
+        private void GetVulnerabilities(IVulnerabilitiesContainer container,
+            IWeakness reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerability> list)
+        {
+            var threats = container?.Vulnerabilities?
+                .Where(x => (reference == null) || (x.WeaknessId == reference.Id)).ToArray();
+            if (threats?.Any() ?? false)
+            {
+                list.AddRange(threats);
+            }
+        }
+
+        private static void GetMitigations(
+            IEnumerable<IEnumerable<IEnumerable<IVulnerabilityMitigation>>> arrayOfArraysOfEnumerables,
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
+        {
+            if (arrayOfArraysOfEnumerables?.Any() ?? false)
+            {
+                foreach (var arrayOfEnumerables in arrayOfArraysOfEnumerables)
+                {
+                    GetMitigations(arrayOfEnumerables, mitigations);
+                }
+            }
+        }
+
+        private static void GetMitigations(IEnumerable<IEnumerable<IVulnerabilityMitigation>> arrayOfEnumerables,
+            [PostSharp.Patterns.Contracts.NotNull] List<IMitigation> mitigations)
+        {
+            if (arrayOfEnumerables?.Any() ?? false)
+            {
+                foreach (var enumerable in arrayOfEnumerables)
+                {
+                    if (enumerable?.Any() ?? false)
+                    {
+                        foreach (var mitigation in enumerable)
+                        {
+                            if (!mitigations.Contains(mitigation.Mitigation))
+                                mitigations.Add(mitigation.Mitigation);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void GetMitigations(IEnumerable<IVulnerabilitiesContainer> containers, IMitigation reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerabilityMitigation> list)
+        {
+            var cs = containers?.ToArray();
+            if (cs?.Any() ?? false)
+            {
+                foreach (var container in cs)
+                {
+                    GetMitigations(container, reference, list);
+                }
+            }
+        }
+
+        private void GetMitigations(IVulnerabilitiesContainer container, IMitigation reference,
+            [PostSharp.Patterns.Contracts.NotNull] List<IVulnerabilityMitigation> list)
+        {
+            var vulnerabilities = container?.Vulnerabilities?.ToArray();
+            if (vulnerabilities?.Any() ?? false)
+            {
+                foreach (var vulnerability in vulnerabilities)
+                {
+                    var mitigations = vulnerability.Mitigations?
+                        .Where(x => (reference == null) || x.MitigationId == reference.Id).ToArray();
+                    if (mitigations?.Any() ?? false)
+                        list.AddRange(mitigations);
+                }
+            }
         }
         #endregion
 
@@ -1009,7 +1382,7 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Implementation of Threat Model Duplication.
-        public IThreatModel Duplicate([Required] string name, [NotNull] DuplicationDefinition def)
+        public IThreatModel Duplicate([Required] string name, [PostSharp.Patterns.Contracts.NotNull] DuplicationDefinition def)
         {
             if (!Validate(def, out var reasons))
                 throw new InvalidDuplicationDefinitionException(reasons);
@@ -1018,7 +1391,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             try
             {
-                Dirty.SuspendDirty();
+                SuspendDirty();
                 result = new ThreatModel(name);
                 if (def.Contributors)
                     DuplicateContributors(result);
@@ -1036,19 +1409,21 @@ namespace ThreatsManager.Engine.ObjectModel
                 DuplicateThreatTypes(result, def.AllThreatTypes ? ThreatTypes?.Select(x => x.Id) : def.ThreatTypes);
                 DuplicateGroups(result, def.AllGroups ? Groups?.Select(x => x.Id) : def.Groups);
                 DuplicateEntityTemplates(result, def.AllEntityTemplates ? EntityTemplates?.Select(x => x.Id) : def.EntityTemplates);
+                DuplicateFlowTemplates(result, def.AllFlowTemplates ? FlowTemplates?.Select(x => x.Id) : def.FlowTemplates);
+                DuplicateTrustBoundaryTemplates(result, def.AllTrustBoundaryTemplates ? TrustBoundaryTemplates?.Select(x => x.Id) : def.TrustBoundaryTemplates);
                 DuplicateEntities(result, def.AllEntities ? Entities?.Select(x => x.Id) : def.Entities);
                 DuplicateDataFlows(result, def.AllDataFlows ? DataFlows?.Select(x => x.Id) : def.DataFlows);
                 DuplicateDiagrams(result, def.AllDiagrams ? Diagrams?.Select(x => x.Id) : def.Diagrams);
             }
             finally
             {
-                Dirty.ResumeDirty();
+                ResumeDirty();
             }
 
             return result;
         }
 
-        private void DuplicateContributors([NotNull] ThreatModel dest)
+        private void DuplicateContributors([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest)
         {
             var list = Contributors?.ToArray();
             if (list?.Any() ?? false)
@@ -1060,7 +1435,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateAssumptions([NotNull] ThreatModel dest)
+        private void DuplicateAssumptions([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest)
         {
             var list = Assumptions?.ToArray();
             if (list?.Any() ?? false)
@@ -1072,7 +1447,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateDependencies([NotNull] ThreatModel dest)
+        private void DuplicateDependencies([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest)
         {
             var list = ExternalDependencies?.ToArray();
             if (list?.Any() ?? false)
@@ -1084,7 +1459,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateSeverities([NotNull] ThreatModel dest, IEnumerable<int> list)
+        private void DuplicateSeverities([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<int> list)
         {
             var severities = Severities?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (severities?.Any() ?? false)
@@ -1096,7 +1471,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateStrengths([NotNull] ThreatModel dest, IEnumerable<int> list)
+        private void DuplicateStrengths([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<int> list)
         {
             var strengths = Strengths?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (strengths?.Any() ?? false)
@@ -1108,7 +1483,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicatePropertySchemas([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicatePropertySchemas([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var schemas = Schemas?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (schemas?.Any() ?? false)
@@ -1120,7 +1495,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateProperties([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateProperties([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var properties = Properties?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (properties?.Any() ?? false)
@@ -1134,7 +1509,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateThreatActors([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateThreatActors([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var actors = ThreatActors?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (actors?.Any() ?? false)
@@ -1146,7 +1521,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateMitigations([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateMitigations([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var mitigations = Mitigations?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (mitigations?.Any() ?? false)
@@ -1158,7 +1533,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateThreatTypes([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateThreatTypes([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var threatTypes = ThreatTypes?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (threatTypes?.Any() ?? false)
@@ -1170,7 +1545,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateGroups([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateGroups([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var groups = Groups?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (groups?.Any() ?? false)
@@ -1182,7 +1557,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateEntityTemplates([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateEntityTemplates([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var templates = EntityTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (templates?.Any() ?? false)
@@ -1194,7 +1569,31 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateEntities([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateFlowTemplates([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        {
+            var templates = FlowTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
+            if (templates?.Any() ?? false)
+            {
+                foreach (var template in templates)
+                {
+                    template.Clone(dest);
+                }
+            }
+        }
+
+        private void DuplicateTrustBoundaryTemplates([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        {
+            var templates = TrustBoundaryTemplates?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
+            if (templates?.Any() ?? false)
+            {
+                foreach (var template in templates)
+                {
+                    template.Clone(dest);
+                }
+            }
+        }
+
+        private void DuplicateEntities([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var entities = Entities?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (entities?.Any() ?? false)
@@ -1206,7 +1605,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateDataFlows([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateDataFlows([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var dataFlows = DataFlows?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (dataFlows?.Any() ?? false)
@@ -1218,7 +1617,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void DuplicateDiagrams([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        private void DuplicateDiagrams([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var diagrams = Diagrams?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
             if (diagrams?.Any() ?? false)
@@ -1230,7 +1629,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private bool Validate([NotNull] DuplicationDefinition def, out IEnumerable<string> reasons)
+        private bool Validate([PostSharp.Patterns.Contracts.NotNull] DuplicationDefinition def, out IEnumerable<string> reasons)
         {
             bool result = true;
 
@@ -1287,6 +1686,20 @@ namespace ThreatsManager.Engine.ObjectModel
             }
             AddIdentities(known, def.AllEntityTemplates, def.EntityTemplates, _entityTemplates);              
 
+            if (!Check(known, knownSeverities, knownStrengths, def.AllFlowTemplates, def.FlowTemplates, _flowTemplates))
+            {
+                result = false;
+                r.Add("One or more Flow Templates are associated to an object which has not been selected.");
+            }
+            AddIdentities(known, def.AllFlowTemplates, def.FlowTemplates, _flowTemplates);              
+
+            if (!Check(known, knownSeverities, knownStrengths, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, _trustBoundaryTemplates))
+            {
+                result = false;
+                r.Add("One or more Trust Boundary Templates are associated to an object which has not been selected.");
+            }
+            AddIdentities(known, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, _trustBoundaryTemplates);              
+
             if (!Check(known, knownSeverities, knownStrengths, def.AllEntities, def.Entities, _entities))
             {
                 result = false;
@@ -1312,8 +1725,8 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<int> knownStrengths, bool all, IEnumerable<Guid> selected, 
             IEnumerable<IIdentity> identities)
         {
@@ -1395,7 +1808,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
         
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownStrengths, 
             IEnumerable<IThreatTypeMitigation> mitigations)
         {
             bool result = true;
@@ -1418,7 +1831,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<IEntity> entities)
         {
             bool result = true;
@@ -1439,7 +1852,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
         
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<IDataFlow> dataFlows)
         {
             bool result = true;
@@ -1461,7 +1874,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownSeverities, 
             IEnumerable<IThreatEvent> threatEvents)
         {
             bool result = true;
@@ -1484,7 +1897,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
             IEnumerable<IThreatEventMitigation> mitigations)
         {
             bool result = true;
@@ -1506,7 +1919,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<IEntityShape> container)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<IEntityShape> container)
         {
             bool result = true;
 
@@ -1526,7 +1939,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<IGroupShape> container)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<IGroupShape> container)
         {
             bool result = true;
 
@@ -1546,7 +1959,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, IEnumerable<ILink> container)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, IEnumerable<ILink> container)
         {
             bool result = true;
 
@@ -1566,7 +1979,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private bool Check([NotNull] List<Guid> known, bool all, IEnumerable<Guid> selected, IEnumerable<IProperty> properties)
+        private bool Check([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, bool all, IEnumerable<Guid> selected, IEnumerable<IProperty> properties)
         {
             bool result = true;
 
@@ -1586,7 +1999,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private void AddIdentities([NotNull] List<Guid> known, 
+        private void AddIdentities([PostSharp.Patterns.Contracts.NotNull] List<Guid> known, 
             bool all, IEnumerable<Guid> selected, IEnumerable<IIdentity> identities)
         {
             var list = identities?.Where(x => all || (selected?.Contains(x.Id) ?? false)).ToArray();
@@ -1608,7 +2021,7 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Implementation of Threat Model Merge.
-        public bool Merge([NotNull] IThreatModel source, [NotNull] DuplicationDefinition def)
+        public bool Merge([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, [PostSharp.Patterns.Contracts.NotNull] DuplicationDefinition def)
         {
             bool result = false;
 
@@ -1619,6 +2032,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     result = true;
                     MergeSchemas(source, def.AllPropertySchemas, def.PropertySchemas);
                     MergeEntityTemplates(source, def.AllEntityTemplates, def.EntityTemplates);
+                    MergeFlowTemplates(source, def.AllFlowTemplates, def.FlowTemplates);
+                    MergeTrustBoundaryTemplates(source, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates);
                     MergeSeverities(source, def.AllSeverities, def.Severities);
                     MergeStrengths(source, def.AllSeverities, def.Severities);
                     MergeThreatActors(source, def.AllThreatActors, def.ThreatActors);
@@ -1630,7 +2045,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        private void MergeSchemas([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeSchemas([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.Schemas?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1642,7 +2057,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeSchema([NotNull] IPropertySchema schema)
+        private void MergeSchema([PostSharp.Patterns.Contracts.NotNull] IPropertySchema schema)
         {
             var existing = GetSchema(schema.Name, schema.Namespace);
             if (existing == null)
@@ -1660,7 +2075,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeEntityTemplates([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeEntityTemplates([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.EntityTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1672,7 +2087,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeEntityTemplate([NotNull] IEntityTemplate entityTemplate)
+        private void MergeEntityTemplate([PostSharp.Patterns.Contracts.NotNull] IEntityTemplate entityTemplate)
         {
             var existing = EntityTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, entityTemplate.Name) == 0);
             if (existing == null)
@@ -1685,7 +2100,57 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeSeverities([NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
+        private void MergeFlowTemplates([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        {
+            var selected = source.FlowTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
+            if (selected?.Any() ?? false)
+            {
+                foreach (var flowTemplate in selected)
+                {
+                    MergeFlowTemplate(flowTemplate);
+                }
+            }
+        }
+
+        private void MergeFlowTemplate([PostSharp.Patterns.Contracts.NotNull] IFlowTemplate flowTemplate)
+        {
+            var existing = FlowTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, flowTemplate.Name) == 0);
+            if (existing == null)
+            {
+                flowTemplate.Clone(this);
+            }
+            else
+            {
+                existing.MergeProperties(flowTemplate);
+            }
+        }
+
+        private void MergeTrustBoundaryTemplates([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        {
+            var selected = source.TrustBoundaryTemplates?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
+            if (selected?.Any() ?? false)
+            {
+                foreach (var trustBoundaryTemplate in selected)
+                {
+                    MergeTrustBoundaryTemplate(trustBoundaryTemplate);
+                }
+            }
+        }
+
+        private void MergeTrustBoundaryTemplate([PostSharp.Patterns.Contracts.NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
+        {
+            var existing = TrustBoundaryTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, trustBoundaryTemplate.Name) == 0);
+            if (existing == null)
+            {
+                trustBoundaryTemplate.Clone(this);
+            }
+            else
+            {
+                existing.MergeProperties(trustBoundaryTemplate);
+            }
+        }
+
+        private void MergeSeverities([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
         {
             var selected = source.Severities?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1697,7 +2162,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeSeverity([NotNull] ISeverity severity)
+        private void MergeSeverity([PostSharp.Patterns.Contracts.NotNull] ISeverity severity)
         {
             var existing = Severities?.FirstOrDefault(x => x.Id == severity.Id);
             if (existing == null)
@@ -1710,7 +2175,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeStrengths([NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
+        private void MergeStrengths([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<int> ids)
         {
             var selected = source.Strengths?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1722,7 +2187,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeStrength([NotNull] IStrength strength)
+        private void MergeStrength([PostSharp.Patterns.Contracts.NotNull] IStrength strength)
         {
             var existing = Strengths?.FirstOrDefault(x => x.Id == strength.Id);
             if (existing == null)
@@ -1735,7 +2200,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatActors([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeThreatActors([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.ThreatActors?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1747,7 +2212,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatActor([NotNull] IThreatActor threatActor)
+        private void MergeThreatActor([PostSharp.Patterns.Contracts.NotNull] IThreatActor threatActor)
         {
             var existing = ThreatActors?.FirstOrDefault(x => string.CompareOrdinal(x.Name, threatActor.Name) == 0);
             if (existing == null)
@@ -1760,7 +2225,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeMitigations([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeMitigations([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.Mitigations?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1772,7 +2237,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeMitigation([NotNull] IMitigation mitigation)
+        private void MergeMitigation([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {
             var existing = Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, mitigation.Name) == 0);
             if (existing == null)
@@ -1785,7 +2250,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatTypes([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        private void MergeThreatTypes([PostSharp.Patterns.Contracts.NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
         {
             var selected = source.ThreatTypes?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
             if (selected?.Any() ?? false)
@@ -1797,7 +2262,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        private void MergeThreatType([NotNull] IThreatType threatType)
+        private void MergeThreatType([PostSharp.Patterns.Contracts.NotNull] IThreatType threatType)
         {
             var existing = ThreatTypes?.FirstOrDefault(x => string.CompareOrdinal(x.Name, threatType.Name) == 0);
             if (existing == null)
@@ -1822,6 +2287,86 @@ namespace ThreatsManager.Engine.ObjectModel
                     }
                 }
             }
+        }
+        #endregion
+
+        #region Implementation of Dirty.
+        public event Action<IDirty, bool> DirtyChanged;
+
+        [AutoDirtyIgnore]
+        public bool IsDirty { get; private set; }
+
+        public void SetDirty()
+        {
+            if (!IsDirtySuspended && !IsDirty)
+            {
+                IsDirty = true;
+                DirtyChanged?.Invoke(this, IsDirty);
+            }
+        }
+
+        public void ResetDirty()
+        {
+            if (!IsDirtySuspended && IsDirty)
+            {
+                IsDirty = false;
+                DirtyChanged?.Invoke(this, IsDirty);
+
+                DataFlows?.ToList().ForEach(x => x.ResetDirty());
+                Diagrams?.ToList().ForEach(x => x.ResetDirty());
+                Entities?.ToList().ForEach(x => x.ResetDirty());
+                EntityTemplates?.ToList().ForEach(x => x.ResetDirty());
+                FlowTemplates?.ToList().ForEach(x => x.ResetDirty());
+                Groups?.ToList().ForEach(x => x.ResetDirty());
+                Mitigations?.ToList().ForEach(x => x.ResetDirty());
+                Schemas?.ToList().ForEach(x => x.ResetDirty());
+                Severities?.ToList().ForEach(x => x.ResetDirty());
+                Strengths?.ToList().ForEach(x => x.ResetDirty());
+                ThreatActors?.ToList().ForEach(x => x.ResetDirty());
+                ThreatTypes?.ToList().ForEach(x => x.ResetDirty());
+                TrustBoundaryTemplates?.ToList().ForEach(x => x.ResetDirty());
+            }
+        }
+
+        [AutoDirtyIgnore]
+        public bool IsDirtySuspended { get; private set; }
+
+        public void SuspendDirty()
+        {
+            IsDirtySuspended = true;
+
+            DataFlows?.ToList().ForEach(x => x.SuspendDirty());
+            Diagrams?.ToList().ForEach(x => x.SuspendDirty());
+            Entities?.ToList().ForEach(x => x.SuspendDirty());
+            EntityTemplates?.ToList().ForEach(x => x.SuspendDirty());
+            FlowTemplates?.ToList().ForEach(x => x.SuspendDirty());
+            Groups?.ToList().ForEach(x => x.SuspendDirty());
+            Mitigations?.ToList().ForEach(x => x.SuspendDirty());
+            Schemas?.ToList().ForEach(x => x.SuspendDirty());
+            Severities?.ToList().ForEach(x => x.SuspendDirty());
+            Strengths?.ToList().ForEach(x => x.SuspendDirty());
+            ThreatActors?.ToList().ForEach(x => x.SuspendDirty());
+            ThreatTypes?.ToList().ForEach(x => x.SuspendDirty());
+            TrustBoundaryTemplates?.ToList().ForEach(x => x.SuspendDirty());
+        }
+
+        public void ResumeDirty()
+        {
+            IsDirtySuspended = false;
+
+            DataFlows?.ToList().ForEach(x => x.ResumeDirty());
+            Diagrams?.ToList().ForEach(x => x.ResumeDirty());
+            Entities?.ToList().ForEach(x => x.ResumeDirty());
+            EntityTemplates?.ToList().ForEach(x => x.ResumeDirty());
+            FlowTemplates?.ToList().ForEach(x => x.ResumeDirty());
+            Groups?.ToList().ForEach(x => x.ResumeDirty());
+            Mitigations?.ToList().ForEach(x => x.ResumeDirty());
+            Schemas?.ToList().ForEach(x => x.ResumeDirty());
+            Severities?.ToList().ForEach(x => x.ResumeDirty());
+            Strengths?.ToList().ForEach(x => x.ResumeDirty());
+            ThreatActors?.ToList().ForEach(x => x.ResumeDirty());
+            ThreatTypes?.ToList().ForEach(x => x.ResumeDirty());
+            TrustBoundaryTemplates?.ToList().ForEach(x => x.ResumeDirty());
         }
         #endregion
 
@@ -1854,6 +2399,10 @@ namespace ThreatsManager.Engine.ObjectModel
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
         public IEnumerable<IThreatEvent> ThreatEvents { get; }
@@ -1880,20 +2429,40 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             return false;
         }
+
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        public IEnumerable<IVulnerability> Vulnerabilities { get; }
+        public IVulnerability GetVulnerability(Guid id)
+        {
+            return null;
+        }
+
+        public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
+        {
+            return null;
+        }
+
+        public void Add(IVulnerability vulnerability)
+        {
+        }
+
+        public IVulnerability AddVulnerability(IWeakness weakness)
+        {
+            return null;
+        }
+
+        public bool RemoveVulnerability(Guid id)
+        {
+            return false;
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private IThreatModel Model => this;
-        private IPropertiesContainer PropertiesContainer => this;
         private List<IProperty> _properties { get; set; }
-        private IThreatEventsContainer ThreatEventsContainer => this;
         private List<IThreatEvent> _threatEvents { get; set; }
+        private List<IVulnerability> _vulnerabilities { get; set; }
         #endregion
-
-        public void Dispose()
-        {
-            UnregisterEvents();
-        }
     }
 }

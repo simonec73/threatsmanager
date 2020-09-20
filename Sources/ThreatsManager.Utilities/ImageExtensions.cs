@@ -17,10 +17,10 @@ namespace ThreatsManager.Utilities
         /// <summary>
         /// Obtains the image related to the Identity passed as argument.
         /// </summary>
-        /// <param name="identity">Identity for which the image should be determined.</param>
-        /// <param name="size">Size of the image.</param>
+        /// <param name = "identity" > Identity for which the image should be determined.</param>
+        /// <param name = "size" > Size of the image.</param>
         /// <returns>Requested image.</returns>
-        public static Bitmap GetImage([NotNull] this IIdentity identity, ImageSize size)
+        public static Bitmap GetImage(this IIdentity identity, ImageSize size)
         {
             Bitmap result = null;
 
@@ -44,7 +44,7 @@ namespace ThreatsManager.Utilities
             }
             else if (identity is IDataFlow)
             {
-                result = GetDataFlowImage(size);
+                result = GetFlowImage(size);
             }
             else if (identity is ITrustBoundary)
             {
@@ -53,6 +53,14 @@ namespace ThreatsManager.Utilities
             else if (identity is IEntityTemplate template)
             {
                 result = GetEntityTemplateImage(template, size);
+            }
+            else if (identity is IFlowTemplate)
+            {
+                result = GetFlowImage(size);
+            }
+            else if (identity is ITrustBoundaryTemplate)
+            {
+                result = GetTrustBoundaryImage(size);
             }
             else if (identity is IThreatModel)
             {
@@ -97,7 +105,7 @@ namespace ThreatsManager.Utilities
         /// <returns>Requested image.</returns>
         public static Bitmap GetEntityImage(this EntityType entityType, ImageSize size)
         {
-            Bitmap result;
+            Bitmap result = null;
 
             switch (entityType)
             {
@@ -118,7 +126,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap Normalize([NotNull] Bitmap bitmap, ImageSize size)
+        private static Bitmap Normalize(Bitmap bitmap, ImageSize size)
         {
             Bitmap result;
 
@@ -144,7 +152,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetStandardEntityImage([NotNull] IEntity entity, ImageSize size)
+        private static Bitmap GetStandardEntityImage(IEntity entity, ImageSize size)
         {
             Bitmap bitmapOverride = null;
             var template = entity.Template;
@@ -163,7 +171,7 @@ namespace ThreatsManager.Utilities
                         break;
                 }
             }
-            
+
             return bitmapOverride ?? (entity is IExternalInteractor ? GetExternalInteractorImage(size) :
                 entity is IProcess ? GetProcessImage(size) :
                 entity is IDataStore ? GetDataStoreImage(size) : null);
@@ -238,7 +246,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetDataFlowImage(ImageSize size)
+        private static Bitmap GetFlowImage(ImageSize size)
         {
             Bitmap result;
 
@@ -284,7 +292,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetEntityTemplateImage([NotNull] IEntityTemplate template, ImageSize size)
+        private static Bitmap GetEntityTemplateImage(IEntityTemplate template, ImageSize size)
         {
             Bitmap result;
 

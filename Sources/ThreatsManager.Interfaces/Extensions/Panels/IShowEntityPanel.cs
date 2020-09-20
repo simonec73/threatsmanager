@@ -5,7 +5,8 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     /// <summary>
     /// Interface representing a Panel handling IEntities.
     /// </summary>
-    public interface IShowEntityPanel : IPanel
+    /// <typeparam name="T">Type representing the Form containing the Panel.</typeparam>
+    public interface IShowEntityPanel<T> : IPanel<T>
     {
         /// <summary>
         /// Method to initialize the Entity associated to the Panel.

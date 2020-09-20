@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Serialization;
@@ -379,6 +380,8 @@ namespace ThreatsManager.Engine
 
                         configSection.Setup = oldConfig?.ThreatsManagerConfig?.Setup ?? false;
                         configSection.Mode = oldConfig?.ThreatsManagerConfig?.Mode ?? ExecutionMode.Expert;
+                        configSection.OverrideThreatEventsInfo =
+                            oldConfig?.ThreatsManagerConfig?.OverrideThreatEventsInfo ?? false;
                         configSection.SmartSave = oldConfig?.ThreatsManagerConfig?.SmartSave ?? false;
                         configSection.SmartSaveCount = oldConfig?.ThreatsManagerConfig?.SmartSaveCount ?? 0;
                         configSection.SmartSaveInterval =
@@ -503,20 +506,42 @@ namespace ThreatsManager.Engine
 
         private string Encrypt(string text)
         {
-            var encoded = Encoding.UTF8.GetBytes(text);
-            var entropy = Convert.FromBase64String(Entropy);
-            var encryptedEncoded = ProtectedData.Protect(encoded, entropy, DataProtectionScope.CurrentUser);
+            string result;
 
-            return Convert.ToBase64String(encryptedEncoded);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var encoded = Encoding.UTF8.GetBytes(text);
+                var entropy = Convert.FromBase64String(Entropy);
+                var encryptedEncoded = ProtectedData.Protect(encoded, entropy, DataProtectionScope.CurrentUser);
+
+                result = Convert.ToBase64String(encryptedEncoded);
+            }
+            else
+            {
+                result = text;
+            }
+
+            return result;
         }
 
         private string Decrypt(string text)
         {
-            var encryptedEncoded = Convert.FromBase64String(text);
-            var entropy = Convert.FromBase64String(Entropy);
-            var encoded = ProtectedData.Unprotect(encryptedEncoded, entropy, DataProtectionScope.CurrentUser);
+            string result;
 
-            return Encoding.UTF8.GetString(encoded);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var encryptedEncoded = Convert.FromBase64String(text);
+                var entropy = Convert.FromBase64String(Entropy);
+                var encoded = ProtectedData.Unprotect(encryptedEncoded, entropy, DataProtectionScope.CurrentUser);
+
+                result = Encoding.UTF8.GetString(encoded);
+            }
+            else
+            {
+                result = text;
+            }
+
+            return result;
         }
         #endregion
     }

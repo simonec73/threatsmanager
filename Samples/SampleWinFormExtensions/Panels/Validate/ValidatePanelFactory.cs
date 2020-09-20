@@ -1,4 +1,5 @@
-﻿using ThreatsManager.Interfaces;
+﻿using System.Windows.Forms;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -8,7 +9,7 @@ namespace SampleWinFormExtensions.Panels.Validate
 {
     [Extension(typeof(IPanelFactory), "A53B0FCF-A888-4737-8BE0-5F38CB769A51",
         "Threat Model Validation", 1000, ExecutionMode.Management)]
-    public partial class ValidatePanelFactory : IPanelFactory, IMainRibbonExtension, IPanelFactoryActionsRequestor
+    public partial class ValidatePanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.
         /// <summary>
@@ -16,7 +17,7 @@ namespace SampleWinFormExtensions.Panels.Validate
         /// </summary>
         public InstanceMode Behavior => InstanceMode.Single;
 
-        public IPanel Create(IIdentity identity, out IActionDefinition action)
+        public IPanel<Form> Create(IIdentity identity, out IActionDefinition action)
         {
             var result = new ValidatePanel();
 
@@ -25,7 +26,7 @@ namespace SampleWinFormExtensions.Panels.Validate
             return result;
         }
 
-        public IPanel Create(IActionDefinition action)
+        public IPanel<Form> Create(IActionDefinition action)
         {
             return new ValidatePanel();
         }

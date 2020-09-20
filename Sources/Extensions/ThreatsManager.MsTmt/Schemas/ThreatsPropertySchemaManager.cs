@@ -26,7 +26,7 @@ namespace ThreatsManager.MsTmt.Schemas
                 result.AppliesTo = Scope.ThreatType | Scope.ThreatEvent;
                 result.Priority = 30;
                 result.Visible = true;
-                result.System = true;
+                result.System = false;
                 result.AutoApply = false;
                 result.Description = Resources.ThreatsPropertySchemaDescription;
             }

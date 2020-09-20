@@ -28,6 +28,13 @@ namespace ThreatsManager.Engine.Config
             set => this["mode"] = value;
         }
 
+        [ConfigurationProperty("overrideThreatEvents", DefaultValue = false, IsRequired = false)]
+        public bool OverrideThreatEventsInfo
+        {
+            get => (bool) this["overrideThreatEvents"];
+            set => this["overrideThreatEvents"] = value;
+        }
+
         [ConfigurationProperty("knownDocuments", IsDefaultCollection = false)]
         public KnownDocumentConfigCollection KnownDocuments
         {

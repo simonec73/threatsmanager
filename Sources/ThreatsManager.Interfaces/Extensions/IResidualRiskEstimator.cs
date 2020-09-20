@@ -32,6 +32,14 @@ namespace ThreatsManager.Interfaces.Extensions
         IDictionary<Guid, Effectiveness> CategorizeMitigations(IThreatModel model);
 
         /// <summary>
+        /// Calculates the residual risk for Threat Types after implementing the listed mitigations. 
+        /// </summary>
+        /// <param name="model">Threat Model to be evaluated.</param>
+        /// <param name="mitigations">Identifiers of the implemented Mitigations.</param>
+        /// <returns>Dictionary with the identifiers of the Threat Types as key and the identifier of the projected severity as value.</returns>
+        IDictionary<Guid, int> GetProjectedThreatTypesResidualRisk(IThreatModel model, IEnumerable<Guid> mitigations);
+
+        /// <summary>
         /// Get a list of parameters that can be used for calculating the Acceptable Risk.
         /// </summary>
         /// <param name="model">Model for which the parameters must be identified.</param>

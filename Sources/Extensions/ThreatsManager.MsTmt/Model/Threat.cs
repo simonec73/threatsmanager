@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using PostSharp.Patterns.Contracts;
@@ -28,19 +27,6 @@ namespace ThreatsManager.MsTmt.Model
             public string Label { get; private set; }
 
             public string Value { get; private set; }
-
-            public void SetValue(string value)
-            {
-                Value = value;
-                _node.ChildNodes[1].InnerText = value;
-
-                var attribute = _node.ChildNodes[1].Attributes.OfType<XmlAttribute>()
-                    .FirstOrDefault(x => string.CompareOrdinal(x.LocalName, "nil") == 0);
-                if (attribute != null)
-                {
-                    _node.ChildNodes[1].Attributes.Remove(attribute);
-                }
-            }
         }
 
         #region Member Variables.
@@ -145,7 +131,7 @@ namespace ThreatsManager.MsTmt.Model
         #endregion
 
         #region Private methods.
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private void AnalyzeValue([NotNull] XmlNode xmlNode)
         {
             foreach (XmlNode node in xmlNode.ChildNodes)

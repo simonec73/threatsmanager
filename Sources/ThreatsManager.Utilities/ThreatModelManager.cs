@@ -7,6 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -35,11 +36,6 @@ namespace ThreatsManager.Utilities
         /// </summary>
         public static Color ThreatsColor = Color.FromArgb(0xE5, 0x39, 0x35);
 
-            /// <summary>
-        /// Main Threat Model for the Application.
-        /// </summary>
-        public static IThreatModel Model { get; set; }
-
         /// <summary>
         /// Creates a new Default Instance of the Threat Model.
         /// </summary>
@@ -54,12 +50,11 @@ namespace ThreatsManager.Utilities
             {
                 var instance = property.GetValue(null);
                 result = type.InvokeMember("CreateNewThreatModel", BindingFlags.InvokeMethod, null, instance,
-                    new object[] {"Default Threat Model"}) as IThreatModel;
+                    new object[] { "Default Threat Model" }) as IThreatModel;
 
                 if (result != null)
                 {
                     _instances.Add(result);
-                    type.GetMethod("RegisterEvents")?.Invoke(result, null);
                 }
             }
 
@@ -119,6 +114,8 @@ namespace ThreatsManager.Utilities
                 }
             }
 
+            var binder = new KnownTypesBinder();
+
             var result = JsonConvert.DeserializeObject(jsonText, new JsonSerializerSettings()
             {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
@@ -126,33 +123,46 @@ namespace ThreatsManager.Utilities
                 TypeNameHandling = TypeNameHandling.All,
 #pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                SerializationBinder = new KnownTypesBinder(),
+                SerializationBinder = binder,
                 MissingMemberHandling = ignoreMissingMembers ? MissingMemberHandling.Ignore : MissingMemberHandling.Error
             }) as IThreatModel;
 
             if (result != null)
             {
-                result.Cleanup();
-
-                if (_instances.Any(x => x.Id == result.Id))
+                try
                 {
-                    throw new ExistingModelException(result);
-                }
-                else
-                {
-                    _instances.Add(result);
+                    if (!binder.HasUnknownTypes)
+                        result.ResetDirty();
 
-                    var method = result.GetType()
-                            .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] {}, null);
-                    if (method != null)
-                        method.Invoke(result, null);
+                    result.SuspendDirty();
 
-                    var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
-                    if (processors?.Any() ?? false)
+                    if (_instances.Any(x => x.Id == result.Id))
                     {
-                        foreach (var processor in processors)
-                            processor.Process(result);
+                        throw new ExistingModelException(result);
                     }
+                    else
+                    {
+                        result.Cleanup();
+                        result.PropertySchemasNormalization();
+
+                        _instances.Add(result);
+
+                        var method = result.GetType()
+                            .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] { }, null);
+                        if (method != null)
+                            method.Invoke(result, null);
+
+                        var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
+                        if (processors?.Any() ?? false)
+                        {
+                            foreach (var processor in processors)
+                                processor.Process(result);
+                        }
+                    }
+                }
+                finally
+                {
+                    result.ResumeDirty();
                 }
             }
 
@@ -217,6 +227,33 @@ namespace ThreatsManager.Utilities
             }
         }
 
+        #region Post-deserialize normalization activities.
+
+        private static void PropertySchemasNormalization(this IThreatModel model)
+        {
+            var propertySchemas = model.Schemas?.ToArray();
+            if (propertySchemas?.Any() ?? false)
+            {
+                foreach (var schema in propertySchemas)
+                {
+                    schema.SetModelId(model.Id);
+
+                    var propertyTypes = schema.PropertyTypes?.ToArray();
+                    if (propertyTypes?.Any() ?? false)
+                    {
+                        foreach (var propertyType in propertyTypes)
+                            propertyType.SetModelId(model.Id);
+                    }
+                }
+            }
+        }
+
+        private static void SetModelId(this object item, Guid modelId)
+        {
+            PropertyInfo property = item.GetType().GetProperty("_modelId", BindingFlags.NonPublic | BindingFlags.Instance);
+            property?.GetSetMethod(true).Invoke(item, new object[] { modelId });
+        }
+
         private static void Cleanup(this IThreatModel model)
         {
             model.CleanProperties(model);
@@ -271,6 +308,24 @@ namespace ThreatsManager.Utilities
                 foreach (var entityTemplate in entityTemplates)
                 {
                     entityTemplate.CleanProperties(model);
+                }
+            }
+
+            var flowTemplates = model.FlowTemplates?.ToArray();
+            if (flowTemplates?.Any() ?? false)
+            {
+                foreach (var flowTemplate in flowTemplates)
+                {
+                    flowTemplate.CleanProperties(model);
+                }
+            }
+
+            var trustBoundaryTemplates = model.TrustBoundaryTemplates?.ToArray();
+            if (trustBoundaryTemplates?.Any() ?? false)
+            {
+                foreach (var trustBoundaryTemplate in trustBoundaryTemplates)
+                {
+                    trustBoundaryTemplate.CleanProperties(model);
                 }
             }
 
@@ -375,5 +430,6 @@ namespace ThreatsManager.Utilities
                     threatEvent.CleanProperties(model);
             }
         }
+        #endregion
     }
 }

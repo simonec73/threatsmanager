@@ -19,14 +19,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [GroupElementAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
+    [VulnerabilitiesContainerAspect]
     [TypeInitial("P")]
     public class Process : IProcess, IInitializableObject
     {
@@ -91,6 +93,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
+        public void ClearProperties()
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
@@ -114,20 +120,65 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return false;
         }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
+
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        public IEnumerable<IVulnerability> Vulnerabilities { get; }
+        public IVulnerability GetVulnerability(Guid id)
+        {
+            return null;
+        }
+
+        public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
+        {
+            return null;
+        }
+
+        public void Add(IVulnerability vulnerability)
+        {
+        }
+
+        public IVulnerability AddVulnerability(IWeakness weakness)
+        {
+            return null;
+        }
+
+        public bool RemoveVulnerability(Guid id)
+        {
+            return false;
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         private List<IProperty> _properties { get; set; }
         private List<IThreatEvent> _threatEvents { get; set; }
-        private IThreatEventsContainer ThreatEventsContainer => this;
+        private List<IVulnerability> _vulnerabilities { get; set; }
         private Guid _parentId { get; set; }
-        private IGroupElement GroupElement => this;
+        private IGroup _parent { get; set; }
         #endregion
- 
+
         #region Specific implementation.
         public override string ToString()
         {
@@ -201,7 +252,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId;
 
-        private IEntityTemplate _template { get; set; }
+        internal IEntityTemplate _template { get; set; }
 
         public IEntityTemplate Template
         {
@@ -214,6 +265,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
                 return _template;
             }
+        }
+
+        public void ResetTemplate()
+        {
+            this.BigImage = EntityType.Process.GetEntityImage(ImageSize.Big);
+            this.Image = EntityType.Process.GetEntityImage(ImageSize.Medium);
+            this.SmallImage = EntityType.Process.GetEntityImage(ImageSize.Small);
+            this.ClearProperties();
+            _model.AutoApplySchemas(this);
+
+            _templateId = Guid.Empty;
+            _template = null;
         }
 
         public IEntity Clone([NotNull] IEntitiesContainer container)

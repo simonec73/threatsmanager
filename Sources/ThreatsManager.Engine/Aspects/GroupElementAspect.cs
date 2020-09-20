@@ -15,24 +15,12 @@ namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
     //private Guid _parentId { get; set; }
-    //private IGroupElement GroupElement => this;
+    //private IGroup _parent { get; set; }
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class GroupElementAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-
-        [ImportMember("GroupElement", IsRequired=true)]
-        public Property<IGroupElement> GroupElement;
-        #endregion
-
         #region Extra elements to be added.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
             LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
@@ -48,7 +36,7 @@ namespace ThreatsManager.Engine.Aspects
 
         #region Implementation of interface IGroupElement.
         private Action<IGroupElement, IGroup, IGroup> _parentChanged;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public event Action<IGroupElement, IGroup, IGroup> ParentChanged
         {
             add
@@ -72,21 +60,18 @@ namespace ThreatsManager.Engine.Aspects
         {
             get
             {
-                if (_parent == null && _parentId != Guid.Empty)
+                if (_parent == null && _parentId != Guid.Empty && Instance is IThreatModelChild child)
                 {
-                    _parent = Model?.Get()?.GetGroup(_parentId);
+                    _parent = child.Model?.GetGroup(_parentId);
                 }
 
                 return _parent;
             }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 15)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public void SetParent(IGroup parent)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return;
-
             IGroup oldParent = null;
 
             if (((parent == null && _parentId != Guid.Empty) || (parent != null && _parentId != parent.Id)))
@@ -94,8 +79,10 @@ namespace ThreatsManager.Engine.Aspects
                 oldParent = Parent;
                 _parentId = parent?.Id ?? Guid.Empty;
                 _parent = parent;
-                Dirty.IsDirty = true;
-                _parentChanged?.Invoke(GroupElement?.Get(), oldParent, parent);
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                if (Instance is IGroupElement groupElement)
+                    _parentChanged?.Invoke(groupElement, oldParent, parent);
             }
         }
         #endregion

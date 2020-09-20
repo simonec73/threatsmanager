@@ -47,10 +47,10 @@ namespace SampleExtensions.RibbonExtensions
                 {
                     case "ImportAzure":
 
-                        ThreatModelManager.Model.AddEntity<IProcess>("Azure Function");
-                        ThreatModelManager.Model.AddEntity<IProcess>("Azure ML");
-                        ThreatModelManager.Model.AddEntity<IDataStore>("Azure SQL");
-                        ThreatModelManager.Model.AddEntity<IDataStore>("Azure Storage Blob");
+                        threatModel.AddEntity<IProcess>("Azure Function");
+                        threatModel.AddEntity<IProcess>("Azure ML");
+                        threatModel.AddEntity<IDataStore>("Azure SQL");
+                        threatModel.AddEntity<IDataStore>("Azure Storage Blob");
 
                         ShowMessage?.Invoke("Import Azure Subscription succeeded.");
 

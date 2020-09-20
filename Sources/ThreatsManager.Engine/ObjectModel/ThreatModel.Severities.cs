@@ -64,7 +64,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (_severities?.Any() ?? false)
             {
-                var severities = _severities?.OrderBy(x => x.Id).ToArray();
+                var severities = _severities?.Where(x => x.Visible).OrderBy(x => x.Id).ToArray();
                 foreach (var severity in severities)
                 {
                     if (severity.Id >= id)
@@ -89,11 +89,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _severities.Add(severity);
 
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                _severityCreated?.Invoke(severity);
-            }
+            SetDirty();
+            _severityCreated?.Invoke(severity);
         }
 
         [InitializationRequired]
@@ -136,7 +133,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(definition);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     _severityRemoved?.Invoke(definition);
                 }
             }

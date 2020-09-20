@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// Interface representing an entity, that is an External Interactor, a Process or a Data Store.
     /// </summary>
     public interface IEntity : IIdentity, IThreatModelChild, IGroupElement, 
-        IPropertiesContainer, IImagesContainer, IThreatEventsContainer//, ILockable
+        IPropertiesContainer, IImagesContainer, IVulnerabilitiesContainer, IThreatEventsContainer, IDirty//, ILockable
     {
         /// <summary>
         /// Event raised when an Image for the Entity changes.
@@ -20,6 +20,11 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// </summary>
         /// <remarks>It returns null if there is no known Template which generated the Entity.</remarks>
         IEntityTemplate Template { get; }
+
+        /// <summary>
+        /// Disassociate the Entity from the underlying Template.
+        /// </summary>
+        void ResetTemplate();
 
         /// <summary>
         /// Creates a duplicate of the current Entity and attaches it to the Container passed as argument.

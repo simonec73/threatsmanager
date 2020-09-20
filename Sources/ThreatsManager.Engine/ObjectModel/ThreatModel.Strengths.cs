@@ -89,11 +89,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _strengths.Add(strength);
             
-            if (this == ThreatModelManager.Model)
-            {
-                Dirty.IsDirty = true;
-                _strengthCreated?.Invoke(strength);
-            }
+            SetDirty();
+            _strengthCreated?.Invoke(strength);
         }
 
         [InitializationRequired]
@@ -134,7 +131,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _strengths.Remove(definition);
                 if (result)
                 {
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     _strengthRemoved?.Invoke(definition);
                 }
             }

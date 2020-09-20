@@ -9,15 +9,22 @@ using ThreatsManager.Utilities;
 
 namespace $rootnamespace$
 {
-    public partial class $safeitemrootname$ : UserControl, IShowThreatModelPanel
+    /// <summary>
+    /// $safeitemname$ is used to implement a Panel that will be shown as part of a Form.
+    /// </summary>
+    // TODO: Change Label, Priority and ExecutionMode. 
+    public partial class $safeitemrootname$ : UserControl, IShowThreatModelPanel<Form>
     {
+        private readonly Guid _id = Guid.NewGuid();
+
         public $safeitemrootname$()
         {
             InitializeComponent();
         }
 
         #region Implementation of interface IShowThreatModelPanel.
-        public Form ContainingForm { get; set; }
+        public Guid Id => _id;
+        public Form PanelContainer { get; set; }
 
         public void SetThreatModel(IThreatModel model)
         {
@@ -27,9 +34,5 @@ namespace $rootnamespace$
             }
         }
         #endregion
-
-        // TODO: fill the fourth parameter with the big icon (64x64 pixels) and the fifth with a smaller icon (32x32 pixels)
-        public IActionDefinition ActionDefinition => 
-            new ActionDefinition(Guid.NewGuid(), "$itemrootname$", "$itemrootname$", null, null);
     }
 }

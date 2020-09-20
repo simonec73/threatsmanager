@@ -7,8 +7,8 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// <summary>
     /// Interface implemented by Data Flows.
     /// </summary>
-    public interface IDataFlow : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IThreatEventsContainer//, ILockable
+    public interface IDataFlow : IIdentity, IThreatModelChild, IPropertiesContainer, IVulnerabilitiesContainer, 
+        IThreatEventsContainer, IDirty//, ILockable
     {
         /// <summary>
         /// Identifier of the Source.
@@ -31,10 +31,21 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         IEntity Target { get; }
 
         /// <summary>
-        /// Type of Data Flow.
+        /// Type of Flow.
         /// </summary>
         FlowType FlowType { get; set; }
  
+        /// <summary>
+        /// Template used to generate the Flow.
+        /// </summary>
+        /// <remarks>It returns null if there is no known Template which generated the Flow.</remarks>
+        IFlowTemplate Template { get; }
+
+        /// <summary>
+        /// Disassociate the Flow from the underlying Template.
+        /// </summary>
+        void ResetTemplate();
+
         /// <summary>
         /// Creates a duplicate of the current Data Flow and attaches it to the Container passed as argument.
         /// </summary>

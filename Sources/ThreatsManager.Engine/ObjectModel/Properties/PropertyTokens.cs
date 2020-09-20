@@ -14,9 +14,10 @@ using ThreatsManager.Utilities.Exceptions;
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     [SimpleNotifyPropertyChanged]
     [AutoDirty]
-    [Serializable]
+    [DirtyAspect]
     [PropertyAspect]
     [ThreatModelChildAspect]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyTokens, ThreatsManager.Engine")]
@@ -93,12 +94,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
         public IThreatModel Model { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
         protected Guid _id { get; set; }
-        private Guid _modelId { get; set; }
-        private IThreatModel _model { get; set; }
+        protected Guid _modelId { get; set; }
+        protected IThreatModel _model { get; set; }
         #endregion
     }
 }

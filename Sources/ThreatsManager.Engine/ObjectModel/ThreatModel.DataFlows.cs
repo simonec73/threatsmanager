@@ -88,10 +88,28 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 result = new DataFlow(this, name, sourceId, targetId);
                 _dataFlows.Add(result);
-                Dirty.IsDirty = true;
+                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
+
+            return result;
+        }
+
+        [InitializationRequired]
+        public IDataFlow AddDataFlow([Required] string name, Guid sourceId, Guid targetId, IFlowTemplate template)
+        {
+            IDataFlow result = new DataFlow(this, name, sourceId, targetId)
+            {
+                _templateId = template?.Id ?? Guid.Empty
+            };
+
+            if (_dataFlows == null)
+                _dataFlows = new List<IDataFlow>();
+            _dataFlows.Add(result);
+            RegisterEvents(result);
+            SetDirty();
+            ChildCreated?.Invoke(result);
 
             return result;
         }
@@ -122,7 +140,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(flow);
-                    Dirty.IsDirty = true;
+                    SetDirty();
                     ChildRemoved?.Invoke(flow);
                 }
             }

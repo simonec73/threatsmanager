@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -32,10 +33,20 @@ namespace ThreatsManager.Utilities
         //convert bitmap to byte (serialize)
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            Bitmap bitmap = (Bitmap) value;
+            if (value is Bitmap bitmap)
+            {
+                //System.Drawing.ImageConverter converter = new System.Drawing.ImageConverter();
+                //writer.WriteValue((byte[]) converter.ConvertTo(bitmap, typeof(byte[])));
 
-            System.Drawing.ImageConverter converter = new System.Drawing.ImageConverter();
-            writer.WriteValue((byte[]) converter.ConvertTo(bitmap, typeof(byte[])));
+                using (var newBitmap = new Bitmap(bitmap))
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        newBitmap.Save(stream, ImageFormat.Png);
+                        writer.WriteValue(stream.ToArray());
+                    }
+                }
+            }
         }
     }
 }

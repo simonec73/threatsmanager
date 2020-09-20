@@ -31,6 +31,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 {
                     _id = _id,
                     _schemaId = schema.Id,
+                    _model = schema.Model,
+                    _modelId = schema.Model?.Id ?? Guid.Empty,
                     Name = Name,
                     Description = Description,
                     _listProviderId = _listProviderId,

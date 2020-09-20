@@ -14,50 +14,45 @@ using ThreatsManager.Utilities.Aspects.Engine;
 namespace ThreatsManager.Engine.Aspects
 {
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(IdentityAspect))]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class EntitiesReadOnlyContainerAspect : InstanceLevelAspect
     {
-        #region Imports from the extended class.
-        [ImportMember("_id", IsRequired=true)]
-        public Property<Guid> _id;
-
-        [ImportMember("Model", IsRequired=true)]
-        public Property<IThreatModel> Model;
-
-        [ImportMember("IsInitialized", IsRequired=true)]
-        public Property<bool> IsInitialized;
-        #endregion
-
         #region Implementation of interface IEntitiesReadOnlyContainer.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<IEntity> Entities => Model?.Get().Entities?.Where(x => x.ParentId == _id?.Get());
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 4)]
+        public IEnumerable<IEntity> Entities
+        {
+            get
+            {
+                var model = (Instance as IThreatModelChild)?.Model;
+                var id = (Instance as IIdentity)?.Id;
+                
+                return model?.Entities?.Where(x => x.ParentId == (id ?? Guid.Empty));
+            }
+        }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public IEntity GetEntity(Guid id)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
+            var model = (Instance as IThreatModelChild)?.Model;
+            var parentId = (Instance as IIdentity)?.Id;
 
-            return Model?.Get().Entities?.FirstOrDefault(x => x.Id == id && x.ParentId == _id?.Get());
+            return model?.Entities?.FirstOrDefault(x => x.Id == id && x.ParentId == (parentId ?? Guid.Empty));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
         public IEnumerable<IEntity> GetEntities(string name)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            return Model?.Get().Entities?.Where(x => name.IsEqual(x.Name) && x.ParentId == _id?.Get());
+            var model = (Instance as IThreatModelChild)?.Model;
+            var parentId = (Instance as IIdentity)?.Id;
+
+            return model?.Entities?.Where(x => name.IsEqual(x.Name) && x.ParentId == (parentId ?? Guid.Empty));
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 4)]
         public IEnumerable<IEntity> SearchEntities(string filter)
         {
-            if (!(IsInitialized?.Get() ?? false))
-                return null;
             if (string.IsNullOrWhiteSpace(filter))
                 throw new ArgumentNullException(nameof(filter));
 

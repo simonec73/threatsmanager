@@ -14,8 +14,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// <summary>
     /// Attribute applied to automatically inject the code needed by classes implementing IIdentity.
     /// </summary>
-    /// <remarks>PostSharp is required to make this attribute effective.
-    /// <para>Please refer to the SDK examples as a reference on how to create </para></remarks>
+    /// <remarks>PostSharp is required to make this attribute effective.</remarks>
     [PSerializable]
     public class IdentityAspect : InstanceLevelAspect
     {
