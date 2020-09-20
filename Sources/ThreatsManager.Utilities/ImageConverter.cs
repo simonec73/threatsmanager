@@ -37,11 +37,14 @@ namespace ThreatsManager.Utilities
             {
                 //System.Drawing.ImageConverter converter = new System.Drawing.ImageConverter();
                 //writer.WriteValue((byte[]) converter.ConvertTo(bitmap, typeof(byte[])));
-                
-                using (var stream = new MemoryStream())
+
+                using (var newBitmap = new Bitmap(bitmap))
                 {
-                    bitmap.Save(stream, ImageFormat.Png);
-                    writer.WriteValue(stream.ToArray());
+                    using (var stream = new MemoryStream())
+                    {
+                        newBitmap.Save(stream, ImageFormat.Png);
+                        writer.WriteValue(stream.ToArray());
+                    }
                 }
             }
         }

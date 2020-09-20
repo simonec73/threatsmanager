@@ -36,18 +36,6 @@ namespace ThreatsManager.Interfaces.ObjectModel
         public IEnumerable<Guid> Properties;
 
         /// <summary>
-        /// If true, all Items will be included.
-        /// </summary>
-        /// <remarks>If true, <see cref="Items"/> will be ignored.</remarks>
-        public bool AllItems;
-
-        /// <summary>
-        /// List of the Items to include.
-        /// </summary>
-        /// <remarks>If <see cref="AllItems"/> is true, then this list will be ignored.</remarks>
-        public IEnumerable<Guid> Items;
-
-        /// <summary>
         /// If true, all Entities will be included.
         /// </summary>
         /// <remarks>If true, <see cref="Entities"/> will be ignored.</remarks>

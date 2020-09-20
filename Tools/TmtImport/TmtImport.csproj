@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sources\Extensions\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj" />
     <ProjectReference Include="..\..\Sources\Extensions\ThreatsManager.MsTmt\ThreatsManager.MsTmt.csproj" />
     <ProjectReference Include="..\..\Sources\ThreatsManager.Engine\ThreatsManager.Engine.csproj" />
   </ItemGroup>

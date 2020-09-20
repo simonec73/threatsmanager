@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using ThreatsManager.AutoThreatGeneration.Initializers;
 using ThreatsManager.Engine;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -24,6 +25,9 @@ namespace TmtImport
             ExtensionsConfigurationManager.SetConfigurationUserLevel(ConfigurationUserLevel.None);
             Manager.Instance.LoadExtensions(ExecutionMode.Simplified);
             Manager.Instance.ApplyExtensionInitializers();
+
+            var autoGenRuleInitializer = new AutoGenRuleInitializer();
+            autoGenRuleInitializer.Initialize();
         }
 
         private void OnTypeNotFound(string assemblyName, string typeName)

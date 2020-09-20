@@ -87,6 +87,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     AppliesTo = AppliesTo,
                     AutoApply = AutoApply,
                     Priority = Priority,
+                    RequiredExecutionMode = RequiredExecutionMode,
                     Visible = Visible,
                     System = System,
                 };

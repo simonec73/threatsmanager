@@ -31,7 +31,7 @@ namespace ThreatsManager.MsTmt.Schemas
                 result.AppliesTo = _scope;
                 result.Priority = 100;
                 result.Visible = true;
-                result.System = true;
+                result.System = false;
                 result.AutoApply = false;
                 result.Description = Resources.TmtPropertySchemaDescription;
             }

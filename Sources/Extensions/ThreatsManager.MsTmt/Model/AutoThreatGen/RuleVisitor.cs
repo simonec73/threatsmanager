@@ -7,6 +7,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.MsTmt.Properties;
 using ThreatsManager.MsTmt.Schemas;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.MsTmt.Model.AutoThreatGen
 {
@@ -160,7 +161,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
 
             var left = context.left?.GetText()?.Split('.');
             var right = context.right?.Text?.Trim('\'');
-            if ((left?.Length ?? 0) == 2)
+            if ((left?.Length ?? 0) >= 2)
             {
                 var scope = Scope.Object;
 
@@ -175,7 +176,8 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                         break;
                 }
 
-                result = GetComparisonRuleNode(left[1], right, scope);
+                string propertyName = left.Length == 2 ? left[1] : left.Skip(1).Concat('.', null);
+                result = GetComparisonRuleNode(propertyName, right, scope);
 
                 if (Rule == null)
                     Rule = result;

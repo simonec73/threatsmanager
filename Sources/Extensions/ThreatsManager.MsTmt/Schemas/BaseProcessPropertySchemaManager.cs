@@ -26,7 +26,7 @@ namespace ThreatsManager.MsTmt.Schemas
                 result.AppliesTo = Scope.Process;
                 result.Priority = 90;
                 result.Visible = true;
-                result.System = true;
+                result.System = false;
                 result.AutoApply = true;
                 result.Description = Resources.EntityPropertySchemaDescription;
             }

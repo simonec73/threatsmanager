@@ -18,7 +18,7 @@ boolean  : AND | OR;
 subjectproperty : (FLOW|subject) PROPERTY;
 
 subject  : SOURCE|TARGET;
-PROPERTY : '.' CHARACTER+;
+PROPERTY : '.' CHARACTER_POINT+;
 
 fragment UPPERLETTER : [A-Z] ;
 fragment LOWERLETTER : [a-z] ;
@@ -38,6 +38,7 @@ NOT        : 'not';
 LPAREN     : '(' ;
 RPAREN     : ')' ;
 CHARACTER : UPPERLETTER | LOWERLETTER | DIGIT | '-';
+CHARACTER_POINT : CHARACTER | '.';
 TEXT      : '\'' ~('\'')* '\'';
 
 WHITESPACE          : (' '|'\t')+ -> skip ;

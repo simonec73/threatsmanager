@@ -423,7 +423,8 @@ namespace ThreatsManager.MsTmt.Model
             {
                 result = text
                     .Replace("{source.Name}", "Source")
-                    .Replace("{target.Name}", "Target");
+                    .Replace("{target.Name}", "Target")
+                    .Replace("{flow.Name}", "Flow");
             }
 
             return result;
