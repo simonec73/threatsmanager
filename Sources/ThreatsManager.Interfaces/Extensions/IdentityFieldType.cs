@@ -27,16 +27,6 @@
         Priority,
 
         /// <summary>
-        /// Severity, as defined for Threats.
-        /// </summary>
-        Severity,
-
-        /// <summary>
-        /// Indicates where the Threat or Mitigation applies.
-        /// </summary>
-        AppliesTo,
-
-        /// <summary>
         /// A Property Type.
         /// </summary>
         Property

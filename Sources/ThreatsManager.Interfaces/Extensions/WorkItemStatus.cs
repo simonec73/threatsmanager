@@ -1,29 +1,33 @@
 ﻿namespace ThreatsManager.Interfaces.Extensions
 {
     /// <summary>
-    /// Status of the Bug.
+    /// Status of the Work Item.
     /// </summary>
-    public enum BugStatus
+    public enum WorkItemStatus
     {
         /// <summary>
-        /// The status of the Bug is unknown.
+        /// The Task status is unknown.
         /// </summary>
         Unknown,
         /// <summary>
-        /// The Bug has been created.
+        /// The Task has been created.
         /// </summary>
         Created,
         /// <summary>
-        /// Bug fixing has started.
+        /// The Task has been planned.
+        /// </summary>
+        Planned,
+        /// <summary>
+        /// The Task is in progress.
         /// </summary>
         [EnumLabel("In Progress")]
         InProgress,
         /// <summary>
-        /// Bug has been fixed.
+        /// The Task has been completed.
         /// </summary>
-        Fixed,
+        Done,
         /// <summary>
-        /// Bug has been removed.
+        /// The Task has been removed.
         /// </summary>
         Removed
     }
