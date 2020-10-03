@@ -65,9 +65,9 @@ namespace ThreatsManager.Engine
         [ExtensionDescription("Property Schemas Extractor")]
         private IEnumerable<Lazy<IPropertySchemasExtractor, IExtensionMetadata>> _propertySchemasExtractors;
 
-        [ImportMany(typeof(IDevOpsConnector))]
-        [ExtensionDescription("DevOps Connector")]
-        private IEnumerable<Lazy<IDevOpsConnector, IExtensionMetadata>> _devOpsConnectors;
+        [ImportMany(typeof(IDevOpsConnectorFactory))]
+        [ExtensionDescription("DevOps Connector Factory")]
+        private IEnumerable<Lazy<IDevOpsConnectorFactory, IExtensionMetadata>> _devOpsConnectorsFactories;
 
         [ImportMany(typeof(ISettingsPanelProvider))]
         [ExtensionDescription("Settings Panel Provider")]

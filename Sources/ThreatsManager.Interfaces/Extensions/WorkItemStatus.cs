@@ -8,6 +8,7 @@
         /// <summary>
         /// The Task status is unknown.
         /// </summary>
+        [EnumLabel("Unknown or Standard")]
         Unknown,
         /// <summary>
         /// The Task has been created.

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Interfaces.Extensions
@@ -8,6 +9,13 @@ namespace ThreatsManager.Interfaces.Extensions
     /// </summary>
     public interface IDevOpsConnector
     {
+        #region Relationship with Factory.
+        /// <summary>
+        /// Identifier of the associated Factory.
+        /// </summary>
+        string FactoryId { get; }
+        #endregion
+
         #region Connection management.
         /// <summary>
         /// Initiates connection to a DevOps server.
@@ -56,7 +64,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         /// <param name="filter">Filter to be used for the search. It must contain at least 3 characters.</param>
         /// <returns>Enumeration of the items whose name includes the three characters.</returns>
-        IEnumerable<IDevOpsItemInfo> GetItems(string filter);
+        Task<IEnumerable<IDevOpsItemInfo>> GetItemsAsync(string filter);
         #endregion
 
         #region Tag management.
@@ -71,7 +79,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// Get the list of supported Work Item Types.
         /// </summary>
         /// <returns>List of supported Work Item Types.</returns>
-        IEnumerable<string> GetWorkItemTypes();
+        Task<IEnumerable<string>> GetWorkItemTypesAsync();
 
         /// <summary>
         /// Property to get and set the Work Item Type for new Work Items.
@@ -92,6 +100,12 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <param name="status">Associated Work Item Status.</param>
         /// <remarks>To remove an association, map it to WorkItemStatus.Unknown.</remarks>
         void SetWorkItemStateMapping(string devOpsState, WorkItemStatus status);
+
+        /// <summary>
+        /// Get Work Item States from the DevOps system.
+        /// </summary>
+        /// <returns>List of States supported by the DevOps system.</returns>
+        Task<IEnumerable<string>> GetWorkItemStatesAsync();
         #endregion
 
         #region Work Item Fields management.
@@ -119,7 +133,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// Get the list of fields supported by the DevOps system for the Work Item.
         /// </summary>
         /// <returns>List of known DevOps fields.</returns>
-        IEnumerable<IDevOpsField> GetWorkItemDevOpsFields();
+        Task<IEnumerable<IDevOpsField>> GetWorkItemDevOpsFieldsAsync();
         #endregion
 
         #region Work Items management.
@@ -128,35 +142,35 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         /// <param name="mitigation">Mitigation to be associated to a Work Item.</param>
         /// <returns>Identifier of the Work Item. It may be -1 if the Task creation has failed.</returns>
-        int CreateWorkItem(IMitigation mitigation);
+        Task<int> CreateWorkItemAsync(IMitigation mitigation);
 
         /// <summary>
         /// Get updated information about a Work Item.
         /// </summary>
         /// <param name="mitigation">Mitigation associated to the Work Item.</param>
         /// <returns>Information about the Work Item.</returns>
-        WorkItemInfo GetWorkItemInfo(IMitigation mitigation);
+        Task<WorkItemInfo> GetWorkItemInfoAsync(IMitigation mitigation);
 
         /// <summary>
         /// Get updated information about a Work Item.
         /// </summary>
         /// <param name="id">Identifier of the Work Item.</param>
         /// <returns>Information about the Work Item.</returns>
-        WorkItemInfo GetWorkItemInfo(int id);
+        Task<WorkItemInfo> GetWorkItemInfoAsync(int id);
 
         /// <summary>
         /// Get information about multiple Work Items.
         /// </summary>
         /// <param name="ids">Enumeration of the Work Items identifiers.</param>
-        /// <returns>Dictionary containing the information for each Work Items.</returns>
-        IDictionary<int, WorkItemInfo> GetWorkItemsInfo(IEnumerable<int> ids);
+        /// <returns>Enumeration with the information for each Work Items.</returns>
+        Task<IEnumerable<WorkItemInfo>> GetWorkItemsInfoAsync(IEnumerable<int> ids);
 
         /// <summary>
         /// Get information about the Work Items that are in a specific status.
         /// </summary>
         /// <param name="status">Desired status.</param>
         /// <returns>Information about the Work Items in the desired status.</returns>
-        IEnumerable<WorkItemInfo> GetWorkItemsInfo(WorkItemStatus status);
+        Task<IEnumerable<WorkItemInfo>> GetWorkItemsInfoAsync(WorkItemStatus status);
         #endregion
     }
 }

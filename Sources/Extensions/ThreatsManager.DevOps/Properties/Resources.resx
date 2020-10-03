@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="businesswoman" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\businesswoman.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="businesswoman_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\businesswoman_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="businesswoman_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\businesswoman_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="businesswoman_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\businesswoman_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cloud_updown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cloud_updown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cloud_updown_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cloud_updown_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cloud_updown_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cloud_updown_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cloud_updown_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cloud_updown_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DefaultNamespace" xml:space="preserve">
+    <value>https://www.simoneonsecurity.com/tm/2018</value>
+  </data>
+  <data name="devops" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DevOpsConfig" xml:space="preserve">
+    <value>Config</value>
+  </data>
+  <data name="DevOpsConfigDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the information related to the connection to the DevOps system.</value>
+  </data>
+  <data name="DevOpsConfigPropertySchema" xml:space="preserve">
+    <value>DevOpsConfig</value>
+  </data>
+  <data name="DevOpsConfigPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema used to store configuration info for the connection to the DevOps system.</value>
+  </data>
+  <data name="DevOpsInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="DevOpsInfoDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the information related to the associated item in a connected DevOps system.</value>
+  </data>
+  <data name="DevOpsPropertySchema" xml:space="preserve">
+    <value>DevOps</value>
+  </data>
+  <data name="DevOpsPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema used to enrich object metadata with information related to the associated item in a connected DevOps system.</value>
+  </data>
+  <data name="devops_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devops_big_forbidden" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_big_forbidden.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devops_forbidden" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_forbidden.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devops_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devops_huge_forbidden" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_huge_forbidden.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devops_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devops_small_forbidden" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devops_small_forbidden.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_bug" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_bug.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_bug_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_bug_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_bug_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_bug_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_bug_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_bug_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_config" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_config.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_config_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_config_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_config_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_config_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_config_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_config_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kanban_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kanban_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="messages" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\messages.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="messages_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\messages_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="messages_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\messages_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="messages_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\messages_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mitigations_kanban" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mitigations_kanban.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mitigations_kanban_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mitigations_kanban_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mitigations_kanban_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mitigations_kanban_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pencil.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pencil_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pencil_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pencil_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pencil_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pencil_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pencil_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PropertyRoadmap" xml:space="preserve">
+    <value>Status of the Mitigation for the Roadmap.</value>
+  </data>
+  <data name="standard_mitigations_kanban" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\standard_mitigations_kanban.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="standard_mitigations_kanban_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\standard_mitigations_kanban_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="standard_mitigations_kanban_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\standard_mitigations_kanban_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_events_kanban" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_events_kanban.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_events_kanban_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_events_kanban_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_events_kanban_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_events_kanban_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_types_kanban" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_types_kanban.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_types_kanban_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_types_kanban_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_types_kanban_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_types_kanban_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>
