@@ -18,11 +18,11 @@
         /// <summary>
         /// Description of the Identity.
         /// </summary>
-        /// <remarks>For Threat Event Mitigations, it includes the Directives.</remarks>
+        /// <remarks>For Mitigations, it includes the Directives for the associated Directives.</remarks>
         Description,
 
         /// <summary>
-        /// Priority, automatically calculated Threats or Mitigations.
+        /// Priority, retrieved from the Roadmap.
         /// </summary>
         Priority,
 

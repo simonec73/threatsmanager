@@ -42,5 +42,13 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         /// <remarks>It is defined only if the FieldType is Property.</remarks>
         public IPropertyType PropertyType { get; private set; }
+
+        /// <summary>
+        /// Representation of the field.
+        /// </summary>
+        public override string ToString()
+        {
+            return FieldType == IdentityFieldType.Property ? PropertyType.ToString() : FieldType.ToString();
+        }
     }
 }
