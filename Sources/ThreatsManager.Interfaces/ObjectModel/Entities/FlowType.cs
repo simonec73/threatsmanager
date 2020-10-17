@@ -26,6 +26,12 @@
         /// <remarks>This is the typical scenario that occurs when the Source
         /// sends a "fire and forget" request to the Target.</remarks>
         [EnumLabel("Write/Command only")]
-        WriteCommand
+        WriteCommand,
+
+        /// <summary>
+        /// The Source pushes data to the Target.
+        /// </summary>
+        [EnumLabel("Push")]
+        Push
     }
 }
