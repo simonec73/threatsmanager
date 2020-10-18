@@ -120,31 +120,7 @@
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
   </data>
-  <data name="DevOpsConfig" xml:space="preserve">
-    <value>Config</value>
-  </data>
-  <data name="DevOpsConfigDescription" xml:space="preserve">
-    <value>Property Type containing the metadata with the information related to the connection to the DevOps system.</value>
-  </data>
-  <data name="DevOpsConfigPropertySchema" xml:space="preserve">
-    <value>DevOpsConfig</value>
-  </data>
-  <data name="DevOpsConfigPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema used to store configuration info for the connection to the DevOps system.</value>
-  </data>
-  <data name="DevOpsInfo" xml:space="preserve">
-    <value>Info</value>
-  </data>
-  <data name="DevOpsInfoDescription" xml:space="preserve">
-    <value>Property Type containing the metadata with the information related to the associated item in a connected DevOps system.</value>
-  </data>
-  <data name="DevOpsPropertySchema" xml:space="preserve">
-    <value>DevOps</value>
-  </data>
-  <data name="DevOpsPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema used to enrich object metadata with information related to the associated item in a connected DevOps system.</value>
-  </data>
-  <data name="PropertyRoadmap" xml:space="preserve">
-    <value>Status of the Mitigation for the Roadmap.</value>
+  <data name="SchemaName" xml:space="preserve">
+    <value>Quality</value>
   </data>
 </root>
