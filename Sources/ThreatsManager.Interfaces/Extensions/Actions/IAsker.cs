@@ -17,7 +17,7 @@ namespace ThreatsManager.Interfaces.Extensions.Actions
         /// <item><description>The text of the request to be shown to the user.</description></item>
         /// <item><description>A boolean, which is positive if the request is a warning and false if it is informational only.</description></item>
         /// <item><description>The available options for the answer.</description></item>
-        /// </list>/remarks>
+        /// </list></remarks>
         event Action<IAsker, object, string, string, bool, RequestOptions> Ask;
 
         /// <summary>
