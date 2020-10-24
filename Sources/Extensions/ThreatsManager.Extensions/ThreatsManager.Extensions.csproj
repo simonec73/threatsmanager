@@ -27,6 +27,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'net472' ">
+      <HintPath>..\..\Resources\net472\ThreatsManager.Icons.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+      <HintPath>..\..\Resources\netcoreapp3.1\ThreatsManager.Icons.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

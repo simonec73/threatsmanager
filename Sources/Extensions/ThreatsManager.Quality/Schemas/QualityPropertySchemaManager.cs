@@ -11,7 +11,7 @@ using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Quality.Schemas
 {
-    class QualityPropertySchemaManager : IInitializableObject
+    public class QualityPropertySchemaManager : IInitializableObject
     {
         private readonly IThreatModel _model;
         private static string FalsePositive = "FalsePositive";

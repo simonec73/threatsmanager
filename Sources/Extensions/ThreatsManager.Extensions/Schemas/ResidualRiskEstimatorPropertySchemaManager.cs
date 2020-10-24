@@ -9,7 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Schemas
 {
-    class ResidualRiskEstimatorPropertySchemaManager
+    public class ResidualRiskEstimatorPropertySchemaManager
     {
         private const string SchemaName = "Residual Risk Estimator Configuration";
 
