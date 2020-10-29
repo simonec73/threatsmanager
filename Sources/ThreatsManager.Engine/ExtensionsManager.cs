@@ -13,7 +13,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Training;
+using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Engine
 {
@@ -111,8 +111,11 @@ namespace ThreatsManager.Engine
                 {
                     foreach (var assembly in assemblies)
                     {
-                        TrainingPillsManager.Instance.Add(assembly);
+                        LearningManager.Instance.Add(assembly);
+                        TroubleshootingManager.Instance.Add(assembly);
                     }
+                    LearningManager.Instance.AnalyzeSources();
+                    TroubleshootingManager.Instance.AnalyzeSources();
                 }
             }
             catch (ReflectionTypeLoadException ex)

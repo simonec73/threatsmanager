@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Collections.Generic;
 
-namespace ThreatsManager.Utilities.Training
+namespace ThreatsManager.Utilities.Help
 {
 
     /// <summary>
@@ -17,14 +17,7 @@ namespace ThreatsManager.Utilities.Training
         /// </summary>
         [JsonProperty("type")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public TrainingLevel SectionType;
-
-        /// <summary>
-        /// Prefix for the items.
-        /// </summary>
-        /// <remarks>This is optional.</remarks>
-        [JsonProperty("prefix")]
-        public string Prefix;
+        public LearningLevel SectionType;
 
         /// <summary>
         /// List of topics.

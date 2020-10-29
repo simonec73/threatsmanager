@@ -2,12 +2,12 @@
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 
-namespace ThreatsManager.Utilities.Training
+namespace ThreatsManager.Utilities.Help
 {
     /// <summary>
     /// Training specific extensions.
     /// </summary>
-    public static class TrainingExtensions
+    public static class HelpExtensions
     {
         /// <summary>
         /// Calculate the image for the Level.
@@ -15,13 +15,13 @@ namespace ThreatsManager.Utilities.Training
         /// <param name="level">Level for which the image must be returned.</param>
         /// <param name="size">Size of the image.</param>
         /// <returns>Bitmap with the image corresponding to the training level.</returns>
-        public static Bitmap GetLevelImage(this TrainingLevel level, ImageSize size)
+        public static Bitmap GetLevelImage(this LearningLevel level, ImageSize size)
         {
             Bitmap result = null;
 
             switch (level)
             {
-                case TrainingLevel.Introductive:
+                case LearningLevel.Introductive:
                     switch (size)
                     {
                         case ImageSize.Small:
@@ -35,7 +35,7 @@ namespace ThreatsManager.Utilities.Training
                             break;
                     }
                     break;
-                case TrainingLevel.Advanced:
+                case LearningLevel.Advanced:
                     switch (size)
                     {
                         case ImageSize.Small:
@@ -49,7 +49,7 @@ namespace ThreatsManager.Utilities.Training
                             break;
                     }
                     break;
-                case TrainingLevel.Expert:
+                case LearningLevel.Expert:
                     switch (size)
                     {
                         case ImageSize.Small:

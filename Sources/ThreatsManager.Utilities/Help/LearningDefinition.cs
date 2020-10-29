@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace ThreatsManager.Utilities.Training
+namespace ThreatsManager.Utilities.Help
 {
     /// <summary>
-    /// Definition of trainings.
+    /// Definition of Learnings.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class TrainingsDefinition
+    public class LearningDefinition
     {
         /// <summary>
         /// Sections defined. Each section describes a training level.

@@ -642,7 +642,7 @@
         </member>
         <member name="T:ThreatsManager.Utilities.Training.Topic">
             <summary>
-            Training Topic, which is a container of Lessons.
+            Training Topic, which is a container of Pages.
             </summary>
         </member>
         <member name="F:ThreatsManager.Utilities.Training.Topic.Name">
@@ -650,9 +650,9 @@
             Name of the topic.
             </summary>
         </member>
-        <member name="F:ThreatsManager.Utilities.Training.Topic.Lessons">
+        <member name="F:ThreatsManager.Utilities.Training.Topic.Pages">
             <summary>
-            Lessons associated to the topic.
+            Pages associated to the topic.
             </summary>
         </member>
         <member name="T:ThreatsManager.Utilities.Training.TrainingExtensions">
@@ -743,14 +743,14 @@
             </summary>
             <param name="level">Level of the training.</param>
             <param name="requiredTags">Required tags.</param>
-            <returns>List of Lessons for the given level and with at least one of the searched tags, if specified.</returns>
+            <returns>List of Pages for the given level and with at least one of the searched tags, if specified.</returns>
         </member>
         <member name="M:ThreatsManager.Utilities.Training.TrainingPillsManager.GetLessons(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Get the lessons.
             </summary>
             <param name="requiredTags">Required tags.</param>
-            <returns>List of Lessons with at least one of the searched tags, if specified.</returns>
+            <returns>List of Pages with at least one of the searched tags, if specified.</returns>
         </member>
         <member name="T:ThreatsManager.Utilities.Training.TrainingsDefinition">
             <summary>

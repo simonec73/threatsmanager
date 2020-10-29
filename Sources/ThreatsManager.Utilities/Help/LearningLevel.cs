@@ -1,20 +1,20 @@
-﻿namespace ThreatsManager.Utilities.Training
+﻿namespace ThreatsManager.Utilities.Help
 {
     /// <summary>
-    /// Type of Training Sections
+    /// Levels of Learning
     /// </summary>
-    public enum TrainingLevel
+    public enum LearningLevel
     {
         /// <summary>
-        /// Introductive Training.
+        /// Introductive lessons.
         /// </summary>
         Introductive,
         /// <summary>
-        /// Advanced Training.
+        /// Advanced lessons.
         /// </summary>
         Advanced,
         /// <summary>
-        /// Expert Training.
+        /// Pages for experts.
         /// </summary>
         Expert
     }

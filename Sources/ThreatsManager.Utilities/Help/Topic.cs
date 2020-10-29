@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace ThreatsManager.Utilities.Training
+namespace ThreatsManager.Utilities.Help
 {
     /// <summary>
-    /// Training Topic, which is a container of Lessons.
+    /// Training Topic, which is a container of Pages.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class Topic
@@ -16,9 +16,9 @@ namespace ThreatsManager.Utilities.Training
         public string Name;
 
         /// <summary>
-        /// Lessons associated to the topic.
+        /// Pages associated to the topic.
         /// </summary>
         [JsonProperty("lessons")]
-        public List<Lesson> Lessons;
+        public List<Page> Lessons;
     }
 }

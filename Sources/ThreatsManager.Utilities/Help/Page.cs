@@ -1,21 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace ThreatsManager.Utilities.Training
+namespace ThreatsManager.Utilities.Help
 {
     /// <summary>
-    /// Training Lesson.
+    /// Help page.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class Lesson
+    public class Page
     {
-        /// <summary>
-        /// Identifier of the lesson.
-        /// </summary>
-        /// <remarks>It must be unique for the Section.</remarks>
-        [JsonProperty("id")]
-        public int Id;
-
         /// <summary>
         /// Name of the topic.
         /// </summary>
@@ -29,9 +21,9 @@ namespace ThreatsManager.Utilities.Training
         public string Description;
 
         /// <summary>
-        /// Tags associated to the topic.
+        /// Url of the lesson.
         /// </summary>
-        [JsonProperty("tags")]
-        public List<string> Tags;
+        [JsonProperty("url")]
+        public string Url;
     }
 }
