@@ -6,7 +6,6 @@ using System.Net.Cache;
 using System.Reflection;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Threading;
 
 namespace ThreatsManager.Utilities.Help
 {

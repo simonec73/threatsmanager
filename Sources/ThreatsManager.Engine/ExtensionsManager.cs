@@ -14,6 +14,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Help;
+using PostSharp.Patterns.Threading;
 
 namespace ThreatsManager.Engine
 {
@@ -105,18 +106,7 @@ namespace ThreatsManager.Engine
             try
             {
                 _container.ComposeParts(this);
-
-                var assemblies = _catalog.Catalogs.OfType<AssemblyCatalog>().Select(x => x.Assembly).ToArray();
-                if (assemblies.Any())
-                {
-                    foreach (var assembly in assemblies)
-                    {
-                        LearningManager.Instance.Add(assembly);
-                        TroubleshootingManager.Instance.Add(assembly);
-                    }
-                    LearningManager.Instance.AnalyzeSources();
-                    TroubleshootingManager.Instance.AnalyzeSources();
-                }
+                LoadHelpConfiguration();
             }
             catch (ReflectionTypeLoadException ex)
             {
@@ -328,6 +318,23 @@ namespace ThreatsManager.Engine
             }
 
             return result;
+        }
+
+        [Background]
+        private void LoadHelpConfiguration()
+        {
+            var assemblies = _catalog.Catalogs.OfType<AssemblyCatalog>().Select(x => x.Assembly).ToArray();
+            if (assemblies.Any())
+            {
+                foreach (var assembly in assemblies)
+                {
+                    LearningManager.Instance.Add(assembly);
+                    TroubleshootingManager.Instance.Add(assembly);
+                }
+                LearningManager.Instance.AnalyzeSources();
+                TroubleshootingManager.Instance.AnalyzeSources();
+            }
+
         }
     }
 }

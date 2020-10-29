@@ -7,7 +7,6 @@ using System.Net.Cache;
 using System.Reflection;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Threading;
 
 namespace ThreatsManager.Utilities.Help
 {
@@ -15,7 +14,7 @@ namespace ThreatsManager.Utilities.Help
     /// Learning Manager.
     /// </summary>
     /// <remarks>Implements the Singleton pattern.</remarks>
-    public sealed class LearningManager : Manager
+    public sealed class LearningManager
     {
         private static readonly Lazy<LearningManager> _instance = 
             new Lazy<LearningManager>(() => new LearningManager());
