@@ -334,7 +334,6 @@ namespace ThreatsManager.Engine
                 LearningManager.Instance.AnalyzeSources();
                 TroubleshootingManager.Instance.AnalyzeSources();
             }
-
         }
     }
 }
