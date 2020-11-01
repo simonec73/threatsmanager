@@ -213,11 +213,27 @@ namespace ThreatsManager.Engine
                             switch (attribute.ConstructorArguments.Count)
                             {
                                 case 1:
-                                    attrib = new ExtensionsContainerAttribute(attribute.ConstructorArguments[0].Value.ToString());
+                                    attrib = new ExtensionsContainerAttribute((string) attribute.ConstructorArguments[0].Value);
                                     break;
                                 case 2:
-                                    attrib = new ExtensionsContainerAttribute(attribute.ConstructorArguments[0].Value.ToString(),
-                                        attribute.ConstructorArguments[1].ToString());
+                                    if (attribute.ConstructorArguments[1].ArgumentType == typeof(string))
+                                    {
+                                        attrib = new ExtensionsContainerAttribute(
+                                            (string) attribute.ConstructorArguments[0].Value,
+                                            (string) attribute.ConstructorArguments[1].Value);
+                                    }
+                                    else
+                                    {
+                                        attrib = new ExtensionsContainerAttribute(
+                                            (string) attribute.ConstructorArguments[0].Value,
+                                            (uint) attribute.ConstructorArguments[1].Value);
+                                    }
+                                    break;
+                                case 3:
+                                    attrib = new ExtensionsContainerAttribute(
+                                        (string) attribute.ConstructorArguments[0].Value,
+                                        (string) attribute.ConstructorArguments[1].Value,
+                                        (uint) attribute.ConstructorArguments[2].Value);
                                     break;
                             }
 
