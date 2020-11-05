@@ -13,9 +13,17 @@ namespace ThreatsManager.Interfaces
         /// Constructor to describe dependency with a specific version of the Engine.
         /// </summary>
         /// <param name="version">Version of the Engine.</param>
-        public ExtensionsContainerAttribute([Required] string version) : this(version, version)
+        public ExtensionsContainerAttribute([Required] string version) : this(version, version, 0)
         {
+        }
 
+        /// <summary>
+        /// Constructor to describe dependency with a specific version of the Engine.
+        /// </summary>
+        /// <param name="version">Version of the Engine.</param>
+        /// <param name="clientId">Client Identifier.</param>
+        public ExtensionsContainerAttribute([Required] string version, uint clientId) : this(version, version, clientId)
+        {
         }
 
         /// <summary>
@@ -23,10 +31,21 @@ namespace ThreatsManager.Interfaces
         /// </summary>
         /// <param name="minVersion">Minimum supported versions of the Engine.</param>
         /// <param name="maxVersion">Maximum supported versions of the Engine.</param>
-        public ExtensionsContainerAttribute([Required] string minVersion, [Required] string maxVersion)
+        public ExtensionsContainerAttribute([Required] string minVersion, [Required] string maxVersion) : this(minVersion, maxVersion, 0)
+        {
+        }
+
+        /// <summary>
+        /// Constructor to describe dependency with a range of versions of the Engine.
+        /// </summary>
+        /// <param name="minVersion">Minimum supported versions of the Engine.</param>
+        /// <param name="maxVersion">Maximum supported versions of the Engine.</param>
+        /// <param name="clientId">Client Identifier.</param>
+        public ExtensionsContainerAttribute([Required] string minVersion, [Required] string maxVersion, uint clientId)
         {
             MinVersion = minVersion;
             MaxVersion = maxVersion;
+            ClientId = clientId;
         }
 
         /// <summary>
@@ -38,6 +57,13 @@ namespace ThreatsManager.Interfaces
         /// Maximum supported version.
         /// </summary>
         public string MaxVersion { get; set; }
+
+        /// <summary>
+        /// Client Identifier.
+        /// </summary>
+        /// <remarks>If the Client Id is not 0, then the Extension Container requires a special client to be executed.
+        /// <para><b>This is not a security feature!</b></para></remarks>
+        public uint ClientId { get; set; }
 
         /// <summary>
         /// Checks if the Extension supports the version of the Engine passed as argument.

@@ -132,6 +132,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public void ApplyTo([NotNull] IDataFlow flow)
         {
+            flow.FlowType = FlowType;
             flow.ClearProperties();
             this.CloneProperties(flow);
             if (flow is DataFlow internalFlow)

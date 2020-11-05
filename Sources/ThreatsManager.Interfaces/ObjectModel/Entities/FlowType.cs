@@ -24,7 +24,8 @@
         /// The Source sends a command to the Target and/or writes data to it.
         /// </summary>
         /// <remarks>This is the typical scenario that occurs when the Source
-        /// sends a "fire and forget" request to the Target.</remarks>
+        /// sends a "fire and forget" request to the Target.
+        /// It is also used when Pushing data.</remarks>
         [EnumLabel("Write/Command only")]
         WriteCommand
     }

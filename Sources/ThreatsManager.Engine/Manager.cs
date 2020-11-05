@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
@@ -133,7 +134,7 @@ namespace ThreatsManager.Engine
                                     {
                                         skip = true;
                                         reason =
-                                            $"Assembly {assembly.FullName} has not been loaded because it is not designed for this client.";
+                                            $"Extension library {assembly.FullName} has not been loaded because it is not designed for this client.";
                                     }
 
                                     if (!skip && CheckVersion(platformVersion, assembly))
@@ -141,13 +142,30 @@ namespace ThreatsManager.Engine
                                         if (certificates?.Any() ?? false)
                                         {
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-                                            var certificate = X509Certificate.CreateFromSignedFile(dll);
-                                            if (certificate != null &&
-                                                certificates.Any(x =>
+                                            X509Certificate certificate = null;
+                                            try
+                                            {
+                                                certificate = X509Certificate.CreateFromSignedFile(dll);
+                                            }
+                                            catch (CryptographicException)
+                                            {
+                                                _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because it has not been signed.");
+                                            }
+
+                                            if (certificate != null)
+                                            {
+                                                if (certificates.Any(x =>
                                                     string.Compare(x.Thumbprint,
                                                         new X509Certificate2(certificate).Thumbprint,
                                                         StringComparison.InvariantCultureIgnoreCase) == 0))
-                                                _extensionsManager.AddExtensionsAssembly(dll);
+                                                {
+                                                    _extensionsManager.AddExtensionsAssembly(dll);
+                                                }
+                                                else
+                                                {
+                                                    _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because its signature is not trusted.");
+                                                }
+                                            }
 #pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
                                         }
                                         else
@@ -159,16 +177,16 @@ namespace ThreatsManager.Engine
                                     {
                                         _showWarning?.Invoke(
                                             reason ??
-                                            $"Assembly {assembly.FullName} not loaded because it does not target this version of the Platform.");
+                                            $"Extension library {assembly.FullName} has not been loaded because it does not target this version of the Platform.");
                                     }
                                 }
                                 catch (FileLoadException)
                                 {
                                     // Ignore: this could be caused by the fact that the library has been loaded from somewhere else. 
                                 }
-                                catch
+                                catch (Exception)
                                 {
-                                    _showWarning?.Invoke($"Assembly {fileName} not loaded because it is not compatible with the current Platform.");
+                                    _showWarning?.Invoke($"Extension library {fileName} has not been loaded because it is not compatible with the current Platform.");
                                 }
                             }
                         }
@@ -195,11 +213,27 @@ namespace ThreatsManager.Engine
                             switch (attribute.ConstructorArguments.Count)
                             {
                                 case 1:
-                                    attrib = new ExtensionsContainerAttribute(attribute.ConstructorArguments[0].Value.ToString());
+                                    attrib = new ExtensionsContainerAttribute((string) attribute.ConstructorArguments[0].Value);
                                     break;
                                 case 2:
-                                    attrib = new ExtensionsContainerAttribute(attribute.ConstructorArguments[0].Value.ToString(),
-                                        attribute.ConstructorArguments[1].ToString());
+                                    if (attribute.ConstructorArguments[1].ArgumentType == typeof(string))
+                                    {
+                                        attrib = new ExtensionsContainerAttribute(
+                                            (string) attribute.ConstructorArguments[0].Value,
+                                            (string) attribute.ConstructorArguments[1].Value);
+                                    }
+                                    else
+                                    {
+                                        attrib = new ExtensionsContainerAttribute(
+                                            (string) attribute.ConstructorArguments[0].Value,
+                                            (uint) attribute.ConstructorArguments[1].Value);
+                                    }
+                                    break;
+                                case 3:
+                                    attrib = new ExtensionsContainerAttribute(
+                                        (string) attribute.ConstructorArguments[0].Value,
+                                        (string) attribute.ConstructorArguments[1].Value,
+                                        (uint) attribute.ConstructorArguments[2].Value);
                                     break;
                             }
 

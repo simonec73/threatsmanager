@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ShapeNotEntityError" xml:space="preserve">
+    <value>Shape does not refer to an Entity.</value>
+  </data>
+  <data name="ShapeNotGroupError" xml:space="preserve">
+    <value>Shape does not refer to a Group.</value>
+  </data>
+  <data name="DiagramNoModelError" xml:space="preserve">
+    <value>Diagram is not associated to a Model.</value>
+  </data>
+  <data name="CapecDefaultUrl" xml:space="preserve">
+    <value>http://capec.mitre.org/data/xml/capec_v2.10.xml</value>
+  </data>
+  <data name="CweDefaultUrl" xml:space="preserve">
+    <value>http://cwe.mitre.org/data/xml/cwec_v2.10.xml.zip</value>
+  </data>
+  <data name="MissingParameterError" xml:space="preserve">
+    <value>Parameter '{0}' is missing.</value>
+  </data>
+  <data name="UnsupportedFileTypeError" xml:space="preserve">
+    <value>File '{0}' has an unsupported type.</value>
+  </data>
+  <data name="CapecPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects the properties returned by Capec and applies to Threat Types and Events.</value>
+  </data>
+  <data name="DefaultNamespace" xml:space="preserve">
+    <value>https://www.simoneonsecurity.com/tm/2018</value>
+  </data>
+  <data name="ThreatsPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects additional generic properties for Threat Types and Events.</value>
+  </data>
+  <data name="GraphDeletionConfirmation" xml:space="preserve">
+    <value>You are about to delete {0} objects. Do you confirm?</value>
+  </data>
+  <data name="GraphDeletionCaption" xml:space="preserve">
+    <value>Deleting objects</value>
+  </data>
+  <data name="CapecConfigPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties to configure Capec. It is dynamically generated based on the selected properties from Capec data source.</value>
+  </data>
+  <data name="RemoveIdentityFromModel" xml:space="preserve">
+    <value>You are about to remove '{0}' from the Threat Model. Are you sure?</value>
+  </data>
+  <data name="DeleteFromModel" xml:space="preserve">
+    <value>Delete from Model</value>
+  </data>
+  <data name="ParentAlignmentWarning" xml:space="preserve">
+    <value>Parent is not aligned. Please move the shape to the correct parent.</value>
+  </data>
+  <data name="PropertyHiddenProperties" xml:space="preserve">
+    <value>List of hidden properties, not to be created in the Capec Property Schema. </value>
+  </data>
+  <data name="ThreatModelConfigPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties used to configure the standard Extensions within the Threat Model. </value>
+  </data>
+  <data name="PropertyHorizontalSpacing" xml:space="preserve">
+    <value>Horizontal spacing to use for the Diagram automatic layout function.</value>
+  </data>
+  <data name="PropertyVerticalSpacing" xml:space="preserve">
+    <value>Vertical spacing to use for the Diagram automatic layout function.</value>
+  </data>
+  <data name="PropertyPoints" xml:space="preserve">
+    <value>Reference points for the link.</value>
+  </data>
+  <data name="PropertyExcelSelectedFields" xml:space="preserve">
+    <value>Selected fields for the Excel reporting Extension.</value>
+  </data>
+  <data name="ReportingConfigPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties used to configure the Reporting Extensions.</value>
+  </data>
+  <data name="PropertyWordDocumentPath" xml:space="preserve">
+    <value>Path name of the file used as seed for Word Report generation.</value>
+  </data>
+  <data name="PropertyWordSections" xml:space="preserve">
+    <value>Configuration of the Sections for Word Report generation.</value>
+  </data>
+  <data name="WordPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties required for the Word Reporting feature.</value>
+  </data>
+  <data name="PropertyColumnWidths" xml:space="preserve">
+    <value>Widths of the Columns. It applies to Word Reporting.</value>
+  </data>
+  <data name="PropertyIgnoredListFields" xml:space="preserve">
+    <value>Fields to be ignored for the Lists. It applies to Word Reporting.</value>
+  </data>
+  <data name="AssociatedDiagram" xml:space="preserve">
+    <value>Identifier of the Diagram associated to the Entity.</value>
+  </data>
+  <data name="AssociatedDiagramPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties to manage Diagrams associated to Entities.</value>
+  </data>
+  <data name="AssociatedEntity" xml:space="preserve">
+    <value>Identifier of the Entity associated to the Diagram.</value>
+  </data>
+  <data name="AssociatedEntityPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties to manage Entities associated to Diagrams.</value>
+  </data>
+  <data name="MessagePromote" xml:space="preserve">
+    <value>You are requesting to get full edit access to the Property Schemas.
+Please note that editing System Property Schemas is a risky action and is not supported: you may cause your Threat Model to become unreadable.
+It is recommended to create backup of the Threat Model before proceeding further.
+
+Are you sure you want still to get full access rights? </value>
+  </data>
+  <data name="EffortPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema to represent the Effort required to implement mitigations.</value>
+  </data>
+  <data name="PropertyEffort" xml:space="preserve">
+    <value>Estimated effort for implementing the Mitigation.</value>
+  </data>
+  <data name="PropertyRoadmap" xml:space="preserve">
+    <value>Status of the Mitigation for the Roadmap.</value>
+  </data>
+  <data name="RoadmapPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema to store the Roadmap Status for Mitigations.</value>
+  </data>
+  <data name="ResidualRiskEstimatorConfigurationPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects the configuration of the selected Residual Risk Estimator.</value>
+  </data>
+  <data name="DiagramPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties to be assigned to the Diagrams.</value>
+  </data>
+  <data name="LinksPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties to be assigned to the Links within Diagrams.</value>
+  </data>
+  <data name="PropertyDpiFactor" xml:space="preserve">
+    <value>Reference Dpi factor for the Diagram.</value>
+  </data>
+  <data name="MessagePromoteSeverities" xml:space="preserve">
+    <value>You are requesting to get full edit access to Severities.
+Please note that removing Severities is a risky action and is not supported: you may even compromise your Threat Model's integrity. 
+It is recommended to create backup of the Threat Model before proceeding further.
+
+Are you sure you want still to get full access rights? </value>
+  </data>
+</root>

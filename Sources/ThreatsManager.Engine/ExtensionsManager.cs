@@ -13,7 +13,8 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Training;
+using ThreatsManager.Utilities.Help;
+using PostSharp.Patterns.Threading;
 
 namespace ThreatsManager.Engine
 {
@@ -65,9 +66,9 @@ namespace ThreatsManager.Engine
         [ExtensionDescription("Property Schemas Extractor")]
         private IEnumerable<Lazy<IPropertySchemasExtractor, IExtensionMetadata>> _propertySchemasExtractors;
 
-        [ImportMany(typeof(IDevOpsConnector))]
-        [ExtensionDescription("DevOps Connector")]
-        private IEnumerable<Lazy<IDevOpsConnector, IExtensionMetadata>> _devOpsConnectors;
+        [ImportMany(typeof(IDevOpsConnectorFactory))]
+        [ExtensionDescription("DevOps Connector Factory")]
+        private IEnumerable<Lazy<IDevOpsConnectorFactory, IExtensionMetadata>> _devOpsConnectorsFactories;
 
         [ImportMany(typeof(ISettingsPanelProvider))]
         [ExtensionDescription("Settings Panel Provider")]
@@ -105,15 +106,7 @@ namespace ThreatsManager.Engine
             try
             {
                 _container.ComposeParts(this);
-
-                var assemblies = _catalog.Catalogs.OfType<AssemblyCatalog>().Select(x => x.Assembly).ToArray();
-                if (assemblies.Any())
-                {
-                    foreach (var assembly in assemblies)
-                    {
-                        TrainingPillsManager.Instance.Add(assembly);
-                    }
-                }
+                LoadHelpConfiguration();
             }
             catch (ReflectionTypeLoadException ex)
             {
@@ -325,6 +318,22 @@ namespace ThreatsManager.Engine
             }
 
             return result;
+        }
+
+        [Background]
+        private void LoadHelpConfiguration()
+        {
+            var assemblies = _catalog.Catalogs.OfType<AssemblyCatalog>().Select(x => x.Assembly).ToArray();
+            if (assemblies.Any())
+            {
+                foreach (var assembly in assemblies)
+                {
+                    LearningManager.Instance.Add(assembly);
+                    TroubleshootingManager.Instance.Add(assembly);
+                }
+                LearningManager.Instance.AnalyzeSources();
+                TroubleshootingManager.Instance.AnalyzeSources();
+            }
         }
     }
 }

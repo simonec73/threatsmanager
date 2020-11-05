@@ -26,7 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [GroupsReadOnlyContainerAspect]
     [GroupElementAspect]
     [TypeLabel("Trust Boundary")]
-    [TypeInitial("D")]
+    [TypeInitial("T")]
     public class TrustBoundary : ITrustBoundary, IInitializableObject
     {
         public TrustBoundary()
