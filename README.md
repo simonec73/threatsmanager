@@ -7,7 +7,7 @@ It has been designed and implemented by a group of experienced Threat Modelers, 
 Threats Manager Platform is the reference implementation of the Threat Modeling vNext vision, discussed in <https://simoneonsecurity.com>.
 
 The code included in this Repo is to be also available as part of a complete Threat Modeling tool, called Threats Manager Studio, which implements the Windows Desktop experience. That tool along with a number of Extensions is available from <https://threatsmanager.com>.
-Threats Manager Studio and the Windows Desktop Extensions will not be available as Open Source, because they are based on various commercial components. Still, they are freely downloadable and usable in all contexts, under a very permissive [license](https://threatsmanager.com/license). 
+Threats Manager Studio and the Windows Desktop Extensions are not available as Open Source, because they are based on various commercial components. Still, they are freely downloadable and usable in all contexts, under a very permissive [license](https://threatsmanager.com/license). 
 Threats Manager Studio is both as a reference implementation of the Threats Manager Platform and a tool you can adopt for your Threat Modeling activities.
 
 ## Important
