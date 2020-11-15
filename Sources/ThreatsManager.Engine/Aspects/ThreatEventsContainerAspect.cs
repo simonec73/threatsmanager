@@ -103,7 +103,7 @@ namespace ThreatsManager.Engine.Aspects
         {
             IThreatEvent result = null;
 
-            if (Instance is IIdentity identity)
+            if (threatType != null && Instance is IIdentity identity)
             {
                 IThreatModel model = (Instance as IThreatModel) ?? (Instance as IThreatModelChild)?.Model;
 
