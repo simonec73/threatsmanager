@@ -519,12 +519,12 @@ namespace ThreatsManager.MsTmt
 
                             var properties = flow.Properties?.ToArray();
                             AddProperties(target, baseSchema, secondarySchema, dataFlow, properties);
+                            result++;
+                            
+                            IDiagram diagram = target.Diagrams?.FirstOrDefault(x =>
+                                string.CompareOrdinal(x.Name, flow.PageName) == 0);
+                            diagram?.AddLink(dataFlow);
                         }
-                        
-                        IDiagram diagram = target.Diagrams?.FirstOrDefault(x =>
-                            string.CompareOrdinal(x.Name, flow.PageName) == 0);
-                        diagram?.AddLink(dataFlow);
-                        result++;
                     }
                 }
             }
