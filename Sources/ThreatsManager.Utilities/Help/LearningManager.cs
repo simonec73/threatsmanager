@@ -128,11 +128,21 @@ namespace ThreatsManager.Utilities.Help
 
                 if (!string.IsNullOrWhiteSpace(json))
                 {
-                    var definition = JsonConvert.DeserializeObject<LearningDefinition>(json,
-                        new JsonSerializerSettings()
-                        {
-                            TypeNameHandling = TypeNameHandling.None
-                        });
+                    LearningDefinition definition = null;
+
+                    try
+                    {
+                        definition = JsonConvert.DeserializeObject<LearningDefinition>(json,
+                            new JsonSerializerSettings()
+                            {
+                                TypeNameHandling = TypeNameHandling.None
+                            });
+                    }
+                    catch (JsonReaderException)
+                    {
+                        // The file cannot be parsed. Let's simply ignore it.
+                        return;
+                    }
 
                     var sections = definition?.Sections?.ToArray();
                     if (sections?.Any() ?? false)

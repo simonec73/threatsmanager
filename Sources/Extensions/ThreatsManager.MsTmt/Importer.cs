@@ -388,13 +388,16 @@ namespace ThreatsManager.MsTmt
 
                 foreach (var element in elements)
                 {
+                    var elementName = element.Value.Name;
+                    if (string.IsNullOrWhiteSpace(elementName))
+                        elementName = "<unnamed>";
                     switch (element.Value.ElementType)
                     {
                         case ElementType.StencilRectangle:
                             entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
                                 string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
-                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
-                                target.AddEntity<IExternalInteractor>(element.Value.Name);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(elementName) : 
+                                target.AddEntity<IExternalInteractor>(elementName);
                             boundary = null;
                             schema = baseEISchema;
                             secondarySchema = entityTemplate != null ? 
@@ -404,8 +407,8 @@ namespace ThreatsManager.MsTmt
                         case ElementType.StencilEllipse:
                             entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
                                 string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
-                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
-                                target.AddEntity<IProcess>(element.Value.Name);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(elementName) : 
+                                target.AddEntity<IProcess>(elementName);
                             boundary = null;
                             schema = basePSchema;
                             secondarySchema = entityTemplate != null ? 
@@ -415,8 +418,8 @@ namespace ThreatsManager.MsTmt
                         case ElementType.StencilParallelLines:
                             entityTemplate = target.EntityTemplates?.FirstOrDefault(x =>
                                 string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
-                            entity = entityTemplate != null ? entityTemplate.CreateEntity(element.Value.Name) : 
-                                target.AddEntity<IDataStore>(element.Value.Name);
+                            entity = entityTemplate != null ? entityTemplate.CreateEntity(elementName) : 
+                                target.AddEntity<IDataStore>(elementName);
                             boundary = null;
                             schema = baseDSSchema;
                             secondarySchema = entityTemplate != null ? 
@@ -428,8 +431,8 @@ namespace ThreatsManager.MsTmt
                             trustBoundaryTemplate = target.TrustBoundaryTemplates?.FirstOrDefault(x =>
                                 string.CompareOrdinal(schemaManager.GetObjectId(x), element.Value.TypeId) == 0);
                             entity = null;
-                            boundary = trustBoundaryTemplate != null ? trustBoundaryTemplate.CreateTrustBoundary(element.Value.Name) :
-                                target.AddGroup<ITrustBoundary>(element.Value.Name);
+                            boundary = trustBoundaryTemplate != null ? trustBoundaryTemplate.CreateTrustBoundary(elementName) :
+                                target.AddGroup<ITrustBoundary>(elementName);
                             schema = baseTBSchema;
                             secondarySchema = trustBoundaryTemplate != null ? 
                                 target.GetSchema(trustBoundaryTemplate.Name, Resources.DefaultNamespace) : null;
@@ -516,12 +519,12 @@ namespace ThreatsManager.MsTmt
 
                             var properties = flow.Properties?.ToArray();
                             AddProperties(target, baseSchema, secondarySchema, dataFlow, properties);
+                            result++;
+                            
+                            IDiagram diagram = target.Diagrams?.FirstOrDefault(x =>
+                                string.CompareOrdinal(x.Name, flow.PageName) == 0);
+                            diagram?.AddLink(dataFlow);
                         }
-                        
-                        IDiagram diagram = target.Diagrams?.FirstOrDefault(x =>
-                            string.CompareOrdinal(x.Name, flow.PageName) == 0);
-                        diagram?.AddLink(dataFlow);
-                        result++;
                     }
                 }
             }

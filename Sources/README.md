@@ -13,7 +13,7 @@ The said Windows Desktop experience will not available as Open Source, because i
 The code has been thought to be opened with Visual Studio 2019. The Community Edition would be enough.
 You need also to install the following prerequisites:
 
-- PostSharp Tools for Visual Studio **v6.6.13** (<https://www.postsharp.net/downloads/postsharp-6.6/v6.6.13>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
+- PostSharp Tools for Visual Studio **v6.7.11** (<https://www.postsharp.net/downloads/postsharp-6.7/v6.7.11>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
 
 ### PostSharp
 

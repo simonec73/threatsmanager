@@ -72,29 +72,39 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
                 var list = new Dictionary<Guid, Effectiveness>();
 
                 int count = mitigations.Length / 3;
-                int i = 0;
-                foreach (var mitigation in mitigations)
+                if (count > 0)
                 {
-                    var pos = Math.DivRem(i, count, out var remainder);
-                    i++;
-                    Effectiveness effectiveness;
-                    if (mitigation.Effectiveness == 0)
-                        effectiveness = Effectiveness.Minor;
-                    else
-                        switch (pos)
-                        {
-                            case 0:
-                                effectiveness = Effectiveness.Major;
-                                break;
-                            case 1:
-                                effectiveness = Effectiveness.Average;
-                                break;
-                            default:
-                                effectiveness = Effectiveness.Minor;
-                                break;
-                        }
+                    int i = 0;
+                    foreach (var mitigation in mitigations)
+                    {
+                        var pos = Math.DivRem(i, count, out var remainder);
+                        i++;
+                        Effectiveness effectiveness;
+                        if (mitigation.Effectiveness == 0)
+                            effectiveness = Effectiveness.Minor;
+                        else
+                            switch (pos)
+                            {
+                                case 0:
+                                    effectiveness = Effectiveness.Major;
+                                    break;
+                                case 1:
+                                    effectiveness = Effectiveness.Average;
+                                    break;
+                                default:
+                                    effectiveness = Effectiveness.Minor;
+                                    break;
+                            }
 
-                    list.Add(mitigation.MitigationId, effectiveness);
+                        list.Add(mitigation.MitigationId, effectiveness);
+                    }
+                }
+                else
+                {
+                    foreach (var mitigation in mitigations)
+                    {
+                        list.Add(mitigation.MitigationId, Effectiveness.Average);
+                    }
                 }
 
                 result = list;
