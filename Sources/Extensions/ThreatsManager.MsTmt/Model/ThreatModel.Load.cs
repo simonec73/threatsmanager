@@ -10,6 +10,8 @@ namespace ThreatsManager.MsTmt.Model
 {
     public partial class ThreatModel
     {
+        private const string Undefined = "<undefined>";
+
         #region Constructors.
         public ThreatModel([Required] string fileName)
         {
@@ -271,7 +273,9 @@ namespace ThreatsManager.MsTmt.Model
                     if (Guid.TryParse(node.SelectSingleNode("ab:Guid", nsManager)?.InnerText, out id))
                     {
                         name = node.SelectSingleNode("mo:Header", nsManager)?.InnerText;
-                        if (name != null)
+                        if (string.IsNullOrWhiteSpace(name))
+                            name = Undefined;
+                        if (!_pagesGuids.ContainsKey(name))
                         {
                             _pages.Add(id, name);
                             _pagesGuids.Add(name, id);
@@ -311,10 +315,14 @@ namespace ThreatsManager.MsTmt.Model
                                 Enum.TryParse<ElementType>(valueNode.Attributes.GetNamedItem("type", "http://www.w3.org/2001/XMLSchema-instance")?.Value, false, out var type))
                             {
                                 properties = Cleanup(valueNode.SelectSingleNode("ab:Properties", nsManager)?.OfType<XmlNode>());
-                                var header = node.ParentNode?.ParentNode?.SelectSingleNode("mo:Header", nsManager)?.InnerText;
+                                var page = node.ParentNode?.ParentNode?.SelectSingleNode("mo:Header", nsManager)?.InnerText;
+                                if (string.IsNullOrWhiteSpace(page))
+                                {
+                                    page = Undefined;
+                                }
                                 var typeId = valueNode.SelectSingleNode("ab:TypeId", nsManager)?.InnerText;
 
-                                if (properties != null && !string.IsNullOrWhiteSpace(header) && !string.IsNullOrWhiteSpace(typeId))
+                                if (properties != null && !string.IsNullOrWhiteSpace(page) && !string.IsNullOrWhiteSpace(typeId))
                                 {
                                     switch (type)
                                     {
@@ -325,14 +333,10 @@ namespace ThreatsManager.MsTmt.Model
                                                 Guid.TryParse(
                                                     valueNode.SelectSingleNode("ab:TargetGuid", nsManager)?.InnerText,
                                                     out targetId))
-                                                _flows.Add(key,
-                                                    new FlowInfo(key, sourceId, targetId, typeId, header,
-                                                        properties));
+                                                _flows.Add(key, new FlowInfo(key, sourceId, targetId, typeId, page, properties));
                                             break;
                                         case ElementType.LineBoundary:
-                                            _elements.Add(key,
-                                                new ElementInfo(header, 0, 0, 0, 0, type,
-                                                    typeId, properties));
+                                            _elements.Add(key, new ElementInfo(page, 0, 0, 0, 0, type, typeId, properties));
                                             break;
                                     }
                                 }
@@ -367,6 +371,8 @@ namespace ThreatsManager.MsTmt.Model
                 foreach (XmlNode pageNode in pageNodes)
                 {
                     var page = pageNode.SelectSingleNode("mo:Header", nsManager)?.InnerText;
+                    if (string.IsNullOrWhiteSpace(page))
+                        page = Undefined;
                     var nodes = pageNode.SelectSingleNode("mo:Borders", nsManager);
 
                     if (nodes != null)
@@ -386,8 +392,7 @@ namespace ThreatsManager.MsTmt.Model
                                     XmlNode propertiesNode = valueNode.SelectSingleNode("ab:Properties", nsManager);
                                     int left = Int32.Parse(
                                         valueNode.SelectSingleNode("ab:Left", nsManager)?.InnerText ?? "0");
-                                    int top = Int32.Parse(valueNode.SelectSingleNode("ab:Top", nsManager)?.InnerText ??
-                                                          "0");
+                                    int top = Int32.Parse(valueNode.SelectSingleNode("ab:Top", nsManager)?.InnerText ?? "0");
                                     int width = Int32.Parse(
                                         valueNode.SelectSingleNode("ab:Width", nsManager)?.InnerText ?? "0");
                                     int height =
