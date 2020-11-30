@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,12 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "E10940D4-952E-4E47-B9F6-4404E58878F4")]
-    [ExportMetadata("Label", "Create a Process Context Aware Action")]
-    [ExportMetadata("Priority", 16)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("E10940D4-952E-4E47-B9F6-4404E58878F4", "Create a Process Context Aware Action", 16, ExecutionMode.Simplified)]
     public class CreateProcess : IIdentityContextAwareAction, IIdentityAddingRequiredAction
     {
         public Scope Scope => Scope.Diagram | Scope.ThreatModel;

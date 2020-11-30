@@ -8,12 +8,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.MsTmt.Schemas
 {
-    [Export(typeof(IListProviderExtension))]
-    [ExportMetadata("Id", "6046F35A-34EF-4EE7-951F-4A3A55EA18CA")]
-    [ExportMetadata("Label", "List Provider for Tmt properties")]
-    [ExportMetadata("Priority", 25)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("6046F35A-34EF-4EE7-951F-4A3A55EA18CA", "List Provider for Tmt properties", 25, ExecutionMode.Simplified)]
     public class ListProvider : IListProviderExtension
     {
         public IEnumerable<IListItem> GetAvailableItems(string context)

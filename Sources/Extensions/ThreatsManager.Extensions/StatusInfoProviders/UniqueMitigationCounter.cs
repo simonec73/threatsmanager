@@ -9,12 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "9F9FC6E2-466D-4156-8BE7-E28ECC364E03")]
-    [ExportMetadata("Label", "Unique Mitigation Counter Status Info Provider")]
-    [ExportMetadata("Priority", 36)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("9F9FC6E2-466D-4156-8BE7-E28ECC364E03", "Unique Mitigation Counter Status Info Provider", 36, ExecutionMode.Simplified)]
     public class UniqueMitigationCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

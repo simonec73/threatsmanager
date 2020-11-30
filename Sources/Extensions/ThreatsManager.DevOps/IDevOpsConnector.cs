@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
-namespace ThreatsManager.Interfaces.Extensions
+namespace ThreatsManager.DevOps
 {
     /// <summary>
     /// Interfaces implemented by the connectors to DevOps systems.

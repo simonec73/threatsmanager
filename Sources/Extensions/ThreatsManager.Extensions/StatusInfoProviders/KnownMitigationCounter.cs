@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -10,12 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "F6103ED2-6ECF-43D0-B47E-A08FB56E7A84")]
-    [ExportMetadata("Label", "Mitigation Counter Status Info Provider")]
-    [ExportMetadata("Priority", 21)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("F6103ED2-6ECF-43D0-B47E-A08FB56E7A84", "Mitigation Counter Status Info Provider", 21, ExecutionMode.Simplified)]
     public class KnownMitigationCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

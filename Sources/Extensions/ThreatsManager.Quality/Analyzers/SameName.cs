@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -12,12 +11,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "EB78DFE2-B125-49EF-AFF6-D15BC553618F")]
-    [ExportMetadata("Label", "Objects with the Same Name Quality Analyzer")]
-    [ExportMetadata("Priority", 8)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("EB78DFE2-B125-49EF-AFF6-D15BC553618F", "Objects with the Same Name Quality Analyzer", 8, ExecutionMode.Simplified)]
     public class SameName : IQualityAnalyzer
     {
         public string Label => "Same Name Objects";

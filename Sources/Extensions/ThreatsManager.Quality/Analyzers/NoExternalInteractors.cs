@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -11,12 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "37F972FB-B069-4BB3-B95D-A7E6C9F4D6E0")]
-    [ExportMetadata("Label", "No External Interactors Quality Analyzer")]
-    [ExportMetadata("Priority", 26)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("37F972FB-B069-4BB3-B95D-A7E6C9F4D6E0", "No External Interactors Quality Analyzer", 26, ExecutionMode.Simplified)]
     public class NoExternalInteractors : IQualityAnalyzer
     {
         public string Label => "Diagrams Missing External Interactors";

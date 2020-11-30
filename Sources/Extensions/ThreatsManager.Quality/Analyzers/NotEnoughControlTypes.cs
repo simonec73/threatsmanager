@@ -4,19 +4,13 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "81BF8B32-C6C7-4E4E-A605-772907067A8A")]
-    [ExportMetadata("Label", "Not Enough Control Types Quality Analyzer")]
-    [ExportMetadata("Priority", 44)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("81BF8B32-C6C7-4E4E-A605-772907067A8A", "Not Enough Control Types Quality Analyzer", 44, ExecutionMode.Simplified)]
     public class NotEnoughControlTypes : IQualityAnalyzer
     {
         public string Label => "Not Enough Control Types";

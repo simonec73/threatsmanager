@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "8ED1AAA3-2A7A-45D8-A282-374317C5DE5F")]
-    [ExportMetadata("Label", "Loops Quality Analyzer")]
-    [ExportMetadata("Priority", 20)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("8ED1AAA3-2A7A-45D8-A282-374317C5DE5F", "Loops Quality Analyzer", 20, ExecutionMode.Simplified)]
     public class Loops : IQualityAnalyzer
     {
         public string Label => "Loops";

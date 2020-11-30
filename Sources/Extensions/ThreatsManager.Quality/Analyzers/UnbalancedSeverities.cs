@@ -4,19 +4,13 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "863E8714-D186-4D13-87F5-F8E52B1DD3CB")]
-    [ExportMetadata("Label", "Unbalanced Severities Quality Analyzer")]
-    [ExportMetadata("Priority", 48)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("863E8714-D186-4D13-87F5-F8E52B1DD3CB", "Unbalanced Severities Quality Analyzer", 48, ExecutionMode.Simplified)]
     public class UnbalancedSeverities : IQualityAnalyzer
     {
         private const int CriticalMin = 0;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -10,12 +9,8 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "5481B935-029B-4943-991D-BAE432757DF0")]
-    [ExportMetadata("Label", "Fully mitigated Threat Types Counter Status Info Provider")]
-    [ExportMetadata("Priority", 29)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("5481B935-029B-4943-991D-BAE432757DF0", 
+        "Fully mitigated Threat Types Counter Status Info Provider", 29, ExecutionMode.Simplified)]
     public class FullyMitigatedThreatTypesCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

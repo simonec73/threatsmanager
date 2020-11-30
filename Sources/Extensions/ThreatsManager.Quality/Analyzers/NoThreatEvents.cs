@@ -4,18 +4,12 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "B6EFBB56-C526-4ABE-99EC-50E312FBDCDD")]
-    [ExportMetadata("Label", "Missing Threat Events Quality Analyzer")]
-    [ExportMetadata("Priority", 30)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("B6EFBB56-C526-4ABE-99EC-50E312FBDCDD", "Missing Threat Events Quality Analyzer", 30, ExecutionMode.Simplified)]
     public class NoThreatEvent : IQualityAnalyzer
     {
         public string Label => "Missing Threat Events";

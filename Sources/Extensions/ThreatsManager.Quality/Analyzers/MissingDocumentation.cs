@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "5477244B-BF14-4C2C-99AE-24C19F674058")]
-    [ExportMetadata("Label", "Missing Documentation Quality Analyzer")]
-    [ExportMetadata("Priority", 60)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("5477244B-BF14-4C2C-99AE-24C19F674058", "Missing Documentation Quality Analyzer", 60, ExecutionMode.Simplified)]
     public class MissingDocumentation : IQualityAnalyzer
     {
         public string Label => "Missing Documentation";

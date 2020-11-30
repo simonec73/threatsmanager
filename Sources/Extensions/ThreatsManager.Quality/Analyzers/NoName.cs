@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "7B677E73-6A14-4BCC-BE20-FA1B0F578FD9")]
-    [ExportMetadata("Label", "Objects with No Name Quality Analyzer")]
-    [ExportMetadata("Priority", 6)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("7B677E73-6A14-4BCC-BE20-FA1B0F578FD9", "Objects with No Name Quality Analyzer", 6, ExecutionMode.Simplified)]
     public class NoName : IQualityAnalyzer
     {
         public string Label => "No Name Objects";

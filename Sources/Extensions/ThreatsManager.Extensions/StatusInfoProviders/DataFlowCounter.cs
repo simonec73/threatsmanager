@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -10,12 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "1F1A0EC1-C0F1-46DF-957E-FE2F3FC7D84A")]
-    [ExportMetadata("Label", "Flow Counter Status Info Provider")]
-    [ExportMetadata("Priority", 13)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("1F1A0EC1-C0F1-46DF-957E-FE2F3FC7D84A", "Flow Counter Status Info Provider", 13, ExecutionMode.Simplified)]
     public class DataFlowCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

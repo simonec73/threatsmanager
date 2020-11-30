@@ -4,18 +4,12 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "A099EB5E-9768-45D5-89D3-B370A5D48109")]
-    [ExportMetadata("Label", "Single Threat Events Quality Analyzer")]
-    [ExportMetadata("Priority", 32)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("A099EB5E-9768-45D5-89D3-B370A5D48109", "Single Threat Events Quality Analyzer", 32, ExecutionMode.Simplified)]
     public class SingleThreatEvent : IQualityAnalyzer
     {
         public string Label => "Single Threat Event";

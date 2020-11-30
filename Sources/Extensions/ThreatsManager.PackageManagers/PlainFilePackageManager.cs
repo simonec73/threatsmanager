@@ -16,12 +16,7 @@ using ThreatsManager.Utilities.Exceptions;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Export(typeof(IPackageManager))]
-    [ExportMetadata("Id", "84252804-27F2-46C0-91A7-8EB7BF57EE58")]
-    [ExportMetadata("Label", "File Package Manager")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("84252804-27F2-46C0-91A7-8EB7BF57EE58", "File Package Manager", 10, ExecutionMode.Simplified)]
     public class PlainFilePackageManager : IPackageManager 
     {
         private const string ThreatModelFile = "threatmodel.json";

@@ -5,7 +5,8 @@ namespace ThreatsManager.Interfaces.Extensions.Actions
     /// <summary>
     /// Action that can be executed on a 
     /// </summary>
-    public interface IContextAwareAction
+    [ExtensionDescription("Context Aware Action")]
+    public interface IContextAwareAction : IExtension
     {
         /// <summary>
         /// Scope of the Action.

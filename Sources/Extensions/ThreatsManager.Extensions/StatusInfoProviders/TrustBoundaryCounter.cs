@@ -10,12 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "731C499F-5FE8-412F-A1A9-A81921A8D15C")]
-    [ExportMetadata("Label", "Trust Boundary Counter Status Info Provider")]
-    [ExportMetadata("Priority", 14)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("731C499F-5FE8-412F-A1A9-A81921A8D15C", "Trust Boundary Counter Status Info Provider", 14, ExecutionMode.Simplified)]
     public class TrustBoundaryCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

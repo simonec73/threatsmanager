@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using System.Linq;
+﻿using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -9,12 +8,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Initializers
 {
-    [Export(typeof(IInitializer))]
-    [ExportMetadata("Id", "30530FE5-9EC2-40DD-9DFF-9482096E51C6")]
-    [ExportMetadata("Label", "Standard Actors Initializer")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("30530FE5-9EC2-40DD-9DFF-9482096E51C6", "Standard Actors Initializer", 10, ExecutionMode.Simplified)]
     public class ActorsInitializer : IInitializer
     {
         public void Initialize([NotNull] IThreatModel model)

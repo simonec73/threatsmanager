@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Icons;
@@ -12,12 +11,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "D252EAFC-8F07-4D35-900D-981A96D5779F")]
-    [ExportMetadata("Label", "Remove Threat Event Context Aware Action")]
-    [ExportMetadata("Priority", 30)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("D252EAFC-8F07-4D35-900D-981A96D5779F", "Remove Threat Event Context Aware Action", 30, ExecutionMode.Simplified)]
     public class RemoveThreatEvent : IIdentityContextAwareAction, IDesktopAlertAwareExtension, IAsker
     {
         public Scope Scope => Scope.ThreatEvent;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,12 +9,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "FC9151DF-D604-4B88-A529-6418495FA5C8")]
-    [ExportMetadata("Label", "Apply Auto Gen Rules to Item Context Aware Action")]
-    [ExportMetadata("Priority", 35)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("FC9151DF-D604-4B88-A529-6418495FA5C8", "Apply Auto Gen Rules to Item Context Aware Action", 35, ExecutionMode.Simplified)]
     public class ApplyAutoGenRulesToItem : IIdentityContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.Entity | Scope.DataFlow;

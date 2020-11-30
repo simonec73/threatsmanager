@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
-namespace ThreatsManager.Interfaces.Extensions
+namespace ThreatsManager.Quality
 {
     /// <summary>
     /// Interface that defines a module to analyze the Threat Model and determine potential quality issues.
     /// </summary>
-    public interface IQualityAnalyzer
+    [ExtensionDescription("Quality Analyzer")]
+    public interface IQualityAnalyzer : IExtension
     {
         /// <summary>
         /// Short description of the Analyzer.

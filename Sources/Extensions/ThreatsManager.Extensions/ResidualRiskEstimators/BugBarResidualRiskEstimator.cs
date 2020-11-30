@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
 using PostSharp.Patterns.Contracts;
@@ -12,12 +11,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.ResidualRiskEstimators
 {
-    [Export(typeof(IResidualRiskEstimator))]
-    [ExportMetadata("Id", "C1F10EC7-FF20-4FE5-99EC-2DBF3C1BC216")]
-    [ExportMetadata("Label", "Bug Bar Residual Risk Estimator")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Business)]
+    [Extension("C1F10EC7-FF20-4FE5-99EC-2DBF3C1BC216", "Bug Bar Residual Risk Estimator", 10, ExecutionMode.Business)]
     public class BugBarResidualRiskEstimator : IResidualRiskEstimator
     {
         class MitigationWeight

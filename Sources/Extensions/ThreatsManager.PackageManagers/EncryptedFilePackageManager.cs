@@ -14,12 +14,7 @@ using ThreatsManager.Utilities.Exceptions;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Export(typeof(IPackageManager))]
-    [ExportMetadata("Id", "C3E6420A-296D-4859-99BD-6045D45A20E3")]
-    [ExportMetadata("Label", "Encrypted File Package Manager")]
-    [ExportMetadata("Priority", 11)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("C3E6420A-296D-4859-99BD-6045D45A20E3", "Encrypted File Package Manager", 11, ExecutionMode.Simplified)]
     public class EncryptedFilePackageManager : ISecurePackageManager
     {
         private const string ThreatModelFile = "threatmodel.json";

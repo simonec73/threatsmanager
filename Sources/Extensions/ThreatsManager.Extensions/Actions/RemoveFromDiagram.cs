@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
@@ -11,12 +10,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "140EA130-FA6C-4745-B609-28B5A47AF834")]
-    [ExportMetadata("Label", "Remove from Diagram Context Aware Action")]
-    [ExportMetadata("Priority", 50)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("140EA130-FA6C-4745-B609-28B5A47AF834", "Remove from Diagram Context Aware Action", 50, ExecutionMode.Simplified)]
     public class RemoveFromDiagram : IShapesContextAwareAction, 
         IShapeContextAwareAction, ILinkContextAwareAction, 
         IEntityGroupRemovingRequiredAction, IDataFlowRemovingRequiredAction

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -11,12 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "83276980-842D-427F-944C-B3CABC9AC54E")]
-    [ExportMetadata("Label", "No Trust Boundary Quality Analyzer")]
-    [ExportMetadata("Priority", 16)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("83276980-842D-427F-944C-B3CABC9AC54E", "No Trust Boundary Quality Analyzer", 16, ExecutionMode.Simplified)]
     public class NoTrustBoundary : IQualityAnalyzer
     {
         public string Label => "Diagrams Missing Trust Boundaries";

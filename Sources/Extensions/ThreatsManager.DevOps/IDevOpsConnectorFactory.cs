@@ -1,9 +1,13 @@
-﻿namespace ThreatsManager.Interfaces.Extensions
+﻿using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
+
+namespace ThreatsManager.DevOps
 {
     /// <summary>
     /// Interface implemented by factories used to create IDevOpsConnector objects.
     /// </summary>
-    public interface IDevOpsConnectorFactory
+    [ExtensionDescription("DevOps Connector Factory")]
+    public interface IDevOpsConnectorFactory : IExtension
     {
         /// <summary>
         /// Create an instance of IDevOpsConnector.

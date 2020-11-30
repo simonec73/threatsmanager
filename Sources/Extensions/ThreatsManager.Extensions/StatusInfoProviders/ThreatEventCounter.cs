@@ -9,17 +9,11 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "2A01104E-E774-4AB9-8700-27F015CCADDE")]
-    [ExportMetadata("Label", "Threat Event Counter Status Info Provider")]
-    [ExportMetadata("Priority", 25)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("2A01104E-E774-4AB9-8700-27F015CCADDE", "Threat Event Counter Status Info Provider", 25, ExecutionMode.Simplified)]
     public class ThreatEventCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;
 
-        
         public event Action<string, string> UpdateInfo;
 
         public void Initialize([NotNull] IThreatModel model)

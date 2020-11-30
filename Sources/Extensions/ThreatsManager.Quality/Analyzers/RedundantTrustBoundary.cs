@@ -3,19 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "AA8E43D1-695D-49DB-930E-DB913A798126")]
-    [ExportMetadata("Label", "Redundant Trust Boundary Quality Analyzer")]
-    [ExportMetadata("Priority", 18)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("AA8E43D1-695D-49DB-930E-DB913A798126", "Redundant Trust Boundary Quality Analyzer", 18, ExecutionMode.Simplified)]
     public class RedundantTrustBoundary : IQualityAnalyzer
     {
         public string Label => "Redundant Trust Boundaries";

@@ -7,7 +7,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// <summary>
     /// Calculator of the estimated Residual Risk.
     /// </summary>
-    public interface IResidualRiskEstimator
+    [ExtensionDescription("Residual Risk Estimator")]
+    public interface IResidualRiskEstimator : IExtension
     {
         /// <summary>
         /// Default value to represent unlimited/infinite.

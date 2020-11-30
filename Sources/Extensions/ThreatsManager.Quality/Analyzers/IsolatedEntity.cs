@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "A45D83AA-5DEF-4647-AC25-1D4EC8E76118")]
-    [ExportMetadata("Label", "Isolated Entities Quality Analyzer")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("A45D83AA-5DEF-4647-AC25-1D4EC8E76118", "Isolated Entities Quality Analyzer", 10, ExecutionMode.Simplified)]
     public class IsolatedEntity : IQualityAnalyzer
     {
         public string Label => "Isolated Entities";

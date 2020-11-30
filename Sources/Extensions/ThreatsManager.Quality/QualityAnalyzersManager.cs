@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
-namespace ThreatsManager.Utilities
+namespace ThreatsManager.Quality
 {
     /// <summary>
     /// Utility class to perform quality analysis of Threat Models.

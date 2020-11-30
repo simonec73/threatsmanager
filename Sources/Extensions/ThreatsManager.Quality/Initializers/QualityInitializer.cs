@@ -6,12 +6,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Quality.Initializers
 {
-    [Export(typeof(IExtensionInitializer))]
-    [ExportMetadata("Id", "1069F3AA-BD5E-41C6-B681-0D37FCA12937")]
-    [ExportMetadata("Label", "Quality Initializer")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("1069F3AA-BD5E-41C6-B681-0D37FCA12937", "Quality Initializer", 10, ExecutionMode.Simplified)]
     public class QualityInitializer : IExtensionInitializer
     {
         public void Initialize()

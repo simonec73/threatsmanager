@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -11,12 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "617694EB-9DAF-48D5-90D6-7CBD33F670BC")]
-    [ExportMetadata("Label", "No Processes Quality Analyzer")]
-    [ExportMetadata("Priority", 24)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("617694EB-9DAF-48D5-90D6-7CBD33F670BC", "No Processes Quality Analyzer", 24, ExecutionMode.Simplified)]
     public class NoProcesses : IQualityAnalyzer
     {
         public string Label => "Diagrams Missing Processes";

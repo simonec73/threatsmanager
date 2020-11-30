@@ -10,12 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "89B5883D-91F9-4C6B-8DBC-514C2A718079")]
-    [ExportMetadata("Label", "Threat Type Counter Status Info Provider")]
-    [ExportMetadata("Priority", 20)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("89B5883D-91F9-4C6B-8DBC-514C2A718079", "Threat Type Counter Status Info Provider", 20, ExecutionMode.Simplified)]
     public class ThreatTypeCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

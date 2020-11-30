@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -10,12 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "DADF4373-6F4A-4943-ABC3-CA7B31CC1998")]
-    [ExportMetadata("Label", "External Interactor Counter Status Info Provider")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("DADF4373-6F4A-4943-ABC3-CA7B31CC1998", "External Interactor Counter Status Info Provider", 10, ExecutionMode.Simplified)]
     public class ExternalInteractorCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

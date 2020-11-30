@@ -4,19 +4,13 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "8C5691D1-EA92-4311-8497-39EAEA94D4C4")]
-    [ExportMetadata("Label", "Single Mitigation Quality Analyzer")]
-    [ExportMetadata("Priority", 42)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("8C5691D1-EA92-4311-8497-39EAEA94D4C4", "Single Mitigation Quality Analyzer", 42, ExecutionMode.Simplified)]
     public class SingleMitigation : IQualityAnalyzer
     {
         public string Label => "Single Mitigation";

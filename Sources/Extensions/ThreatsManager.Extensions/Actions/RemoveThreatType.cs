@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -11,12 +10,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 namespace ThreatsManager.Extensions.Actions
 {
 #pragma warning disable CS0067
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "8CB90E20-19C5-43C1-A79A-C10794FE014E")]
-    [ExportMetadata("Label", "Remove Threat Type Context Aware Action")]
-    [ExportMetadata("Priority", 30)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("8CB90E20-19C5-43C1-A79A-C10794FE014E", "Remove Threat Type Context Aware Action", 30, ExecutionMode.Simplified)]
     public class RemoveThreatType : IIdentityContextAwareAction, IDesktopAlertAwareExtension, IAsker
     {
         public Scope Scope => Scope.ThreatType;

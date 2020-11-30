@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -9,12 +8,8 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "3E723A65-69EB-489B-9538-D6F664CAC892")]
-    [ExportMetadata("Label", "Not Mitigated Threat Events Counter Status Info Provider")]
-    [ExportMetadata("Priority", 65)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("3E723A65-69EB-489B-9538-D6F664CAC892", 
+        "Not Mitigated Threat Events Counter Status Info Provider", 65, ExecutionMode.Simplified)]
     public class NotMitigatedThreatEventsCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

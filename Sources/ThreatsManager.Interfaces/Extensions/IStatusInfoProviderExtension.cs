@@ -6,7 +6,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// <summary>
     /// Interface implemented by the extensions that provide information within the Status Bar.
     /// </summary>
-    public interface IStatusInfoProviderExtension : IDisposable
+    [ExtensionDescription("Status Info Provider")]
+    public interface IStatusInfoProviderExtension : IExtension, IDisposable
     {
         /// <summary>
         /// Event raised when there is the need to update the text shown by the Extension.

@@ -114,11 +114,11 @@ namespace ThreatsManager.Utilities
         }
 
         /// <summary>
-        /// Gets all the Extensions of a specific type loaded by the Platform. 
+        /// Gets the Extension of a specific type and ID, loaded by the Platform. 
         /// </summary>
         /// <typeparam name="T">Extension type.</typeparam>
         /// <param name="extensionId">Identifier of the Extension.</param>
-        /// <returns>List of registered Extensions.</returns>
+        /// <returns>Registered Extension.</returns>
         public static T GetExtension<T>([Required] string extensionId) where T : class
         {
             T result = null;
@@ -130,6 +130,28 @@ namespace ThreatsManager.Utilities
                 var instance = property.GetValue(null);
                 result = type.GetMethod("GetExtension")?.MakeGenericMethod(typeof(T))
                     .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new [] { (object)extensionId }, CultureInfo.InvariantCulture) as T;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the Extension of a specific type and Label, loaded by the Platform. 
+        /// </summary>
+        /// <typeparam name="T">Extension type.</typeparam>
+        /// <param name="label">Label of the Extension.</param>
+        /// <returns>Registered Extension.</returns>
+        public static T GetExtensionByLabel<T>([Required] string label) where T : class
+        {
+            T result = null;
+
+            var type = Type.GetType("ThreatsManager.Engine.Manager, ThreatsManager.Engine", false);
+            var property = type?.GetProperty("Instance");
+            if (property != null)
+            {
+                var instance = property.GetValue(null);
+                result = type.GetMethod("GetExtensionByLabel")?.MakeGenericMethod(typeof(T))
+                    .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new [] { (object)label }, CultureInfo.InvariantCulture) as T;
             }
 
             return result;

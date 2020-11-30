@@ -1,3 +1,3 @@
 ﻿using ThreatsManager.Interfaces;
 
-[assembly: ExtensionsContainer("1.3.4")]
+[assembly: ExtensionsContainer("1.4.0")]

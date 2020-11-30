@@ -15,14 +15,13 @@ namespace ThreatsManager.Interfaces
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="type">Main Type exported by the Extension.</param>
         /// <param name="id">Identifier of the Extension. It is a Guid serialized as string.</param>
         /// <param name="label">Label characterizing the Extension.</param>
         /// <param name="priority">Priority of the Extension. The lower it is, the higher the Priority.</param>
         /// <param name="executionMode">Required Execution Mode, to determine the visibility.</param>
         /// <param name="parameters">Optional list of parameters for the Extension configuration.</param>
-        public ExtensionAttribute(Type type, string id, string label, 
-            int priority, ExecutionMode executionMode, string[] parameters = null) : base(type)
+        public ExtensionAttribute(string id, string label, 
+            int priority, ExecutionMode executionMode, string[] parameters = null) : base(typeof(IExtension))
         {
             Id = id;
             Label = label;

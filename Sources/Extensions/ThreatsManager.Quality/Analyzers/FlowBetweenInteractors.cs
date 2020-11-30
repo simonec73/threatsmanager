@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "76E92DDA-D315-43E9-AB82-331F0460EBF3")]
-    [ExportMetadata("Label", "Flow Between Interactors Quality Analyzer")]
-    [ExportMetadata("Priority", 15)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("76E92DDA-D315-43E9-AB82-331F0460EBF3", "Flow Between Interactors Quality Analyzer", 15, ExecutionMode.Simplified)]
     public class FlowBetweenInteractors : IQualityAnalyzer
     {
         public string Label => "Flow Between External Interactors";

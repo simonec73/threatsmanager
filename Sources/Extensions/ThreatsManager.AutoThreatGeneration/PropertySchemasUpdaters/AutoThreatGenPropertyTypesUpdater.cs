@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
-using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoThreatGeneration.Engine;
 using ThreatsManager.AutoThreatGeneration.Schemas;
@@ -11,12 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.AutoThreatGeneration.PropertySchemasUpdaters
 {
-    [Export(typeof(IPropertySchemasUpdater))]
-    [ExportMetadata("Id", "B8EE3575-CB38-4E76-8CB8-8E37AF85C507")]
-    [ExportMetadata("Label", "Auto Threat Gen Property Schema Updater")]
-    [ExportMetadata("Priority", 20)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("B8EE3575-CB38-4E76-8CB8-8E37AF85C507", "Auto Threat Gen Property Schema Updater", 20, ExecutionMode.Simplified)]
     public class AutoThreatGenPropertyTypesUpdater : IPropertySchemasUpdater
     {
         public bool HasPropertySchema(IThreatModel model, string schemaName, string nsName)

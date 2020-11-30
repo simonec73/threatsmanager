@@ -1,4 +1,4 @@
-﻿namespace ThreatsManager.Interfaces.Extensions
+﻿namespace ThreatsManager.DevOps
 {
     /// <summary>
     /// Definition of a Field for the DevOps system.

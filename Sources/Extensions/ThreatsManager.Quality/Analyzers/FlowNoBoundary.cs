@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "B6D77089-F2E3-4175-B870-FA3333593A08")]
-    [ExportMetadata("Label", "Flow Missing Trust Boundary Quality Analyzer")]
-    [ExportMetadata("Priority", 17)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("B6D77089-F2E3-4175-B870-FA3333593A08", "Flow Missing Trust Boundary Quality Analyzer", 17, ExecutionMode.Simplified)]
     public class FlowNoBoundary : IQualityAnalyzer
     {
         public string Label => "Flow Missing Trust Boundary";

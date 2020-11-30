@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using PostSharp.Patterns.Contracts;
+﻿using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -7,12 +6,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Extensions.Initializers
 {
-    [Export(typeof(IInitializer))]
-    [ExportMetadata("Id", "6E637EFC-7AFC-4895-8794-F650DA4ED2FF")]
-    [ExportMetadata("Label", "Threat Model Configuration Schema Initializer")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("6E637EFC-7AFC-4895-8794-F650DA4ED2FF", "Threat Model Configuration Schema Initializer", 10, ExecutionMode.Simplified)]
     public class ModelConfigSchemaInitializer : IInitializer
     {
         public void Initialize([NotNull] IThreatModel model)

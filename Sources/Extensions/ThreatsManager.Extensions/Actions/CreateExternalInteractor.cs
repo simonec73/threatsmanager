@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,12 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "2F7A97D4-D5EE-4DF8-A467-EE7F22B451F1")]
-    [ExportMetadata("Label", "Create an External Interactor Context Aware Action")]
-    [ExportMetadata("Priority", 15)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("2F7A97D4-D5EE-4DF8-A467-EE7F22B451F1", "Create an External Interactor Context Aware Action", 15, ExecutionMode.Simplified)]
     public class CreateExternalInteractor : IIdentityContextAwareAction, IIdentityAddingRequiredAction
     {
         public Scope Scope => Scope.Diagram | Scope.ThreatModel;

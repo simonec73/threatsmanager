@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -11,12 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "D765E1A3-F335-47E0-AE0A-1EA87FE6980A")]
-    [ExportMetadata("Label", "No Data Stores Quality Analyzer")]
-    [ExportMetadata("Priority", 28)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("D765E1A3-F335-47E0-AE0A-1EA87FE6980A", "No Data Stores Quality Analyzer", 28, ExecutionMode.Simplified)]
     public class NoDataStores : IQualityAnalyzer
     {
         public string Label => "Diagrams Missing Data Stores";

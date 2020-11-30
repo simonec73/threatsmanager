@@ -10,12 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "82DF6644-1955-464A-A244-C395856B527B")]
-    [ExportMetadata("Label", "Process Counter Status Info Provider")]
-    [ExportMetadata("Priority", 11)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("82DF6644-1955-464A-A244-C395856B527B", "Process Counter Status Info Provider", 11, ExecutionMode.Simplified)]
     public class ProcessCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

@@ -5,7 +5,8 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     /// <summary>
     /// Base interface representing a Panel Factory, that is a creator of a specific type of Panels.
     /// </summary>
-    public interface IPanelFactory
+    [ExtensionDescription("UI Panel")]
+    public interface IPanelFactory : IExtension
     {
         /// <summary>
         /// Behavior of the Panel Factory.

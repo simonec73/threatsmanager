@@ -369,7 +369,8 @@ namespace ThreatsManager.Engine
         #region Events management.
         private void RegisterContextAwareActionsEventHandlers()
         {
-            var actions = _extensionsManager.GetExtensions<IContextAwareAction>()?.Where(x => _configuration.IsEnabled(x.Metadata.Id)).ToArray();
+            var actions = _extensionsManager.GetExtensions<IContextAwareAction>()?
+                .Where(x => _configuration.IsEnabled(x.Key.Id)).ToArray();
 
             if (actions?.Any() ?? false)
             {

@@ -1,17 +1,11 @@
-﻿using System.ComponentModel.Composition;
-using ThreatsManager.AutoThreatGeneration.Engine;
+﻿using ThreatsManager.AutoThreatGeneration.Engine;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Utilities;
 
 namespace ThreatsManager.AutoThreatGeneration.Initializers
 {
-    [Export(typeof(IExtensionInitializer))]
-    [ExportMetadata("Id", "1A18A128-2C14-4C46-8CF6-1C25A62B9A3E")]
-    [ExportMetadata("Label", "Automatic Threat Event Generation Initializer")]
-    [ExportMetadata("Priority", 10)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Business)]
+    [Extension("1A18A128-2C14-4C46-8CF6-1C25A62B9A3E", "Automatic Threat Event Generation Initializer", 10, ExecutionMode.Business)]
     public class AutoGenRuleInitializer : IExtensionInitializer
     {
         public void Initialize()
