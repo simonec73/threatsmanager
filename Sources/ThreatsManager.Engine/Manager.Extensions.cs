@@ -31,8 +31,16 @@ namespace ThreatsManager.Engine
 
         public T GetExtensionByLabel<T>([Required] string label) where T : class, IExtension
         {
-            return (_configuration?.IsEnabled(label) ?? false) ?
-                _extensionsManager.GetExtensionByLabel<T>(label) : default(T);
+            T result = default(T);
+
+            var extension = _extensionsManager.GetExtensions<T>()?
+                .FirstOrDefault(x => string.CompareOrdinal(x.Key.Label, label) == 0);
+            if (extension.HasValue && (_configuration?.IsEnabled(extension.Value.Key.Id) ?? false))
+            {
+                result = extension.Value.Value;
+            }
+
+            return result;
         }
 
         public IEnumerable<T> GetExtensions<T>() where T : class, IExtension
