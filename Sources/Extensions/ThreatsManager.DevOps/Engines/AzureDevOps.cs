@@ -30,7 +30,8 @@ namespace ThreatsManager.DevOps.Engines
         private WorkItemTrackingHttpClient _client;
         private const string DefaultTag = "ThreatModeling";
         private string _workItemType;
-        private IEnumerable<string> _availableProjects;
+        private Guid _projectId;
+        private IDictionary<string, Guid> _availableProjects;
         private IEnumerable<string> _itemTypes;
         private IEnumerable<string> _itemStates;
         private IEnumerable<IDevOpsField> _fields;
@@ -93,22 +94,29 @@ namespace ThreatsManager.DevOps.Engines
             _connection = new VssConnection(new Uri(_url), new VssClientCredentials());
             using (var projectClient = _connection.GetClient<ProjectHttpClient>())
             {
-                _availableProjects = projectClient.GetProjects().Result.Select(x => x.Name).ToArray();
+                _availableProjects = projectClient.GetProjects().Result
+                    .ToDictionary(x => x.Name, y => y.Id);
             }
 
 
-            return _availableProjects;
+            return _availableProjects.Keys;
         }
 
-        public bool OpenProject([Required] string project)
+        public bool OpenProject([Required] string projectName)
         {
             bool result = false;
 
-            if (!string.IsNullOrEmpty(_url) &&
-                (_availableProjects?.Any(x => string.CompareOrdinal(project, x) == 0) ?? false))
+            if (!string.IsNullOrEmpty(_url))
             {
-                Project = project;
-                result = true;
+                var project = _availableProjects?
+                    .FirstOrDefault(x => string.CompareOrdinal(projectName, x.Key) == 0);
+
+                if (project.HasValue)
+                {
+                    Project = project.Value.Key;
+                    _projectId = project.Value.Value;
+                    result = true;
+                }
             }
 
             return result;
@@ -302,6 +310,8 @@ namespace ThreatsManager.DevOps.Engines
         #endregion
 
         #region Work Items management.
+        public event Action<WorkItemInfo> WorkItemStatusChanged;
+
         [InitializationRequired(-1)]
         public async Task<int> CreateWorkItemAsync([PostSharp.Patterns.Contracts.NotNull] IMitigation mitigation)
         {

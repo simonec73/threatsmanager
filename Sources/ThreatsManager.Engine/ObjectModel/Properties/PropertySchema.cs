@@ -65,6 +65,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [JsonProperty("system")]
         public bool System { get; set; }
 
+        [JsonProperty("notExportable")]
+        public bool NotExportable { get; set; }
+
         [JsonProperty("executionMode", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
         [DefaultValue(ExecutionMode.Business)]
         [JsonConverter(typeof(StringEnumConverter))]

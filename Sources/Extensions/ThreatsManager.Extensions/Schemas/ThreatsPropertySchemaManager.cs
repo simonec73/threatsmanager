@@ -28,6 +28,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.Priority = 10;
                 result.Visible = true;
                 result.System = true;
+                result.NotExportable = false;
                 result.RequiredExecutionMode = ExecutionMode.Expert;
                 result.Description = Properties.Resources.ThreatsPropertySchemaDescription;
             }
@@ -37,6 +38,7 @@ namespace ThreatsManager.Extensions.Schemas
             {
                 keywords = result.AddPropertyType("Keywords", PropertyValueType.Tokens);
                 keywords.Visible = true;
+                keywords.DoNotPrint = true;
                 keywords.Description = Resources.PropertyKeywords;
             }
 

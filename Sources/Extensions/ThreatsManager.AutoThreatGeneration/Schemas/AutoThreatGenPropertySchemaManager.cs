@@ -28,6 +28,7 @@ namespace ThreatsManager.AutoThreatGeneration.Schemas
                 result.Priority = 10;
                 result.Visible = false;
                 result.System = true;
+                result.NotExportable = false;
                 result.Description = Resources.AutoThreatGenPropertySchemaDescription;
             }
 
@@ -46,6 +47,7 @@ namespace ThreatsManager.AutoThreatGeneration.Schemas
                 {
                     result = schema.AddPropertyType("AutoGenRule", PropertyValueType.JsonSerializableObject);
                     result.Visible = false;
+                    result.DoNotPrint = true;
                     result.Description = Resources.PropertyAutoGenRule;
                 }
             }

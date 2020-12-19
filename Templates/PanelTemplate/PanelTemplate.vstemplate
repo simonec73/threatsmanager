@@ -2,7 +2,7 @@
 <VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
   <TemplateData>
     <Name>Panel and Panel Factory</Name>
-    <Description>Extension to show WinForms Panels in Threats Manager Platform.</Description>
+    <Description>Extension to show WinForms Panels in Threats Manager Studio.</Description>
     <Icon>template.ico</Icon>
     <TemplateID>ThreatsManagerPlatform.Panel</TemplateID>
     <TemplateGroupID>ThreatsManagerPlatform</TemplateGroupID>

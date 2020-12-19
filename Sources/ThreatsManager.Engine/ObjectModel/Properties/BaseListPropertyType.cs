@@ -53,6 +53,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid SchemaId { get; set; }
         public int Priority { get; set; }
         public bool Visible { get; set; }
+        public bool DoNotPrint { get; set; }
+        public string CustomPropertyViewer { get; set; }
 
         public event Action<IDirty, bool> DirtyChanged;
         public bool IsDirty { get; }

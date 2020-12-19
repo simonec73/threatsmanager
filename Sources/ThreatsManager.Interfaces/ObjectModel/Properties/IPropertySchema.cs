@@ -42,6 +42,12 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         bool System { get; set; }
 
         /// <summary>
+        /// Flag that allows to mark a Property Schema as not being exportable as a Template. 
+        /// </summary>
+        /// <remarks>By default all Property Schemas are exportable.</remarks>
+        bool NotExportable { get; set; }
+
+        /// <summary>
         /// Execution Mode required to show the Property Schema.
         /// </summary>
         ExecutionMode RequiredExecutionMode { get; set; }

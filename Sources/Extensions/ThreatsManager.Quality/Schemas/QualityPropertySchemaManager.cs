@@ -5,6 +5,7 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Quality.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
@@ -29,15 +30,18 @@ namespace ThreatsManager.Quality.Schemas
             if (schema == null)
             {
                 schema = _model.AddSchema(Properties.Resources.SchemaName, Properties.Resources.DefaultNamespace);
+                schema.Description = Resources.QualityPropertySchemaDescription;
                 schema.Visible = false;
                 schema.AppliesTo = Scope.All;
                 schema.System = true;
                 schema.AutoApply = false;
+                schema.NotExportable = true;
             }
 
             return schema;
         }
 
+        #region False Positive.
         [InitializationRequired]
         public IPropertyType GetFalsePositivePropertyType()
         {
@@ -180,5 +184,6 @@ namespace ThreatsManager.Quality.Schemas
                 Timestamp = DateTime.Now
             };
         }
+        #endregion
     }
 }

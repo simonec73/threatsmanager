@@ -43,6 +43,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid SchemaId { get; }
         public int Priority { get; set; }
         public bool Visible { get; set; }
+        public bool DoNotPrint { get; set; }
+        public string CustomPropertyViewer { get; set; }
 
         public event Action<IDirty, bool> DirtyChanged;
         public bool IsDirty { get; }
@@ -92,6 +94,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     Name = Name,
                     Description = Description,
                     Visible = Visible,
+                    DoNotPrint = DoNotPrint,
+                    CustomPropertyViewer = CustomPropertyViewer,
                     Priority = Priority
                 };
                 container.Add(result);

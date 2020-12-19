@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using ThreatsManager.Interfaces;
+﻿using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;

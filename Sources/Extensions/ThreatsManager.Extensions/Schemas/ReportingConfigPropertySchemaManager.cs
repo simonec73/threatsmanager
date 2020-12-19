@@ -28,6 +28,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.Priority = 10;
                 result.Visible = false;
                 result.System = true;
+                result.NotExportable = true;
                 result.Description = Resources.ReportingConfigPropertySchemaDescription;
             }
 
@@ -36,6 +37,7 @@ namespace ThreatsManager.Extensions.Schemas
             {
                 excelSelectedFields = result.AddPropertyType("ExcelSelectedFields", PropertyValueType.Array);
                 excelSelectedFields.Visible = false;
+                excelSelectedFields.DoNotPrint = true;
                 excelSelectedFields.Description = Resources.PropertyExcelSelectedFields;
             }
 
@@ -44,6 +46,7 @@ namespace ThreatsManager.Extensions.Schemas
             {
                 wordDocumentPath = result.AddPropertyType("WordDocumentPath", PropertyValueType.SingleLineString);
                 wordDocumentPath.Visible = false;
+                wordDocumentPath.DoNotPrint = true;
                 wordDocumentPath.Description = Resources.PropertyWordDocumentPath;
             }
 
@@ -52,6 +55,7 @@ namespace ThreatsManager.Extensions.Schemas
             {
                 wordSections = result.AddPropertyType("WordSections", PropertyValueType.JsonSerializableObject);
                 wordSections.Visible = false;
+                wordSections.DoNotPrint = true;
                 wordSections.Description = Resources.PropertyWordSections;
             }
 

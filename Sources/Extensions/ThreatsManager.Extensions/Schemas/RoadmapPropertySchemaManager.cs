@@ -29,6 +29,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.System = true;
                 result.Priority = 10;
                 result.AutoApply = false;
+                result.NotExportable = true;
                 result.AppliesTo = Scope.Mitigation;
             }
 
@@ -47,6 +48,8 @@ namespace ThreatsManager.Extensions.Schemas
                 {
                     result = schema.AddPropertyType(PropertyName, PropertyValueType.SingleLineString);
                     result.Description = Resources.PropertyRoadmap;
+                    result.Visible = false;
+                    result.DoNotPrint = true;
                 }
             }
 

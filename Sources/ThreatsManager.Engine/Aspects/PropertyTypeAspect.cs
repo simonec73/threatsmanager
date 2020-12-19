@@ -38,6 +38,18 @@ namespace ThreatsManager.Engine.Aspects
             OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         [JsonProperty("visible")]
         public bool Visible { get; set; }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
+            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
+        [JsonProperty("doNotPrint")]
+        public bool DoNotPrint { get; set; }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
+            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
+        [JsonProperty("propertyViewer")]
+        public string CustomPropertyViewer { get; set; }
         #endregion
     }
 }

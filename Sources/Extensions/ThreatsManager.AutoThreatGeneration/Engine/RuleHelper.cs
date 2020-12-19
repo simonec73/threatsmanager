@@ -41,7 +41,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
                     !string.IsNullOrWhiteSpace(booleanRuleNode.Schema))
                 {
                     var schema = model.GetSchema(booleanRuleNode.Schema, booleanRuleNode.Namespace);
-                    if (!list.Contains(schema))
+                    if (schema != null && !list.Contains(schema))
                         list.Add(schema);
                 }
             }
@@ -51,7 +51,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
                     !string.IsNullOrWhiteSpace(comparisonRuleNode.Schema))
                 {
                     var schema = model.GetSchema(comparisonRuleNode.Schema, comparisonRuleNode.Namespace);
-                    if (!list.Contains(schema))
+                    if (schema != null && !list.Contains(schema))
                         list.Add(schema);
                 }
             }
@@ -61,7 +61,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
                     !string.IsNullOrWhiteSpace(enumValueRuleNode.Schema))
                 {
                     var schema = model.GetSchema(enumValueRuleNode.Schema, enumValueRuleNode.Namespace);
-                    if (!list.Contains(schema))
+                    if (schema != null && !list.Contains(schema))
                         list.Add(schema);
                 }
             }
@@ -77,7 +77,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
                         {
                             foreach (var childItem in childItems)
                             {
-                                if (!list.Contains(childItem))
+                                if (childItem != null && !list.Contains(childItem))
                                     list.Add(childItem);
                             }
                         }
@@ -91,7 +91,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
                 {
                     foreach (var childItem in childItems)
                     {
-                        if (!list.Contains(childItem))
+                        if (childItem != null && !list.Contains(childItem))
                             list.Add(childItem);
                     }
                 }

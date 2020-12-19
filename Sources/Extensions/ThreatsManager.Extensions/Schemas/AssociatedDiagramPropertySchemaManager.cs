@@ -28,6 +28,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.Priority = 10;
                 result.Visible = true;
                 result.System = true;
+                result.NotExportable = true;
                 result.Description = Resources.AssociatedDiagramPropertySchemaDescription;
             }
 

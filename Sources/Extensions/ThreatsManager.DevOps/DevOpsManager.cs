@@ -9,7 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.DevOps
 {
-    static class DevOpsManager
+    public static class DevOpsManager
     {
         private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
 

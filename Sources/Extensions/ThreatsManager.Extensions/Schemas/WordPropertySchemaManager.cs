@@ -28,6 +28,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.Priority = 10;
                 result.Visible = false;
                 result.System = true;
+                result.NotExportable = true;
                 result.Description = Properties.Resources.WordPropertySchemaDescription;
             }
 
@@ -36,6 +37,7 @@ namespace ThreatsManager.Extensions.Schemas
             {
                 ignoredListFields = result.AddPropertyType("IgnoredListFields", PropertyValueType.Array);
                 ignoredListFields.Visible = false;
+                ignoredListFields.DoNotPrint = true;
                 ignoredListFields.Description = Resources.PropertyIgnoredListFields;
             }
 
@@ -44,6 +46,7 @@ namespace ThreatsManager.Extensions.Schemas
             {
                 columnWidth = result.AddPropertyType("ColumnWidth", PropertyValueType.Array);
                 columnWidth.Visible = false;
+                columnWidth.DoNotPrint = true;
                 columnWidth.Description = Resources.PropertyColumnWidths;
             }
 

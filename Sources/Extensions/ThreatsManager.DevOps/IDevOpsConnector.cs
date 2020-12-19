@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
@@ -137,6 +138,11 @@ namespace ThreatsManager.DevOps
         #endregion
 
         #region Work Items management.
+        /// <summary>
+        /// Event raised when a Work Item changes status.
+        /// </summary>
+        event Action<WorkItemInfo> WorkItemStatusChanged;
+
         /// <summary>
         /// Create a mitigation associated to a Work Item.
         /// </summary>

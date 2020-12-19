@@ -31,6 +31,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.Priority = 100;
                 result.Visible = false;
                 result.System = true;
+                result.NotExportable = true;
                 result.Description = Resources.ResidualRiskEstimatorConfigurationPropertySchemaDescription;
             }
 
@@ -50,6 +51,7 @@ namespace ThreatsManager.Extensions.Schemas
                     result =
                         schema.AddPropertyType("Selected Estimator", PropertyValueType.SingleLineString);
                     result.Visible = false;
+                    result.DoNotPrint = true;
                     result.Description = "Extension Id of the Selected Residual Risk Estimator";
                 }
             }
@@ -70,6 +72,7 @@ namespace ThreatsManager.Extensions.Schemas
                     result =
                         schema.AddPropertyType("Estimator Parameters", PropertyValueType.JsonSerializableObject);
                     result.Visible = false;
+                    result.DoNotPrint = true;
                     result.Description = "Parameters of the Selected Residual Risk Estimator";
                 }
             }

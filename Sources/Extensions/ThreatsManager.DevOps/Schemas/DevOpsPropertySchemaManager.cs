@@ -31,6 +31,7 @@ namespace ThreatsManager.DevOps.Schemas
                 result.AppliesTo = Scope.Mitigation;
                 result.System = true;
                 result.AutoApply = false;
+                result.NotExportable = true;
             }
 
             return result;
@@ -48,6 +49,7 @@ namespace ThreatsManager.DevOps.Schemas
                 {
                     result = schema.AddPropertyType(Properties.Resources.DevOpsInfo, PropertyValueType.JsonSerializableObject);
                     result.Visible = false;
+                    result.DoNotPrint = true;
                     result.Description = Properties.Resources.DevOpsInfoDescription;
                 }
             }

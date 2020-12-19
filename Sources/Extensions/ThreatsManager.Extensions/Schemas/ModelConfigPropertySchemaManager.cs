@@ -28,6 +28,7 @@ namespace ThreatsManager.Extensions.Schemas
                 result.Priority = 10;
                 result.Visible = false;
                 result.System = true;
+                result.NotExportable = true;
                 result.Description = Resources.ThreatModelConfigPropertySchemaDescription;
             }
 
@@ -37,6 +38,7 @@ namespace ThreatsManager.Extensions.Schemas
                 horizontalSpacing =
                     result.AddPropertyType("Diagram Layout Horizontal Spacing", PropertyValueType.Integer);
                 horizontalSpacing.Visible = false;
+                horizontalSpacing.DoNotPrint = true;
                 horizontalSpacing.Description = Resources.PropertyHorizontalSpacing;
             }
 
@@ -46,6 +48,7 @@ namespace ThreatsManager.Extensions.Schemas
                 verticalSpacing =
                     result.AddPropertyType("Diagram Layout Vertical Spacing", PropertyValueType.Integer);
                 verticalSpacing.Visible = false;
+                verticalSpacing.DoNotPrint = true;
                 verticalSpacing.Description = Resources.PropertyVerticalSpacing;
             }
 
