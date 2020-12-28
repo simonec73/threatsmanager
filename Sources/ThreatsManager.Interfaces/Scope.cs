@@ -160,7 +160,7 @@ namespace ThreatsManager.Interfaces
         /// </summary>
         [UiHidden]
         All = Entity | ItemTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor | 
-              Severity | PropertyType | PropertySchema | Diagram | 
+              Severity | PropertyType | PropertySchema | Diagram | ThreatTypeMitigation | ThreatEventMitigation |
               EntityShape | GroupShape | Link | ThreatModel
     }
 }

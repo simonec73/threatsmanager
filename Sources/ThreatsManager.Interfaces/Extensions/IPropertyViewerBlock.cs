@@ -9,11 +9,6 @@ namespace ThreatsManager.Interfaces.Extensions
     public interface IPropertyViewerBlock
     {
         /// <summary>
-        /// Event raised when the Property Viewer Block needs to be refreshed.
-        /// </summary>
-        event Action<IPropertyViewerBlock> RefreshRequired;
-
-        /// <summary>
         /// Type of Block to be shown.
         /// </summary>
         PropertyViewerBlockType BlockType { get; }
