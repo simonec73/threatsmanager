@@ -9,28 +9,6 @@ namespace ThreatsManager.AutoGenRules.Engine
 {
     public static class RuleHelper
     {
-        //public static SelectionRule GetRule(this IPropertiesContainer container)
-        //{
-        //    SelectionRule result = null;
-
-        //    if (container is IThreatModelChild child && child.Model is IThreatModel model)
-        //    {
-        //        var schemaManager = new AutoGenRulesPropertySchemaManager(model);
-        //        var propertyType = schemaManager?.GetPropertyType();
-        //        if (propertyType != null)
-        //        {
-        //            var p = container.GetProperty(propertyType);
-        //            if (p is IPropertyJsonSerializableObject jsonProperty)
-        //            {
-        //                if (jsonProperty.Value is SelectionRule rule)
-        //                    result = rule;
-        //            }
-        //        }
-        //    }
-
-        //    return result;
-        //}
-
         public static IEnumerable<IPropertySchema> Traverse(this IThreatModel model, SelectionRuleNode node)
         {
             List<IPropertySchema> list = new List<IPropertySchema>();
