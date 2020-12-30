@@ -7,7 +7,7 @@
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
-    <Copyright>Copyright © Simone Curzi, 2018-2020. All Rights Reserved.</Copyright>
+    <Copyright>Copyright © Simone Curzi, 2018-2021. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
     <FileVersion>1.4.0.0</FileVersion>
@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
     <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
+    <ProjectReference Include="..\ThreatsManager.AutoGenRules\ThreatsManager.AutoGenRules.csproj" />
   </ItemGroup>
 
   <ItemGroup>

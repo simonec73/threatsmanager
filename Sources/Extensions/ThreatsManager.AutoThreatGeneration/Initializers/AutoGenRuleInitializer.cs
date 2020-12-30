@@ -1,4 +1,5 @@
-﻿using ThreatsManager.AutoThreatGeneration.Engine;
+﻿using System.Reflection;
+using ThreatsManager.AutoThreatGeneration.Engine;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Utilities;
@@ -10,28 +11,51 @@ namespace ThreatsManager.AutoThreatGeneration.Initializers
     {
         public void Initialize()
         {
-            KnownTypesBinder.AddKnownType(typeof(AndRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(BooleanRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(ComparisonOperator));
-            KnownTypesBinder.AddKnownType(typeof(ComparisonRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(CrossTrustBoundaryRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(EnumValueRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(NaryRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(NotRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(OrRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(SelectionRule));
-            KnownTypesBinder.AddKnownType(typeof(SelectionRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(UnaryRuleNode));
             KnownTypesBinder.AddKnownType(typeof(MitigationSelectionRule));
-            KnownTypesBinder.AddKnownType(typeof(HasIncomingRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(HasOutgoingRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(TruismRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(EntityTemplateRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(ExternalInteractorTemplateRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(ProcessTemplateRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(DataStoreTemplateRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(FlowTemplateRuleNode));
-            KnownTypesBinder.AddKnownType(typeof(TrustBoundaryTemplateRuleNode));
+
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.AndRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.AndRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.BooleanRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.BooleanRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.ComparisonOperator", 
+                typeof(ThreatsManager.AutoGenRules.Engine.ComparisonOperator));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.ComparisonRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.ComparisonRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.CrossTrustBoundaryRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.CrossTrustBoundaryRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.EnumValueRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.EnumValueRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.NaryRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.NaryRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.NotRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.NotRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.OrRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.OrRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.SelectionRule", 
+                typeof(ThreatsManager.AutoGenRules.Engine.SelectionRule));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.SelectionRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.SelectionRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.UnaryRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.UnaryRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.HasIncomingRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.HasIncomingRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.HasOutgoingRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.HasOutgoingRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.TruismRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.TruismRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.EntityTemplateRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.EntityTemplateRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.ExternalInteractorTemplateRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.ExternalInteractorTemplateRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.ProcessTemplateRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.ProcessTemplateRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.DataStoreTemplateRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.DataStoreTemplateRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.FlowTemplateRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.FlowTemplateRuleNode));
+            KnownTypesBinder.AddEquivalence(assemblyName, "ThreatsManager.AutoThreatGeneration.Engine.TrustBoundaryTemplateRuleNode", 
+                typeof(ThreatsManager.AutoGenRules.Engine.TrustBoundaryTemplateRuleNode));
         }
     }
 }

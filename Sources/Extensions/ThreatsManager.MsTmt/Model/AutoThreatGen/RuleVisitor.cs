@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Xml.XPath;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.AutoThreatGeneration.Engine;
+using ThreatsManager.AutoGenRules.Engine;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.MsTmt.Properties;

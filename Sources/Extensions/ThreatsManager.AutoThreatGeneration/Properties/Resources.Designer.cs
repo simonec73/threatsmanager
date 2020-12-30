@@ -61,47 +61,11 @@ namespace ThreatsManager.AutoThreatGeneration.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property Schema that collects properties used to configure the Automatic Threat Event Generation Extension..
-        /// </summary>
-        internal static string AutoThreatGenPropertySchemaDescription {
-            get {
-                return ResourceManager.GetString("AutoThreatGenPropertySchemaDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to https://www.simoneonsecurity.com/tm/2018.
         /// </summary>
         internal static string DefaultNamespace {
             get {
                 return ResourceManager.GetString("DefaultNamespace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Selection Rule.
-        /// </summary>
-        internal static string LabelSelectionRule {
-            get {
-                return ResourceManager.GetString("LabelSelectionRule", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Selection Rule Node.
-        /// </summary>
-        internal static string LabelSelectionRuleNode {
-            get {
-                return ResourceManager.GetString("LabelSelectionRuleNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configuration of the Automatic Threat Events Generation rules..
-        /// </summary>
-        internal static string PropertyAutoGenRule {
-            get {
-                return ResourceManager.GetString("PropertyAutoGenRule", resourceCulture);
             }
         }
     }
