@@ -9,6 +9,7 @@ namespace ThreatsManager.MsTmt.Model
     public abstract class Info
     {
         private readonly List<Property> _properties = new List<Property>();
+        private const string Undefined = "<undefined>";
 
         protected Info(IEnumerable<XmlNode> nodes)
         {
@@ -28,7 +29,7 @@ namespace ThreatsManager.MsTmt.Model
                         var propertyValue = node.SelectSingleNode("b:Value", nsManager)?.InnerText;
                         if (String.CompareOrdinal(propertyName, "Name") == 0)
                         {
-                            Name = propertyValue;
+                            Name = string.IsNullOrWhiteSpace(propertyValue) ? Undefined : propertyValue;
                         }
                         else
                         {
