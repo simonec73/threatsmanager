@@ -24,7 +24,7 @@ namespace ThreatsManager.AutoGenRules.Engine
             return Resources.LabelSelectionRuleNode;
         }
 
-        public abstract bool Evaluate(IIdentity identity);
+        public abstract bool Evaluate(object context);
 
         protected IIdentity GetScopedIdentity([NotNull] IIdentity identity)
         {

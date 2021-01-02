@@ -6,6 +6,7 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
 namespace ThreatsManager.AutoGenRules.Engine
@@ -56,42 +57,49 @@ namespace ThreatsManager.AutoGenRules.Engine
         [JsonProperty("value")]
         public string Value { get; set; }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = false;
 
-            var scopedIdentity = GetScopedIdentity(identity);
-
-            if (scopedIdentity != null)
+            if (context is IIdentity identity)
             {
-                if (Scope == Scope.AnyTrustBoundary)
-                {
-                    var crossedTrustBoundaries = GetCrossedTrustBoundaries(scopedIdentity)?.ToArray();
-                    if (crossedTrustBoundaries?.Any() ?? false)
-                    {
-                        foreach (var tb in crossedTrustBoundaries)
-                        {
-                            result = InternalEvaluate(tb);
+                var scopedIdentity = GetScopedIdentity(identity);
 
-                            if (result)
-                                break;
+                if (scopedIdentity != null)
+                {
+                    if (Scope == Scope.AnyTrustBoundary)
+                    {
+                        var crossedTrustBoundaries = GetCrossedTrustBoundaries(scopedIdentity)?.ToArray();
+                        if (crossedTrustBoundaries?.Any() ?? false)
+                        {
+                            foreach (var tb in crossedTrustBoundaries)
+                            {
+                                result = InternalEvaluate(tb);
+
+                                if (result)
+                                    break;
+                            }
                         }
                     }
+                    else
+                    {
+                        result = InternalEvaluate(scopedIdentity);
+                    }
                 }
-                else
-                {
-                    result = InternalEvaluate(scopedIdentity);
-                }
+            }
+            else
+            {
+                result = InternalEvaluate(context);
             }
 
             return result;
         }
 
-        private bool InternalEvaluate([NotNull] IIdentity identity)
+        private bool InternalEvaluate([NotNull] object context)
         {
             bool result = false;
 
-            if (TryGetValue(identity, Namespace, Schema, Name, out var actualValue))
+            if (TryGetValue(context, Namespace, Schema, Name, out var actualValue))
             {
                 result = string.Compare(Value, actualValue, StringComparison.Ordinal) == 0;
             }
@@ -99,7 +107,7 @@ namespace ThreatsManager.AutoGenRules.Engine
             return result;
         }
 
-        private static bool TryGetValue([NotNull] IIdentity identity, 
+        private static bool TryGetValue([NotNull] object context, 
             string schemaNs, string schemaName, [Required] string propertyName, out string value)
         {
             bool result = false;
@@ -107,23 +115,36 @@ namespace ThreatsManager.AutoGenRules.Engine
 
             if (string.IsNullOrWhiteSpace(schemaNs) && string.IsNullOrWhiteSpace(schemaName))
             {
-                var model = identity as IThreatModel ?? (identity as IThreatModelChild)?.Model;
+                var model = context as IThreatModel ?? (context as IThreatModelChild)?.Model;
                 switch (propertyName)
                 {
                     case "Flow Type":
-                        value = (identity as IDataFlow)?.FlowType.GetEnumLabel();
+                        value = (context as IDataFlow)?.FlowType.GetEnumLabel();
                         result = true;
                         break;
                     case "Object Type":
-                        value = model?.GetIdentityTypeName(identity);
-                        result = true;
+                        if (context is IIdentity identity)
+                        {
+                            value = model?.GetIdentityTypeName(identity);
+                            result = true;
+                        }
+                        else if (context is IThreatTypeMitigation)
+                        {
+                            value = "Threat Type Mitigation";
+                            result = true;
+                        }
+                        else if (context is IThreatEventMitigation)
+                        {
+                            value = "Threat Event Mitigation";
+                            result = true;
+                        }
                         break;
                 }
             }
             else
             {
-                if ((identity is IThreatModelChild child) && (child.Model is IThreatModel model) &&
-                    (identity is IPropertiesContainer container))
+                if ((context is IThreatModelChild child) && (child.Model is IThreatModel model) &&
+                    (context is IPropertiesContainer container))
                 {
                     var schema = model.GetSchema(schemaName, schemaNs);
                     var propertyType = schema?.GetPropertyType(propertyName);
@@ -133,7 +154,7 @@ namespace ThreatsManager.AutoGenRules.Engine
                         result = true;
                     }
                 }
-                else if (identity is IThreatModel model2)
+                else if (context is IThreatModel model2)
                 {
                     var schema = model2.GetSchema(schemaName, schemaNs);
                     var propertyType = schema?.GetPropertyType(propertyName);

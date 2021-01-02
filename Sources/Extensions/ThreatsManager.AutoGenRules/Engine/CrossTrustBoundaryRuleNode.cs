@@ -22,11 +22,11 @@ namespace ThreatsManager.AutoGenRules.Engine
         [JsonProperty("value")]
         public bool Value { get; set; }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = false;
 
-            if (identity is IDataFlow dataFlow)
+            if (context is IDataFlow dataFlow)
             {
                 result = (Value && dataFlow.Source.Parent != dataFlow.Target.Parent) ||
                     (!Value && dataFlow.Source.Parent == dataFlow.Target.Parent);

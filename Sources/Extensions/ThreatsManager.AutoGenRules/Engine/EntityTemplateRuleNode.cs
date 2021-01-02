@@ -22,28 +22,35 @@ namespace ThreatsManager.AutoGenRules.Engine
         [JsonProperty("entityTemplate")]
         public Guid EntityTemplate { get; set; }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = false;
 
-            var scopedIdentity = GetScopedIdentity(identity);
-
-            if (scopedIdentity != null)
+            if (context is IIdentity identity)
             {
-                if (Scope != Scope.AnyTrustBoundary)
+                var scopedIdentity = GetScopedIdentity(identity);
+
+                if (scopedIdentity != null)
                 {
-                    result = InternalEvaluate(scopedIdentity);
+                    if (Scope != Scope.AnyTrustBoundary)
+                    {
+                        result = InternalEvaluate(scopedIdentity);
+                    }
                 }
+            }
+            else
+            {
+                result = InternalEvaluate(context);
             }
 
             return result;
         }
 
-        private bool InternalEvaluate([NotNull] IIdentity identity)
+        private bool InternalEvaluate([NotNull] object context)
         {
             bool result = false;
 
-            if (identity is IEntity entity)
+            if (context is IEntity entity)
             {
                 result = entity.Template?.Id == EntityTemplate;
             }

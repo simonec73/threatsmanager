@@ -12,7 +12,7 @@ namespace ThreatsManager.AutoGenRules.Engine
             Name = "TRUE";
         }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             return true;
         }

@@ -7,9 +7,9 @@ namespace ThreatsManager.AutoGenRules.Engine
     [JsonObject(MemberSerialization.OptIn)]
     public class NotRuleNode : UnaryRuleNode
     {
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
-            return !(Child?.Evaluate(identity) ?? false);
+            return !(Child?.Evaluate(context) ?? false);
         }
 
         public override string ToString()

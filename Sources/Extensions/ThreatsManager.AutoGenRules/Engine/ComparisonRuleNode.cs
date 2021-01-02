@@ -37,42 +37,49 @@ namespace ThreatsManager.AutoGenRules.Engine
         [JsonProperty("value")]
         public string Value { get; set; }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = false;
 
-            var scopedIdentity = GetScopedIdentity(identity);
-
-            if (scopedIdentity != null)
+            if (context is IIdentity identity)
             {
-                if (Scope == Scope.AnyTrustBoundary)
-                {
-                    var crossedTrustBoundaries = GetCrossedTrustBoundaries(scopedIdentity)?.ToArray();
-                    if (crossedTrustBoundaries?.Any() ?? false)
-                    {
-                        foreach (var tb in crossedTrustBoundaries)
-                        {
-                            result = InternalEvaluate(tb);
+                var scopedIdentity = GetScopedIdentity(identity);
 
-                            if (result)
-                                break;
+                if (scopedIdentity != null)
+                {
+                    if (Scope == Scope.AnyTrustBoundary)
+                    {
+                        var crossedTrustBoundaries = GetCrossedTrustBoundaries(scopedIdentity)?.ToArray();
+                        if (crossedTrustBoundaries?.Any() ?? false)
+                        {
+                            foreach (var tb in crossedTrustBoundaries)
+                            {
+                                result = InternalEvaluate(tb);
+
+                                if (result)
+                                    break;
+                            }
                         }
                     }
+                    else
+                    {
+                        result = InternalEvaluate(scopedIdentity);
+                    }
                 }
-                else
-                {
-                    result = InternalEvaluate(scopedIdentity);
-                }
+            }
+            else
+            {
+                result = InternalEvaluate(context);
             }
 
             return result;
         }
 
-        private bool InternalEvaluate([NotNull] IIdentity identity)
+        private bool InternalEvaluate([NotNull] object context)
         {
             bool result = false;
 
-            if (TryGetValue(identity,
+            if (TryGetValue(context,
                 Namespace, Schema, Name, out var actualValue))
             {
                 switch (Operator)
@@ -92,7 +99,7 @@ namespace ThreatsManager.AutoGenRules.Engine
             return result;
         }
 
-        private static bool TryGetValue([NotNull] IIdentity identity, 
+        private static bool TryGetValue([NotNull] object context, 
             string schemaNs, string schemaName, [Required] string propertyName, out string value)
         {
             bool result = false;
@@ -100,22 +107,30 @@ namespace ThreatsManager.AutoGenRules.Engine
 
             if (string.IsNullOrWhiteSpace(schemaNs) && string.IsNullOrWhiteSpace(schemaName))
             {
-                switch (propertyName)
+                if (context is IIdentity identity)
                 {
-                    case "Name":
-                        value = identity.Name;
-                        result = true;
-                        break;
-                    case "Description":
-                        value = identity.Description;
-                        result = true;
-                        break;
+                    switch (propertyName)
+                    {
+                        case "Name":
+                            value = identity.Name;
+                            result = true;
+                            break;
+                        case "Description":
+                            value = identity.Description;
+                            result = true;
+                            break;
+                    }
+                }
+                else if (string.CompareOrdinal(propertyName, "Name") == 0)
+                {
+                    value = context.ToString();
+                    result = true;
                 }
             }
             else
             {
-                if ((identity is IThreatModelChild child) && (child.Model is IThreatModel model) &&
-                    (identity is IPropertiesContainer container))
+                if ((context is IThreatModelChild child) && (child.Model is IThreatModel model) &&
+                    (context is IPropertiesContainer container))
                 {
                     var schema = model.GetSchema(schemaName, schemaNs);
                     var propertyType = schema?.GetPropertyType(propertyName);
@@ -125,7 +140,7 @@ namespace ThreatsManager.AutoGenRules.Engine
                         result = true;
                     }
                 }
-                else if (identity is IThreatModel model2)
+                else if (context is IThreatModel model2)
                 {
                     var schema = model2.GetSchema(schemaName, schemaNs);
                     var propertyType = schema?.GetPropertyType(propertyName);

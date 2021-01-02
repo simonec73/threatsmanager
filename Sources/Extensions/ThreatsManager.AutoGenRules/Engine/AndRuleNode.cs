@@ -9,7 +9,7 @@ namespace ThreatsManager.AutoGenRules.Engine
     [JsonObject(MemberSerialization.OptIn)]
     public class AndRuleNode : NaryRuleNode
     {
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = true;
 
@@ -17,7 +17,7 @@ namespace ThreatsManager.AutoGenRules.Engine
             {
                 foreach (SelectionRuleNode child in Children)
                 {
-                    result &= child.Evaluate(identity);
+                    result &= child.Evaluate(context);
                 }
             }
 

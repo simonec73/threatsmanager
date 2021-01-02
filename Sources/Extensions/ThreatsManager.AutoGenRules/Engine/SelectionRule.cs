@@ -21,9 +21,9 @@ namespace ThreatsManager.AutoGenRules.Engine
             return result;
         }
 
-        public bool Evaluate([NotNull] IIdentity identity)
+        public bool Evaluate([NotNull] object context)
         {
-            return Root?.Evaluate(identity) ?? false;
+            return Root?.Evaluate(context) ?? false;
         }
     }
 }

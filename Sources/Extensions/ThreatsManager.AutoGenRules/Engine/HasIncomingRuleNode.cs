@@ -27,42 +27,49 @@ namespace ThreatsManager.AutoGenRules.Engine
         [JsonConverter(typeof(StringEnumConverter))]
         public EntityType EntityType { get; set; }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = false;
 
-            var scopedIdentity = GetScopedIdentity(identity);
-
-            if (scopedIdentity != null)
+            if (context is IIdentity identity)
             {
-                if (Scope != Scope.AnyTrustBoundary)
+                var scopedIdentity = GetScopedIdentity(identity);
+
+                if (scopedIdentity != null)
                 {
-                    result = InternalEvaluate(scopedIdentity);
+                    if (Scope != Scope.AnyTrustBoundary)
+                    {
+                        result = InternalEvaluate(scopedIdentity);
+                    }
                 }
+            }
+            else
+            {
+                result = InternalEvaluate(context);
             }
 
             return result;
         }
 
-        private bool InternalEvaluate([NotNull] IIdentity identity)
+        private bool InternalEvaluate([NotNull] object context)
         {
             bool result = false;
 
-            if (identity is IEntity entity)
+            if (context is IEntity entity)
             {
                 switch (EntityType)
                 {
                     case EntityType.ExternalInteractor:
                         result = entity.Model.DataFlows?
-                                     .Any(x => x.Source is IExternalInteractor && x.TargetId == identity.Id) ?? false;
+                                     .Any(x => x.Source is IExternalInteractor && x.TargetId == entity.Id) ?? false;
                         break;
                     case EntityType.Process:
                         result = entity.Model.DataFlows?
-                                     .Any(x => x.Source is IProcess && x.TargetId == identity.Id) ?? false;
+                                     .Any(x => x.Source is IProcess && x.TargetId == entity.Id) ?? false;
                         break;
                     case EntityType.DataStore:
                         result = entity.Model.DataFlows?
-                                     .Any(x => x.Source is IDataStore && x.TargetId == identity.Id) ?? false;
+                                     .Any(x => x.Source is IDataStore && x.TargetId == entity.Id) ?? false;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

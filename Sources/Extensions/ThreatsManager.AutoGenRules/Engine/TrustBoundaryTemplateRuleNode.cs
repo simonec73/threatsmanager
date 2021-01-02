@@ -23,11 +23,11 @@ namespace ThreatsManager.AutoGenRules.Engine
         [JsonProperty("trustBoundaryTemplate")]
         public Guid TrustBoundaryTemplate { get; set; }
 
-        public override bool Evaluate([NotNull] IIdentity identity)
+        public override bool Evaluate([NotNull] object context)
         {
             bool result = false;
 
-            if (identity is IDataFlow flow)
+            if (context is IDataFlow flow)
             {
                 result = InternalEvaluate(flow);
             }
