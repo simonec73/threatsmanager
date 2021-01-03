@@ -14,7 +14,7 @@ namespace ThreatsManager.AutoGenRules.PropertySchemasExtractors
         {
             IEnumerable<IPropertySchema> result = null;
 
-            if (jsonSerializableObject.Value is SelectionRule selectionRule)
+            if (jsonSerializableObject.Value is SelectionRule selectionRule && selectionRule.Root != null)
             {
                 result = jsonSerializableObject.Model.Traverse(selectionRule.Root);
             }
