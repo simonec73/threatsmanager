@@ -223,27 +223,18 @@ namespace ThreatsManager.Utilities
         private static IPropertyJsonSerializableObject GetExtensionConfigurationProperty([NotNull] IThreatModel model, [Required] string extensionId)
         {
             var propertySchema =
-                model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
-            if (propertySchema == null)
-            {
-                propertySchema =
-                    model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
-                propertySchema.AppliesTo = Scope.ThreatModel;
-                propertySchema.AutoApply = false;
-                propertySchema.NotExportable = true;
-                propertySchema.Priority = 100;
-                propertySchema.RequiredExecutionMode = ExecutionMode.Business;
-                propertySchema.System = true;
-                propertySchema.Visible = false;
-            }
+                model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager") ?? model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
+            propertySchema.AppliesTo = Scope.ThreatModel;
+            propertySchema.AutoApply = false;
+            propertySchema.NotExportable = true;
+            propertySchema.Priority = 100;
+            propertySchema.RequiredExecutionMode = ExecutionMode.Business;
+            propertySchema.System = true;
+            propertySchema.Visible = false;
 
-            var propertyType = propertySchema.GetPropertyType(extensionId);
-            if (propertyType == null)
-            {
-                propertyType = propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
-                propertyType.Visible = false;
-                propertyType.DoNotPrint = true;
-            }
+            var propertyType = propertySchema.GetPropertyType(extensionId) ?? propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
+            propertyType.Visible = false;
+            propertyType.DoNotPrint = true;
 
             return (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
         }

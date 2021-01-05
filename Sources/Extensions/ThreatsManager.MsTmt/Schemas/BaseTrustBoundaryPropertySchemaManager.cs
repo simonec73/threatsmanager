@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using PostSharp.Patterns.Contracts;
+﻿using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.MsTmt.Properties;
-using ThreatsManager.Utilities;
 
 namespace ThreatsManager.MsTmt.Schemas
 {
@@ -19,17 +17,14 @@ namespace ThreatsManager.MsTmt.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(Resources.TmtTrustBoundaryPropertySchema, Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(Resources.TmtTrustBoundaryPropertySchema, Resources.DefaultNamespace);
-                result.AppliesTo = Scope.TrustBoundary;
-                result.Priority = 90;
-                result.Visible = true;
-                result.System = false;
-                result.AutoApply = true;
-                result.Description = Resources.TrustBoundaryPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(Resources.TmtTrustBoundaryPropertySchema, Resources.DefaultNamespace) ??
+                         _model.AddSchema(Resources.TmtTrustBoundaryPropertySchema, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.TrustBoundary;
+            result.Priority = 90;
+            result.Visible = true;
+            result.System = false;
+            result.AutoApply = true;
+            result.Description = Resources.TrustBoundaryPropertySchemaDescription;
 
             return result;
         }

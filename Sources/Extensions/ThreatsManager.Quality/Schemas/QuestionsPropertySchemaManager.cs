@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -27,17 +24,13 @@ namespace ThreatsManager.Quality.Schemas
         [InitializationRequired]
         public IPropertySchema GetSchema()
         {
-            var schema = _model.GetSchema(Questions, Properties.Resources.DefaultNamespace);
-            if (schema == null)
-            {
-                schema = _model.AddSchema(Questions, Properties.Resources.DefaultNamespace);
-                schema.Description = Resources.QuestionsPropertySchemaDescription;
-                schema.Visible = false;
-                schema.AppliesTo = Scope.ThreatModel;
-                schema.System = true;
-                schema.AutoApply = false;
-                schema.NotExportable = false;
-            }
+            var schema = _model.GetSchema(Questions, Resources.DefaultNamespace) ?? _model.AddSchema(Questions, Resources.DefaultNamespace);
+            schema.Description = Resources.QuestionsPropertySchemaDescription;
+            schema.Visible = false;
+            schema.AppliesTo = Scope.ThreatModel;
+            schema.System = true;
+            schema.AutoApply = false;
+            schema.NotExportable = false;
 
             return schema;
         }
@@ -51,14 +44,10 @@ namespace ThreatsManager.Quality.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType(Questions);
-                if (result == null)
-                {
-                    result = schema.AddPropertyType(Questions, PropertyValueType.JsonSerializableObject);
-                    result.DoNotPrint = true;
-                    result.Visible = false;
-                    result.Description = Properties.Resources.QuestionsDescription;
-                }
+                result = schema.GetPropertyType(Questions) ?? schema.AddPropertyType(Questions, PropertyValueType.JsonSerializableObject);
+                result.DoNotPrint = true;
+                result.Visible = false;
+                result.Description = Resources.QuestionsDescription;
             }
 
             return result;

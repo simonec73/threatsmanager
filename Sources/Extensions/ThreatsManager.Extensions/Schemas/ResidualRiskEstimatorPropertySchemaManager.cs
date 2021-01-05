@@ -22,18 +22,14 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.AppliesTo = Scope.ThreatModel;
-                result.AutoApply = false;
-                result.Priority = 100;
-                result.Visible = false;
-                result.System = true;
-                result.NotExportable = true;
-                result.Description = Resources.ResidualRiskEstimatorConfigurationPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.ThreatModel;
+            result.AutoApply = false;
+            result.Priority = 100;
+            result.Visible = false;
+            result.System = true;
+            result.NotExportable = true;
+            result.Description = Resources.ResidualRiskEstimatorConfigurationPropertySchemaDescription;
 
             return result;
         }
@@ -45,15 +41,10 @@ namespace ThreatsManager.Extensions.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType("Selected Estimator");
-                if (result == null)
-                {
-                    result =
-                        schema.AddPropertyType("Selected Estimator", PropertyValueType.SingleLineString);
-                    result.Visible = false;
-                    result.DoNotPrint = true;
-                    result.Description = "Extension Id of the Selected Residual Risk Estimator";
-                }
+                result = schema.GetPropertyType("Selected Estimator") ?? schema.AddPropertyType("Selected Estimator", PropertyValueType.SingleLineString);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = "Extension Id of the Selected Residual Risk Estimator";
             }
 
             return result;
@@ -66,15 +57,10 @@ namespace ThreatsManager.Extensions.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType("Estimator Parameters");
-                if (result == null)
-                {
-                    result =
-                        schema.AddPropertyType("Estimator Parameters", PropertyValueType.JsonSerializableObject);
-                    result.Visible = false;
-                    result.DoNotPrint = true;
-                    result.Description = "Parameters of the Selected Residual Risk Estimator";
-                }
+                result = schema.GetPropertyType("Estimator Parameters") ?? schema.AddPropertyType("Estimator Parameters", PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = "Parameters of the Selected Residual Risk Estimator";
             }
 
             return result;
@@ -87,14 +73,9 @@ namespace ThreatsManager.Extensions.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType("Infinite Cap");
-                if (result == null)
-                {
-                    result =
-                        schema.AddPropertyType("Infinite Cap", PropertyValueType.Decimal);
-                    result.Visible = false;
-                    result.Description = "Infinite Cap for the selected Residual Risk Estimator";
-                }
+                result = schema.GetPropertyType("Infinite Cap") ?? schema.AddPropertyType("Infinite Cap", PropertyValueType.Decimal);
+                result.Visible = false;
+                result.Description = "Infinite Cap for the selected Residual Risk Estimator";
             }
 
             return result;

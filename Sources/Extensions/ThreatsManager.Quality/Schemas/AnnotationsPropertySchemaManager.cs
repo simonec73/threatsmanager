@@ -25,17 +25,13 @@ namespace ThreatsManager.Quality.Schemas
         [InitializationRequired]
         public IPropertySchema GetSchema()
         {
-            var schema = _model.GetSchema(Annotations, Properties.Resources.DefaultNamespace);
-            if (schema == null)
-            {
-                schema = _model.AddSchema(Annotations, Properties.Resources.DefaultNamespace);
-                schema.Description = Resources.AnnotationsPropertySchemaDescription;
-                schema.Visible = true;
-                schema.AppliesTo = Scope.All;
-                schema.System = true;
-                schema.AutoApply = false;
-                schema.NotExportable = true;
-            }
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace) ?? _model.AddSchema(Annotations, Resources.DefaultNamespace);
+            schema.Description = Resources.AnnotationsPropertySchemaDescription;
+            schema.Visible = true;
+            schema.AppliesTo = Scope.All;
+            schema.System = true;
+            schema.AutoApply = false;
+            schema.NotExportable = true;
 
             return schema;
         }
@@ -49,15 +45,11 @@ namespace ThreatsManager.Quality.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType(Annotations);
-                if (result == null)
-                {
-                    result = schema.AddPropertyType(Annotations, PropertyValueType.JsonSerializableObject);
-                    result.DoNotPrint = true;
-                    result.Visible = true;
-                    result.CustomPropertyViewer = "Annotations Property Viewer";
-                    result.Description = Properties.Resources.AnnotationsDescription;
-                }
+                result = schema.GetPropertyType(Annotations) ?? schema.AddPropertyType(Annotations, PropertyValueType.JsonSerializableObject);
+                result.DoNotPrint = true;
+                result.Visible = true;
+                result.CustomPropertyViewer = "Annotations Property Viewer";
+                result.Description = Resources.AnnotationsDescription;
             }
 
             return result;

@@ -19,18 +19,14 @@ namespace ThreatsManager.AutoGenRules.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.AppliesTo = Scope.All;
-                result.AutoApply = false;
-                result.Priority = 10;
-                result.Visible = false;
-                result.System = true;
-                result.NotExportable = false;
-                result.Description = Resources.AutoGenRulePropertySchemaDescription;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.All;
+            result.AutoApply = false;
+            result.Priority = 10;
+            result.Visible = false;
+            result.System = true;
+            result.NotExportable = false;
+            result.Description = Resources.AutoGenRulePropertySchemaDescription;
 
             return result;
         }
@@ -42,14 +38,10 @@ namespace ThreatsManager.AutoGenRules.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType("AutoGenRule");
-                if (result == null)
-                {
-                    result = schema.AddPropertyType("AutoGenRule", PropertyValueType.JsonSerializableObject);
-                    result.Visible = false;
-                    result.DoNotPrint = true;
-                    result.Description = Resources.PropertyAutoGenRule;
-                }
+                result = schema.GetPropertyType("AutoGenRule") ?? schema.AddPropertyType("AutoGenRule", PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Resources.PropertyAutoGenRule;
             }
 
             return result;

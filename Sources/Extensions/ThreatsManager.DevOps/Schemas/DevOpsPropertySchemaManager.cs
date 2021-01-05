@@ -21,18 +21,14 @@ namespace ThreatsManager.DevOps.Schemas
         public IPropertySchema GetPropertySchema()
         {
             IPropertySchema result = _model.GetSchema(Properties.Resources.DevOpsPropertySchema,
+                Properties.Resources.DefaultNamespace) ?? _model.AddSchema(Properties.Resources.DevOpsPropertySchema,
                 Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(Properties.Resources.DevOpsPropertySchema,
-                    Properties.Resources.DefaultNamespace);
-                result.Description = Properties.Resources.DevOpsPropertySchemaDescription;
-                result.Visible = false;
-                result.AppliesTo = Scope.Mitigation;
-                result.System = true;
-                result.AutoApply = false;
-                result.NotExportable = true;
-            }
+            result.Description = Properties.Resources.DevOpsPropertySchemaDescription;
+            result.Visible = false;
+            result.AppliesTo = Scope.Mitigation;
+            result.System = true;
+            result.AutoApply = false;
+            result.NotExportable = true;
 
             return result;
         }
@@ -44,14 +40,10 @@ namespace ThreatsManager.DevOps.Schemas
             var schema = GetPropertySchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType(Properties.Resources.DevOpsInfo);
-                if (result == null)
-                {
-                    result = schema.AddPropertyType(Properties.Resources.DevOpsInfo, PropertyValueType.JsonSerializableObject);
-                    result.Visible = false;
-                    result.DoNotPrint = true;
-                    result.Description = Properties.Resources.DevOpsInfoDescription;
-                }
+                result = schema.GetPropertyType(Properties.Resources.DevOpsInfo) ?? schema.AddPropertyType(Properties.Resources.DevOpsInfo, PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Properties.Resources.DevOpsInfoDescription;
             }
 
             return result;
@@ -167,6 +159,8 @@ namespace ThreatsManager.DevOps.Schemas
                                          string.CompareOrdinal(x.Project, connectionInfo.Project) == 0);
                 if (existing != null)
                     info.Infos.Remove(existing);
+                if (info.Infos == null)
+                    info.Infos = new List<DevOpsConnectionInfo>();
                 info.Infos.Add(connectionInfo);
             }
         }

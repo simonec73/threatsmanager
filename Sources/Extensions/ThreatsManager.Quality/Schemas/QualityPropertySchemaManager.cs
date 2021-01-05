@@ -26,17 +26,14 @@ namespace ThreatsManager.Quality.Schemas
         [InitializationRequired]
         public IPropertySchema GetSchema()
         {
-            var schema = _model.GetSchema(Properties.Resources.SchemaName, Properties.Resources.DefaultNamespace);
-            if (schema == null)
-            {
-                schema = _model.AddSchema(Properties.Resources.SchemaName, Properties.Resources.DefaultNamespace);
-                schema.Description = Resources.QualityPropertySchemaDescription;
-                schema.Visible = false;
-                schema.AppliesTo = Scope.All;
-                schema.System = true;
-                schema.AutoApply = false;
-                schema.NotExportable = true;
-            }
+            var schema = _model.GetSchema(Resources.SchemaName, Resources.DefaultNamespace) ??
+                         _model.AddSchema(Resources.SchemaName, Resources.DefaultNamespace);
+            schema.Description = Resources.QualityPropertySchemaDescription;
+            schema.Visible = false;
+            schema.AppliesTo = Scope.All;
+            schema.System = true;
+            schema.AutoApply = false;
+            schema.NotExportable = true;
 
             return schema;
         }
@@ -51,6 +48,8 @@ namespace ThreatsManager.Quality.Schemas
             if (schema != null)
             {
                 result = schema.GetPropertyType(FalsePositive) ?? schema.AddPropertyType(FalsePositive, PropertyValueType.JsonSerializableObject);
+                result.DoNotPrint = true;
+                result.Visible = false;
             }
 
             return result;
@@ -81,9 +80,9 @@ namespace ThreatsManager.Quality.Schemas
             bool result = false;
 
             if (container is IThreatModelChild threatModelChild &&
-                threatModelChild.Model is IThreatModel model)
+                threatModelChild.Model != null)
             {
-                result = new QualityPropertySchemaManager(model).IsFalsePositive(container, qualityAnalyzer);
+                result = new QualityPropertySchemaManager(threatModelChild.Model).IsFalsePositive(container, qualityAnalyzer);
             }
 
             return result;

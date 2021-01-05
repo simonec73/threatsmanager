@@ -19,18 +19,14 @@ namespace ThreatsManager.DevOps.Schemas
         public IPropertySchema GetPropertySchema()
         {
             IPropertySchema result = _model.GetSchema(Properties.Resources.DevOpsConfigPropertySchema,
+                Properties.Resources.DefaultNamespace) ?? _model.AddSchema(Properties.Resources.DevOpsConfigPropertySchema,
                 Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(Properties.Resources.DevOpsConfigPropertySchema,
-                    Properties.Resources.DefaultNamespace);
-                result.Description = Properties.Resources.DevOpsConfigPropertySchemaDescription;
-                result.Visible = false;
-                result.AppliesTo = Scope.ThreatModel;
-                result.System = true;
-                result.AutoApply = false;
-                result.NotExportable = true;
-            }
+            result.Description = Properties.Resources.DevOpsConfigPropertySchemaDescription;
+            result.Visible = false;
+            result.AppliesTo = Scope.ThreatModel;
+            result.System = true;
+            result.AutoApply = false;
+            result.NotExportable = true;
 
             return result;
         }
@@ -42,14 +38,10 @@ namespace ThreatsManager.DevOps.Schemas
             var schema = GetPropertySchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType(Properties.Resources.DevOpsConfig);
-                if (result == null)
-                {
-                    result = schema.AddPropertyType(Properties.Resources.DevOpsConfig, PropertyValueType.JsonSerializableObject);
-                    result.Visible = false;
-                    result.DoNotPrint = true;
-                    result.Description = Properties.Resources.DevOpsConfigDescription;
-                }
+                result = schema.GetPropertyType(Properties.Resources.DevOpsConfig) ?? schema.AddPropertyType(Properties.Resources.DevOpsConfig, PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Properties.Resources.DevOpsConfigDescription;
             }
 
             return result;

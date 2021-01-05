@@ -20,18 +20,14 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.Description = Properties.Resources.RoadmapPropertySchemaDescription;
-                result.Visible = false;
-                result.System = true;
-                result.Priority = 10;
-                result.AutoApply = false;
-                result.NotExportable = true;
-                result.AppliesTo = Scope.Mitigation;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.Description = Resources.RoadmapPropertySchemaDescription;
+            result.Visible = false;
+            result.System = true;
+            result.Priority = 10;
+            result.AutoApply = false;
+            result.NotExportable = true;
+            result.AppliesTo = Scope.Mitigation;
 
             return result;
         }
@@ -43,14 +39,10 @@ namespace ThreatsManager.Extensions.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType(PropertyName);
-                if (result == null)
-                {
-                    result = schema.AddPropertyType(PropertyName, PropertyValueType.SingleLineString);
-                    result.Description = Resources.PropertyRoadmap;
-                    result.Visible = false;
-                    result.DoNotPrint = true;
-                }
+                result = schema.GetPropertyType(PropertyName) ?? schema.AddPropertyType(PropertyName, PropertyValueType.SingleLineString);
+                result.Description = Resources.PropertyRoadmap;
+                result.Visible = false;
+                result.DoNotPrint = true;
             }
 
             return result;
