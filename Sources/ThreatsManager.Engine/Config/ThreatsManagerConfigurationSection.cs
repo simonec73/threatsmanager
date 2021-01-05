@@ -130,5 +130,12 @@ namespace ThreatsManager.Engine.Config
             get => StatusBar?.TagSplit();
             set => StatusBar = value?.TagConcat();
         }
+
+        [ConfigurationProperty("extensionsConfigFolder")]
+        public string ExtensionsConfigFolder
+        {
+            get => (string) base["extensionsConfigFolder"];
+            set => base["extensionsConfigFolder"] = value;
+        }
     }
 }

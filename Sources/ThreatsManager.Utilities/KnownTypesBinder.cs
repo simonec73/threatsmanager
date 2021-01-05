@@ -17,8 +17,15 @@ namespace ThreatsManager.Utilities
 
         static KnownTypesBinder()
         {
+            AddKnownType(typeof(object));
+            AddKnownType(typeof(bool));
+            AddKnownType(typeof(string));
+            AddKnownType(typeof(int));
+            AddKnownType(typeof(decimal));
+            AddKnownType(typeof(System.Drawing.PointF));
             AddKnownType(typeof(IListItem));
             AddKnownType(typeof(ListItem));
+            AddKnownType(typeof(ExtensionConfiguration));
         }
 
         public static void AddKnownType([NotNull] Type type)

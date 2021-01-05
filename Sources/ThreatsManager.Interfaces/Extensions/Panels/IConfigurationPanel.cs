@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Interfaces.Extensions.Panels
 {
@@ -28,5 +30,24 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
         /// </summary>
         /// <remarks>Best if icon is black. Use Preferred size is 24x24 pixels image or bigger.</remarks>
         Bitmap SelectedIcon { get; }
+
+        /// <summary>
+        /// Get the Configuration objects associated with the Extension.
+        /// </summary>
+        IEnumerable<ConfigurationData> Configuration { get; }
+
+        /// <summary>
+        /// Initialize the Configuration Panel with the folder containing the Extension Configuration files.
+        /// </summary>
+        /// <param name="model">Current Threat Model.</param>
+        /// <param name="configurationFolder">Folder containing the Extension Configuration files,
+        /// which store the global configurations for the Extensions.</param>
+        void Initialize(IThreatModel model, string configurationFolder);
+
+        /// <summary>
+        /// Apply the current configuration.
+        /// </summary>
+        /// <remarks>This is typically called after the configuration changes have been confirmed.</remarks>
+        void Apply();
     }
 }

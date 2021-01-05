@@ -291,12 +291,6 @@ namespace ThreatsManager.Engine
 
         private void InitializeEngineKnownTypes()
         {
-            KnownTypesBinder.AddKnownType(typeof(bool));
-            KnownTypesBinder.AddKnownType(typeof(string));
-            KnownTypesBinder.AddKnownType(typeof(int));
-            KnownTypesBinder.AddKnownType(typeof(decimal));
-            KnownTypesBinder.AddKnownType(typeof(System.Drawing.PointF));
-
             InitializeKnownTypes(Assembly.GetExecutingAssembly());
         }
 
