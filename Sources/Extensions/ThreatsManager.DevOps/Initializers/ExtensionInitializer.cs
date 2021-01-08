@@ -1,4 +1,5 @@
-﻿using ThreatsManager.DevOps.Schemas;
+﻿using ThreatsManager.DevOps.Review;
+using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Utilities;
@@ -17,6 +18,7 @@ namespace ThreatsManager.DevOps.Initializers
             KnownTypesBinder.AddKnownType(typeof(DevOpsWorkItemStateMapping));
             KnownTypesBinder.AddKnownType(typeof(DevOpsFieldMapping));
             KnownTypesBinder.AddKnownType(typeof(DevOpsItemInfo));
+            KnownTypesBinder.AddKnownType(typeof(ReviewInfo));
         }
     }
 }

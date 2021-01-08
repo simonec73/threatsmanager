@@ -8,7 +8,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.Schemas
 {
-    internal class SimplifiedRoadmapPropertySchemaManager
+    public class SimplifiedRoadmapPropertySchemaManager
     {
         private const string SchemaName = "Roadmap";
         private const string PropertyName = "Status";

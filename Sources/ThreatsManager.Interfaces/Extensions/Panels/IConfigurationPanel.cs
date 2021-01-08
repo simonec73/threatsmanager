@@ -11,8 +11,7 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     /// Interface representing a Panel to show Extension-specific configurations.
     /// </summary>
     /// <typeparam name="T">Type representing the Form containing the Panel.</typeparam>
-    [ExtensionDescription("Configuration Panel")]
-    public interface IConfigurationPanel<T> : IExtension, IPanel<T>
+    public interface IConfigurationPanel<T> : IPanel<T>
     {
         /// <summary>
         /// Label to be used to show the Configuration Panel.

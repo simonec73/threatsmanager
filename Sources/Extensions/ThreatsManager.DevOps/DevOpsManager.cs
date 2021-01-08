@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Threading;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -17,10 +15,11 @@ namespace ThreatsManager.DevOps
         private static bool _stopUpdater = false;
         private static bool _updaterExecuting = false;
         private static NotificationType _notificationType;
+        private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
 
         public static event Action<int> RefreshDone;
-
-        private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
+        public static event Action<IThreatModel, IDevOpsConnector> ConnectorAdded;
+        public static event Action<IThreatModel, IDevOpsConnector> ConnectorRemoved;
 
         public static void Register([NotNull] IDevOpsConnector connector, [NotNull] IThreatModel model)
         {
@@ -30,6 +29,8 @@ namespace ThreatsManager.DevOps
             config.RegisterConnection(model, connector);
 
             _connectors.Add(model.Id, connector);
+
+            ConnectorAdded?.Invoke(model, connector);
         }
 
         public static void UpdateConfig([NotNull] IThreatModel model)
@@ -51,6 +52,8 @@ namespace ThreatsManager.DevOps
                 config.UnregisterConnection(model);
 
                 _connectors.Remove(model.Id);
+
+                ConnectorRemoved?.Invoke(model, connector);
             }
         }
 
@@ -143,12 +146,12 @@ namespace ThreatsManager.DevOps
                             .Select(x => x.Value)
                             .FirstOrDefault();
 
-                        if (mitigation != null && info is WorkItemInfo workItemInfo)
+                        if (mitigation != null && info != null)
                         {
                             var oldStatus = schemaManager.GetDevOpsStatus(mitigation, connector);
-                            if (oldStatus != workItemInfo.Status)
+                            if (oldStatus != info.Status)
                             {
-                                schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, workItemInfo.Status);
+                                schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, info.Status);
                                 result++;
                             }
                         }

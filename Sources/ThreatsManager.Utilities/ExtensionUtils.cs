@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Reflection.MethodBody;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -106,7 +104,7 @@ namespace ThreatsManager.Utilities
         /// </summary>
         /// <typeparam name="T">Extension type.</typeparam>
         /// <returns>List of registered Extensions.</returns>
-        public static IEnumerable<T> GetExtensions<T>() where T : class
+        public static IEnumerable<T> GetExtensions<T>() where T : class, IExtension
         {
             IEnumerable<T> result = null;
 
@@ -114,9 +112,8 @@ namespace ThreatsManager.Utilities
             var property = type?.GetProperty("Instance");
             if (property != null)
             {
-                var instance = property.GetValue(null);
-                result = type.GetMethod("GetExtensions")?.MakeGenericMethod(typeof(T))
-                    .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new object[] { }, CultureInfo.InvariantCulture) as IEnumerable<T>;
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtensions<T>();
             }
 
             return result;
@@ -128,7 +125,7 @@ namespace ThreatsManager.Utilities
         /// <typeparam name="T">Extension type.</typeparam>
         /// <param name="extensionId">Identifier of the Extension.</param>
         /// <returns>Registered Extension.</returns>
-        public static T GetExtension<T>([Required] string extensionId) where T : class
+        public static T GetExtension<T>([Required] string extensionId) where T : class, IExtension
         {
             T result = null;
 
@@ -136,9 +133,8 @@ namespace ThreatsManager.Utilities
             var property = type?.GetProperty("Instance");
             if (property != null)
             {
-                var instance = property.GetValue(null);
-                result = type.GetMethod("GetExtension")?.MakeGenericMethod(typeof(T))
-                    .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new [] { (object)extensionId }, CultureInfo.InvariantCulture) as T;
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtension<T>(extensionId);
             }
 
             return result;
@@ -150,7 +146,7 @@ namespace ThreatsManager.Utilities
         /// <typeparam name="T">Extension type.</typeparam>
         /// <param name="label">Label of the Extension.</param>
         /// <returns>Registered Extension.</returns>
-        public static T GetExtensionByLabel<T>([Required] string label) where T : class
+        public static T GetExtensionByLabel<T>([Required] string label) where T : class, IExtension
         {
             T result = null;
 
@@ -158,9 +154,8 @@ namespace ThreatsManager.Utilities
             var property = type?.GetProperty("Instance");
             if (property != null)
             {
-                var instance = property.GetValue(null);
-                result = type.GetMethod("GetExtensionByLabel")?.MakeGenericMethod(typeof(T))
-                    .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new [] { (object)label }, CultureInfo.InvariantCulture) as T;
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtensionByLabel<T>(label);
             }
 
             return result;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.DevOps.Review;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -33,7 +34,8 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
-        public IPropertyType GetPropertyType()
+        #region DevOpsInfo.
+        public IPropertyType GetDevOpsInfoPropertyType()
         {
             IPropertyType result = null;
 
@@ -123,7 +125,7 @@ namespace ThreatsManager.DevOps.Schemas
         {
             DevOpsInfo result = null;
 
-            var propertyType = GetPropertyType();
+            var propertyType = GetDevOpsInfoPropertyType();
             if (propertyType != null)
             {
                 result = (container.GetProperty(propertyType) as IPropertyJsonSerializableObject)?.Value as DevOpsInfo;
@@ -137,7 +139,7 @@ namespace ThreatsManager.DevOps.Schemas
             var info = GetInfo(container);
             if (info == null)
             {
-                var propertyType = GetPropertyType();
+                var propertyType = GetDevOpsInfoPropertyType();
                 if (propertyType != null)
                 {
                     var property = (container.GetProperty(propertyType) as IPropertyJsonSerializableObject) ??
@@ -172,5 +174,58 @@ namespace ThreatsManager.DevOps.Schemas
                                      string.CompareOrdinal(x.Url, connector.Url) == 0 &&
                                      string.CompareOrdinal(x.Project, connector.Project) == 0) as T;
         }
+        #endregion
+
+        #region Review.
+        public IPropertyType GetReviewPropertyType()
+        {
+            IPropertyType result = null;
+
+            var schema = GetPropertySchema();
+            if (schema != null)
+            {
+                result = schema.GetPropertyType(Properties.Resources.Review) ?? schema.AddPropertyType(Properties.Resources.Review, PropertyValueType.JsonSerializableObject);
+                result.Visible = true;
+                result.DoNotPrint = true;
+                result.CustomPropertyViewer = "Backlog Review Property Viewer";
+                result.Description = Properties.Resources.ReviewDescription;
+            }
+
+            return result;
+        }
+
+        public ReviewInfo GetReview([NotNull] IMitigation mitigation)
+        {
+            ReviewInfo result = null;
+
+            var propertyType = GetReviewPropertyType();
+            if (propertyType != null)
+            {
+                var property = mitigation.GetProperty(propertyType) ?? mitigation.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is ReviewInfo reviewInfo)
+                {
+                    result = reviewInfo;
+                }
+            }
+
+            return result;
+        }
+
+        public void SetReview([NotNull] IMitigation mitigation, [NotNull] ReviewInfo info)
+        {
+            ReviewInfo result = null;
+
+            var propertyType = GetReviewPropertyType();
+            if (propertyType != null)
+            {
+                var property = mitigation.GetProperty(propertyType) ?? mitigation.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                {
+                    jsonSerializableObject.Value = info;
+                }
+            }
+        }
+        #endregion
     }
 }

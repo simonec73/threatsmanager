@@ -61,24 +61,6 @@ namespace ThreatsManager.Quality.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Annotations to objects..
-        /// </summary>
-        internal static string AnnotationsDescription {
-            get {
-                return ResourceManager.GetString("AnnotationsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Property Schema that collects properties related to the Quality Extension annotations functionality..
-        /// </summary>
-        internal static string AnnotationsPropertySchemaDescription {
-            get {
-                return ResourceManager.GetString("AnnotationsPropertySchemaDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to https://www.simoneonsecurity.com/tm/2018.
         /// </summary>
         internal static string DefaultNamespace {

@@ -149,5 +149,23 @@ namespace ThreatsManager.DevOps.Properties {
                 return ResourceManager.GetString("PropertyRoadmap", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review.
+        /// </summary>
+        internal static string Review {
+            get {
+                return ResourceManager.GetString("Review", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the decisions related to the inclusion of the Mitigation in the Backlog..
+        /// </summary>
+        internal static string ReviewDescription {
+            get {
+                return ResourceManager.GetString("ReviewDescription", resourceCulture);
+            }
+        }
     }
 }

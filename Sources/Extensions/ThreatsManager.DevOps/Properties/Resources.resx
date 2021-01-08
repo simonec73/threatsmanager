@@ -147,4 +147,10 @@
   <data name="PropertyRoadmap" xml:space="preserve">
     <value>Status of the Mitigation for the Roadmap.</value>
   </data>
+  <data name="Review" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="ReviewDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the decisions related to the inclusion of the Mitigation in the Backlog.</value>
+  </data>
 </root>

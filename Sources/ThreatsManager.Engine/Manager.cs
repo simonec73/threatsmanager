@@ -20,7 +20,7 @@ using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine
 {
-    public partial class Manager : IDesktopAlertAwareExtension
+    public partial class Manager : IExtensionManager, IDesktopAlertAwareExtension
     {
         private static readonly Manager _instance = new Manager();
 

@@ -28,13 +28,52 @@ namespace ThreatsManager.Utilities
         public IEnumerable<ConfigurationData> Data => _configData.AsReadOnly();
 
         /// <summary>
-        /// Get an Extension Configuration Property.
+        /// Get an Extension Configuration Property from the Global configuration.
         /// </summary>
         /// <typeparam name="T">Type of the Property.</typeparam>
         /// <param name="propertyName">Name of the Property.</param>
         /// <param name="defaultValue">[Optional] Default value of the Property, to be used if the property has not been configured yet.</param>
         /// <returns>Value of the property.</returns>
-        public T Get<T>(string propertyName, T defaultValue = default(T))
+        public T GlobalGet<T>(string propertyName, T defaultValue = default(T))
+        {
+            return Get<T>(propertyName, true, defaultValue);
+        }
+
+        /// <summary>
+        /// Get an Extension Configuration Property from the Local configuration.
+        /// </summary>
+        /// <typeparam name="T">Type of the Property.</typeparam>
+        /// <param name="propertyName">Name of the Property.</param>
+        /// <param name="defaultValue">[Optional] Default value of the Property, to be used if the property has not been configured yet.</param>
+        /// <returns>Value of the property.</returns>
+        public T LocalGet<T>(string propertyName, T defaultValue = default(T))
+        {
+            return Get<T>(propertyName, false, defaultValue);
+        }
+
+        /// <summary>
+        /// Set an Extension Configuration Property into the Global configuration.
+        /// </summary>
+        /// <typeparam name="T">Type of the Property.</typeparam>
+        /// <param name="propertyName">Name of the Property.</param>
+        /// <param name="value">Value of the Property.</param>
+        public void GlobalSet<T>(string propertyName, T value)
+        {
+            Set<T>(propertyName, true, value);
+        }
+
+        /// <summary>
+        /// Set an Extension Configuration Property into the Local configuration.
+        /// </summary>
+        /// <typeparam name="T">Type of the Property.</typeparam>
+        /// <param name="propertyName">Name of the Property.</param>
+        /// <param name="value">Value of the Property.</param>
+        public void LocalSet<T>(string propertyName, T value)
+        {
+            Set<T>(propertyName, false, value);
+        }
+
+        private T Get<T>(string propertyName, bool global, T defaultValue)
         {
             T result = defaultValue;
 
@@ -42,7 +81,7 @@ namespace ThreatsManager.Utilities
                 .FirstOrDefault(x => string.CompareOrdinal(x.Name, propertyName) == 0);
             if (cd == null)
             {
-                var c = new ConfigurationData<T>(propertyName, defaultValue, true);
+                var c = new ConfigurationData<T>(propertyName, defaultValue, global);
                 _configData.Add(c);
             } 
             else if (cd is ConfigurationData<T> configValue)
@@ -57,19 +96,13 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        /// <summary>
-        /// Set an Extension Configuration Property.
-        /// </summary>
-        /// <typeparam name="T">Type of the Property.</typeparam>
-        /// <param name="propertyName">Name of the Property.</param>
-        /// <param name="value">Value of the Property.</param>
-        public void Set<T>(string propertyName, T value)
+        private void Set<T>(string propertyName, bool global, T value)
         {
             var cd = _configData
                 .FirstOrDefault(x => string.CompareOrdinal(x.Name, propertyName) == 0);
             if (cd == null)
             {
-                var c = new ConfigurationData<T>(propertyName, value, true);
+                var c = new ConfigurationData<T>(propertyName, value, global);
                 _configData.Add(c);
             } 
             else
@@ -77,5 +110,6 @@ namespace ThreatsManager.Utilities
                 cd.Value = value;
             }
         }
+
     }
 }

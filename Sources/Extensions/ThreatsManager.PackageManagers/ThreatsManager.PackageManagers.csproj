@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="PostSharp" Version="6.7.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
     <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
   </ItemGroup>

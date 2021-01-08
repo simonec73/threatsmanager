@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.DevOps.Schemas
 {
@@ -43,7 +42,8 @@ namespace ThreatsManager.DevOps.Schemas
             if (_identityFieldType == IdentityFieldType.Property)
             {
                 var schema = model.GetSchema(_schemaId);
-                if (schema?.GetPropertyType(_propertyId) is IPropertyType propertyType)
+                var propertyType = schema?.GetPropertyType(_propertyId);
+                if (propertyType != null)
                 {
                     result = new IdentityField(propertyType);
                 }
