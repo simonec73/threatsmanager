@@ -40,9 +40,7 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
         /// Initialize the Configuration Panel with the folder containing the Extension Configuration files.
         /// </summary>
         /// <param name="model">Current Threat Model.</param>
-        /// <param name="configurationFolder">Folder containing the Extension Configuration files,
-        /// which store the global configurations for the Extensions.</param>
-        void Initialize(IThreatModel model, string configurationFolder);
+        void Initialize(IThreatModel model);
 
         /// <summary>
         /// Apply the current configuration.

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
+using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using PostSharp.Patterns.Contracts;
@@ -39,6 +41,7 @@ namespace ThreatsManager.DevOps.Engines
         private readonly Mapper<IdentityField> _workItemFieldMapping = new Mapper<IdentityField>();
         #endregion
 
+        #region Constructors.
         static AzureDevOps()
         {
             TypeDescriptor.AddAttributes(typeof(IdentityDescriptor),
@@ -73,7 +76,8 @@ namespace ThreatsManager.DevOps.Engines
             _workItemFieldMapping.SetStandardMapping("System.Description", new IdentityField(IdentityFieldType.Description));
             _workItemFieldMapping.SetStandardMapping("Microsoft.VSTS.Common.Priority", new IdentityField(IdentityFieldType.Priority));
         }
-
+        #endregion
+        
         public bool IsInitialized => IsConnected();
 
         public override string ToString()
@@ -188,6 +192,23 @@ namespace ThreatsManager.DevOps.Engines
 
         #region Tag management.
         public string Tag { get; set; }
+        #endregion
+
+        #region Iterations Management.
+        public async Task<IEnumerable<Iteration>> GetIterations()
+        {
+            var workHttpClient = _connection.GetClient<WorkHttpClient>();
+
+            var queryResult = workHttpClient.GetTeamIterationsAsync(new TeamContext(_projectId));
+            return (await queryResult)?.Select(x => new Iteration()
+            {
+                Id = x.Id.ToString(),
+                Name = x.Name,
+                Url = x.Url,
+                Start = x.Attributes?.StartDate,
+                End = x.Attributes?.FinishDate
+            });
+        }
         #endregion
 
         #region Work Item Types management.

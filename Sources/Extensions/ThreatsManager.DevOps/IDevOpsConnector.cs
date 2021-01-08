@@ -75,6 +75,14 @@ namespace ThreatsManager.DevOps
         string Tag { get; set; }
         #endregion
 
+        #region Iterations Management.
+        /// <summary>
+        /// Get the Iterations defined for the Project.
+        /// </summary>
+        /// <returns>Enumeration with all the Iterations defined for the Project.</returns>
+        Task<IEnumerable<Iteration>> GetIterations();
+        #endregion
+
         #region Work Item Types management.
         /// <summary>
         /// Get the list of supported Work Item Types.

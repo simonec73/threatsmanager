@@ -25,7 +25,7 @@ namespace ThreatsManager.Utilities
             AddKnownType(typeof(System.Drawing.PointF));
             AddKnownType(typeof(IListItem));
             AddKnownType(typeof(ListItem));
-            AddKnownType(typeof(ExtensionConfiguration));
+            AddKnownType(typeof(ExtensionConfigurationData));
         }
 
         public static void AddKnownType([NotNull] Type type)

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Reflection.MethodBody;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -20,6 +21,7 @@ namespace ThreatsManager.Utilities
     /// </summary>
     public static class ExtensionUtils
     {
+        #region Extension Properties.
         /// <summary>
         /// Get the Extension Identifier.
         /// </summary>
@@ -96,7 +98,9 @@ namespace ThreatsManager.Utilities
                 .Select(x => x.Title)
                 .FirstOrDefault();
         }
+        #endregion
 
+        #region Extension Enumeration.
         /// <summary>
         /// Gets all the Extensions of a specific type loaded by the Platform. 
         /// </summary>
@@ -161,22 +165,27 @@ namespace ThreatsManager.Utilities
 
             return result;
         }
+        #endregion
 
         #region Extensions Configuration.
+        /// <summary>
+        /// Folder where the Extension Configuration files are stored.
+        /// </summary>
+        public static string ExtensionConfigurationFolder;
+
         /// <summary>
         /// Get the specific configuration for an Extension.
         /// </summary>
         /// <param name="model">Current Threat Model.</param>
         /// <param name="extensionId">Identifier of the Extension.</param>
-        /// <param name="folder">Folder containing the Global configuration of the Extension.</param>
         /// <returns>Configuration of the Extension.</returns>
-        public static IEnumerable<ConfigurationData> GetExtensionConfiguration(this IThreatModel model, 
-            [Required] string extensionId, [Required] string folder)
+        public static ExtensionConfiguration GetExtensionConfiguration(this IThreatModel model, 
+            [Required] string extensionId)
         {
             List<ConfigurationData> result = null;
 
             var property = GetExtensionConfigurationProperty(model, extensionId);
-            if (property != null && property.Value is ExtensionConfiguration extensionConfig)
+            if (property != null && property.Value is ExtensionConfigurationData extensionConfig)
             {
                 var configurationData = GetConfigurationArray(extensionConfig, false)?.ToArray();
                 if (configurationData?.Any() ?? false)
@@ -185,7 +194,7 @@ namespace ThreatsManager.Utilities
                 }
             }
 
-            var config = GetGlobalConfiguration(extensionId, folder);
+            var config = GetGlobalConfiguration(extensionId, ExtensionConfigurationFolder);
             if (config?.Properties?.Any() ?? false)
             {
                 var configurationData = GetConfigurationArray(config, true)?.ToArray();
@@ -198,7 +207,7 @@ namespace ThreatsManager.Utilities
                 }
             }
 
-            return result;
+            return new ExtensionConfiguration(result);
         }
 
         /// <summary>
@@ -206,18 +215,19 @@ namespace ThreatsManager.Utilities
         /// </summary>
         /// <param name="model">Current Threat Model.</param>
         /// <param name="extensionId">Identifier of the Extension.</param>
-        /// <param name="folder">Folder containing the Global configuration of the Extension.</param>
         /// <param name="configuration">Configuration of the Extension.</param>
         public static void SetExtensionConfiguration(this IThreatModel model, 
-            [Required] string extensionId, [Required] string folder, IEnumerable<ConfigurationData> configuration)
+            [Required] string extensionId, ExtensionConfiguration configuration)
         {
+            var data = configuration?.Data?.ToArray();
+
             var property = GetExtensionConfigurationProperty(model, extensionId);
             if (property != null)
             {
-                property.Value = GetConfigurationObject(configuration?.Where(x => !x.Global));
+                property.Value = GetConfigurationObject(data?.Where(x => !x.Global));
             }
 
-            SaveGlobalConfiguration(extensionId, folder, GetConfigurationObject(configuration?.Where(x => x.Global)));
+            SaveGlobalConfiguration(extensionId, ExtensionConfigurationFolder, GetConfigurationObject(data?.Where(x => x.Global)));
         }
 
         private static IPropertyJsonSerializableObject GetExtensionConfigurationProperty([NotNull] IThreatModel model, [Required] string extensionId)
@@ -239,14 +249,14 @@ namespace ThreatsManager.Utilities
             return (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
         }
 
-        private static ExtensionConfiguration GetConfigurationObject(IEnumerable<ConfigurationData> configuration)
+        private static ExtensionConfigurationData GetConfigurationObject(IEnumerable<ConfigurationData> configuration)
         {
-            ExtensionConfiguration result = null;
+            ExtensionConfigurationData result = null;
 
             var items = configuration?.ToArray();
             if (items?.Any() ?? false)
             {
-                result = new ExtensionConfiguration()
+                result = new ExtensionConfigurationData()
                 {
                     Properties = items.ToDictionary(x => x.Name, y => y.Value)
                 };
@@ -255,7 +265,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static IEnumerable<ConfigurationData> GetConfigurationArray(ExtensionConfiguration configuration, bool global)
+        private static IEnumerable<ConfigurationData> GetConfigurationArray(ExtensionConfigurationData configuration, bool global)
         {
             IEnumerable<ConfigurationData> result = null;
 
@@ -268,9 +278,9 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static ExtensionConfiguration GetGlobalConfiguration([Required] string extensionId, [Required] string folder)
+        private static ExtensionConfigurationData GetGlobalConfiguration([Required] string extensionId, [Required] string folder)
         {
-            ExtensionConfiguration result = null;
+            ExtensionConfigurationData result = null;
 
             var pathName = Path.Combine(folder, $"{extensionId}.tmg");
 
@@ -282,7 +292,7 @@ namespace ThreatsManager.Utilities
                     {
                         file.CopyTo(ms);
                         var jsonText = Encoding.Unicode.GetString(ms.ToArray());
-                        result = JsonConvert.DeserializeObject<ExtensionConfiguration>(jsonText,
+                        result = JsonConvert.DeserializeObject<ExtensionConfigurationData>(jsonText,
                             new JsonSerializerSettings()
                             {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
@@ -300,7 +310,7 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static void SaveGlobalConfiguration([Required] string extensionId, [Required] string folder, ExtensionConfiguration config)
+        private static void SaveGlobalConfiguration([Required] string extensionId, [Required] string folder, ExtensionConfigurationData config)
         {
             if (!Directory.Exists(folder))
             {
@@ -308,6 +318,9 @@ namespace ThreatsManager.Utilities
             }
 
             var pathName = Path.Combine(folder, $"{extensionId}.tmg");
+
+            if (File.Exists(pathName))
+                File.Delete(pathName);
 
             using (var file = File.OpenWrite(pathName))
             {

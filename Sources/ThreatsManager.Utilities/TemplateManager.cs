@@ -37,6 +37,9 @@ namespace ThreatsManager.Utilities
                     package.Save();
                     break;
                 case ".tmk":
+                    if (File.Exists(path))
+                        File.Delete(path);
+
                     using (var file = File.OpenWrite(path))
                     {
                         using (var writer = new BinaryWriter(file))

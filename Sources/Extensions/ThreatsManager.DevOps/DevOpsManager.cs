@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -11,6 +13,13 @@ namespace ThreatsManager.DevOps
 {
     public static class DevOpsManager
     {
+        private static int _intervalMins;
+        private static bool _stopUpdater = false;
+        private static bool _updaterExecuting = false;
+        private static NotificationType _notificationType;
+
+        public static event Action<int> RefreshDone;
+
         private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
 
         public static void Register([NotNull] IDevOpsConnector connector, [NotNull] IThreatModel model)
@@ -57,12 +66,16 @@ namespace ThreatsManager.DevOps
             return result;
         }
 
-        public static async Task UpdateAsync([NotNull] IThreatModel model)
+        public static async Task<int> UpdateAsync([NotNull] IThreatModel model)
         {
+            int result = 0;
+
             if (_connectors.TryGetValue(model.Id, out var connector) && (connector?.IsConnected() ?? false))
             {
-                await UpdateMitigationsAsync(model, connector);
+                result = await UpdateMitigationsAsync(model, connector);
             }
+
+            return result;
         }
 
         public static IDictionary<IMitigation, WorkItemStatus> GetMitigationsStatus([NotNull] IThreatModel model)
@@ -90,8 +103,27 @@ namespace ThreatsManager.DevOps
             return result;
         }
 
-        private static async Task UpdateMitigationsAsync([NotNull] IThreatModel model, [NotNull] IDevOpsConnector connector)
+        public static async Task StartAutomaticUpdater([NotNull] IThreatModel model, [Range(1, 120)] int intervalMins, NotificationType notificationType)
         {
+            _stopUpdater = false;
+            _intervalMins = intervalMins;
+            _notificationType = notificationType;
+
+            if (!_updaterExecuting)
+            {
+                await AutomaticUpdater(model);
+            }
+        }
+
+        public static void StopAutomaticUpdater()
+        {
+            _stopUpdater = true;
+        }
+
+        private static async Task<int> UpdateMitigationsAsync([NotNull] IThreatModel model, [NotNull] IDevOpsConnector connector)
+        {
+            int result = 0;
+
             var schemaManager = new DevOpsPropertySchemaManager(model);
 
             var mitigations = model.GetUniqueMitigations()?
@@ -113,10 +145,35 @@ namespace ThreatsManager.DevOps
 
                         if (mitigation != null && info is WorkItemInfo workItemInfo)
                         {
-                            schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, workItemInfo.Status);
+                            var oldStatus = schemaManager.GetDevOpsStatus(mitigation, connector);
+                            if (oldStatus != workItemInfo.Status)
+                            {
+                                schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, workItemInfo.Status);
+                                result++;
+                            }
                         }
                     }
                 }
+            }
+
+            return result;
+        }
+
+        private static async Task AutomaticUpdater([NotNull] IThreatModel model)
+        {
+            if (_intervalMins > 0 && _intervalMins <= 120)
+            {
+                do
+                {
+                    var changes = await UpdateAsync(model);
+                    if (_notificationType == NotificationType.Full || 
+                        (_notificationType == NotificationType.SuccessOnly && changes > 0))
+                        RefreshDone?.Invoke(changes);
+
+                    await Task.Delay(_intervalMins * 60000);
+                } while (!_stopUpdater);
+
+                _updaterExecuting = false;
             }
         }
     }
