@@ -22,6 +22,16 @@ namespace ThreatsManager.Engine
 {
     public partial class Manager : IExtensionManager, IDesktopAlertAwareExtension
     {
+        #region Nested objects.
+
+        enum VersionCheckOutcome
+        {
+            NotAnExtensionLibrary,
+            Ok,
+            DoesNotSupportCurrentEngine
+        }
+        #endregion
+
         private static readonly Manager _instance = new Manager();
 
         #region Event management.
@@ -133,51 +143,53 @@ namespace ThreatsManager.Engine
                                     if (except != null && except(assembly))
                                     {
                                         skip = true;
-                                        reason =
-                                            $"Extension library {assembly.FullName} has not been loaded because it is not designed for this client.";
+                                        _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because it is not designed for this client.");
                                     }
 
-                                    if (!skip && CheckVersion(platformVersion, assembly))
+                                    if (!skip)
                                     {
-                                        if (certificates?.Any() ?? false)
+                                        switch (CheckVersion(platformVersion, assembly))
                                         {
-#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-                                            X509Certificate certificate = null;
-                                            try
-                                            {
-                                                certificate = X509Certificate.CreateFromSignedFile(dll);
-                                            }
-                                            catch (CryptographicException)
-                                            {
-                                                _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because it has not been signed.");
-                                            }
-
-                                            if (certificate != null)
-                                            {
-                                                if (certificates.Any(x =>
-                                                    string.Compare(x.Thumbprint,
-                                                        new X509Certificate2(certificate).Thumbprint,
-                                                        StringComparison.InvariantCultureIgnoreCase) == 0))
+                                            case VersionCheckOutcome.Ok:
+                                                if (certificates?.Any() ?? false)
                                                 {
-                                                    _extensionsManager.AddExtensionsAssembly(dll);
+#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
+                                                    X509Certificate certificate = null;
+                                                    try
+                                                    {
+                                                        certificate = X509Certificate.CreateFromSignedFile(dll);
+                                                    }
+                                                    catch (CryptographicException)
+                                                    {
+                                                        _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because it has not been signed.");
+                                                    }
+
+                                                    if (certificate != null)
+                                                    {
+                                                        if (certificates.Any(x =>
+                                                            string.Compare(x.Thumbprint,
+                                                                new X509Certificate2(certificate).Thumbprint,
+                                                                StringComparison.InvariantCultureIgnoreCase) == 0))
+                                                        {
+                                                            _extensionsManager.AddExtensionsAssembly(dll);
+                                                        }
+                                                        else
+                                                        {
+                                                            _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because its signature is not trusted.");
+                                                        }
+                                                    }
+#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
                                                 }
                                                 else
                                                 {
-                                                    _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded because its signature is not trusted.");
+                                                    _extensionsManager.AddExtensionsAssembly(dll);
                                                 }
-                                            }
-#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
+                                                break;
+                                            case VersionCheckOutcome.DoesNotSupportCurrentEngine:
+                                                _showWarning?.Invoke(
+                                                    $"Extension library {assembly.FullName} has not been loaded because it does not target this version of the Platform.");
+                                                break;
                                         }
-                                        else
-                                        {
-                                            _extensionsManager.AddExtensionsAssembly(dll);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _showWarning?.Invoke(
-                                            reason ??
-                                            $"Extension library {assembly.FullName} has not been loaded because it does not target this version of the Platform.");
                                     }
                                 }
                                 catch (FileLoadException)
@@ -195,19 +207,21 @@ namespace ThreatsManager.Engine
             }
         }
 
-        private bool CheckVersion([NotNull] Version platformVersion, [NotNull] Assembly assembly)
+        private VersionCheckOutcome CheckVersion([NotNull] Version platformVersion, [NotNull] Assembly assembly)
         {
-            bool result = false;
+            VersionCheckOutcome result = VersionCheckOutcome.NotAnExtensionLibrary;
 
             var attributes = CustomAttributeData.GetCustomAttributes(assembly);
             if (attributes.Any())
             {
+
                 var typeName = typeof(ExtensionsContainerAttribute).FullName;
                 {
                     foreach (var attribute in attributes)
                     {
                         if (string.CompareOrdinal(attribute.AttributeType.FullName, typeName) == 0)
                         {
+                            result = VersionCheckOutcome.DoesNotSupportCurrentEngine;
                             ExtensionsContainerAttribute attrib = null;
 
                             switch (attribute.ConstructorArguments.Count)
@@ -239,7 +253,7 @@ namespace ThreatsManager.Engine
 
                             if (attrib?.IsApplicableExtensionsContainer(platformVersion) ?? false)
                             {
-                                result = true;
+                                result = VersionCheckOutcome.Ok;
                                 break;
                             }
                         }

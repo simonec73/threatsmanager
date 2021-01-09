@@ -6,7 +6,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
-namespace ThreatsManager.DevOps.Schemas
+namespace ThreatsManager.Extensions.Client.Schemas
 {
     public class SimplifiedRoadmapPropertySchemaManager
     {
@@ -42,7 +42,7 @@ namespace ThreatsManager.DevOps.Schemas
         {
             var result = GetStatusFromProperties(mitigation);
 
-            var tems = mitigation.GetThreatEventMitigations();
+            var tems = mitigation.GetThreatEventMitigations()?.ToArray();
             if (!(tems?.Any() ?? false))
                 result = RoadmapStatus.NotAssessed;
 

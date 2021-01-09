@@ -7,8 +7,8 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.StatusInfoProviders
 {
-    [Extension("E4FEBE50-6D39-408D-8890-262E87C2C053", "DevOps Connector Status Info Provider", 100, ExecutionMode.Business)]
-    public class ConnectorStatus : IStatusInfoProviderExtension
+    [Extension("731CE9F1-6973-4619-A7A7-44654CB0EE78", "DevOps Connection Url Status Info Provider", 100, ExecutionMode.Business)]
+    public class ConnectionUrlStatus : IStatusInfoProviderExtension
     {
         private IThreatModel _model;
         
@@ -28,11 +28,11 @@ namespace ThreatsManager.DevOps.StatusInfoProviders
 
         public string CurrentStatus => GetCurrentStatus(DevOpsManager.GetConnector(_model));
 
-        public string Description => "Status Info Provider showing which DevOps Connector is active.";
+        public string Description => "Status Info Provider showing the Url of the DevOps service.";
 
         public override string ToString()
         {
-            return "DevOps Connector Status";
+            return "DevOps Url";
         }
 
         public void Dispose()
@@ -44,7 +44,7 @@ namespace ThreatsManager.DevOps.StatusInfoProviders
 
         private string GetCurrentStatus(IDevOpsConnector connector)
         {
-            return $"DevOps Connector: {(connector?.ToString() ?? "<Disconnected>")}";
+            return $"DevOps Url: {(connector?.Url ?? "<Disconnected>")}";
         }
 
         private void OnConnectorAdded(IThreatModel model, IDevOpsConnector connector)

@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using ThreatsManager.DevOps.Schemas;
+using ThreatsManager.Extensions.Client.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -90,6 +91,10 @@ namespace ThreatsManager.DevOps.Engines
         #endregion
 
         #region Connection management.
+        public event Action<IDevOpsConnector, string> Connected;
+        public event Action<IDevOpsConnector> Disconnected;
+        public event Action<IDevOpsConnector, string> ProjectOpened;
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public IEnumerable<string> Connect([Required] string url)
         {
@@ -102,6 +107,7 @@ namespace ThreatsManager.DevOps.Engines
                     .ToDictionary(x => x.Name, y => y.Id);
             }
 
+            Connected?.Invoke(this, url);
 
             return _availableProjects.Keys;
         }
@@ -119,6 +125,9 @@ namespace ThreatsManager.DevOps.Engines
                 {
                     Project = project.Value.Key;
                     _projectId = project.Value.Value;
+
+                    ProjectOpened?.Invoke(this, projectName);
+
                     result = true;
                 }
             }
@@ -144,6 +153,8 @@ namespace ThreatsManager.DevOps.Engines
                 _connection.Dispose();
                 _connection = null;
             }
+
+            Disconnected?.Invoke(this);
         }
 
         public bool IsConnected()

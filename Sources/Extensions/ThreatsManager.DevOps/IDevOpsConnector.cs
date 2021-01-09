@@ -19,6 +19,24 @@ namespace ThreatsManager.DevOps
 
         #region Connection management.
         /// <summary>
+        /// Event raised when the DevOps Connector is connected.
+        /// </summary>
+        /// <remarks>The parameters of the connection are the DevOps Connector and the Url of the DevOps Service.</remarks>
+        event Action<IDevOpsConnector, string> Connected;
+
+        /// <summary>
+        /// Event raised when the DevOps Connector is disconnected.
+        /// </summary>
+        /// <remarks>The parameter of the connection is the DevOps Connector.</remarks>
+        event Action<IDevOpsConnector> Disconnected;
+
+        /// <summary>
+        /// Event raised when a Project has been opened.
+        /// </summary>
+        /// <remarks>The parameters of the connection are the DevOps Connector and the name of the project.</remarks>
+        event Action<IDevOpsConnector, string> ProjectOpened;
+
+        /// <summary>
         /// Initiates connection to a DevOps server.
         /// </summary>
         /// <param name="url">Main URL for the server.</param>

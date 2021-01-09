@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
-    <Description>Threats Manager Platform DevOps Integration library.</Description>
+    <Description>Threats Manager Platform Extensions Client library.</Description>
     <AssemblyVersion>1.4.0.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
@@ -22,16 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.153.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.153.0" />
     <PackageReference Include="PostSharp" Version="6.7.11" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
     <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
-    <ProjectReference Include="..\ThreatsManager.Extensions.Client\ThreatsManager.Extensions.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
