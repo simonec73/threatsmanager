@@ -203,6 +203,22 @@ namespace ThreatsManager.DevOps
         /// <param name="status">Desired status.</param>
         /// <returns>Information about the Work Items in the desired status.</returns>
         Task<IEnumerable<WorkItemInfo>> GetWorkItemsInfoAsync(WorkItemStatus status);
+
+        /// <summary>
+        /// Set the state of a Work Item.
+        /// </summary>
+        /// <param name="mitigation">Mitigation associated to the Work Item.</param>
+        /// <param name="newStatus">New status for the Work Item.</param>
+        /// <returns>Information about the Work Item.</returns>
+        Task<bool> SetWorkItemStateAsync(IMitigation mitigation, WorkItemStatus newStatus);
+
+        /// <summary>
+        /// Set the status of a Work Item.
+        /// </summary>
+        /// <param name="id">Identifier of the Work Item.</param>
+        /// <param name="newStatus">New status for the Work Item.</param>
+        /// <returns>Information about the Work Item.</returns>
+        Task<bool> SetWorkItemStateAsync(int id, WorkItemStatus newStatus);
         #endregion
     }
 }

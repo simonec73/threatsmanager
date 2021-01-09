@@ -106,7 +106,45 @@ namespace ThreatsManager.DevOps
             return result;
         }
 
-        public static async Task StartAutomaticUpdater([NotNull] IThreatModel model, [Range(1, 120)] int intervalMins, NotificationType notificationType)
+        public static async Task<bool> SetMitigationsStatusAsync([NotNull] IMitigation mitigation, WorkItemStatus status)
+        {
+            bool result = false;
+
+            var model = mitigation.Model;
+
+            if (model != null)
+            {
+                var connector = GetConnector(model);
+                if (connector?.IsConnected() ?? false)
+                {
+                    var workItemInfo = await connector.GetWorkItemInfoAsync(mitigation).ConfigureAwait(false);
+                    int id;
+                    if (workItemInfo == null)
+                    {
+                        id = await connector.CreateWorkItemAsync(mitigation).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        id = workItemInfo.Id;
+                    }
+
+                    if (id >= 0 && await connector.SetWorkItemStateAsync(id, status).ConfigureAwait(false))
+                    {
+                        var schemaManager = new DevOpsPropertySchemaManager(model);
+                        schemaManager.SetDevOpsStatus(mitigation, connector, id, status);
+                        result = true;
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static async Task StartAutomaticUpdaterAsync([NotNull] IThreatModel model, [Range(1, 120)] int intervalMins, NotificationType notificationType)
         {
             _stopUpdater = false;
             _intervalMins = intervalMins;
