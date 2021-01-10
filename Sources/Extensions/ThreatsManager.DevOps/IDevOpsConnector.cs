@@ -219,6 +219,20 @@ namespace ThreatsManager.DevOps
         /// <param name="newStatus">New status for the Work Item.</param>
         /// <returns>Information about the Work Item.</returns>
         Task<bool> SetWorkItemStateAsync(int id, WorkItemStatus newStatus);
+
+        /// <summary>
+        /// Get the list of comments associated with the Mitigation.
+        /// </summary>
+        /// <param name="mitigation">Mitigation whose comments are to be retrieved.</param>
+        /// <returns>Enumeration of the comments.</returns>
+        Task<IEnumerable<Comment>> GetWorkItemCommentsAsync(IMitigation mitigation);
+
+        /// <summary>
+        /// Get the list of comments associated with a Work Item.
+        /// </summary>
+        /// <param name="id">Identified of the Work Item.</param>
+        /// <returns>Enumeration of the available comments.</returns>
+        Task<IEnumerable<Comment>> GetWorkItemCommentsAsync(int id);
         #endregion
     }
 }

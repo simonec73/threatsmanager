@@ -101,7 +101,7 @@ namespace ThreatsManager.DevOps.Schemas
                     SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
                     {
                         Id = id,
-                        ConnectorId = connector.GetExtensionId(),
+                        ConnectorId = connector.FactoryId,
                         Url = connector.Url,
                         Project = connector.Project,
                         Status = status
@@ -113,7 +113,7 @@ namespace ThreatsManager.DevOps.Schemas
                 SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
                 {
                     Id = id,
-                    ConnectorId = connector.GetExtensionId(),
+                    ConnectorId = connector.FactoryId,
                     Url = connector.Url,
                     Project = connector.Project,
                     Status = status
@@ -170,7 +170,7 @@ namespace ThreatsManager.DevOps.Schemas
         private T GetConnectionInfo<T>([NotNull] DevOpsInfo devOpsInfo, [NotNull] IDevOpsConnector connector) where T : DevOpsConnectionInfo
         {
             return devOpsInfo?.Infos?
-                .FirstOrDefault(x => string.CompareOrdinal(x.ConnectorId, connector.GetExtensionId()) == 0 &&
+                .FirstOrDefault(x => string.CompareOrdinal(x.ConnectorId, connector.FactoryId) == 0 &&
                                      string.CompareOrdinal(x.Url, connector.Url) == 0 &&
                                      string.CompareOrdinal(x.Project, connector.Project) == 0) as T;
         }

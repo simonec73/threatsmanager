@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi.Types;
@@ -79,13 +77,15 @@ namespace ThreatsManager.DevOps.Engines
             _workItemFieldMapping.SetStandardMapping("Microsoft.VSTS.Common.Priority", new IdentityField(IdentityFieldType.Priority));
         }
         #endregion
-        
+
+        #region Other public methods.
         public bool IsInitialized => IsConnected();
 
         public override string ToString()
         {
             return "Microsoft Azure DevOps";
         }
+        #endregion
 
         #region Relationship with Factory.
         public string FactoryId => "0EB212AB-EBA8-483D-A76C-E2D31CEFFCE1";
@@ -568,6 +568,47 @@ namespace ThreatsManager.DevOps.Engines
 
             return await InternalSetWorkItemStateAsync(id, newStatus).ConfigureAwait(false);
         }
+
+        [InitializationRequired]
+        public async Task<IEnumerable<Comment>> GetWorkItemCommentsAsync(IMitigation mitigation)
+        {
+            IEnumerable<Comment> result;
+
+            if (_client == null)
+                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
+
+            try
+            {
+                result = await InternalGetWorkItemCommentsAsync(mitigation).ConfigureAwait(false);
+            }
+            catch
+            {
+                result = null;
+            }
+
+            return result;
+        }
+
+        [InitializationRequired]
+        public async Task<IEnumerable<Comment>> GetWorkItemCommentsAsync(int id)
+        {
+            IEnumerable<Comment> result;
+
+            if (_client == null)
+                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
+
+            try
+            {
+                result = await InternalGetWorkItemCommentsAsync(id).ConfigureAwait(false);
+            }
+            catch
+            {
+                result = null;
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Auxiliary methods.
@@ -810,6 +851,33 @@ namespace ThreatsManager.DevOps.Engines
                 }
 
                 result = list;
+            }
+
+            return result;
+        }
+
+        private async Task<IEnumerable<Comment>> InternalGetWorkItemCommentsAsync(IMitigation mitigation)
+        {
+            IEnumerable<Comment> result = null;
+
+            var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation);
+
+            if (workItemInfo != null)
+            {
+                result = await InternalGetWorkItemCommentsAsync(workItemInfo.Id);
+            }
+
+            return result;
+        }
+
+        private async Task<IEnumerable<Comment>> InternalGetWorkItemCommentsAsync(int id)
+        {
+            IEnumerable<Comment> result = null;
+
+            var items = await _client.GetCommentsAsync(Project, id).ConfigureAwait(false);
+            if ((items?.Count ?? 0) > 0)
+            {
+                result = items.Comments.Select(x => new Comment(x.Text, x.CreatedBy.DisplayName, x.CreatedDate.Date));
             }
 
             return result;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
@@ -128,15 +129,23 @@ namespace ThreatsManager.DevOps
                         id = workItemInfo.Id;
                     }
 
-                    if (id >= 0 && await connector.SetWorkItemStateAsync(id, status).ConfigureAwait(false))
+                    if (id >= 0)
                     {
-                        var schemaManager = new DevOpsPropertySchemaManager(model);
-                        schemaManager.SetDevOpsStatus(mitigation, connector, id, status);
-                        result = true;
+                        if (await connector.SetWorkItemStateAsync(id, status).ConfigureAwait(false))
+                        {
+                            var schemaManager = new DevOpsPropertySchemaManager(model);
+                            schemaManager.SetDevOpsStatus(mitigation, connector, id, status);
+                            result = true;
+                        }
+                        else
+                        {
+                            throw new WorkItemStateChangeException(mitigation,
+                                workItemInfo?.Status ?? WorkItemStatus.Created, status);
+                        }
                     }
                     else
                     {
-                        
+                        throw new WorkItemCreationException(mitigation);
                     }
                 }
             }
