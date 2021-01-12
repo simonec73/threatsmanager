@@ -12,11 +12,13 @@ namespace ThreatsManager.DevOps
 {
     public static class DevOpsManager
     {
+        #region Private member variables.
         private static int _intervalMins;
         private static bool _stopUpdater = false;
         private static bool _updaterExecuting = false;
         private static NotificationType _notificationType;
         private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
+        #endregion
 
         public static event Action<int> RefreshDone;
         public static event Action<IThreatModel, IDevOpsConnector> ConnectorAdded;
@@ -95,11 +97,14 @@ namespace ThreatsManager.DevOps
                 {
                     foreach (var mitigation in mitigations)
                     {
-                        var status = schemaManager.GetDevOpsStatus(mitigation, connector);
+                        var info = schemaManager.GetDevOpsInfo(mitigation, connector);
 
-                        if (result == null)
-                            result = new Dictionary<IMitigation, WorkItemStatus>();
-                        result.Add(mitigation, status);
+                        if (info != null)
+                        {
+                            if (result == null)
+                                result = new Dictionary<IMitigation, WorkItemStatus>();
+                            result.Add(mitigation, info.Status);
+                        }
                     }
                 }
             }
@@ -123,6 +128,7 @@ namespace ThreatsManager.DevOps
                     if (workItemInfo == null)
                     {
                         id = await connector.CreateWorkItemAsync(mitigation).ConfigureAwait(false);
+                        workItemInfo = await connector.GetWorkItemInfoAsync(id).ConfigureAwait(false);
                     }
                     else
                     {
@@ -134,7 +140,7 @@ namespace ThreatsManager.DevOps
                         if (await connector.SetWorkItemStateAsync(id, status).ConfigureAwait(false))
                         {
                             var schemaManager = new DevOpsPropertySchemaManager(model);
-                            schemaManager.SetDevOpsStatus(mitigation, connector, id, status);
+                            schemaManager.SetDevOpsStatus(mitigation, connector, id, workItemInfo?.Url, status);
                             result = true;
                         }
                         else
@@ -177,28 +183,28 @@ namespace ThreatsManager.DevOps
             var schemaManager = new DevOpsPropertySchemaManager(model);
 
             var mitigations = model.GetUniqueMitigations()?
-                .Where(x => schemaManager.GetDevOpsId(x, connector) >= 0)
-                .ToDictionary(x => schemaManager.GetDevOpsId(x, connector), x => x)
+                .ToDictionary(x => x, x => schemaManager.GetDevOpsInfo(x, connector))
                 .ToArray();
             if (mitigations?.Any() ?? false)
             {
-                var infos = await connector.GetWorkItemsInfoAsync(mitigations.Select(x => x.Key));
+                var infos = await connector
+                    .GetWorkItemsInfoAsync(mitigations.Select(x => x.Value.Id));
 
                 if (infos != null)
                 {
                     foreach (var info in infos)
                     {
-                        var mitigation = mitigations
-                            .Where(x => x.Key == info.Id)
-                            .Select(x => x.Value)
-                            .FirstOrDefault();
+                        var pairs = mitigations
+                            .Where(x => x.Value.Id == info.Id)
+                            .ToArray();
 
-                        if (mitigation != null && info != null)
+                        if (pairs.Any())
                         {
-                            var oldStatus = schemaManager.GetDevOpsStatus(mitigation, connector);
-                            if (oldStatus != info.Status)
+                            var pair = pairs.FirstOrDefault();
+
+                            if (pair.Value.Status != info.Status)
                             {
-                                schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, info.Status);
+                                schemaManager.SetDevOpsStatus(pair.Key, connector, info.Id, info.Url, info.Status);
                                 result++;
                             }
                         }

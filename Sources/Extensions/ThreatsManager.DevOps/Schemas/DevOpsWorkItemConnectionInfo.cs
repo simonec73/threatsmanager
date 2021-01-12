@@ -9,5 +9,8 @@ namespace ThreatsManager.DevOps.Schemas
         [JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter))]
         public WorkItemStatus Status { get; set; }
+
+        [JsonProperty("url")]
+        public string ItemUrl { get; set; }
     }
 }

@@ -792,7 +792,7 @@ namespace ThreatsManager.DevOps.Engines
                             status = mappedState;
                         }
 
-                        list.Add(new WorkItemInfo(item.Id.Value, status));
+                        list.Add(new WorkItemInfo(item.Id.Value, item.Url, status));
                     }
                 }
 

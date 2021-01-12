@@ -51,42 +51,21 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
-        public int GetDevOpsId([NotNull] IMitigation mitigation, [NotNull] IDevOpsConnector connector)
+        public DevOpsWorkItemConnectionInfo GetDevOpsInfo([NotNull] IMitigation mitigation, [NotNull] IDevOpsConnector connector)
         {
-            int result = -1;
+            DevOpsWorkItemConnectionInfo result = null;
 
             var info = GetInfo(mitigation);
             if (info != null)
             {
-                var connectionInfo = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
-                if (connectionInfo != null)
-                {
-                    result = connectionInfo.Id;
-                }
-            }
-
-            return result;
-        }
-
-        public WorkItemStatus GetDevOpsStatus([NotNull] IMitigation mitigation, [NotNull] IDevOpsConnector connector)
-        {
-            var result = WorkItemStatus.Unknown;
-
-            var info = GetInfo(mitigation);
-            if (info != null)
-            {
-                var connectionInfo = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
-                if (connectionInfo != null)
-                {
-                    result = connectionInfo.Status;
-                }
+                result = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
             }
 
             return result;
         }
 
         public void SetDevOpsStatus([NotNull] IMitigation mitigation, 
-            [NotNull] IDevOpsConnector connector, int id, WorkItemStatus status)
+            [NotNull] IDevOpsConnector connector, int id, string itemUrl, WorkItemStatus status)
         {
             var info = GetInfo(mitigation);
             if (info != null)
@@ -104,7 +83,8 @@ namespace ThreatsManager.DevOps.Schemas
                         ConnectorId = connector.FactoryId,
                         Url = connector.Url,
                         Project = connector.Project,
-                        Status = status
+                        Status = status,
+                        ItemUrl = itemUrl
                     });
                 }
             }
@@ -116,7 +96,8 @@ namespace ThreatsManager.DevOps.Schemas
                     ConnectorId = connector.FactoryId,
                     Url = connector.Url,
                     Project = connector.Project,
-                    Status = status
+                    Status = status,
+                    ItemUrl = itemUrl
                 });
             }
         }
