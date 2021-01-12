@@ -366,7 +366,8 @@ namespace ThreatsManager.Engine
             var certificates = _configuration.Certificates;
             AddAssemblies(folders, prefixes, certificates, except);
 
-            _extensionsManager.Load();
+            var config = ExtensionsConfigurationManager.GetConfigurationSection();
+            _extensionsManager.Load(!(config?.DisableHelp ?? false));
             _extensionsManager.SetExecutionMode(mode);
             _configuration.Initialize(_extensionsManager);
 

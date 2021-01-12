@@ -66,6 +66,9 @@ namespace ThreatsManager.Engine.Config
 
         [XmlAttribute("extensionsConfigFolder"), DefaultValue(null)]
         public string ExtensionsConfigFolder { get; set; }
+
+        [XmlAttribute("disableHelp"), DefaultValue(false)]
+        public bool DisableHelp { get; set; }
     }
 
     public class KnownDocumentInfo

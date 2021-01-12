@@ -38,7 +38,7 @@ namespace ThreatsManager.Engine
             _executionMode = executionMode;
         }
 
-        public void Load()
+        public void Load(bool loadHelp)
         {
             //Create the CompositionContainer with the parts in the catalog  
             _container = new CompositionContainer(_catalog);
@@ -47,7 +47,8 @@ namespace ThreatsManager.Engine
             try
             {
                 _container.ComposeParts(this);
-                LoadHelpConfiguration();
+                if (loadHelp)
+                    LoadHelpConfiguration();
             }
             catch (ReflectionTypeLoadException ex)
             {
