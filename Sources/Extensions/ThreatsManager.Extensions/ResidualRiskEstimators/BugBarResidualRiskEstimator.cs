@@ -176,7 +176,7 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
         }
 
         public float GetAcceptableRisk([NotNull] IThreatModel model,
-            IDictionary<string, float> parameters, float infinite)
+            IDictionary<string, float> parameters, float infinite, int normalizationReference)
         {
             float result = 0f;
 
@@ -199,6 +199,9 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
                     }
                 }
             }
+
+            if (normalizationReference > 0)
+                result *= ((float) ((model.Entities?.Count() ?? 0) + (model.DataFlows?.Count() ?? 0))) / (float)normalizationReference;
 
             return result;
         }

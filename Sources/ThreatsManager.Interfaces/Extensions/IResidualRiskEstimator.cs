@@ -54,8 +54,13 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <param name="model">Model to be analyzed.</param>
         /// <param name="parameters">Parameters of the calculation.</param>
         /// <param name="infinite">Value to be used to represent infinite/unlimited.</param>
+        /// <param name="normalizationReference">Normalization Reference.<para/>
+        /// The Normalization Reference indicates the number of objects for which the Acceptable Risk is defined.<para/>
+        /// For example, if the Normalization Reference is 40 and you have only 8 Entities and 12 Flows, then the Acceptable Risk level is halved.<para/>
+        /// Analogously, if the Normalization Reference is 40 and you have 30 Entities and 50 Flows, then the Acceptable Risk level is doubled.<para/>
+        /// If it is 0, then no normalization is applied.</param>
         /// <returns>Evaluation of the Acceptable Risk.</returns>
         /// <remarks>The value of the parameters can be negative, to express an unlimited value.</remarks>
-        float GetAcceptableRisk(IThreatModel model, IDictionary<string, float> parameters, float infinite);
+        float GetAcceptableRisk(IThreatModel model, IDictionary<string, float> parameters, float infinite, int normalizationReference);
     }
 }
