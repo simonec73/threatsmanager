@@ -68,5 +68,23 @@ namespace ThreatsManager.Extensions.Client.Properties {
                 return ResourceManager.GetString("DefaultNamespace", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status of the Mitigation for the Roadmap..
+        /// </summary>
+        internal static string PropertyRoadmap {
+            get {
+                return ResourceManager.GetString("PropertyRoadmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema to store the Roadmap Status for Mitigations..
+        /// </summary>
+        internal static string RoadmapPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("RoadmapPropertySchemaDescription", resourceCulture);
+            }
+        }
     }
 }

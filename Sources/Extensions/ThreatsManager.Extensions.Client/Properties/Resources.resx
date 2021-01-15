@@ -120,4 +120,10 @@
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
   </data>
+  <data name="PropertyRoadmap" xml:space="preserve">
+    <value>Status of the Mitigation for the Roadmap.</value>
+  </data>
+  <data name="RoadmapPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema to store the Roadmap Status for Mitigations.</value>
+  </data>
 </root>

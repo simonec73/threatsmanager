@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Client.Properties;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -8,21 +10,30 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Client.Schemas
 {
-    public class SimplifiedRoadmapPropertySchemaManager
+    public class RoadmapPropertySchemaManager
     {
         private const string SchemaName = "Roadmap";
         private const string PropertyName = "Status";
 
         private readonly IThreatModel _model;
 
-        public SimplifiedRoadmapPropertySchemaManager([NotNull] IThreatModel model)
+        public RoadmapPropertySchemaManager([NotNull] IThreatModel model)
         {
             _model = model;
         }
 
         public IPropertySchema GetSchema()
         {
-            return _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.Description = Resources.RoadmapPropertySchemaDescription;
+            result.Visible = false;
+            result.System = true;
+            result.Priority = 10;
+            result.AutoApply = false;
+            result.NotExportable = true;
+            result.AppliesTo = Scope.Mitigation;
+
+            return result;
         }
 
         public IPropertyType GetPropertyType()
@@ -32,7 +43,10 @@ namespace ThreatsManager.Extensions.Client.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType(PropertyName);
+                result = schema.GetPropertyType(PropertyName) ?? schema.AddPropertyType(PropertyName, PropertyValueType.SingleLineString);
+                result.Description = Resources.PropertyRoadmap;
+                result.Visible = false;
+                result.DoNotPrint = true;
             }
 
             return result;

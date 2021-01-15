@@ -712,7 +712,7 @@ namespace ThreatsManager.DevOps.Engines
 
             if (mitigation.Model is IThreatModel model)
             {
-                var roadmapSchemaManager = new SimplifiedRoadmapPropertySchemaManager(model);
+                var roadmapSchemaManager = new RoadmapPropertySchemaManager(model);
                 var roadmapStatus = roadmapSchemaManager.GetStatus(mitigation);
                 switch (roadmapStatus)
                 {
