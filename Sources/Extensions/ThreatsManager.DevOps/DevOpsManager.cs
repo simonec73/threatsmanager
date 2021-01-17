@@ -14,8 +14,8 @@ namespace ThreatsManager.DevOps
     {
         #region Private member variables.
         private static int _intervalMins;
-        private static bool _stopUpdater = false;
-        private static bool _updaterExecuting = false;
+        private static Task _updater;
+        private static bool _stopUpdater;
         private static NotificationType _notificationType;
         private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
         #endregion
@@ -159,21 +159,24 @@ namespace ThreatsManager.DevOps
             return result;
         }
 
-        public static async Task StartAutomaticUpdaterAsync([NotNull] IThreatModel model, [Range(1, 120)] int intervalMins, NotificationType notificationType)
+        public static void StartAutomaticUpdater([NotNull] IThreatModel model, [Range(1, 120)] int intervalMins, NotificationType notificationType)
         {
             _stopUpdater = false;
             _intervalMins = intervalMins;
             _notificationType = notificationType;
 
-            if (!_updaterExecuting)
+            if (_updater == null)
             {
-                await AutomaticUpdater(model);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                _updater = AutomaticUpdater(model);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
         }
 
-        public static void StopAutomaticUpdater()
+        public static bool StopAutomaticUpdater()
         {
             _stopUpdater = true;
+            return _updater?.Wait(3000) ?? true;
         }
 
         private static async Task<int> UpdateMitigationsAsync([NotNull] IThreatModel model, [NotNull] IDevOpsConnector connector)
@@ -188,7 +191,10 @@ namespace ThreatsManager.DevOps
             if (mitigations?.Any() ?? false)
             {
                 var infos = await connector
-                    .GetWorkItemsInfoAsync(mitigations.Select(x => x.Value.Id));
+                    .GetWorkItemsInfoAsync(mitigations
+                        .Select(x => x.Value?.Id ?? -1)
+                        .Where(x => x >= 0)
+                    );
 
                 if (infos != null)
                 {
@@ -229,7 +235,7 @@ namespace ThreatsManager.DevOps
                     await Task.Delay(_intervalMins * 60000);
                 } while (!_stopUpdater);
 
-                _updaterExecuting = false;
+                _updater = null;
             }
         }
     }

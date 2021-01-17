@@ -16,15 +16,16 @@ namespace ThreatsManager.DevOps
         /// Constructor.
         /// </summary>
         /// <param name="serialized">Serialized value of the Item, obtained with <see cref="Serialize"/>.</param>
-        public DevOpsItemInfo([RegularExpression(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)")] string serialized)
+        public DevOpsItemInfo([RegularExpression(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)#(?<WorkItemType>.*)")] string serialized)
         {
-            var regex = new Regex(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)");
+            var regex = new Regex(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)#(?<WorkItemType>.*)");
             var match = regex.Match(serialized);
             if (match.Success && int.TryParse(match.Groups["Id"].Value, out var id))
             {
                 _id = id;
                 _name = match.Groups["Name"].Value;
                 _url = match.Groups["Url"].Value;
+                _workItemType = match.Groups["WorkItemType"].Value;
             }
         }
 
@@ -33,11 +34,14 @@ namespace ThreatsManager.DevOps
         /// </summary>
         /// <param name="id">Identifier of the Item.</param>
         /// <param name="name">Name of the Item.</param>
-        public DevOpsItemInfo([Positive] int id, [Required] string name, [Required] string url)
+        /// <param name="url">Url of the Item.</param>
+        /// <param name="workItemType">Type of the Item.</param>
+        public DevOpsItemInfo([Positive] int id, [Required] string name, [Required] string url, [Required] string workItemType)
         {
             _id = id;
             _name = name;
             _url = url;
+            _workItemType = workItemType;
         }
 
         [JsonProperty("id")]
@@ -55,9 +59,14 @@ namespace ThreatsManager.DevOps
 
         public string Url => _url;
 
+        [JsonProperty("workItemType")]
+        private string _workItemType;
+
+        public string WorkItemType => _workItemType;
+
         public string Serialize()
         {
-            return $"{Id}#{Name}#{Url}";
+            return $"{Id}#{Name}#{Url}#{WorkItemType}";
         }
 
        public override string ToString()

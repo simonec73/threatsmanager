@@ -831,7 +831,7 @@ namespace ThreatsManager.DevOps.Engines
         private async Task<IEnumerable<DevOpsItemInfo>> InternalGetDevOpsItemsInfoAsync([NotNull] IEnumerable<int> ids)
         {
             IEnumerable<DevOpsItemInfo> result = null;
-            var fields = new[] { "System.Id", "System.Title" };
+            var fields = new[] { "System.Id", "System.Title", "System.WorkItemType" };
 
             var items = await _client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
 
@@ -843,9 +843,10 @@ namespace ThreatsManager.DevOps.Engines
                 {
                     if (item.Id.HasValue)
                     {
-                        if (item.Fields.TryGetValue("System.Title", out string title))
+                        if (item.Fields.TryGetValue("System.Title", out string title) && 
+                            item.Fields.TryGetValue("System.WorkItemType", out string workItemType))
                         {
-                            list.Add(new DevOpsItemInfo(item.Id.Value, title, item.Url));
+                            list.Add(new DevOpsItemInfo(item.Id.Value, title, item.Url, workItemType));
                         }
                     }
                 }

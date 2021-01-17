@@ -24,6 +24,11 @@ namespace ThreatsManager.DevOps
         string Url { get; }
 
         /// <summary>
+        /// Type of the Item.
+        /// </summary>
+        string WorkItemType { get; }
+
+        /// <summary>
         /// Serialize the content of the object.
         /// </summary>
         /// <returns>Serialized object.</returns>
