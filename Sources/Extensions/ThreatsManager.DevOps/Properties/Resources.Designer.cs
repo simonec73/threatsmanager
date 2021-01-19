@@ -124,6 +124,24 @@ namespace ThreatsManager.DevOps.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Iterations.
+        /// </summary>
+        internal static string DevOpsIterations {
+            get {
+                return ResourceManager.GetString("DevOpsIterations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the list of Iterations defined for the Threat Model..
+        /// </summary>
+        internal static string DevOpsIterationsDescription {
+            get {
+                return ResourceManager.GetString("DevOpsIterationsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DevOps.
         /// </summary>
         internal static string DevOpsPropertySchema {

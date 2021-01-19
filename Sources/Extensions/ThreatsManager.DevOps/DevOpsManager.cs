@@ -29,7 +29,7 @@ namespace ThreatsManager.DevOps
             Unregister(model);
 
             var config = new DevOpsConfigPropertySchemaManager(model);
-            config.RegisterConnection(model, connector);
+            config.RegisterConnection(connector);
 
             _connectors.Add(model.Id, connector);
 
@@ -41,7 +41,7 @@ namespace ThreatsManager.DevOps
             if (_connectors.TryGetValue(model.Id, out var connector))
             {
                 var config = new DevOpsConfigPropertySchemaManager(model);
-                config.RegisterConnection(model, connector);
+                config.RegisterConnection(connector);
             }
         }
 
@@ -52,7 +52,7 @@ namespace ThreatsManager.DevOps
                 connector.Disconnect();
 
                 var config = new DevOpsConfigPropertySchemaManager(model);
-                config.UnregisterConnection(model);
+                config.UnregisterConnection();
 
                 _connectors.Remove(model.Id);
 
@@ -128,7 +128,8 @@ namespace ThreatsManager.DevOps
                     if (workItemInfo == null)
                     {
                         id = await connector.CreateWorkItemAsync(mitigation).ConfigureAwait(false);
-                        workItemInfo = await connector.GetWorkItemInfoAsync(id).ConfigureAwait(false);
+                        if (id >= 0)
+                            workItemInfo = await connector.GetWorkItemInfoAsync(id).ConfigureAwait(false);
                     }
                     else
                     {

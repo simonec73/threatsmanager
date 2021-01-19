@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -31,7 +32,8 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
-        public IPropertyType GetPropertyType()
+        #region DevOps Connector.
+        public IPropertyType GetPropertyTypeDevOpsConnector()
         {
             IPropertyType result = null;
 
@@ -47,17 +49,17 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
-        public IDevOpsConnector GetDevOpsConnector([NotNull] IThreatModel model, out string url, out string project)
+        public IDevOpsConnector GetDevOpsConnector(out string url, out string project)
         {
             IDevOpsConnector result = null;
             url = null;
             project = null;
 
-            var propertyType = GetPropertyType();
+            var propertyType = GetPropertyTypeDevOpsConnector();
 
             if (propertyType != null)
             {
-                var property = model.GetProperty(propertyType);
+                var property = _model.GetProperty(propertyType);
                 if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
                     jsonSerializableObject.Value is DevOpsConnection connection)
                 {
@@ -85,7 +87,7 @@ namespace ThreatsManager.DevOps.Schemas
                         {
                             foreach (var mapping in workItemFieldMappings)
                             {
-                                result.SetWorkItemFieldMapping(mapping.Field, mapping.GetMappedField(model));
+                                result.SetWorkItemFieldMapping(mapping.Field, mapping.GetMappedField(_model));
                             }
                         }
                     }
@@ -95,13 +97,13 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
-        public void RegisterConnection([NotNull] IThreatModel model, [NotNull] IDevOpsConnector connector)
+        public void RegisterConnection([NotNull] IDevOpsConnector connector)
         {
-            var propertyType = GetPropertyType();
+            var propertyType = GetPropertyTypeDevOpsConnector();
 
             if (propertyType != null)
             {
-                var property = model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null);
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
 
                 if (property is IPropertyJsonSerializableObject jsonSerializableObject)
                 {
@@ -110,17 +112,74 @@ namespace ThreatsManager.DevOps.Schemas
             }
         }
 
-        public void UnregisterConnection([NotNull] IThreatModel model)
+        public void UnregisterConnection()
         {
-            var propertyType = GetPropertyType();
+            var propertyType = GetPropertyTypeDevOpsConnector();
 
             if (propertyType != null)
             {
-                if (model.GetProperty(propertyType) is IPropertyJsonSerializableObject property)
+                if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject property)
                 {
                     property.Value = null;
                 }
             }
         }
+        #endregion
+
+        #region Iterations.
+        public IPropertyType GetPropertyTypeIterations()
+        {
+            IPropertyType result = null;
+
+            var schema = GetPropertySchema();
+            if (schema != null)
+            {
+                result = schema.GetPropertyType(Properties.Resources.DevOpsIterations) ?? 
+                         schema.AddPropertyType(Properties.Resources.DevOpsIterations, PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Properties.Resources.DevOpsIterationsDescription;
+            }
+
+            return result;
+        }
+
+        public IEnumerable<Iteration> GetIterations()
+        {
+            IEnumerable<Iteration> result = null;
+
+            var propertyType = GetPropertyTypeIterations();
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is Iterations iterations)
+                {
+                    result = iterations.Items?.AsReadOnly();
+                }
+            }
+
+            return result;
+        }
+
+        public void SetIterations(IEnumerable<Iteration> iterations)
+        {
+            var propertyType = GetPropertyTypeIterations();
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                {
+                    Iterations container;
+                    if (iterations?.Any() ?? false)
+                        container = new Iterations(iterations);
+                    else
+                        container = null;
+
+                    jsonSerializableObject.Value = container;
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -184,6 +184,11 @@ namespace ThreatsManager.DevOps.Engines
             return !string.IsNullOrWhiteSpace(Project) && !string.IsNullOrEmpty(_url) && _connection != null;
         }
 
+        public bool IsConfigured()
+        {
+            return MasterParent != null && !string.IsNullOrWhiteSpace(WorkItemType) && WorkItemStateMappings.Any() && WorkItemFieldMappings.Any();
+        }
+
         public string Url => _url;
 
         public string Project {get; private set;}
@@ -235,7 +240,7 @@ namespace ThreatsManager.DevOps.Engines
         #endregion
 
         #region Iterations Management.
-        public async Task<IEnumerable<Iteration>> GetIterations()
+        public async Task<IEnumerable<Iteration>> GetIterationsAsync()
         {
             IEnumerable<Iteration> result = null;
 

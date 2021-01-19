@@ -138,6 +138,12 @@
   <data name="DevOpsInfoDescription" xml:space="preserve">
     <value>Property Type containing the metadata with the information related to the associated item in a connected DevOps system.</value>
   </data>
+  <data name="DevOpsIterations" xml:space="preserve">
+    <value>Iterations</value>
+  </data>
+  <data name="DevOpsIterationsDescription" xml:space="preserve">
+    <value>Property Type containing the list of Iterations defined for the Threat Model.</value>
+  </data>
   <data name="DevOpsPropertySchema" xml:space="preserve">
     <value>DevOps</value>
   </data>

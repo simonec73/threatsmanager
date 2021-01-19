@@ -62,6 +62,12 @@ namespace ThreatsManager.DevOps
         bool IsConnected();
 
         /// <summary>
+        /// Check if the Connector is fully configured and operational.
+        /// </summary>
+        /// <returns>True if the connector is fully operational, otherwise false.</returns>
+        bool IsConfigured();
+
+        /// <summary>
         /// Url of the Server to which the Connector is connected.
         /// </summary>
         string Url { get; }
@@ -98,7 +104,7 @@ namespace ThreatsManager.DevOps
         /// Get the Iterations defined for the Project.
         /// </summary>
         /// <returns>Enumeration with all the Iterations defined for the Project.</returns>
-        Task<IEnumerable<Iteration>> GetIterations();
+        Task<IEnumerable<Iteration>> GetIterationsAsync();
         #endregion
 
         #region Work Item Types management.
