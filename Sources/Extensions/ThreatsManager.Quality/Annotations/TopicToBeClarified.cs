@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Quality.Annotations
@@ -23,7 +24,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _askedOn = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 
@@ -37,7 +38,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _askedBy = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 
@@ -54,7 +55,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _answered = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 

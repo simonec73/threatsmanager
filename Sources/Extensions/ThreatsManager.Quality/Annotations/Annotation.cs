@@ -11,7 +11,7 @@ namespace ThreatsManager.Quality.Annotations
         {
             Printable = true;
             CreatedOn = DateTime.Now;
-            CreatedBy = GetUserName();
+            CreatedBy = UserName.GetDisplayName();
         }
 
         [JsonProperty("text")]
@@ -24,7 +24,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _text = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 
@@ -42,20 +42,5 @@ namespace ThreatsManager.Quality.Annotations
 
         [JsonProperty("modifiedBy")]
         public string ModifiedBy { get; protected set; }
-
-        protected string GetUserName()
-        {
-            string result;
-            try
-            {
-                result = UserName.GetDisplayName();
-            }
-            catch
-            {
-                result = Environment.UserName;
-            }
-
-            return result;
-        }
     }
 }

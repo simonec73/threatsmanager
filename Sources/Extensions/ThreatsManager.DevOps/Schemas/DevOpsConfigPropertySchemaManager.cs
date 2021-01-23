@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -178,6 +179,110 @@ namespace ThreatsManager.DevOps.Schemas
 
                     jsonSerializableObject.Value = container;
                 }
+            }
+        }
+
+        public Iteration CurrentIteration
+        {
+            get
+            {
+                Iteration result = null;
+
+                var iterations = GetIterations()?
+                    .OrderBy(x => x.Start)
+                    .ToArray();
+                if (iterations?.Any() ?? false)
+                {
+                    var count = iterations.Length;
+                    var now = DateTime.Now.Date;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var current = iterations.ElementAt(i);
+                        if (current.Start.HasValue && current.End.HasValue &&
+                            now >= current.Start.Value.Date && now <= current.End.Value.Date)
+                        {
+                            result = current;
+                            break;
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public Iteration PreviousIteration
+        {
+            get
+            {
+                Iteration result = null;
+
+                var iterations = GetIterations()?
+                    .OrderBy(x => x.Start)
+                    .ToArray();
+                if (iterations?.Any() ?? false)
+                {
+                    var count = iterations.Length;
+                    var now = DateTime.Now.Date;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var current = iterations.ElementAt(i);
+                        if (current.Start.HasValue && current.End.HasValue &&
+                            now >= current.Start.Value.Date && now <= current.End.Value.Date)
+                        {
+                            if (i > 0)
+                            {
+                                current = iterations.ElementAt(i - 1);
+                                if (current.Start.HasValue && current.End.HasValue)
+                                {
+                                    result = current;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public Iteration NextIteration
+        {
+            get
+            {
+                Iteration result = null;
+
+                var iterations = GetIterations()?
+                    .OrderBy(x => x.Start)
+                    .ToArray();
+                if (iterations?.Any() ?? false)
+                {
+                    var count = iterations.Length;
+                    var now = DateTime.Now;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var current = iterations.ElementAt(i);
+                        if (current.Start.HasValue && current.End.HasValue &&
+                            now >= current.Start.Value.Date && now <= current.End.Value.Date)
+                        {
+                            if (i < count - 1)
+                            {
+                                current = iterations.ElementAt(i + 1);
+                                if (current.Start.HasValue && current.End.HasValue)
+                                {
+                                    result = current;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                return result;
             }
         }
         #endregion

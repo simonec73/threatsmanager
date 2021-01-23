@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Quality.Annotations
 {
@@ -16,7 +17,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _answeredOn = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 
@@ -30,7 +31,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _answeredBy = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 

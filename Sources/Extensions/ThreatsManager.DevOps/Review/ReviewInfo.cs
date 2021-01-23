@@ -19,7 +19,7 @@ namespace ThreatsManager.DevOps.Review
             {
                 _text = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 
@@ -33,7 +33,7 @@ namespace ThreatsManager.DevOps.Review
             {
                 _settledOn = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
 
@@ -47,7 +47,7 @@ namespace ThreatsManager.DevOps.Review
             {
                 _settledBy = value;
                 ModifiedOn = DateTime.Now;
-                ModifiedBy = GetUserName();
+                ModifiedBy = UserName.GetDisplayName();
             }
         }
             
@@ -62,20 +62,5 @@ namespace ThreatsManager.DevOps.Review
 
         [JsonProperty("modifiedBy")]
         public string ModifiedBy { get; protected set; }
-
-        protected string GetUserName()
-        {
-            string result;
-            try
-            {
-                result = UserName.GetDisplayName();
-            }
-            catch
-            {
-                result = Environment.UserName;
-            }
-
-            return result;
-        }
     }
 }

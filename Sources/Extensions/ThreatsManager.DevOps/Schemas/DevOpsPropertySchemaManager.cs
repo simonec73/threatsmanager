@@ -208,5 +208,99 @@ namespace ThreatsManager.DevOps.Schemas
             }
         }
         #endregion
+
+        #region Iterations.
+        public IPropertyType GetIterationFirstSeenPropertyType()
+        {
+            IPropertyType result = null;
+
+            var schema = GetPropertySchema();
+            if (schema != null)
+            {
+                result = schema.GetPropertyType(Properties.Resources.IterationFirstSeen) ?? schema.AddPropertyType(Properties.Resources.IterationFirstSeen, PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Properties.Resources.IterationFirstSeenDescription;
+            }
+
+            return result;
+        }
+
+        public IPropertyType GetMitigationExposurePropertyType()
+        {
+            IPropertyType result = null;
+
+            var schema = GetPropertySchema();
+            if (schema != null)
+            {
+                result = schema.GetPropertyType(Properties.Resources.IterationMitigationExposure) ?? schema.AddPropertyType(Properties.Resources.IterationMitigationExposure, PropertyValueType.SingleLineString);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Properties.Resources.IterationMitigationExposureDescription;
+            }
+
+            return result;
+        }
+
+        public IterationInfo GetFirstSeenOn([NotNull] IMitigation mitigation)
+        {
+            IterationInfo result = null;
+
+            var propertyType = GetIterationFirstSeenPropertyType();
+            if (propertyType != null)
+            {
+                var property = mitigation.GetProperty(propertyType);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is IterationInfo iterationInfo)
+                {
+                    result = iterationInfo;
+                }
+            }
+
+            return result;
+        }
+
+        public void SetFirstSeenOn([NotNull] IMitigation mitigation, [NotNull] Iteration info)
+        {
+            var iterationFirstSeenPropertyType = GetIterationFirstSeenPropertyType();
+            var mitigationExposurePropertyType = GetMitigationExposurePropertyType();
+            if (iterationFirstSeenPropertyType != null && mitigationExposurePropertyType != null)
+            {
+                var propertyFirstSeen = mitigation.GetProperty(iterationFirstSeenPropertyType) ?? mitigation.AddProperty(iterationFirstSeenPropertyType, null);
+                var propertyMitigationExposure = mitigation.GetProperty(mitigationExposurePropertyType) ?? mitigation.AddProperty(mitigationExposurePropertyType, null);
+                if (propertyFirstSeen is IPropertyJsonSerializableObject firstSeen &&
+                    propertyMitigationExposure is IPropertySingleLineString mitigationExposure)
+                {
+                    firstSeen.Value = new IterationInfo(info);
+                    mitigationExposure.StringValue = GetMitigationExposure(mitigation);
+                }
+            }
+        }
+
+        public bool HasChanged([NotNull] IMitigation mitigation)
+        {
+            var result = false;
+
+            var mitigationExposurePropertyType = GetMitigationExposurePropertyType();
+            if (mitigationExposurePropertyType != null)
+            {
+                var propertyMitigationExposure = mitigation.GetProperty(mitigationExposurePropertyType);
+                if (propertyMitigationExposure is IPropertySingleLineString mitigationExposure)
+                {
+                    result = string.CompareOrdinal(mitigationExposure.StringValue, GetMitigationExposure(mitigation)) != 0;
+                }
+            }
+
+            return result;
+        }
+
+        private string GetMitigationExposure([NotNull] IMitigation mitigation)
+        {
+            return _model.GetThreatEventMitigations(mitigation)?
+                .Select(x => x.ThreatEvent.Id.ToString("N"))
+                .OrderBy(x => x)
+                .TagConcat();
+        }
+        #endregion
     }
 }

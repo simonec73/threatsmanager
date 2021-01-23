@@ -160,6 +160,42 @@ namespace ThreatsManager.DevOps.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FirstSeen.
+        /// </summary>
+        internal static string IterationFirstSeen {
+            get {
+                return ResourceManager.GetString("IterationFirstSeen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the information related to the Iteration when the Mitigation has been first seen..
+        /// </summary>
+        internal static string IterationFirstSeenDescription {
+            get {
+                return ResourceManager.GetString("IterationFirstSeenDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MitigationExposure.
+        /// </summary>
+        internal static string IterationMitigationExposure {
+            get {
+                return ResourceManager.GetString("IterationMitigationExposure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the information related to the Iteration when the Mitigation has been changed, by changing its association to Threat Events..
+        /// </summary>
+        internal static string IterationMitigationExposureDescription {
+            get {
+                return ResourceManager.GetString("IterationMitigationExposureDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status of the Mitigation for the Roadmap..
         /// </summary>
         internal static string PropertyRoadmap {
