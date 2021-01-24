@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
-using ThreatsManager.Extensions.Client.Schemas;
+using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;

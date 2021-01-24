@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ThreatsManager.Extensions.Client.Properties {
+namespace ThreatsManager.Extensions.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ThreatsManager.Extensions.Client.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ThreatsManager.Extensions.Client.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ThreatsManager.Extensions.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -75,6 +75,15 @@ namespace ThreatsManager.Extensions.Client.Properties {
         internal static string PropertyRoadmap {
             get {
                 return ResourceManager.GetString("PropertyRoadmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects the configuration of the selected Residual Risk Estimator..
+        /// </summary>
+        internal static string ResidualRiskEstimatorConfigurationPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("ResidualRiskEstimatorConfigurationPropertySchemaDescription", resourceCulture);
             }
         }
         

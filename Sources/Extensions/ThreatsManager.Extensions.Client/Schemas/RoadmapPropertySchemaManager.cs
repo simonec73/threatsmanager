@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Extensions.Client.Properties;
+using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
-namespace ThreatsManager.Extensions.Client.Schemas
+namespace ThreatsManager.Extensions.Schemas
 {
     public class RoadmapPropertySchemaManager
     {

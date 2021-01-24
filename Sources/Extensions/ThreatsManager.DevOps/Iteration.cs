@@ -20,5 +20,10 @@ namespace ThreatsManager.DevOps
 
         [JsonProperty("end")]
         public DateTime? End { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

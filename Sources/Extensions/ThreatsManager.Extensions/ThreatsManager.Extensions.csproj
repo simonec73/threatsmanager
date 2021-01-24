@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
     <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
+    <ProjectReference Include="..\ThreatsManager.Extensions.Client\ThreatsManager.Extensions.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using ThreatsManager.Interfaces;
 
-namespace ThreatsManager.Extensions.Client.Schemas
+namespace ThreatsManager.Extensions.Schemas
 {
     public enum RoadmapStatus
     {

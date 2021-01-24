@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 
-namespace ThreatsManager.Interfaces.Extensions
+namespace ThreatsManager.Extensions
 {
     /// <summary>
     /// Calculator of the estimated Residual Risk.
@@ -62,5 +64,15 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <returns>Evaluation of the Acceptable Risk.</returns>
         /// <remarks>The value of the parameters can be negative, to express an unlimited value.</remarks>
         float GetAcceptableRisk(IThreatModel model, IDictionary<string, float> parameters, float infinite, int normalizationReference);
+
+        /// <summary>
+        /// Get a normalized evaluation of the current risk represented by the solution. 
+        /// </summary>
+        /// <param name="model">Threat Model to be analyzed.</param>
+        /// <returns>Normalized evaluation of the current risk.
+        /// <para>The returned value is normalized, that is independent from the size of the Threat Model, and allows to compare different iterations of the same Threat Model.</para>
+        /// <para>The normalized evaluation is not thought to be used to compare different Threat Models.</para>
+        /// </returns>
+        float GetRiskEvaluation(IThreatModel model);
     }
 }

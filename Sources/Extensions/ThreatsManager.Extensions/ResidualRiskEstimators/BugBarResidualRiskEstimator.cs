@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PostSharp.Patterns.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -124,12 +124,12 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
                                     (mitigations?.Any(y => y == x.MitigationId) ?? false))
                         .Sum(x => x.StrengthId);
                     var newSeverity = model.GetMappedSeverity(
-                        Convert.ToInt32(((float)threatEvent.SeverityId) * 
+                        Convert.ToInt32(((float)threatEvent.SeverityId) *
                                        (100f - Math.Min((mitigationsStrength ?? 0), 100f)) / 100f));
 
                     if (newSeverity != null)
                     {
-                        var newSeverityId = newSeverity.Id == 0 ? (int) DefaultSeverity.Info : newSeverity.Id;
+                        var newSeverityId = newSeverity.Id == 0 ? (int)DefaultSeverity.Info : newSeverity.Id;
                         if (dict.ContainsKey(threatEvent.ThreatTypeId))
                         {
                             if (dict[threatEvent.ThreatTypeId] < newSeverityId)
@@ -166,7 +166,7 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
                 }
             }
 
-            return result;  
+            return result;
         }
 
         public IEnumerable<string> GetAcceptableRiskParameters([NotNull] IThreatModel model)
@@ -201,7 +201,27 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
             }
 
             if (normalizationReference > 0)
-                result *= ((float) ((model.Entities?.Count() ?? 0) + (model.DataFlows?.Count() ?? 0))) / (float)normalizationReference;
+                result *= ((float)((model.Entities?.Count() ?? 0) + (model.DataFlows?.Count() ?? 0))) / (float)normalizationReference;
+
+            return result;
+        }
+
+        public float GetRiskEvaluation(IThreatModel model)
+        {
+            var result = 0f;
+
+            var threatEvents = model.GetThreatEvents()?.ToArray();
+            if (threatEvents?.Any() ?? false)
+            {
+                var totalSeverity = 0;
+
+                foreach (var threatEvent in threatEvents)
+                {
+                    totalSeverity += threatEvent.SeverityId;
+                }
+
+                result = (float)totalSeverity / ((float)((model.Entities?.Count() ?? 0) + (model.DataFlows?.Count() ?? 0)));
+            }
 
             return result;
         }

@@ -138,6 +138,12 @@
   <data name="DevOpsInfoDescription" xml:space="preserve">
     <value>Property Type containing the metadata with the information related to the associated item in a connected DevOps system.</value>
   </data>
+  <data name="DevOpsIterationRisks" xml:space="preserve">
+    <value>IterationRisk</value>
+  </data>
+  <data name="DevOpsIterationRisksDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the evaluation of the risk associated to the Iterations.</value>
+  </data>
   <data name="DevOpsIterations" xml:space="preserve">
     <value>Iterations</value>
   </data>

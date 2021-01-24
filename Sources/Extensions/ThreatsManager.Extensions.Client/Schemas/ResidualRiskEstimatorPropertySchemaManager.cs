@@ -2,7 +2,6 @@
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;

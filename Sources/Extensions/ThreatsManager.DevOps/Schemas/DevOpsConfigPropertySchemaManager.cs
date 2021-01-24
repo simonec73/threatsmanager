@@ -286,5 +286,72 @@ namespace ThreatsManager.DevOps.Schemas
             }
         }
         #endregion
+
+        #region Iterations Risk.
+        public IPropertyType GetPropertyTypeIterationsRisk()
+        {
+            IPropertyType result = null;
+
+            var schema = GetPropertySchema();
+            if (schema != null)
+            {
+                result = schema.GetPropertyType(Properties.Resources.DevOpsIterationRisks) ?? 
+                         schema.AddPropertyType(Properties.Resources.DevOpsIterationRisks, PropertyValueType.JsonSerializableObject);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Properties.Resources.DevOpsIterationRisksDescription;
+            }
+
+            return result;
+        }
+
+        public float GetIterationRisk([NotNull] Iteration iteration)
+        {
+            var result = 0f;
+
+            var propertyType = GetPropertyTypeIterationsRisk();
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is IterationRisks iterationRisks)
+                {
+                    result = iterationRisks.Items?
+                        .FirstOrDefault(x => string.CompareOrdinal(iteration.Id, x.IterationId) == 0)?
+                        .Risk ?? 0f;
+                }
+            }
+
+            return result;
+        }
+
+        public void SetIterationRisk([NotNull] Iteration iteration, float risk)
+        {
+            var propertyType = GetPropertyTypeIterationsRisk();
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is IterationRisks iterationRisks)
+                {
+                    var iterationRisk =
+                        iterationRisks.Items?.FirstOrDefault(x =>
+                            string.CompareOrdinal(iteration.Id, x.IterationId) == 0);
+                    if (iterationRisk != null)
+                    {
+                        iterationRisk.Risk = risk;
+                    }
+                    else
+                    {
+                        if (iterationRisks.Items == null)
+                            iterationRisks.Items = new List<IterationRisk>();
+
+                        iterationRisk = new IterationRisk(iteration, risk);
+                        iterationRisks.Items.Add(iterationRisk);
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -124,6 +124,24 @@ namespace ThreatsManager.DevOps.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IterationRisk.
+        /// </summary>
+        internal static string DevOpsIterationRisks {
+            get {
+                return ResourceManager.GetString("DevOpsIterationRisks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the evaluation of the risk associated to the Iterations..
+        /// </summary>
+        internal static string DevOpsIterationRisksDescription {
+            get {
+                return ResourceManager.GetString("DevOpsIterationRisksDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Iterations.
         /// </summary>
         internal static string DevOpsIterations {

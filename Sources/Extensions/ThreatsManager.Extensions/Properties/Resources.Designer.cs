@@ -375,15 +375,6 @@ namespace ThreatsManager.Extensions.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property Schema that collects the configuration of the selected Residual Risk Estimator..
-        /// </summary>
-        internal static string ResidualRiskEstimatorConfigurationPropertySchemaDescription {
-            get {
-                return ResourceManager.GetString("ResidualRiskEstimatorConfigurationPropertySchemaDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Shape does not refer to an Entity..
         /// </summary>
         internal static string ShapeNotEntityError {
