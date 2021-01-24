@@ -1,0 +1,425 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="save_as" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\save_as.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConsentMessage" xml:space="preserve">
+    <value>This software includes telemetry features to allow the author to receive basic usage information and details about the errors occurring within the application.
+The information sent by the application, include:
+   - Date and Time of the event.
+   - OS version, .NET Runtime version.
+   - CPU Architecture, memory and other system properties.
+   - Command line used to open the software.
+   - Details of the error, including the message and the call stack.
+   - Loaded libraries and their version.
+   - Session duration.
+
+The provided information WILL be used EXCLUSIVELY for troubleshooting, to improve usability and provide a better experience, and WILL NOT be shared with any third party, besides the hosting company for the error tracking platform, Exceptionless.
+
+Even if the errors may include potentially sensitive information as part of the message, the application does NOT intentionally collect any personal information, like the user name, the machine name or the domain name. 
+
+If you do not accept this telemetry usage, please click "NO": Threats Manager Studio will disable the Telemetry. Please note that in this case you will not be able to notify the details of your issues and as a consequence it may be more difficult to fix them.
+You can change your mind at any time, by change the related setting in the Settings.</value>
+  </data>
+  <data name="HideSystemReason" xml:space="preserve">
+    <value>System component</value>
+  </data>
+  <data name="EditMode_Existing" xml:space="preserve">
+    <value>Edit Exiting Component</value>
+  </data>
+  <data name="Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Background.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="door_exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\door_exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="document_empty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\document_empty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ApproveMinorReason" xml:space="preserve">
+    <value>Minor issues, acceptable condition</value>
+  </data>
+  <data name="HideFalsePositiveReason" xml:space="preserve">
+    <value>False positive</value>
+  </data>
+  <data name="ResetGitHubParentChild" xml:space="preserve">
+    <value>All the assessments for selected versions generated by Extensions, GitHub information, versions not found and Alias Relationships (Parent-Children)</value>
+  </data>
+  <data name="ConsentCaption" xml:space="preserve">
+    <value>Consent Required</value>
+  </data>
+  <data name="floppy_disk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\floppy_disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HideTestReason" xml:space="preserve">
+    <value>Component used for the Unit Tests, to do Code Analysis or similar tasks</value>
+  </data>
+  <data name="ResetGitHub" xml:space="preserve">
+    <value>All the assessments for selected version generated by Extensions, plus GitHub information (does not affect Parent)</value>
+  </data>
+  <data name="ResetParent" xml:space="preserve">
+    <value>Alias relationship with Parent Component</value>
+  </data>
+  <data name="ApproveGoodReason" xml:space="preserve">
+    <value>Recent version, no known vulnerabilities</value>
+  </data>
+  <data name="folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\folder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ErrorPanelTypeMismatch" xml:space="preserve">
+    <value>Panel type mismatch.</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Threats Manager Studio</value>
+  </data>
+  <data name="HideProjectReason" xml:space="preserve">
+    <value>Internal component, part of the project</value>
+  </data>
+  <data name="ApprovePerfectReason" xml:space="preserve">
+    <value>Latest version, no known vulnerabilities</value>
+  </data>
+  <data name="folder_open_document" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\folder_open_document.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="gearwheel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\gearwheel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditMode_Create" xml:space="preserve">
+    <value>Create New Component</value>
+  </data>
+  <data name="ResetAll" xml:space="preserve">
+    <value>All the assessments for selected versions, GitHub information, versions not found and Alias Relationships (Parent-Children)</value>
+  </data>
+  <data name="ResetAssessments" xml:space="preserve">
+    <value>All the assessments for selected versions, generated by Extensions (does not affect Parent)</value>
+  </data>
+  <data name="HideAuxiliaryReason" xml:space="preserve">
+    <value>Auxiliary component introduced as a dependency</value>
+  </data>
+  <data name="ResetParentChild" xml:space="preserve">
+    <value>Alias relationship with Children Components</value>
+  </data>
+  <data name="information" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="gearwheels" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\gearwheels.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SolutionTitle" xml:space="preserve">
+    <value>Threats Manager Studio</value>
+  </data>
+  <data name="windows_close_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_white_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_white_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_white_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_white_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_white_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_white_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_white_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_white_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_white_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_white_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_white_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_white_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_sel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_sel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_sel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_sel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_sel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_sel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="windows_close_sel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windows_close_sel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_sel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_sel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_sel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_sel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_sel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_sel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="window_close_sel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\window_close_sel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MicrosoftOnly" xml:space="preserve">
+    <value>*** ATTENTION: this edition of the tool should be shared only with Microsoft employees (FTEs and non-FTEs).</value>
+  </data>
+  <data name="ThirdParties" xml:space="preserve">
+    <value>Threats Manager Studio is available as is, with no specific implicit or explicit guarantee or warranty. See the license for further information.
+
+The tool would have not been possible without the following libraries, listed in alphabetical order: 
+- DevComponents DotNetBar (https://devcomponents.com)
+- Exceptionless (https://exceptionless.com)
+- Keyoti RapidSpell (https://keyoti.com)
+- MathNet Numerics (https://numerics.mathdotnet.com/)
+- Newtonsoft Json (https://newtonsoft.com)
+- NLog (https://nlog-project.org)
+- Northwoods GoDiagram (https://www.nwoods.com)
+- PostSharp (https://www.postsharp.net)
+- Svg (https://github.com/vvvv/svg)
+- Syncfusion WinForms Libraries (https://syncfusion.com)
+
+IMPORTANT: all those libraries are used "as-is" and their authors shall not be considered responsible for any eventual damage caused.</value>
+  </data>
+  <data name="cabinet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cabinet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cabinet_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cabinet_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cabinet_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cabinet_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cabinet_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cabinet_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_frown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_frown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_frown_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_frown_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_frown_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_frown_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_frown_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_frown_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_smile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_smile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_smile_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_smile_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_smile_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_smile_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="emoticon_smile_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\emoticon_smile_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Feedback_ThankYou" xml:space="preserve">
+    <value>Thank you for your feedback!
+Every input is precious to us for improving the Platform for You,
+and this is even more true for constructive criticism.</value>
+  </data>
+  <data name="user_message" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_std" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_std.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_std_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_std_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_std_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_std_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_std_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_std_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_white_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_white_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_white_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_white_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user_message_white_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_message_white_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RansomwareProtectionMessage" xml:space="preserve">
+    <value>It is not possible to write the User Dictionary. If you have configured Ransomware Protection, please mark the Threats Manager Studio as trusted.</value>
+  </data>
+</root>

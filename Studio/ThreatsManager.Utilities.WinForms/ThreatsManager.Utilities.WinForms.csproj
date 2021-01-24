@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\PostSharp.6.7.11\build\PostSharp.props" Condition="Exists('packages\PostSharp.6.7.11\build\PostSharp.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8DA52FE7-E3E4-44BB-85E5-E81A26108155}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ThreatsManager.Utilities.WinForms</RootNamespace>
+    <AssemblyName>ThreatsManager.Utilities.WinForms</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\ThreatsManager.Utilities.WinForms.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\ThreatsManager\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\DotNetBar for Windows Forms\DevComponents.DotNetBar.Layout.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\DotNetBar for Windows Forms\DevComponents.DotNetBar.SuperGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\DotNetBar for Windows Forms\DevComponents.DotNetBar2.dll</HintPath>
+    </Reference>
+    <Reference Include="Fizzler, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4ebff4844e382110, processorArchitecture=MSIL">
+      <HintPath>packages\Fizzler.1.2.0\lib\netstandard2.0\Fizzler.dll</HintPath>
+    </Reference>
+    <Reference Include="Keyoti.RapidSpell.NET4">
+      <HintPath>..\..\..\..\Program Files (x86)\Keyoti Inc\RapidSpell Desktop .NET v6\.NET4_DLLs\Keyoti.RapidSpell.NET4.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=6.7.11.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Redist.6.7.11\lib\net45\PostSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Aggregation.Redist.6.7.11\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Common, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Common.Redist.6.7.11\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Threading, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Threading.Redist.6.7.11\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg, Version=3.1.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>packages\Svg.3.1.1\lib\net452\Svg.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encoding.CodePages.4.7.1\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="ThreatsManager.AutoGenRules">
+      <HintPath>..\..\Build\repo\net472\ThreatsManager.AutoGenRules.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Icons">
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Icons.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Interfaces">
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities">
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Utilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dialogs\GenericIdentityCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GenericIdentityCreationDialog.Designer.cs">
+      <DependentUpon>GenericIdentityCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImageSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImageSelector.Designer.cs">
+      <DependentUpon>ImageSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ItemEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ItemEditorDialog.Designer.cs">
+      <DependentUpon>ItemEditorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MitigationCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\MitigationCreationDialog.Designer.cs">
+      <DependentUpon>MitigationCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MitigationThreatTypeSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\MitigationThreatTypeSelectionDialog.Designer.cs">
+      <DependentUpon>MitigationThreatTypeSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SelectImagesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SelectImagesDialog.Designer.cs">
+      <DependentUpon>SelectImagesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SeverityCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SeverityCreationDialog.Designer.cs">
+      <DependentUpon>SeverityCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\StrengthCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\StrengthCreationDialog.Designer.cs">
+      <DependentUpon>StrengthCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\TextEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\TextEditorDialog.Designer.cs">
+      <DependentUpon>TextEditorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ThreatEventMitigationSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ThreatEventMitigationSelectionDialog.Designer.cs">
+      <DependentUpon>ThreatEventMitigationSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ThreatEventScenarioCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ThreatEventScenarioCreationDialog.Designer.cs">
+      <DependentUpon>ThreatEventScenarioCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ThreatTypeCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ThreatTypeCreationDialog.Designer.cs">
+      <DependentUpon>ThreatTypeCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ThreatTypeMitigationSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ThreatTypeMitigationSelectionDialog.Designer.cs">
+      <DependentUpon>ThreatTypeMitigationSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ThreatTypeSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ThreatTypeSelectionDialog.Designer.cs">
+      <DependentUpon>ThreatTypeSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ItemEditor.Controls.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ItemEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ItemEditor.Designer.cs">
+      <DependentUpon>ItemEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuDefinition.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RichTextBoxSpellAsYouTypeAdapter.cs" />
+    <Compile Include="Rules\BooleanItemContext.cs" />
+    <Compile Include="Rules\ButtonItemContext.cs" />
+    <Compile Include="Rules\ComparisonItemContext.cs" />
+    <Compile Include="Rules\CrossTrustBoundaryItemContext.cs" />
+    <Compile Include="Rules\DataStoreTemplateItemContext.cs" />
+    <Compile Include="Rules\EnumValueItemContext.cs" />
+    <Compile Include="Rules\ExternalInteractorTemplateItemContext.cs" />
+    <Compile Include="Rules\FlowsItemContext.cs" />
+    <Compile Include="Rules\FlowTemplateItemContext.cs" />
+    <Compile Include="Rules\IRuleEditor.cs" />
+    <Compile Include="Rules\ListItemContext.cs" />
+    <Compile Include="Rules\NaryItemContext.cs" />
+    <Compile Include="Rules\ProcessTemplateItemContext.cs" />
+    <Compile Include="Rules\PropertyTypeItemContext.cs" />
+    <Compile Include="Rules\RuleEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Rules\RuleEditor.Designer.cs">
+      <DependentUpon>RuleEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Rules\RuleEditorHelper.cs" />
+    <Compile Include="Rules\TooltipErrorProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Rules\TooltipErrorProvider.Designer.cs">
+      <DependentUpon>TooltipErrorProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Rules\TruismItemContext.cs" />
+    <Compile Include="Rules\TrustBoundaryTemplateItemContext.cs" />
+    <Compile Include="SpellCheckConfig.cs" />
+    <Compile Include="TooltipExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dialogs\GenericIdentityCreationDialog.resx">
+      <DependentUpon>GenericIdentityCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageSelector.resx">
+      <DependentUpon>ImageSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ItemEditorDialog.resx">
+      <DependentUpon>ItemEditorDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\MitigationCreationDialog.resx">
+      <DependentUpon>MitigationCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\MitigationThreatTypeSelectionDialog.resx">
+      <DependentUpon>MitigationThreatTypeSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SelectImagesDialog.resx">
+      <DependentUpon>SelectImagesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SeverityCreationDialog.resx">
+      <DependentUpon>SeverityCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\StrengthCreationDialog.resx">
+      <DependentUpon>StrengthCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\TextEditorDialog.resx">
+      <DependentUpon>TextEditorDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ThreatEventMitigationSelectionDialog.resx">
+      <DependentUpon>ThreatEventMitigationSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ThreatEventScenarioCreationDialog.resx">
+      <DependentUpon>ThreatEventScenarioCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ThreatTypeCreationDialog.resx">
+      <DependentUpon>ThreatTypeCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ThreatTypeMitigationSelectionDialog.resx">
+      <DependentUpon>ThreatTypeMitigationSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ThreatTypeSelectionDialog.resx">
+      <DependentUpon>ThreatTypeSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ItemEditor.resx">
+      <DependentUpon>ItemEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Rules\RuleEditor.resx">
+      <DependentUpon>RuleEditor.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ThreatsManager\ThreatsManager.snk">
+      <Link>ThreatsManager.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_to_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_from.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_from_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_from_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_from_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_to.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_to_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_to_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tag_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tag_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tag_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_and.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_and_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_and_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_and_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_not.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_not_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_not_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_not_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_or.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_or_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_or_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logic_or_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ok.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ok_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ok_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ok_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrows_circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrows_circle_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrows_circle_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrows_circle_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\garbage_can.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\garbage_can_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\garbage_can_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\garbage_can_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\erase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\erase_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\erase_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\erase_small.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\PostSharp.6.7.11\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.6.7.11\build\PostSharp.props'))" />
+    <Error Condition="!Exists('packages\PostSharp.6.7.11\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.6.7.11\build\PostSharp.targets'))" />
+  </Target>
+  <Import Project="packages\PostSharp.6.7.11\build\PostSharp.targets" Condition="Exists('packages\PostSharp.6.7.11\build\PostSharp.targets')" />
+</Project>

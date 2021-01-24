@@ -1,0 +1,282 @@
+﻿
+namespace ThreatsManager.Quality.Panels.Annotations
+{
+    partial class AnnotationsPanel
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            _objects.SelectedIndexChanged -= new System.EventHandler(this._objects_SelectedIndexChanged);
+            _objectTypes.SelectedValueChanged -= new System.EventHandler(this._objectTypes_SelectedValueChanged);
+
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this._left = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._objects = new System.Windows.Forms.ListView();
+            this.ObjectName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this._imageList = new System.Windows.Forms.ImageList(this.components);
+            this._objectTypes = new System.Windows.Forms.ComboBox();
+            this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
+            this._right = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._annotation = new ThreatsManager.Quality.Annotations.AnnotationControl();
+            this._annotationLayoutControlItem = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._properties = new ThreatsManager.Utilities.WinForms.ItemEditor();
+            this.expandableSplitter2 = new DevComponents.DotNetBar.ExpandableSplitter();
+            this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
+            this._left.SuspendLayout();
+            this._right.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _left
+            // 
+            this._left.BackColor = System.Drawing.Color.White;
+            this._left.Controls.Add(this._objects);
+            this._left.Controls.Add(this._objectTypes);
+            this._left.Dock = System.Windows.Forms.DockStyle.Left;
+            this._left.Location = new System.Drawing.Point(0, 0);
+            this._left.Name = "_left";
+            // 
+            // 
+            // 
+            this._left.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
+            this.layoutControlItem1,
+            this.layoutControlItem2});
+            this._left.Size = new System.Drawing.Size(277, 624);
+            this._left.TabIndex = 0;
+            // 
+            // _objects
+            // 
+            this._objects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.ObjectName});
+            this._objects.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this._objects.HideSelection = false;
+            this._objects.Location = new System.Drawing.Point(4, 33);
+            this._objects.Margin = new System.Windows.Forms.Padding(0);
+            this._objects.MultiSelect = false;
+            this._objects.Name = "_objects";
+            this._objects.Size = new System.Drawing.Size(269, 587);
+            this._objects.SmallImageList = this._imageList;
+            this._objects.TabIndex = 1;
+            this._objects.UseCompatibleStateImageBehavior = false;
+            this._objects.View = System.Windows.Forms.View.Details;
+            this._objects.SelectedIndexChanged += new System.EventHandler(this._objects_SelectedIndexChanged);
+            // 
+            // _imageList
+            // 
+            this._imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this._imageList.ImageSize = new System.Drawing.Size(16, 16);
+            this._imageList.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // _objectTypes
+            // 
+            this._objectTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._objectTypes.FormattingEnabled = true;
+            this._objectTypes.Location = new System.Drawing.Point(72, 4);
+            this._objectTypes.Margin = new System.Windows.Forms.Padding(0);
+            this._objectTypes.Name = "_objectTypes";
+            this._objectTypes.Size = new System.Drawing.Size(201, 21);
+            this._objectTypes.TabIndex = 0;
+            this._objectTypes.SelectedValueChanged += new System.EventHandler(this._objectTypes_SelectedValueChanged);
+            // 
+            // layoutControlItem1
+            // 
+            this.layoutControlItem1.Control = this._objectTypes;
+            this.layoutControlItem1.Height = 29;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Text = "Object Type";
+            this.layoutControlItem1.Width = 100;
+            this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem2
+            // 
+            this.layoutControlItem2.Control = this._objects;
+            this.layoutControlItem2.Height = 100;
+            this.layoutControlItem2.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Text = "Label:";
+            this.layoutControlItem2.TextVisible = false;
+            this.layoutControlItem2.Width = 100;
+            this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // expandableSplitter1
+            // 
+            this.expandableSplitter1.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter1.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this.expandableSplitter1.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter1.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter1.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter1.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter1.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter1.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this.expandableSplitter1.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this.expandableSplitter1.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
+            this.expandableSplitter1.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
+            this.expandableSplitter1.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
+            this.expandableSplitter1.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
+            this.expandableSplitter1.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter1.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter1.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter1.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter1.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this.expandableSplitter1.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this.expandableSplitter1.Location = new System.Drawing.Point(277, 0);
+            this.expandableSplitter1.Name = "expandableSplitter1";
+            this.expandableSplitter1.Size = new System.Drawing.Size(6, 624);
+            this.expandableSplitter1.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
+            this.expandableSplitter1.TabIndex = 1;
+            this.expandableSplitter1.TabStop = false;
+            // 
+            // _right
+            // 
+            this._right.BackColor = System.Drawing.Color.White;
+            this._right.Controls.Add(this._annotation);
+            this._right.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._right.Location = new System.Drawing.Point(283, 0);
+            this._right.Name = "_right";
+            // 
+            // 
+            // 
+            this._right.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
+            this._annotationLayoutControlItem});
+            this._right.Size = new System.Drawing.Size(538, 624);
+            this._right.TabIndex = 2;
+            // 
+            // _annotation
+            // 
+            this._annotation.Annotation = null;
+            this._annotation.BackColor = System.Drawing.Color.White;
+            this._annotation.Location = new System.Drawing.Point(4, 4);
+            this._annotation.Margin = new System.Windows.Forms.Padding(0);
+            this._annotation.Name = "_annotation";
+            this._annotation.Size = new System.Drawing.Size(530, 616);
+            this._annotation.TabIndex = 0;
+            // 
+            // _annotationLayoutControlItem
+            // 
+            this._annotationLayoutControlItem.Control = this._annotation;
+            this._annotationLayoutControlItem.Height = 100;
+            this._annotationLayoutControlItem.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this._annotationLayoutControlItem.MinSize = new System.Drawing.Size(64, 18);
+            this._annotationLayoutControlItem.Name = "_annotationLayoutControlItem";
+            this._annotationLayoutControlItem.Text = "Label:";
+            this._annotationLayoutControlItem.TextVisible = false;
+            this._annotationLayoutControlItem.Visible = false;
+            this._annotationLayoutControlItem.Width = 101;
+            this._annotationLayoutControlItem.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _properties
+            // 
+            this._properties.BackColor = System.Drawing.Color.White;
+            this._properties.Dock = System.Windows.Forms.DockStyle.Right;
+            this._properties.Item = null;
+            this._properties.Location = new System.Drawing.Point(827, 0);
+            this._properties.Name = "_properties";
+            this._properties.ReadOnly = false;
+            this._properties.Size = new System.Drawing.Size(309, 624);
+            this._properties.TabIndex = 3;
+            // 
+            // expandableSplitter2
+            // 
+            this.expandableSplitter2.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter2.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this.expandableSplitter2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.expandableSplitter2.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter2.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter2.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter2.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter2.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter2.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this.expandableSplitter2.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this.expandableSplitter2.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
+            this.expandableSplitter2.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
+            this.expandableSplitter2.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
+            this.expandableSplitter2.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
+            this.expandableSplitter2.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter2.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter2.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter2.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter2.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this.expandableSplitter2.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this.expandableSplitter2.Location = new System.Drawing.Point(821, 0);
+            this.expandableSplitter2.Name = "expandableSplitter2";
+            this.expandableSplitter2.Size = new System.Drawing.Size(6, 624);
+            this.expandableSplitter2.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
+            this.expandableSplitter2.TabIndex = 4;
+            this.expandableSplitter2.TabStop = false;
+            // 
+            // _superTooltip
+            // 
+            this._superTooltip.DefaultTooltipSettings = new DevComponents.DotNetBar.SuperTooltipInfo("", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray);
+            this._superTooltip.DelayTooltipHideDuration = 250;
+            this._superTooltip.LicenseKey = "PUT_YOUR_LICENSE_HERE";
+            this._superTooltip.MaximumWidth = 400;
+            // 
+            // AnnotationsPanel
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._right);
+            this.Controls.Add(this.expandableSplitter2);
+            this.Controls.Add(this._properties);
+            this.Controls.Add(this.expandableSplitter1);
+            this.Controls.Add(this._left);
+            this.Name = "AnnotationsPanel";
+            this.Size = new System.Drawing.Size(1136, 624);
+            this._left.ResumeLayout(false);
+            this._right.ResumeLayout(false);
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private DevComponents.DotNetBar.Layout.LayoutControl _left;
+        private DevComponents.DotNetBar.ExpandableSplitter expandableSplitter1;
+        private DevComponents.DotNetBar.Layout.LayoutControl _right;
+        private System.Windows.Forms.ListView _objects;
+        private System.Windows.Forms.ComboBox _objectTypes;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem1;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem2;
+        private Utilities.WinForms.ItemEditor _properties;
+        private DevComponents.DotNetBar.ExpandableSplitter expandableSplitter2;
+        private System.Windows.Forms.ImageList _imageList;
+        private System.Windows.Forms.ColumnHeader ObjectName;
+        private DevComponents.DotNetBar.SuperTooltip _superTooltip;
+        private Quality.Annotations.AnnotationControl _annotation;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem _annotationLayoutControlItem;
+    }
+}

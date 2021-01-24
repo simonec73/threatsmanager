@@ -1,0 +1,2808 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	<xs:element name="Weakness_Catalog">
+		<xs:annotation>
+			<xs:documentation> The Weakness_Catalog structure represents a collection of software
+				security issues (flaws, faults, bugs, vulnerabilities, weaknesses, etc). The name
+				used by CWE is usually "CWE". However, if this collection is a subset of CWE, then a
+				more appropriate name should be used. It has two required attributes: Catalog_Name
+				and Catalog_Version.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Views">
+					<xs:annotation>
+						<xs:documentation> The Views structure contains zero or more View elements.
+							Each View element represents a perspective with which one might look at
+							the weaknesses in CWE. CWE-699 Development View and CWE-1000 Research
+							View are two examples of Views. </xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="View" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Categories">
+					<xs:annotation>
+						<xs:documentation> The Categories structure contains zero or more Category
+							elements. Each Category element represents what used to be referred to
+							in CWE as a "Grouping" entry. That is, a category is now a collection of
+							weaknesses based on a common attribute, such as CWE-310 Cryptographic
+							Issues or CWE-355 User Interface Security Issues. </xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Category" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Weaknesses">
+					<xs:annotation>
+						<xs:documentation> The Weaknesses structure contains zero or more Weakness
+							elements. Each Weakness element represents an actual weakness entry in
+							CWE, such as CWE-311 Failure to Encrypt Sensitive Data or CWE-326 Weak
+							Encryption. </xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Weakness" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Compound_Elements">
+					<xs:annotation>
+						<xs:documentation> The Compound_Elements structure contains zero or more
+							Compound_Element elements. Each Compound_Element represents a meaningful
+							aggregation of several weaknesses, as in a chain like CWE-690: CWE-252
+							Unchecked Return Value can result in CWE-476 NULL Pointer Dereference or
+							as in a composite like CWE-352 Cross-Site Request Forgery.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Compound_Element" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Catalog_Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> Catalog_Name is a required attribute of Weakness_Catalog
+						which identifies the collection of Weaknesses, Views, Categories and
+						Compound_Elements represented by this XML document. </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Catalog_Version" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> Catalog_Version is a required attribute of Weakness_Catalog
+						which identifies what version of @Catalog_Name this XML document represents.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Catalog_Date" type="xs:date">
+				<xs:annotation>
+					<xs:documentation> Catalog_Date is an optional attribute of Weakness_Catalog
+						which identifies the date when this catalog was created or last updated.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="View">
+		<xs:annotation>
+			<xs:documentation> Each View element represents a perspective with which one might look
+				at the weaknesses in CWE. CWE-699 Development Concepts, CWE-1000 Research Concepts
+				and are two examples of Views. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:group ref="View_Attributes"/>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation> The ID attribute provides a unique identifier for the entry.
+						It will be static for the lifetime of the entry. In the event that this
+						entry becomes deprecated, the ID will not be reused and a pointer will be
+						left in this entry to the replacement. This is required for all Views.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> The Name is a descriptive attribute used to give the reader
+						an idea of what perspective this view represents. All words in the name
+						should be capitalized except for articles and prepositions unless they begin
+						or end the name. Subsequent words in a hyphenated chain are also not
+						capitalized. This is required for all Views. </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Status" use="required" type="Status_Type">
+				<xs:annotation>
+					<xs:documentation> The Status attribute defines the status level for this view.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Category">
+		<xs:annotation>
+			<xs:documentation> Each Category element represents what used to be referred to in CWE
+				as a "Grouping" entry. That is, a category is now a collection of weaknesses sharing
+				a common attribute, such as CWE-310 Cryptographic Issues or CWE-355 User Interface
+				Security Issues. The shared attribute may any number of things including, but not
+				limited to, environment (J2EE, .NET), functional area (authentication, cryptography)
+				and the relevant resource (credentials management, certificate issues).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:group ref="Common_Attributes"/>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation> This attribute provides a unique identifier for the entry. It
+						will be static for the lifetime of the entry. In the event that this entry
+						becomes deprecated, the ID will not be reused and a pointer will be left in
+						this entry to the replacement. This is required for all Categories.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> The Name is a descriptive name used to give the reader an
+						idea of what the commonality is amongst the children of this category. All
+						words in the name should be capitalized except for articles and prepositions
+						unless they begin or end the name. Subsequent words in a hyphenated chain
+						are also not capitalized. This is required for all Categories.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Status" use="required" type="Status_Type">
+				<xs:annotation>
+					<xs:documentation> The Status attribute defines the status level for this
+						category. </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Weakness">
+		<xs:annotation>
+			<xs:documentation> Each Weakness element represents an actual weakness entry in CWE,
+				such as CWE-311 Failure to Encrypt Sensitive Data or CWE-326 Weak Encryption.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:group ref="Common_Attributes"/>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation> This attribute provides a unique identifier for the entry. It
+						will be static for the lifetime of the entry. In the event that this entry
+						becomes deprecated, the ID will not be reused and a pointer will be left in
+						this entry to the replacement. This is required for all Weaknesses.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> This attribute is the string which identifies the entry. The
+						name should focus on the weakness being described in the entry and should
+						avoid focusing on the attack which exploits the weakness or the consequences
+						of exploiting the weakness. All words in the entry name should be
+						capitalized except for articles and prepositions unless they begin or end
+						the name. Subsequent words in a hyphenated chain are also not capitalized.
+						This is required for all Weaknesses. </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Weakness_Abstraction" use="required">
+				<xs:annotation>
+					<xs:documentation> The Weakness_Abstraction attribute defines the abstraction
+						level for this weakness. Acceptable values are "Class", which is the most
+						abstract type of Weakness such as CWE-362 Race Conditions, "Base" which is a
+						more specific type of weakness that is still mostly independent of a
+						specific resource or technology such as CWE-567 Unsynchronized Access to
+						Shared Data, and "Variant" which is a weakness specific to a particular
+						resource, technology or context. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Class"/>
+						<xs:enumeration value="Base"/>
+						<xs:enumeration value="Variant"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Status" use="required" type="Status_Type">
+				<xs:annotation>
+					<xs:documentation>The Status attribute defines the status level for this
+						weakness.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Compound_Element">
+		<xs:annotation>
+			<xs:documentation> The Compound_Element structure represents a meaningful aggregation of
+				several weaknesses, as in a chain like CWE-690: CWE-252 Unchecked Return Value can
+				result in CWE-476 NULL Pointer Dereference or as in a composite like CWE-352
+				Cross-Site Request Forgery. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:group ref="Common_Attributes"/>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation> This attribute provides a unique identifier for the entry. It
+						will be static for the lifetime of the entry. In the event that this entry
+						becomes deprecated, the ID will not be reused and a pointer will be left in
+						this entry to the replacement. This is required for all Compound_Elements.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> The Name is a descriptive name used to give the reader an
+						idea of the meaning behind the compound weakness structure. All words in the
+						name should be capitalized except for articles and prepositions unless they
+						begin or end the name. Subsequent words in a hyphenated chain are also not
+						capitalized. This is required for all Compound_Elements. </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Compound_Element_Abstraction" use="required">
+				<xs:annotation>
+					<xs:documentation> The Abstraction defines the abstraction level for this
+						weakness. The abstractions levels for Compound_Elements and Weaknesses are
+						the same. For example, if the Compound_Element is a chain, and all elements
+						of the chain are Class level, then the Compound_Element Abstraction
+						attribute is Class. This is required for all Compound_Elements.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Class"/>
+						<xs:enumeration value="Base"/>
+						<xs:enumeration value="Variant"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Compound_Element_Structure" use="required">
+				<xs:annotation>
+					<xs:documentation> The Structure attribute defines the structural nature of this
+						compound element - that is, composed of other weaknesses concurrently, as in
+						a composite, or consecutively, as in a chain. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Composite"/>
+						<xs:enumeration value="Chain"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Status" use="required" type="Status_Type">
+				<xs:annotation>
+					<xs:documentation> The Status attribute defines the status level for this
+						compound element. </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Relationship">
+		<xs:annotation>
+			<xs:documentation> Each Relationship identifies an association between this structure,
+				whether it is a Weakness, Category, or Compound_Element and another structure. The
+				relationship also identifies the views under which the relationship is applicable.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Relationship_Views" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> This element contains a list of the individual Views to
+							which this relationship pertains. </xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Relationship_View_ID" minOccurs="1"
+								maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation> Specifies the unique ID of the individual
+										view element to which this relationship pertains. This ID
+										must correspond to a View. </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:integer">
+											<xs:attribute name="Ordinal">
+												<xs:annotation>
+												<xs:documentation> The ordinal attribute is used
+												to determine if this relationship is the primary
+												ChildOf relationship for this weakness entry for a
+												given Relationship_View_ID element.. This
+												attribute can only have the value "Primary" and
+												should only be included for the primary
+												parent/child relationship. </xs:documentation>
+												</xs:annotation>
+												<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:enumeration value="Primary"/>
+												</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Relationship_Chains" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> This element contains a list of the individual Chains
+							this relationship pertains to. </xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Relationship_Chain_ID" type="xs:integer" minOccurs="0"
+								maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation> This element specifies the unique ID of an
+										individual chain element this relationship pertains to.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Relationship_Target_Form">
+					<xs:annotation>
+						<xs:documentation>The Relationship_Target_Form element defines the form of
+							the target of this relationship, such as Category, Weakness, View or
+							Compound_Element.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="Category"/>
+							<xs:enumeration value="Weakness"/>
+							<xs:enumeration value="View"/>
+							<xs:enumeration value="Compound_Element"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Relationship_Nature" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> The Relationship_Nature element defines the nature of the
+							relationship between this element and the target element, such as
+							ChildOf, HasMember or Requires to name a few. </xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="HasMember">
+								<xs:annotation>
+									<xs:documentation> This Relationship_Nature denotes the
+										specified weakness as a top level member of this View. This
+										value for Relationship_Nature can only be used in Views. The
+										complementary relationship is MemberOf.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="MemberOf">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes membership of
+										this weakness in the top level of the View specified in
+										Relationship_Target_ID. The complementary relationship is
+										HasMember.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="ChildOf">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes a specified
+										weakness as a parent of this entry. In general, this means
+										that the parent will be a higher level representation of
+										this entry from the perspective of the View provided in
+										Relationship_View_ID. The complementary relationship is
+										ParentOf.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="ParentOf">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes a specified
+										weakness as a child of this entry. In general, this means
+										that the child will be a lower level representation of this
+										entry from the perspective of the View provided in
+										Relationship_View_ID. The complementary relationship is
+										ChildOf.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="PeerOf">
+								<xs:annotation>
+									<xs:documentation> This Relationship_Nature denotes a specified
+										entry as having some similarity with this entry which does
+										not fit any of the other Relationship_Nature values. In this
+										case, a Relationship_Note should also be provided explaining
+										the connection. The complementary relationship is itself
+										(PeerOf).</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="Requires">
+								<xs:annotation>
+									<xs:documentation> This Relationship_Nature denotes a
+										Compound_Element of Compound_Element_Structure="Composite".
+										All entries that a Composite Requires must exist
+										simultaneously in order for the Compound_Element to exist.
+										The complementary relationship is
+										RequiredBy.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="RequiredBy">
+								<xs:annotation>
+									<xs:documentation> This Relationship_Nature denotes an entry
+										that is required in order for the Compound_Element specified
+										in Relationship_Target_ID to exist. The complementary
+										relationship is Requires.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="StartsWith">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes the starting
+										point in this chain as the entry specified by
+										Relationship_Target_ID. This Relationship_Nature can only be
+										used for Compound_Elements with
+										Compound_Element_Structure="Chain". For named chains, the
+										complementary relationship is
+										StartsChain.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="StartsChain">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes this weakness
+										as the starting point in the chain specified in
+										Relationship_Target_ID. For named chains, the complementary
+										relationship is StartsWith.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="CanPrecede">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes a chain where
+										this entry can precede the entry specified by
+										Relationship_Target_ID in a sequential fashion. It is
+										important to note that not all CanPrecede relationships are
+										captured in a Compound_Element chain, only the most common
+										for now. The complementary relationship is
+										CanFollow.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="CanFollow">
+								<xs:annotation>
+									<xs:documentation>This Relationship_Nature denotes a chain where
+										this entry can follow the entry specified by
+										Relationship_Target_ID in a sequential fashion. It is
+										important to note that not all CanFollow relationships are
+										captured in a Compound_Element chain, only the most common
+										for now. The complementary relationship is
+										CanPrecede.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="CanAlsoBe">
+								<xs:annotation>
+									<xs:documentation> This Relationship_Nature denotes an entry
+										that, in the proper environment and context, can also be
+										perceived as the entry specified by Relationship_Target_ID.
+										This relationship is not necessarily reciprocal.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Relationship_Target_ID" type="xs:integer" minOccurs="1"
+					maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>The Relationship_Target_ID specifies the unique ID of the
+							target element of the relationship.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:group name="View_Attributes">
+		<xs:annotation>
+			<xs:documentation> The View_Attributes structure is a collection of common elements
+				which might be shared by all Views. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="View_Structure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The View_Structure element describes how this view is being
+						constructed. Valid values are: Implicit Slice = a slice based on a filter
+						criteria; Explicit Slice = a slice based on arbitrary membership, as defined
+						by specific relationships between entries; Graph = a bounded graphical slice
+						based on ChildOf relationships.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Implicit_Slice"/>
+						<xs:enumeration value="Explicit_Slice"/>
+						<xs:enumeration value="Graph"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="View_Objective" type="Structured_Text_Type" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> The View_Objective element describes the perspective from
+						which this View is constructed. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="View_Audience" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> The View_Audience element provides a reference to the
+						targeted audiences or groups for this view. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Audience" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> The Audience element provides a reference to the
+									target audience or group for this view. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Stakeholder" maxOccurs="1" minOccurs="1">
+										<xs:annotation>
+											<xs:documentation> The Stakeholder element specifies
+												what types of members of the CWE community might be
+												interested in this view. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Developers"/>
+												<xs:enumeration value="Software_Vendors"/>
+												<xs:enumeration value="Assessment_Vendors"/>
+												<xs:enumeration value="Educators"/>
+												<xs:enumeration value="OWGV"/>
+												<xs:enumeration value="SAMATE"/>
+												<xs:enumeration value="CWE_Formalization"/>
+												<xs:enumeration value="CWE_Team"/>
+												<xs:enumeration value="Software_Customers"/>
+												<xs:enumeration value="Assessment_Customers"/>
+												<xs:enumeration value="Academic_Researchers"/>
+												<xs:enumeration value="Applied_Researchers"/>
+												<xs:enumeration value="Information_Providers"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Stakeholder_Description"
+										type="Structured_Text_Type" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation> The Stakeholder_Description element
+												provides some text describing what properties of
+												this View this particular Stakeholder might find
+												useful.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Relationships" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Relationship_Notes" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Maintenance_Notes" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Other_Notes" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Alternate_Terms" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Research_Gaps" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="References" minOccurs="0" type="Reference_List_Type">
+				<xs:annotation>
+					<xs:documentation>The References element contains one or more Reference
+						elements, each of which provide further reading and insight into this view.
+						This should be filled out when the view is based on sources or projects that
+						are external to the CWE project.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="View_Filter" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The View_Filter element holds an XSL query for identifying
+						which elements are members of an implicit slice. This should only be present
+						for implicit slices.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Content_History" minOccurs="1"/>
+		</xs:sequence>
+	</xs:group>
+	<xs:group name="Common_Attributes">
+		<xs:annotation>
+			<xs:documentation> The Common_Attributes structure is a collection of common elements
+				which might be shared by a Weakness, Category or Compound_Element.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Description" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This field provides a description of this Structure, whether
+						it is a Weakness, Category or Compound Element. Its primary subelement is
+						Description_Summary which is intended to serve as a minimalistic description
+						which provides the information necessary to understand the primary focus of
+						this entry. Additionally, it has the subelement Extended_Description which
+						is optional and is used to provide further information pertaining to this
+						weakness. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Description_Summary" type="xs:string" minOccurs="1"
+							maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This description should be short and should limit
+									itself to describing the key points that define this entry.
+									Further explanation can be included in the extended description
+									element. This is required for all entries. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Extended_Description" type="Structured_Text_Type"
+							minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This element provides a place for details
+									important to the description of this entry to be included that
+									are not necessary to convey the fundamental concept behind the
+									entry. This is not required for all entries and should only be
+									included where appropriate. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Relationships" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Relationship_Notes" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Weakness_Ordinalities" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This element contains one or more Weakness_Ordinality
+						elements, each of which describes when this entry is primary - where the
+						weakness exists independent of other weaknesses, or when this entry might be
+						resultant - where the weakness is typically related to the presence of some
+						other weaknesses. This should be filled out for all Weakness Base and
+						Variant entries. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Weakness_Ordinality" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> This element describes when this entry is primary
+									- where the weakness exists independent of other weaknesses, or
+									when this entry might be resultant - where the weakness is
+									typically related to the presence of some other weaknesses. The
+									Ordinality subelement identifies whether or not we are providing
+									context around when this entry is primary, or resultant. The
+									Ordinality_Description contains the description of the context
+									in which this entry is primary or resultant. It is important to
+									note that it is possible for the same entry to be primary in
+									some instances and resultant in others.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Ordinality" minOccurs="1" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation>This element indicates whether this
+												weakness exists independent of other weaknesses,
+												Primary, or whether it is the result of the presence
+												of some other weaknesses,
+												Resultant.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Primary"/>
+												<xs:enumeration value="Resultant"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Ordinality_Description"
+										type="Structured_Text_Type" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation>This element describes context in
+												which this entry is either Primary or Resultant,
+												depending on the corresponding value for
+												Ordinality.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Applicable_Platforms" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This structure contains the Languages, Operating_Systems,
+						Hardware_Architectures, Architectural_Paradigms, Environments,
+						Technology_Classes or Common Platforms on which this entry may exist. This
+						should be filled out as much as possible for all Compound_Element and
+						Weakness entries.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Languages" minOccurs="0" maxOccurs="1"
+							type="Languages_List_Type">
+							<xs:annotation>
+								<xs:documentation>This structure contains one or more Language
+									elements which each represent a language in which this weakness
+									may exist.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Operating_Systems" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This element contains one or more
+									Operating_System subelements which each represent an OS in which
+									this weakness is likely to exist. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Operating_System" minOccurs="0"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												Operating_System in which this entry may exist and
+												with what frequency on the specified OS.
+											</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Operating_System_Name">
+												<xs:annotation>
+												<xs:documentation> This subelement identifies
+												operating systems in which this weakness is likely
+												to exist. </xs:documentation>
+												</xs:annotation>
+												<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Windows Vista"/>
+												<xs:enumeration value="Windows XP"/>
+												<xs:enumeration value="Windows 2000"/>
+												<xs:enumeration value="Solaris"/>
+												<xs:enumeration value="Red Hat Linux"/>
+												<xs:enumeration value="SUSE Linux"/>
+												<xs:enumeration value="Ubuntu Linux"/>
+												<xs:enumeration value="Mac OS X"/>
+												<xs:enumeration value="OpenBSD"/>
+												<xs:enumeration value="FreeBSD"/>
+												<xs:enumeration value="NetBSD"/>
+												</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified operating
+												system.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Operating_System_Class" minOccurs="0"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												class of operating systems, specified in
+												Operating_System_Class_Description, in which this
+												entry may exist. Suggested values include: Linux,
+												Windows, UNIX, BSD, and Mac OS.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Operating_System_Class_Description"
+												type="xs:string">
+												<xs:annotation>
+												<xs:documentation> This subelement identifies
+												families or groups of operating systems in which
+												this weakness is likely to exist.
+												</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified operating
+												system within this operating system
+												class.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Hardware_Architectures" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This element contains one or more
+									Hardware_Architecture subelements which each represent an
+									architecture in which this weakness is likely to exist.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Hardware_Architecture" minOccurs="0"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												Hardware_Architecture on which this entry may exist
+												and with what frequency on the specified
+												architecture. </xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Hardware_Architecture_Name">
+												<xs:annotation>
+												<xs:documentation> This subelement identifies
+												architectures on which this weakness is likely to
+												exist. </xs:documentation>
+												</xs:annotation>
+												<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:enumeration value="x86"/>
+												<xs:enumeration value="SPARC"/>
+												<xs:enumeration value="PowerPC"/>
+												</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified hardware
+												architecture.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Hardware_Architecture_Class" minOccurs="0"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												class of hardware architectures, specified in
+												Hardware_Architecture_Class_Name, in which this
+												entry may exist. </xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Hardware_Architecture_Class_Name"
+												type="xs:string">
+												<xs:annotation>
+												<xs:documentation> This subelement identifies
+												architectures in which this weakness is likely to
+												exist. </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified hardware
+												architecture within the specified hardware
+												architecture class.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Architectural_Paradigms" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This element contains one or more
+									Architectural_Paradigm subelements which each represent an
+									architecture on which this weakness is likely to exist.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Architectural_Paradigm" minOccurs="1"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												Architectural_Paradigm in which this entry may exist
+												and with what frequency in the specified paradigm.
+											</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Architectural_Paradigm_Name">
+												<xs:annotation>
+												<xs:documentation> This subelement identifies
+												paradigms in which this weakness is likely to
+												exist. </xs:documentation>
+												</xs:annotation>
+												<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:enumeration value="Mainframe"/>
+												<xs:enumeration value="Client-Server"/>
+												<xs:enumeration value="n-Tier"/>
+												<xs:enumeration value="Web-based"/>
+												<xs:enumeration value="Mobile Application"/>
+												<xs:enumeration value="SOA"/>
+												<xs:enumeration
+												value="Concurrent Systems Operating on Shared Resources"
+												/>
+												</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified
+												paradigm.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Environments" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This element contains one or more Environment
+									subelements which each represent an environment in which this
+									weakness may exist. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Environment" minOccurs="1"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												Environment in which this entry may exist and with
+												what frequency in the specified environment.
+											</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Environment_Name" type="xs:string">
+												<xs:annotation>
+												<xs:documentation> This attribute is the name of
+												the Environment we are identifying.
+												</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified
+												environment.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Technology_Classes" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> This element contains one or more individual
+									Technology_Class subelements which each represent a technology
+									class in which this weakness is likely to exist.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Technology_Class" minOccurs="1"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This element identifies a single
+												Technology_Class in which this entry may exist and
+												with what frequency in the specified
+												class.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Technology_Name">
+												<xs:annotation>
+												<xs:documentation> This subelement identifies a
+												technology class in which this weakness is likely
+												to exist. </xs:documentation>
+												</xs:annotation>
+												<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:enumeration value="Web-Server"/>
+												<xs:enumeration value="Web-Client"/>
+												<xs:enumeration value="Database-Server"/>
+												<xs:enumeration value="Database-Client"/>
+												</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="Prevalence" type="Frequency_Type">
+												<xs:annotation>
+												<xs:documentation>This attribute identifies the
+												prevalence with which this weakness may occur
+												within code that runs on the specified technology
+												class.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Common_Platform_References" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation> The Common_Platforms element contains references
+									to the Common Platform Enumeration, CPE, which will identify
+									common platforms on which this weakness may occur. It has one or
+									more Common_Platform elements as children and each child will
+									point to a single CPE entry which is associated with this
+									weakness. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Common_Platform_Reference"
+										maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> The Common_Platform subelement
+												identifies a single platform that is associated with
+												this weakness. Its only child, CPE_ID is required
+												and identifies the related CPE entry. More than one
+												Common_Platform_Reference element can exist, but
+												they must all be contained within a single
+												Common_Platform_References element.
+											</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element type="xs:string" name="CPE_ID">
+												<xs:annotation>
+												<xs:documentation> The CPE_ID stores the value for
+												the related CPE entry identifier as a string. Only
+												one CPE_ID element can exist for each
+												Common_Platform element. </xs:documentation>
+												</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Platform_Notes" minOccurs="0" maxOccurs="1"
+							type="Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation> This element provides additional information
+									related to the applicable platforms of a weakness if needed.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Maintenance_Notes" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Background_Details" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more Background_Detail
+						elements, each of which holds information regarding the entry or any
+						technologies that are related to it, where the background information is not
+						related to the nature of the entry itself. It should be filled out where
+						appropriate. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Background_Detail" minOccurs="1" maxOccurs="unbounded"
+							type="Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation> This element contains background information
+									regarding the entry or any technologies that are related to it,
+									where the background information is not related to the nature of
+									the weakness itself. It should be filled out where appropriate.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Other_Notes" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="Alternate_Terms" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Terminology_Notes" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This element contains one or more Terminology_Note elements
+						that each contain a discussion of terminology issues related to this
+						weakness. It is different from the Alternate_Terms element, which is focused
+						on discussion of specific terms that are commonly used. It should be filled
+						out in any entry for which there is no established terminology, or if there
+						are multiple uses of the same key term.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Terminology_Note" minOccurs="1" maxOccurs="unbounded"
+							type="Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation> This element is used for general discussion of
+									terminology issues associated with this weakness. It is
+									different from the Alternate_Terms element, which is focused on
+									discussion of specific terms that are commonly used. It should
+									be filled out in any entry for which there is no established
+									terminology, or if there are multiple uses of the same key
+									term.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Time_of_Introduction" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> The Time_of_Introduction element contains the points of time
+						in the software life cycle at which the weakness may be introduced. If there
+						are multiple points of time at which the weakness may be introduced, then
+						separate Introduction elements should be included for each. This element
+						should be populated for all weakness bases and variants. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Introductory_Phase" maxOccurs="unbounded" minOccurs="0"
+							type="SDLC_Phase_Type">
+							<xs:annotation>
+								<xs:documentation> This element identifies the point of time in the
+									software life cycle at which the weakness may be introduced.
+									Possible values are Architecture and Design, Implementation and
+									Operational to name a few. If there are multiple points of time
+									at which the weakness may be introduced, then separate
+									Introductory_Phase elements should be included for each. This
+									element should be populated for all weakness bases and variants.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Modes_of_Introduction" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This element describes the typical scenarios under which this
+						weakness can be introduced into the software. It should be filled out as
+						needed. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Mode_of_Introduction" type="Structured_Text_Type"
+							minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> This element identifies the mode by which the
+									weakness may be introduced. If there are multiple ways in which
+									the weakness may be introduced, then separate
+									Mode_of_Introduction elements should be included for each. This
+									element should be populated for all weakness bases and variants.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Enabling_Factors_for_Exploitation" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This element contains one or more
+						Enabling_Factor_for_Exploitation, each of which points out conditions or
+						factors that could increase the likelihood of exploit for this weakness.
+						This should be filled out for most weakness bases. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Enabling_Factor_for_Exploitation"
+							type="Structured_Text_Type" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> This element identifies a condition or factor
+									that could increase the likelihood of exploit for this weakness.
+									This element should contain structured text with enough detail
+									to make the enabling factor clear. This should be filled out for
+									most weakness bases. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Likelihood_of_Exploit" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element contains a rough estimate at the likelihood of
+						exploitation of an exposed weakness. Many factors can impact this value
+						which is why it should only be regarded as an approximation.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Very High"/>
+						<xs:enumeration value="High to Very High"/>
+						<xs:enumeration value="High"/>
+						<xs:enumeration value="Medium to High"/>
+						<xs:enumeration value="Medium"/>
+						<xs:enumeration value="Low to Medium"/>
+						<xs:enumeration value="Low"/>
+						<xs:enumeration value="Very Low"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Common_Consequences" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element contains the common consequences associated with
+						this weakness. It is populated by one or more individual Common_Consequence
+						subelements. This should be included and completed as much as possible for
+						all weaknesses. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Common_Consequence" minOccurs="1" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Detection_Methods" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> The Detection_Methods element is comprised of one or more
+						Detection_Method elements which identify methods that may be employed to
+						detect this weakness. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Detection_Method" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>The Detection_Method element is intended to
+									provide information on different techniques that can be used to
+									detect a weakness, including their strengths and limitations.
+									This should be filled out for some weakness classes and bases.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Method_Name" maxOccurs="1" minOccurs="1">
+										<xs:annotation>
+											<xs:documentation>The Method_Name element identifies the
+												particular weakness detection method to be
+												described. This should be filled out for some
+												weakness classes and bases. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Automated Analysis"/>
+												<xs:enumeration value="Automated Dynamic Analysis"/>
+												<xs:enumeration value="Automated Static Analysis"/>
+												<xs:enumeration value="Fuzzing"/>
+												<xs:enumeration value="Manual Analysis"/>
+												<xs:enumeration value="Manual Dynamic Analysis"/>
+												<xs:enumeration value="Manual Static Analysis"/>
+												<xs:enumeration value="Other"/>
+												<xs:enumeration value="White Box"/>
+												<xs:enumeration value="Black Box"/>
+												<xs:enumeration value="Architecture / Design Review"/>
+												<xs:enumeration
+												value="Automated Static Analysis - Source Code"/>
+												<xs:enumeration
+												value="Automated Static Analysis - Binary / Bytecode"/>
+												<xs:enumeration
+												value="Dynamic Analysis with manual results interpretation"/>
+												<xs:enumeration
+												value="Dynamic Analysis with automated results interpretation"/>
+												<xs:enumeration
+												value="Manual Static Analysis - Source Code"/>
+												<xs:enumeration
+												value="Manual Static Analysis - Binary / Bytecode"
+												/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Method_Description"
+										type="Structured_Text_Type" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation>The Method_Description element is
+												intended to provide some context of how this
+												Detection_Method can be applied to a specific
+												weakness. This should be filled out for some
+												weakness classes and bases. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Method_Effectiveness" maxOccurs="1"
+										minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element summarizes how effective
+												the detection method may be in detecting the
+												associated weakness. This assumes the use of
+												best-of-breed tools, analysts, and methods. There is
+												limited consideration for financial costs, labor, or
+												time.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="None/Rare">
+												<xs:annotation>
+												<xs:documentation>The method is highly unlikely to
+												work.</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+												<xs:enumeration value="Limited">
+												<xs:annotation>
+												<xs:documentation>The method may be useful in
+												limited circumstances, only applicable to a subset
+												of potential errors of this weakness type,
+												requires training/customization, or gives limited
+												visibility.</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+												<xs:enumeration value="Opportunistic">
+												<xs:annotation>
+												<xs:documentation>The method is not effective in
+												directly identifying the weakness, but it may
+												inadvertently uncover evidence that is related to
+												the weakness.</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+												<xs:enumeration value="Moderate">
+												<xs:annotation>
+												<xs:documentation>The method is applicable to
+												multiple circumstances, but it may be subject to
+												high false-positive or false-negative
+												rates.</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+												<xs:enumeration value="High">
+												<xs:annotation>
+												<xs:documentation>The method has well-known,
+												well-understood strengths and limitations; there
+												are reasonable false-positive or false-negative
+												rates; and there is good coverage with respect to
+												other techniques.</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+												<xs:enumeration value="SOAR High">
+												<xs:annotation>
+												<xs:documentation>According to SOAR, High
+												effectiveness either completely addresses this
+												objective or can be a highly cost-effective
+												measure to address this
+												objective</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+												<xs:enumeration value="SOAR Partial">
+												<xs:annotation>
+												<xs:documentation>According to SOAR, Partial
+												effectiveness means that this method can be
+												cost-effective for partial coverage of this
+												objective.</xs:documentation>
+												</xs:annotation>
+												</xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Method_Effectiveness_Notes"
+										type="Structured_Text_Type" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation> The Method_Effectiveness_Notes
+												element is intended to discuss the strengths and
+												shortcomings of this detection method. This should
+												be filled out for some weakness classes and bases.
+											</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute type="xs:string" name="Detection_Method_ID">
+									<xs:annotation>
+										<xs:documentation>The Detection_Method_ID stores the value
+											for the related Detection_Method entry identifier as a
+											string. Only one Detection_Method_ID element can exist
+											for each Detection_Method element (ex: DM-1). However,
+											Detection_Methods across CWE with the same ID should
+											only vary in small details.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Potential_Mitigations" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This element contains the potential mitigations associated
+						with this weakness. It contains one or more mitigation subelements which
+						each represent individual mitigations for this weakness. This should be
+						included and completed to the extent possible for all weakness bases and
+						variants. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Mitigation" minOccurs="1" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Causal_Nature" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element describes the nature of the underlying cause of
+						the weakness. Is it an implicit underlying weakness or is it an issue of
+						behavior on the part of the software developer? Appropriate values are
+						either Implicit, occurring regardless of developer behavior, or Explicit, an
+						explicit weakness resulting from behavior of the developer.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Implicit"/>
+						<xs:enumeration value="Explicit"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Demonstrative_Examples" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more Demonstrative_Examples,
+						each of which should contain an example illustrating the problem being
+						described in this weakness. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Demonstrative_Example" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> This element illustrates how this weakness may
+									look in actual code. It contains an Intro_Text element
+									describing the context in which this code should be viewed, an
+									Example_Body element which is a mixture of code and explanatory
+									text, and Demonstrative_Example_References that provide
+									additional information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Intro_Text" maxOccurs="1" minOccurs="1"
+										type="xs:string">
+										<xs:annotation>
+											<xs:documentation>This element describes the context and
+												setting surrounding the example to add clarity for
+												the reader. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Example_Body" type="Structured_Text_Type"
+										minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation> This element consists of a
+												Structured_Text element which should hold the code
+												and some explanatory information for the
+												reader.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Demonstrative_Example_References"
+										minOccurs="0" type="Reference_List_Type">
+										<xs:annotation>
+											<xs:documentation>The Demonstrative_Example_References
+												element contains one or more Reference elements,
+												each of which provide further reading and insight
+												into this demonstrative example. This should be
+												filled out when appropriate.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute type="xs:string" name="Demonstrative_Example_ID">
+									<xs:annotation>
+										<xs:documentation> The Demonstrative_Example_ID stores the
+											value for the related Demonstrative_Example entry
+											identifier as a string. Only one
+											Demonstrative_Example_ID element can exist for each
+											Demonstrative_Example element (ex: DX-1). However,
+											Demonstrative_Examples across CWE with the same ID
+											should only vary in small details.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Observed_Examples" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more Observed_Example
+						elements, each of which is a reference to a specific observed instance of
+						this weakness in the real world; typically this will be a CVE reference.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Observed_Example" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> This element specifies a reference to a specific
+									observed instance of this weakness in the real-world; Typically
+									this will be a CVE reference. Each Observed_Example element
+									represents a single example. This element should be filled out
+									for as many entries as possible. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Observed_Example_Reference" type="xs:string"
+										minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This field should contain the
+												identifier for the example being cited. For example,
+												if a CVE is being cited it should be of the standard
+												CVE identifier format, such as CVE-2005-1951 or
+												CVE-1999-0046. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Observed_Example_Description" type="xs:string">
+										<xs:annotation>
+											<xs:documentation> This field should contain a product
+												independent description of the example being cited.
+												The description should present an unambiguous
+												correlation between the example being described and
+												the weakness which it is meant to exemplify. It
+												should also be short and easy to understand.
+											</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Observed_Example_Link" type="xs:string"
+										minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation> This field should provide a valid URL
+												where more information regarding this example can be
+												obtained. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Theoretical_Notes" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This element contains one or more Theoretical_Note elements
+						that each describe the weakness using vulnerability theory concepts. It
+						should be filled out as needed, especially in cases where the application of
+						vulnerability theory is not necessarily obvious for the
+						weakness.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Theoretical_Note" minOccurs="1" maxOccurs="unbounded"
+							type="Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation>This element is used to describe the weakness
+									using vulnerability theory concepts, which can be useful in
+									understanding the Research view. It should be filled out as
+									needed, especially in cases where the application of
+									vulnerability theory is not necessarily obvious for the
+									weakness.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Functional_Areas" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more Functional_Area elements,
+						each of which identifies the functional area of the software in which the
+						weakness is most likely to occur. For example, CWE-178 Failure to Resolve
+						Case Sensitivity is likely to occur in functional areas of software related
+						to file processing and credentials. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Functional_Area" minOccurs="1" maxOccurs="unbounded"
+							type="xs:string">
+							<xs:annotation>
+								<xs:documentation> This element identifies the functional area of
+									the software in which the weakness is most likely to occur. For
+									example, CWE-178 Failure to Resolve Case Sensitivity is likely
+									to occur in functional areas of software related to file
+									processing and credentials. Each applicable functional area
+									should have a new Functional_Area element and standard title
+									capitalization should be applied to each area.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Properties" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more Relevant_Property
+						elements. Each Relevant_Property element identifies a property that is
+						required by the code or a resource in order to function as specified.
+						Correctly labeling all of the relevant properties can help to figure out
+						what the root cause of a vulnerability might be. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Property" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> Each Relevant_Property element identifies a
+									property that is required by the code or a resource in order to
+									function as specified. Correctly labeling all of the relevant
+									properties can help to figure out what the root cause of a
+									vulnerability might be. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Accessibility"/>
+									<xs:enumeration value="Mutability"/>
+									<xs:enumeration value="Trustability"/>
+									<xs:enumeration value="Validity"/>
+									<xs:enumeration value="Equivalence"/>
+									<xs:enumeration value="Uniqueness"/>
+									<xs:enumeration value="Predictability"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Affected_Resources" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> This element identifies system resources affected by this
+						entry. It is populated by Affected_Resource elements. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Affected_Resource" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> This element identifies system resources affected
+									by this entry. Each resource affected by this weakness should be
+									given its own Affected_Resource element. For example, CWE-249,
+									Path Manipulation has both Memory and File/Directory listed in
+									separate Affected_Resource elements. This should be filled out
+									in weakness bases and variants where applicable.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="System Process"/>
+									<xs:enumeration value="Memory"/>
+									<xs:enumeration value="File/Directory"/>
+									<xs:enumeration value="CPU"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Research_Gaps" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="References" minOccurs="0" type="Reference_List_Type">
+				<xs:annotation>
+					<xs:documentation> The References element contains one or more Reference
+						elements, each of which provide further reading and insight into this
+						weakness. This may include an alternate interpretation of this weakness, a
+						deeper technical breakdown of this weakness such as a research paper, deeper
+						information on mitigations, or background details on this technical area.
+						This should be filled out for all weakness bases and some variants.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Taxonomy_Mappings" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The Taxonomy_Mappings element contains one or more
+						Taxonomy_Mapping structures which provide a mapping from this entry to an
+						entry in a different taxonomy.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Taxonomy_Mapping" minOccurs="1" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This structure describes mappings to nodes of
+									other taxonomies that are similar in meaning to this node.
+									Although this may sound similar to Source_Taxonomy,
+									Source_Taxonomy is designed to provide a history and pedigree
+									for the entry, whereas Taxonomy_Mapping allows similar nodes in
+									other collections to be identified as matching concepts with
+									this weakness. For example, Taxonomy_Mapping should be used to
+									map the CWE entries to their OWASP Top 10 equivalents. The sole
+									attribute is "Mapped_Taxonomy_Name" which is used to identify
+									the taxonomy to which this weakness is being mapped.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Mapped_Node_Name" type="xs:string"
+										minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation> This element identifies the name of
+												the entry to which this weakness is being mapped in
+												taxonomy Taxonomy_Name. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Mapped_Node_ID" type="xs:string" minOccurs="0"
+										maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation> This element identifies the ID of the
+												entry to which this weakness is being mapped in
+												taxonomy Taxonomy_Name. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Mapping_Fit" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation> This element identifies how close to
+												the original taxonomy this node was mapped.
+											</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Exact"/>
+												<xs:enumeration value="CWE_More_Abstract"/>
+												<xs:enumeration value="CWE_More_Specific"/>
+												<xs:enumeration value="Imprecise"/>
+												<xs:enumeration value="Perspective"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="Mapped_Taxonomy_Name" use="required">
+									<xs:annotation>
+										<xs:documentation> This attribute identifies the taxonomy to
+											which this weakness has a similar or equivalent entry.
+										</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:whiteSpace value="collapse"/>
+											<xs:enumeration value="7 Pernicious Kingdoms"/>
+											<xs:enumeration value="19 Deadly Sins"/>
+											<xs:enumeration
+												value="Anonymous Tool Vendor (under NDA)"/>
+											<xs:enumeration value="Aslam"/>
+											<xs:enumeration value="Bishop"/>
+											<xs:enumeration value="CLASP"/>
+											<xs:enumeration value="Landwehr"/>
+											<xs:enumeration value="OWASP Top Ten 2004"/>
+											<xs:enumeration value="OWASP Top Ten 2007"/>
+											<xs:enumeration value="PLOVER"/>
+											<xs:enumeration value="Protection Analysis"/>
+											<xs:enumeration value="RISOS"/>
+											<xs:enumeration value="Weber, Karger, Paradkar"/>
+											<xs:enumeration value="WASC"/>
+											<xs:enumeration value="CERT C Secure Coding"/>
+											<xs:enumeration value="CERT Java Secure Coding"/>
+											<xs:enumeration value="CERT C++ Secure Coding"/>
+											<xs:enumeration value="Software Fault Patterns"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="White_Box_Definitions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more White_Box_Definition
+						elements, each of which describes the weakness from a white box perspective,
+						meaning that the view includes the knowledge of control flow, data flow, and
+						all other inner workings of the software in which the weakness exists.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="White_Box_Definition" minOccurs="1" maxOccurs="unbounded"
+							type="Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation> This element describes the weakness from a white
+									box perspective, meaning that the view includes the knowledge of
+									control flow, data flow, and all other inner workings of the
+									software in which the weakness exists. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Black_Box_Definitions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This structure contains one or more Black_Box_Definition
+						elements, each of which describes the weakness from an external perspective,
+						meaning that the view includes no knowledge of how the software is
+						processing data other than what can be inferred from observing the
+						software's behavior. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Black_Box_Definition" minOccurs="1" maxOccurs="unbounded"
+							type="Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation> This element contains elements describes the
+									weakness from an external perspective, meaning that the view
+									includes no knowledge of how the software is processing data
+									other than what can be inferred from observing the software's
+									behavior. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Related_Attack_Patterns" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> The Related_Attack_Patterns element contains all references
+						to CAPEC which will identify related attack patterns to this weakness. It
+						has one or more Related_Attack_Pattern elements as children and each child
+						will point to a single CAPEC entry which is associated with this weakness.
+						This should be filled out to the extent possible for most weaknesses.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Related_Attack_Pattern" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation> The Related_Attack_Pattern subelement identifies
+									a single attack pattern that is associated with this weakness.
+									Its only child, CAPEC_ID is required and identifies the related
+									CAPEC entry. It also has a required attribute, CAPEC_Version,
+									which identifies which version of CAPEC is being referenced.
+									More than one Related _Attack_Pattern element can exist, but
+									they must all be contained within a single
+									Related_Attack_Patterns element. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element type="xs:string" name="CAPEC_ID">
+										<xs:annotation>
+											<xs:documentation> The CAPEC_ID stores the value for the
+												related CAPEC entry identifier as a string. Only one
+												CAPEC_ID element can exist for each
+												Related_Attack_Pattern element. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="CAPEC_Version" use="required">
+									<xs:annotation>
+										<xs:documentation>This attribute identifies which version of
+											CAPEC is being referenced.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Content_History" minOccurs="1"/>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:element name="Content_History">
+		<xs:annotation>
+			<xs:documentation> This element is used to keep track of the author of the weakness
+				entry and anyone who has made modifications to the content. This provides a means of
+				contacting the authors and modifiers for clarifying ambiguities, merging overlapping
+				contributions, etc. This should be filled out for all entries. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Submission" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation> This element houses the subelements which identify the
+							submitter and the submitter's comments related to this entry. This
+							element has a single attribute, Submission_Source, which provides a
+							general idea of how the initial information for this entry was obtained,
+							whether internal to MITRE, external, donated, etc.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Submitter" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should contain the name of the
+										author for this entry. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Submitter_Organization" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should identify the author's
+										organization. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Submission_Date" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should provide the date on which
+										this content was authored in YYYY-MM-DD format.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Submission_Comment" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element provides the author with a place
+										to store any comments regarding the content of this weakness
+										entry, such as assumptions made, reasons for omitting
+										elements, contact information, pending questions, etc.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Submission_Source" use="required">
+							<xs:annotation>
+								<xs:documentation> This attribute identifies how the initial
+									information for this entry was obtained. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Externally_Mined"/>
+									<xs:enumeration value="NDA"/>
+									<xs:enumeration value="Internal_CWE_Team"/>
+									<xs:enumeration value="External_Submission"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Contribution" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation> This element houses the subelements which identify the
+							contributor and contributor's comments related to this entry. This
+							element has a single attribute, Contribution_Mode, which indicates
+							whether the contribution was part of feedback given to the CWE team or
+							actual content that was donated.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Contributor" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should contain the name of the
+										author for this entry. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Contribution_Organization" type="xs:string"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should identify the author's
+										organization. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Contribution_Date" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should provide the date on which
+										this content was authored in YYYY-MM-DD format.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Contribution_Comment" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element provides the author with a place
+										to store any comments regarding the content of this weakness
+										entry, such as assumptions made, reasons for omitting
+										elements, contact information, pending questions, etc.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Contribution_Mode" use="required">
+							<xs:annotation>
+								<xs:documentation> This attribute indicates whether the contribution
+									was part of feedback given to the CWE team or actual content
+									that was donated.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Content"/>
+									<xs:enumeration value="Feedback"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Modification" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation> This element houses the subelements which identify the
+							modifier and modifier's comments related to this entry. A new
+							Modification element should exist for each modification of the entry
+							content. This element has a single attribute, Modification_Source, which
+							indicates whether this modification was made by a CWE team member or an
+							external party.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Modifier" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should contain the name of the
+										person modifying this entry. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Modifier_Organization" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should contain the modifier's
+										organization. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Modification_Date" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element should contain the date of the
+										modifications. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Modification_Comment" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> This element provides the modifier with a
+										place to store any comments regarding the content of this
+										weakness entry, such as assumptions made, reasons for
+										omitting elements, contact information, pending questions,
+										etc. </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Modification_Importance">
+							<xs:annotation>
+								<xs:documentation> This attribute identifies how significant the
+									modification is to the weakness with regard to the meaning and
+									interpretation of the weakness. If a modification has a value of
+									Critical, then the meaning of the entry or how it might be
+									interpreted has changed and requires attention from anyone
+									previously dependent on the weakness. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Normal"/>
+									<xs:enumeration value="Critical"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Modification_Source" use="required">
+							<xs:annotation>
+								<xs:documentation> This attribute indicates whether this
+									modification was created by a CWE team member or provided by an
+									external party.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Internal"/>
+									<xs:enumeration value="External"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Previous_Entry_Names" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation> This structure contains one or more Previous_Entry_Name
+							elements, each of which describes a previous name that was used for this
+							entry. This should be filled out whenever a substantive name change
+							occurs.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Previous_Entry_Name" minOccurs="1"
+								maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation> This element identifies a name that was
+										previously used for this entry.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="Name_Change_Date" type="xs:date"
+												use="required">
+												<xs:annotation>
+												<xs:documentation>This lists the date on which
+												this name was changed to something else.
+												Typically, this date will be closely aligned with
+												new releases of CWE.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Mitigation">
+		<xs:annotation>
+			<xs:documentation> This subelement contains a single method for mitigating this
+				weakness. One or more mitigations must be included inside of a Potential_Mitigations
+				element. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Mitigation_Phase" minOccurs="0" maxOccurs="unbounded"
+					type="SDLC_Phase_Type">
+					<xs:annotation>
+						<xs:documentation> The Mitigation_Phase element indicates the development
+							life cycle phase during which this particular mitigation may be applied.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Mitigation_Strategy" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>The general strategy for protecting a system to which this
+							mitigation contributes.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:whiteSpace value="collapse"/>
+							<xs:enumeration value="Compilation or Build Hardening"/>
+							<xs:enumeration value="Enforcement by Conversion"/>
+							<xs:enumeration value="Environment Hardening"/>
+							<xs:enumeration value="Firewall"/>
+							<xs:enumeration value="Identify and Reduce Attack Surface"/>
+							<xs:enumeration value="Input Validation"/>
+							<xs:enumeration value="Language Selection"/>
+							<xs:enumeration value="Libraries or Frameworks"/>
+							<xs:enumeration value="Limit Resource Consumption"/>
+							<xs:enumeration value="Output Encoding"/>
+							<xs:enumeration value="Parameterization"/>
+							<xs:enumeration value="Refactoring"/>
+							<xs:enumeration value="Sandbox or Jail"/>
+							<xs:enumeration value="Separation of Privilege"/>
+							<xs:enumeration value="Threat Modeling"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Applicable_Languages" minOccurs="0" maxOccurs="1"
+					type="Languages_List_Type">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Language elements
+							which each represent a language in which this mitigation may
+							exist.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Mitigation_Description" type="Structured_Text_Type" minOccurs="0"
+					maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> This subelement contains the description of this
+							individual mitigation.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Mitigation_Effectiveness" maxOccurs="1" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element summarizes how effective the mitigation may
+							be in preventing the weakness.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="None">
+								<xs:annotation>
+									<xs:documentation>The mitigation will not work, however it may
+										be included in an entry to emphasize common yet incorrect
+										protections that developers might
+										introduce.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="Defense in Depth">
+								<xs:annotation>
+									<xs:documentation>The mitigation may not necessarily prevent the
+										weakness, but it may help to minimize the potential impact
+										of an attacker exploiting the weakness.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="Limited">
+								<xs:annotation>
+									<xs:documentation>The mitigation may be useful in limited
+										circumstances, or it is only applicable to a subset of
+										potential errors of this weakness type.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="Incidental">
+								<xs:annotation>
+									<xs:documentation>The mitigation is generally not effective and
+										will only provide protection by chance, rather than in a
+										reliable manner.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="Moderate">
+								<xs:annotation>
+									<xs:documentation>The mitigation will prevent the weakness in
+										multiple forms, but it does not have complete coverage of
+										the weakness. </xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="High">
+								<xs:annotation>
+									<xs:documentation>The mitigation is frequently successful in
+										eliminating the weakness entirely.</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Mitigation_Effectiveness_Notes" type="Structured_Text_Type"
+					minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> The Mitigation_Effectiveness_Notes element is intended to
+							identify the strengths and shortcomings of this mitigation on a specific
+							weakness. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="SubMitigations" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Mitigation" minOccurs="1" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="References" minOccurs="0" maxOccurs="1" type="Reference_List_Type">
+					<xs:annotation>
+						<xs:documentation>The References element contains one or more Reference
+							elements, each of which provide further reading and insight into this
+							view. This should be filled out when the view is based on sources or
+							projects that are external to the CWE project.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="Mitigation_ID">
+				<xs:annotation>
+					<xs:documentation> The Mitigation_ID stores the value for the related Mitigation
+						entry identifier as a string. Only one Mitigation_ID element can exist for
+						each Mitigation element (ex: MIT-1). However, Mitigations across CWE with
+						the same ID should only vary in small details.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Common_Consequence">
+		<xs:annotation>
+			<xs:documentation> This subelement contains an individual consequence associated with
+				this weakness. One or more are required for every Common_Consequences element and
+				should exist in all weaknesses. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Consequence_Scope" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation> This subelement identifies an individual consequence that
+							may be associated with this weakness. Possible effects are detailed in
+							Consequence_Effect. </xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="Confidentiality"/>
+							<xs:enumeration value="Integrity"/>
+							<xs:enumeration value="Availability"/>
+							<xs:enumeration value="Access_Control"/>
+							<xs:enumeration value="Non-Repudiation"/>
+							<xs:enumeration value="Accountability"/>
+							<xs:enumeration value="Authentication"/>
+							<xs:enumeration value="Authorization"/>
+							<xs:enumeration value="Non-Repudiation"/>
+							<xs:enumeration value="Other"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Consequence_Technical_Impact" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>This subelement describes the technical impacts that can
+							arise if an attacker attempts to exploit this
+							weakness.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="Impact_Type">
+								<xs:attribute name="Likelihood" use="optional">
+									<xs:annotation>
+										<xs:documentation>This attribute identifies how likely an
+											impact is based on the weakness.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:enumeration value="Low"/>
+											<xs:enumeration value="Medium"/>
+											<xs:enumeration value="High"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Consequence_Note" type="Structured_Text_Type" minOccurs="0"
+					maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>This subelement provides additional commentary about this
+							consequence.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="Common_Consequence_ID">
+				<xs:annotation>
+					<xs:documentation> The Common_Consequence_ID stores the value for the related
+						Common_Consequence entry identifier as a string. Only one
+						Common_Consequence_ID element can exist for each Common_Consequence element
+						(ex: CC-1). However, Common_Consequences across CWE with the same ID should
+						only vary in small details.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="Language_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="C"/>
+			<xs:enumeration value="C++"/>
+			<xs:enumeration value="C#"/>
+			<xs:enumeration value="Java"/>
+			<xs:enumeration value="JSP"/>
+			<xs:enumeration value="Javascript"/>
+			<xs:enumeration value="ASP.NET"/>
+			<xs:enumeration value="SQL"/>
+			<xs:enumeration value="Python"/>
+			<xs:enumeration value="Perl"/>
+			<xs:enumeration value="PHP"/>
+			<xs:enumeration value="SOAP"/>
+			<xs:enumeration value="Ruby"/>
+			<xs:enumeration value="Shell"/>
+			<xs:enumeration value="PseudoCode"/>
+			<xs:enumeration value=".NET"/>
+			<xs:enumeration value="Assembly"/>
+			<xs:enumeration value="XML"/>
+			<xs:enumeration value="HTML"/>
+			<xs:enumeration value="Objective-C"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Status_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Deprecated"/>
+			<xs:enumeration value="Incomplete"/>
+			<xs:enumeration value="Draft"/>
+			<xs:enumeration value="Usable"/>
+			<xs:enumeration value="Stable"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Frequency_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Often"/>
+			<xs:enumeration value="Sometimes"/>
+			<xs:enumeration value="Rarely"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SDLC_Phase_Type">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="Policy"/>
+			<xs:enumeration value="Requirements"/>
+			<xs:enumeration value="Architecture and Design"/>
+			<xs:enumeration value="Implementation"/>
+			<xs:enumeration value="Testing"/>
+			<xs:enumeration value="Bundling"/>
+			<xs:enumeration value="Distribution"/>
+			<xs:enumeration value="Installation"/>
+			<xs:enumeration value="Patch"/>
+			<xs:enumeration value="Documentation"/>
+			<xs:enumeration value="Porting"/>
+			<xs:enumeration value="System Configuration"/>
+			<xs:enumeration value="Operation"/>
+			<xs:enumeration value="Build and Compilation"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Impact_Type">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="Modify memory"/>
+			<xs:enumeration value="Read memory"/>
+			<xs:enumeration value="Modify files or directories"/>
+			<xs:enumeration value="Read files or directories"/>
+			<xs:enumeration value="Modify application data"/>
+			<xs:enumeration value="Read application data"/>
+			<xs:enumeration value="DoS: crash / exit / restart"/>
+			<xs:enumeration value="DoS: amplification"/>
+			<xs:enumeration value="DoS: instability"/>
+			<xs:enumeration value="DoS: resource consumption (CPU)"/>
+			<xs:enumeration value="DoS: resource consumption (memory)"/>
+			<xs:enumeration value="DoS: resource consumption (other)"/>
+			<xs:enumeration value="Execute unauthorized code or commands"/>
+			<xs:enumeration value="Gain privileges / assume identity"/>
+			<xs:enumeration value="Bypass protection mechanism"/>
+			<xs:enumeration value="Hide activities"/>
+			<xs:enumeration value="Alter execution logic"/>
+			<xs:enumeration value="Other"/>
+			<xs:enumeration value="Varies by context"/>
+			<xs:enumeration value="Quality degradation"/>
+			<xs:enumeration value="Unexpected state"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Block">
+		<xs:annotation>
+			<xs:documentation>Block is a Structured_Text element consisting of one of Text_Title,
+				Text, Code_Example_Language, or Code followed by another Block element.
+				Structured_Text elements help define whitespace and text segments.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded" minOccurs="1">
+				<xs:group ref="Structured_Text_Group"/>
+				<xs:element ref="Block"/>
+			</xs:choice>
+			<xs:attribute name="Block_Nature">
+				<xs:annotation>
+					<xs:documentation>This attribute identifies the nature of the content contained
+						within the Block.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Good_Code"/>
+						<xs:enumeration value="Bad_Code"/>
+						<xs:enumeration value="Mitigation_Code"/>
+						<xs:enumeration value="Attack"/>
+						<xs:enumeration value="Result"/>
+						<xs:enumeration value="List"/>
+						<xs:enumeration value="Numeric_List"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:group name="Structured_Text_Group">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Text_Title" maxOccurs="unbounded" minOccurs="0" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define
+							bold-faced title for a subsequent block of text.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Text" maxOccurs="unbounded" minOccurs="0" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define a
+							paragraph of text.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Code_Example_Language" maxOccurs="unbounded" minOccurs="0"
+					type="Language_Type">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to identify the
+							programming language being used in the following block of
+							Code</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Code" maxOccurs="unbounded" minOccurs="0" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define a
+							line of code.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Comment" maxOccurs="unbounded" minOccurs="0" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define a
+							comment in code.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Image" maxOccurs="unbounded" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define an
+							image.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence maxOccurs="unbounded" minOccurs="1">
+							<xs:element name="Image_Location" type="xs:string" minOccurs="1"
+								maxOccurs="1">
+								<xs:annotation>
+									<xs:documentation>This element provides the location of the
+										image file.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Image_Title" type="xs:string" minOccurs="1"
+								maxOccurs="1">
+								<xs:annotation>
+									<xs:documentation>This element provides a title for the
+										image.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="Structured_Text_Type">
+		<xs:sequence>
+			<xs:choice minOccurs="1" maxOccurs="unbounded">
+				<xs:group ref="Structured_Text_Group"/>
+				<xs:element ref="Block"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="Relationships">
+		<xs:annotation>
+			<xs:documentation> The Relationships structure contains one or more Relationship
+				elements, each of which identifies an association between this structure, whether it
+				is a Weakness, Category, or Compound_Element and another structure.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Relationship" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Relationship_Notes">
+		<xs:annotation>
+			<xs:documentation> This structure houses one or more Relationship_Note elements, which
+				each contain details regarding the relationships between CWE entries.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Relationship_Note" minOccurs="1" maxOccurs="unbounded"
+					type="Structured_Text_Type">
+					<xs:annotation>
+						<xs:documentation> This element contains a note regarding the relationships
+							between CWE entries. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Maintenance_Notes">
+		<xs:annotation>
+			<xs:documentation> This element contains one or more Maintenance_Note elements which
+				each contain significant maintenance tasks within this entry that still need to be
+				addressed, such as clarifying the concepts involved or improving relationships. It
+				should be filled out in any entry that is still undergoing significant review by the
+				CWE team.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Maintenance_Note" minOccurs="1" maxOccurs="unbounded"
+					type="Structured_Text_Type">
+					<xs:annotation>
+						<xs:documentation> This element describes a significant maintenance task
+							within this entry that still need to be addressed, such as clarifying
+							the concepts involved or improving relationships. It should be filled
+							out in any entry that is still undergoing significant review by the CWE
+							team. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Other_Notes">
+		<xs:annotation>
+			<xs:documentation> This element contains one or more Note elements, each of which
+				provide any additional notes or comments that cannot be captured using other
+				elements. New elements might be defined in the future to contain this information.
+				It should be filled out where needed. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Note" minOccurs="1" maxOccurs="unbounded"
+					type="Structured_Text_Type">
+					<xs:annotation>
+						<xs:documentation> This element contains any additional notes or comments
+							that cannot be captured using other elements. New elements might be
+							defined in the future to contain this information. It should be filled
+							out where needed. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Alternate_Terms">
+		<xs:annotation>
+			<xs:documentation> This element contains one or more Alternate_Term elements, each of
+				which contains other names used to describe this weakness. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Alternate_Term" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation> This element contains alternate terms by which this
+							weakness may be known and a description to explain the context in which
+							the term may be relevant. For example, CWE-181 Incorrect Behavior Order:
+							Validate Before Filter, has the alternate terms value
+							"Validate-before-cleanse". This is not required for all entries and
+							should only be included where appropriate. </xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Term" minOccurs="1" maxOccurs="1" type="xs:string">
+								<xs:annotation>
+									<xs:documentation> This element contains the actual term for the
+										Alternate_Term element. Each term should follow the same
+										conventions as the entry Name attribute.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Alternate_Term_Description"
+								type="Structured_Text_Type" minOccurs="0" maxOccurs="1">
+								<xs:annotation>
+									<xs:documentation> This element provides context to each
+										Alternate_Term by which this weakness may be
+										known.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Research_Gaps">
+		<xs:annotation>
+			<xs:documentation> This structure contains one or more Research gap elements, each of
+				which identifies potential opportunities for the vulnerability research community to
+				conduct further exploration of issues related to this weakness. It is intended to
+				highlight parts of CWE that have not received sufficient attention from researchers.
+				This should be filled out where appropriate for weaknesses and categories.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Research_Gap" minOccurs="1" maxOccurs="unbounded"
+					type="Structured_Text_Type">
+					<xs:annotation>
+						<xs:documentation> This element identifies potential opportunities for the
+							vulnerability research community to conduct further exploration of
+							issues related to this weakness. It is intended to highlight parts of
+							CWE that have not received sufficient attention from researchers. This
+							should be filled out where appropriate for weaknesses and categories.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="Languages_List_Type">
+		<xs:annotation>
+			<xs:documentation>The Languages_List_Type contains one or more Language elements, each
+				of which provide further reading and insight into the item. This should be filled
+				out as appropriate.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="Language" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation> This element represents a programming language in
+								which this entry may occur. The language name is specified in the
+								Language_Name attribute. </xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:attribute name="Language_Name" type="Language_Type">
+								<xs:annotation>
+									<xs:documentation> This attribute specifies the name of the
+										programming language in which this entry may
+										occur.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="Prevalence" type="Frequency_Type">
+								<xs:annotation>
+									<xs:documentation>This attribute identifies the prevalence with
+										which this weakness may occur within code that is written in
+										the specified language.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Language_Class" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation> This element houses the description of a type of
+								language in which this entry is likely to exist and its likely
+								frequency of occurrence in that language. The type may be specified
+								by a common property, such as Languages with Automated Memory
+								Management or Languages which support Format Strings, or it may
+								describe a more general class of language such as All Interpreted
+								Languages or Pseudo Code. </xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:attribute name="Language_Class_Description" type="xs:string">
+								<xs:annotation>
+									<xs:documentation> This element is the description of a type of
+										language in which this entry is likely to exist. The type
+										may be specified by a common property, such as Languages
+										with Automated Memory Management or Languages which support
+										Format Strings, or it may describe a more general class of
+										language such as All Interpreted Languages or Pseudo
+										Code.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="Prevalence" type="Frequency_Type">
+								<xs:annotation>
+									<xs:documentation>This attribute identifies the prevalence with
+										which this weakness may occur within code that is written in
+										languages within the specified language
+										class.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="Reference_List_Type">
+		<xs:annotation>
+			<xs:documentation>The References_List_Type contains one or more Reference elements, each
+				of which provide further reading and insight into the item. This should be filled
+				out as appropriate.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Reference" minOccurs="1" maxOccurs="unbounded" type="Reference_Type">
+				<xs:annotation>
+					<xs:documentation> Each Reference subelement should provide a single source from
+						which more information and deeper insight can be obtained, such as a
+						research paper or an excerpt from a publication. Multiple Reference
+						subelements can exist. The sole attribute of this element is the id. The id
+						is optional and translates to a preceding footnote below the context notes
+						if the author of the entry wants to cite a reference. Not all subelements
+						need to be completed, since some are designed for web references and others
+						are designed for book references. The fields Reference_Author and
+						Reference_Title should be filled out for all references if possible.
+						Reference_Section and Reference_Date can be included for either book
+						references or online references. Reference_Edition, Reference_Publication,
+						Reference_Publisher, and Reference_PubDate are intended for book references,
+						however they can be included where appropriate for other types of
+						references. Reference_Link is intended for web references, however it can be
+						included for book references as well if applicable. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Reference_Type">
+		<xs:sequence>
+			<xs:element name="Reference_Author" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation> This element identifies an individual author of the material
+						being referenced. It is not required, but may be repeated sequentially in
+						order to identify multiple authors for a single piece of material.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Title" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element identifies the title of the material being
+						referenced. It is not required if the material does not have a title.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Section" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element is intended to provide a means of identifying
+						the exact location of the material inside of the publication source, such as
+						the relevant pages of a research paper, the appropriate chapters from a
+						book, etc. This is useful for both book references and internet references.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Edition" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element identifies the edition of the material being
+						referenced in the event that multiple editions of the material exist. This
+						will usually only be useful for book references. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Publication" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element identifies the publication source of the
+						reference material, if one exists. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Publisher" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element identifies the publisher of the reference
+						material, if one exists. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Date" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element identifies the date when the reference was
+						included in the entry. This provides the reader with a time line for when
+						the material in the reference, usually the link, was valid. The date should
+						be of the format YYYY-MM-DD. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_PubDate" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This field describes the date when the reference was
+						published YYYY. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Link" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This element should hold the URL for the material being
+						referenced, if one exists. This should always be used for web references,
+						and may optionally be used for book and other publication references.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Reference_ID" type="xs:string">
+			<xs:annotation>
+				<xs:documentation> The Reference_ID is an optional value for the related Reference
+					entry identifier as a string. Only one Reference_ID element can exist for each
+					Reference element (ex: REF-1). However, References across CWE with the same ID
+					should only vary in small details. Text citing this reference should use the
+					local reference ID, as this ID is only for reference library related consistency
+					checking and maintenance.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Local_Reference_ID" type="xs:string">
+			<xs:annotation>
+				<xs:documentation> The Local_Reference_ID is an optional value for the related Local
+					Reference entry identifier as a string. Only one Local_Reference_ID element can
+					exist for each Reference element (ex: R.78.1). Text citing this reference should
+					use the format [R.78.1].</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>
