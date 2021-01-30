@@ -10,7 +10,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 namespace ThreatsManager.Extensions.Actions
 {
 #pragma warning disable CS0067
-    [Extension("8CB90E20-19C5-43C1-A79A-C10794FE014E", "Remove Threat Type Context Aware Action", 30, ExecutionMode.Simplified)]
+    [Extension("8CB90E20-19C5-43C1-A79A-C10794FE014E", "Remove Threat Type Context Aware Action", 50, ExecutionMode.Simplified)]
     public class RemoveThreatType : IIdentityContextAwareAction, IDesktopAlertAwareExtension, IAsker
     {
         public Scope Scope => Scope.ThreatType;

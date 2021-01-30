@@ -11,12 +11,12 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 namespace ThreatsManager.Extensions.Actions
 {
     [Extension("606CDD2C-8811-47D2-87DE-7BAE808146B3", 
-        "Propagate Threat Event Name and Description Context Aware Action", 30, ExecutionMode.Simplified)]
+        "Propagate Threat Event Name and Description Context Aware Action", 62, ExecutionMode.Simplified)]
     public class PropagateThreatEvent : IIdentityContextAwareAction, IAsker
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Propagate Threat Event Info";
-        public string Group => "Propagate";
+        public string Group => "Other";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;

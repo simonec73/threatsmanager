@@ -15,7 +15,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Apply Mitigation Association Rules";
-        public string Group => "ItemActions";
+        public string Group => "Associate";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;

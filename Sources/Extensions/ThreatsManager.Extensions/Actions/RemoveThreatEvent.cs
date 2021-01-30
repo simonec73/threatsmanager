@@ -11,12 +11,12 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("D252EAFC-8F07-4D35-900D-981A96D5779F", "Remove Threat Event Context Aware Action", 30, ExecutionMode.Simplified)]
+    [Extension("D252EAFC-8F07-4D35-900D-981A96D5779F", "Remove Threat Event Context Aware Action", 50, ExecutionMode.Simplified)]
     public class RemoveThreatEvent : IIdentityContextAwareAction, IDesktopAlertAwareExtension, IAsker
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Remove Threat Event";
-        public string Group => "ObjectRemoval";
+        public string Group => "Object";
         public Bitmap Icon => Resources.threat_event_big_delete;
         public Bitmap SmallIcon => Resources.threat_event_delete;
         public Shortcut Shortcut => Shortcut.None;
