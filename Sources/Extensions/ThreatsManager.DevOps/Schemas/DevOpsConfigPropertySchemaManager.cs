@@ -219,7 +219,7 @@ namespace ThreatsManager.DevOps.Schemas
                 Iteration result = null;
 
                 var iterations = GetIterations()?
-                    .OrderBy(x => x.Start)
+                    .OrderByDescending(x => x.Start)
                     .ToArray();
                 if (iterations?.Any() ?? false)
                 {
@@ -229,17 +229,9 @@ namespace ThreatsManager.DevOps.Schemas
                     for (int i = 0; i < count; i++)
                     {
                         var current = iterations.ElementAt(i);
-                        if (current.Start.HasValue && current.End.HasValue &&
-                            now >= current.Start.Value.Date && now <= current.End.Value.Date)
+                        if (current.Start.HasValue && now < current.Start.Value.Date)
                         {
-                            if (i > 0)
-                            {
-                                current = iterations.ElementAt(i - 1);
-                                if (current.Start.HasValue && current.End.HasValue)
-                                {
-                                    result = current;
-                                }
-                            }
+                            result = current;
                             break;
                         }
                     }
@@ -256,27 +248,19 @@ namespace ThreatsManager.DevOps.Schemas
                 Iteration result = null;
 
                 var iterations = GetIterations()?
-                    .OrderBy(x => x.Start)
+                    .OrderBy(x => x.End)
                     .ToArray();
                 if (iterations?.Any() ?? false)
                 {
                     var count = iterations.Length;
-                    var now = DateTime.Now;
+                    var now = DateTime.Now.Date;
 
                     for (int i = 0; i < count; i++)
                     {
                         var current = iterations.ElementAt(i);
-                        if (current.Start.HasValue && current.End.HasValue &&
-                            now >= current.Start.Value.Date && now <= current.End.Value.Date)
+                        if (current.End.HasValue && now > current.End.Value.Date)
                         {
-                            if (i < count - 1)
-                            {
-                                current = iterations.ElementAt(i + 1);
-                                if (current.Start.HasValue && current.End.HasValue)
-                                {
-                                    result = current;
-                                }
-                            }
+                            result = current;
                             break;
                         }
                     }
