@@ -102,7 +102,7 @@ namespace ThreatsManager.PackageManagers
                 File.WriteAllBytes(newLocation, tmSerialized);
 
                 if (autoAddDateTime)
-                    File.Copy(newLocation, $"{StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location))}{Path.GetExtension(location)}", true);
+                    File.Copy(newLocation, Path.Combine(Path.GetDirectoryName(location), $"{StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location))}{Path.GetExtension(location)}"), true);
                 
                 result = true;
             }
