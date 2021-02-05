@@ -65,7 +65,7 @@ namespace ThreatsManager.DevOps.Schemas
         }
 
         public void SetDevOpsStatus([NotNull] IMitigation mitigation, 
-            [NotNull] IDevOpsConnector connector, int id, string itemUrl, WorkItemStatus status)
+            [NotNull] IDevOpsConnector connector, int id, string itemUrl, string assignedTo, WorkItemStatus status)
         {
             var info = GetInfo(mitigation);
             if (info != null)
@@ -74,6 +74,8 @@ namespace ThreatsManager.DevOps.Schemas
                 if (connectionInfo != null)
                 {
                     connectionInfo.Status = status;
+                    if (assignedTo != null)
+                        connectionInfo.AssignedTo = assignedTo;
                 }
                 else
                 {
@@ -82,6 +84,7 @@ namespace ThreatsManager.DevOps.Schemas
                         Id = id,
                         ConnectorId = connector.FactoryId,
                         Url = connector.Url,
+                        AssignedTo = assignedTo,
                         Project = connector.Project,
                         Status = status,
                         ItemUrl = itemUrl
@@ -95,6 +98,7 @@ namespace ThreatsManager.DevOps.Schemas
                     Id = id,
                     ConnectorId = connector.FactoryId,
                     Url = connector.Url,
+                    AssignedTo = assignedTo,
                     Project = connector.Project,
                     Status = status,
                     ItemUrl = itemUrl

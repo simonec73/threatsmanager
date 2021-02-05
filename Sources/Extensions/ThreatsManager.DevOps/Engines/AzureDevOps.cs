@@ -486,10 +486,19 @@ namespace ThreatsManager.DevOps.Engines
         [InitializationRequired]
         public async Task<IEnumerable<WorkItemInfo>> GetWorkItemsInfoAsync(IEnumerable<int> ids)
         {
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
+            IEnumerable<WorkItemInfo> result = null;
 
-            return await InternalGetWorkItemsInfoAsync(ids).ConfigureAwait(false);
+            var items = ids?.Where(x => x >= 0).ToArray();
+
+            if (items?.Any() ?? false)
+            {
+                if (_client == null)
+                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
+
+                result = await InternalGetWorkItemsInfoAsync(items).ConfigureAwait(false);
+            }
+
+            return result;
         }
 
         [InitializationRequired]
@@ -779,7 +788,7 @@ namespace ThreatsManager.DevOps.Engines
         {
             IEnumerable<WorkItemInfo> result = null;
 
-            var fields = new[] {"System.Id", "System.State"};
+            var fields = new[] {"System.Id", "System.State", "System.AssignedTo"};
 
             var items = await _client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
             if (items?.Any() ?? false)
@@ -797,7 +806,13 @@ namespace ThreatsManager.DevOps.Engines
                             status = mappedState;
                         }
 
-                        list.Add(new WorkItemInfo(item.Id.Value, item.Url, status));
+                        string name = null;
+                        if (item.Fields.TryGetValue("System.AssignedTo", out IdentityRef assignedTo))
+                        {
+                            name = assignedTo.DisplayName;
+                        }
+
+                        list.Add(new WorkItemInfo(item.Id.Value, item.Url, name, status));
                     }
                 }
 
@@ -836,7 +851,7 @@ namespace ThreatsManager.DevOps.Engines
         private async Task<IEnumerable<DevOpsItemInfo>> InternalGetDevOpsItemsInfoAsync([NotNull] IEnumerable<int> ids)
         {
             IEnumerable<DevOpsItemInfo> result = null;
-            var fields = new[] { "System.Id", "System.Title", "System.WorkItemType" };
+            var fields = new[] { "System.Id", "System.Title", "System.WorkItemType", "System.AssignedTo" };
 
             var items = await _client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
 
@@ -851,7 +866,11 @@ namespace ThreatsManager.DevOps.Engines
                         if (item.Fields.TryGetValue("System.Title", out string title) && 
                             item.Fields.TryGetValue("System.WorkItemType", out string workItemType))
                         {
-                            list.Add(new DevOpsItemInfo(item.Id.Value, title, item.Url, workItemType));
+                            string name = null;
+                            if (item.Fields.TryGetValue("System.AssignedTo", out IdentityRef assignedTo))
+                                name = assignedTo.DisplayName;
+
+                            list.Add(new DevOpsItemInfo(item.Id.Value, title, item.Url, workItemType, name));
                         }
                     }
                 }

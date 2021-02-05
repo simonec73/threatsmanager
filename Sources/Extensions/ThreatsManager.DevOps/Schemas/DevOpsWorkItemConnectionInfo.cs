@@ -12,5 +12,8 @@ namespace ThreatsManager.DevOps.Schemas
 
         [JsonProperty("itemUrl")]
         public string ItemUrl { get; set; }
+
+        [JsonProperty("assignedTo")]
+        public string AssignedTo { get; set; }
     }
 }

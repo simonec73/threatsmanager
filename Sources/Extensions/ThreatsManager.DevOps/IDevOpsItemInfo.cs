@@ -29,6 +29,11 @@ namespace ThreatsManager.DevOps
         string WorkItemType { get; }
 
         /// <summary>
+        /// Assignee of the Item.
+        /// </summary>
+        string AssignedTo { get; }
+
+        /// <summary>
         /// Serialize the content of the object.
         /// </summary>
         /// <returns>Serialized object.</returns>

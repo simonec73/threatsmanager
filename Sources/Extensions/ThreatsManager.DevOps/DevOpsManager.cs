@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -84,9 +84,9 @@ namespace ThreatsManager.DevOps
             return result;
         }
 
-        public static IDictionary<IMitigation, WorkItemStatus> GetMitigationsStatus([NotNull] IThreatModel model)
+        public static IDictionary<IMitigation, WorkItemSummary> GetMitigationsSummary([NotNull] IThreatModel model)
         {
-            IDictionary<IMitigation, WorkItemStatus> result = null;
+            IDictionary<IMitigation, WorkItemSummary> result = null;
 
             if (_connectors.TryGetValue(model.Id, out var connector))
             {
@@ -102,8 +102,8 @@ namespace ThreatsManager.DevOps
                         if (info != null)
                         {
                             if (result == null)
-                                result = new Dictionary<IMitigation, WorkItemStatus>();
-                            result.Add(mitigation, info.Status);
+                                result = new Dictionary<IMitigation, WorkItemSummary>();
+                            result.Add(mitigation, new WorkItemSummary(info.Id, info.Status, info.AssignedTo));
                         }
                     }
                 }
@@ -141,7 +141,7 @@ namespace ThreatsManager.DevOps
                         if (await connector.SetWorkItemStateAsync(id, status).ConfigureAwait(false))
                         {
                             var schemaManager = new DevOpsPropertySchemaManager(model);
-                            schemaManager.SetDevOpsStatus(mitigation, connector, id, workItemInfo?.Url, status);
+                            schemaManager.SetDevOpsStatus(mitigation, connector, id, workItemInfo?.Url, null, status);
                             result = true;
                         }
                         else
@@ -202,16 +202,17 @@ namespace ThreatsManager.DevOps
                     foreach (var info in infos)
                     {
                         var pairs = mitigations
-                            .Where(x => x.Value.Id == info.Id)
+                            .Where(x => x.Value != null && x.Value.Id == info.Id)
                             .ToArray();
 
                         if (pairs.Any())
                         {
                             var pair = pairs.FirstOrDefault();
 
-                            if (pair.Value.Status != info.Status)
+                            if (pair.Value.Status != info.Status || 
+                                string.CompareOrdinal(pair.Value.AssignedTo, info.AssignedTo) != 0)
                             {
-                                schemaManager.SetDevOpsStatus(pair.Key, connector, info.Id, info.Url, info.Status);
+                                schemaManager.SetDevOpsStatus(pair.Key, connector, info.Id, info.Url, info.AssignedTo, info.Status);
                                 result++;
                             }
                         }

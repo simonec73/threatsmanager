@@ -9,11 +9,13 @@
         /// Public constructor.
         /// </summary>
         /// <param name="id">Identified of the Work Item.</param>
+        /// <param name="assignedTo">Name of the assignee of the Work Item.</param>
         /// <param name="status">Status of the Work Item.</param>
-        public WorkItemInfo(int id, string url, WorkItemStatus status)
+        public WorkItemInfo(int id, string url, string assignedTo, WorkItemStatus status)
         {
             Id = id;
             Url = url;
+            AssignedTo = assignedTo;
             Status = status;
         }
 
@@ -31,5 +33,10 @@
         /// Status of the Work Item.
         /// </summary>
         public WorkItemStatus Status { get; private set; }
+
+        /// <summary>
+        /// Name of the assignee of the activity.
+        /// </summary>
+        public string AssignedTo { get; private set; }
     }
 }

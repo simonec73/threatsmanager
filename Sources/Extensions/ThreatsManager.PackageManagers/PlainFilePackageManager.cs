@@ -121,6 +121,9 @@ namespace ThreatsManager.PackageManagers
                 package.Add(ExtensionsFile, extSerialized);
                 package.Save();
 
+                if (autoAddDateTime)
+                    File.Copy(newLocation, $"{StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location))}{Path.GetExtension(location)}", true);
+
                 result = true;
             }
 

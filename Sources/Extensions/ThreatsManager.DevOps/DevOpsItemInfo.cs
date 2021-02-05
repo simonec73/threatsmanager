@@ -16,9 +16,9 @@ namespace ThreatsManager.DevOps
         /// Constructor.
         /// </summary>
         /// <param name="serialized">Serialized value of the Item, obtained with <see cref="Serialize"/>.</param>
-        public DevOpsItemInfo([RegularExpression(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)#(?<WorkItemType>.*)")] string serialized)
+        public DevOpsItemInfo([RegularExpression(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)#(?<WorkItemType>.*)#(?<AssignedTo>.*)")] string serialized)
         {
-            var regex = new Regex(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)#(?<WorkItemType>.*)");
+            var regex = new Regex(@"(?<Id>[\d]+)#(?<Name>.*)#(?<Url>.*)#(?<WorkItemType>.*)#(?<AssignedTo>.*)");
             var match = regex.Match(serialized);
             if (match.Success && int.TryParse(match.Groups["Id"].Value, out var id))
             {
@@ -26,6 +26,7 @@ namespace ThreatsManager.DevOps
                 _name = match.Groups["Name"].Value;
                 _url = match.Groups["Url"].Value;
                 _workItemType = match.Groups["WorkItemType"].Value;
+                _assignedTo = match.Groups["AssignedTo"].Value;
             }
         }
 
@@ -36,12 +37,13 @@ namespace ThreatsManager.DevOps
         /// <param name="name">Name of the Item.</param>
         /// <param name="url">Url of the Item.</param>
         /// <param name="workItemType">Type of the Item.</param>
-        public DevOpsItemInfo([Positive] int id, [Required] string name, [Required] string url, [Required] string workItemType)
+        public DevOpsItemInfo([Positive] int id, [Required] string name, [Required] string url, [Required] string workItemType, string assignedTo)
         {
             _id = id;
             _name = name;
             _url = url;
             _workItemType = workItemType;
+            _assignedTo = assignedTo;
         }
 
         [JsonProperty("id")]
@@ -64,9 +66,14 @@ namespace ThreatsManager.DevOps
 
         public string WorkItemType => _workItemType;
 
+        [JsonProperty("assignedTo")]
+        private string _assignedTo;
+
+        public string AssignedTo => _assignedTo;
+
         public string Serialize()
         {
-            return $"{Id}#{Name}#{Url}#{WorkItemType}";
+            return $"{Id}#{Name}#{Url}#{WorkItemType}#{AssignedTo}";
         }
 
        public override string ToString()
