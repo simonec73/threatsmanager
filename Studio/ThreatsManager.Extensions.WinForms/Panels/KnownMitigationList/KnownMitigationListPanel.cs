@@ -13,6 +13,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.KnownMitigationList
 {
@@ -597,9 +598,15 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 var row = GetRow(e.Location);
 
                 if (row?.Tag is IMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_mitigationMenu, row.Tag);
                     _mitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatTypeMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_threatTypeMitigationMenu, row.Tag);
                     _threatTypeMitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
 

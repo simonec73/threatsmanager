@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Controls;
@@ -11,7 +10,9 @@ using DevComponents.DotNetBar.Layout;
 using DevComponents.DotNetBar.SuperGrid;
 using DevComponents.Editors;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.WinForms.Dialogs;
@@ -92,6 +93,46 @@ namespace ThreatsManager.Utilities.WinForms
             container.RootGroup.Items.Add(item);
 
             return control;
+        }
+        #endregion
+
+        #region Hyperlink.
+        private static LinkLabel AddHyperlink([NotNull] LayoutControl container,
+            [Required] string label, [NotNull] IIdentity identity)
+        {
+            int height = (int) (25 * Dpi.Factor.Height);
+            var control = new LinkLabel()
+            {
+                Text = identity.Name,
+                UseMnemonic = false,
+                Padding = new Padding(4, 0, 4, 0),
+                Tag = identity
+            };
+           control.LinkClicked += OnHyperlinkClicked;
+
+            var item = new LayoutControlItem()
+            {
+                Text = label,
+                Control = control,
+                Height = height,
+                HeightType = eLayoutSizeType.Absolute,
+                Width = 101,
+                WidthType = eLayoutSizeType.Percent,
+                Padding = new Padding(4)
+            };
+            container.Controls.Add(control);
+            container.RootGroup.Items.Add(item);
+
+            return control;
+        }
+
+        private static void OnHyperlinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (sender is LinkLabel linkLabel && linkLabel.Tag is IIdentity identity)
+            {
+                var dialog = new ItemEditorDialog {Item = identity};
+                dialog.ShowDialog(Form.ActiveForm);
+            }
         }
         #endregion
 
@@ -488,7 +529,7 @@ namespace ThreatsManager.Utilities.WinForms
                     {
                         Text = listPropertyType.Name,
                         Control = control,
-                        Height = (int) (20 * Dpi.Factor.Height),
+                        Height = (int) (25 * Dpi.Factor.Height),
                         HeightType = eLayoutSizeType.Absolute,
                         Width = 101,
                         WidthType = eLayoutSizeType.Percent
@@ -526,7 +567,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label,
                 Control = control,
-                Height = (int) (20 * Dpi.Factor.Height),
+                Height = (int) (25 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent
@@ -762,6 +803,77 @@ namespace ThreatsManager.Utilities.WinForms
                             }
                         }
                     }
+                }
+            }
+        }
+        #endregion
+
+        #region List View.
+        private ListView AddListView([NotNull] LayoutControl container,
+            [NotNull] string label, IEnumerable<IThreatEvent> threatEvents)
+        {
+            var smallImageList = new ImageList();
+            var imageList = new ImageList();
+            var control = new ListView()
+            {
+                HeaderStyle = ColumnHeaderStyle.None,
+                View = View.Details,
+                SmallImageList = smallImageList,
+                LargeImageList = imageList,
+                UseCompatibleStateImageBehavior = false,
+                HideSelection = false,
+                MultiSelect = false
+            };
+
+            control.Columns.AddRange(new [] {new ColumnHeader()});
+            var values = threatEvents?.ToArray();
+            if (values?.Any() ?? false)
+            {
+                int i = 0;
+                foreach (var value in values)
+                {
+                    smallImageList.Images.Add(value.Parent.GetImage(ImageSize.Small));
+                    imageList.Images.Add(value.Parent.GetImage(ImageSize.Medium));
+                    control.Items.Add(new ListViewItem(value.Parent.Name, i)
+                    {
+                        Tag = value
+                    });
+                    i++;
+                }
+                control.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
+            control.MouseDoubleClick += OnListViewDoubleClick;
+
+            var item = new LayoutControlItem()
+            {
+                Control = control,
+                Height = (int) (150 * Dpi.Factor.Height),
+                HeightType = eLayoutSizeType.Absolute,
+                Width = 101,
+                WidthType = eLayoutSizeType.Percent,
+                Padding = new Padding(4)
+            };
+            item.Text = label;
+            if (string.IsNullOrWhiteSpace(label))
+            {
+                item.TextVisible = false;
+            }
+            container.Controls.Add(control);
+            container.RootGroup.Items.Add(item);
+
+            return control;
+        }
+
+        private void OnListViewDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (sender is ListView listView)
+            {
+                ListViewHitTestInfo hit = listView.HitTest(e.Location);
+
+                if (hit.Item?.Tag is IIdentity identity)
+                {
+                    var dialog = new ItemEditorDialog {Item = identity};
+                    dialog.ShowDialog(Form.ActiveForm);
                 }
             }
         }
@@ -1309,6 +1421,14 @@ namespace ThreatsManager.Utilities.WinForms
             else if (control is DateTimePicker dateTimePicker)
             {
                 dateTimePicker.ValueChanged -= DateTimePickerValueChanged;
+            }
+            else if (control is LinkLabel linkLabel)
+            {
+                linkLabel.LinkClicked -= OnHyperlinkClicked;
+            }
+            else if (control is ListView listView)
+            {
+                listView.MouseDoubleClick -= OnListViewDoubleClick;
             }
 
             if (control.Tag is IActions actions)

@@ -85,11 +85,11 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                         }
                         break;
                     case "Auto":
-                        var states = DevOpsManager.GetMitigationsStatus(_model);
+                        var summaries = DevOpsManager.GetMitigationsSummary(_model);
                         var schemaManager = new RoadmapPropertySchemaManager(_model);
                         var mitigations = _model?.GetUniqueMitigations()?
                             .Where(x => (schemaManager.GetStatus(x) != RoadmapStatus.NoActionRequired) &&
-                                        !(states?.ContainsKey(x) ?? false))
+                                        !(summaries?.ContainsKey(x) ?? false))
                             .OrderBy(x => x.Name).ToArray();
                         if (mitigations?.Any() ?? false)
                         {
@@ -154,7 +154,8 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                         var workItemInfo = await connector.GetWorkItemInfoAsync(info.Id);
                         if (workItemInfo != null)
                         {
-                            schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, info.Url, workItemInfo.Status);
+                            schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, 
+                                info.Url, info.AssignedTo, workItemInfo.Status);
                         }
                     }
                 }

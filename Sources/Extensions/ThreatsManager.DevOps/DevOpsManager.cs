@@ -20,7 +20,7 @@ namespace ThreatsManager.DevOps
         private static readonly Dictionary<Guid, IDevOpsConnector> _connectors = new Dictionary<Guid, IDevOpsConnector>();
         #endregion
 
-        public static event Action<int> RefreshDone;
+        public static event Action<IThreatModel, int> RefreshDone;
         public static event Action<IThreatModel, IDevOpsConnector> ConnectorAdded;
         public static event Action<IThreatModel, IDevOpsConnector> ConnectorRemoved;
 
@@ -141,7 +141,7 @@ namespace ThreatsManager.DevOps
                         if (await connector.SetWorkItemStateAsync(id, status).ConfigureAwait(false))
                         {
                             var schemaManager = new DevOpsPropertySchemaManager(model);
-                            schemaManager.SetDevOpsStatus(mitigation, connector, id, workItemInfo?.Url, null, status);
+                            schemaManager.SetDevOpsStatus(mitigation, connector, id, workItemInfo?.Url, status);
                             result = true;
                         }
                         else
@@ -229,10 +229,14 @@ namespace ThreatsManager.DevOps
             {
                 do
                 {
-                    var changes = await UpdateAsync(model);
-                    if (_notificationType == NotificationType.Full || 
-                        (_notificationType == NotificationType.SuccessOnly && changes > 0))
-                        RefreshDone?.Invoke(changes);
+                    var connector = GetConnector(model);
+                    if (connector != null)
+                    {
+                        var changes = await UpdateAsync(model);
+                        if (_notificationType == NotificationType.Full ||
+                            (_notificationType == NotificationType.SuccessOnly && changes > 0))
+                            RefreshDone?.Invoke(model, changes);
+                    }
 
                     await Task.Delay(_intervalMins * 60000);
                 } while (!_stopUpdater);

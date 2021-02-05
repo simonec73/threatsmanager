@@ -12,6 +12,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.ThreatTypeList
 {
@@ -626,9 +627,15 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                 var row = GetRow(e.Location);
 
                 if (row?.Tag is IThreatType)
+                {
+                    MenuDefinition.UpdateVisibility(_threatTypeMenu, row.Tag);
                     _threatTypeMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatTypeMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_threatTypeMitigationMenu, row.Tag);
                     _threatTypeMitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
 

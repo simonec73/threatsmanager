@@ -134,9 +134,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             if (sender is MetroTileItem item)
             {
-                // TODO: load the actions to be shown for the context menu.
                 item.Checked = false;
-                ContextMenu = new ContextMenu()
+                ContextMenuStrip = new ContextMenuStrip()
                 {
                     Tag = item.Tag
                 };
@@ -149,10 +148,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (first)
                             first = false;
                         else
-                            ContextMenu.MenuItems.Add("-");
+                            ContextMenuStrip.Items.Add("-");
                         foreach (var action in _actions[bucket])
                         {
-                            ContextMenu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                            ContextMenuStrip.Items.Add(new ToolStripMenuItem(action.Label, action.SmallIcon, DoAction)
                             {
                                 Tag = action
                             });

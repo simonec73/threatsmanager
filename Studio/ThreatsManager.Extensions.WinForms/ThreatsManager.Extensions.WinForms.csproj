@@ -238,6 +238,13 @@
     <Compile Include="Dialogs\ResidualRiskEstimatorConfigurationDialog.Designer.cs">
       <DependentUpon>ResidualRiskEstimatorConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapFilter.cs" />
+    <Compile Include="Dialogs\RoadmapFilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RoadmapFilterDialog.Designer.cs">
+      <DependentUpon>RoadmapFilterDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtensionConfigurationManager.cs" />
     <Compile Include="Initializers\DiagramSchemaInitializer.cs" />
     <Compile Include="Panels\Configuration\ConfigurationPanel.cs">
@@ -292,10 +299,15 @@
     <Compile Include="Panels\RoadmapThreatTypesCharts.Designer.cs">
       <DependentUpon>RoadmapThreatTypesCharts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapItem.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapSubItem.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapPanelFactory.ContextAwareExtension.cs" />
     <Compile Include="Panels\Roadmap\RoadmapExtensions.cs" />
-    <Compile Include="Panels\Roadmap\RoadmapMitigation.cs" />
     <Compile Include="Panels\Roadmap\RoadmapPalette.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Panels\Roadmap\RoadmapPanel.CustomRibbonExtension.cs">
       <SubType>UserControl</SubType>
@@ -1083,6 +1095,9 @@
     <EmbeddedResource Include="Dialogs\ResidualRiskEstimatorConfigurationDialog.resx">
       <DependentUpon>ResidualRiskEstimatorConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RoadmapFilterDialog.resx">
+      <DependentUpon>RoadmapFilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Panels\Configuration\ConfigurationPanel.resx">
       <DependentUpon>ConfigurationPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -1569,6 +1584,10 @@
     <None Include="Resources\pieces_white.png" />
     <None Include="Resources\library_white.png" />
     <None Include="Resources\library_black.png" />
+    <None Include="Resources\funnel_small.png" />
+    <None Include="Resources\funnel.png" />
+    <None Include="Resources\funnel_big.png" />
+    <None Include="Resources\funnel_huge.png" />
     <Content Include="Shortcuts.txt" />
     <Content Include="Colors.txt" />
     <Content Include="Resources\threats_selection_small.png" />

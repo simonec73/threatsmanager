@@ -260,12 +260,14 @@ namespace ThreatsManager.DevOps.Panels
             _sixthPalette.RefreshNodes();
         }
 
-        protected void AddItem(IMitigation mitigation, WorkItemStatus status)
+        protected void AddItem(IMitigation mitigation, WorkItemStatus status, string assignedTo)
         {
             var index = _captions.IndexOf(status.GetEnumLabel());
             if (mitigation != null && index >= 0)
             {
                 var item = new KanbanItem(mitigation, index);
+                if (!string.IsNullOrWhiteSpace(assignedTo))
+                    item.SetInfo("Assigned To", assignedTo);
                 item.MoveRequired += ItemOnMoveRequired;
                 Add(item, index);
             }

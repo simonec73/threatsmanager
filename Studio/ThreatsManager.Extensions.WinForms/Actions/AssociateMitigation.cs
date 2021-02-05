@@ -38,6 +38,11 @@ namespace ThreatsManager.Extensions.Actions
             return result;
         }
 
+        public bool IsVisible(object item)
+        {
+            return true;
+        }
+
         public bool Execute([NotNull] IIdentity identity)
         {
             bool result = false;

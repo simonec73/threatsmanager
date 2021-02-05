@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.ThreatActorList
 {
@@ -283,8 +284,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
             {
                 var row = GetRow(e.Location);
 
-                if (row != null)
+                if (row?.Tag != null)
+                {
+                    MenuDefinition.UpdateVisibility(_contextMenu, row.Tag);
                     _contextMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
 

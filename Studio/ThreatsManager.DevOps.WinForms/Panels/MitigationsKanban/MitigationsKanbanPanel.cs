@@ -36,6 +36,14 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
             _model = threatModel;
 
             LoadModel();
+
+            DevOpsManager.RefreshDone += DevOpsManagerOnRefreshDone;
+        }
+
+        private void DevOpsManagerOnRefreshDone(IThreatModel model, int count)
+        {
+            if (count > 0 && _model == model)
+                LoadModel();
         }
 
         [Dispatched]
@@ -63,14 +71,17 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
 
                 if (mitigations?.Any() ?? false)
                 {
-                    var states = DevOpsManager.GetMitigationsStatus(_model);
+                    var summaries = DevOpsManager.GetMitigationsSummary(_model);
 
-                   foreach (var mitigation in mitigations)
+                    foreach (var mitigation in mitigations)
                     {
-                        if (states?.ContainsKey(mitigation) ?? false)
-                            AddItem(mitigation, states[mitigation]);
+                        if (summaries?.ContainsKey(mitigation) ?? false)
+                        {
+                            var summary = summaries[mitigation];
+                            AddItem(mitigation, summary.Status, summary.AssignedTo);
+                        }
                         else
-                            AddItem(mitigation, WorkItemStatus.Unknown);
+                            AddItem(mitigation, WorkItemStatus.Unknown, null);
                     }
 
                     RefreshNodes();

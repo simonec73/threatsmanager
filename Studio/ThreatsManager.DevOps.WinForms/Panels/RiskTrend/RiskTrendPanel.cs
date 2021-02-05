@@ -15,7 +15,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.DevOps.Panels.RiskTrend
 {
-    public partial class RiskTrendPanel : UserControl, IShowThreatModelPanel<Panel>
+    public partial class RiskTrendPanel : UserControl, IShowThreatModelPanel<Form>
     {
         public RiskTrendPanel()
         {
@@ -68,7 +68,7 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
 
         public Guid Id => _id;
 
-        public Panel PanelContainer { get; set; }
+        public Form PanelContainer { get; set; }
 
         private ChartXy Chart => _chart.ChartPanel.ChartContainers.FirstOrDefault() as ChartXy;
 

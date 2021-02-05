@@ -784,9 +784,15 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                 var row = GetRow(e.Location);
 
                 if (row?.Tag is IMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_mitigationMenu, row.Tag);
                     _mitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatEventMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_threatEventMitigationMenu, row.Tag);
                     _threatEventMitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
 

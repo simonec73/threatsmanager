@@ -74,8 +74,7 @@ namespace ThreatsManager.DevOps.Schemas
                 if (connectionInfo != null)
                 {
                     connectionInfo.Status = status;
-                    if (assignedTo != null)
-                        connectionInfo.AssignedTo = assignedTo;
+                    connectionInfo.AssignedTo = assignedTo;
                 }
                 else
                 {
@@ -99,6 +98,44 @@ namespace ThreatsManager.DevOps.Schemas
                     ConnectorId = connector.FactoryId,
                     Url = connector.Url,
                     AssignedTo = assignedTo,
+                    Project = connector.Project,
+                    Status = status,
+                    ItemUrl = itemUrl
+                });
+            }
+        }
+
+        public void SetDevOpsStatus([NotNull] IMitigation mitigation, 
+            [NotNull] IDevOpsConnector connector, int id, string itemUrl, WorkItemStatus status)
+        {
+            var info = GetInfo(mitigation);
+            if (info != null)
+            {
+                var connectionInfo = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
+                if (connectionInfo != null)
+                {
+                    connectionInfo.Status = status;
+                }
+                else
+                {
+                    SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
+                    {
+                        Id = id,
+                        ConnectorId = connector.FactoryId,
+                        Url = connector.Url,
+                        Project = connector.Project,
+                        Status = status,
+                        ItemUrl = itemUrl
+                    });
+                }
+            }
+            else
+            {
+                SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
+                {
+                    Id = id,
+                    ConnectorId = connector.FactoryId,
+                    Url = connector.Url,
                     Project = connector.Project,
                     Status = status,
                     ItemUrl = itemUrl

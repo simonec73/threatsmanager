@@ -73,6 +73,92 @@ namespace ThreatsManager.Utilities.WinForms
             return result;
         }
 
+        /// <summary>
+        /// Modifies the visibility of a ContextMenuStrip based on the context passed as argument.
+        /// </summary>
+        /// <param name="menu">Menu containing the items to be analyzed.</param>
+        /// <param name="context">Context of the analysis.</param>
+        public static void UpdateVisibility(ContextMenuStrip menu, object context)
+        {
+            var items = menu?.Items.OfType<ToolStripMenuItem>().Where(x => x.Tag is IContextAwareAction).ToArray();
+            if (items?.Any() ?? false)
+            {
+                foreach (var item in items)
+                {
+                    if (item.Tag is IContextAwareAction action)
+                    {
+                        item.Visible = action.IsVisible(context);
+                    }
+                }
+
+                bool previousWasSeparator = false;
+                ToolStripSeparator lastSeparator = null;
+
+                foreach (ToolStripItem item in menu.Items)
+                {
+                    if (item is ToolStripSeparator separator)
+                    {
+                        item.Visible = !previousWasSeparator;
+
+                        previousWasSeparator = true;
+                        lastSeparator = separator;
+                    } else if (item.Tag is IContextAwareAction action)
+                    {
+                        if (action.IsVisible(context))
+                            previousWasSeparator = false;
+                    }
+                }
+
+                if (previousWasSeparator)
+                    lastSeparator.Visible = false;
+            }
+        }
+
+        /// <summary>
+        /// Modifies the visibility of a ContextMenu based on the context passed as argument.
+        /// </summary>
+        /// <param name="menu">Menu containing the items to be analyzed.</param>
+        /// <param name="context">Context of the analysis.</param>
+        public static void UpdateVisibility(ContextMenu menu, object context)
+        {
+            var items = menu?.MenuItems.OfType<MenuItem>().Where(x => x.Tag is IContextAwareAction).ToArray();
+            if (items?.Any() ?? false)
+            {
+                foreach (var item in items)
+                {
+                    if (item.Tag is IContextAwareAction action)
+                    {
+                        item.Visible = context != null && action.IsVisible(context);
+                    }
+                }
+
+                var allItems = menu.MenuItems.OfType<MenuItem>().ToArray();
+                if (allItems.Any())
+                {
+                    bool previousWasSeparator = false;
+                    MenuItem lastSeparator = null;
+
+                    foreach (var item in allItems)
+                    {
+                        if (item.Tag is IContextAwareAction action)
+                        {
+                            if (action.IsVisible(context))
+                                previousWasSeparator = false;
+                        }
+                        else
+                        {
+                            item.Visible = !previousWasSeparator;
+                            previousWasSeparator = true;
+                            lastSeparator = item;
+                        }
+                    }
+
+                    if (previousWasSeparator)
+                        lastSeparator.Visible = false;
+                }
+            }
+        }
+
         #region Private or protected members.
         private bool IsApplicable(IContextAwareAction action, Scope scope)
         {

@@ -11,6 +11,7 @@ using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
@@ -20,6 +21,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 #pragma warning disable CS0067
     public partial class RoadmapPanel
     {
+        private Dictionary<string, List<ICommandsBarDefinition>> _commandsBarContextAwareActions;
+
         public event Action<string, bool> ChangeCustomActionStatus;
 
         public string TabLabel => "Roadmap";
@@ -39,12 +42,38 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                             Properties.Resources.money_bill_fire),
                     }));
                 };
+
+                result.Add(new CommandsBarDefinition("Filter", "Filter", new IActionDefinition[]
+                {
+                    new ActionDefinition(Id, "Filter", "Filter Mitigations",
+                        Properties.Resources.funnel_big,
+                        Properties.Resources.funnel),
+                }));
+
                 result.Add(new CommandsBarDefinition("Export", "Export", new IActionDefinition[]
                 {
                     new ActionDefinition(Id, "ExportCsv", "Export for Azure DevOps",
                         Properties.Resources.xlsx_big,
                         Properties.Resources.xlsx),
                 }));
+
+                if (_commandsBarContextAwareActions?.Any() ?? false)
+                {
+                    foreach (var definitions in _commandsBarContextAwareActions.Values)
+                    {
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                    }
+                }
+
                 result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
                 {
                     new ActionDefinition(Id, "Refresh", "Refresh List",
@@ -52,6 +81,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         Resources.refresh,
                         true, Shortcut.F5),
                 }));
+
 
                 return result;
             }
@@ -75,6 +105,15 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                             LoadModel();
                         }
                         break;
+                    case "Filter":
+                        var dialogFilter = new RoadmapFilterDialog(_model);
+                        dialogFilter.Filter = _filter;
+                        if (dialogFilter.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            _filter = dialogFilter.Filter;
+                            LoadModel();
+                        }
+                        break;
                     case "ExportCsv":
                         var saveFileDialog = new SaveFileDialog()
                         {
@@ -95,6 +134,15 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         break;
                     case "Refresh":
                         LoadModel();
+                        break;
+                    default:
+                        if (action.Tag is IIdentityContextAwareAction identityContextAwareAction)
+                        {
+                            if ((identityContextAwareAction.Scope & Scope.ThreatModel) != 0)
+                            {
+                                identityContextAwareAction.Execute(_model);
+                            }
+                        }
                         break;
                 }
 

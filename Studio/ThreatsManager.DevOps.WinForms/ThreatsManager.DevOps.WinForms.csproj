@@ -206,11 +206,12 @@
     <Compile Include="..\ThreatsManager\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Actions\AssignNewToPreviousIteration.cs" />
+    <Compile Include="Actions\AssignNewToCurrentIteration.cs" />
     <Compile Include="Actions\AssignToIteration.cs" />
     <Compile Include="Actions\Configure.cs" />
     <Compile Include="Actions\Connect.cs" />
     <Compile Include="Actions\ManageIterations.cs" />
-    <Compile Include="Actions\Synchronize.cs" />
     <Compile Include="Dialogs\DevOpsConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -253,6 +254,7 @@
     <Compile Include="ExtensionsContainer.cs" />
     <Compile Include="Initializers\AutoConnector.cs" />
     <Compile Include="Initializers\NewInstanceInitializer.cs" />
+    <Compile Include="Initializers\UpdateNotifier.cs" />
     <Compile Include="Panels\CommentsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -269,14 +271,6 @@
     <Compile Include="Panels\GridCellSuperTooltipProvider.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Panels\ImplementationReview\ImplementationReviewPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Panels\ImplementationReview\ImplementationReviewPanel.Designer.cs">
-      <DependentUpon>ImplementationReviewPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Panels\ImplementationReview\ImplementationReviewPanelFactory.cs" />
-    <Compile Include="Panels\ImplementationReview\ImplementationReviewPanelFactory.MainRibbonExtension.cs" />
     <Compile Include="Panels\KanbanHyperlink.cs" />
     <Compile Include="Panels\KanbanItem.cs" />
     <Compile Include="Panels\KanbanPalette.cs">
@@ -300,6 +294,7 @@
       <DependentUpon>MitigationsKanbanPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Panels\KanbanSubItem.cs" />
+    <Compile Include="Panels\RiskTrend\RiskTrendPanelFactory.MainRibbonExtension.cs" />
     <Compile Include="Panels\RiskTrend\RiskTrendPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -345,9 +340,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\Configuration\ConfigurationPanel.resx">
       <DependentUpon>ConfigurationPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Panels\ImplementationReview\ImplementationReviewPanel.resx">
-      <DependentUpon>ImplementationReviewPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\KanbanPanel.resx">
       <DependentUpon>KanbanPanel.cs</DependentUpon>
@@ -606,7 +598,18 @@
   <ItemGroup>
     <None Include="Resources\iteration_big.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\chart_line_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\chart_line.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\chart_line_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\chart_line_huge.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)Extensions\$(ProjectName)\" /Y

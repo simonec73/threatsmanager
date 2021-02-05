@@ -341,14 +341,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (_buckets?.Any() ?? false)
             {
-                bool first = true;
-
                 foreach (var bucket in _buckets)
                 {
-                    if (first)
-                        first = false;
-                    else
-                        cm.MenuItems.Add(new MenuItem("-"));
                     AddMenu(cm, _actions[bucket]);
                 }
             }
@@ -358,12 +352,25 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void AddMenu([NotNull] GoContextMenu menu, [NotNull] List<IContextAwareAction> actions)
         {
+            bool separator = false;
+
             foreach (var action in actions)
             {
-                menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                if (action.IsVisible(_link.DataFlow))
                 {
-                    Tag = action
-                });
+                    if (!separator)
+                    {
+                        separator = true;
+
+                        if (menu.MenuItems.Count > 0)
+                            menu.MenuItems.Add(new MenuItem("-"));
+                    }
+
+                    menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                    {
+                        Tag = action
+                    });
+                }
             }
         }
 

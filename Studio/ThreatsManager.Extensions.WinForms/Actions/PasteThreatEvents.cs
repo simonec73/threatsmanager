@@ -14,7 +14,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("1619C3FB-356E-49C7-9548-0E828928F426", "Paste Threat Events Context Aware Action", 40, ExecutionMode.Simplified)]
+    [Extension("1619C3FB-356E-49C7-9548-0E828928F426", "Paste Threat Events Context Aware Action", 25, ExecutionMode.Simplified)]
     public class PasteThreatEvents : IIdentityContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.Entity | Scope.Group | Scope.DataFlow;
@@ -30,6 +30,11 @@ namespace ThreatsManager.Extensions.Actions
         public bool Execute(object item)
         {
             return (item is IIdentity identity) && Execute(identity);
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)

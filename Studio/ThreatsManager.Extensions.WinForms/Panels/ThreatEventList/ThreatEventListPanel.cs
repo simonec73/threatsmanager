@@ -1369,13 +1369,25 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 var row = GetRow(e.Location);
 
                 if (row?.Tag is IThreatEvent)
+                {
+                    MenuDefinition.UpdateVisibility(_threatEventMenu, row.Tag);
                     _threatEventMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatType)
+                {
+                    MenuDefinition.UpdateVisibility(_threatTypeMenu, row.Tag);
                     _threatTypeMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatEventScenario)
+                {
+                    MenuDefinition.UpdateVisibility(_scenarioMenu, row.Tag);
                     _scenarioMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatEventMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_threatEventMitigationMenu, row.Tag);
                     _threatEventMitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
         #endregion

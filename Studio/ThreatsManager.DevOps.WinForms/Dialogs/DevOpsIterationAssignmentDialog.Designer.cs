@@ -33,9 +33,9 @@ namespace ThreatsManager.DevOps.Dialogs
             this._ok = new System.Windows.Forms.Button();
             this._cancel = new System.Windows.Forms.Button();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._add = new System.Windows.Forms.Button();
             this._iterations = new System.Windows.Forms.ComboBox();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._add = new System.Windows.Forms.Button();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this.layoutControl1.SuspendLayout();
@@ -91,15 +91,27 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControl1.Size = new System.Drawing.Size(562, 46);
             this.layoutControl1.TabIndex = 2;
             // 
+            // _add
+            // 
+            this._add.Location = new System.Drawing.Point(483, 4);
+            this._add.Margin = new System.Windows.Forms.Padding(0);
+            this._add.Name = "_add";
+            this._add.Size = new System.Drawing.Size(75, 23);
+            this._add.TabIndex = 1;
+            this._add.Text = "Add New";
+            this._add.UseVisualStyleBackColor = true;
+            this._add.Click += new System.EventHandler(this._add_Click);
+            // 
             // _iterations
             // 
             this._iterations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._iterations.FormattingEnabled = true;
             this._iterations.Location = new System.Drawing.Point(52, 4);
-            this._iterations.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            this._iterations.Margin = new System.Windows.Forms.Padding(0);
             this._iterations.Name = "_iterations";
             this._iterations.Size = new System.Drawing.Size(423, 21);
             this._iterations.TabIndex = 0;
+            this._iterations.SelectedIndexChanged += new System.EventHandler(this._iterations_SelectedIndexChanged);
             // 
             // layoutControlItem1
             // 
@@ -110,17 +122,6 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControlItem1.Text = "Iteration";
             this.layoutControlItem1.Width = 99;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // _add
-            // 
-            this._add.Location = new System.Drawing.Point(483, 4);
-            this._add.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._add.Name = "_add";
-            this._add.Size = new System.Drawing.Size(75, 23);
-            this._add.TabIndex = 1;
-            this._add.Text = "Add New";
-            this._add.UseVisualStyleBackColor = true;
-            this._add.Click += new System.EventHandler(this._add_Click);
             // 
             // layoutControlItem2
             // 

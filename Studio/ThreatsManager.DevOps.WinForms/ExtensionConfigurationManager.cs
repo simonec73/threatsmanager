@@ -29,25 +29,9 @@ namespace ThreatsManager.DevOps
                 DevOpsManager.StartAutomaticUpdater(_model, RefreshInterval, NotificationStrategy);
             else
                 DevOpsManager.StopAutomaticUpdater();
-
-            if (EnableBacklogReview)
-            {
-
-            }
         }
 
         public IEnumerable<ConfigurationData> Data => _configuration?.Data;
-
-        public bool EnableBacklogReview
-        {
-            get => _configuration?.LocalGet<bool>("backlogReview") ?? false;
-
-            set
-            {
-                _configuration?.LocalSet<bool>("backlogReview", value);
-                _dirty = true;
-            }
-        }
 
         public bool ScheduledRefreshes
         {

@@ -168,6 +168,12 @@ namespace ThreatsManager.DevOps.Dialogs
                 Id = Guid.NewGuid().ToString()
             };
 
+            if (CalculateNextIteration(out var start, out var end))
+            {
+                iteration.Start = start;
+                iteration.End = end;
+            }
+
             AddIteration(iteration);
             SaveIterations();
         }
@@ -384,17 +390,18 @@ namespace ThreatsManager.DevOps.Dialogs
 
         private void _generate_Click(object sender, EventArgs e)
         {
-            var start = _paramStartDate.Value.Date;
-            var count = _paramCount.Value;
-            var duration = _paramDuration.Value;
-            bool monday = _paramMonday.Checked;
-            bool tuesday = _paramTuesday.Checked;
-            bool wednesday = _paramWednesday.Checked;
-            bool thursday = _paramThursday.Checked;
-            bool friday = _paramFriday.Checked;
-            bool saturday = _paramSaturday.Checked;
-            bool sunday = _paramSunday.Checked;
+            GenerateIterations(_paramStartDate.Value.Date, (int) _paramCount.Value, (int) _paramDuration.Value, 
+                _paramMonday.Checked, _paramTuesday.Checked, _paramWednesday.Checked, _paramThursday.Checked, 
+                _paramFriday.Checked, _paramSaturday.Checked, _paramSunday.Checked);
+            
+            _initializeGroup.Visible = false;
+            _initialize.Enabled = false;
+        }
 
+        private void GenerateIterations(DateTime start, int count, int duration, 
+            bool monday, bool tuesday, bool wednesday, bool thursday, bool friday, bool saturday, bool sunday,
+            string prefix = "Iteration")
+        {
             DateTime curr;
             DateTime end;
             int days;
@@ -502,7 +509,7 @@ namespace ThreatsManager.DevOps.Dialogs
                 var iteration = new Iteration()
                 {
                     Id = Guid.NewGuid().ToString("D"),
-                    Name = $"Iteration {i + 1}",
+                    Name = $"{prefix} {i + 1}",
                     Start = start,
                     End = end
                 };
@@ -512,8 +519,67 @@ namespace ThreatsManager.DevOps.Dialogs
             }
 
             SaveIterations();
-            _initializeGroup.Visible = false;
-            _initialize.Enabled = false;
+        }
+
+        private bool CalculateNextIteration(out DateTime start, out DateTime end)
+        {
+            bool result = false;
+
+            start = DateTime.Today;
+            end = DateTime.Today;
+
+            var iterations = _schemaManager.GetIterations()?.ToArray();
+            if ((iterations?.Length ?? 0) > 1)
+            {
+                var daysofweek = iterations
+                    .Where(x => x.Start.HasValue)
+                    .Select(x => x.Start.Value.DayOfWeek);
+                if (daysofweek.Any())
+                {
+                    var dayofweek = daysofweek.First();
+                    if (daysofweek.All(x => x == dayofweek))
+                    {
+                        if (iterations.Any(x => x.End.HasValue))
+                        {
+                            start = iterations.Where(x => x.End.HasValue).Max(x => x.End.Value);
+
+                            do
+                            {
+                                start = start.AddDays(1.0);
+                            } while (start.DayOfWeek != dayofweek);
+
+                            var duration = CalculateDuration(iterations);
+                            if (duration > 0)
+                            {
+                                end = start.AddDays(duration);
+                                result = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private int CalculateDuration([NotNull] IEnumerable<Iteration> iterations)
+        {
+            int result = 0;
+
+            var durations = iterations
+                .Where(x => x.Start.HasValue && x.End.HasValue)
+                .Select(x => (x.End.Value - x.Start.Value).Days);
+
+            if (durations.Any())
+            {
+                var duration = durations.First();
+                if (durations.All(x => x == duration))
+                {
+                    result = duration;
+                }
+            }
+
+            return result;
         }
     }
 }

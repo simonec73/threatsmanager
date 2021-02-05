@@ -34,6 +34,25 @@ namespace ThreatsManager.Quality.Actions
             return result;
         }
 
+        public bool IsVisible(object item)
+        {
+            bool result = false;
+
+            IThreatModel model = null;
+            if (item is IThreatModelChild child)
+                model = child.Model;
+            else if (item is IThreatModel threatModel)
+                model = threatModel;
+
+            if (model != null && item is IPropertiesContainer container)
+            {
+                var schemaManager = new AnnotationsPropertySchemaManager(model);
+                result = !schemaManager.AreAnnotationsEnabled(container);
+            }
+
+            return result;
+        }
+
         public bool Execute(IThreatTypeMitigation mitigation)
         {
             bool result = false;

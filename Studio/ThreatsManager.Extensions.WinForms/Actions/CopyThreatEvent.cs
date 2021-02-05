@@ -11,7 +11,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("B1EB3B54-0BFB-473A-A86D-FF35CF9D455A", "Copy a Threat Event Context Aware Action", 31, ExecutionMode.Simplified)]
+    [Extension("B1EB3B54-0BFB-473A-A86D-FF35CF9D455A", "Copy a Threat Event Context Aware Action", 10, ExecutionMode.Simplified)]
     public class CopyThreatEvent : IIdentityContextAwareAction
     {
         public Scope Scope => Scope.ThreatEvent;
@@ -24,6 +24,11 @@ namespace ThreatsManager.Extensions.Actions
         public bool Execute([NotNull] object item)
         {
             return (item is IThreatEvent threatEvent) && Execute(threatEvent);
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)

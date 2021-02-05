@@ -37,7 +37,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         static ModelPanel()
         {
-            _imageSize = Dpi.Factor.Height > 1.5 ? ImageSize.Big : ImageSize.Medium;
+            _imageSize = Dpi.Factor.Height >= 1.5 ? ImageSize.Big : ImageSize.Medium;
         }
 
         public ModelPanel()
@@ -55,7 +55,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             _templateTypes.ItemHeight = (int) (20 * Dpi.Factor.Height);
             _templateToolsPanel.ResumeLayout();
 
-            if (Dpi.Factor.Height > 1.5)
+            if (Dpi.Factor.Height >= 1.5)
             {
                 _existingExternalInteractor.Image = Resources.external;
                 _existingProcess.Image = Resources.process;

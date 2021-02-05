@@ -13,7 +13,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("6555EBB7-8D35-4C50-9B0F-61D22994991B", "Threat Type Edit Context Aware Action", 50, ExecutionMode.Simplified)]
+    [Extension("6555EBB7-8D35-4C50-9B0F-61D22994991B", "Threat Type Edit Context Aware Action", 60, ExecutionMode.Simplified)]
     public class EditThreatType : IIdentityContextAwareAction, 
         IDesktopAlertAwareExtension, IExecutionModeSupport
     {
@@ -21,7 +21,7 @@ namespace ThreatsManager.Extensions.Actions
 
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Edit the Underlying Threat Type";
-        public string Group => "Edit";
+        public string Group => "Other";
         public Bitmap Icon => Resources.threat_type_big;
         public Bitmap SmallIcon => Resources.threat_type;
         public Shortcut Shortcut => Shortcut.None;
@@ -39,6 +39,11 @@ namespace ThreatsManager.Extensions.Actions
             }
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute([NotNull] IIdentity identity)

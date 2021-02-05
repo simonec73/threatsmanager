@@ -5,6 +5,7 @@ using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -18,13 +19,14 @@ using ThreatsManager.Utilities.WinForms;
 namespace ThreatsManager.Extensions.Panels.Roadmap
 {
     public partial class RoadmapPanel : UserControl, IShowThreatModelPanel<Form>, 
-        ICustomRibbonExtension, IPanelOpenerExtension, IExecutionModeSupport
+        ICustomRibbonExtension, IPanelOpenerExtension, IExecutionModeSupport, IContextAwareExtension
     {
         private readonly Guid _id = Guid.NewGuid();
         private IThreatModel _model;
         private GridCell _lastMouseOverCell;
         private bool _loading;
         private ExecutionMode _executionMode = ExecutionMode.Expert;
+        private RoadmapFilter _filter;
 
         public RoadmapPanel()
         {
@@ -62,6 +64,10 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             _noActionRequiredPalette.Clear();
 
             var mitigations = _model?.GetUniqueMitigations()?.OrderBy(x => x.Name).ToArray();
+            if ((mitigations?.Any() ?? false) && _filter != null)
+            {
+                mitigations = _filter.Filter(mitigations)?.ToArray();
+            }
 
             if (mitigations?.Any() ?? false)
             {
@@ -76,23 +82,26 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         effectiveness = effectivenessDict[mitigation.Id];
 
                     var status = mitigation.GetStatus(out var automatedCalculation);
+                    var node = new RoadmapItem(mitigation, effectiveness);
+                    if (_actions != null)
+                        node.SetContextAwareActions(_actions);
 
                     switch (status)
                     {
                         case RoadmapStatus.NotAssessed:
-                            _notAssessedPalette.AddNode(new RoadmapMitigation(mitigation, effectiveness));
+                            _notAssessedPalette.AddNode(node);
                             break;
                         case RoadmapStatus.ShortTerm:
-                            _shortTermPalette.AddNode(new RoadmapMitigation(mitigation, effectiveness));
+                            _shortTermPalette.AddNode(node);
                             break;
                         case RoadmapStatus.MidTerm:
-                            _midTermPalette.AddNode(new RoadmapMitigation(mitigation, effectiveness));
+                            _midTermPalette.AddNode(node);
                             break;
                         case RoadmapStatus.LongTerm:
-                            _longTermPalette.AddNode(new RoadmapMitigation(mitigation, effectiveness));
+                            _longTermPalette.AddNode(node);
                             break;
                         case RoadmapStatus.NoActionRequired:
-                            _noActionRequiredPalette.AddNode(new RoadmapMitigation(mitigation, effectiveness));
+                            _noActionRequiredPalette.AddNode(node);
                             if (automatedCalculation)
                                 mitigation.SetStatus(RoadmapStatus.NoActionRequired);
                             break;
@@ -187,7 +196,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
         private void ObjectSingleClicked(object sender, GoObjectEventArgs e)
         {
-            if (e.GoObject is GoText text && text.ParentNode is RoadmapMitigation mitigation)
+            if (e.GoObject.ParentNode is RoadmapItem mitigation)
             {
                 _itemDetails.Item = mitigation.Mitigation;
                 LoadGrid(mitigation.Mitigation);

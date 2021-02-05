@@ -406,8 +406,11 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             {
                 var row = GetRow(e.Location);
 
-                if (row != null)
+                if (row?.Tag != null)
+                {
+                    MenuDefinition.UpdateVisibility(_contextMenu, row.Tag);
                     _contextMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
 

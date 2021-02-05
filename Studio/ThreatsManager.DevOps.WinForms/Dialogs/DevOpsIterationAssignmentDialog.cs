@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
@@ -43,11 +37,9 @@ namespace ThreatsManager.DevOps.Dialogs
         private void _add_Click(object sender, EventArgs e)
         {
             var dialog = new DevOpsManageIterationsDialog(_model);
-            if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-            {
-                _iterations.Items.Clear();
-                Load();
-            }
+            dialog.ShowDialog(Form.ActiveForm);
+            _iterations.Items.Clear();
+            Load();
         }
 
         private void Load()
@@ -70,6 +62,11 @@ namespace ThreatsManager.DevOps.Dialogs
                     }
                 }
             }
+        }
+
+        private void _iterations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _ok.Enabled = _iterations.SelectedItem is Iteration;
         }
     }
 }

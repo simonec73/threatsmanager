@@ -47,7 +47,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
         private void OnRemoveMitigation(IMitigation obj)
         {
-            var node = Document.OfType<RoadmapMitigation>()
+            var node = Document.OfType<RoadmapItem>()
                 .FirstOrDefault(x => x.Mitigation == obj);
 
             if (node != null)
@@ -57,13 +57,13 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
         }
 
-        public void AddNode([NotNull] RoadmapMitigation node)
+        public void AddNode([NotNull] RoadmapItem node)
         {
             Document.Add(node);
             MitigationDropped?.Invoke(node.Mitigation);
         }
 
-        public void RemoveNode([NotNull] RoadmapMitigation node)
+        public void RemoveNode([NotNull] RoadmapItem node)
         {
             Document.Remove(node);
         }
@@ -75,7 +75,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
         public void RefreshNodes()
         {
-            var nodes = Document.OfType<RoadmapMitigation>()
+            var nodes = Document.OfType<RoadmapItem>()
                 .Where(x => x.Label != null)
                 .OrderBy(x => x.Label.Text).ToArray();
             if (nodes.Any())
@@ -101,7 +101,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
         protected override void OnExternalObjectsDropped(GoInputEventArgs evt)
         {
-            if (Selection.Primary is RoadmapMitigation node &&
+            if (Selection.Primary is RoadmapItem node &&
                 node.Document is GoDocument doc)
             {
                 RemoveMitigation?.Invoke(node.Mitigation);

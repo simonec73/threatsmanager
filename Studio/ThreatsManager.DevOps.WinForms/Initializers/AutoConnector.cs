@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Actions;
-using ThreatsManager.DevOps.Panels.ImplementationReview;
 using ThreatsManager.DevOps.Panels.MitigationsKanban;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces;

@@ -13,7 +13,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("6E33D6FF-0381-4F03-8B67-EFC99EC7845B", "Copy All Threat Events Context Aware Action", 30, ExecutionMode.Simplified)]
+    [Extension("6E33D6FF-0381-4F03-8B67-EFC99EC7845B", "Copy All Threat Events Context Aware Action", 20, ExecutionMode.Simplified)]
     public class CopyAllThreatEvents : IShapeContextAwareAction, IIdentityContextAwareAction
     {
         public Scope Scope => Scope.Entity | Scope.Group | Scope.DataFlow;
@@ -26,6 +26,11 @@ namespace ThreatsManager.Extensions.Actions
         public bool Execute([NotNull] object item)
         {
             return (item is IIdentity identity) && Execute(identity);
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute([NotNull] IShape shape)

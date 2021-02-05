@@ -70,7 +70,7 @@ namespace ThreatsManager
             _executionMode = config.Mode;
             Manager.Instance.LoadExtensions(_executionMode, ExceptExtension);
 
-            Manager.Instance.ApplyExtensionInitializers();
+            HandleExtensionInitializers();
 
             DiagramNameUpdater();
             var actions = Manager.Instance.GetExtensions<IContextAwareAction>();
@@ -399,6 +399,24 @@ namespace ThreatsManager
             }
 
             asker.Answer(context, answer);
+        }
+
+        private void HandleExtensionInitializers()
+        {
+            var initializers = ExtensionUtils.GetExtensions<IExtensionInitializer>()?.ToArray();
+            if (initializers?.Any() ?? false)
+            {
+                foreach (var initializer in initializers)
+                {
+                    initializer.Initialize();
+
+                    if (initializer is IDesktopAlertAwareExtension alertAwareExtension)
+                    {
+                        alertAwareExtension.ShowMessage += DesktopAlertAwareExtensionOnShowMessage;
+                        alertAwareExtension.ShowWarning += DesktopAlertAwareExtensionOnShowWarning;
+                    }
+                }
+            }
         }
         #endregion
 

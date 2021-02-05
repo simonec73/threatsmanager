@@ -30,6 +30,11 @@ namespace ThreatsManager.Extensions.Actions
             return false;
         }
 
+        public bool IsVisible(object item)
+        {
+            return true;
+        }
+
         public bool Execute([NotNull] IShape shape)
         {
             return Execute(new[] {shape}, null);

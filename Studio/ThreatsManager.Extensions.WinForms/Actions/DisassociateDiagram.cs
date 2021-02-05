@@ -14,7 +14,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("B1E5C7AA-8E8F-4150-BE33-ECBF5F28201D", "Disassociate Diagram Context Aware Action", 41, ExecutionMode.Simplified)]
+    [Extension("B1E5C7AA-8E8F-4150-BE33-ECBF5F28201D", "Disassociate Diagram Context Aware Action", 42, ExecutionMode.Simplified)]
     public class DisassociateDiagram : IShapeContextAwareAction, IIdentityContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.Entity;
@@ -30,6 +30,29 @@ namespace ThreatsManager.Extensions.Actions
         public bool Execute([NotNull] object item)
         {
             return (item is IIdentity identity) && Execute(identity);
+        }
+        
+        public bool IsVisible(object item)
+        {
+            bool result = false;
+
+            IThreatModel model = null;
+            if (item is IThreatModelChild child)
+                model = child.Model;
+            else if (item is IThreatModel threatModel)
+                model = threatModel;
+
+            if (model != null && item is IPropertiesContainer container)
+            {
+                var schemaManager = new AssociatedDiagramPropertySchemaManager(model);
+                var propertyType = schemaManager.GetAssociatedDiagramIdPropertyType();
+                if (propertyType != null)
+                {
+                    result = !string.IsNullOrWhiteSpace(container.GetProperty(propertyType)?.StringValue?.Trim('0'));
+                }
+            }
+
+            return result;
         }
 
         public bool Execute([NotNull] IShape shape)

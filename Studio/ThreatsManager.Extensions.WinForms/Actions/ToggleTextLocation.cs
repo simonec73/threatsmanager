@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -15,7 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 namespace ThreatsManager.Extensions.Actions
 {
     [Extension("F6A8BC36-2321-4286-BEAE-8FE6FD333046", "Toggle Text Location for Links Context Aware Action", 
-        50, ExecutionMode.Simplified)]
+        30, ExecutionMode.Simplified)]
     public class ToggleTextLocation : ILinkContextAwareAction
     {
         public Scope Scope => Scope.Link;
@@ -33,6 +28,11 @@ namespace ThreatsManager.Extensions.Actions
                 result = Execute(link);
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(ILink link)

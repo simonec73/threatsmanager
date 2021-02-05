@@ -42,6 +42,11 @@ namespace ThreatsManager.MsTmt.Extensions
             return false;
         }
 
+        public bool IsVisible(object item)
+        {
+            return true;
+        }
+
         public bool Execute([NotNull] IEnumerable<IShape> shapes, [NotNull] IEnumerable<ILink> links)
         {
             bool result = false;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.DevOps.Dialogs;
 using ThreatsManager.Interfaces;
@@ -37,6 +32,11 @@ namespace ThreatsManager.DevOps.Actions
             return result;
         }
 
+        public bool IsVisible(object item)
+        {
+            return true;
+        }
+
         public bool Execute(IIdentity identity)
         {
             bool result = false;
@@ -44,7 +44,7 @@ namespace ThreatsManager.DevOps.Actions
             if (identity is IMitigation mitigation)
             {
                 var dialog = new DevOpsIterationAssignmentDialog(mitigation);
-                dialog.ShowDialog(Form.ActiveForm);
+                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
             }
 
             return result;

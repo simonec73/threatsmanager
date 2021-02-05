@@ -42,8 +42,6 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._tooltip = new System.Windows.Forms.ToolTip(this.components);
-            this._enableBacklogReview = new System.Windows.Forms.CheckBox();
-            this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._interval)).BeginInit();
             this.SuspendLayout();
@@ -51,7 +49,6 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             // layoutControl1
             // 
             this.layoutControl1.BackColor = System.Drawing.Color.White;
-            this.layoutControl1.Controls.Add(this._enableBacklogReview);
             this.layoutControl1.Controls.Add(this._raiseAllEvents);
             this.layoutControl1.Controls.Add(this._raiseSomeEvents);
             this.layoutControl1.Controls.Add(this._raiseNoEvents);
@@ -64,7 +61,6 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             // 
             // 
             this.layoutControl1.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
-            this.layoutControlItem6,
             this.layoutControlItem1,
             this.layoutControlItem2,
             this.layoutControlItem3,
@@ -77,11 +73,11 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             // 
             this._raiseAllEvents.AutoSize = true;
             this._raiseAllEvents.Enabled = false;
-            this._raiseAllEvents.Location = new System.Drawing.Point(21, 132);
+            this._raiseAllEvents.Location = new System.Drawing.Point(21, 107);
             this._raiseAllEvents.Margin = new System.Windows.Forms.Padding(0);
             this._raiseAllEvents.Name = "_raiseAllEvents";
             this._raiseAllEvents.Size = new System.Drawing.Size(658, 17);
-            this._raiseAllEvents.TabIndex = 5;
+            this._raiseAllEvents.TabIndex = 4;
             this._raiseAllEvents.Text = "Raise a notification every time a Refresh is performed";
             this._raiseAllEvents.UseVisualStyleBackColor = true;
             this._raiseAllEvents.CheckedChanged += new System.EventHandler(this._raiseAllEvents_CheckedChanged);
@@ -90,11 +86,11 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             // 
             this._raiseSomeEvents.AutoSize = true;
             this._raiseSomeEvents.Enabled = false;
-            this._raiseSomeEvents.Location = new System.Drawing.Point(21, 107);
+            this._raiseSomeEvents.Location = new System.Drawing.Point(21, 82);
             this._raiseSomeEvents.Margin = new System.Windows.Forms.Padding(0);
             this._raiseSomeEvents.Name = "_raiseSomeEvents";
             this._raiseSomeEvents.Size = new System.Drawing.Size(658, 17);
-            this._raiseSomeEvents.TabIndex = 4;
+            this._raiseSomeEvents.TabIndex = 3;
             this._raiseSomeEvents.Text = "Raise a notification only if one or more updates are found\r\n";
             this._raiseSomeEvents.UseVisualStyleBackColor = true;
             this._raiseSomeEvents.CheckedChanged += new System.EventHandler(this._raiseSomeEvents_CheckedChanged);
@@ -104,11 +100,11 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             this._raiseNoEvents.AutoSize = true;
             this._raiseNoEvents.Checked = true;
             this._raiseNoEvents.Enabled = false;
-            this._raiseNoEvents.Location = new System.Drawing.Point(21, 82);
+            this._raiseNoEvents.Location = new System.Drawing.Point(21, 57);
             this._raiseNoEvents.Margin = new System.Windows.Forms.Padding(0);
             this._raiseNoEvents.Name = "_raiseNoEvents";
             this._raiseNoEvents.Size = new System.Drawing.Size(658, 17);
-            this._raiseNoEvents.TabIndex = 3;
+            this._raiseNoEvents.TabIndex = 2;
             this._raiseNoEvents.TabStop = true;
             this._raiseNoEvents.Text = "Do not raise any notification as a result of a Refresh";
             this._raiseNoEvents.UseVisualStyleBackColor = true;
@@ -123,14 +119,14 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             this._interval.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._interval.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this._interval.Enabled = false;
-            this._interval.Location = new System.Drawing.Point(100, 54);
+            this._interval.Location = new System.Drawing.Point(100, 29);
             this._interval.Margin = new System.Windows.Forms.Padding(0);
             this._interval.MaxValue = 120;
             this._interval.MinValue = 1;
             this._interval.Name = "_interval";
             this._interval.ShowUpDown = true;
             this._interval.Size = new System.Drawing.Size(96, 20);
-            this._interval.TabIndex = 2;
+            this._interval.TabIndex = 1;
             this._tooltip.SetToolTip(this._interval, "Interval between two repeated refreshes of the Mitigation statuses.\r\nIt is recomm" +
         "ended to avoid refreshing too frequently, to limit resource consumption.\r\nAllowe" +
         "d values are between 1 and 120.");
@@ -140,11 +136,11 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             // _scheduledRefresh
             // 
             this._scheduledRefresh.AutoSize = true;
-            this._scheduledRefresh.Location = new System.Drawing.Point(4, 29);
+            this._scheduledRefresh.Location = new System.Drawing.Point(4, 4);
             this._scheduledRefresh.Margin = new System.Windows.Forms.Padding(0);
             this._scheduledRefresh.Name = "_scheduledRefresh";
             this._scheduledRefresh.Size = new System.Drawing.Size(675, 17);
-            this._scheduledRefresh.TabIndex = 1;
+            this._scheduledRefresh.TabIndex = 0;
             this._scheduledRefresh.Text = "Enable scheduled status refreshes\r\n";
             this._tooltip.SetToolTip(this._scheduledRefresh, "Scheduled refresh of the status of the Mitigations.\r\nIt is recommended to avoid r" +
         "efreshing too frequently, to limit resource consumption.");
@@ -200,26 +196,6 @@ namespace ThreatsManager.DevOps.Panels.Configuration
             this.layoutControlItem5.Width = 101;
             this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // _enableBacklogReview
-            // 
-            this._enableBacklogReview.AutoSize = true;
-            this._enableBacklogReview.Location = new System.Drawing.Point(4, 4);
-            this._enableBacklogReview.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._enableBacklogReview.Name = "_enableBacklogReview";
-            this._enableBacklogReview.Size = new System.Drawing.Size(675, 17);
-            this._enableBacklogReview.TabIndex = 0;
-            this._enableBacklogReview.Text = "Enable Backlog Review";
-            this._enableBacklogReview.UseVisualStyleBackColor = true;
-            // 
-            // layoutControlItem6
-            // 
-            this.layoutControlItem6.Control = this._enableBacklogReview;
-            this.layoutControlItem6.Height = 25;
-            this.layoutControlItem6.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem6.Name = "layoutControlItem6";
-            this.layoutControlItem6.Width = 100;
-            this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // ConfigurationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -248,7 +224,5 @@ namespace ThreatsManager.DevOps.Panels.Configuration
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem3;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem4;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem5;
-        private System.Windows.Forms.CheckBox _enableBacklogReview;
-        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem6;
     }
 }

@@ -1031,25 +1031,9 @@ namespace ThreatsManager.Utilities.WinForms
             _itemType.Text = "Threat Event";
             _itemPicture.Image = Resources.threat_event_big;
 
-            //if (_executionMode == ExecutionMode.Expert)
-            //{
-            //    var section2 = AddSection("Threat Type");
-            //    section2.SuspendLayout();
-            //    AddSingleLineLabel(section2, "Name", threatEvent.ThreatType.Name);
-            //    AddText(section2, "Description", threatEvent.ThreatType.Description, null, null, true);
-            //    AddCombo(section2, "Severity", threatEvent.ThreatType.Severity?.Name,
-            //        threatEvent.ThreatType.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id)
-            //            .Select(x => x.Name),
-            //        null, true);
-            //    var listBox2 = AddListBox(section2, "Standard Mitigations",
-            //        threatEvent.ThreatType.Mitigations, null, true);
-            //    //listBox2.DoubleClick += OpenSubItem;
-            //    FinalizeSection(section2, true);
-            //    section2.ResumeLayout();
-            //}
-
             var section = AddSection("Threat Event");
             section.SuspendLayout();
+            AddHyperlink(section, "Threat Type", threatEvent.ThreatType);
             var label = AddSingleLineLabel(section, "Associated To", threatEvent.Parent.Name,
                 Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
             if (threatEvent.Parent is IEntity entity)
@@ -1095,6 +1079,8 @@ namespace ThreatsManager.Utilities.WinForms
             var listBox = AddListBox(section, "Standard Mitigations",
                 threatType.Mitigations, AddStandardMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
+
+            AddListView(section, "Threat Events\napplied to", threatType.Model?.GetThreatEvents(threatType));
 
             if (_actions?.Any() ?? false)
             {

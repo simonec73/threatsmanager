@@ -796,6 +796,7 @@ namespace ThreatsManager
         #endregion
 
         #region Private auxiliary members.
+        [Dispatched]
         private void ShowDesktopAlert(string text, bool warning = false)
         {
             DesktopAlertWindow alert = new DesktopAlertWindow

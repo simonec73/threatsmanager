@@ -14,12 +14,12 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("29A32F8C-2E72-4438-BED7-B7E7F56727B8", "Create Threat Event Mitigation Context Aware Action", 21, ExecutionMode.Simplified)]
+    [Extension("29A32F8C-2E72-4438-BED7-B7E7F56727B8", "Create Threat Event Mitigation Context Aware Action", 51, ExecutionMode.Simplified)]
     public class CreateThreatEventMitigation : IIdentityContextAwareAction
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Create a Threat Event Mitigation...";
-        public string Group => "EntityCreation";
+        public string Group => "Associate";
         public Bitmap Icon => Resources.scenario_big_delete;
         public Bitmap SmallIcon => Resources.scenario_delete;
         public Shortcut Shortcut => Shortcut.None;
@@ -34,6 +34,11 @@ namespace ThreatsManager.Extensions.Actions
             }
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute([NotNull] IIdentity identity)

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Microsoft.VisualStudio.Services.FormInput;
 using ThreatsManager.DevOps.Dialogs;
-using ThreatsManager.DevOps.Panels.ImplementationReview;
 using ThreatsManager.DevOps.Panels.MitigationsKanban;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -102,9 +100,7 @@ namespace ThreatsManager.DevOps.Actions
             Configure.ChangeConfigureButtonStatus(status);
 
             var configured = connector?.IsConfigured() ?? false;
-            Synchronize.ChangeSynchronizeButtonStatus(configured && status);
             MitigationsKanbanPanelFactory.ChangeConfigureButtonStatus(configured && status);
-            ImplementationReviewPanelFactory.ChangeConfigureButtonStatus(configured && status);
         }
     }
 }

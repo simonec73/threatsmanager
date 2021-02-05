@@ -40,7 +40,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         static GraphEntity()
         {
-            _imageSize = Dpi.Factor.Height > 1.5 ? ImageSize.Big : ImageSize.Medium;
+            _imageSize = Dpi.Factor.Height >= 1.5 ? ImageSize.Big : ImageSize.Medium;
         }
 
         public void Dispose()
@@ -97,7 +97,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                 _threatsMarker = new AssociatedThreatsMarker(entity)
                 {
-                    Position = new PointF(16.0f * Dpi.Factor.Width, 16.0f * Dpi.Factor.Height),
+                    Position = new PointF(Icon.Size.Width / 2.0f, Icon.Size.Height / 2.0f),
                 };
                 _threatsMarker.ThreatEventClicked += OnThreatEventClicked;
                 Add(_threatsMarker);
@@ -222,7 +222,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             if (Icon is GoImage icon)
             {
-                if (Dpi.Factor.Height > 1.5)
+                if (Dpi.Factor.Height >= 1.5)
                 {
                     if (imageSize == ImageSize.Big)
                     {
@@ -355,13 +355,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (_buckets?.Any() ?? false)
             {
-                bool first = true;
                 foreach (var bucket in _buckets)
                 {
-                    if (first)
-                        first = false;
-                    else
-                        cm.MenuItems.Add(new MenuItem("-"));
                     AddMenu(cm, _actions[bucket]);
                 }
             }
@@ -371,12 +366,25 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void AddMenu([NotNull] GoContextMenu menu, [NotNull] List<IContextAwareAction> actions)
         {
+            bool separator = false;
+
             foreach (var action in actions)
             {
-                menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                if (action.IsVisible(_shape.Identity))
                 {
-                    Tag = action
-                });
+                    if (!separator)
+                    {
+                        separator = true;
+
+                        if (menu.MenuItems.Count > 0)
+                            menu.MenuItems.Add(new MenuItem("-"));
+                    }
+
+                    menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                    {
+                        Tag = action
+                    });
+                }
             }
         }
 

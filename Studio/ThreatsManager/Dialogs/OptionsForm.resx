@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="_tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>453, 26</value>
-  </metadata>
-  <data name="_disableHelp.ToolTip" xml:space="preserve">
-    <value>Help and Troubleshooting requires to contact external systems to retrieve the indexes
-and then to contact the documentation pages under https://threatsmanager.com.
-Therefore, to avoid all contact with external systems, you have to disable both Telemetry
-and Help and Troubleshooting.</value>
-  </data>
   <data name="label4.Text" xml:space="preserve">
     <value>Please select the interval in minutes for automatic saves.
 For example, if the number above is 3, then the file is automatically saved every 3 minutes, provided that there is a pending change to be saved.
@@ -137,10 +128,23 @@ If the value is 0, then unlimited saves will be maintained.
 If the value is 1 or greater, then the oldest save will be removed, up to leaving only the configured number.
 Each save will have the name of the original file, with suffix ending with "_YYYYMMDDhhmmss". For example, if the original file is named "My Model.tm", a save will be named like "My Model_20191021101112.tm".
 Please note that removal will consider only the files with name ending with the suffix.
+The original file without suffix will be replaced every time with the latest version.
 Smart Save operates only with the standard Save: Save As is not affected by it.</value>
+  </data>
+  <metadata name="_tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>453, 26</value>
+  </metadata>
+  <data name="_disableHelp.ToolTip" xml:space="preserve">
+    <value>Help and Troubleshooting requires to contact external systems to retrieve the indexes
+and then to contact the documentation pages under https://threatsmanager.com.
+Therefore, to avoid all contact with external systems, you have to disable both Telemetry
+and Help and Troubleshooting.</value>
   </data>
   <metadata name="_fontDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>256, 26</value>
+  </metadata>
+  <metadata name="_tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>453, 26</value>
   </metadata>
   <metadata name="_userDictFile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>546, 26</value>

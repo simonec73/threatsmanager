@@ -55,6 +55,19 @@ namespace ThreatsManager.Quality.Schemas
             return result;
         }
 
+        public bool AreAnnotationsEnabled([NotNull] IPropertiesContainer container)
+        {
+            bool result = false;
+
+            var propertyType = GetAnnotationsPropertyType();
+            if (propertyType != null)
+            {
+                result = container.GetProperty(propertyType) != null;
+            }
+
+            return result;
+        }
+
         public bool EnableAnnotations([NotNull] IPropertiesContainer container)
         {
             bool result = false;
@@ -148,6 +161,34 @@ namespace ThreatsManager.Quality.Schemas
             }
         }
 
+        public bool HasNotes([NotNull] IPropertiesContainer container)
+        {
+            bool result = false;
+
+            var propertyType = GetAnnotationsPropertyType();
+            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            {
+                result = annotations.Items.Any(x => !(x is Highlight) && !(x is TopicToBeClarified) && !(x is ReviewNote) && !(x is AnnotationAnswer));
+            }
+
+            return result;
+        }
+
+        public bool HasTopics([NotNull] IPropertiesContainer container)
+        {
+            bool result = false;
+
+            var propertyType = GetAnnotationsPropertyType();
+            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            {
+                result = annotations.Items.OfType<TopicToBeClarified>().Any();
+            }
+
+            return result;
+        }
+
         public bool HasOpenTopics([NotNull] IPropertiesContainer container)
         {
             bool result = false;
@@ -157,6 +198,20 @@ namespace ThreatsManager.Quality.Schemas
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
                 result = annotations.Items.OfType<TopicToBeClarified>().Any(x => !x.Answered);
+            }
+
+            return result;
+        }
+        
+        public bool HasClosedTopics([NotNull] IPropertiesContainer container)
+        {
+            bool result = false;
+
+            var propertyType = GetAnnotationsPropertyType();
+            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            {
+                result = annotations.Items.OfType<TopicToBeClarified>().Any(x => x.Answered);
             }
 
             return result;

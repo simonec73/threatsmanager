@@ -241,7 +241,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     Image = Resources.threats_circle_orange_big;
                 }
             }
-            Size = new SizeF(16.0f * Dpi.Factor.Width, 16.0f * Dpi.Factor.Height);
+
+            if (Dpi.Factor.Width >= 1.5)
+                Size = new SizeF(32.0f, 32.0f);
+            else
+                Size = new SizeF(16.0f, 16.0f);
         }
     }
 }

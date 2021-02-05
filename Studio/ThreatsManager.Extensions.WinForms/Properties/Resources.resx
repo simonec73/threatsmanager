@@ -1242,4 +1242,16 @@ Are you sure you want still to get full access rights? </value>
   <data name="report_problem_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\report_problem_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="funnel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\funnel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="funnel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\funnel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="funnel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\funnel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="funnel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\funnel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -121,8 +121,8 @@
             // _sideNav
             // 
             this._sideNav.Controls.Add(this._panelExtensions);
-            this._sideNav.Controls.Add(this.sideNavPanel1);
             this._sideNav.Controls.Add(this._panelSmartSave);
+            this._sideNav.Controls.Add(this.sideNavPanel1);
             this._sideNav.Dock = System.Windows.Forms.DockStyle.Fill;
             this._sideNav.EnableClose = false;
             this._sideNav.EnableMaximize = false;

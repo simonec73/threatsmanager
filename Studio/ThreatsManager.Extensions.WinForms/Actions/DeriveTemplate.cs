@@ -10,7 +10,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Extension("C6DAFFB6-5CD6-405F-8B8E-6305E91AA665", "Derive Template Context Aware Action", 32, ExecutionMode.Simplified)]
+    [Extension("C6DAFFB6-5CD6-405F-8B8E-6305E91AA665", "Derive Template Context Aware Action", 34, ExecutionMode.Simplified)]
     public class DeriveTemplate : IIdentityContextAwareAction
     {
         public Scope Scope => Scope.Entity | Scope.TrustBoundary | Scope.DataFlow;
@@ -28,6 +28,11 @@ namespace ThreatsManager.Extensions.Actions
                 result = Execute(identity);
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)
