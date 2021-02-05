@@ -29,7 +29,12 @@ namespace ThreatsManager.Extensions.Actions
         {
             return false;
         }
-        
+
+        public bool IsVisible(object item)
+        {
+            return true;
+        }
+
         public bool Execute([NotNull] ILink link)
         {
             return Execute(null, new[] {link});

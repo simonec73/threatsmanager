@@ -3,7 +3,7 @@
 namespace ThreatsManager.Interfaces.Extensions.Actions
 {
     /// <summary>
-    /// Action that can be executed on a 
+    /// Action that can be executed on an object and is typically represented as a context menu item.
     /// </summary>
     [ExtensionDescription("Context Aware Action")]
     public interface IContextAwareAction : IExtension
@@ -44,5 +44,12 @@ namespace ThreatsManager.Interfaces.Extensions.Actions
         /// <param name="item">Object on which the Action must be executed.</param>
         /// <returns>True if the action succeeded, false otherwise.</returns>
         bool Execute(object item);
+
+        /// <summary>
+        /// Checks if the Action should be visible for the current object.
+        /// </summary>
+        /// <param name="item">Current object.</param>
+        /// <returns>True if the Action is visible, false otherwise.</returns>
+        bool IsVisible(object item);
     }
 }
