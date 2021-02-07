@@ -69,10 +69,15 @@ namespace ThreatsManager.Extensions
         /// Get a normalized evaluation of the current risk represented by the solution. 
         /// </summary>
         /// <param name="model">Threat Model to be analyzed.</param>
+        /// <param name="normalizationReference">Normalization Reference.<para/>
+        /// The Normalization Reference indicates the number of objects for which the Risk Evaluation is defined.<para/>
+        /// For example, if the Normalization Reference is 40 and you have only 8 Entities and 12 Flows, then the Risk Evaluation is doubled.<para/>
+        /// Analogously, if the Normalization Reference is 40 and you have 30 Entities and 50 Flows, then the Risk Evaluation is halved.<para/>
+        /// If it is 0, then no normalization is applied.</param>
         /// <returns>Normalized evaluation of the current risk.
         /// <para>The returned value is normalized, that is independent from the size of the Threat Model, and allows to compare different iterations of the same Threat Model.</para>
         /// <para>The normalized evaluation is not thought to be used to compare different Threat Models.</para>
         /// </returns>
-        float GetRiskEvaluation(IThreatModel model);
+        float GetRiskEvaluation(IThreatModel model, int normalizationReference);
     }
 }

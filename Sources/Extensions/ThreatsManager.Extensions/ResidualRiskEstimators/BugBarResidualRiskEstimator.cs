@@ -206,7 +206,7 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
             return result;
         }
 
-        public float GetRiskEvaluation(IThreatModel model)
+        public float GetRiskEvaluation(IThreatModel model, int normalizationReference)
         {
             var result = 0f;
 
@@ -220,7 +220,11 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
                     totalSeverity += threatEvent.SeverityId;
                 }
 
-                result = (float)totalSeverity / ((float)((model.Entities?.Count() ?? 0) + (model.DataFlows?.Count() ?? 0)));
+                if (normalizationReference > 0)
+                    result = (float) totalSeverity * (float) normalizationReference /
+                             ((float) ((model.Entities?.Count() ?? 0) + (model.DataFlows?.Count() ?? 0)));
+                else
+                    result = (float)totalSeverity;
             }
 
             return result;
