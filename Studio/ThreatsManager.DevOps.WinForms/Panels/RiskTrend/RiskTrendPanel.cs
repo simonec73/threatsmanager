@@ -8,10 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.Charts;
+using ThreatsManager.DevOps.Panels.Configuration;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.Panels.RiskTrend
 {
@@ -31,14 +33,44 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
 
             if (iterations?.Any() ?? false)
             {
+                var current = schemaManager.CurrentIteration ?? schemaManager.PreviousIteration;
+
+                float maxRisk = 0f;
+
                 if (Chart?.ChartSeries.FirstOrDefault() is ChartSeries series)
-                { 
+                {
+                    SeriesPoint point;
+                    float risk = 0f;
                     foreach (var iteration in iterations)
                     {
-                        var point = new SeriesPoint(iteration.Name);
-                        var risk = schemaManager.GetIterationRisk(iteration);
+                        point = new SeriesPoint(iteration.Name);
+
+                        if (iteration == current)
+                        {
+                            var extensionId = ExtensionUtils.GetExtensionByLabel<IConfigurationPanelFactory<Form>>(
+                                "Extensions Configuration Panel")?.GetExtensionId();
+
+                            if (extensionId != null)
+                            {
+                                var normalizationReference = threatModel.GetExtensionConfiguration(extensionId)?
+                                    .GlobalGet<int>("normalization") ?? 0;
+                                if (normalizationReference > 0)
+                                {
+                                    risk = threatModel.EvaluateRisk(normalizationReference);
+                                    if (risk > 0f)
+                                        schemaManager.SetIterationRisk(iteration, risk);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            risk = schemaManager.GetIterationRisk(iteration);
+                        }
                         point.ValueY = new object[] {((object) risk)};
                         series.SeriesPoints.Add(point);
+
+                        if (maxRisk < risk)
+                            maxRisk = risk;
                     }
                 }
 
@@ -60,6 +92,9 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
                     {
                         AcceptableRisk = 0f;
                     }
+
+                    if (AcceptableRisk > maxRisk)
+                        Chart.AxisY.MaxValue = AcceptableRisk * 1.2f;
                 }
             }
         }

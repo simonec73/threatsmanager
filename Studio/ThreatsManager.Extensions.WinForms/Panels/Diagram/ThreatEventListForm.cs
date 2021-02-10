@@ -186,9 +186,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
  
         private void DoAction(object sender, EventArgs e)
         {
-            if (sender is MenuItem menuItem &&
+            if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IContextAwareAction action &&
-                menuItem.GetContextMenu()?.Tag is IThreatEvent threatEvent)
+                menuItem.Owner.Tag is IThreatEvent threatEvent)
             {
                 this.Close();
                 action.Execute(threatEvent);

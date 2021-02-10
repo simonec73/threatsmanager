@@ -29,23 +29,23 @@ namespace ThreatsManager.Quality.Annotations
             if (annotation is TopicToBeClarified topicToBeClarified)
             {
                 Image = topicToBeClarified.Answered
-                    ? Properties.Resources.speech_balloon_answer
-                    : Properties.Resources.speech_balloon_question;
+                    ? Properties.Resources.speech_balloon_answer_big
+                    : Properties.Resources.speech_balloon_question_big;
                 BlockType = PropertyViewerBlockType.ImageButton;
             }
             else if (annotation is Highlight highlight)
             {
-                Image = Properties.Resources.marker;
+                Image = Properties.Resources.marker_big;
                 BlockType = PropertyViewerBlockType.ImageButton;
             }
             else if (annotation is ReviewNote reviewNote)
             {
-                Image = Properties.Resources.clipboard_check_edit;
+                Image = Properties.Resources.clipboard_check_edit_big;
                 BlockType = PropertyViewerBlockType.ImageButton;
             }
             else
             {
-                Image = Properties.Resources.note_text;
+                Image = Properties.Resources.note_text_big;
                 BlockType = PropertyViewerBlockType.String;
             }
         }

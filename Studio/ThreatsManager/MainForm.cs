@@ -24,6 +24,7 @@ using ThreatsManager.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Exceptions;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using DevComponents.DotNetBar.Metro.ColorTables;
 using Exceptionless.Logging;
 using ThreatsManager.Interfaces;
@@ -52,6 +53,23 @@ namespace ThreatsManager
         private JumpListManager _jumpListManager;
         #endregion
 
+        #region Nested classes.
+        private class AcquireLockOutput
+        {
+            public AcquireLockOutput(string location,string latest,
+                OpenOutcome outcome)
+            {
+                Location = location;
+                Latest = latest;
+                Outcome = outcome;
+            }
+
+            public string Location { get; }
+            public string Latest { get; }
+            public OpenOutcome Outcome { get; }
+        }
+        #endregion
+
         #if MICROSOFT_EDITION
         private const string LatestVersion = "MSLatestVersion";
         private const string Highlights = "MSHighlights";
@@ -76,7 +94,7 @@ namespace ThreatsManager
         }
 
         #region Form events.
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             Text = Resources.Title;
 
@@ -223,7 +241,6 @@ namespace ThreatsManager
                     if (File.Exists(fileName))
                     {
                         OpenOutcome outcome = OpenOutcome.KO;
-                        string message = null;
 
                         if (string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tm") == 0)
                         {
@@ -231,7 +248,7 @@ namespace ThreatsManager
                                 .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
                             if (packageManager != null)
                             {
-                                outcome = Open(packageManager, LocationType.FileSystem, fileName, out message);
+                                outcome = await OpenAsync(packageManager, LocationType.FileSystem, fileName);
                             }
 
                             if (outcome == OpenOutcome.OK)
@@ -271,17 +288,6 @@ namespace ThreatsManager
 
                         if (outcome != OpenOutcome.OK)
                         {
-                            if (!string.IsNullOrWhiteSpace(message))
-                            {
-                                ShowDesktopAlert(message, true);
-                            }
-                            else
-                            {
-                                ShowDesktopAlert(
-                                    "The document has not loaded successfully: the default empty document has been loaded.",
-                                    true);
-                            }
-
                             InitializeStatus(null);
                         }
                     }
@@ -363,7 +369,7 @@ namespace ThreatsManager
 
             if (!e.Cancel)
             {
-                DocumentLocker.ReleaseLock(true);
+                DocumentLocker.ReleaseLock();
                 _closing = true;
             }
         }
@@ -586,7 +592,7 @@ namespace ThreatsManager
             }
         }
 
-        private void _open_Click(object sender, EventArgs e)
+        private async void _open_Click(object sender, EventArgs e)
         {
             bool abort = false;
 
@@ -623,24 +629,13 @@ namespace ThreatsManager
                     string.CompareOrdinal(_openFile.FileName, _currentLocation) != 0)
                 {
                     var packageManager = packageManagers.ElementAt(_openFile.FilterIndex - 1);
-                    string message = null;
                     if (packageManager.CanHandle(LocationType.FileSystem, _openFile.FileName) &&
-                        Open(packageManager, LocationType.FileSystem, _openFile.FileName, out message) == OpenOutcome.OK)
+                        (await OpenAsync(packageManager, LocationType.FileSystem, _openFile.FileName)) == OpenOutcome.OK)
                     {
                         _lockRequest.Visible = false;
                         UpdateFormsList();
                         AddKnownDocument(packageManager, LocationType.FileSystem, _openFile.FileName);
                         ShowDesktopAlert("Document successfully opened.");
-                    }
-                    else if (string.IsNullOrWhiteSpace(message))
-                    {
-                        ShowDesktopAlert(
-                            "The document has not been loaded successfully.",
-                            true);
-                    }
-                    else
-                    {
-                        ShowDesktopAlert(message, true);
                     }
                 }
             }
@@ -756,12 +751,18 @@ namespace ThreatsManager
         {
             try
             {
-                DocumentLocker.ReleaseLock(true);
+                DocumentLocker.ReleaseLock();
                 Application.Exit();
             }
             catch (Exception)
             {
-                Environment.FailFast("Failure on exit");
+                try
+                {
+                    Environment.FailFast("Failure on exit");
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -894,18 +895,18 @@ namespace ThreatsManager
             }
         }
 
-        private OpenOutcome Open([NotNull] IPackageManager packageManager, 
-            LocationType locationType, [Required] string location, out string message)
+        private async Task<OpenOutcome> OpenAsync([NotNull] IPackageManager packageManager, 
+            LocationType locationType, [Required] string location)
         {
             OpenOutcome result = OpenOutcome.KO;
 
-            message = null;
             IThreatModel model = null;
 
             var oldMissingTypes = new List<string>(_missingTypes);
             var oldErrorsOnLoading = _errorsOnLoading;
             _missingTypes.Clear();
             _errorsOnLoading = false;
+            bool messageRaised = false;
 
             try
             {
@@ -916,8 +917,18 @@ namespace ThreatsManager
 
                 if (locationType == LocationType.FileSystem)
                 {
-                    if (AcquireLock(ref location, ref message, ref latest, out var openOutcome)) 
-                        return openOutcome;
+                    var output = await AcquireLockAsync(location, latest);
+                    result = output?.Outcome ?? OpenOutcome.KO;
+                    if (result == OpenOutcome.OK)
+                    {
+                        // ReSharper disable once PossibleNullReferenceException
+                        location = output.Location;
+                        latest = output.Latest;
+                    }
+                    else
+                    {
+                        return result;
+                    }
                 }
 
                 if (latest != null && 
@@ -954,21 +965,27 @@ namespace ThreatsManager
                 {
                     dialog.ShowDialog(this);
                 }
+
+                messageRaised = true;
             }
             catch (ExistingModelException)
             {
-                message = "The model is already open.\nClose it if you want to load it again.";
+                ShowDesktopAlert("The model is already open.\nClose it if you want to load it again.", true);
                 model = null;
+                messageRaised = true;
             }
             catch (FileNotFoundException)
             {
-                message = "File has not been found.";
+                ShowDesktopAlert("File has not been found.", true);
                 model = null;
+                messageRaised = true;
             }
             catch (Exception e)
             {
+                ShowDesktopAlert($"An exception occurred loading the Threat Model:\n{e.Message}", true);
                 e.ToExceptionless().Submit();
                 model = null;
+                messageRaised = true;
             }
 
             if (model != null)
@@ -984,33 +1001,41 @@ namespace ThreatsManager
             {
                 _missingTypes.AddRange(oldMissingTypes);
                 _errorsOnLoading = oldErrorsOnLoading;
+
+                if (!messageRaised)
+                    ShowDesktopAlert("File cannot be opened.", true);
             }
 
             return result;
         }
 
-        private bool AcquireLock(ref string location, ref string message, ref string latest, out OpenOutcome openOutcome)
+        private async Task<AcquireLockOutput> AcquireLockAsync(string location, string latest)
         {
-            openOutcome = OpenOutcome.KO;
+            var openOutcome = OpenOutcome.KO;
 
-            if (!DocumentLocker.AcquireLock(location, false, out var owner,
-                out var machine, out var timestamp, out var requests))
+            var lockInfo = await DocumentLocker.AcquireLockAsync(location, false);
+            if (lockInfo?.Owned ?? false)
             {
-                if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrWhiteSpace(machine))
+                openOutcome = OpenOutcome.OK;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(lockInfo?.Owner) || string.IsNullOrWhiteSpace(lockInfo?.Machine))
                 {
                     ShowDesktopAlert("Lock cannot be acquired.", true);
+                    openOutcome = OpenOutcome.KO;
                 } 
                 else
                 {
                     var action = new ThreatModelInUseNotification()
-                        .Show(owner, machine, timestamp, requests);
+                        .Show(lockInfo.Owner, lockInfo.Machine, lockInfo.Timestamp, lockInfo.PendingRequests);
 
                     switch (action)
                     {
                         case ThreatModelInUseAction.WorkWithCopyNotify:
+                            await DocumentLocker.AcquireLockAsync(location);
                             if (_selectFolder.ShowDialog(this) == DialogResult.OK)
                             {
-                                DocumentLocker.AcquireLock(location);
                                 if (string.Compare(_selectFolder.SelectedPath, Path.GetDirectoryName(location),
                                     StringComparison.InvariantCultureIgnoreCase) != 0)
                                 {
@@ -1024,21 +1049,18 @@ namespace ThreatsManager
 
                                     location = newLocation;
                                     latest = newLatest;
-                                }
 
-                                ShowDesktopAlert(
-                                    "A copy of the file has been opened.\nYou will be informed as soon as the original one has been released.",
-                                    true);
+                                    openOutcome = OpenOutcome.OK;
+
+                                    ShowDesktopAlert(
+                                        "A copy of the file has been opened.\nYou will be informed as soon as the original one has been released.",
+                                        false);
+                                }
                             }
                             else
                             {
-                                message =
-                                    "File is already in use and cannot be opened.\nYou will be informed as soon as it is released.";
-                                DocumentLocker.AcquireLock(location);
-                                {
-                                    openOutcome = OpenOutcome.Ownership;
-                                    return true;
-                                }
+                                ShowDesktopAlert("File is already in use and cannot be opened.\nYou will be informed as soon as it is released.", false);
+                                openOutcome = OpenOutcome.Ownership;
                             }
 
                             break;
@@ -1058,39 +1080,32 @@ namespace ThreatsManager
 
                                     location = newLocation;
                                     latest = newLatest;
-                                }
 
-                                ShowDesktopAlert("A copy of the file has been opened.", true);
+                                    lockInfo = await DocumentLocker.AcquireLockAsync(location);
+                                    openOutcome = OpenOutcome.OK;
+                                    ShowDesktopAlert("A copy of the file has been opened.");
+                                }
                             }
                             else
                             {
-                                message = "File is already in use and cannot be opened.";
-                                {
-                                    openOutcome = OpenOutcome.Ownership;
-                                    return true;
-                                }
+                                ShowDesktopAlert("File is already in use and cannot be opened.", true);
+                                openOutcome = OpenOutcome.Ownership;
                             }
-
                             break;
                         case ThreatModelInUseAction.Notify:
-                            message =
-                                "File is already in use and cannot be opened.\nYou will be informed as soon as it is released.";
-                            DocumentLocker.AcquireLock(location);
-                            {
-                                openOutcome = OpenOutcome.Ownership;
-                                return true;
-                            }
+                            await DocumentLocker.AcquireLockAsync(location);
+                            ShowDesktopAlert("File is already in use and cannot be opened.\nYou will be informed as soon as it is released.", true);
+                            openOutcome = OpenOutcome.Ownership;
+                            break;
                         default:
-                            message = "File is already in use and cannot be opened.";
-                            {
-                                openOutcome = OpenOutcome.Ownership;
-                                return true;
-                            }
+                            ShowDesktopAlert("File is already in use and cannot be opened.", true);
+                            openOutcome = OpenOutcome.Ownership;
+                            break;
                     }
                 }
             }
 
-            return false;
+            return new AcquireLockOutput(location, latest, openOutcome);
         }
 
         private bool Save()
@@ -1114,6 +1129,13 @@ namespace ThreatsManager
             {
                 var enabledExtensions = Manager.Instance.Configuration.EnabledExtensions
                     .Select(x => Manager.Instance.GetExtensionMetadata(x));
+
+                var beforeSave = ExtensionUtils.GetExtensions<IBeforeSaveProcessor>()?.ToArray();
+                if (beforeSave?.Any() ?? false)
+                {
+                    foreach (var bs in beforeSave)
+                        bs.Execute(_model);
+                }
 
                 if (packageManager is ISecurePackageManager securePM)
                 {
@@ -1185,7 +1207,7 @@ namespace ThreatsManager
             }
         }
 
-        private void KnownDocumentClick(object sender, EventArgs e)
+        private async void KnownDocumentClick(object sender, EventArgs e)
         {
             if (sender is ButtonItem buttonItem && buttonItem.Tag is KnownDocumentConfig documentConfig &&
                 string.CompareOrdinal(documentConfig.Path, _currentLocation) != 0)
@@ -1212,7 +1234,7 @@ namespace ThreatsManager
                     {
                         if (packageManager.CanHandle(documentConfig.LocationType, documentConfig.Path))
                         {
-                            var outcome = Open(packageManager, documentConfig.LocationType, documentConfig.Path, out var message);
+                            var outcome = await OpenAsync(packageManager, documentConfig.LocationType, documentConfig.Path);
 
                             switch (outcome)
                             {
@@ -1222,29 +1244,8 @@ namespace ThreatsManager
                                     break;
                                 case OpenOutcome.KO:
                                     RemoveKnownDocument(packageManager, documentConfig.LocationType, documentConfig.Path);
-
-                                    if (string.IsNullOrWhiteSpace(message))
-                                    {
-                                        ShowDesktopAlert(
-                                            "The document has not been loaded successfully.",
-                                            true);
-                                    }
-                                    else
-                                    {
-                                        ShowDesktopAlert(message, true);
-                                    }
                                     break;
                                 case OpenOutcome.Ownership:
-                                    if (string.IsNullOrWhiteSpace(message))
-                                    {
-                                        ShowDesktopAlert(
-                                            "The document has not been loaded successfully.",
-                                            true);
-                                    }
-                                    else
-                                    {
-                                        ShowDesktopAlert(message, true);
-                                    }
                                     break;
                             }
                         }
@@ -1442,7 +1443,6 @@ namespace ThreatsManager
                 {
                     if (Save())
                     {
-
                         ShowDesktopAlert("Document saved successfully.");
                     }
                     else

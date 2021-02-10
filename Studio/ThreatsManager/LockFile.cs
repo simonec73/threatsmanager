@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Utilities;
@@ -11,7 +12,6 @@ namespace ThreatsManager
     [JsonObject(MemberSerialization.OptIn)]
     public class LockFile : LockInfo
     {
-        private static object _sync = new object();
         private string _fileName;
 
         private LockFile()
@@ -36,14 +36,14 @@ namespace ThreatsManager
             string.Compare(User, UserName.GetDisplayName(), StringComparison.InvariantCultureIgnoreCase) == 0 &&
             string.Compare(Machine, CurrentMachine, StringComparison.InvariantCultureIgnoreCase) == 0;
 
-        public bool Acquire()
+        public async Task<bool> AcquireAsync()
         {
             bool result = false;
 
             if (IsOwned && !IsAcquired)
             {
                 IsAcquired = true;
-                Save();
+                await SaveAsync();
 
                 result = true;
             }
@@ -51,7 +51,7 @@ namespace ThreatsManager
             return result;
         }
 
-        public bool Book()
+        public async Task<bool> BookAsync()
         {
             bool result = false;
 
@@ -70,7 +70,7 @@ namespace ThreatsManager
                         _requests = new List<LockInfo>();
                     _requests.Add(lockInfo);
 
-                    Save();
+                    await SaveAsync();
                 }
 
                 result = true;
@@ -79,7 +79,7 @@ namespace ThreatsManager
             return result;
         }
 
-        public void Release()
+        public async Task ReleaseAsync()
         {
             if (IsOwned)
             {
@@ -91,7 +91,7 @@ namespace ThreatsManager
                     Machine = first.Machine;
                     Timestamp = DateTime.Now;
                     IsAcquired = false;
-                    Save();
+                    await SaveAsync();
                 }
                 else
                 {
@@ -107,12 +107,12 @@ namespace ThreatsManager
                 if (request != null)
                 {
                     _requests.Remove(request);
-                    Save(); 
+                    await SaveAsync(); 
                 }
             }
         }
 
-        public static LockFile Load(string fileName)
+        public static async Task<LockFile> LoadAsync(string fileName)
         {
             LockFile result = null;
 
@@ -120,22 +120,20 @@ namespace ThreatsManager
             {
                 try
                 {
-                    lock (_sync)
+                    using (var fileStream = new FileStream(fileName, FileMode.Open))
                     {
-                        using (var fileStream = new FileStream(fileName, FileMode.Open))
+                        var serializer = new JsonSerializer();
+                        using (var stringReader = new StreamReader(fileStream))
+                        using (var reader = new JsonTextReader(stringReader))
                         {
-                            var serializer = new JsonSerializer();
-                            using (var stringReader = new StreamReader(fileStream))
-                            using (var reader = new JsonTextReader(stringReader))
-                            {
-                                result = serializer.Deserialize<LockFile>(reader);
-                                if (result != null)
-                                    result._fileName = fileName;
-                            }
+                            result = serializer.Deserialize<LockFile>(reader);
+                            if (result != null)
+                                result._fileName = fileName;
                         }
-
-                        result?.MoveNext();
                     }
+
+                    if (result != null) 
+                        await result.MoveNextAsync();
                 }
                 catch (FileNotFoundException)
                 {
@@ -146,13 +144,13 @@ namespace ThreatsManager
             {
                 result = new LockFile(fileName);
                 result.AutoLoad();
-                result.Save();
+                await result.SaveAsync();
             }
 
             return result;
         }
 
-        private void MoveNext()
+        private async Task MoveNextAsync()
         {
             if (!IsOwned && !IsAcquired &&
                 DateTime.Now - Timestamp > TimeSpan.FromMinutes(30.0))
@@ -171,22 +169,29 @@ namespace ThreatsManager
                 }
                 Timestamp = DateTime.Now;
                 IsAcquired = false;
-                Save();
+                await SaveAsync();
             }
         }
 
-        private void Save()
+        private async Task SaveAsync()
         {
-            lock (_sync)
+            await Task.Run(() =>
             {
-                using (var fileStream = new FileStream(_fileName, FileMode.Create))
+                try
                 {
-                    var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-                    using (var stringWriter = new StreamWriter(fileStream))
-                    using (var writer = new JsonTextWriter(stringWriter))
-                        serializer.Serialize(writer, this);
+                    using (var fileStream = new FileStream(_fileName, FileMode.Create))
+                    {
+                        var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+                        using (var stringWriter = new StreamWriter(fileStream))
+                        using (var writer = new JsonTextWriter(stringWriter))
+                            serializer.Serialize(writer, this);
+                    }
                 }
-            }
+                catch (IOException)
+                {
+                    // May happen if the file is in use somewhere else. It will be eventually saved.
+                }
+            });
         }
     }
 }

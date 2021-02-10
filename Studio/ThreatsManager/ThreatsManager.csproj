@@ -269,6 +269,7 @@
     <Compile Include="GlobalAspects.cs" />
     <Compile Include="JumpListManager.cs" />
     <Compile Include="LockFile.cs" />
+    <Compile Include="DocumentLockInfo.cs" />
     <Compile Include="LockInfo.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

@@ -212,6 +212,7 @@
     <Compile Include="Actions\Configure.cs" />
     <Compile Include="Actions\Connect.cs" />
     <Compile Include="Actions\ManageIterations.cs" />
+    <Compile Include="BeforeSave\IterationRiskUpdater.cs" />
     <Compile Include="Dialogs\DevOpsConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -610,6 +611,7 @@
   <ItemGroup>
     <None Include="Resources\chart_line_huge.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)Extensions\$(ProjectName)\" /Y

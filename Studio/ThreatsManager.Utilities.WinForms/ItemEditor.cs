@@ -12,7 +12,6 @@ using DevComponents.DotNetBar.Controls;
 using DevComponents.DotNetBar.Layout;
 using DevComponents.DotNetBar.SuperGrid;
 using DevComponents.Editors;
-using Microsoft.VisualBasic.Devices;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
@@ -1077,10 +1076,11 @@ namespace ThreatsManager.Utilities.WinForms
                 threatType.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
             var listBox = AddListBox(section, "Standard Mitigations",
-                threatType.Mitigations, AddStandardMitigationEventHandler, _readonly);
+                threatType.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddStandardMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
-            AddListView(section, "Threat Events\napplied to", threatType.Model?.GetThreatEvents(threatType));
+            AddListView(section, "Threat Events\napplied to", 
+                threatType.Model?.GetThreatEvents(threatType)?.OrderBy(x => x.Parent.Name));
 
             if (_actions?.Any() ?? false)
             {
@@ -1106,6 +1106,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var section = AddSection("Threat Event Scenario");
             section.SuspendLayout();
+            AddHyperlink(section, "Threat Event", scenario.ThreatEvent);
             AddCombo(section, "Severity", scenario.Severity?.Name, 
                 scenario.Model?.Severities?.OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
@@ -1151,7 +1152,8 @@ namespace ThreatsManager.Utilities.WinForms
 
             var section = AddSection("Threat Type Mitigation");
             section.SuspendLayout();
-            AddSingleLineLabel(section, "Threat Type", mitigation.ThreatType.Name);
+            AddHyperlink(section, "Threat Type", mitigation.ThreatType);
+            AddHyperlink(section, "Mitigation", mitigation.Mitigation);
             AddCombo(section, "Control", mitigation.Mitigation.ControlType.ToString(),
                 Enum.GetValues(typeof(SecurityControlType)).OfType<SecurityControlType>().Select(x => x.GetEnumLabel()),
                 SecurityControlTypeChanged, true);
@@ -1170,7 +1172,8 @@ namespace ThreatsManager.Utilities.WinForms
 
             var section = AddSection("Threat Event Mitigation");
             section.SuspendLayout();
-            AddSingleLineLabel(section, "Threat Event", mitigation.ThreatEvent.Name);
+            AddHyperlink(section, "Threat Event", mitigation.ThreatEvent);
+            AddHyperlink(section, "Mitigation", mitigation.Mitigation);
             var label = AddSingleLineLabel(section, "Associated To", mitigation.ThreatEvent.Parent.Name,
                 Dpi.Factor.Width > 1.5 ? mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Medium) : mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Small));
             _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(mitigation.ThreatEvent.Parent));
@@ -1205,6 +1208,7 @@ namespace ThreatsManager.Utilities.WinForms
                     using (var dialog = new ItemEditorDialog())
                     {
                         dialog.SetExecutionMode(_executionMode);
+                        dialog.ReadOnly = ReadOnly;
                         dialog.Item = selected;
                         dialog.ShowDialog();
                     }
@@ -2156,5 +2160,12 @@ namespace ThreatsManager.Utilities.WinForms
             _menuThreatTypeMitigation = null;
         }
         #endregion
+
+        private void _refresh_Click(object sender, EventArgs e)
+        {
+            var item = Item;
+            Item = null;
+            Item = item;
+        }
     } 
 }

@@ -72,7 +72,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             {
                 foreach (var property in properties)
                 {
-                    var propertyValue = property.GetValue(mitigation);
+                    var propertyValue = property?.GetValue(mitigation);
                     if (propertyValue != null)
                         AddItem(property.Name, propertyValue);
                 }

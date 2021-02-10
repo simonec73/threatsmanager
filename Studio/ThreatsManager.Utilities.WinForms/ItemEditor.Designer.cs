@@ -53,6 +53,7 @@
             this._dynamicLayout = new DevComponents.DotNetBar.PanelEx();
             this._spellAsYouType = new Keyoti.RapidSpell.RapidSpellAsYouType(this.components);
             this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
+            this._refresh = new DevComponents.DotNetBar.ButtonX();
             this._fixedLayout.SuspendLayout();
             this._titlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._itemPicture)).BeginInit();
@@ -127,6 +128,7 @@
             // 
             this._itemNameTypeTitlePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this._itemNameTypeTitlePanel.Controls.Add(this._refresh);
             this._itemNameTypeTitlePanel.Controls.Add(this._itemName);
             this._itemNameTypeTitlePanel.Controls.Add(this._itemType);
             this._itemNameTypeTitlePanel.Location = new System.Drawing.Point(52, 0);
@@ -234,6 +236,20 @@
             this._superTooltip.MaximumWidth = 400;
             this._superTooltip.MarkupLinkClick += new DevComponents.DotNetBar.MarkupLinkClickEventHandler(this._superTooltip_MarkupLinkClick);
             // 
+            // _refresh
+            // 
+            this._refresh.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this._refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._refresh.ColorTable = DevComponents.DotNetBar.eButtonColor.Flat;
+            this._refresh.Location = new System.Drawing.Point(256, 2);
+            this._refresh.Name = "_refresh";
+            this._refresh.Size = new System.Drawing.Size(12, 12);
+            this._refresh.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._refresh.Symbol = "";
+            this._refresh.SymbolSize = 8F;
+            this._refresh.TabIndex = 5;
+            this._refresh.Click += new System.EventHandler(this._refresh_Click);
+            // 
             // ItemEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -266,5 +282,6 @@
         private DevComponents.DotNetBar.PanelEx _dynamicLayout;
         private Keyoti.RapidSpell.RapidSpellAsYouType _spellAsYouType;
         private DevComponents.DotNetBar.SuperTooltip _superTooltip;
+        private DevComponents.DotNetBar.ButtonX _refresh;
     }
 }

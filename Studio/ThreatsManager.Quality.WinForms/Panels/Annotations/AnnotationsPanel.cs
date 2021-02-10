@@ -346,7 +346,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
         {
             if (index < 0)
             {
-                _imageList.Images.Add(item.GetImage(ImageSize.Small));
+                _imageList.Images.Add(item.GetImage(Dpi.Factor.Height >= 1.5 ? ImageSize.Medium : ImageSize.Small));
                 index = _imageList.Images.Count - 1;
             }
 
@@ -368,14 +368,14 @@ namespace ThreatsManager.Quality.Panels.Annotations
             {
                 index = _right.RootGroup.Items.OfType<LayoutControlItem>().Count(x => x.Control is Button);
                 image = topicToBeClarified.Answered
-                    ? Properties.Resources.speech_balloon_answer
-                    : Properties.Resources.speech_balloon_question;
+                    ? Properties.Resources.speech_balloon_answer_big
+                    : Properties.Resources.speech_balloon_question_big;
                 tooltip = $"<b>{(topicToBeClarified.Answered ? "Question Answered" : "Needs Clarification")}</b><br/>{topicToBeClarified.Text?.Replace("\n", "<br/>")}";
             }
             else if (annotation is Highlight highlight)
             {
                 index = _right.RootGroup.Items.OfType<LayoutControlItem>().Count(x => x.Control is Button);
-                image = Properties.Resources.marker;
+                image = Properties.Resources.marker_big;
                 tooltip = $"<b>Highlight</b><br/>{highlight.Text?.Replace("\n", "<br/>")}";
             }
             else if (annotation is ReviewNote reviewNote)
@@ -387,7 +387,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
             else
             {
                 index = 0;
-                image = Properties.Resources.note_text;
+                image = Properties.Resources.note_text_big;
                 tooltip = null;
             }
 
@@ -395,7 +395,8 @@ namespace ThreatsManager.Quality.Panels.Annotations
             {
                 var button = new Button()
                 {
-                    Image = image,
+                    Image = new Bitmap(image, (int) (32 * Dpi.Factor.Width),
+                        (int) (32 * Dpi.Factor.Height)),
                     Enabled = true,
                     FlatStyle = FlatStyle.Flat,
                     FlatAppearance = {BorderSize = 0},
@@ -407,9 +408,9 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     Text = string.Empty,
                     TextVisible = false,
                     Control = button,
-                    Height = 54,
+                    Height = (int) (54 * Dpi.Factor.Height),
                     HeightType = eLayoutSizeType.Absolute,
-                    Width = 54,
+                    Width = (int) (54 * Dpi.Factor.Width),
                     WidthType = eLayoutSizeType.Absolute
                 };
                 if (tooltip != null)

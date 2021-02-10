@@ -65,6 +65,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 }
 
                 newLink.Loading = false;
+                newLink.UpdateRoute();
             }
         }
 

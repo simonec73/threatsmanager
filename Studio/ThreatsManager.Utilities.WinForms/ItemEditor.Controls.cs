@@ -97,7 +97,7 @@ namespace ThreatsManager.Utilities.WinForms
         #endregion
 
         #region Hyperlink.
-        private static LinkLabel AddHyperlink([NotNull] LayoutControl container,
+        private LinkLabel AddHyperlink([NotNull] LayoutControl container,
             [Required] string label, [NotNull] IIdentity identity)
         {
             int height = (int) (25 * Dpi.Factor.Height);
@@ -126,11 +126,14 @@ namespace ThreatsManager.Utilities.WinForms
             return control;
         }
 
-        private static void OnHyperlinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void OnHyperlinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (sender is LinkLabel linkLabel && linkLabel.Tag is IIdentity identity)
             {
-                var dialog = new ItemEditorDialog {Item = identity};
+                var dialog = new ItemEditorDialog();
+                dialog.SetExecutionMode(_executionMode);
+                dialog.ReadOnly = ReadOnly;
+                dialog.Item = identity;
                 dialog.ShowDialog(Form.ActiveForm);
             }
         }
@@ -872,7 +875,10 @@ namespace ThreatsManager.Utilities.WinForms
 
                 if (hit.Item?.Tag is IIdentity identity)
                 {
-                    var dialog = new ItemEditorDialog {Item = identity};
+                    var dialog = new ItemEditorDialog();
+                    dialog.SetExecutionMode(_executionMode);
+                    dialog.ReadOnly = ReadOnly;
+                    dialog.Item = identity;
                     dialog.ShowDialog(Form.ActiveForm);
                 }
             }
@@ -1239,9 +1245,16 @@ namespace ThreatsManager.Utilities.WinForms
         private Button AddCompactButton([NotNull] LayoutControl container, [Required] string label, 
             Bitmap image, Action<Button> clickAction, bool readOnly)
         {
+            var picture = image;
+            if (image != null)
+            {
+                picture = new Bitmap(image, (int) (32 * Dpi.Factor.Width),
+                    (int) (32 * Dpi.Factor.Height));
+            }
+
             var result = new Button()
             {
-                Image = image, 
+                Image = picture,
                 Enabled = !readOnly,
                 FlatStyle = FlatStyle.Flat,
                 FlatAppearance = {BorderSize = 0}
@@ -1260,9 +1273,9 @@ namespace ThreatsManager.Utilities.WinForms
                 Text = label,
                 TextVisible = false,
                 Control = result,
-                Height = 48,
+                Height = (int) (48 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
-                Width = 48,
+                Width = (int) (48 * Dpi.Factor.Width),
                 WidthType = eLayoutSizeType.Absolute
             };
             _superTooltip.SetSuperTooltip(result, new SuperTooltipInfo()
@@ -1295,7 +1308,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Text = label,
                 TextVisible = false,
                 Control = result,
-                Height = 36,
+                Height = (int) (36 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
