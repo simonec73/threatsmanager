@@ -16,7 +16,7 @@ using ThreatsManager.Utilities.Exceptions;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Extension("84252804-27F2-46C0-91A7-8EB7BF57EE58", "File Package Manager", 10, ExecutionMode.Simplified)]
+    [Extension("84252804-27F2-46C0-91A7-8EB7BF57EE58", "File Package Manager", 10, ExecutionMode.Business)]
     public class PlainFilePackageManager : IPackageManager 
     {
         private const string ThreatModelFile = "threatmodel.json";

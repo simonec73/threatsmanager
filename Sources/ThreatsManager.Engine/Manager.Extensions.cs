@@ -35,7 +35,7 @@ namespace ThreatsManager.Engine
 
             var extension = _extensionsManager.GetExtensions<T>()?
                 .FirstOrDefault(x => string.CompareOrdinal(x.Key.Label, label) == 0);
-            if (extension.HasValue && (_configuration?.IsEnabled(extension.Value.Key.Id) ?? false))
+            if (extension.HasValue && extension.Value.Key != null && (_configuration?.IsEnabled(extension.Value.Key.Id) ?? false))
             {
                 result = extension.Value.Value;
             }

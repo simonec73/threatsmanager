@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,7 +13,7 @@ using ThreatsManager.Utilities.Exceptions;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Extension("FA6F6023-8369-4D2F-97C1-1EB5ED83DA21", "Json File Package Manager", 15, ExecutionMode.Simplified)]
+    [Extension("FA6F6023-8369-4D2F-97C1-1EB5ED83DA21", "Json File Package Manager", 15, ExecutionMode.Business)]
     public class JsonFilePackageManager : IPackageManager 
     { 
         public LocationType SupportedLocations => LocationType.FileSystem;

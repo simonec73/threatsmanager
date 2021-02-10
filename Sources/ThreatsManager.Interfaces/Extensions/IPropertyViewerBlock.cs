@@ -27,7 +27,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <summary>
         /// Bitmap of the Block.
         /// </summary>
-        /// <remarks>It is typically 32x32 pixels.</remarks>
+        /// <remarks>It is typically 64x64 pixels.</remarks>
         Bitmap Image { get; }
 
         /// <summary>

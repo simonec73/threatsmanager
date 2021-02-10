@@ -24,9 +24,12 @@ namespace ThreatsManager.DevOps.RoadmapProviders
             if (mitigation.Model is IThreatModel model)
             {
                 var connector = DevOpsManager.GetConnector(model);
-                var schemaManager = new DevOpsPropertySchemaManager(model);
-                var status = schemaManager.GetDevOpsInfo(mitigation, connector);
-                result = (status?.Status ?? WorkItemStatus.Unknown).GetEnumLabel();
+                if (connector != null)
+                {
+                    var schemaManager = new DevOpsPropertySchemaManager(model);
+                    var status = schemaManager.GetDevOpsInfo(mitigation, connector);
+                    result = (status?.Status ?? WorkItemStatus.Unknown).GetEnumLabel();
+                }
             }
 
             return result;
