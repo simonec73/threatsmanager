@@ -8,7 +8,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 
 namespace SampleWinFormExtensions.Panels.Definitions
 {
-    [Extension(typeof(IPanelFactory), "2ED5A24F-1666-4171-B4AB-07FF00AAD2D6",
+    [Extension("2ED5A24F-1666-4171-B4AB-07FF00AAD2D6",
         "Definitions Editor Panel", 1000, ExecutionMode.Business)]
     public partial class DefinitionsPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {

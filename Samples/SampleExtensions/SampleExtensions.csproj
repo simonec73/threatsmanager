@@ -52,7 +52,7 @@
       <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.7.11\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Model, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.7.11\lib\net40\PostSharp.Patterns.Model.dll</HintPath>
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.7.11\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Threading, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
       <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.7.11\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
