@@ -314,5 +314,19 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
             return container;
         }
+
+        public void SetWidth(int width)
+        {
+            Header.Width = width;
+            Header[0].Width = width - 50;
+            Items.Width = width;
+            var items = Items.OfType<RoadmapSubItem>().ToArray();
+            foreach (var item in items)
+            {
+                item.Label.Width = (width / 2f) - 50f;
+                item.Label.WrappingWidth = (width / 2f) - 50f;
+                item.Value.WrappingWidth = width / 2f;
+            }
+        }
     }
 }

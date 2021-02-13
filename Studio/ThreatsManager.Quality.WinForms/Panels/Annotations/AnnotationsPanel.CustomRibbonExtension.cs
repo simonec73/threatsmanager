@@ -136,7 +136,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                 case "RemoveNotes":
                     if (_selected != null && _annotation.Annotation is Annotation annotation &&
                         MessageBox.Show("You are about to remove the currently selected Note. Are you sure?",
-                            "Remove Notes", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
+                            "Remove Notes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
                         schemaManager.RemoveAnnotation(_selected, annotation);
@@ -147,7 +147,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                 case "RemoveTopic":
                     if (_selected != null && _annotation.Annotation is TopicToBeClarified toBeClarified &&
                         MessageBox.Show("You are about to remove the currently selected Topic. Are you sure?",
-                        "Remove Topic", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
+                        "Remove Topic", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
                         schemaManager.RemoveAnnotation(_selected, toBeClarified);
@@ -158,7 +158,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                 case "RemoveHighlight":
                     if (_selected != null && _annotation.Annotation is Highlight highlight &&
                         MessageBox.Show("You are about to remove the currently selected Highlight. Are you sure?",
-                            "Remove Highlight", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
+                            "Remove Highlight", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
                         schemaManager.RemoveAnnotation(_selected, highlight);
@@ -167,7 +167,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     }
                     break;
                 case "ShowOpenTopics":
-                    _show = Show.OpenTopicsOnly;
+                    _show = WhatToShow.OpenTopicsOnly;
                     LoadModel();
                     ChangeCustomActionStatus?.Invoke("ShowOpenTopics", false);
                     ChangeCustomActionStatus?.Invoke("ShowHighlights", true);
@@ -175,7 +175,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     ChangeCustomActionStatus?.Invoke("ShowAll", true);
                     break;
                 case "ShowHighlights":
-                    _show = Show.HighlightsOnly;
+                    _show = WhatToShow.HighlightsOnly;
                     LoadModel();
                     ChangeCustomActionStatus?.Invoke("ShowOpenTopics", true);
                     ChangeCustomActionStatus?.Invoke("ShowHighlights", false);
@@ -183,7 +183,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     ChangeCustomActionStatus?.Invoke("ShowAll", true);
                     break;
                 case "ShowAll":
-                    _show = Show.All;
+                    _show = WhatToShow.All;
                     LoadModel();
                     ChangeCustomActionStatus?.Invoke("ShowOpenTopics", true);
                     ChangeCustomActionStatus?.Invoke("ShowHighlights", true);

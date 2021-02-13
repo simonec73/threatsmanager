@@ -128,7 +128,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Scenarios. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Scenarios,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Scenarios", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Scenarios", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -184,7 +184,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             else if (_currentRow?.Tag is IThreatEventScenario scenario &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove scenario '{scenario.Name}' from the current Threat Event. Are you sure?",
-                                         "Remove Scenario", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Scenario", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (scenario.ThreatEvent.RemoveScenario(scenario.Id))
@@ -214,7 +214,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                                 var name = (_currentRow.Tag as IThreatEventMitigation)?.Mitigation.Name;
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected2.Length} Mitigation associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Mitigation associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
-                                    "Remove Mitigation association", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Mitigation association", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -270,7 +270,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             else if (_currentRow?.Tag is IThreatEventMitigation mitigation &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove mitigation '{mitigation.Mitigation.Name}' from the current Threat Event. Are you sure?",
-                                         "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (mitigation.ThreatEvent.RemoveMitigation(mitigation.MitigationId))

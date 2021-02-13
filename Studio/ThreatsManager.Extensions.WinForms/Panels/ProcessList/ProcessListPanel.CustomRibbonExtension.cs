@@ -82,7 +82,7 @@ namespace ThreatsManager.Extensions.Panels.ProcessList
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Processes. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Processes,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
                                     "Remove Processes", MessageBoxButtons.YesNoCancel,
-                                    MessageBoxIcon.Question,
+                                    MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -138,7 +138,7 @@ namespace ThreatsManager.Extensions.Panels.ProcessList
                             else if (_currentRow != null && _currentRow.Tag is IProcess process &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Process '{process.Name}'. Are you sure?",
-                                         "Remove Process", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Process", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveEntity(process.Id))

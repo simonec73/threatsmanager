@@ -284,7 +284,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 case "RemoveDiagram":
                     if (MessageBox.Show(Form.ActiveForm,
                             "Are you sure you want to remove the current Diagram from the Model?",
-                            "Delete Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                            "Delete Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
                         if (_factory.Delete(this))
@@ -317,7 +317,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     break;
                 case "Layout":
                     if (MessageBox.Show("Are you sure you want to automatically layout the Diagram?",
-                        "Automatic Layout confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        "Automatic Layout confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         _graph.DoLayout(h?.Value ?? 200, v?.Value ?? 100);
                     break;

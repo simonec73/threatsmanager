@@ -68,7 +68,7 @@ namespace ThreatsManager.DevOps.Actions
                         if (MessageBox.Show(
                             $"You are about to assign {mitigations.Length} mitigations to the previous iteration ('{iteration.Name}')." +
                             $"\nDo you confirm?", "Bulk assignment to Iteration", MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
                             foreach (var mitigation in mitigations)
                             {

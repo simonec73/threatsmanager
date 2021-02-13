@@ -112,7 +112,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Threat Types. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Types,\nNo to remove only the last one you selected, '{_currentRow?.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Threat Types", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Threat Types", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -167,7 +167,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                             else if (_currentRow != null && _currentRow.Tag is IThreatType threatType3 &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Threat Type '{threatType3.Name}'. Are you sure?",
-                                         "Remove Threat Type", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Threat Type", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveThreatType(threatType3.Id))
@@ -197,7 +197,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                                 var name = (_currentRow.Tag as IThreatTypeMitigation)?.Mitigation.Name;
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected2.Length} Mitigations associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Mitigations associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
-                                    "Remove Mitigations associations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Mitigations associations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -254,7 +254,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                             else if (_currentRow != null && _currentRow.Tag is IThreatTypeMitigation mitigation &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to disassociate Mitigation '{mitigation.Mitigation.Name}'. Are you sure?",
-                                         "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (mitigation.ThreatType.RemoveMitigation(mitigation.MitigationId))

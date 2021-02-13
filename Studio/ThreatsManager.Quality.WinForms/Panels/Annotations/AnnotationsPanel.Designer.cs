@@ -16,6 +16,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
         {
             _objects.SelectedIndexChanged -= new System.EventHandler(this._objects_SelectedIndexChanged);
             _objectTypes.SelectedValueChanged -= new System.EventHandler(this._objectTypes_SelectedValueChanged);
+            _annotation.AnnotationUpdated -= OnAnnotationUpdated;
 
             if (disposing && (components != null))
             {

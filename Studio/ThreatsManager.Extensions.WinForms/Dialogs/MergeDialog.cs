@@ -81,7 +81,7 @@ namespace ThreatsManager.Extensions.Dialogs
                 if (latest != null && 
                     MessageBox.Show(Form.ActiveForm, 
                         $"A newer version is available, created on {dateTime.ToString("g")}.\nDo you want to open the newest version instead?",
-                        "Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                        "Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                 {
                     comparisonSourceFile = latest;
                 }
@@ -2034,7 +2034,7 @@ namespace ThreatsManager.Extensions.Dialogs
         private void _ok_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("The selected merge actions are about to be performed.\nPlease confirm.",
-                "Merge", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                "Merge", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
             {
                 bool dirty = false;
 

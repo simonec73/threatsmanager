@@ -94,7 +94,7 @@ namespace ThreatsManager.Extensions.Panels.SeverityList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Severities. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Severities,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Severities", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Severities", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -148,7 +148,7 @@ namespace ThreatsManager.Extensions.Panels.SeverityList
                             else if (_currentRow?.Tag is ISeverity severity &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Severity '{severity.Name}'. Are you sure?",
-                                         "Remove Severity", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Severity", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveSeverity(severity.Id))

@@ -89,7 +89,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Threat Actors. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Actors,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Threat Actors", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Threat Actors", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -145,7 +145,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
                             else if (_currentRow?.Tag is IThreatActor actor &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Threat Actor '{actor.Name}'. Are you sure?",
-                                         "Remove Threat Actor", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Threat Actor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveThreatActor(actor.Id))

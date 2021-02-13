@@ -120,7 +120,7 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Item Templates. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Item Templates,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Item Templates", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Item Templates", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -208,7 +208,7 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                             else if (_currentRow?.Tag is IEntityTemplate template &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Entity Template '{template.Name}'. Are you sure?",
-                                         "Remove Entity Template", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Entity Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveEntityTemplate(template.Id))
@@ -224,7 +224,7 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                             } else if (_currentRow?.Tag is IFlowTemplate flowTemplate &&
                                        MessageBox.Show(Form.ActiveForm,
                                            $"You are about to remove Flow Template '{flowTemplate.Name}'. Are you sure?",
-                                           "Remove Flow Template", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                           "Remove Flow Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                            MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveFlowTemplate(flowTemplate.Id))
@@ -240,7 +240,7 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                             } else if (_currentRow?.Tag is ITrustBoundaryTemplate trustBoundaryTemplate &&
                                        MessageBox.Show(Form.ActiveForm,
                                            $"You are about to remove Trust Boundary Template '{trustBoundaryTemplate.Name}'. Are you sure?",
-                                           "Remove Trust Boundary Template", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                           "Remove Trust Boundary Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                            MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id))

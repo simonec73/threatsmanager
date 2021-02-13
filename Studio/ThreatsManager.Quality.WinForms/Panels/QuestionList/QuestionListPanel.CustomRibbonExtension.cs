@@ -75,7 +75,7 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                         if (text.Length > 15)
                             text = $"{text.Substring(0, 15)}...";
                         if (MessageBox.Show($"Are you sure you want to delete question '{text}'?", 
-                            "Remove Question", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
+                            "Remove Question", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.OK)
                         {
                             _schemaManager.RemoveQuestion(question2);
                             _currentRow.Cells[0].PropertyChanged -= OnQuestionCellChanged;

@@ -22,7 +22,7 @@ namespace ThreatsManager.DevOps.Dialogs
         {
             _mitigation = mitigation;
             _model = mitigation.Model;
-            Load();
+            LoadModel();
         }
 
         private void _ok_Click(object sender, EventArgs e)
@@ -39,10 +39,10 @@ namespace ThreatsManager.DevOps.Dialogs
             var dialog = new DevOpsManageIterationsDialog(_model);
             dialog.ShowDialog(Form.ActiveForm);
             _iterations.Items.Clear();
-            Load();
+            LoadModel();
         }
 
-        private void Load()
+        private void LoadModel()
         {
             var schemaManager = new DevOpsConfigPropertySchemaManager(_model);
             var iterations = schemaManager.GetIterations()?.ToArray();

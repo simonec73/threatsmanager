@@ -28,7 +28,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
     public partial class AnnotationsPanel : UserControl, IShowThreatModelPanel<Form>, 
         ICustomRibbonExtension, IInitializableObject
     {
-        enum Show
+        enum WhatToShow
         {
             All,
             OpenTopicsOnly,
@@ -39,12 +39,49 @@ namespace ThreatsManager.Quality.Panels.Annotations
         private AnnotationsPropertySchemaManager _schemaManager;
         private IPropertyType _propertyType;
         private IPropertiesContainer _selected;
-        private Show _show = Show.All;
+        private WhatToShow _show = WhatToShow.All;
         private Button _currentButton;
 
         public AnnotationsPanel()
         {
             InitializeComponent();
+
+            _annotation.AnnotationUpdated += OnAnnotationUpdated;
+        }
+
+        private void OnAnnotationUpdated()
+        {
+            var item = _properties.Item;
+            _properties.Item = null;
+            _properties.Item = item;
+
+            var annotation = _annotation.Annotation;
+            var button = GetButton(annotation);
+            if (button != null)
+            {
+                Image image;
+                if (annotation is TopicToBeClarified topicToBeClarified)
+                {
+                    image = topicToBeClarified.Answered
+                        ? Properties.Resources.speech_balloon_answer_big
+                        : Properties.Resources.speech_balloon_question_big;
+                }
+                else if (annotation is Highlight highlight)
+                {
+                    image = Properties.Resources.marker_big;
+                }
+                else if (annotation is ReviewNote reviewNote)
+                {
+                    image = null;
+                }
+                else
+                {
+                    image = Properties.Resources.note_text_big;
+                }
+
+                button.Image = new Bitmap(image, (int) (32 * Dpi.Factor.Width),
+                    (int) (32 * Dpi.Factor.Height));
+            }
         }
 
         #region Implementation of interface IShowThreatModelPanel.
@@ -247,71 +284,72 @@ namespace ThreatsManager.Quality.Panels.Annotations
         private void LoadModel()
         {
             _objectTypes.Items.Clear();
+            _annotationLayoutControlItem.Visible = false;
 
             if (_model.Entities?.OfType<IExternalInteractor>()
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                    (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                    (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                    (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                    (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("External Interactors");
             if (_model.Entities?.OfType<IProcess>()
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Processes");
             if (_model.Entities?.OfType<IDataStore>()
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Data Stores");
             if (_model.DataFlows?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Flows");
             if (_model.Groups?.OfType<ITrustBoundary>()
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Trust Boundaries");
             if (_model.GetThreatEvents()?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Threat Events");
             if (_model.GetThreatEventMitigations()?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Threat Event Mitigations");
             if (_model.ThreatTypes?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Threat Types");
             if (_model.Mitigations?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Known Mitigations");
             if (_model.GetThreatTypeMitigations()?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Standard Mitigations");
             if (_model.EntityTemplates?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Entity Templates");
             if (_model.FlowTemplates?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Flow Templates");
             if (_model.TrustBoundaryTemplates?
-                .Any(x => (_show == Show.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
-                          (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
-                          (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
+                .Any(x => (_show == WhatToShow.All && (_schemaManager.HasNotes(x) || _schemaManager.HasTopics(x) || _schemaManager.HasHighlights(x))) ||
+                          (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(x)) ||
+                          (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(x))) ?? false)
                 _objectTypes.Items.Add("Trust Boundary Templates");
 
             _objects.Items.Clear();
@@ -324,9 +362,9 @@ namespace ThreatsManager.Quality.Panels.Annotations
         {
             var items = identities?
                 .Where(x => x is IPropertiesContainer container && 
-                            ((_show == Show.All && (_schemaManager.HasNotes(container) || _schemaManager.HasTopics(container) || _schemaManager.HasHighlights(container))) ||
-                            (_show == Show.OpenTopicsOnly && _schemaManager.HasOpenTopics(container)) ||
-                            (_show == Show.HighlightsOnly && _schemaManager.HasHighlights(container))))
+                            ((_show == WhatToShow.All && (_schemaManager.HasNotes(container) || _schemaManager.HasTopics(container) || _schemaManager.HasHighlights(container))) ||
+                            (_show == WhatToShow.OpenTopicsOnly && _schemaManager.HasOpenTopics(container)) ||
+                            (_show == WhatToShow.HighlightsOnly && _schemaManager.HasHighlights(container))))
                 .ToArray();
             if (items?.Any() ?? false)
             {
@@ -426,6 +464,22 @@ namespace ThreatsManager.Quality.Panels.Annotations
                 _right.Controls.Add(button);
                 _right.RootGroup.Items.Insert(index, item);
             }
+        }
+
+        private Button GetButton(Annotation annotation)
+        {
+            Button result = null;
+
+            if (annotation != null)
+            {
+                result = _right.RootGroup.Items
+                    .OfType<LayoutControlItem>()
+                    .Select(x => x.Control)
+                    .OfType<Button>()
+                    .FirstOrDefault(x => x.Tag == annotation);
+            }
+
+            return result;
         }
 
         private void RemoveButton([NotNull] Annotation annotation)

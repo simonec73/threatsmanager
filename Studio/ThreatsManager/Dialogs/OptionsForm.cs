@@ -99,6 +99,7 @@ namespace ThreatsManager.Dialogs
                             Panel = sideNavPanel,
                             Image = panel.Icon,
                             ImageSize = new Size(24, 24),
+                            ImageFixedSize = new Size(24, 24),
                             HoverImage = panel.SelectedIcon,
                             PressedImage = panel.SelectedIcon,
                             Text = panel.Label

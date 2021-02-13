@@ -8,7 +8,6 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Dialogs;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions.Schemas;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
@@ -214,10 +213,24 @@ namespace ThreatsManager.DevOps.Panels
                 if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                 {
                     var itemInfo = dialog.SelectedItemInfo;
-                    if (itemInfo != null)
-                        SetHyperlinkInfo("Link", itemInfo.Id.ToString(), itemInfo.Url);
+                    //if (itemInfo != null)
+                    //    SetHyperlinkInfo("Link", itemInfo.Id.ToString(), itemInfo.Url);
                     MoveRequired?.Invoke(this);
                 }
+            }
+        }
+
+        public void SetWidth(int width)
+        {
+            Header.Width = width;
+            Header[0].Width = width - 50;
+            Items.Width = width;
+            var items = Items.OfType<KanbanSubItem>().ToArray();
+            foreach (var item in items)
+            {
+                item.Label.Width = (width / 2f) - 50f;
+                item.Label.WrappingWidth = (width / 2f) - 50f;
+                item.Value.WrappingWidth = width / 2f;
             }
         }
     }

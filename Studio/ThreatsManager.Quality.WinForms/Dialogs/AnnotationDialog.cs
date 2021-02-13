@@ -65,7 +65,7 @@ namespace ThreatsManager.Quality.Dialogs
         private void _cancel_Click(object sender, System.EventArgs e)
         {
             if (_editMode && MessageBox.Show("You are about to delete the current Annotation. Do you confirm?",
-                "Delete Annotation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                "Delete Annotation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 DialogResult = DialogResult.Abort;

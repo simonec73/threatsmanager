@@ -81,7 +81,7 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Data Stores. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Data Stores,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Data Stores", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Data Stores", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -136,7 +136,7 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                             else if (_currentRow != null && _currentRow.Tag is IDataStore dataStore &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Data Store '{dataStore.Name}'. Are you sure?",
-                                         "Remove Data Store", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Data Store", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveEntity(dataStore.Id))

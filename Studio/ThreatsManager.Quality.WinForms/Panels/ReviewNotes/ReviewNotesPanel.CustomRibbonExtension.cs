@@ -83,7 +83,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
                 case "RemoveReviewNote":
                     if (_selected != null && _annotation.Annotation is ReviewNote reviewNote &&
                         MessageBox.Show("You are about to remove the currently selected Review Note. Are you sure?",
-                            "Remove Review Note", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
+                            "Remove Review Note", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
                         schemaManager.RemoveAnnotation(_selected, reviewNote);

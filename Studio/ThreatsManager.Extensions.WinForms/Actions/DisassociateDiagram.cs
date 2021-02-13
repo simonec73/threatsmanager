@@ -69,7 +69,7 @@ namespace ThreatsManager.Extensions.Actions
                 $"You are about to disassociate the associated diagram from {model.GetIdentityTypeName(entity)} '{entity.Name}'. Are you sure?",
                 "Disassociate Diagram", 
                 MessageBoxButtons.YesNo, 
-                MessageBoxIcon.Question, 
+                MessageBoxIcon.Information, 
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 var schemaManager = new AssociatedDiagramPropertySchemaManager(model);

@@ -347,7 +347,7 @@ namespace ThreatsManager.DevOps.Dialogs
             if (selectedRow.Tag is IDevOpsField field)
             {
                 if (MessageBox.Show($"Are you sure you want to remove field '{field.Label}'?",
-                    "Remove field", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    "Remove field", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     var connector = DevOpsManager.GetConnector(_model);

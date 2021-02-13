@@ -91,6 +91,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
             var bounds = this.ComputeDocumentBounds();
             this.Document.Size = bounds.Size;
+
+            OnResize(EventArgs.Empty);
         }
 
         protected override void DoExternalDrag(DragEventArgs evt)
@@ -116,6 +118,21 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             RemoveMitigation -= OnRemoveMitigation;
 
             base.Dispose(disposing);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            var nodes = Document.OfType<RoadmapItem>().ToArray();
+            if (nodes?.Any() ?? false)
+            {
+                var width = this.Width;
+                foreach (var node in nodes)
+                {
+                    node.SetWidth(width);
+                }
+            }
         }
     }
 }

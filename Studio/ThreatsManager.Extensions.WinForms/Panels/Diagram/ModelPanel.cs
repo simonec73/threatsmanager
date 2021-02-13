@@ -24,7 +24,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         IExecutionModeSupport
     {
         #region Private member variables.
-        private readonly Guid _id = Guid.NewGuid();
         private bool _loading;
         private IDiagram _diagram;
         private ModelPanelFactory _factory;
@@ -182,7 +181,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public bool IsInitialized => _diagram != null;
 
-        public Guid Id => _id;
+        public Guid Id => _diagram?.Id ?? Guid.Empty;
 
         internal Bitmap GetBitmap()
         {

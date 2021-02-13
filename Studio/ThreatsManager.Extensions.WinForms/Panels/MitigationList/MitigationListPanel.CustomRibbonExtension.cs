@@ -84,7 +84,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                                 var name = (_currentRow?.Tag as IThreatEventMitigation)?.ThreatEvent.Name;
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Threat Event associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Event associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
-                                    "Remove Threat Event associations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Threat Event associations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -141,7 +141,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to disassociate mitigation '{mitigation.Mitigation.Name}' from the Threat Event '{mitigation.ThreatEvent.Name}'. Are you sure?",
                                          "Remove Threat Event association", MessageBoxButtons.YesNo,
-                                         MessageBoxIcon.Question,
+                                         MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (mitigation.ThreatEvent.RemoveMitigation(mitigation.MitigationId))

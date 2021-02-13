@@ -53,7 +53,7 @@ namespace ThreatsManager.Extensions.Actions
 
             if (MessageBox.Show(Form.ActiveForm,
                 $"You are about to disassociate Mitigation '{mitigation.Mitigation.Name}'. Are you sure?",
-                "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 if (mitigation.ThreatType.RemoveMitigation(mitigation.MitigationId))
@@ -76,7 +76,7 @@ namespace ThreatsManager.Extensions.Actions
 
             if (MessageBox.Show(Form.ActiveForm,
                 $"You are about to remove mitigation '{mitigation.Mitigation.Name}' from the current Threat Event. Are you sure?",
-                "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 if (mitigation.ThreatEvent.RemoveMitigation(mitigation.MitigationId))

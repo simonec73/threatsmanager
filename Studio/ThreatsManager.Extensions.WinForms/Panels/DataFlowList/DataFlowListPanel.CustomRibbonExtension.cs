@@ -84,7 +84,7 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Flows. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Flows,\nNo to remove only the last one you selected, '{_currentRow?.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Flows", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove Flows", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -138,7 +138,7 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                             else if (_currentRow != null && _currentRow.Tag is IDataFlow dataFlow &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Flow '{dataFlow.Name}'. Are you sure?",
-                                         "Remove Flow", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Flow", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveDataFlow(dataFlow.Id))

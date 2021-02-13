@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Quality.Dialogs;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
@@ -14,11 +13,14 @@ namespace ThreatsManager.Quality.Annotations
     public partial class AnnotationControl : UserControl, IInitializableObject
     {
         private Annotation _annotation;
+        private bool _loading;
 
         public AnnotationControl()
         {
             InitializeComponent();
         }
+
+        public event Action AnnotationUpdated;
 
         public bool IsInitialized => _annotation != null;
 
@@ -28,39 +30,48 @@ namespace ThreatsManager.Quality.Annotations
 
             set
             {
-                _annotation = value;
-                _text.Text = _annotation?.Text;
-                _createdBy.Text = _annotation?.CreatedBy;
-                _createdOn.Text = _annotation?.CreatedOn.ToLongDateString();
-                _modifiedBy.Text = _annotation?.ModifiedBy;
-                _modifiedOn.Text = string.IsNullOrWhiteSpace(_annotation?.ModifiedBy) ? null : _annotation?.ModifiedOn.ToLongDateString();
+                _loading = true;
 
-                ClearAnswers();
-
-                if (_annotation is TopicToBeClarified topicToBeClarified)
+                try
                 {
-                    _askedBy.Text = topicToBeClarified.AskedBy;
-                    _askedOn.Value = topicToBeClarified.AskedOn;
-                    _askedVia.Text = topicToBeClarified.AskedVia;
-                    _answered.Checked = topicToBeClarified.Answered;
-                    if (topicToBeClarified.Answers?.Any() ?? false)
-                        AddAnswers(topicToBeClarified.Answers);
+                    _annotation = value;
+                    _text.Text = _annotation?.Text;
+                    _createdBy.Text = _annotation?.CreatedBy;
+                    _createdOn.Text = _annotation?.CreatedOn.ToLongDateString();
+                    _modifiedBy.Text = _annotation?.ModifiedBy;
+                    _modifiedOn.Text = string.IsNullOrWhiteSpace(_annotation?.ModifiedBy) ? null : _annotation?.ModifiedOn.ToLongDateString();
 
-                    _askedByContainer.Visible = true;
-                    _askedOnContainer.Visible = true;
-                    _askedViaContainer.Visible = true;
-                    _answeredContainer.Visible = true;
-                    _answersContainer.Visible = true;
-                    _textContainer.Height = 50;
+                    ClearAnswers();
+
+                    if (_annotation is TopicToBeClarified topicToBeClarified)
+                    {
+                        _askedBy.Text = topicToBeClarified.AskedBy;
+                        _askedOn.Value = topicToBeClarified.AskedOn;
+                        _askedVia.Text = topicToBeClarified.AskedVia;
+                        _answered.Checked = topicToBeClarified.Answered;
+                        if (topicToBeClarified.Answers?.Any() ?? false)
+                            AddAnswers(topicToBeClarified.Answers);
+
+                        _askedByContainer.Visible = true;
+                        _askedOnContainer.Visible = true;
+                        _askedViaContainer.Visible = true;
+                        _answeredContainer.Visible = true;
+                        _answersContainer.Visible = true;
+                        _textContainer.Height = 50;
+                    }
+                    else
+                    {
+                        _askedByContainer.Visible = false;
+                        _askedOnContainer.Visible = false;
+                        _askedViaContainer.Visible = false;
+                        _answeredContainer.Visible = false;
+                        _answersContainer.Visible = false;
+                        _textContainer.Height = 99;
+                    }
                 }
-                else
+                finally
                 {
-                    _askedByContainer.Visible = false;
-                    _askedOnContainer.Visible = false;
-                    _askedViaContainer.Visible = false;
-                    _answeredContainer.Visible = false;
-                    _answersContainer.Visible = false;
-                    _textContainer.Height = 99;
+                    _loading = false;
                 }
             }
         }
@@ -68,9 +79,10 @@ namespace ThreatsManager.Quality.Annotations
         [InitializationRequired]
         private void AddAnswers([NotNull] IEnumerable<AnnotationAnswer> answers)
         {
-            if (answers?.Any() ?? false)
+            var array = answers?.ToArray();
+            if (array?.Any() ?? false)
             {
-                foreach (var answer in answers)
+                foreach (var answer in array)
                 {
                     AddAnswer(answer);
                 }
@@ -94,7 +106,7 @@ namespace ThreatsManager.Quality.Annotations
             var superTabControlPanel = new SuperTabControlPanel
             {
                 Name = $"tabControlPanelAnswer{index}",
-                Dock = System.Windows.Forms.DockStyle.Fill,
+                Dock = DockStyle.Fill,
                 Location = new System.Drawing.Point(0, 30),
                 Size = new System.Drawing.Size(661, 162),
                 TabItem = superTabItem
@@ -120,7 +132,7 @@ namespace ThreatsManager.Quality.Annotations
         private void ClearAnswers()
         {
             var toRemove = _answers.Tabs.OfType<SuperTabItem>().ToArray();
-            if (toRemove?.Any() ?? false)
+            if (toRemove.Any())
             {
                 foreach (var item in toRemove)
                 {
@@ -142,10 +154,10 @@ namespace ThreatsManager.Quality.Annotations
             }
         }
 
-        private void _tabContainer_TabItemClose(object sender, DevComponents.DotNetBar.SuperTabStripTabItemCloseEventArgs e)
+        private void _tabContainer_TabItemClose(object sender, SuperTabStripTabItemCloseEventArgs e)
         {
             if (MessageBox.Show($"Are you sure you want to delete answer '{e.Tab.Text}'?",
-                "Remove Answer", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
+                "Remove Answer", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button2) == DialogResult.OK)
             {
                 if (_annotation is TopicToBeClarified topicToBeClarified && e.Tab?.Tag is AnnotationAnswer answer)
@@ -172,31 +184,43 @@ namespace ThreatsManager.Quality.Annotations
         [InitializationRequired]
         private void _text_TextChanged(object sender, EventArgs e)
         {
-            _annotation.Text = _text.Text;
+            if (!_loading)
+            {
+                _annotation.Text = _text.Text;
+            }
         }
 
         private void _askedBy_TextChanged(object sender, EventArgs e)
         {
-            if (_annotation is TopicToBeClarified topicToBeClarified)
+            if (!_loading && _annotation is TopicToBeClarified topicToBeClarified)
+            {
                 topicToBeClarified.AskedBy = _askedBy.Text;
+            }
         }
 
         private void _askedOn_ValueChanged(object sender, EventArgs e)
         {
-            if (_annotation is TopicToBeClarified topicToBeClarified)
+            if (!_loading && _annotation is TopicToBeClarified topicToBeClarified)
+            {
                 topicToBeClarified.AskedOn = _askedOn.Value;
+            }
         }
 
         private void _askedVia_TextChanged(object sender, EventArgs e)
         {
-            if (_annotation is TopicToBeClarified topicToBeClarified)
+            if (!_loading && _annotation is TopicToBeClarified topicToBeClarified)
+            {
                 topicToBeClarified.AskedVia = _askedVia.Text;
+            }
         }
 
         private void _answered_CheckedChanged(object sender, EventArgs e)
         {
-            if (_annotation is TopicToBeClarified topicToBeClarified)
+            if (!_loading && _annotation is TopicToBeClarified topicToBeClarified)
+            {
                 topicToBeClarified.Answered = _answered.Checked;
+                AnnotationUpdated?.Invoke();
+            }
         }
     }
 }

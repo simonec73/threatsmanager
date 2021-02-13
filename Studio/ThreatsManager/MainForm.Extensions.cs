@@ -376,7 +376,7 @@ namespace ThreatsManager
             }
 
             var result = MessageBox.Show(Form.ActiveForm, text, caption, buttons, 
-                warning ? MessageBoxIcon.Warning : MessageBoxIcon.Question, defaultButton);
+                warning ? MessageBoxIcon.Warning : MessageBoxIcon.Information, defaultButton);
 
             AnswerType answer;
             switch (result)

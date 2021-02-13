@@ -358,7 +358,7 @@ namespace ThreatsManager
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it before exiting?\n\nPlease press Yes to save and close.\nPress No to close without saving.\nPress Cancel to abort.",
-                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button1);
 
                 if (dialogResult == DialogResult.Yes)
@@ -572,7 +572,7 @@ namespace ThreatsManager
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
-                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button1);
 
                 if (dialogResult == DialogResult.Yes)
@@ -600,7 +600,7 @@ namespace ThreatsManager
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
-                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button1);
 
                 if (dialogResult == DialogResult.Yes)
@@ -726,7 +726,7 @@ namespace ThreatsManager
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it?\n\nPlease press Yes to save and then close it.\nPress No to close without saving.\nPress Cancel to abort.",
-                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button1);
 
                 if (dialogResult == DialogResult.Yes)
@@ -934,7 +934,7 @@ namespace ThreatsManager
                 if (latest != null && 
                     MessageBox.Show(Form.ActiveForm, 
                     $"A newer version is available, created on {dateTime.ToString("g")}.\nDo you want to open the newest version instead?",
-                    "Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                    "Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                 {
                     location = latest;
                 }
@@ -1221,7 +1221,7 @@ namespace ThreatsManager
                     {
                         var dialogResult = MessageBox.Show(this,
                             "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
-                            "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                            "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button1);
 
                         if (dialogResult == DialogResult.Yes)

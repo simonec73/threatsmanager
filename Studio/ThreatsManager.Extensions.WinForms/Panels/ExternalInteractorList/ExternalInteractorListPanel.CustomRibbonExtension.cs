@@ -81,7 +81,7 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} External Interactors. Do you want to remove them all?\nPlease click 'Yes' to remove all selected External Interactors,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove External Interactors", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    "Remove External Interactors", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -136,7 +136,7 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
                             else if (_currentRow != null && _currentRow.Tag is IExternalInteractor externalInteractor &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove External Interactor '{externalInteractor.Name}'. Are you sure?",
-                                         "Remove External Interactor", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove External Interactor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveEntity(externalInteractor.Id))

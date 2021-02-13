@@ -82,7 +82,7 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                                 var outcome = MessageBox.Show(Form.ActiveForm,
                                     $"You have selected {selected.Length} Trust Boundaries. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Trust Boundaries,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
                                     "Remove Trust Boundaries", MessageBoxButtons.YesNoCancel,
-                                    MessageBoxIcon.Question,
+                                    MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
@@ -138,7 +138,7 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                             else if (_currentRow != null && _currentRow.Tag is ITrustBoundary tb &&
                                      MessageBox.Show(Form.ActiveForm,
                                          $"You are about to remove Trust Boundary '{tb.Name}'. Are you sure?",
-                                         "Remove Trust Boundary", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                         "Remove Trust Boundary", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
                                 if (_model.RemoveGroup(tb.Id))
