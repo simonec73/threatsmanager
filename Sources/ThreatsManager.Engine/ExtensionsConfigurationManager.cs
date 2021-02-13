@@ -388,6 +388,8 @@ namespace ThreatsManager.Engine
                             oldConfig?.ThreatsManagerConfig?.SmartSaveInterval ?? 0;
                         configSection.UserDictionary = oldConfig?.ThreatsManagerConfig?.UserDictionary;
                         configSection.StatusBarItems = oldConfig?.ThreatsManagerConfig?.StatusBar?.TagSplit();
+                        configSection.ExtensionsConfigFolder = oldConfig?.ThreatsManagerConfig?.ExtensionsConfigFolder;
+                        configSection.DisableHelp = oldConfig?.ThreatsManagerConfig?.DisableHelp ?? false;
 
                         var docs = oldConfig?.ThreatsManagerConfig?.KnownDocuments;
                         if (docs != null)

@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.AutoGenRules.Engine;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.AutoThreatGeneration.Engine

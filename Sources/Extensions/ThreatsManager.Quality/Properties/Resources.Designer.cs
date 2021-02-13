@@ -70,152 +70,29 @@ namespace ThreatsManager.Quality.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Property Schema that collects properties for the Quality Extension library..
         /// </summary>
-        internal static System.Drawing.Bitmap emoticon_frown {
+        internal static string QualityPropertySchemaDescription {
             get {
-                object obj = ResourceManager.GetObject("emoticon_frown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("QualityPropertySchemaDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Questions to automatically generate Topics to be Clarified..
         /// </summary>
-        internal static System.Drawing.Bitmap emoticon_frown_small {
+        internal static string QuestionsDescription {
             get {
-                object obj = ResourceManager.GetObject("emoticon_frown_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("QuestionsDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Property Schema that collects properties related to the Quality Extension questions functionality..
         /// </summary>
-        internal static System.Drawing.Bitmap emoticon_smile {
+        internal static string QuestionsPropertySchemaDescription {
             get {
-                object obj = ResourceManager.GetObject("emoticon_smile", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap emoticon_smile_small {
-            get {
-                object obj = ResourceManager.GetObject("emoticon_smile_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap emoticon_straight_face {
-            get {
-                object obj = ResourceManager.GetObject("emoticon_straight_face", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap emoticon_straight_face_small {
-            get {
-                object obj = ResourceManager.GetObject("emoticon_straight_face_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap hand_thumb_up {
-            get {
-                object obj = ResourceManager.GetObject("hand_thumb_up", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap hand_thumb_up_big {
-            get {
-                object obj = ResourceManager.GetObject("hand_thumb_up_big", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap hand_thumb_up_huge {
-            get {
-                object obj = ResourceManager.GetObject("hand_thumb_up_huge", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap hand_thumb_up_small {
-            get {
-                object obj = ResourceManager.GetObject("hand_thumb_up_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap logo {
-            get {
-                object obj = ResourceManager.GetObject("logo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap pdf {
-            get {
-                object obj = ResourceManager.GetObject("pdf", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap pdf_big {
-            get {
-                object obj = ResourceManager.GetObject("pdf_big", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap pdf_huge {
-            get {
-                object obj = ResourceManager.GetObject("pdf_huge", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap pdf_small {
-            get {
-                object obj = ResourceManager.GetObject("pdf_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("QuestionsPropertySchemaDescription", resourceCulture);
             }
         }
         
@@ -225,86 +102,6 @@ namespace ThreatsManager.Quality.Properties {
         internal static string SchemaName {
             get {
                 return ResourceManager.GetString("SchemaName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap wax_seal {
-            get {
-                object obj = ResourceManager.GetObject("wax_seal", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap wax_seal_big {
-            get {
-                object obj = ResourceManager.GetObject("wax_seal_big", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap wax_seal_huge {
-            get {
-                object obj = ResourceManager.GetObject("wax_seal_huge", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap wax_seal_small {
-            get {
-                object obj = ResourceManager.GetObject("wax_seal_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap xlsx {
-            get {
-                object obj = ResourceManager.GetObject("xlsx", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap xlsx_big {
-            get {
-                object obj = ResourceManager.GetObject("xlsx_big", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap xlsx_huge {
-            get {
-                object obj = ResourceManager.GetObject("xlsx_huge", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap xlsx_small {
-            get {
-                object obj = ResourceManager.GetObject("xlsx_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

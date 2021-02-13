@@ -7,7 +7,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// <summary>
     /// Interface implemented by Extensions to update Property Schemas referenced by IPropertyJsonSerializableObjects.
     /// </summary>
-    public interface IPropertySchemasUpdater
+    [ExtensionDescription("Property Schema Updater")]
+    public interface IPropertySchemasUpdater : IExtension
     {
         /// <summary>
         /// Checks if the Property Schema is referenced anywhere.

@@ -3,6 +3,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace SampleExtensions.Actions
 {
@@ -10,7 +11,7 @@ namespace SampleExtensions.Actions
     /// A simple Action that creates an item in the context menu for the Entities.
     /// </summary>
     /// <remarks>The Extension attribute is required to allow the class to be recognized as an extension.</remarks>
-    [Extension(typeof(IContextAwareAction), "AEFC2C88-6D98-47BA-9A7E-27C7F5855D0F",
+    [Extension("AEFC2C88-6D98-47BA-9A7E-27C7F5855D0F",
         "Convert Name to Upper Case Context Aware Action", 100, ExecutionMode.Simplified)]
     public class ConvertNameToUpperAction : IIdentityContextAwareAction
     {
@@ -63,6 +64,18 @@ namespace SampleExtensions.Actions
         public bool Execute(object item)
         {
             return (item is IIdentity identity) && Execute(identity);
+        }
+
+        /// <summary>
+        /// Function called before showing the Context menu with the Action, to determine if it should be visible.
+        /// </summary>
+        /// <param name="item">Context used to decide if the action must be shown.
+        /// <para>Given that the Extension is an IIdentityContextAwareAction and that the Scope is IEntity,
+        /// the object is necessarily a <see cref="ThreatsManager.Interfaces.ObjectModel.Entities.IEntity"/>.</para></param>
+        /// <returns>True if the Action is visible, false otherwise.</returns>
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         /// <summary>

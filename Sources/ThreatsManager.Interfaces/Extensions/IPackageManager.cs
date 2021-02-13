@@ -8,7 +8,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// Interface implemented by Package Manager Extensions.
     /// </summary>
     /// <remarks>Package Manager extensions implement ways to save and load Threat Models.</remarks>
-    public interface IPackageManager
+    [ExtensionDescription("Package Manager")]
+    public interface IPackageManager : IExtension
     {
         /// <summary>
         /// Supported locations.

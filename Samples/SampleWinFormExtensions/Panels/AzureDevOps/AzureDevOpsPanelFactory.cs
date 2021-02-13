@@ -7,7 +7,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 
 namespace SampleWinFormExtensions.Panels.AzureDevOps
 {
-    [Extension(typeof(IPanelFactory), "9A97643C-278A-4F39-BCCE-6D447203C12A",
+    [Extension("9A97643C-278A-4F39-BCCE-6D447203C12A",
         "Simulated Azure DevOps Integration", 1000, ExecutionMode.Management)]
     public partial class AzureDevOpsPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {

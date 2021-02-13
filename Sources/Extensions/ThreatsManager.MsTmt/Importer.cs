@@ -6,8 +6,8 @@ using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.AutoThreatGeneration.Engine;
-using ThreatsManager.AutoThreatGeneration.Schemas;
+using ThreatsManager.AutoGenRules.Engine;
+using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -867,7 +867,7 @@ namespace ThreatsManager.MsTmt
             {
                 andNode.Children.Add(new BooleanRuleNode("Out of Scope", Resources.DefaultNamespace, Resources.TmtFlowPropertySchema, false)
                 {
-                    Scope = AutoThreatGeneration.Engine.Scope.Object
+                    Scope = AutoGenRules.Engine.Scope.Object
                 });
 
                 rule = new SelectionRule()
@@ -875,7 +875,7 @@ namespace ThreatsManager.MsTmt
                     Root = andNode
                 };
 
-                var schemaManager = new AutoThreatGenPropertySchemaManager(target.Model);
+                var schemaManager = new AutoGenRulesPropertySchemaManager(target.Model);
                 var propertyType = schemaManager.GetPropertyType();
                 var property = target.GetProperty(propertyType) ?? target.AddProperty(propertyType, null);
                 if (property is IPropertyJsonSerializableObject jsonSerializableObject)

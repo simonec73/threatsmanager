@@ -1,0 +1,2 @@
+Standard: 	#0173C7
+Threat:		#E53935

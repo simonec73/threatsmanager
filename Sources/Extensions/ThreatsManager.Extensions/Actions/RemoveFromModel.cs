@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
@@ -9,12 +8,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "4CB5F79B-189F-499F-AC63-ABF4EEFB462F")]
-    [ExportMetadata("Label", "Remove from Model Context Aware Action")]
-    [ExportMetadata("Priority", 51)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("4CB5F79B-189F-499F-AC63-ABF4EEFB462F", "Remove from Model Context Aware Action", 51, ExecutionMode.Simplified)]
     public class RemoveFromModel : IIdentityContextAwareAction, IRemoveIdentityFromModelRequiredAction, IAsker
     {
         public Scope Scope => Scope.Entity | Scope.DataFlow | Scope.Group;
@@ -35,6 +29,11 @@ namespace ThreatsManager.Extensions.Actions
                 result = Execute(identity);
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)

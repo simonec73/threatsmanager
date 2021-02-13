@@ -927,6 +927,58 @@ namespace ThreatsManager.Engine.ObjectModel
             return mitigations;
         }
 
+        public IEnumerable<IThreatTypeMitigation> GetThreatTypeMitigations()
+        {
+            IEnumerable<IThreatTypeMitigation> result = null;
+
+            var threatTypes = _threatTypes?.OrderBy(x => x.Name).ToArray();
+            if (threatTypes?.Any() ?? false)
+            {
+                var list = new List<IThreatTypeMitigation>();
+
+                foreach (var threatType in threatTypes)
+                {
+                    var mitigations = threatType.Mitigations?.OrderBy(x => x.Mitigation.Name).ToArray();
+                    if (mitigations?.Any() ?? false)
+                    {
+                        list.AddRange(mitigations);
+                    }
+                }
+
+                if (list.Any())
+                    result = list.AsReadOnly();
+            }
+
+            return result;
+        }
+
+        public IEnumerable<IThreatTypeMitigation> GetThreatTypeMitigations([NotNull] IMitigation mitigation)
+        {
+            IEnumerable<IThreatTypeMitigation> result = null;
+
+            var threatTypes = _threatTypes?
+                .Where(x => x.Mitigations?.Any(y => y.MitigationId == mitigation.Id) ?? false)
+                .OrderBy(x => x.Name).ToArray();
+            if (threatTypes?.Any() ?? false)
+            {
+                var list = new List<IThreatTypeMitigation>();
+
+                foreach (var threatType in threatTypes)
+                {
+                    var threatTypeMitigation = threatType.Mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.Id);
+                    if (threatTypeMitigation != null)
+                    {
+                        list.Add(threatTypeMitigation);
+                    }
+                }
+
+                if (list.Any())
+                    result = list.AsReadOnly();
+            }
+
+            return result;
+        }
+
         public IEnumerable<IThreatEventMitigation> GetThreatEventMitigations()
         {
             return GetThreatEventMitigations(null);

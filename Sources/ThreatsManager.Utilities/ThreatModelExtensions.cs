@@ -127,7 +127,7 @@ namespace ThreatsManager.Utilities
         /// </summary>
         /// <param name="identity">Identity to be analyzed.</param>
         /// <param name="filter">Filter to be applied.</param>
-        /// <returns>True if any string in the filter is present in any text field of teh Identity.</returns>
+        /// <returns>True if any string in the filter is present in any text field of the Identity.</returns>
         /// <remarks>It analyzes the Name, the Description and eventual Text properties.
         /// <para>The search is case-insensitive.</para></remarks>
         public static bool Filter(this IIdentity identity, [Required] string filter)
@@ -138,6 +138,44 @@ namespace ThreatsManager.Utilities
                           identity.Description.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
 
             if (!result && identity is IPropertiesContainer container)
+            {
+                var properties = container.Properties?.ToArray();
+                if (properties?.Any() ?? false)
+                {
+                    foreach (var property in properties)
+                    {
+                        var stringValue = property.StringValue;
+                        if ((!string.IsNullOrWhiteSpace(stringValue) &&
+                             stringValue.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Verifies if the object should be picked, based on the filter passed as argument.
+        /// </summary>
+        /// <param name="container">Object to be analyzed.</param>
+        /// <param name="description">Optional description to be searched.</param>
+        /// <param name="filter">Filter to be applied.</param>
+        /// <returns>True if any string in the filter is present in any text field of the object.</returns>
+        /// <remarks>It analyzes the Name, the Description and eventual Text properties.
+        /// <para>The search is case-insensitive.</para></remarks>
+        public static bool Filter(this IPropertiesContainer container, string description, [Required] string filter)
+        {
+            var name = container.ToString();
+            var result = (!string.IsNullOrWhiteSpace(name) &&
+                          name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                         (!string.IsNullOrWhiteSpace(description) &&
+                          description.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
+
+            if (!result)
             {
                 var properties = container.Properties?.ToArray();
                 if (properties?.Any() ?? false)

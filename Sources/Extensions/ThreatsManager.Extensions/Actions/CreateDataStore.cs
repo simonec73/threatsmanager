@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,12 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "D6B01BC8-E72A-400C-88C9-6EB83B41D936")]
-    [ExportMetadata("Label", "Create a Data Store Context Aware Action")]
-    [ExportMetadata("Priority", 17)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("D6B01BC8-E72A-400C-88C9-6EB83B41D936", "Create a Data Store Context Aware Action", 17, ExecutionMode.Simplified)]
     public class CreateDataStore : IIdentityContextAwareAction, IIdentityAddingRequiredAction
     {
         public Scope Scope => Scope.Diagram | Scope.ThreatModel;
@@ -35,6 +29,11 @@ namespace ThreatsManager.Extensions.Actions
                 result = Execute(identity);
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)

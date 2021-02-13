@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.DevOps", "Th
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Quality", "ThreatsManager.Quality\ThreatsManager.Quality.csproj", "{26BBE943-E47E-49AC-9C27-CA88166F46FE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.AutoGenRules", "ThreatsManager.AutoGenRules\ThreatsManager.AutoGenRules.csproj", "{7E8E1476-DA3D-4F56-BC0F-83D8C1D43510}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.Extensions.Client", "ThreatsManager.Extensions.Client\ThreatsManager.Extensions.Client.csproj", "{2E38BD51-B814-4CF5-8336-394A065B2A7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{26BBE943-E47E-49AC-9C27-CA88166F46FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26BBE943-E47E-49AC-9C27-CA88166F46FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26BBE943-E47E-49AC-9C27-CA88166F46FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E8E1476-DA3D-4F56-BC0F-83D8C1D43510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E8E1476-DA3D-4F56-BC0F-83D8C1D43510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E8E1476-DA3D-4F56-BC0F-83D8C1D43510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E8E1476-DA3D-4F56-BC0F-83D8C1D43510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E38BD51-B814-4CF5-8336-394A065B2A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E38BD51-B814-4CF5-8336-394A065B2A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E38BD51-B814-4CF5-8336-394A065B2A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E38BD51-B814-4CF5-8336-394A065B2A7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

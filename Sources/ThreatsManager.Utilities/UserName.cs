@@ -1,10 +1,17 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ThreatsManager.Utilities
 {
+    /// <summary>
+    /// Auxiliary class to provide the name of the current user.
+    /// </summary>
     public class UserName
     {
+        /// <summary>
+        /// Available formats for the user name.
+        /// </summary>
         public enum ExtendedNameFormat
         {
              /// <summary>
@@ -70,6 +77,10 @@ namespace ThreatsManager.Utilities
         private static extern int GetUserNameEx (ExtendedNameFormat nameFormat,
             StringBuilder userName, ref int userNameSize);
 
+        /// <summary>
+        /// Get the name of the current user.
+        /// </summary>
+        /// <returns>Display Name of the current user.</returns>
         public static string GetDisplayName()
         {
             string result = null;
@@ -77,9 +88,20 @@ namespace ThreatsManager.Utilities
             StringBuilder userName = new StringBuilder(1024);
             int userNameSize = userName.Capacity;
 
-            if(0 != GetUserNameEx(ExtendedNameFormat.NameDisplay, userName, ref userNameSize))
+            try
             {
-                result = userName.ToString();
+                if(0 != GetUserNameEx(ExtendedNameFormat.NameDisplay, userName, ref userNameSize))
+                {
+                    result = userName.ToString();
+                }
+                else
+                {
+                    result = Environment.UserName;
+                }
+            }
+            catch
+            {
+                result = Environment.UserName;
             }
 
             return result;

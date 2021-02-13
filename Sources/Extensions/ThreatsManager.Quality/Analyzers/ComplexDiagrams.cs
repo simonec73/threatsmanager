@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "BF79DB1A-15D1-443D-AE1E-6BEA8137E64A")]
-    [ExportMetadata("Label", "Complex Diagrams Quality Analyzer")]
-    [ExportMetadata("Priority", 21)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("BF79DB1A-15D1-443D-AE1E-6BEA8137E64A", "Complex Diagrams Quality Analyzer", 21, ExecutionMode.Simplified)]
     public class ComplexDiagrams : IQualityAnalyzer
     {
         public string Label => "Too Complex Diagrams";

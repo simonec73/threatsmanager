@@ -120,6 +120,15 @@
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
   </data>
+  <data name="QualityPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties for the Quality Extension library.</value>
+  </data>
+  <data name="QuestionsDescription" xml:space="preserve">
+    <value>Questions to automatically generate Topics to be Clarified.</value>
+  </data>
+  <data name="QuestionsPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties related to the Quality Extension questions functionality.</value>
+  </data>
   <data name="SchemaName" xml:space="preserve">
     <value>Quality</value>
   </data>

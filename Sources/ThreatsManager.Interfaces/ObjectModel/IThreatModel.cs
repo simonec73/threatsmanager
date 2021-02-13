@@ -366,6 +366,19 @@ namespace ThreatsManager.Interfaces.ObjectModel
         IEnumerable<IMitigation> GetUniqueMitigations();
 
         /// <summary>
+        /// Get the Threat Type Mitigations, inspecting the whole Threat Model.
+        /// </summary>
+        /// <returns>Enumeration of the Threat Type Mitigations defined within the Threat Model.</returns>
+        IEnumerable<IThreatTypeMitigation> GetThreatTypeMitigations();
+
+        /// <summary>
+        /// Get all the Threat Type Mitigations associated to a given Mitigation, inspecting the whole Threat Model.
+        /// </summary>
+        /// <param name="mitigation">Reference mitigation.</param>
+        /// <returns>Enumeration of the associations found.</returns>
+        IEnumerable<IThreatTypeMitigation> GetThreatTypeMitigations(IMitigation mitigation);
+
+        /// <summary>
         /// Get the Threat Event Mitigations, inspecting the whole Threat Model.
         /// </summary>
         /// <returns>Enumeration of the Threat Event Mitigations defined within the Threat Model.</returns>

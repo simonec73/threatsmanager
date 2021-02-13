@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "9696B01B-F8EA-4034-8069-AC44DCAC8CB1")]
-    [ExportMetadata("Label", "Missing Mitigations Quality Analyzer")]
-    [ExportMetadata("Priority", 40)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("9696B01B-F8EA-4034-8069-AC44DCAC8CB1", "Missing Mitigations Quality Analyzer", 40, ExecutionMode.Simplified)]
     public class NoMitigations : IQualityAnalyzer
     {
         public string Label => "Missing Mitigations";

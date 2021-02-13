@@ -138,13 +138,43 @@
   <data name="DevOpsInfoDescription" xml:space="preserve">
     <value>Property Type containing the metadata with the information related to the associated item in a connected DevOps system.</value>
   </data>
+  <data name="DevOpsIterationRisks" xml:space="preserve">
+    <value>IterationRisk</value>
+  </data>
+  <data name="DevOpsIterationRisksDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the evaluation of the risk associated to the Iterations.</value>
+  </data>
+  <data name="DevOpsIterations" xml:space="preserve">
+    <value>Iterations</value>
+  </data>
+  <data name="DevOpsIterationsDescription" xml:space="preserve">
+    <value>Property Type containing the list of Iterations defined for the Threat Model.</value>
+  </data>
   <data name="DevOpsPropertySchema" xml:space="preserve">
     <value>DevOps</value>
   </data>
   <data name="DevOpsPropertySchemaDescription" xml:space="preserve">
     <value>Property Schema used to enrich object metadata with information related to the associated item in a connected DevOps system.</value>
   </data>
+  <data name="IterationFirstSeen" xml:space="preserve">
+    <value>FirstSeen</value>
+  </data>
+  <data name="IterationFirstSeenDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the information related to the Iteration when the Mitigation has been first seen.</value>
+  </data>
+  <data name="IterationMitigationExposure" xml:space="preserve">
+    <value>MitigationExposure</value>
+  </data>
+  <data name="IterationMitigationExposureDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the information related to the Iteration when the Mitigation has been changed, by changing its association to Threat Events.</value>
+  </data>
   <data name="PropertyRoadmap" xml:space="preserve">
     <value>Status of the Mitigation for the Roadmap.</value>
+  </data>
+  <data name="Review" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="ReviewDescription" xml:space="preserve">
+    <value>Property Type containing the metadata with the decisions related to the inclusion of the Mitigation in the Backlog.</value>
   </data>
 </root>

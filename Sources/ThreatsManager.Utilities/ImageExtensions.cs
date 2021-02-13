@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;

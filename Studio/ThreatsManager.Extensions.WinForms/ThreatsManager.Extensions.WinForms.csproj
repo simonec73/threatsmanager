@@ -1,0 +1,1640 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DCC0DD34-B991-48C7-90CD-DEB5BF9DE934}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ThreatsManager.Extensions</RootNamespace>
+    <AssemblyName>ThreatsManager.Extensions.WinForms</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\ThreatsManager\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar.Charts, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.30, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\DotNetBar for Windows Forms\DevComponents.DotNetBar.Layout.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.30, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\DotNetBar for Windows Forms\DevComponents.DotNetBar.SuperGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.30, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\DotNetBar for Windows Forms\DevComponents.DotNetBar2.dll</HintPath>
+    </Reference>
+    <Reference Include="Keyoti.RapidSpell.NET4, Version=6.0.19.705, Culture=neutral, PublicKeyToken=58d9fd2e9ec4dc0e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\Keyoti.RapidSpell.NET4.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Northwoods.Go">
+      <HintPath>..\References\Northwoods.Go.dll</HintPath>
+    </Reference>
+    <Reference Include="Northwoods.Go.Layout">
+      <HintPath>..\References\Northwoods.Go.Layout.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="ThreatsManager.Engine, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Extensions">
+      <HintPath>..\..\Build\repo\net472\ThreatsManager.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Extensions.Client">
+      <HintPath>..\..\Build\repo\net472\ThreatsManager.Extensions.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Icons, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Icons.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Interfaces, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Packaging">
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities.WinForms, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Utilities.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ThreatsManager\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Actions\ChangeTemplate.cs" />
+    <Compile Include="Actions\CopyThreatEvent.cs" />
+    <Compile Include="Actions\DisassociateMitigation.cs" />
+    <Compile Include="Actions\AssociateMitigation.cs" />
+    <Compile Include="Actions\EditThreatType.cs" />
+    <Compile Include="Actions\ToggleTextLocation.cs" />
+    <Compile Include="Dialogs\ActionType.cs" />
+    <Compile Include="Dialogs\ChangeTemplateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ChangeTemplateDialog.Designer.cs">
+      <DependentUpon>ChangeTemplateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ComboBoxItem.cs" />
+    <Compile Include="Dialogs\ComboCollection.cs" />
+    <Compile Include="Dialogs\ComparisonDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ComparisonDialog.Designer.cs">
+      <DependentUpon>ComparisonDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\Merge.cs" />
+    <Compile Include="Actions\EditMitigation.cs" />
+    <Compile Include="Actions\ShowAssociatedDiagram.cs" />
+    <Compile Include="Actions\DisassociateDiagram.cs" />
+    <Compile Include="Actions\AssociateDiagram.cs" />
+    <Compile Include="Actions\CopyAllThreatEvents.cs" />
+    <Compile Include="Actions\ImportTemplate.cs" />
+    <Compile Include="Actions\ExportTemplate.cs" />
+    <Compile Include="Actions\Copy.cs" />
+    <Compile Include="Actions\PasteThreatEvents.cs" />
+    <Compile Include="Actions\CreateThreatEventMitigation.cs" />
+    <Compile Include="Actions\CreateThreatEventScenario.cs" />
+    <Compile Include="Actions\Cut.cs" />
+    <Compile Include="Actions\ChangeEntityIcon.cs" />
+    <Compile Include="Actions\DeriveTemplate.cs" />
+    <Compile Include="Actions\ShapesInfo.cs" />
+    <Compile Include="Actions\SummaryExcelReport.cs" />
+    <Compile Include="Actions\ThreatEventsInfo.cs" />
+    <Compile Include="DiagramAssociationHelper.cs" />
+    <Compile Include="Dialogs\ComparedObject.cs" />
+    <Compile Include="Dialogs\CreateEntityTemplateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CreateEntityTemplateDialog.Designer.cs">
+      <DependentUpon>CreateEntityTemplateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DiagramSortDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DiagramSortDialog.Designer.cs">
+      <DependentUpon>DiagramSortDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ImagedComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ImportSchemaDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ImportSchemaDialog.Designer.cs">
+      <DependentUpon>ImportSchemaDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ImportTemplateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ImportTemplateDialog.Designer.cs">
+      <DependentUpon>ImportTemplateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ExportTemplateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ExportTemplateDialog.Designer.cs">
+      <DependentUpon>ExportTemplateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ExportSchemaDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ExportSchemaDialog.Designer.cs">
+      <DependentUpon>ExportSchemaDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DiagramSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DiagramSelectionDialog.Designer.cs">
+      <DependentUpon>DiagramSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MergeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\MergeDialog.Designer.cs">
+      <DependentUpon>MergeDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PropertyTypeCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\PropertyTypeCreationDialog.Designer.cs">
+      <DependentUpon>PropertyTypeCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PropertySchemaCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\PropertySchemaCreationDialog.Designer.cs">
+      <DependentUpon>PropertySchemaCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\Paste.cs" />
+    <Compile Include="DiagramActionDefinition.cs" />
+    <Compile Include="Dialogs\ResidualRiskEstimatorConfigurationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ResidualRiskEstimatorConfigurationDialog.Designer.cs">
+      <DependentUpon>ResidualRiskEstimatorConfigurationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapFilter.cs" />
+    <Compile Include="Dialogs\RoadmapFilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RoadmapFilterDialog.Designer.cs">
+      <DependentUpon>RoadmapFilterDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExtensionConfigurationManager.cs" />
+    <Compile Include="Initializers\DiagramSchemaInitializer.cs" />
+    <Compile Include="Panels\Configuration\ConfigurationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Configuration\ConfigurationPanel.Designer.cs">
+      <DependentUpon>ConfigurationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Configuration\ConfigurationPanelFactory.cs" />
+    <Compile Include="Panels\DataFlowList\DataFlowListFilter.cs" />
+    <Compile Include="Panels\DataStoreList\DataStoreListFilter.cs" />
+    <Compile Include="Panels\Diagram\AssociatedDiagramMarker.cs" />
+    <Compile Include="Panels\Diagram\DpiState.cs" />
+    <Compile Include="Panels\Diagram\MarkerStatus.cs" />
+    <Compile Include="Panels\Diagram\MarkerStatusTrigger.cs" />
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListFilter.cs" />
+    <Compile Include="Panels\GridCellSuperTooltipProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\Learning\LearningPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Learning\LearningPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Learning\LearningPanel.Designer.cs">
+      <DependentUpon>LearningPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Learning\LearningPanelFactory.cs" />
+    <Compile Include="Panels\Learning\LearningPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\MitigationList\MitigationListFilter.cs" />
+    <Compile Include="Panels\Overview\OverviewPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Overview\OverviewPanel.Designer.cs">
+      <DependentUpon>OverviewPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Overview\OverviewPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Overview\OverviewPanelFactory.cs" />
+    <Compile Include="Panels\Overview\OverviewPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\RoadmapChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\RoadmapChart.Designer.cs">
+      <DependentUpon>RoadmapChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\RoadmapThreatTypesCharts.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\RoadmapThreatTypesCharts.Designer.cs">
+      <DependentUpon>RoadmapThreatTypesCharts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapItem.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapSubItem.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapExtensions.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapPalette.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapPanelFactory.cs" />
+    <Compile Include="Panels\Roadmap\RoadmapPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Roadmap\RoadmapPanel.Designer.cs">
+      <DependentUpon>RoadmapPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\SeverityList\GridColorCombo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\MitigationStatusChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\MitigationStatusChart.Designer.cs">
+      <DependentUpon>MitigationStatusChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ThreatEventList\ThreatEventListFilter.cs" />
+    <Compile Include="Panels\ThreatTypesChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatTypesChart.Designer.cs">
+      <DependentUpon>ThreatTypesChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ProcessList\ProcessListFilter.cs" />
+    <Compile Include="Panels\KnownMitigationList\MitigationListFilter.cs" />
+    <Compile Include="Panels\PropertySchemaList\GridTokenEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\PropertySchemaList\ListProvider.cs" />
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListFilter.cs" />
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.Designer.cs">
+      <DependentUpon>TroubleshootingPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanelFactory.cs" />
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListFilter.cs" />
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanel.Designer.cs">
+      <DependentUpon>TrustBoundaryListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanelFactory.cs" />
+    <Compile Include="Panels\TrustBoundaryList\TrustBoundaryListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\DataFlowList\DataFlowListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\DataFlowList\DataFlowListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\DataFlowList\DataFlowListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\DataFlowList\DataFlowListPanel.Designer.cs">
+      <DependentUpon>DataFlowListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\DataFlowList\DataFlowListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\DataFlowList\DataFlowListPanelFactory.cs" />
+    <Compile Include="Panels\DataFlowList\DataFlowListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\Diagram\GraphRealLink.cs" />
+    <Compile Include="Panels\Excel\ExcelReportEngine.cs" />
+    <Compile Include="Panels\Excel\ExcelReportingPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Excel\ExcelReportingPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Excel\ExcelReportingPanel.Designer.cs">
+      <DependentUpon>ExcelReportingPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Excel\ExcelReportingPanelFactory.cs" />
+    <Compile Include="Panels\Excel\ExcelReportingPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\MitigationList\MitigationListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\MitigationList\MitigationListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\MitigationList\MitigationListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\MitigationList\MitigationListPanel.Designer.cs">
+      <DependentUpon>MitigationListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanel.Designer.cs">
+      <DependentUpon>ItemTemplateListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanelFactory.cs" />
+    <Compile Include="Panels\ItemTemplateList\ItemTemplateListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanel.Designer.cs">
+      <DependentUpon>PropertySchemaListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\StrengthComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\StrengthList\StrengthListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\StrengthList\StrengthListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\StrengthList\StrengthListPanel.Designer.cs">
+      <DependentUpon>StrengthListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\StrengthList\StrengthListPanelFactory.cs" />
+    <Compile Include="Panels\StrengthList\StrengthListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanelFactory.cs" />
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatActorList\ThreatActorListPanel.Designer.cs">
+      <DependentUpon>ThreatActorListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\DataStoreList\DataStoreListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\DataStoreList\DataStoreListPanelFactory.cs" />
+    <Compile Include="Panels\DataStoreList\DataStoreListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\DataStoreList\DataStoreListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\DataStoreList\DataStoreListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\DataStoreList\DataStoreListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\DataStoreList\DataStoreListPanel.Designer.cs">
+      <DependentUpon>DataStoreListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Diagram\AssociatedThreatsMarker.cs" />
+    <Compile Include="Panels\Diagram\BlockingSubGraphMarker.cs" />
+    <Compile Include="Panels\Diagram\GraphGroup.cs" />
+    <Compile Include="Panels\Diagram\GraphDoc.cs" />
+    <Compile Include="Panels\Diagram\GraphLink.cs" />
+    <Compile Include="Panels\Diagram\GraphEntity.cs" />
+    <Compile Include="Panels\MitigationList\MitigationListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\MitigationList\MitigationListPanelFactory.cs" />
+    <Compile Include="Panels\MitigationList\MitigationListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ProcessList\ProcessListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ProcessList\ProcessListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ProcessList\ProcessListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ProcessList\ProcessListPanel.Designer.cs">
+      <DependentUpon>ProcessListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\SeverityList\SeverityListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\SeverityList\SeverityListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\SeverityList\SeverityListPanel.Designer.cs">
+      <DependentUpon>SeverityListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanel.Designer.cs">
+      <DependentUpon>KnownMitigationListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\NotImplementedPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\NotImplementedPanel.Designer.cs">
+      <DependentUpon>NotImplementedPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\EnumComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\SeverityComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatActorComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatEventList\ThreatEventListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatEventList\ThreatEventListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatEventList\ThreatEventListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatEventList\ThreatEventListPanel.Designer.cs">
+      <DependentUpon>ThreatEventListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ThreatEventList\ThreatTypeComparer.cs" />
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.Designer.cs">
+      <DependentUpon>ThreatTypeListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Word\Engine\Fields\AffectedObjectsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\FlowTypeField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\TablePropertyTypeField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\TargetField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\SourceField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\DirectivesField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\ApprovedMitigationsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\AssociatedToField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\DescriptionField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\ExistingMitigationsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\Field.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\ImplementedMitigationsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\AffectedThreatsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\MitigationsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\PlannedMitigationsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\PropertyTypeField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\ProposedMitigationsField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\SeverityField.cs" />
+    <Compile Include="Panels\Word\Engine\Fields\ControlTypeField.cs" />
+    <Compile Include="Panels\Word\Engine\ItemType.cs" />
+    <Compile Include="Panels\Word\Engine\Row.cs" />
+    <Compile Include="Panels\Word\Engine\Table.cs" />
+    <Compile Include="Panels\Word\Engine\Placeholder.cs" />
+    <Compile Include="Panels\Word\Engine\PlaceholderComparer.cs" />
+    <Compile Include="Panels\Word\Engine\PlaceholderSection.cs" />
+    <Compile Include="Panels\Word\ProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Panels\Word\ProgressDialog.Designer.cs">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Word\Engine\TableType.cs" />
+    <Compile Include="Panels\Word\WordExtensions.cs" />
+    <Compile Include="Panels\Word\WordReportingPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Word\WordReportingPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Word\WordReportingPanel.Designer.cs">
+      <DependentUpon>WordReportingPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Word\WordReportingPanelFactory.cs" />
+    <Compile Include="Panels\Word\WordReportingPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\Diagram\GraphThreatTypeNode.cs" />
+    <Compile Include="Panels\Diagram\ModelPanel.Links.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanel.Palette.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanel.Shapes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\Diagram\ModelPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\GraphPalette.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\GraphText.cs" />
+    <Compile Include="Panels\Diagram\GraphView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanel.Designer.cs">
+      <DependentUpon>ModelPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanel.ShowDiagramPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanelFactory.cs" />
+    <Compile Include="Panels\Diagram\ThreatEventListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Panels\Diagram\ThreatEventListForm.Designer.cs">
+      <DependentUpon>ThreatEventListForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Diagram\WarningMarker.cs" />
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanel.Designer.cs">
+      <DependentUpon>ExternalInteractorListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanelFactory.cs" />
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ProcessList\ProcessListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ProcessList\ProcessListPanelFactory.cs" />
+    <Compile Include="Panels\ProcessList\ProcessListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanelFactory.cs" />
+    <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\SeverityList\SeverityListPanelFactory.cs" />
+    <Compile Include="Panels\SeverityList\SeverityListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanelFactory.cs" />
+    <Compile Include="Panels\KnownMitigationList\KnownMitigationListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatEventList\ThreatEventsListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ThreatEventList\ThreatEventsListPanelFactory.cs" />
+    <Compile Include="Panels\ThreatEventList\ThreatEventsListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatModel\ThreatModelPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatModel\ThreatModelPanel.Designer.cs">
+      <DependentUpon>ThreatModelPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ThreatModel\ThreatModelPanelFactory.cs" />
+    <Compile Include="Panels\ThreatModel\ThreatModelPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatSources\CapecImportPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatSources\CapecImportPanel.Designer.cs">
+      <DependentUpon>CapecImportPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Schemas\CapecPropertySchemaManager.cs" />
+    <Compile Include="Schemas\DiagramPropertySchemaManager.cs" />
+    <Compile Include="Panels\ThreatSources\MitreCatalogControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatSources\MitreCatalogControl.Designer.cs">
+      <DependentUpon>MitreCatalogControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ThreatSources\CapecImportPanelFactory.cs" />
+    <Compile Include="Panels\ThreatSources\CapecImportPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatSources\CapecImportPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatSources\PropertyControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatSources\PropertyControl.Designer.cs">
+      <DependentUpon>PropertyControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Diagram\ModelPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionArgumentType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionContextTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionPertinentObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionReferenceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionRelationshipType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionStatusTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionsType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ActionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Alternate_Terms.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Alternate_TermsAlternate_Term.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\AnyURIObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ap_schema_v2.7.1.Designer.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\AssociatedObjectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Execution_Flow.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Execution_FlowAttack_Phase.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Execution_FlowAttack_PhaseAttack_Step.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Execution_FlowAttack_PhaseAttack_StepCommon_Attack_Step.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Execution_FlowAttack_PhaseName.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeAttacker_Skill_or_Knowledge_Required.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeAttacker_Skill_or_Knowledge_RequiredSkill_or_Knowledge_Level.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeCIA_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeCIA_ImpactAvailability_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeCIA_ImpactConfidentiality_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeCIA_ImpactIntegrity_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeDescription.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeExampleInstance.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeIndicatorWarning_of_Attack.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeMethod_of_Attack.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeObfuscation_Technique.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypePattern_Abstraction.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypePattern_Completeness.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypePayload_Activation_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeProbing_Technique.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypePurpose.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeRelated_Vulnerability.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeRelated_Weakness.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeRelated_WeaknessWeakness_Relationship_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeRelevant_Design_Patterns.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTechnical_Context.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTechnical_ContextArchitectural_Paradigm.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTechnical_ContextFramework.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTechnical_ContextLanguage.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTechnical_ContextPlatform.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTypical_Likelihood_of_Exploit.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_PatternTypeTypical_Severity.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Pattern_Catalog.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Pattern_CatalogCommon_Attack_Step.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Pattern_CatalogCommon_Attack_Surface.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Pattern_CatalogCompound_Elements.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Attack_Step_Technique.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Base64BinaryObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\BaseObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Block.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\BlockBlock_Nature.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\BuildConfigurationType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\BuildInformationType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\BuildUtilityType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ByteRunType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Category.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CategoryAttacker_Skill_or_Knowledge_Required.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CategoryAttacker_Skill_or_Knowledge_RequiredSkill_or_Knowledge_Level.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CategoryDescription.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CategoryMethod_of_Attack.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CategoryRelated_Weakness.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CategoryRelated_WeaknessWeakness_Relationship_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CipherType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Common_ConsequenceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Common_ConsequenceTypeConsequence_Scope.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Common_ConsequenceTypeConsequence_Technical_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CompensationModelType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CompilerInformalDescriptionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\CompilerType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Compound_Element.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Compound_ElementCompound_Element_Abstraction.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Compound_ElementCompound_Element_Completeness.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Compound_ElementCompound_Element_Structure.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Compound_ElementDescription.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ConditionApplicationEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ConditionTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ConfigurationSettingType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_History.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistoryContribution.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistoryContributionContribution_Mode.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistoryModification.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistoryModificationModification_Importance.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistoryModificationModification_Source.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistoryPrevious_Entry_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistorySubmission.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Content_HistorySubmissionSubmission_Source.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ContributorType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ControlledVocabularyStringType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeIndicator.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeIndicatorType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeOutcome.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeOutcomeType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeSecurity_Control.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeSecurity_ControlObservable_Evidence.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Custom_Attack_StepTypeSecurity_ControlType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataFormatEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataReadEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataReceivedEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataSegmentType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataSentEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataSizeType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataSizeUnitsEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DatatypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DataWrittenEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateObjectPropertyRestrictionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DatePrecisionEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateRangeType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateTimeObjectPropertyRestrictionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateTimeObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateTimeWithPrecisionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DateWithPrecisionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DefinedEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DependencyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DigitalSignatureInfoType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DomainSpecificObjectPropertiesType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DoubleObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\DurationObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\EaseOfObfuscationEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\EffectTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\EndiannessType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Environment.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\EnvironmentVariableType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ErrorType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\EventType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ExecutionEnvironmentType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ExtractedFeaturesType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ExtractedStringType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\FloatObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\FrequencyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\FuzzyHashBlockType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\FuzzyHashStructureType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\FuzzyHashValueType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\HashSegmentType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\HashType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\HashValueType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\HexBinaryObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\IntegerObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\InternalStringsType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ItemChoiceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ItemsChoiceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ItemsChoiceType1.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Language_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Layer4ProtocolType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\LibrariesType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\LibraryType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\LocationType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\LongObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Maintenance_Notes.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\MeasureSourceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\MetadataType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\NameObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\NoisinessEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\NonNegativeIntegerObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ObfuscationTechniqueType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ObjectPropertiesType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ObjectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ObservableCompositionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ObservablesType2.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ObservableType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\OperatorTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Other_Notes.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PatternableFieldType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PatternFidelityType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PatternTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PlatformIdentifierType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PlatformSpecificationType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PoolsType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PositiveIntegerObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PropertiesEnumeratedEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PropertyReadEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\PropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Reference_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RegionalRegistryType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RelatedObjectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Relationships.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RelationshipType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RelationshipTypeRelationship_Nature.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RelationshipTypeRelationship_Target_Form.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RelationshipTypeRelationship_View_ID.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\RelationshipTypeRelationship_View_IDOrdinal.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Relationship_Notes.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Relevant_Attack_Surface_ElementsType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Research_Gaps.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\SendControlCodeEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\SIDType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\SimpleHashValueType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\SourceClassTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\SourceTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\StateChangeEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Status_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\StringObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\StructuredTextType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Structured_Text_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Structured_Text_TypeImages.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Structured_Text_TypeImagesImage.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_SurfaceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_SurfaceTypeCommon_Attack_Surface_Description.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTargeted_OSI_Layer.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Attack_Surface_Locality.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Attack_Surface_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Functional_Service.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Functional_ServiceProtocol.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Functional_ServiceProtocolCommand_Structure.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Functional_ServiceProtocolProtocol_Header.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Functional_ServiceProtocolRelated_Protocol.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\Target_Attack_Surface_DescriptionTypeTarget_Functional_ServiceProtocolRelated_ProtocolRelationship_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\TimeObjectPropertyRestrictionType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\TimeObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\TimePrecisionEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\TimeType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ToolConfigurationType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ToolInformationType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ToolReferenceType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ToolReferenceTypeEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ToolSpecificDataType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\TrendEnum.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\UnsignedIntegerObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\UnsignedLongObjectPropertyType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ValuesEnumeratedEffectType.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\View.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ViewAudience.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ViewAudienceStakeholder.cs" />
+    <Compile Include="Panels\ThreatSources\Capec\ViewView_Structure.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Alternate_Terms.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Alternate_TermsAlternate_Term.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Block.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\BlockBlock_Nature.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Category.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryAffected_Resource.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_Platforms.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsArchitectural_Paradigm.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsArchitectural_ParadigmArchitectural_Paradigm_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsCommon_Platform_Reference.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsEnvironment.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsHardware_Architectures.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsHardware_ArchitecturesHardware_Architecture.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsHardware_ArchitecturesHardware_ArchitectureHardware_Architecture_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsHardware_ArchitecturesHardware_Architecture_Class.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsOperating_Systems.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsOperating_SystemsOperating_System.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsOperating_SystemsOperating_SystemOperating_System_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsOperating_SystemsOperating_System_Class.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsTechnology_Class.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryApplicable_PlatformsTechnology_ClassTechnology_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryCausal_Nature.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryDemonstrative_Example.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryDescription.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryDetection_Method.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryDetection_MethodMethod_Effectiveness.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryDetection_MethodMethod_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryLikelihood_of_Exploit.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryObserved_Example.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryRelated_Attack_Pattern.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryRelevant_Property.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryTaxonomy_Mapping.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryTaxonomy_MappingMapped_Taxonomy_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryTaxonomy_MappingMapping_Fit.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryWeakness_Ordinality.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\CategoryWeakness_OrdinalityOrdinality.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Common_Consequence.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Common_ConsequenceConsequence_Scope.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Common_ConsequenceConsequence_Technical_Impact.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Common_ConsequenceConsequence_Technical_ImpactLikelihood.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Compound_Element.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Compound_ElementCompound_Element_Abstraction.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Compound_ElementCompound_Element_Structure.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_History.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistoryContribution.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistoryContributionContribution_Mode.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistoryModification.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistoryModificationModification_Importance.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistoryModificationModification_Source.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistoryPrevious_Entry_Name.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistorySubmission.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Content_HistorySubmissionSubmission_Source.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\cwe_schema_v5.4.2.Designer.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Frequency_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Impact_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\ItemsChoiceType.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\ItemsChoiceType1.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Languages_List_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Languages_List_TypeLanguage.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Languages_List_TypeLanguage_Class.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Language_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Maintenance_Notes.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Mitigation.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\MitigationMitigation_Effectiveness.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\MitigationMitigation_Strategy.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Other_Notes.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Reference_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Relationship.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\RelationshipRelationship_Nature.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\RelationshipRelationship_Target_Form.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\RelationshipRelationship_View_ID.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\RelationshipRelationship_View_IDOrdinal.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Relationships.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Relationship_Notes.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Research_Gaps.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\SDLC_Phase_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Status_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Structured_Text_Type.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Structured_Text_TypeImage.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\View.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\ViewAudience.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\ViewAudienceStakeholder.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\ViewView_Structure.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Weakness.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\WeaknessWeakness_Abstraction.cs" />
+    <Compile Include="Panels\ThreatSources\Cwe\Weakness_Catalog.cs" />
+    <Compile Include="Panels\ThreatSources\ListExtensions.cs" />
+    <Compile Include="Panels\ThreatSources\ThreatSource.cs" />
+    <Compile Include="Panels\ThreatSources\ThreatSourceManager.cs" />
+    <Compile Include="Panels\ThreatSources\ThreatSourceNode.cs" />
+    <Compile Include="Panels\ThreatSources\ThreatSourceNodeParentChild.cs" />
+    <Compile Include="Panels\ThreatSources\ThreatSourceType.cs" />
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanelFactory.cs" />
+    <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schemas\Effort.cs" />
+    <Compile Include="Schemas\EffortPropertySchemaManager.cs" />
+    <None Include="..\ThreatsManager\ThreatsManager.snk">
+      <Link>ThreatsManager.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="Panels\ThreatSources\Capec\ap_schema_v2.7.1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Panels\ThreatSources\Cwe\cwe_schema_v5.4.2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dialogs\ChangeTemplateDialog.resx">
+      <DependentUpon>ChangeTemplateDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ComparisonDialog.resx">
+      <DependentUpon>ComparisonDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\CreateEntityTemplateDialog.resx">
+      <DependentUpon>CreateEntityTemplateDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DiagramSortDialog.resx">
+      <DependentUpon>DiagramSortDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ImportSchemaDialog.resx">
+      <DependentUpon>ImportSchemaDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ImportTemplateDialog.resx">
+      <DependentUpon>ImportTemplateDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ExportTemplateDialog.resx">
+      <DependentUpon>ExportTemplateDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ExportSchemaDialog.resx">
+      <DependentUpon>ExportSchemaDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DiagramSelectionDialog.resx">
+      <DependentUpon>DiagramSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\MergeDialog.resx">
+      <DependentUpon>MergeDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\PropertyTypeCreationDialog.resx">
+      <DependentUpon>PropertyTypeCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\PropertySchemaCreationDialog.resx">
+      <DependentUpon>PropertySchemaCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ResidualRiskEstimatorConfigurationDialog.resx">
+      <DependentUpon>ResidualRiskEstimatorConfigurationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RoadmapFilterDialog.resx">
+      <DependentUpon>RoadmapFilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Configuration\ConfigurationPanel.resx">
+      <DependentUpon>ConfigurationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Learning\LearningPanel.resx">
+      <DependentUpon>LearningPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Overview\OverviewPanel.resx">
+      <DependentUpon>OverviewPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\RoadmapChart.resx">
+      <DependentUpon>RoadmapChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\RoadmapThreatTypesCharts.resx">
+      <DependentUpon>RoadmapThreatTypesCharts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Roadmap\RoadmapPanel.resx">
+      <DependentUpon>RoadmapPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\MitigationStatusChart.resx">
+      <DependentUpon>MitigationStatusChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatTypesChart.resx">
+      <DependentUpon>ThreatTypesChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Troubleshooting\TroubleshootingPanel.resx">
+      <DependentUpon>TroubleshootingPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\TrustBoundaryList\TrustBoundaryListPanel.resx">
+      <DependentUpon>TrustBoundaryListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\DataFlowList\DataFlowListPanel.resx">
+      <DependentUpon>DataFlowListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Excel\ExcelReportingPanel.resx">
+      <DependentUpon>ExcelReportingPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\MitigationList\MitigationListPanel.resx">
+      <DependentUpon>MitigationListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ItemTemplateList\ItemTemplateListPanel.resx">
+      <DependentUpon>ItemTemplateListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\PropertySchemaList\PropertySchemaListPanel.resx">
+      <DependentUpon>PropertySchemaListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\StrengthList\StrengthListPanel.resx">
+      <DependentUpon>StrengthListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatActorList\ThreatActorListPanel.resx">
+      <DependentUpon>ThreatActorListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\DataStoreList\DataStoreListPanel.resx">
+      <DependentUpon>DataStoreListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Diagram\ModelPanel.resx">
+      <DependentUpon>ModelPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Diagram\ThreatEventListForm.resx">
+      <DependentUpon>ThreatEventListForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ExternalInteractorList\ExternalInteractorListPanel.resx">
+      <DependentUpon>ExternalInteractorListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ProcessList\ProcessListPanel.resx">
+      <DependentUpon>ProcessListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\SeverityList\SeverityListPanel.resx">
+      <DependentUpon>SeverityListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\KnownMitigationList\KnownMitigationListPanel.resx">
+      <DependentUpon>KnownMitigationListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\NotImplementedPanel.resx">
+      <DependentUpon>NotImplementedPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatEventList\ThreatEventListPanel.resx">
+      <DependentUpon>ThreatEventListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatModel\ThreatModelPanel.resx">
+      <DependentUpon>ThreatModelPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatSources\CapecImportPanel.resx">
+      <DependentUpon>CapecImportPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatSources\MitreCatalogControl.resx">
+      <DependentUpon>MitreCatalogControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatSources\PropertyControl.resx">
+      <DependentUpon>PropertyControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ThreatTypeList\ThreatTypeListPanel.resx">
+      <DependentUpon>ThreatTypeListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Word\ProgressDialog.resx">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Word\WordReportingPanel.resx">
+      <DependentUpon>WordReportingPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layout_horizontal_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layout_vertical_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layout_horizontal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layout_vertical.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layout_horizontal_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layout_vertical_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\export_template_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\export_template_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\export_template.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\export_template_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\import_template_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\import_template.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\import_template_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\import_template_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\copy_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\copy_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\copy_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cut_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cut_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cut_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paste_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paste_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paste_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cloud_computing_download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\report_problem_small.png" />
+    <None Include="Resources\report_problem.png" />
+    <None Include="Resources\report_problem_big.png" />
+    <None Include="Resources\report_problem_huge.png" />
+    <None Include="Resources\properties_small.png" />
+    <None Include="Resources\properties.png" />
+    <None Include="Resources\properties_big.png" />
+    <None Include="Resources\properties_huge.png" />
+    <None Include="Resources\layout_top_huge.png" />
+    <None Include="Resources\layout_bottom_huge.png" />
+    <None Include="Resources\layout_left_huge.png" />
+    <None Include="Resources\layout_right_huge.png" />
+    <None Include="Resources\layout_top_big.png" />
+    <None Include="Resources\layout_bottom_big.png" />
+    <None Include="Resources\layout_left_big.png" />
+    <None Include="Resources\layout_right_big.png" />
+    <None Include="Resources\layout_top.png" />
+    <None Include="Resources\layout_bottom.png" />
+    <None Include="Resources\layout_left.png" />
+    <None Include="Resources\layout_right.png" />
+    <None Include="Resources\layout_top_small.png" />
+    <None Include="Resources\layout_bottom_small.png" />
+    <None Include="Resources\layout_left_small.png" />
+    <None Include="Resources\layout_right_small.png" />
+    <None Include="Resources\zoom_out_small.png" />
+    <None Include="Resources\view_1_1_small.png" />
+    <None Include="Resources\window_size_small.png" />
+    <None Include="Resources\zoom_in_small.png" />
+    <None Include="Resources\zoom_out.png" />
+    <None Include="Resources\view_1_1.png" />
+    <None Include="Resources\window_size.png" />
+    <None Include="Resources\zoom_in.png" />
+    <None Include="Resources\zoom_out_big.png" />
+    <None Include="Resources\view_1_1_big.png" />
+    <None Include="Resources\window_size_big.png" />
+    <None Include="Resources\zoom_in_big.png" />
+    <None Include="Resources\zoom_out_huge.png" />
+    <None Include="Resources\view_1_1_huge.png" />
+    <None Include="Resources\window_size_huge.png" />
+    <None Include="Resources\zoom_in_huge.png" />
+    <None Include="Resources\camera_small.png" />
+    <None Include="Resources\camera.png" />
+    <None Include="Resources\camera_big.png" />
+    <None Include="Resources\camera_huge.png" />
+    <None Include="Resources\clipboard_small.png" />
+    <None Include="Resources\clipboard.png" />
+    <None Include="Resources\clipboard_big.png" />
+    <None Include="Resources\clipboard_huge.png" />
+    <None Include="Resources\document_empty_small.png" />
+    <None Include="Resources\document_empty.png" />
+    <None Include="Resources\document_empty_big.png" />
+    <None Include="Resources\document_empty_huge.png" />
+    <None Include="Resources\floppy_disk_huge.png" />
+    <None Include="Resources\floppy_disk_big.png" />
+    <None Include="Resources\floppy_disk.png" />
+    <None Include="Resources\floppy_disk_small.png" />
+    <None Include="Resources\properties_big_new.png" />
+    <None Include="Resources\properties_huge_new.png" />
+    <None Include="Resources\properties_new.png" />
+    <None Include="Resources\properties_small_new.png" />
+    <None Include="Resources\property_huge_new.png" />
+    <None Include="Resources\property_new.png" />
+    <None Include="Resources\property_small.png" />
+    <None Include="Resources\property_small_new.png" />
+    <None Include="Resources\property.png" />
+    <None Include="Resources\property_big.png" />
+    <None Include="Resources\property_big_new.png" />
+    <None Include="Resources\property_huge.png" />
+    <None Include="Resources\properties_big_delete.png" />
+    <None Include="Resources\properties_delete.png" />
+    <None Include="Resources\properties_huge_delete.png" />
+    <None Include="Resources\properties_small_delete.png" />
+    <None Include="Resources\property_big_delete.png" />
+    <None Include="Resources\property_delete.png" />
+    <None Include="Resources\property_huge_delete.png" />
+    <None Include="Resources\property_small_delete.png" />
+    <None Include="Resources\magic_wand_small.png" />
+    <None Include="Resources\magic_wand.png" />
+    <None Include="Resources\magic_wand_big.png" />
+    <None Include="Resources\magic_wand_huge.png" />
+    <None Include="Resources\elements_two_small.png" />
+    <None Include="Resources\element_small.png" />
+    <None Include="Resources\elements_cascade_small.png" />
+    <None Include="Resources\elements_tree_small.png" />
+    <None Include="Resources\element.png" />
+    <None Include="Resources\elements_cascade.png" />
+    <None Include="Resources\elements_tree.png" />
+    <None Include="Resources\elements_two.png" />
+    <None Include="Resources\element_big.png" />
+    <None Include="Resources\elements_cascade_big.png" />
+    <None Include="Resources\elements_tree_big.png" />
+    <None Include="Resources\elements_two_big.png" />
+    <None Include="Resources\element_huge.png" />
+    <None Include="Resources\elements_cascade_huge.png" />
+    <None Include="Resources\elements_tree_huge.png" />
+    <None Include="Resources\elements_two_huge.png" />
+    <None Include="Resources\graph_star_small.png" />
+    <None Include="Resources\graph_star.png" />
+    <None Include="Resources\graph_star_big.png" />
+    <None Include="Resources\graph_star_huge.png" />
+    <None Include="Resources\selected_graph_star_big.png" />
+    <None Include="Resources\selected_graph_star_huge.png" />
+    <None Include="Resources\selected_graph_star_small.png" />
+    <None Include="Resources\selected_graph_star.png" />
+    <None Include="Resources\document_text.png" />
+    <None Include="Resources\document_text_big.png" />
+    <None Include="Resources\document_text_huge.png" />
+    <None Include="Resources\document_text_small.png" />
+    <None Include="Resources\docx.png" />
+    <None Include="Resources\docx_big.png" />
+    <None Include="Resources\docx_huge.png" />
+    <None Include="Resources\docx_small.png" />
+    <None Include="Resources\note_text.png" />
+    <None Include="Resources\note_text_big.png" />
+    <None Include="Resources\note_text_huge.png" />
+    <None Include="Resources\note_text_small.png" />
+    <None Include="Resources\pdf.png" />
+    <None Include="Resources\pdf_big.png" />
+    <None Include="Resources\pdf_huge.png" />
+    <None Include="Resources\pdf_small.png" />
+    <None Include="Resources\xlsx.png" />
+    <None Include="Resources\xlsx_big.png" />
+    <None Include="Resources\xlsx_huge.png" />
+    <None Include="Resources\xlsx_small.png" />
+    <None Include="Resources\checkbox_unchecked_small.png" />
+    <None Include="Resources\checkbox.png" />
+    <None Include="Resources\checkbox_big.png" />
+    <None Include="Resources\checkbox_huge.png" />
+    <None Include="Resources\checkbox_small.png" />
+    <None Include="Resources\checkbox_unchecked.png" />
+    <None Include="Resources\checkbox_unchecked_big.png" />
+    <None Include="Resources\checkbox_unchecked_huge.png" />
+    <None Include="Resources\folder_open_document_small.png" />
+    <None Include="Resources\folder_open_document.png" />
+    <None Include="Resources\folder_open_document_big.png" />
+    <None Include="Resources\folder_open_document_huge.png" />
+    <None Include="Resources\shelf_full_small.png" />
+    <None Include="Resources\rubber_stamp.png" />
+    <None Include="Resources\rubber_stamp_big.png" />
+    <None Include="Resources\rubber_stamp_huge.png" />
+    <None Include="Resources\rubber_stamp_small.png" />
+    <None Include="Resources\shapes.png" />
+    <None Include="Resources\shapes_big.png" />
+    <None Include="Resources\shapes_huge.png" />
+    <None Include="Resources\shapes_small.png" />
+    <None Include="Resources\shelf_full.png" />
+    <None Include="Resources\shelf_full_big.png" />
+    <None Include="Resources\shelf_full_huge.png" />
+    <None Include="Resources\rubber_stamp_new.png" />
+    <None Include="Resources\rubber_stamp_small_delete.png" />
+    <None Include="Resources\rubber_stamp_huge_delete.png" />
+    <None Include="Resources\rubber_stamp_big_delete.png" />
+    <None Include="Resources\rubber_stamp_delete.png" />
+    <None Include="Resources\rubber_stamp_small_new.png" />
+    <None Include="Resources\rubber_stamp_huge_new.png" />
+    <None Include="Resources\rubber_stamp_big_new.png" />
+    <None Include="Resources\astrologer_small.png" />
+    <None Include="Resources\astrologer.png" />
+    <None Include="Resources\astrologer_big.png" />
+    <None Include="Resources\astrologer_huge.png" />
+    <None Include="Resources\question_and_answer.png" />
+    <None Include="Resources\question_and_answer_big.png" />
+    <None Include="Resources\question_and_answer_huge.png" />
+    <None Include="Resources\question_and_answer_small.png" />
+    <None Include="Resources\school_small.png" />
+    <None Include="Resources\school.png" />
+    <None Include="Resources\school_big.png" />
+    <None Include="Resources\school_huge.png" />
+    <None Include="Resources\book_small.png" />
+    <None Include="Resources\book.png" />
+    <None Include="Resources\book_big.png" />
+    <None Include="Resources\book_huge.png" />
+    <None Include="Resources\book_open.png" />
+    <None Include="Resources\book_open_big.png" />
+    <None Include="Resources\book_open_huge.png" />
+    <None Include="Resources\book_open_small.png" />
+    <None Include="Resources\book_open_selected_small.png" />
+    <None Include="Resources\book_selected_huge.png" />
+    <None Include="Resources\book_open_selected_huge.png" />
+    <None Include="Resources\book_open_selected_big.png" />
+    <None Include="Resources\book_selected_big.png" />
+    <None Include="Resources\book_open_selected.png" />
+    <None Include="Resources\book_selected.png" />
+    <None Include="Resources\book_selected_small.png" />
+    <None Include="Resources\model_big_up.png" />
+    <None Include="Resources\model_huge_up.png" />
+    <None Include="Resources\model_small_up.png" />
+    <None Include="Resources\model_up.png" />
+    <None Include="Resources\text_small.png" />
+    <None Include="Resources\businesspeople_alt.png" />
+    <None Include="Resources\businesspeople_alt_big.png" />
+    <None Include="Resources\businesspeople_alt_huge.png" />
+    <None Include="Resources\businesspeople_alt_small.png" />
+    <None Include="Resources\caesar.png" />
+    <None Include="Resources\caesar_big.png" />
+    <None Include="Resources\caesar_huge.png" />
+    <None Include="Resources\caesar_small.png" />
+    <None Include="Resources\dependencies.png" />
+    <None Include="Resources\dependencies_big.png" />
+    <None Include="Resources\dependencies_huge.png" />
+    <None Include="Resources\dependencies_small.png" />
+    <None Include="Resources\hint.png" />
+    <None Include="Resources\hint_big.png" />
+    <None Include="Resources\hint_huge.png" />
+    <None Include="Resources\hint_small.png" />
+    <None Include="Resources\tag.png" />
+    <None Include="Resources\tag_big.png" />
+    <None Include="Resources\tag_huge.png" />
+    <None Include="Resources\tag_small.png" />
+    <None Include="Resources\text.png" />
+    <None Include="Resources\text_big.png" />
+    <None Include="Resources\text_huge.png" />
+    <None Include="Resources\chart_pie_small.png" />
+    <None Include="Resources\tt_chart_pie.png" />
+    <None Include="Resources\tt_chart_pie_big.png" />
+    <None Include="Resources\tt_chart_pie_huge.png" />
+    <None Include="Resources\tt_chart_pie_small.png" />
+    <None Include="Resources\red_chart_pie.png" />
+    <None Include="Resources\red_chart_pie_big.png" />
+    <None Include="Resources\red_chart_pie_huge.png" />
+    <None Include="Resources\red_chart_pie_small.png" />
+    <None Include="Resources\chart_pie.png" />
+    <None Include="Resources\chart_pie_big.png" />
+    <None Include="Resources\chart_pie_huge.png" />
+    <None Include="Resources\signpost_two_small.png" />
+    <None Include="Resources\firewall.png" />
+    <None Include="Resources\firewall_big.png" />
+    <None Include="Resources\firewall_huge.png" />
+    <None Include="Resources\firewall_small.png" />
+    <None Include="Resources\signpost_two.png" />
+    <None Include="Resources\signpost_two_big.png" />
+    <None Include="Resources\signpost_two_huge.png" />
+    <None Include="Resources\table_small.png" />
+    <None Include="Resources\list_style_numbered.png" />
+    <None Include="Resources\list_style_numbered_big.png" />
+    <None Include="Resources\list_style_numbered_huge.png" />
+    <None Include="Resources\list_style_numbered_small.png" />
+    <None Include="Resources\odometer.png" />
+    <None Include="Resources\odometer_big.png" />
+    <None Include="Resources\odometer_huge.png" />
+    <None Include="Resources\odometer_small.png" />
+    <None Include="Resources\presentation_pie_chart.png" />
+    <None Include="Resources\presentation_pie_chart_big.png" />
+    <None Include="Resources\presentation_pie_chart_huge.png" />
+    <None Include="Resources\presentation_pie_chart_small.png" />
+    <None Include="Resources\table.png" />
+    <None Include="Resources\table_big.png" />
+    <None Include="Resources\table_huge.png" />
+    <None Include="Resources\arrows_merge_small.png" />
+    <None Include="Resources\arrows_merge.png" />
+    <None Include="Resources\arrows_merge_big.png" />
+    <None Include="Resources\arrows_merge_huge.png" />
+    <None Include="Resources\map_roads_small.png" />
+    <None Include="Resources\map_roads.png" />
+    <None Include="Resources\map_roads_big.png" />
+    <None Include="Resources\map_roads_huge.png" />
+    <None Include="Resources\tower_crane_small.png" />
+    <None Include="Resources\tower_crane.png" />
+    <None Include="Resources\tower_crane_big.png" />
+    <None Include="Resources\tower_crane_huge.png" />
+    <None Include="Resources\tower_crane_stop.png" />
+    <None Include="Resources\tower_crane_stop_big.png" />
+    <None Include="Resources\tower_crane_stop_huge.png" />
+    <None Include="Resources\tower_crane_stop_small.png" />
+    <None Include="Resources\undo_small.png" />
+    <None Include="Resources\undo.png" />
+    <None Include="Resources\undo_big.png" />
+    <None Include="Resources\undo_huge.png" />
+    <None Include="Resources\nav_refresh_small.png" />
+    <None Include="Resources\nav_refresh.png" />
+    <None Include="Resources\nav_refresh_big.png" />
+    <None Include="Resources\nav_refresh_huge.png" />
+    <None Include="Resources\money_bill_fire_small.png" />
+    <None Include="Resources\money_bill_fire.png" />
+    <None Include="Resources\money_bill_fire_big.png" />
+    <None Include="Resources\money_bill_fire_huge.png" />
+    <None Include="Resources\gauge_small.png" />
+    <None Include="Resources\gauge.png" />
+    <None Include="Resources\gauge_big.png" />
+    <None Include="Resources\gauge_huge.png" />
+    <None Include="Resources\cubes_small.png" />
+    <None Include="Resources\cubes.png" />
+    <None Include="Resources\cubes_big.png" />
+    <None Include="Resources\cubes_huge.png" />
+    <None Include="Resources\lifebelt_small.png" />
+    <None Include="Resources\lifebelt.png" />
+    <None Include="Resources\lifebelt_big.png" />
+    <None Include="Resources\lifebelt_huge.png" />
+    <None Include="Resources\window_environment.png" />
+    <None Include="Resources\window_environment_big.png" />
+    <None Include="Resources\window_environment_huge.png" />
+    <None Include="Resources\window_environment_small.png" />
+    <None Include="Resources\tower_crane_white.png" />
+    <None Include="Resources\tower_crane_black.png" />
+    <None Include="Resources\pieces_black.png" />
+    <None Include="Resources\pieces_white.png" />
+    <None Include="Resources\library_white.png" />
+    <None Include="Resources\library_black.png" />
+    <None Include="Resources\funnel_small.png" />
+    <None Include="Resources\funnel.png" />
+    <None Include="Resources\funnel_big.png" />
+    <None Include="Resources\funnel_huge.png" />
+    <Content Include="Shortcuts.txt" />
+    <Content Include="Colors.txt" />
+    <Content Include="Resources\threats_selection_small.png" />
+    <Content Include="Resources\threat_selection_small.png" />
+    <Content Include="Resources\threats_selection.png" />
+    <Content Include="Resources\threat_selection.png" />
+    <Content Include="Resources\threats_selection_big.png" />
+    <Content Include="Resources\threat_selection_big.png" />
+    <Content Include="Resources\threats_selection_huge.png" />
+    <Content Include="Resources\threat_selection_huge.png" />
+    <Content Include="Resources\clear_huge.png" />
+    <Content Include="Resources\clear_big.png" />
+    <Content Include="Resources\clear_small.png" />
+    <Content Include="Resources\clear.png" />
+    <Content Include="Resources\import.png" />
+    <Content Include="Resources\import_small.png" />
+    <Content Include="Resources\import_big.png" />
+    <Content Include="Resources\import_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit.Forms.UI.Controls.WebView">
+      <Version>6.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="PostSharp.Patterns.Model">
+      <Version>6.7.11</Version>
+    </PackageReference>
+    <PackageReference Include="PostSharp.Patterns.Threading.Redist">
+      <Version>6.7.11</Version>
+    </PackageReference>
+    <PackageReference Include="Svg">
+      <Version>3.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.DocIO.WinForms">
+      <Version>18.3.0.38</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.XlsIO.WinForms">
+      <Version>18.3.0.38</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
+xcopy "$(TargetDir)*.pdb" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
+xcopy "$(SolutionDir)..\Build\repo\net472\ThreatsManager.PackageManagers.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y</PostBuildEvent>
+  </PropertyGroup>
+</Project>

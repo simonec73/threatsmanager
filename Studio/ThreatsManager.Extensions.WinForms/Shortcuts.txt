@@ -1,0 +1,9 @@
+﻿Ctrl+Shift+B	New Trust Boundary
+Ctrl+Shift+D	Iterate Diagrams
+Ctrl+Shift+E	New External Interactor
+Ctrl+Shift+P	New Process
+Ctrl+Shift+S	New Data Store
+Ctrl+Shift+T	New Threat Type
+F5				Refresh
+
+Ctrl+F4			Close Mdi Child (standard)

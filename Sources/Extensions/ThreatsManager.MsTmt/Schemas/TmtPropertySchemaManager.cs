@@ -24,17 +24,13 @@ namespace ThreatsManager.MsTmt.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(_schemaName, Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(_schemaName, Resources.DefaultNamespace);
-                result.AppliesTo = _scope;
-                result.Priority = 100;
-                result.Visible = true;
-                result.System = false;
-                result.AutoApply = false;
-                result.Description = Resources.TmtPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(_schemaName, Resources.DefaultNamespace) ?? _model.AddSchema(_schemaName, Resources.DefaultNamespace);
+            result.AppliesTo = _scope;
+            result.Priority = 100;
+            result.Visible = true;
+            result.System = false;
+            result.AutoApply = false;
+            result.Description = Resources.TmtPropertySchemaDescription;
 
             return result;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,17 +9,13 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "C2029A88-0E8E-49F1-A9DF-3FEFAF5582CB")]
-    [ExportMetadata("Label", "Apply Mitigation Association Rule to Threat Event Context Aware Action")]
-    [ExportMetadata("Priority", 35)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("C2029A88-0E8E-49F1-A9DF-3FEFAF5582CB", 
+        "Apply Mitigation Association Rule to Threat Event Context Aware Action", 35, ExecutionMode.Simplified)]
     public class ApplyMitigationAssociationRules : IIdentityContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Apply Mitigation Association Rules";
-        public string Group => "ItemActions";
+        public string Group => "Associate";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;
@@ -36,6 +31,11 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 result = Execute(identity);
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)

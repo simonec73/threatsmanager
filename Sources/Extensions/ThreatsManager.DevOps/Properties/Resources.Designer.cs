@@ -124,6 +124,42 @@ namespace ThreatsManager.DevOps.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IterationRisk.
+        /// </summary>
+        internal static string DevOpsIterationRisks {
+            get {
+                return ResourceManager.GetString("DevOpsIterationRisks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the evaluation of the risk associated to the Iterations..
+        /// </summary>
+        internal static string DevOpsIterationRisksDescription {
+            get {
+                return ResourceManager.GetString("DevOpsIterationRisksDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iterations.
+        /// </summary>
+        internal static string DevOpsIterations {
+            get {
+                return ResourceManager.GetString("DevOpsIterations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the list of Iterations defined for the Threat Model..
+        /// </summary>
+        internal static string DevOpsIterationsDescription {
+            get {
+                return ResourceManager.GetString("DevOpsIterationsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DevOps.
         /// </summary>
         internal static string DevOpsPropertySchema {
@@ -142,11 +178,65 @@ namespace ThreatsManager.DevOps.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FirstSeen.
+        /// </summary>
+        internal static string IterationFirstSeen {
+            get {
+                return ResourceManager.GetString("IterationFirstSeen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the information related to the Iteration when the Mitigation has been first seen..
+        /// </summary>
+        internal static string IterationFirstSeenDescription {
+            get {
+                return ResourceManager.GetString("IterationFirstSeenDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MitigationExposure.
+        /// </summary>
+        internal static string IterationMitigationExposure {
+            get {
+                return ResourceManager.GetString("IterationMitigationExposure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the information related to the Iteration when the Mitigation has been changed, by changing its association to Threat Events..
+        /// </summary>
+        internal static string IterationMitigationExposureDescription {
+            get {
+                return ResourceManager.GetString("IterationMitigationExposureDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status of the Mitigation for the Roadmap..
         /// </summary>
         internal static string PropertyRoadmap {
             get {
                 return ResourceManager.GetString("PropertyRoadmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review.
+        /// </summary>
+        internal static string Review {
+            get {
+                return ResourceManager.GetString("Review", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Type containing the metadata with the decisions related to the inclusion of the Mitigation in the Backlog..
+        /// </summary>
+        internal static string ReviewDescription {
+            get {
+                return ResourceManager.GetString("ReviewDescription", resourceCulture);
             }
         }
     }

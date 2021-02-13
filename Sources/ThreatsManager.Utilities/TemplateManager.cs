@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ThreatsManager.Packaging;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -27,9 +28,27 @@ namespace ThreatsManager.Utilities
             newModel.Description = description;
             var serialization = ThreatModelManager.Serialize(newModel);
 
-            var package = Package.Create(path);
-            package.Add(Resources.ThreatModelTemplateFile, serialization);
-            package.Save();
+            var extension = Path.GetExtension(path)?.ToLower();
+            switch (extension)
+            {
+                case ".tmt":
+                    var package = Package.Create(path);
+                    package.Add(Resources.ThreatModelTemplateFile, serialization);
+                    package.Save();
+                    break;
+                case ".tmk":
+                    if (File.Exists(path))
+                        File.Delete(path);
+
+                    using (var file = File.OpenWrite(path))
+                    {
+                        using (var writer = new BinaryWriter(file))
+                        {
+                            writer.Write(serialization);
+                        }
+                    }
+                    break;
+            }
         }
 
         /// <summary>
@@ -39,9 +58,35 @@ namespace ThreatsManager.Utilities
         /// <returns>The Threat Model representing the Template.</returns>
         public static IThreatModel OpenTemplate([Required] string path)
         {
-            var package = new Package(path);
-            var bytes = package.Read(Resources.ThreatModelTemplateFile);
-            return ThreatModelManager.Deserialize(bytes, true);
+            IThreatModel result = null;
+
+            byte[] bytes;
+            var extension = Path.GetExtension(path)?.ToLower();
+            switch (extension)
+            {
+                case ".tmt":
+                    var package = new Package(path);
+                    bytes = package.Read(Resources.ThreatModelTemplateFile);
+                    break;
+                case ".tmk":
+                    using (var file = File.OpenRead(path))
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            file.CopyTo(ms);
+                            bytes = ms.ToArray();
+                        }
+                    }
+                    break;
+                default:
+                    bytes = null;
+                    break;
+            }
+
+            if (bytes != null)
+                result = ThreatModelManager.Deserialize(bytes, true);
+
+            return result;
         }
 
         /// <summary>

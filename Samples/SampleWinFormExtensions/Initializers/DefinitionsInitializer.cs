@@ -11,7 +11,7 @@ namespace SampleWinFormExtensions.Initializers
     /// Initializers are called every time a new Threat Model is created. 
     /// </summary>
     /// <remarks>Initializers implement interface IInitializer.</remarks>
-    [Extension(typeof(IInitializer),"0C8C1CC5-B0F8-4D52-9874-4E9D73801AAD",
+    [Extension("0C8C1CC5-B0F8-4D52-9874-4E9D73801AAD",
         "Definitions Schema Initializer", 10, ExecutionMode.Business)]
     public class DefinitionsSchemaInitializer : IInitializer
     {

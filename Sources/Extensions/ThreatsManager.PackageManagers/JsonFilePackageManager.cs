@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,12 +13,7 @@ using ThreatsManager.Utilities.Exceptions;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Export(typeof(IPackageManager))]
-    [ExportMetadata("Id", "FA6F6023-8369-4D2F-97C1-1EB5ED83DA21")]
-    [ExportMetadata("Label", "Json File Package Manager")]
-    [ExportMetadata("Priority", 15)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("FA6F6023-8369-4D2F-97C1-1EB5ED83DA21", "Json File Package Manager", 15, ExecutionMode.Business)]
     public class JsonFilePackageManager : IPackageManager 
     { 
         public LocationType SupportedLocations => LocationType.FileSystem;
@@ -106,7 +100,9 @@ namespace ThreatsManager.PackageManagers
 
                 File.WriteAllBytes(newLocation, tmSerialized);
 
-
+                if (autoAddDateTime)
+                    File.Copy(newLocation, Path.Combine(Path.GetDirectoryName(location), $"{StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location))}{Path.GetExtension(location)}"), true);
+                
                 result = true;
             }
 

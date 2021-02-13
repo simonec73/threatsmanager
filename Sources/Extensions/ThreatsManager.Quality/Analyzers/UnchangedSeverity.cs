@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "1C18A756-C5D0-4217-AFE4-4647DA6D0F21")]
-    [ExportMetadata("Label", "Unchanged Severity Quality Analyzer")]
-    [ExportMetadata("Priority", 46)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("1C18A756-C5D0-4217-AFE4-4647DA6D0F21", "Unchanged Severity Quality Analyzer", 46, ExecutionMode.Simplified)]
     public class UnchangedSeverity : IQualityAnalyzer
     {
         public string Label => "Unchanged Severities";

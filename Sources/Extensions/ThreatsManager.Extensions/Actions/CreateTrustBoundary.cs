@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,12 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "E6BA9412-00C0-4547-9D62-A55BF881F3E7")]
-    [ExportMetadata("Label", "Create a Trust Boundary Context Aware Action")]
-    [ExportMetadata("Priority", 18)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("E6BA9412-00C0-4547-9D62-A55BF881F3E7", "Create a Trust Boundary Context Aware Action", 18, ExecutionMode.Simplified)]
     public class CreateTrustBoundary : IIdentityContextAwareAction, IIdentityAddingRequiredAction
     {
         public Scope Scope => Scope.Diagram | Scope.ThreatModel;
@@ -35,6 +29,11 @@ namespace ThreatsManager.Extensions.Actions
                 result = Execute(identity);
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute(IIdentity identity)

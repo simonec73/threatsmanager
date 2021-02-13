@@ -8,8 +8,7 @@ namespace $rootnamespace$
     /// <summary>
     /// $safeitemname$ is used to Initialize a newly created Threat Model.
     /// </summary>
-    [Extension(typeof(IInitializer), "$guid1$", 
-        "$itemname$ Initializer", 100, ExecutionMode.Simplified)]
+    [Extension("$guid1$", "$itemname$ Initializer", 100, ExecutionMode.Simplified)]
     public class $safeitemname$ : IInitializer 
     {
         public void Initialize(IThreatModel model)

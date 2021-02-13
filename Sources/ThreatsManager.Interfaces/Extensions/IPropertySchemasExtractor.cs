@@ -10,7 +10,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// <summary>
     /// Interface implemented by Extensions to extract the Property Schemas referenced by IPropertyJsonSerializableObjects.
     /// </summary>
-    public interface IPropertySchemasExtractor
+    [ExtensionDescription("Property Schemas Extractor")]
+    public interface IPropertySchemasExtractor : IExtension
     {
         /// <summary>
         /// Get Property Schemas referenced by the input object.

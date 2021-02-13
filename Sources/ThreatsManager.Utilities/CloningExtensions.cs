@@ -30,8 +30,8 @@ namespace ThreatsManager.Utilities
                     if (property.PropertyType is IPropertyType sourcePropertyType &&
                         sourceModel.GetSchema(sourcePropertyType.SchemaId) is IPropertySchema sourceSchema)
                     {
-                        if (model.GetSchema(sourceSchema.Name, sourceSchema.Namespace) is IPropertySchema
-                            targetSchema)
+                        if (model.GetSchema(sourceSchema.Name, sourceSchema.Namespace) is IPropertySchema targetSchema &&
+                            !targetSchema.NotExportable)
                         {
                             var propertyType = targetSchema.GetPropertyType(sourcePropertyType.Name);
                             if (propertyType != null)

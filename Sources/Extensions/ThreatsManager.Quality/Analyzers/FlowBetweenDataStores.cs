@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "DF2DB940-E3C4-44B2-A7B8-C14CAB1FCE80")]
-    [ExportMetadata("Label", "Flow Between Data Stores Quality Analyzer")]
-    [ExportMetadata("Priority", 15)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("DF2DB940-E3C4-44B2-A7B8-C14CAB1FCE80", "Flow Between Data Stores Quality Analyzer", 15, ExecutionMode.Simplified)]
     public class FlowBetweenDataStores : IQualityAnalyzer
     {
         public string Label => "Flow Between Data Stores";

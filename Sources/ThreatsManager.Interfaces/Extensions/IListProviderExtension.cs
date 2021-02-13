@@ -6,7 +6,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// <summary>
     /// Interface implemented by List Providers, which provide values to IPropertyLists
     /// </summary>
-    public interface IListProviderExtension
+    [ExtensionDescription("List Provider")]
+    public interface IListProviderExtension : IExtension
     {
         /// <summary>
         /// Get the enumeration of the available values.

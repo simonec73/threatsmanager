@@ -1,0 +1,659 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\PostSharp.6.7.11\build\PostSharp.props" Condition="Exists('..\packages\PostSharp.6.7.11\build\PostSharp.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{096E77A7-2C30-4DDD-AE56-45414D8823B0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ThreatsManager.Quality</RootNamespace>
+    <AssemblyName>ThreatsManager.Quality.WinForms</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\ThreatsManager\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar.Charts, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.Instrumentation, Version=14.1.0.35, Culture=neutral, PublicKeyToken=f90dc37c26666a67, processorArchitecture=MSIL" />
+    <Reference Include="Fizzler, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4ebff4844e382110, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fizzler.1.2.0\lib\netstandard2.0\Fizzler.dll</HintPath>
+    </Reference>
+    <Reference Include="Keyoti.RapidSpell.NET4">
+      <HintPath>..\..\Build\nuget\bin\net472\Keyoti.RapidSpell.NET4.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Toolkit.Forms.UI.Controls.WebView">
+      <HintPath>..\..\..\..\Users\simon\.nuget\packages\microsoft.toolkit.forms.ui.controls.webview\6.1.2\lib\net462\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Northwoods.Go">
+      <HintPath>..\References\Northwoods.Go.dll</HintPath>
+    </Reference>
+    <Reference Include="Northwoods.Go.Layout">
+      <HintPath>..\References\Northwoods.Go.Layout.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=6.7.11.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Redist.6.7.11\lib\net45\PostSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.6.7.11\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Common, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.7.11\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Model, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.7.11\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp.Patterns.Threading, Version=6.7.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.7.11\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg, Version=3.1.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.3.1.1\lib\net452\Svg.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=18.3460.0.38, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Compression.Base.18.3.0.38\lib\net46\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIO.Base">
+      <HintPath>..\..\..\..\Users\simon\.nuget\packages\syncfusion.docio.winforms\18.3.0.38\lib\net46\Syncfusion.DocIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Gauge.Windows, Version=18.3460.0.38, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Gauge.Windows.18.3.0.38\lib\net46\Syncfusion.Gauge.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=18.3460.0.38, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.18.3.0.38\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.OfficeChart.Base">
+      <HintPath>..\..\..\..\Users\simon\.nuget\packages\syncfusion.officechart.base\18.3.0.38\lib\net46\Syncfusion.OfficeChart.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.Base, Version=18.3460.0.38, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Pdf.WinForms.18.3.0.38\lib\net46\Syncfusion.Pdf.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Shared.Base, Version=18.3460.0.38, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Shared.Base.18.3.0.38\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.XlsIO.Base, Version=18.3460.0.38, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.XlsIO.WinForms.18.3.0.38\lib\net46\Syncfusion.XlsIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="ThreatsManager.AutoGenRules">
+      <HintPath>..\..\Build\repo\net472\ThreatsManager.AutoGenRules.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Extensions">
+      <HintPath>..\..\Build\repo\net472\ThreatsManager.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Icons, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Icons.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Interfaces, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Packaging, Version=1.4.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Quality">
+      <HintPath>..\..\Build\repo\net472\ThreatsManager.Quality.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="ThreatsManager.Utilities.WinForms, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Utilities.WinForms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ThreatsManager\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Actions\ApplyQuestions.cs" />
+    <Compile Include="Actions\EnableAnnotations.cs" />
+    <Compile Include="Actions\ImportQuestions.cs" />
+    <Compile Include="Annotations\AddReviewNoteButtonPropertyViewerBlock.cs" />
+    <Compile Include="Annotations\AddHighlightButtonPropertyViewerBlock.cs" />
+    <Compile Include="Annotations\AddToBeClarifiedButtonPropertyViewerBlock.cs" />
+    <Compile Include="Annotations\AnnotationsPropertyViewer.cs" />
+    <Compile Include="Annotations\AnnotationPropertyViewerBlock.cs" />
+    <Compile Include="Annotations\AnnotationsPropertyViewerFactory.cs" />
+    <Compile Include="Annotations\AddNotesButtonPropertyViewerBlock.cs" />
+    <Compile Include="Annotations\AnswerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Annotations\AnswerControl.Designer.cs">
+      <DependentUpon>AnswerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AnnotationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AnnotationDialog.Designer.cs">
+      <DependentUpon>AnnotationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FalsePositiveReasonDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FalsePositiveReasonDialog.Designer.cs">
+      <DependentUpon>FalsePositiveReasonDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FalsePositivesListDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FalsePositivesListDialog.Designer.cs">
+      <DependentUpon>FalsePositivesListDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RuleEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RuleEditDialog.designer.cs">
+      <DependentUpon>RuleEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RuleFilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RuleFilterDialog.designer.cs">
+      <DependentUpon>RuleFilterDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExtensionsContainer.cs" />
+    <Compile Include="Annotations\AnnotationControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Annotations\AnnotationControl.Designer.cs">
+      <DependentUpon>AnnotationControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Initializers\AnnotationsInitializer.cs" />
+    <Compile Include="Panels\ReviewNotes\ReviewNotesPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ReviewNotes\ReviewNotesPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ReviewNotes\ReviewNotesPanel.Designer.cs">
+      <DependentUpon>ReviewNotesPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ReviewNotes\ReviewNotesPanelFactory.cs" />
+    <Compile Include="Panels\ReviewNotes\ReviewNotesPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\AnnotationsHelper.cs" />
+    <Compile Include="Panels\Annotations\AnnotationsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Annotations\AnnotationsPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Annotations\AnnotationsPanel.Designer.cs">
+      <DependentUpon>AnnotationsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Annotations\AnnotationsPanelFactory.cs" />
+    <Compile Include="Panels\Annotations\AnnotationsPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\QualityDashboard\Dashboard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\Dashboard.Designer.cs">
+      <DependentUpon>Dashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\CheckPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\CheckPanel.Designer.cs">
+      <DependentUpon>CheckPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\ExcelReportEngine.cs" />
+    <Compile Include="Panels\QualityDashboard\OverallPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\OverallPanel.Designer.cs">
+      <DependentUpon>OverallPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\Dashboard.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\DashboardFactory.cs" />
+    <Compile Include="Panels\QualityDashboard\DashboardFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\QualityDashboard\Dashboard.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QualityDashboard\DashboardFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\QuestionList\QuestionListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QuestionList\QuestionListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\QuestionList\QuestionListPanel.Designer.cs">
+      <DependentUpon>QuestionListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\QuestionList\QuestionListPanelFactory.cs" />
+    <Compile Include="Panels\QuestionList\QuestionListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Schemas\AnnotationsPropertySchemaManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Annotations\AnswerControl.resx">
+      <DependentUpon>AnswerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AnnotationDialog.resx">
+      <DependentUpon>AnnotationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FalsePositiveReasonDialog.resx">
+      <DependentUpon>FalsePositiveReasonDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FalsePositivesListDialog.resx">
+      <DependentUpon>FalsePositivesListDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Annotations\AnnotationControl.resx">
+      <DependentUpon>AnnotationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RuleEditDialog.resx">
+      <DependentUpon>RuleEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RuleFilterDialog.resx">
+      <DependentUpon>RuleFilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ReviewNotes\ReviewNotesPanel.resx">
+      <DependentUpon>ReviewNotesPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Annotations\AnnotationsPanel.resx">
+      <DependentUpon>AnnotationsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\QualityDashboard\Dashboard.resx">
+      <DependentUpon>Dashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\QualityDashboard\CheckPanel.resx">
+      <DependentUpon>CheckPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\QualityDashboard\OverallPanel.resx">
+      <DependentUpon>OverallPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\QuestionList\QuestionListPanel.resx">
+      <DependentUpon>QuestionListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ThreatsManager\ThreatsManager.snk">
+      <Link>ThreatsManager.snk</Link>
+    </None>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resources\emoticon_straight_face.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\emoticon_smile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\emoticon_frown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsx_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsx.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsx_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsx_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pdf_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pdf_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pdf_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\emoticon_straight_face_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\emoticon_frown_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\emoticon_smile_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hand_thumb_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hand_thumb_up_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hand_thumb_up_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hand_thumb_up_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_answer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_answer_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_answer_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_answer_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThreatsManager.Extensions.WinForms\ThreatsManager.Extensions.WinForms.csproj">
+      <Project>{DCC0DD34-B991-48C7-90CD-DEB5BF9DE934}</Project>
+      <Name>ThreatsManager.Extensions.WinForms</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\note_text_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\question_and_answer_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\question_and_answer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\question_and_answer_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\question_and_answer_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_tree.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_tree_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_tree_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_tree_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checkbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checkbox_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checkbox_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checkbox_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\floppy_disk_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\floppy_disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\floppy_disk_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\floppy_disk_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_small_floppy_disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_big_floppy_disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_floppy_disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech_balloon_question_huge_floppy_disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker_small_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_small_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_big_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_big_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_huge_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_huge_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clipboard_check_edit_small_delete.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)Extensions\$(ProjectName)\" /Y
+xcopy "$(TargetDir)*.pdb" "$(SolutionDir)Extensions\$(ProjectName)\" /Y</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\PostSharp.6.7.11\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.7.11\build\PostSharp.props'))" />
+    <Error Condition="!Exists('..\packages\PostSharp.6.7.11\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.7.11\build\PostSharp.targets'))" />
+  </Target>
+  <Import Project="..\packages\PostSharp.6.7.11\build\PostSharp.targets" Condition="Exists('..\packages\PostSharp.6.7.11\build\PostSharp.targets')" />
+</Project>

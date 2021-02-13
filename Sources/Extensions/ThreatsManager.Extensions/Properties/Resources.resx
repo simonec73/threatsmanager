@@ -226,15 +226,6 @@ Are you sure you want still to get full access rights? </value>
   <data name="PropertyEffort" xml:space="preserve">
     <value>Estimated effort for implementing the Mitigation.</value>
   </data>
-  <data name="PropertyRoadmap" xml:space="preserve">
-    <value>Status of the Mitigation for the Roadmap.</value>
-  </data>
-  <data name="RoadmapPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema to store the Roadmap Status for Mitigations.</value>
-  </data>
-  <data name="ResidualRiskEstimatorConfigurationPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema that collects the configuration of the selected Residual Risk Estimator.</value>
-  </data>
   <data name="DiagramPropertySchemaDescription" xml:space="preserve">
     <value>Property Schema that collects properties to be assigned to the Diagrams.</value>
   </data>
@@ -250,5 +241,8 @@ Please note that removing Severities is a risky action and is not supported: you
 It is recommended to create backup of the Threat Model before proceeding further.
 
 Are you sure you want still to get full access rights? </value>
+  </data>
+  <data name="PropertyKeywords" xml:space="preserve">
+    <value>Keywords associated to the Threat Type or Event. This is used to improve the results while Searching for Threats.</value>
   </data>
 </root>

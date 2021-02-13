@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "13F15DE4-D3C7-4FB3-B458-6458947AAF6D")]
-    [ExportMetadata("Label", "Undefined Mitigations Quality Analyzer")]
-    [ExportMetadata("Priority", 50)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("13F15DE4-D3C7-4FB3-B458-6458947AAF6D", "Undefined Mitigations Quality Analyzer", 50, ExecutionMode.Simplified)]
     public class UndefinedMitigations : IQualityAnalyzer
     {
         public string Label => "Undefined Mitigations";

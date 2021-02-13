@@ -1,0 +1,2646 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:capec="http://capec.mitre.org/capec-2" xmlns:cybox="http://cybox.mitre.org/cybox-2" targetNamespace="http://capec.mitre.org/capec-2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.7.1">
+	<xs:import namespace="http://cybox.mitre.org/cybox-2" schemaLocation="http://cybox.mitre.org/XMLSchema/core/2.1/cybox_core.xsd"/>
+	<xs:element name="Attack_Pattern_Catalog">
+		<xs:annotation>
+			<xs:documentation>This is the enumerated catalog of common attack patterns.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Views" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="capec:View" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Categories" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="capec:Category" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>A category is a collection of attack patterns sharing a common attribute. The shared attribute may any number of things.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Attack_Patterns" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="capec:Attack_Pattern" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Compound_Elements" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="capec:Compound_Element">
+								<xs:annotation>
+									<xs:documentation>The Compound_Element structure represents a meaningful aggregation of several attack patterns.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Common_Attack_Steps" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Common_Attack_Step" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="capec:Custom_Attack_StepType">
+											<xs:attribute name="ID" type="xs:integer" use="required"/>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Common_Attack_Surfaces" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Common_Attack_Surface" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="capec:Target_Attack_Surface_DescriptionType">
+											<xs:attribute name="ID" type="xs:integer" use="required"/>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Environments" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="capec:Environment" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Catalog_Name" type="xs:string" use="required"/>
+			<xs:attribute name="Catalog_Version" type="xs:string" use="required"/>
+			<xs:attribute name="Catalog_Date" type="xs:date"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="View">
+		<xs:annotation>
+			<xs:documentation>Each View element represents a perspective with which one might look at the attack patterns in CAPEC.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:group ref="capec:View_Attributes">
+				<xs:annotation>
+					<xs:documentation>The View_Attributes structure is a collection of common elements which might be shared by all Views.</xs:documentation>
+				</xs:annotation>
+			</xs:group>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>The ID attribute provides a unique identifier for the entry. It will be static for the lifetime of the entry. In the event that this entry becomes deprecated, the ID will not be reused and a pointer will be left in this entry to the replacement. This is required for all Views.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>The Name is a descriptive attribute used to give the reader an idea of what perspective this view represents. All words in the name should be capitalized except for articles and prepositions unless they begin or end the name. Subsequent words in a hyphenated chain are also not capitalized. This is required for all Views.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Status" type="capec:Status_Type" use="required">
+				<xs:annotation>
+					<xs:documentation>The Status attribute defines the status level for this view.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Category">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Description">
+					<xs:annotation>
+						<xs:documentation>This field provides a description of this Category. Its primary subelement is Description_Summary which is intended to serve as a minimalistic description which provides the information necessary to understand the primary focus of this entry. Additionally, it has the subelement Extended_Description which is optional and is used to provide further information pertaining to this attack pattern.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Description_Summary" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>This description should be short and should limit itself to describing the key points that define this entry. Further explanation can be included in the extended description element. This is required for all entries.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Extended_Description" type="capec:Structured_Text_Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This element provides a place for details important to the description of this entry to be included that are not necessary to convey the fundamental concept behind the entry. This is not required for all entries and should only be included where appropriate.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Related_Weaknesses" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Which specific weaknesses does this attack target and leverage? Specific weaknesses (underlying issues that may cause vulnerabilities) reference the industry-standard Common Weakness Enumeration (CWE). This list should include not only those weaknesses that are directly targeted by the attack but also those whose presence can directly increase the likelihood of the attack succeeding or the impact if it does succeed.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Related_Weakness" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This field describes an individual related weakness.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CWE_ID" type="xs:integer">
+											<xs:annotation>
+												<xs:documentation>The CWE_ID is a field that exists for all weaknesses enumerated in the Common Weakness Enumeration (CWE). It is a unique value that allows each weakness to be unambiguously identified. The CWE_ID field for the attack pattern contains the value of the CWE_ID for the specific related weakness.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Weakness_Relationship_Type">
+											<xs:annotation>
+												<xs:documentation>This field describes the nature of the relationship between this weakness and the attack pattern. Weaknesses that are specifically targeted by the attack are of type “Targeted”. Weaknesses which are not specifically targeted but whose presence may increase the likelihood of the attack succeeding or the impact of the attack if it does succeed are of type “Secondary”.</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Targeted"/>
+												<xs:enumeration value="Secondary"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Attack_Prerequisites" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This field describes the conditions that must exist or the functionality and characteristics that the target software must have or behavior it must exhibit for an attack of this type to succeed.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Attack_Prerequisite" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This field describes an individual attack prerequisite.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Methods_of_Attack" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This field describes the mechanism of attack used by this pattern. This field can help define the applicable attack surface required for this attack.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Method_of_Attack" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This field describes the mechanism of attack used by this pattern. In order to assist in normalization and classification, this field involves a selection from an enumerated list of defined vectors which is currently incomplete and will grow as new relevant vectors are identified. This field can help define the applicable attack surface required for this attack.</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:whiteSpace value="collapse"/>
+										<xs:enumeration value="Injection"/>
+										<xs:enumeration value="Modification of Resources"/>
+										<xs:enumeration value="Protocol Manipulation"/>
+										<xs:enumeration value="Analysis"/>
+										<xs:enumeration value="API Abuse"/>
+										<xs:enumeration value="Brute Force"/>
+										<xs:enumeration value="Flooding"/>
+										<xs:enumeration value="Time and State"/>
+										<xs:enumeration value="Spoofing"/>
+										<xs:enumeration value="Social Engineering"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Attacker_Skills_or_Knowledge_Required" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This field describes the level of skills or specific knowledge required by an attacker to execute this type of attack.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Attacker_Skill_or_Knowledge_Required" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This field describes the level of skill or specific knowledge required by an attacker to execute this type of attack.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Skill_or_Knowledge_Level" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This should be communicated on a rough scale (Low, Medium, High). For example: • Low - Basic computer familiarity • Low - Basic SQL knowledge • Medium - Moderate scripting and shell experience and ability to disassemble and decompile • High - Expert knowledge of LINUX kernel • High - Detailed knowledge of target software development practices and business context (former employee) • Etc.</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Low"/>
+												<xs:enumeration value="Medium"/>
+												<xs:enumeration value="High"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Skill_or_Knowledge_Type" type="capec:Structured_Text_Type" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This field provides contextual detail for the skill or knowledge level.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Resources_Required" type="capec:Structured_Text_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This field describes the resources (CPU cycles, IP addresses, tools, etc.) required by an attacker to effectively execute this type of attack.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Attack_Motivation-Consequences" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>What is the attacker trying to achieve by using this attack? This is not the end business/mission goal of the attack within the target context but rather the specific technical result desired that could be leveraged to achieve the end business/mission objective. This information is useful for aligning attack patterns to threat models and for determining which attack patterns are relevant for a given context.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Attack_Motivation-Consequence" type="capec:Common_ConsequenceType" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>What is the attacker trying to achieve by using this attack? This is not the end business/mission goal of the attack within the target context but rather the specific technical result desired that could be leveraged to achieve the end business/mission objective. In order to assist in normalization and classification, this field involves a selection from an enumerated list of defined motivations/consequences which is currently incomplete and will grow as new relevant possibilities are identified. This information is useful for aligning attack patterns to threat models and for determining which attack patterns are relevant for a given context.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="capec:Relationships" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The Relationships structure contains one or more Relationship elements, each of which identifies an association between this structure, whether it is an Attack Pattern, Category, or Compound_Element and another structure.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Relationship_Notes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure houses one or more Relationship_Note elements, which each contain details regarding the relationships between CAPEC entries.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Maintenance_Notes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element contains one or more Maintenance_Note elements which each contain significant maintenance tasks within this entry that still need to be addressed, such as clarifying the concepts involved or improving relationships. It should be filled out in any entry that is still undergoing significant review by the CAPEC team.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Background_Details" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Background_Detail elements, each of which holds information regarding the entry or any technologies that are related to it, where the background information is not related to the nature of the entry itself. It should be filled out where appropriate.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Background_Detail" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This element contains background information regarding the entry or any technologies that are related to it, where the background information is not related to the nature of the category itself. It should be filled out where appropriate.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="capec:Other_Notes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element contains one or more Note elements, each of which provide any additional notes or comments that cannot be captured using other elements. New elements might be defined in the future to contain this information. It should be filled out where needed.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Alternate_Terms" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element contains one or more Alternate_Term elements, each of which contains other names used to describe this attack pattern.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Research_Gaps" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Research gap elements, each of which identifies potential opportunities for the vulnerability research community to conduct further exploration of issues related to this attack pattern. It is intended to highlight parts of CAPEC that have not received sufficient attention from researchers. This should be filled out where appropriate for attack patterns and categories.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="References" type="capec:Reference_List_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The References element contains one or more Reference elements, each of which provide further reading and insight into this attack pattern.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Content_History" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element is used to keep track of the author of the attack pattern entry and anyone who has made modifications to the content. This provides a means of contacting the authors and modifiers for clarifying ambiguities, merging overlapping contributions, etc. This should be filled out for all entries.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>This attribute provides a unique identifier for the entry. It will be static for the lifetime of the entry. In the event that this entry becomes deprecated, the ID will not be reused and a pointer will be left in this entry to the replacement. This is required for all Categories.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>The Name is a descriptive name used to give the reader an idea of what the commonality is amongst the children of this category. All words in the name should be capitalized except for articles and prepositions unless they begin or end the name. Subsequent words in a hyphenated chain are also not capitalized. This is required for all Categories.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Status" type="capec:Status_Type" use="required">
+				<xs:annotation>
+					<xs:documentation>The Status attribute defines the status level for this category.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Attack_Pattern" type="capec:Attack_PatternType">
+		<xs:annotation>
+			<xs:documentation>This element is an individual attack pattern.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Compound_Element">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Description">
+					<xs:annotation>
+						<xs:documentation>This field provides a description of this Structure, whether it is an Attack Pattern, Category or Compound Element. Its primary subelement is Description_Summary which is intended to serve as a minimalistic description which provides the information necessary to understand the primary focus of this entry. Additionally, it has the subelement Extended_Description which is optional and is used to provide further information pertaining to this attack pattern.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Description_Summary" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>This description should be short and should limit itself to describing the key points that define this entry. Further explanation can be included in the extended description element. This is required for all entries.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Extended_Description" type="capec:Structured_Text_Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This element provides a place for details important to the description of this entry to be included that are not necessary to convey the fundamental concept behind the entry. This is not required for all entries and should only be included where appropriate.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="capec:Relationships" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The Relationships structure contains one or more Relationship elements, each of which identifies an association between this structure, whether it is an Attack Pattern, Category, or Compound_Element and another structure.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Relationship_Notes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure houses one or more Relationship_Note elements, which each contain details regarding the relationships between CAPEC entries.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Maintenance_Notes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element contains one or more Maintenance_Note elements which each contain significant maintenance tasks within this entry that still need to be addressed, such as clarifying the concepts involved or improving relationships. It should be filled out in any entry that is still undergoing significant review by the CAPEC team.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Background_Details" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Background_Detail elements, each of which holds information regarding the entry or any technologies that are related to it, where the background information is not related to the nature of the entry itself. It should be filled out where appropriate.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Background_Detail" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This element contains background information regarding the entry or any technologies that are related to it, where the background information is not related to the nature of the attack pattern itself. It should be filled out where appropriate.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="capec:Other_Notes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element contains one or more Note elements, each of which provide any additional notes or comments that cannot be captured using other elements. New elements might be defined in the future to contain this information. It should be filled out where needed.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Alternate_Terms" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element contains one or more Alternate_Term elements, each of which contains other names used to describe this attack pattern.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Research_Gaps" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Research gap elements, each of which identifies potential opportunities for the vulnerability research community to conduct further exploration of issues related to this attack pattern. It is intended to highlight parts of CAPEC that have not received sufficient attention from researchers. This should be filled out where appropriate for attack patterns and categories.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="References" type="capec:Reference_List_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The References element contains one or more Reference elements, each of which provide further reading and insight into this attack pattern.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="capec:Content_History" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This element is used to keep track of the author of the attack pattern entry and anyone who has made modifications to the content. This provides a means of contacting the authors and modifiers for clarifying ambiguities, merging overlapping contributions, etc. This should be filled out for all entries.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ID" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>This attribute provides a unique identifier for the entry. It will be static for the lifetime of the entry. In the event that this entry becomes deprecated, the ID will not be reused and a pointer will be left in this entry to the replacement. This is required for all Compound_Elements.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>The Name is a descriptive name used to give the reader an idea of the meaning behind the compound attack pattern structure. All words in the name should be capitalized except for articles and prepositions unless they begin or end the name. Subsequent words in a hyphenated chain are also not capitalized. This is required for all Compound_Elements.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Compound_Element_Abstraction" use="required">
+				<xs:annotation>
+					<xs:documentation>The Abstraction defines the abstraction level for this attack pattern. The abstraction levels for Compound_Elements and Attack Patterns are the same. For example, if the Compound_Element is a chain, and all elements of the chain are Meta level, then the Compound_Element Abstraction attribute is Meta. This is required for all Compound_Elements.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Meta"/>
+						<xs:enumeration value="Standard"/>
+						<xs:enumeration value="Detailed"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Compound_Element_Completeness" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Complete"/>
+						<xs:enumeration value="Stub"/>
+						<xs:enumeration value="Hook"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Compound_Element_Structure" use="required">
+				<xs:annotation>
+					<xs:documentation>The Structure attribute defines the structural nature of this compound element - that is, composed of other attack patterns concurrently, as in a composite, or consecutively, as in a chain.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Composite"/>
+						<xs:enumeration value="Chain"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Status" type="capec:Status_Type" use="required">
+				<xs:annotation>
+					<xs:documentation>The Status attribute defines the status level for this compound element.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Environment">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Description and globally unique ID for a kind of environment or context that is required. Used in Attack Steps, Indicators of Susceptibility, and Security Controls, etc.</xs:documentation>
+			</xs:annotation>
+			<xs:all>
+				<xs:element name="Environment_Title" type="xs:token"/>
+				<xs:element name="Environment_Description" type="xs:token"/>
+			</xs:all>
+			<xs:attribute name="ID" type="xs:ID" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Attack_Execution_Flow">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Attack_Phases">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Attack_Phase" maxOccurs="3">
+								<xs:annotation>
+									<xs:documentation>Segment the attack steps into the various phases of attack. One of three phases "Explore", "Experiment", or "Exploit." Each phase should appear at most once, and attack steps should be grouped by what kind of activities the attacker is carrying out. The exploration and experimentation phases may or may not occur during a particular attack, because the attacker may already know exactly how to exploit a system.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:annotation>
+											<xs:documentation>One of three phases "Explore", "Experiment", or "Exploit." Each phase should appear at most once, and attack steps should be grouped by what kind of activities the attacker is carrying out.</xs:documentation>
+										</xs:annotation>
+										<xs:element name="Attack_Steps">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Attack_Step" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Brief description of an individual action step in carrying out the attack</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:choice>
+																<xs:element name="Common_Attack_Step">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Pattern_Specific_Overrides" type="capec:Custom_Attack_StepType"/>
+																		</xs:sequence>
+																		<xs:attribute name="Common_Attack_Step_ID" type="xs:integer" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Custom_Attack_Step" type="capec:Custom_Attack_StepType"/>
+															</xs:choice>
+															<xs:attribute name="ID" type="xs:integer" use="required"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="ID" type="xs:integer" use="required"/>
+									<xs:attribute name="Name" use="required">
+										<xs:annotation>
+											<xs:documentation>"Explore", "Experiment", or "Exploit."</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:token">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Explore"/>
+												<xs:enumeration value="Experiment"/>
+												<xs:enumeration value="Exploit"/>
+												<xs:enumeration value=""/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Attack_Step_Technique">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>A particular technique that may accomplish this attack step.</xs:documentation>
+			</xs:annotation>
+			<xs:all>
+				<xs:element name="Attack_Step_Technique_Description" type="capec:Structured_Text_Type">
+					<xs:annotation>
+						<xs:documentation>This field contains a brief description of the attack step technique.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Leveraged_Attack_Patterns" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Leveraged_Attack_Pattern_ID" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Relevant_Attack_Surface_Elements" type="capec:Relevant_Attack_Surface_ElementsType" minOccurs="0"/>
+				<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0"/>
+				<xs:element name="Environments" type="xs:IDREFS">
+					<xs:annotation>
+						<xs:documentation>References the defined environments where this attack step technique is applicable.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+			<xs:attribute name="ID" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:group name="View_Attributes">
+		<xs:annotation>
+			<xs:documentation>The View_Attributes structure is a collection of common elements which might be shared by all Views.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="View_Structure">
+				<xs:annotation>
+					<xs:documentation>The View_Structure element describes how this view is being constructed. Valid values are: Implicit Slice = a slice based on a filter criteria; Explicit Slice = a slice based on arbitrary membership, as defined by specific relationships between entries; Graph = a bounded graphical slice based on ChildOf relationships.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Implicit_Slice"/>
+						<xs:enumeration value="Explicit_Slice"/>
+						<xs:enumeration value="Graph"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="View_Objective" type="capec:Structured_Text_Type">
+				<xs:annotation>
+					<xs:documentation>The View_Objective element describes the perspective from which this View is constructed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="View_Audience" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The View_Audience element provides a reference to the targeted audiences or groups for this view.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Audience" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>The Audience element provides a reference to the target audience or group for this view.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Stakeholder">
+										<xs:annotation>
+											<xs:documentation>The Stakeholder element specifies what types of members of the CAPEC community might be interested in this view.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Developers"/>
+												<xs:enumeration value="Software_Vendors"/>
+												<xs:enumeration value="Assessment_Vendors"/>
+												<xs:enumeration value="Educators"/>
+												<xs:enumeration value="OWGV"/>
+												<xs:enumeration value="SAMATE"/>
+												<xs:enumeration value="CAPEC_Formalization"/>
+												<xs:enumeration value="CAPEC_Team"/>
+												<xs:enumeration value="Software_Customers"/>
+												<xs:enumeration value="Assessment_Customers"/>
+												<xs:enumeration value="Academic_Researchers"/>
+												<xs:enumeration value="Applied_Researchers"/>
+												<xs:enumeration value="Information_Providers"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Stakeholder_Description" type="capec:Structured_Text_Type" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The Stakeholder_Description element provides some text describing what properties of this View this particular Stakeholder might find useful.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="capec:Relationships" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Relationships structure contains one or more Relationship elements, each of which identifies an association between this structure, whether it is a Attack Pattern, Category, or Compound_Element and another structure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="capec:Relationship_Notes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This structure houses one or more Relationship_Note elements, which each contain details regarding the relationships between CAPEC entries.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="capec:Maintenance_Notes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element contains one or more Maintenance_Note elements which each contain significant maintenance tasks within this entry that still need to be addressed, such as clarifying the concepts involved or improving relationships. It should be filled out in any entry that is still undergoing significant review by the CAPEC team.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="capec:Other_Notes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element contains one or more Note elements, each of which provide any additional notes or comments that cannot be captured using other elements. New elements might be defined in the future to contain this information. It should be filled out where needed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="capec:Alternate_Terms" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element contains one or more Alternate_Term elements, each of which contains other names used to describe this attack pattern.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="capec:Research_Gaps" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This structure contains one or more Research gap elements, each of which identifies potential opportunities for the vulnerability research community to conduct further exploration of issues related to this attack pattern. It is intended to highlight parts of CAPEC that have not received sufficient attention from researchers. This should be filled out where appropriate for attack patterns and categories.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="References" type="capec:Reference_List_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The References element contains one or more Reference elements, each of which provide further reading and insight into this view. This should be filled out when the view is based on sources or projects that are external to the CAPEC project.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="View_Filter" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The View_Filter element holds an XSL query for identifying which elements are members of an implicit slice. This should only be present for implicit slices.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="capec:Content_History" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element is used to keep track of the author of the attack pattern entry and anyone who has made modifications to the content. This provides a means of contacting the authors and modifiers for clarifying ambiguities, merging overlapping contributions, etc. This should be filled out for all entries.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:element name="Relationships">
+		<xs:annotation>
+			<xs:documentation>The Relationships structure contains one or more Relationship elements, each of which identifies an association between this structure, whether it is a Attack Pattern, Category, or Compound_Element and another structure.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Relationship" type="capec:RelationshipType" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Each Relationship identifies an association between this structure, whether it is an Attack Pattern, Category, or Compound_Element and another structure. The relationship also identifies the views under which the relationship is applicable.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RelationshipType">
+		<xs:sequence>
+			<xs:element name="Relationship_Views">
+				<xs:annotation>
+					<xs:documentation>This element contains a list of the individual Views to which this relationship pertains.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relationship_View_ID" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Specifies the unique ID of the individual view element to which this relationship pertains. This ID must correspond to a View.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:integer">
+										<xs:attribute name="Ordinal">
+											<xs:annotation>
+												<xs:documentation>The ordinal attribute is used to determine if this relationship is the primary ChildOf relationship for this entry for a given Relationship_View_ID element.. This attribute can only have the value "Primary" and should only be included for the primary parent/child relationship.</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:whiteSpace value="collapse"/>
+													<xs:enumeration value="Primary"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relationship_Chains" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element contains a list of the individual Chains this relationship pertains to.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relationship_Chain_ID" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This element specifies the unique ID of an individual chain element this relationship pertains to.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relationship_Target_Form">
+				<xs:annotation>
+					<xs:documentation>The Relationship_Target_Form element defines the form of the target of this relationship, such as Category, Attack Pattern, View or Compound_Element.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Category"/>
+						<xs:enumeration value="Attack Pattern"/>
+						<xs:enumeration value="View"/>
+						<xs:enumeration value="Compound_Element"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Relationship_Nature" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The Relationship_Nature element defines the nature of the relationship between this element and the target element, such as ChildOf, HasMember or Requires to name a few.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="HasMember">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes the specified entry as a top level member of this View. This value for Relationship_Nature can only be used in Views. The complementary relationship is MemberOf.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="MemberOf">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes membership of this entry in the top level of the View specified in Relationship_Target_ID. The complementary relationship is HasMember.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="ChildOf">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes a specified entry as a parent of this entry. In general, this means that the parent will be a higher level representation of this entry from the perspective of the View provided in Relationship_View_ID. The complementary relationship is ParentOf.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="ParentOf">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes a specified entry as a child of this entry. In general, this means that the child will be a lower level representation of this entry from the perspective of the View provided in Relationship_View_ID. The complementary relationship is ChildOf.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="PeerOf">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes a specified entry as having some similarity with this entry which does not fit any of the other Relationship_Nature values. In this case, a Relationship_Note should also be provided explaining the connection. The complementary relationship is itself (PeerOf).</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="Requires">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes a Compound_Element of Compound_Element_Structure="Composite". All entries that a Composite Requires must exist simultaneously in order for the Compound_Element to exist. The complementary relationship is RequiredBy.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="RequiredBy">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes an entry that is required in order for the Compound_Element specified in Relationship_Target_ID to exist. The complementary relationship is Requires.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="StartsWith">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes the starting point in this chain as the entry specified by Relationship_Target_ID. This Relationship_Nature can only be used for Compound_Elements with Compound_Element_Structure="Chain". For named chains, the complementary relationship is StartsChain.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="StartsChain">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes this entry as the starting point in the chain specified in Relationship_Target_ID. For named chains, the complementary relationship is StartsWith.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="CanPrecede">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes a chain where this entry can precede the entry specified by Relationship_Target_ID in a sequential fashion. It is important to note that not all CanPrecede relationships are captured in a Compound_Element chain, only the most common for now. The complementary relationship is CanFollow.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="CanFollow">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes a chain where this entry can follow the entry specified by Relationship_Target_ID in a sequential fashion. It is important to note that not all CanFollow relationships are captured in a Compound_Element chain, only the most common for now. The complementary relationship is CanPrecede.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="CanAlsoBe">
+							<xs:annotation>
+								<xs:documentation>This Relationship_Nature denotes an entry that, in the proper environment and context, can also be perceived as the entry specified by Relationship_Target_ID. This relationship is not necessarily reciprocal.</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Relationship_Target_ID" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The Relationship_Target_ID specifies the unique ID of the target element of the relationship.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Relationship_Description" type="capec:Structured_Text_Type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Relationship_Notes">
+		<xs:annotation>
+			<xs:documentation>This structure houses one or more Relationship_Note elements, which each contain details regarding the relationships between CAPEC entries.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Relationship_Note" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>This element contains a note regarding the relationships between CAPEC entries.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Maintenance_Notes">
+		<xs:annotation>
+			<xs:documentation>This element contains one or more Maintenance_Note elements which each contain significant maintenance tasks within this entry that still need to be addressed, such as clarifying the concepts involved or improving relationships. It should be filled out in any entry that is still undergoing significant review by the CAPEC team.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Maintenance_Note" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>This element describes a significant maintenance task within this entry that still need to be addressed, such as clarifying the concepts involved or improving relationships. It should be filled out in any entry that is still undergoing significant review by the CAPEC team.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Other_Notes">
+		<xs:annotation>
+			<xs:documentation>This element contains one or more Note elements, each of which provide any additional notes or comments that cannot be captured using other elements. New elements might be defined in the future to contain this information. It should be filled out where needed.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Note" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>This element contains any additional notes or comments that cannot be captured using other elements. New elements might be defined in the future to contain this information. It should be filled out where needed.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Alternate_Terms">
+		<xs:annotation>
+			<xs:documentation>This element contains one or more Alternate_Term elements, each of which contains other names used to describe this attack pattern.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Alternate_Term" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>This element contains alternate terms by which this attack pattern may be known and a description to explain the context in which the term may be relevant. This is not required for all entries and should only be included where appropriate.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Term" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>This element contains the actual term for the Alternate_Term element. Each term should follow the same conventions as the entry Name attribute.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Alternate_Term_Description" type="capec:Structured_Text_Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This element provides context to each Alternate_Term by which this attack pattern may be known.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Research_Gaps">
+		<xs:annotation>
+			<xs:documentation>This structure contains one or more Research gap elements, each of which identifies potential opportunities for the attack research community to conduct further exploration of issues related to this attack pattern. It is intended to highlight parts of CAPEC that have not received sufficient attention from researchers. This should be filled out where appropriate for attack patterns and categories.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Research_Gap" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>This element identifies potential opportunities for the vulnerability research community to conduct further exploration of issues related to this attack pattern. It is intended to highlight parts of CAPEC that have not received sufficient attention from researchers. This should be filled out where appropriate for attack patterns and categories.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Content_History">
+		<xs:annotation>
+			<xs:documentation>This element is used to keep track of the author of the attack pattern entry and anyone who has made modifications to the content. This provides a means of contacting the authors and modifiers for clarifying ambiguities, merging overlapping contributions, etc. This should be filled out for all entries. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Submissions" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Submission elements.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Submission" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This element houses the subelements which identify the submitter and the submitter's comments related to this entry. This element has a single attribute, Submission_Source, which provides a general idea of how the initial information for this entry was obtained, whether internal to the CAPEC team, external, donated, etc.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Submitter" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should contain the name of the author for this entry.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Submitter_Organization" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should identify the author's organization.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Submission_Date" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should provide the date on which this content was authored in YYYY-MM-DD format.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Submission_Comment" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element provides the author with a place to store any comments regarding the content of this attack pattern entry, such as assumptions made, reasons for omitting elements, contact information, pending questions, etc.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Submission_Source" use="optional">
+										<xs:annotation>
+											<xs:documentation>This attribute identifies how the initial information for this entry was obtained.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Externally_Mined"/>
+												<xs:enumeration value="NDA"/>
+												<xs:enumeration value="Internal_CAPEC_Team"/>
+												<xs:enumeration value="External_Submission"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Contributions" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Contribution elements.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Contribution" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This element houses the subelements which identify the contributor and contributor's comments related to this entry. This element has a single attribute, Contribution_Mode, which indicates whether the contribution was part of feedback given to the CAPEC team or actual content that was donated.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Contributor" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should contain the name of the author for this entry.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Contribution_Organization" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should identify the author's organization.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Contribution_Date" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should provide the date on which this content was authored in YYYY-MM-DD format.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Contribution_Comment" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element provides the author with a place to store any comments regarding the content of this attack patterns entry, such as assumptions made, reasons for omitting elements, contact information, pending questions, etc.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Contribution_Mode" use="optional">
+										<xs:annotation>
+											<xs:documentation>This attribute indicates whether the contribution was part of feedback given to the CAPEC team or actual content that was donated.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Content"/>
+												<xs:enumeration value="Feedback"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Modifications" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Modification elements.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Modification" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This element houses the subelements which identify the modifier and modifier's comments related to this entry. A new Modification element should exist for each modification of the entry content. This element has a single attribute, Modification_Source, which indicates whether this modification was made by a CAPEC team member or an external party.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Modifier" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should contain the name of the person modifying this entry.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Modifier_Organization" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should contain the modifier's organization.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Modification_Date" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element should contain the date of the modifications.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Modification_Comment" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>This element provides the modifier with a place to store any comments regarding the content of this attack pattern entry, such as assumptions made, reasons for omitting elements, contact information, pending questions, etc.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Modification_Importance">
+										<xs:annotation>
+											<xs:documentation>This attribute identifies how significant the modification is to the attack pattern with regard to the meaning and interpretation of the pattern. If a modification has a value of Critical, then the meaning of the entry or how it might be interpreted has changed and requires attention from anyone previously dependent on the attack pattern.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Normal"/>
+												<xs:enumeration value="Critical"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="Modification_Source" use="optional">
+										<xs:annotation>
+											<xs:documentation>This attribute indicates whether this modification was created by a CAPEC team member or provided by an external party.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Internal"/>
+												<xs:enumeration value="External"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Previous_Entry_Names" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>This structure contains one or more Previous_Entry_Name elements, each of which describes a previous name that was used for this entry. This should be filled out whenever a substantive name change occurs.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Previous_Entry_Name" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>This element identifies a name that was previously used for this entry.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="Name_Change_Date" type="xs:date" use="required">
+												<xs:annotation>
+													<xs:documentation>This lists the date on which this name was changed to something else. Typically, this date will be closely aligned with new releases of CAPEC.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ObservablesType">
+		<xs:sequence>
+			<xs:element name="Observable" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Signature">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Location-Sensor" minOccurs="0"/>
+									<xs:element name="Stateful_Measure">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Description" type="capec:Structured_Text_Type"/>
+												<xs:element name="Value_Type">
+													<xs:complexType>
+														<xs:choice>
+															<xs:element name="Objective_Value" type="xs:string"/>
+															<xs:element name="Trend">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:whiteSpace value="collapse"/>
+																		<xs:enumeration value="Increasing"/>
+																		<xs:enumeration value="Decreasing"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="Frequency">
+																<xs:complexType>
+																	<xs:attribute name="Rate" type="xs:float" use="required"/>
+																	<xs:attribute name="Units" type="xs:string" use="required"/>
+																	<xs:attribute name="Scale" type="xs:string" use="required"/>
+																</xs:complexType>
+															</xs:element>
+														</xs:choice>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="Name"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Event">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Description" type="capec:Structured_Text_Type"/>
+												<xs:element name="Action">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="Object" maxOccurs="unbounded">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="Value" maxOccurs="unbounded">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="Objective_Value" type="xs:string" minOccurs="0"/>
+																					<xs:element name="Change" type="xs:boolean" minOccurs="0"/>
+																					<xs:element name="Delta" minOccurs="0">
+																						<xs:complexType>
+																							<xs:choice>
+																								<xs:element name="Trend">
+																								<xs:simpleType>
+																									<xs:restriction base="xs:string">
+																										<xs:whiteSpace value="collapse"/>
+																										<xs:enumeration value="Increasing"/>
+																										<xs:enumeration value="Decreasing"/>
+																									</xs:restriction>
+																								</xs:simpleType>
+																								</xs:element>
+																								<xs:element name="Frequency">
+																									<xs:complexType>
+																										<xs:attribute name="Rate" type="xs:float" use="required"/>
+																										<xs:attribute name="Units" type="xs:string" use="required"/>
+																										<xs:attribute name="Scale" type="xs:string" use="required"/>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:choice>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="Event_Type" type="xs:string"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Noisiness" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="High"/>
+									<xs:enumeration value="Medium"/>
+									<xs:enumeration value="Low"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Ease_of_Obfuscation" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="High"/>
+									<xs:enumeration value="Medium"/>
+									<xs:enumeration value="Low"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Obfuscation_Techniques" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Obfuscation_Technique" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Description" type="capec:Structured_Text_Type"/>
+												<xs:element name="Observables" type="capec:ObservablesType"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Structured_Text_Type">
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="capec:Structured_Text_Group"/>
+				<xs:element ref="capec:Block">
+					<xs:annotation>
+						<xs:documentation>Block is a Structured_Text element consisting of one of Text_Title, Text, Code_Example_Language, or Code followed by another Block element. Structured_Text elements help define whitespace and text segments.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:group name="Structured_Text_Group">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Text_Title" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to definebold-faced title for a subsequent block of text.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Text" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define a paragraph of text.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Code_Example_Language" type="capec:Language_Type" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to identify the programming language being used in the following block of Code</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Code" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define a line of code.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Comment" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define a comment in code.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Images" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Presentation Element: This element is used to define an image.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Image" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Presentation Element: This element is used to define an image.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence maxOccurs="unbounded">
+										<xs:element name="Image_Location" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>This element provides the location of the image file.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Image_Title" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>This element provides a title for the image.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	<xs:element name="Block">
+		<xs:annotation>
+			<xs:documentation>Block is a Structured_Text element consisting of one of Text_Title, Text, Code_Example_Language, or Code followed by another Block element. Structured_Text elements help define whitespace and text segments.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="capec:Structured_Text_Group"/>
+				<xs:element ref="capec:Block">
+					<xs:annotation>
+						<xs:documentation>Block is a Structured_Text element consisting of one of Text_Title,Text, Code_Example_Language, or Code followed by another Block element. Structured_Text elements help define whitespace and text segments.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:attribute name="Block_Nature">
+				<xs:annotation>
+					<xs:documentation>This attribute identifies the nature of the content containedwithin the Block.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Good_Code"/>
+						<xs:enumeration value="Bad_Code"/>
+						<xs:enumeration value="Mitigation_Code"/>
+						<xs:enumeration value="Attack"/>
+						<xs:enumeration value="Result"/>
+						<xs:enumeration value="List"/>
+						<xs:enumeration value="Numeric_List"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Reference_List_Type">
+		<xs:annotation>
+			<xs:documentation>The References_List_Type contains one or more Reference elements, each of which provide further reading and insight into the item. This should be filled out as appropriate.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Reference" type="capec:Reference_Type" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Each Reference subelement should provide a single source from which more information and deeper insight can be obtained, such as a research paper or an excerpt from a publication. Multiple Reference subelements can exist. The sole attribute of this element is the id. The id is optional and translates to a preceding footnote below the context notes if the author of the entry wants to cite a reference. Not all subelements need to be completed, since some are designed for web references and others are designed for book references. The fields Reference_Author and Reference_Title should be filled out for all references if possible. Reference_Section and Reference_Date can be included for either book references or online references. Reference_Edition, Reference_Publication, Reference_Publisher, and Reference_PubDate are intended for book references, however they can be included where appropriate for other types of references. Reference_Link is intended for web references, however it can be included for book references as well if applicable.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Reference_Type">
+		<xs:sequence>
+			<xs:element name="Reference_Author" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>This element identifies an individual author of the material being referenced. It is not required, but may be repeated sequentially in order to identify multiple authors for a single piece of material.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Title" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element identifies the title of the material beingreferenced. It is not required if the material does not have a title.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Section" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element is intended to provide a means of identifying the exact location of the material inside of the publication source, such as the relevant pages of a research paper, the appropriate chapters from a book, etc. This is useful for both book references and internet references.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Edition" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element identifies the edition of the material being referenced in the event that multiple editions of the material exist. This will usually only be useful for book references.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Publication" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element identifies the publication source of the reference material, if one exists.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Publisher" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element identifies the publisher of the reference material, if one exists.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Date" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element identifies the date when the reference was included in the entry. This provides the reader with a time line for when the material in the reference, usually the link, was valid. The date should be of the format YYYY-MM-DD.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_PubDate" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field describes the date when the reference was published YYYY.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference_Link" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element should hold the URL for the material being referenced, if one exists. This should always be used for web references, and may optionally be used for book and other publication references.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Reference_ID" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Reference_ID is an optional value for the related Reference entry identifier as a string. Only one Reference_ID element can exist for each Reference element (ex: REF-1). However, References across CAPEC with the same ID should only vary in small details. Text citing this reference should use the local reference ID, as this ID is only for reference library related consistency checking and maintenance.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Local_Reference_ID" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Local_Reference_ID is an optional value for the related Local Reference entry identifier as a string. Only one Local_Reference_ID element can exist for each Reference element (ex: R.78.1). Text citing this reference should use the format [R.78.1].</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:simpleType name="Language_Type">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="C"/>
+			<xs:enumeration value="C++"/>
+			<xs:enumeration value="C#"/>
+			<xs:enumeration value="Java"/>
+			<xs:enumeration value="JSP"/>
+			<xs:enumeration value="Javascript"/>
+			<xs:enumeration value="ASP.NET"/>
+			<xs:enumeration value="SQL"/>
+			<xs:enumeration value="Python"/>
+			<xs:enumeration value="Perl"/>
+			<xs:enumeration value="PHP"/>
+			<xs:enumeration value="SOAP"/>
+			<xs:enumeration value="Ruby"/>
+			<xs:enumeration value="Shell"/>
+			<xs:enumeration value="PseudoCode"/>
+			<xs:enumeration value=".NET"/>
+			<xs:enumeration value="Assembly"/>
+			<xs:enumeration value="XML"/>
+			<xs:enumeration value="HTML"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Frequency_Type">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="Often"/>
+			<xs:enumeration value="Sometimes"/>
+			<xs:enumeration value="Rarely"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Status_Type">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="Deprecated"/>
+			<xs:enumeration value="Incomplete"/>
+			<xs:enumeration value="Draft"/>
+			<xs:enumeration value="Usable"/>
+			<xs:enumeration value="Stable"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Custom_Attack_StepType">
+		<xs:sequence>
+			<xs:element name="Attack_Step_Title" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains a short descriptive title for the attack step. It should be kept as short as possible but also clearly convey the nature of the attack step being described.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Attack_Step_Description" type="capec:Structured_Text_Type">
+				<xs:annotation>
+					<xs:documentation>This field contains a brief description of the attack step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Attack_Step_Techniques" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="capec:Attack_Step_Technique" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This field captures various techniques that the attacker can use to achieve the attack step’s goal. For example, an attacker may use tools such as WebScarab and Tamper Data in the experimentation phase of a SQL Injection attack pattern. The techniques include references to environments, because not all techniques work in all environments</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Indicators" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Indicator" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>These are indicators that the application may or may not be susceptible to the given attack step (not necessarily the pattern as a whole).</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="Indicator_Description" type="capec:Structured_Text_Type">
+										<xs:annotation>
+											<xs:documentation>This field contains a brief description of the indicator.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Relevant_Attack_Surface_Elements" type="capec:Relevant_Attack_Surface_ElementsType" minOccurs="0"/>
+									<xs:element name="Environments" type="xs:IDREFS">
+										<xs:annotation>
+											<xs:documentation>References the defined environments where this indicator of susceptibility is applicable.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0"/>
+								</xs:all>
+								<xs:attribute name="ID" type="xs:integer" use="required">
+									<xs:annotation>
+										<xs:documentation>This field contains a unique integer identifier for the indicator.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="type" use="required">
+									<xs:annotation>
+										<xs:documentation>Each indicator has a mandatory type attribute that can be one of the values “Positive,” “Negative,” or “Inconclusive.” For example, a positive indicator of susceptibility to parameter tampering is the existence of parameters in the URL. Although it does not guarantee susceptibility, it indicates a cause for further examination. A negative indicator for the technique of privilege escalation is a lack of credentials and user identifiers in an application. Again, this is not a conclusive measure of resistance to attack, but an indicator that the attack step technique is unlikely to bear significant fruit. An inconclusive indicator of susceptibility to dynamic code injection is a page whose URL ends in .jsp, .asp, or .do but which has no visible explicit parameters. Such URLs typically indicate dynamic processing, but since no visible parameters are passed, it is inconclusive whether dynamic code could be injected into the application.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:token">
+											<xs:whiteSpace value="collapse"/>
+											<xs:enumeration value="Positive"/>
+											<xs:enumeration value="Negative"/>
+											<xs:enumeration value="Inconclusive"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Outcomes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Outcome" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This field captures possible outcomes for this attack step.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Outcome_Description" type="xs:string"/>
+									<xs:element name="Relevant_Attack_Surface_Elements" type="capec:Relevant_Attack_Surface_ElementsType" minOccurs="0"/>
+									<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0"/>
+								</xs:sequence>
+								<xs:attribute name="ID" type="xs:integer" use="required">
+									<xs:annotation>
+										<xs:documentation>This field contains a unique integer identifier for the outcome.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="type" use="required">
+									<xs:annotation>
+										<xs:documentation>An outcome has a mandatory type attribute that can be one of the values “success,” “failure,” or “inconclusive.” It indicates what results of executing the attack step techniques should be considered successes, which should be considered failures, and which ones are inconclusive. Outcomes’ successes are determined relative to the attacker’s point of view. It is a success if the attack step got the attacker closer to his goal of attacking the application. It is a failure if the attacker got no closer to his goal.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:token">
+											<xs:whiteSpace value="collapse"/>
+											<xs:enumeration value="Success"/>
+											<xs:enumeration value="Failure"/>
+											<xs:enumeration value="Inconclusive"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Security_Controls" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Security_Control" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This field captures security controls for this attack step that describe ways in which the attack step can be detected, corrected, or prevented. These are presented from a defender’s point of view, where the defender may be a developer, tester, operations administrator, or other resource resisting the attacker.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Security_Control_Description" type="xs:string"/>
+									<xs:element name="Relevant_Attack_Surface_Elements" type="capec:Relevant_Attack_Surface_ElementsType" minOccurs="0"/>
+									<xs:element name="Observable_Evidence" minOccurs="0">
+										<xs:complexType>
+											<xs:choice>
+												<xs:element name="IfPresent_Observables" type="cybox:ObservablesType"/>
+												<xs:element name="IfNotPresent_Observables" type="cybox:ObservablesType"/>
+											</xs:choice>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="ID" type="xs:integer" use="required">
+									<xs:annotation>
+										<xs:documentation>This field contains a unique integer identifier for the security control.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="type" use="required">
+									<xs:annotation>
+										<xs:documentation>Each security control has a mandatory type attribute that can be one of the values “Detective,” “Corrective,” or “Preventative.” Detective controls detect an attacker’s activities in the attack step, whether the activities are successful or not. Corrective controls attempt to mitigate an attacker’s success by responding to a successful outcome. They are not related to or normalized against outcomes. Preventative controls are those that make the attack step unlikely or impossible to succeed.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:token">
+											<xs:whiteSpace value="collapse"/>
+											<xs:enumeration value="Detective"/>
+											<xs:enumeration value="Corrective"/>
+											<xs:enumeration value="Preventative"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Target_Attack_SurfaceType">
+		<xs:choice>
+			<xs:element name="Common_Attack_Surface_Description">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Attack_Surface_Elements" type="capec:Relevant_Attack_Surface_ElementsType"/>
+						<xs:element name="Pattern_Specific_Overrides" type="capec:Target_Attack_Surface_DescriptionType" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute name="Common_Attack_Surface_ID"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Target_Attack_Surface_Description" type="capec:Target_Attack_Surface_DescriptionType"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Target_Attack_Surface_DescriptionType">
+		<xs:sequence>
+			<xs:element name="Targeted_OSI_Layers">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Targeted_OSI_Layer" maxOccurs="unbounded">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Physical Layer"/>
+									<xs:enumeration value="Data Link Layer"/>
+									<xs:enumeration value="Network Layer"/>
+									<xs:enumeration value="Transport Layer"/>
+									<xs:enumeration value="Session Layer"/>
+									<xs:enumeration value="Presentation Layer"/>
+									<xs:enumeration value="Application Layer"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Target_Attack_Surface_Localities">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Target_Attack_Surface_Locality" maxOccurs="unbounded">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Client-side"/>
+									<xs:enumeration value="Server-side"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Target_Attack_Surface_Types">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Target_Attack_Surface_Type" maxOccurs="unbounded">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Network"/>
+									<xs:enumeration value="Host"/>
+									<xs:enumeration value="Service"/>
+									<xs:enumeration value="Non-Web Application"/>
+									<xs:enumeration value="Web Application"/>
+									<xs:enumeration value="Firewall"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Target_Functional_Services" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Target_Functional_Service" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Protocol" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Protocol_Structure" minOccurs="0">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="Protocol_Header" maxOccurs="unbounded">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="Protocol_RFC" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="Protocol_Field_Name" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="Protocol_Field_Description" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="Protocol_Flag_Description" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="Protocol_Flag_Value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="Protocol_Operation_Code" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="Protocol_Data" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+																	</xs:sequence>
+																	<xs:attribute name="ID" type="xs:integer" use="required"/>
+																	<xs:attribute name="Name" type="xs:string"/>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Command_Structures" minOccurs="0">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="Command_Structure" maxOccurs="unbounded">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="Command_Description" type="xs:string" minOccurs="0"/>
+																		<xs:element name="Command_Type" type="xs:string" minOccurs="0"/>
+																		<xs:element name="Command_Group_Label" type="xs:string" minOccurs="0"/>
+																	</xs:sequence>
+																	<xs:attribute name="ID" type="xs:integer" use="required"/>
+																	<xs:attribute name="Name" type="xs:string" use="required"/>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Related_Protocols" minOccurs="0">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="Related_Protocol" maxOccurs="unbounded">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="Relationship_Type" maxOccurs="unbounded">
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:whiteSpace value="collapse"/>
+																					<xs:enumeration value="Is an abstraction of"/>
+																					<xs:enumeration value="Is a refinement of"/>
+																					<xs:enumeration value="Is an alternative to"/>
+																					<xs:enumeration value="Uses Protocol"/>
+																					<xs:enumeration value="Is a service of"/>
+																					<xs:enumeration value="Is a command of"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:element>
+																	</xs:sequence>
+																	<xs:attribute name="Name"/>
+																	<xs:attribute name="RFC"/>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="ID" type="xs:integer" use="required"/>
+											<xs:attribute name="Name" type="xs:string" use="required"/>
+											<xs:attribute name="RFC" type="xs:string"/>
+											<xs:attribute name="Encryption" type="xs:boolean"/>
+											<xs:attribute name="Encryption_Type" type="xs:string"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="ID" type="xs:integer" use="required"/>
+								<xs:attribute name="Name" type="xs:string" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Relevant_Attack_Surface_ElementsType">
+		<xs:sequence>
+			<xs:element name="Relevant_Functional_Services" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Functional_Service_ID" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Protocols" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Protocol_ID" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Protocol_Headers" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Protocol_Header_ID" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Command_Structures" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Command_Structure_ID" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Common_ConsequenceType">
+		<xs:sequence>
+			<xs:element name="Consequence_Scope" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>This subelement identifies an individual consequence that may result from this attack pattern.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Confidentiality"/>
+						<xs:enumeration value="Integrity"/>
+						<xs:enumeration value="Availability"/>
+						<xs:enumeration value="Access_Control"/>
+						<xs:enumeration value="Non-Repudiation"/>
+						<xs:enumeration value="Accountability"/>
+						<xs:enumeration value="Authentication"/>
+						<xs:enumeration value="Authorization"/>
+						<xs:enumeration value="Other"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Consequence_Technical_Impact" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>This subelement describes the technical impacts that can result from successful execution of this attack pattern.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Modify memory"/>
+						<xs:enumeration value="Read memory"/>
+						<xs:enumeration value="Modify files or directories"/>
+						<xs:enumeration value="Read files or directories"/>
+						<xs:enumeration value="Modify application data"/>
+						<xs:enumeration value="Read application data"/>
+						<xs:enumeration value="DoS: crash / exit / restart"/>
+						<xs:enumeration value="DoS: amplification"/>
+						<xs:enumeration value="DoS: instability"/>
+						<xs:enumeration value="DoS: resource consumption (CPU)"/>
+						<xs:enumeration value="DoS: resource consumption (memory)"/>
+						<xs:enumeration value="DoS: resource consumption (other)"/>
+						<xs:enumeration value="Execute unauthorized code or commands"/>
+						<xs:enumeration value="Gain privileges / assume identity"/>
+						<xs:enumeration value="Bypass protection mechanism"/>
+						<xs:enumeration value="Hide activities"/>
+						<xs:enumeration value="Alter execution logic"/>
+						<xs:enumeration value="Other"/>
+						<xs:enumeration value="&quot;Varies by context&quot;"/>
+						<xs:enumeration value="Quality degradation"/>
+						<xs:enumeration value="Unexpected State"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Consequence_Note" type="capec:Structured_Text_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This subelement provides additional commentary about this consequence.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Common_Consequence_ID" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Common_Consequence_ID stores the value for the related Common_Consequence entry identifier as a string. Only one Common_Consequence_ID element can exist for each Common_Consequence element (ex: CC-1). However, Common_Consequences across CAPEC with the same ID should only vary in small details.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Attack_PatternType">
+		<xs:sequence>
+			<xs:element name="Description" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a detailed description of an attack pattern. Content may include a summary and a list of steps taken by the attacker. USAGE: This element can be used to capture a range of descriptive information. Comprehensive descriptions might include attack trees, exploit graphs, etc., to more clearly elaborate this type of attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Summary" type="capec:Structured_Text_Type">
+							<xs:annotation>
+								<xs:documentation>This element provides a summary description of the attack that includes the attack target and sequence of steps.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="capec:Attack_Execution_Flow" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element lists the steps typically performed by an attacker when executing the attack.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="capec:Alternate_Terms" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element contains one or more alternative terms used to identify the attack pattern.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Target_Attack_Surface" type="capec:Target_Attack_SurfaceType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element characterizes the locations where an attacker interacts with the target system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Attack_Prerequisites" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An attack prerequisite is a condition that must exist in order for an attack of this type to succeed.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Attack_Prerequisite" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This field describes an individual attack prerequisite.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Typical_Severity" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element reflect the typical severity of an attack on a scale of {Very Low, Low, Medium, High, Very High}. USAGE: This element is used to capture an overall typical average value for this type of attack with the understanding that it will not be completely accurate for all attacks.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+						<xs:enumeration value="Very High"/>
+						<xs:enumeration value="High"/>
+						<xs:enumeration value="Medium"/>
+						<xs:enumeration value="Low"/>
+						<xs:enumeration value="Very Low"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Typical_Likelihood_of_Exploit" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents the typical likelihood that the attack will succeed, and provides a likelihood estimate and an explanation that qualifies the estimate. USAGE: This element is used to capture an overall typical average value for this type of attack with the understanding that it will not be completely accurate for all attacks.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Likelihood" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element reflect the likelihood of attack success on a scale of {Very Low, Low, Medium, High, Very High}, in consideration of the attack prerequisites, targeted weakness, attack surface, skills and resources required, as well as effectiveness of likely implemented blocking solutions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Explanation" type="capec:Structured_Text_Type" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element provides qualifications or assumptions regarding the estimated likelihood.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Methods_of_Attack" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more methods of attack. Method of attack is enumerated list of defined vectors that identify the underlying mechanism(s) used in the attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Method_of_Attack" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Method of attack is enumerated list of defined vectors that identify the underlying mechanism(s) used in the attack. USAGE: This element is represented as an enumerated list to facilitate normalization and classification of attack patterns, and to help define the applicable attack surface required for this attack.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Injection"/>
+									<xs:enumeration value="Modification of Resources"/>
+									<xs:enumeration value="Protocol Manipulation"/>
+									<xs:enumeration value="Analysis"/>
+									<xs:enumeration value="API Abuse"/>
+									<xs:enumeration value="Brute Force"/>
+									<xs:enumeration value="Flooding"/>
+									<xs:enumeration value="Time and State"/>
+									<xs:enumeration value="Spoofing"/>
+									<xs:enumeration value="Social Engineering"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Examples-Instances" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more example instances. An example instance details an explanatory example or demonstrative exploit instance of this attack, USAGE: This element is used to to help the reader understand the nature, context and variability of the attack in more practical and concrete terms.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Example-Instance" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This element represents an exploit description and may also provide an external reference and/or a range of related vulnerabilities.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Example-Instance_Description" type="capec:Structured_Text_Type">
+										<xs:annotation>
+											<xs:documentation>This element describes in detail a specific example or exploit instance of this attack pattern. USAGE: This element is used to define the context of an attack, targeted weaknesses or vulnerabilities, the sequence of attack steps, and the resulting impact of attack success or failure.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Example-Instance_Related_Vulnerabilities" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element represents a container of one or more instance related vulnerabilities. An instance related vulnerability identifies vulnerabilities targeted by this exploit instance of the attack.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Example-Instance_Related_Vulnerability" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+													<xs:annotation>
+														<xs:documentation>This element identifies specific vulnerabilities targeted by this exploit instance of the attack. USAGE: This element is used to reference industry-standard identifiers such as Common Vulnerabilities and Exposures (CVE) numbers and/or US-CERT numbers.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Attacker_Skills_or_Knowledge_Required" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more attacker skill or knowledge required. Attacker skill or knowledge required describes the level of skills or specific knowledge needed by an attacker to execute this type of attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Attacker_Skill_or_Knowledge_Required" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Attacker skill or knowledge required describes the level of skills or specific knowledge needed by an attacker to execute this type of attack.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Skill_or_Knowledge_Level" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>This element reflects the level of knowledge or skill required to execute this type of attack on a scale of { Low, Medium, High }. USAGE: This element is used to represent the level with respect to a specified type of skill or knowledge, e.g., low - basic SQL knowledge, high - expert knowledge of LINUX kernel, etc.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Low"/>
+												<xs:enumeration value="Medium"/>
+												<xs:enumeration value="High"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Skill_or_Knowledge_Type" type="capec:Structured_Text_Type" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element details the skill or knowledge required.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Resources_Required" type="capec:Structured_Text_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element describes the resources (CPU cycles, IP addresses, tools, etc.) required by an attacker to effectively execute this type of attack.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Probing_Techniques" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more probing techniques. A probing technique describes a method used to probe and reconnoiter a potential target to determine vulnerability and/or to prepare for this type of attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Probing_Technique" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A probing technique describes a method used to probe and reconnoiter a potential target to determine vulnerability and/or to prepare for this type of attack.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Description" type="capec:Structured_Text_Type" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element provides an explanatory description of the probing technique.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element specifies detailed cyber observable patterns for potential detection of the probing technique activity.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Indicators-Warnings_of_Attack" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more indicator warning of attack. Indicator warning of attack describes activities, events, conditions or behaviors that may indicate that an attack of this type is imminent, in progress or has occurred.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Indicator-Warning_of_Attack" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Indicator warning of attack describes activities, events, conditions or behaviors that may indicate that an attack of this type is imminent, in progress or has occurred.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Description" type="capec:Structured_Text_Type" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element provides an explanatory description of the indicator warning of attack.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element specifies detailed cyber observable patterns for potential detection of the indicator warning of attack.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Obfuscation_Techniques" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more obfuscation techniques. An obfuscation technique can be used to disguise the fact that an attack of this type is imminent, in progress or has occurred.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Obfuscation_Technique" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>An obfuscation technique can be used to disguise the fact that an attack of this type is imminent, in progress or has occurred.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Description" type="capec:Structured_Text_Type" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element provides an explanatory description of the obfuscation technique.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This element specifies detailed cyber observable patterns for potential detection of the obfuscation technique.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Solutions_and_Mitigations" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more solutions or mitigations. A solution or mitigation describes actions or approaches to prevent or mitigate the risk of this attack by improving the resilience of the target system, reduce its attack surface or to reduce the impact of the attack if it is successful.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Solution_or_Mitigation" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A solution or mitigation describes actions or approaches to prevent or mitigate the risk of this attack by improving the resilience of the target system, reduce its attack surface or to reduce the impact of the attack if it is successful.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Attack_Motivation-Consequences" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one ore more attack motivation consequences. Attack motivation consequence represents the desired technical results that could be achieved/leveraged by this attack pattern, represented as an enumerated list of defined adversary motivations/consequences. USAGE: This element is used to identify specific technical results that could be leveraged to achieve the adversary's business or mission objective. This information is useful for aligning attack patterns to threat models and for determining which attack patterns are relevant for a given context.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Attack_Motivation-Consequence" type="capec:Common_ConsequenceType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Attack motivation consequence represents the desired technical results that could be achieved/leveraged by this attack pattern, represented as an enumerated list of defined adversary motivations/consequences.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Injection_Vector" type="capec:Structured_Text_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element details the mechanism and format of an input-driven attack of this type. Injection vectors take into account the grammar of an attack, the syntax accepted by the system, the position of various fields, and the ranges of data that are acceptable.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Payload" type="capec:Structured_Text_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element describes the code, configuration or other data to be executed or otherwise activated as part of an injection-based attack of this type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Activation_Zone" type="capec:Structured_Text_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element describes the area within the target software that is capable of executing or otherwise activating the payload of an injection-based attack of this type. The activation zone is where the intent of the attacker is put into action. The activation zone may be a command interpreter, some active machine code in a buffer, a client browser, a system API call, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Payload_Activation_Impact" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element describes the impact that the activation of the attack payload for an injection-based attack of this type would typically have on the confidentiality, integrity or availability of the target software.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Description" type="capec:Structured_Text_Type" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element provides an explanatory description of the payload activation impact.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Observables" type="cybox:ObservablesType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element specifies detailed cyber observable patterns for potential detection of the payload activation impact.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Related_Weaknesses" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more related weaknesses. Related weaknesses refer to software weaknesses potentially targeted for exploit by this attack pattern. USAGE: This element is used to reference industry standard Common Weakness Enumeration (CWE) data, including weaknesses that are exploited by the attack as well as weaknesses whose presence increases the likelihood or impact of the attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Related_Weakness" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Related weaknesses refer to software weaknesses potentially targeted for exploit by this attack pattern.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CWE_ID" type="xs:integer">
+										<xs:annotation>
+											<xs:documentation>The element contains the Common Weakness Enumeration (CWE) ID of the exploited software weakness.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Weakness_Relationship_Type">
+										<xs:annotation>
+											<xs:documentation>This element describes the nature of the relationship between the attack pattern and the software weakness, represented as the enumerated list {Targeted, Secondary}. USAGE: This element is used to indicate whether the weakness is targeted or secondary. If the attack is designed to exploit the weakness, then that weakness is Targeted. A weaknesses whose presence may increase the likelihood of the attack succeeding or the impact of the attack if it does succeed is Secondary.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Targeted"/>
+												<xs:enumeration value="Secondary"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Related_Vulnerabilities" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more related vulnerabilities. A related vulnerability refers to a specific instance vulnerability targeted for exploit by this attack pattern. USAGE: This element is used to identify specific vulnerabilities by their industry-standard Common Vulnerabilities and Exposures (CVE) numbers and/or US-CERT numbers. As vulnerabilities are much more specific and localized than weaknesses, it is uncommon that an attack pattern would target a specific vulnerability. This would most likely occur if the attack pattern were targeting vulnerabilities in the underlying platform, framework, or software library.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Related_Vulnerability" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This element represents a specific instance vulnerability targeted for exploit by this attack pattern.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Vulnerability_ID" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>The element contains the Common Vulnerabilities and Explosures (CVE) or US-CERT number identifying the vulnerability.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Vulnerability_Description" type="capec:Structured_Text_Type">
+										<xs:annotation>
+											<xs:documentation>This element contains a short textual description of the specific related vulnerability taken from the industry standard vulnerability listing.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Related_Attack_Patterns" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more related attack patterns. A related attack pattern refers to an attack pattern that is dependent on or applied in conjunction with this attack pattern.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Related_Attack_Pattern" type="capec:RelationshipType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A related attack pattern refers to an attack pattern that is dependent on or applied in conjunction with this attack pattern.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Security_Requirements" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more relevant security requirements. A relevant security requirement is a general security requirement that is relevant to this type of attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Security_Requirement" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A relevant security requirement is a general security requirement that is relevant to this type of attack.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Design_Patterns" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more relevant design patterns. Relevant design patterns include both recommended design patterns, which increase the software's resistance or resilience to this type of attack, and non-recommended design patterns, which could leave the system especially susceptible to this type of attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Recommended_Design_Patterns">
+							<xs:annotation>
+								<xs:documentation>This element represents a container of one or more recommended design patterns. A recommended design pattern increases the software's resistance or resilience to this type of attack.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Recommended_Design_Pattern" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>A design pattern that is likely to increase the software’s resistance or resiliency to this type of attack.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Non-Recommended_Design_Patterns">
+							<xs:annotation>
+								<xs:documentation>This element represents a container of one or more non-recommended design patterns. A non-recommended design can decrease a sofware's resistence or resilience to this type of attack, leaving the system more susceptible.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Non-Recommended_Design_Pattern" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>A non-recommended design can decrease a sofware's resistence or resilience to this type of attack, leaving the system more susceptible.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Relevant_Security_Patterns" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more relevant security patterns. A relevant security pattern provides resistance or resilience to this type of attack.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Relevant_Security_Pattern" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A relevant security pattern provides resistance or resilience to this type of attack.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Related_Security_Principles" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more related security principles. A principle is defined as a rule or standard for good behavior. A related security principle is a security rule or practice that impedes this attack pattern. USAGE: Usage defined in NIST SP 800-27A, "Engineering Principles for Information Technology Security", Revision A.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Related_Security_Principle" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A related security principle is a security rule or practice that impedes this attack pattern.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Related_Guidelines" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more related guidelines. A related guideline represents a security guideline that is relevant to identifying or mitigating this type of attack. USAGE: It would be helpful to provide a usage reference. However links to security principle and guideline documentation on the BSI site appear to be broken. NIST SP 800-27 uses the terms principle and guideline interchangeably.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Related_Guideline" type="capec:Structured_Text_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A related guideline represents a security guideline that is relevant to identifying or mitigating this type of attack.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Purposes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more purposes. Purpose refers to the intended purpose behind the attack pattern relative to an enumerated list of attack objectives. USAGE: This element is used to capture pattern composibility and assist with normalization and classification of attack patterns within the CAPEC catalog.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Purpose" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Purpose refers to the intended purpose behind the attack pattern relative to an enumerated list of attack objectives. USAGE: This element is represented as an enumerated list to facilitate normalization and classification of attack patterns</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Reconnaissance"/>
+									<xs:enumeration value="Penetration"/>
+									<xs:enumeration value="Exploitation"/>
+									<xs:enumeration value="Obfuscation"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CIA_Impact" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element characterizes the typical relative impact of this pattern on the confidentiality, integrity, and availability of the targeted software.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Confidentiality_Impact" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element describes the typical impact of this pattern on the confidentiality characteristics of the targeted software and related data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Low"/>
+									<xs:enumeration value="Medium"/>
+									<xs:enumeration value="High"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Integrity_Impact" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element describes the typical impact of this pattern on the integrity characteristics of the targeted software and related data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Low"/>
+									<xs:enumeration value="Medium"/>
+									<xs:enumeration value="High"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Availability_Impact" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element describes the typical impact of this pattern on the availability characteristics of the targeted software and related data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:whiteSpace value="collapse"/>
+									<xs:enumeration value="Low"/>
+									<xs:enumeration value="Medium"/>
+									<xs:enumeration value="High"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Technical_Context" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element characterizes the technical context where this pattern is applicable.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Architectural_Paradigms" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element represents a container of one or more architectural paradigms in which this attack pattern is possible and relevant. Architectural paradigm characterizes the target using an enumerated list of paradigms utilized by the target.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Architectural_Paradigm" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Architectural paradigm characterizes the target using an enumerated list of supported paradigms in which this attack pattern is possible and relevant. USAGE: This element is represented as an enumerated list to facilitate normalization and classification of attack patterns</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Client-Server"/>
+												<xs:enumeration value="Mainframe"/>
+												<xs:enumeration value="Mobile"/>
+												<xs:enumeration value="n-Tier"/>
+												<xs:enumeration value="SOA"/>
+												<xs:enumeration value="Web"/>
+												<xs:enumeration value="Other"/>
+												<xs:enumeration value="All"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Frameworks" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element represents a container of one or more frameworks in which this attack pattern is possible and relevant. Frameworks characterizes the target using an enumerated list of frameworks utilized by the target.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Framework" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Framework characterizes the target using an enumerated list of supported frameworks in which this attack pattern is possible and relevant. USAGE: This element is represented as an enumerated list to facilitate normalization and classification of attack patterns</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="J2EE"/>
+												<xs:enumeration value=".NET"/>
+												<xs:enumeration value="Struts"/>
+												<xs:enumeration value="Spring"/>
+												<xs:enumeration value="Hibernate"/>
+												<xs:enumeration value="Other"/>
+												<xs:enumeration value="All"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Platforms" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element represents a container of one or more platforms in which this attack pattern is possible and relevant. Platforms characterizes the target using an enumerated list of platforms utilized by the target.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Platform" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Platform characterizes the target using an enumerated list of supported platforms in which this attack pattern is possible and relevant. USAGE: This element is represented as an enumerated list to facilitate normalization and classification of attack patterns</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="Android"/>
+												<xs:enumeration value="BlackBerry"/>
+												<xs:enumeration value="iOS"/>
+												<xs:enumeration value="Mac OS"/>
+												<xs:enumeration value="Windows"/>
+												<xs:enumeration value="UNIX-LINUX"/>
+												<xs:enumeration value="Solaris"/>
+												<xs:enumeration value="Other"/>
+												<xs:enumeration value="All"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Languages" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element represents a container of one or more languages in which this attack pattern is possible and relevant. Languages characterizes the target using an enumerated list of languages utilized by the target.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Language" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Language characterizes the target using an enumerated list of implementation languages in which this attack pattern is possible and relevant. USAGE: This element is represented as an enumerated list to facilitate normalization and classification of attack patterns.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:whiteSpace value="collapse"/>
+												<xs:enumeration value="AJAX"/>
+												<xs:enumeration value="ASP"/>
+												<xs:enumeration value="ASP.NET"/>
+												<xs:enumeration value="C"/>
+												<xs:enumeration value="C++"/>
+												<xs:enumeration value="C#"/>
+												<xs:enumeration value="Java"/>
+												<xs:enumeration value="JSP"/>
+												<xs:enumeration value="Objective-C"/>
+												<xs:enumeration value="PHP"/>
+												<xs:enumeration value="PERL"/>
+												<xs:enumeration value="Ruby"/>
+												<xs:enumeration value="Visual Basic"/>
+												<xs:enumeration value="Other"/>
+												<xs:enumeration value="All"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Keywords" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more keywords. Keyword correspond to text strings used to tag and search CAPEC catalog data.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Keyword" type="xs:string" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Keyword correspond to text strings used to tag and search CAPEC catalog data.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="References" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents a container of one or more references. Reference represents a documentary resource used to develop the definition of this attack pattern.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Reference" type="capec:Reference_Type" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Reference represents a documentary resource used to develop the definition of this attack pattern.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="capec:Other_Notes" minOccurs="0"/>
+			<xs:element ref="capec:Maintenance_Notes" minOccurs="0"/>
+			<xs:element ref="capec:Content_History" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ID" type="xs:integer" use="optional" default="0"/>
+		<xs:attribute name="Name" type="xs:string" use="required"/>
+		<xs:attribute name="Pattern_Completeness">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:whiteSpace value="collapse"/>
+					<xs:enumeration value="Complete"/>
+					<xs:enumeration value="Stub"/>
+					<xs:enumeration value="Hook"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="Pattern_Abstraction" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:whiteSpace value="collapse"/>
+					<xs:enumeration value="Meta"/>
+					<xs:enumeration value="Standard"/>
+					<xs:enumeration value="Detailed"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="Status" type="capec:Status_Type" use="required">
+			<xs:annotation>
+				<xs:documentation>The Status attribute defines the status level for this view.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

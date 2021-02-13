@@ -11,8 +11,7 @@ namespace $rootnamespace$
     /// </summary>
     /// <remarks>IIdentityContextAwareAction applies to objects implementing IIdentity.</remarks>
     // TODO: Change Label, Priority and ExecutionMode. 
-    [Extension(typeof(IContextAwareAction), "$guid1$", 
-        "$itemname$ Context Aware Action", 100, ExecutionMode.Simplified)]
+    [Extension("$guid1$", "$itemname$ Context Aware Action", 100, ExecutionMode.Simplified)]
     public class $safeitemname$ : IIdentityContextAwareAction
     {
         // TODO: specify the right scope.

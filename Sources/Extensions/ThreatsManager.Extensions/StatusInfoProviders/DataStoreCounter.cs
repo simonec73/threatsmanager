@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -10,12 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "050DF7F2-0AD0-4F28-BEF4-8393358EF165")]
-    [ExportMetadata("Label", "Data Store Counter Status Info Provider")]
-    [ExportMetadata("Priority", 12)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("050DF7F2-0AD0-4F28-BEF4-8393358EF165", "Data Store Counter Status Info Provider", 12, ExecutionMode.Simplified)]
     public class DataStoreCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

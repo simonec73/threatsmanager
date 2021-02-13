@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -9,12 +8,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "0B7C32A9-5E69-42EE-A379-288FDF9BB9F2")]
-    [ExportMetadata("Label", "Fully Mitigated Threat Events Percentage Status Info Provider")]
-    [ExportMetadata("Priority", 60)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("0B7C32A9-5E69-42EE-A379-288FDF9BB9F2", "Fully Mitigated Threat Events Percentage Status Info Provider", 60, ExecutionMode.Simplified)]
     public class FullyMitigatedThreatEventsPerc : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

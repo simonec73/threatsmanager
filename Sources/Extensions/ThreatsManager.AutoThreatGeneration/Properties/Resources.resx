@@ -117,19 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LabelSelectionRule" xml:space="preserve">
-    <value>Selection Rule</value>
-  </data>
-  <data name="LabelSelectionRuleNode" xml:space="preserve">
-    <value>Selection Rule Node</value>
-  </data>
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
-  </data>
-  <data name="AutoThreatGenPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema that collects properties used to configure the Automatic Threat Event Generation Extension.</value>
-  </data>
-  <data name="PropertyAutoGenRule" xml:space="preserve">
-    <value>Configuration of the Automatic Threat Events Generation rules.</value>
   </data>
 </root>

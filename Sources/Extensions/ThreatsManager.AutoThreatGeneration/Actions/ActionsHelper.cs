@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using PostSharp.Patterns.Contracts;
+    using PostSharp.Patterns.Contracts;
+using ThreatsManager.AutoGenRules.Engine;
+using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.AutoThreatGeneration.Engine;
-using ThreatsManager.AutoThreatGeneration.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -13,38 +13,36 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 {
     public static class ActionsHelper
     {
+        private const string OldSchemaName = "Automatic Threat Event Generation Extension Configuration";
+        private const string OldPropertyName = "AutoGenRule";
+
         public static bool GenerateThreatEvents(this IThreatModel model)
         {
-            bool result = false;
+            var result = false;
 
-            var schemaManager = new AutoThreatGenPropertySchemaManager(model);
-            var propertyType = schemaManager.GetPropertyType();
-            if (propertyType is IJsonSerializableObjectPropertyType jsonPropertyType)
+            var threatTypesWithRules = GetThreatTypesWithRules(model)?.ToArray();
+            if (threatTypesWithRules?.Any() ?? false)
             {
-                var threatTypes = model.ThreatTypes?.Where(x => x.HasProperty(jsonPropertyType)).ToArray();
-                if (threatTypes?.Any() ?? false)
+                ApplyThreatTypes(model, threatTypesWithRules);
+
+                var entities = model.Entities?.ToArray();
+                if (entities?.Any() ?? false)
                 {
-                    ApplyThreatTypes(model, threatTypes, jsonPropertyType);
-
-                    var entities = model.Entities?.ToArray();
-                    if (entities?.Any() ?? false)
+                    foreach (var entity in entities)
                     {
-                        foreach (var entity in entities)
-                        {
-                            ApplyThreatTypes(entity, threatTypes, jsonPropertyType);
-                        }
+                        ApplyThreatTypes(entity, threatTypesWithRules);
                     }
-                    var dataFlows = model.DataFlows?.ToArray();
-                    if (dataFlows?.Any() ?? false)
-                    {
-                        foreach (var dataFlow in dataFlows)
-                        {
-                            ApplyThreatTypes(dataFlow, threatTypes, jsonPropertyType);
-                        }
-                    }
-
-                    result = true;
                 }
+                var dataFlows = model.DataFlows?.ToArray();
+                if (dataFlows?.Any() ?? false)
+                {
+                    foreach (var dataFlow in dataFlows)
+                    {
+                        ApplyThreatTypes(dataFlow, threatTypesWithRules);
+                    }
+                }
+
+                result = true;
             }
 
             return result;
@@ -56,17 +54,11 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 
             if (entity.Model is IThreatModel model)
             {
-                var schemaManager = new AutoThreatGenPropertySchemaManager(model);
-                var propertyType = schemaManager.GetPropertyType();
-                if (propertyType is IJsonSerializableObjectPropertyType jsonPropertyType)
+                var threatTypesWithRules = GetThreatTypesWithRules(model)?.ToArray();
+                if (threatTypesWithRules?.Any() ?? false)
                 {
-                    var threatTypes = model.ThreatTypes?.Where(x => x.HasProperty(jsonPropertyType)).ToArray();
-                    if (threatTypes?.Any() ?? false)
-                    {
-                        ApplyThreatTypes(entity, threatTypes, jsonPropertyType);
-
-                        result = true;
-                    }
+                    ApplyThreatTypes(entity, threatTypesWithRules);
+                    result = true;
                 }
             }
 
@@ -79,17 +71,11 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 
             if (flow.Model is IThreatModel model)
             {
-                var schemaManager = new AutoThreatGenPropertySchemaManager(model);
-                var propertyType = schemaManager.GetPropertyType();
-                if (propertyType is IJsonSerializableObjectPropertyType jsonPropertyType)
+                var threatTypesWithRules = GetThreatTypesWithRules(model)?.ToArray();
+                if (threatTypesWithRules?.Any() ?? false)
                 {
-                    var threatTypes = model.ThreatTypes?.Where(x => x.HasProperty(jsonPropertyType)).ToArray();
-                    if (threatTypes?.Any() ?? false)
-                    {
-                        ApplyThreatTypes(flow, threatTypes, jsonPropertyType);
-
-                        result = true;
-                    }
+                    ApplyThreatTypes(flow, threatTypesWithRules);
+                    result = true;
                 }
             }
 
@@ -97,28 +83,24 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         }
 
         private static bool ApplyThreatTypes([NotNull] IIdentity identity, 
-            [NotNull] IEnumerable<IThreatType> threatTypes,
-            [NotNull] IJsonSerializableObjectPropertyType propertyType)
+            [NotNull] IEnumerable<KeyValuePair<IThreatType, SelectionRule>> threatTypesWithRules)
         {
             bool result = false;
 
-            foreach (var threatType in threatTypes)
+            foreach (var threatTypeWithRule in threatTypesWithRules)
             {
-                result |= ApplyThreatType(identity, threatType, propertyType);
+                result |= ApplyThreatType(identity, threatTypeWithRule.Key, threatTypeWithRule.Value);
             }
 
             return result;
         }
 
         private static bool ApplyThreatType([NotNull] IIdentity identity,
-            [NotNull] IThreatType threatType, [NotNull] IJsonSerializableObjectPropertyType propertyType)
+            [NotNull] IThreatType threatType, [NotNull] SelectionRule rule)
         {
             bool result = false;
 
-            var property = threatType.GetProperty(propertyType);
-            if (property is IPropertyJsonSerializableObject jsonProperty &&
-                jsonProperty.Value is SelectionRule rule && rule.Evaluate(identity) &&
-                identity is IThreatEventsContainer container)
+            if (rule.Evaluate(identity) && identity is IThreatEventsContainer container)
             {
                 var threatEvent = container.AddThreatEvent(threatType);
                 if (threatEvent == null)
@@ -132,72 +114,152 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 
                 if (threatEvent != null)
                 {
-                    result |= threatEvent.ApplyMitigations(propertyType);
+                    result |= threatEvent.ApplyMitigations();
                 }
             }
 
             return result;
         }
 
-        public static bool ApplyMitigations(this IThreatEvent threatEvent, 
-            IJsonSerializableObjectPropertyType propertyType = null)
+        public static bool ApplyMitigations(this IThreatEvent threatEvent)
         {
             bool result = false;
 
             if (threatEvent.ThreatType is IThreatType threatType && threatEvent.Model is IThreatModel model &&
                 threatEvent.Parent is IIdentity identity)
             {
-                if (propertyType == null)
+                var mitigations = threatType.Mitigations?.ToArray();
+                if (mitigations?.Any() ?? false)
                 {
-                    var schemaManager = new AutoThreatGenPropertySchemaManager(model);
-                    propertyType = schemaManager.GetPropertyType() as IJsonSerializableObjectPropertyType;
-                }
+                    ISeverity maximumSeverity = null;
+                    var generated = false;
 
-                if (propertyType != null)
-                {
-                    var mitigations = threatType.Mitigations?.ToArray();
-                    if (mitigations?.Any() ?? false)
+                    foreach (var mitigation in mitigations)
                     {
-                        ISeverity maximumSeverity = null;
-                        var generated = false;
-
-                        foreach (var mitigation in mitigations)
+                        var rule = GetRule(mitigation);
+                        if (rule.Evaluate(identity))
                         {
-                            var mProperty = mitigation.GetProperty(propertyType);
-                            if (mProperty is IPropertyJsonSerializableObject jsonMProperty &&
-                                jsonMProperty.Value is MitigationSelectionRule mRule && mRule.Evaluate(identity))
+                            var strength = mitigation.Strength;
+                            if (rule.StrengthId.HasValue &&
+                                model.GetStrength(rule.StrengthId.Value) is IStrength strengthOverride)
+                                strength = strengthOverride;
+
+                            if (rule.Status.HasValue)
+                                generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength,
+                                                 rule.Status.Value) !=
+                                             null);
+                            else
+                                generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength) !=
+                                             null);
+                            result |= generated;
+
+                            if (generated && rule.SeverityId.HasValue &&
+                                model.GetSeverity(rule.SeverityId.Value) is ISeverity severity &&
+                                (maximumSeverity == null || maximumSeverity.Id > severity.Id))
                             {
-                                var strength = mitigation.Strength;
-                                if (mRule.StrengthId.HasValue &&
-                                    model.GetStrength(mRule.StrengthId.Value) is IStrength strengthOverride)
-                                    strength = strengthOverride;
-
-                                if (mRule.Status.HasValue)
-                                    generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength,
-                                                     mRule.Status.Value) !=
-                                                 null);
-                                else
-                                    generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength) !=
-                                                 null);
-                                result |= generated;
-
-                                if (generated && mRule.SeverityId.HasValue &&
-                                    model.GetSeverity(mRule.SeverityId.Value) is ISeverity severity &&
-                                    (maximumSeverity == null || maximumSeverity.Id > severity.Id))
-                                {
-                                    maximumSeverity = severity;
-                                }
+                                maximumSeverity = severity;
                             }
                         }
+                    }
 
-                        if (maximumSeverity != null && maximumSeverity.Id < threatEvent.SeverityId)
+                    if (maximumSeverity != null && maximumSeverity.Id < threatEvent.SeverityId)
+                    {
+                        threatEvent.Severity = maximumSeverity;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static SelectionRule GetRule([NotNull] IThreatType threatType)
+        {
+            return threatType.GetRule(threatType.Model);
+        }
+
+        public static MitigationSelectionRule GetRule([NotNull] IThreatTypeMitigation threatTypeMitigation)
+        {
+            return threatTypeMitigation.GetRule(threatTypeMitigation.Model) as MitigationSelectionRule;
+        }
+
+        public static SelectionRule GetRule(this IPropertiesContainer container, IThreatModel model = null)
+        {
+            SelectionRule result = null;
+
+            if (model == null && container is IThreatModelChild child)
+                model = child.Model;
+
+            if (model != null)
+            {
+                var schemaManager = new AutoGenRulesPropertySchemaManager(model);
+                var propertyType = schemaManager.GetPropertyType();
+                if (container.HasProperty(propertyType))
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject)
+                    {
+                        result = jsonSerializableObject.Value as SelectionRule;
+                    }
+                }
+                else
+                {
+                    var oldSchema = model.GetSchema(OldSchemaName, Properties.Resources.DefaultNamespace);
+                    var oldPropertyType = oldSchema?.GetPropertyType(OldPropertyName);
+                    if (oldPropertyType != null)
+                    {
+                        if (container.GetProperty(oldPropertyType) is IPropertyJsonSerializableObject
+                            jsonSerializableObject)
                         {
-                            threatEvent.Severity = maximumSeverity;
+                            result = jsonSerializableObject.Value as SelectionRule;
+                            container.AddProperty(propertyType, jsonSerializableObject.StringValue);
+                            container.RemoveProperty(oldPropertyType);
                         }
                     }
                 }
             }
 
+            return result;
+        }
+
+        public static void SetRule(this IPropertiesContainer container, SelectionRule rule, IThreatModel model = null)
+        {
+            if (model == null && container is IThreatModelChild child)
+                model = child.Model;
+
+            if (model != null)
+            {
+                var schemaManager = new AutoGenRulesPropertySchemaManager(model);
+                var propertyType = schemaManager.GetPropertyType();
+                var property = container.GetProperty(propertyType) ?? container.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                {
+                    jsonSerializableObject.Value = rule;
+                }
+            }
+        }
+
+        private static IEnumerable<KeyValuePair<IThreatType, SelectionRule>> GetThreatTypesWithRules(
+            [NotNull] IThreatModel model)
+        {
+            IEnumerable<KeyValuePair<IThreatType, SelectionRule>> result = null;
+
+            var threatTypes = model.ThreatTypes?.ToArray();
+            if (threatTypes?.Any() ?? false)
+            {
+                List<KeyValuePair<IThreatType, SelectionRule>> list = null;
+
+                foreach (var threatType in threatTypes)
+                {
+                    var rule = GetRule(threatType);
+                    if (rule != null)
+                    {
+                        if (list == null)
+                            list = new List<KeyValuePair<IThreatType, SelectionRule>>();
+                        list.Add(new KeyValuePair<IThreatType, SelectionRule>(threatType, rule));
+                    }
+                }
+
+                result = list?.AsReadOnly();
+            }
             return result;
         }
     }

@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "208AB31D-2B01-4BE2-B726-90896EE67C69")]
-    [ExportMetadata("Label", "Objects with Default Name Quality Analyzer")]
-    [ExportMetadata("Priority", 4)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("208AB31D-2B01-4BE2-B726-90896EE67C69", "Objects with Default Name Quality Analyzer", 4, ExecutionMode.Simplified)]
     public class DefaultName : IQualityAnalyzer
     {
         public string Label => "Default Name Objects";

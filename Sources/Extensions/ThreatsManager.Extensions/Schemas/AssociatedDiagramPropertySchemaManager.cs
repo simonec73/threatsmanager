@@ -19,17 +19,14 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.AppliesTo = Scope.Entity;
-                result.AutoApply = true;
-                result.Priority = 10;
-                result.Visible = true;
-                result.System = true;
-                result.Description = Resources.AssociatedDiagramPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.Entity;
+            result.AutoApply = true;
+            result.Priority = 10;
+            result.Visible = true;
+            result.System = true;
+            result.NotExportable = true;
+            result.Description = Resources.AssociatedDiagramPropertySchemaDescription;
 
             return result;
         }
@@ -41,14 +38,9 @@ namespace ThreatsManager.Extensions.Schemas
             var schema = GetSchema();
             if (schema != null)
             {
-                result = schema.GetPropertyType("Associated Diagram");
-                if (result == null)
-                {
-                    result =
-                        schema.AddPropertyType("Associated Diagram", PropertyValueType.IdentityReference);
-                    result.Visible = true;
-                    result.Description = Resources.AssociatedDiagram;
-                }
+                result = schema.GetPropertyType("Associated Diagram") ?? schema.AddPropertyType("Associated Diagram", PropertyValueType.IdentityReference);
+                result.Visible = true; 
+                result.Description = Resources.AssociatedDiagram;
             }
 
             return result;

@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "C38FABD0-16CA-46E5-A6FC-50B40A02E8B5")]
-    [ExportMetadata("Label", "Data Store as a source for Flows Quality Analyzer")]
-    [ExportMetadata("Priority", 14)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("C38FABD0-16CA-46E5-A6FC-50B40A02E8B5", "Data Store as a source for Flows Quality Analyzer", 14, ExecutionMode.Simplified)]
     public class StorageFlowsSource : IQualityAnalyzer
     {
         public string Label => "Data Store as a Source for Flows";

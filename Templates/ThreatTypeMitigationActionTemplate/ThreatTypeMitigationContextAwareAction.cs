@@ -12,8 +12,7 @@ namespace $rootnamespace$
     /// </summary>
     /// <remarks>IThreatTypeMitigationContextAwareAction applies to objects implementing IThreatTypeMitigation.</remarks>
     // TODO: Change Label, Priority and ExecutionMode. 
-    [Extension(typeof(IContextAwareAction), "$guid1$", 
-        "$itemname$ Context Aware Action", 100, ExecutionMode.Simplified)]
+    [Extension("$guid1$", "$itemname$ Context Aware Action", 100, ExecutionMode.Simplified)]
     public class $safeitemname$ : IThreatTypeMitigationContextAwareAction
     {
         public Scope Scope => Scope.ThreatTypeMitigation;    

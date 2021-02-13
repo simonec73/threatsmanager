@@ -63,6 +63,12 @@ namespace ThreatsManager.Engine.Config
 
         [XmlAttribute("statusBar"), DefaultValue(null)]
         public string StatusBar { get; set; }
+
+        [XmlAttribute("extensionsConfigFolder"), DefaultValue(null)]
+        public string ExtensionsConfigFolder { get; set; }
+
+        [XmlAttribute("disableHelp"), DefaultValue(false)]
+        public bool DisableHelp { get; set; }
     }
 
     public class KnownDocumentInfo

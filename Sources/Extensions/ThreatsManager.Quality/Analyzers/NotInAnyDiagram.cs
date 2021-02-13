@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "CE92020F-11E4-4837-811B-F0FCB4C40467")]
-    [ExportMetadata("Label", "Objects Not In Any Diagram Quality Analyzer")]
-    [ExportMetadata("Priority", 22)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("CE92020F-11E4-4837-811B-F0FCB4C40467", "Objects Not In Any Diagram Quality Analyzer", 22, ExecutionMode.Simplified)]
     public class NotInAnyDiagram : IQualityAnalyzer
     {
         public string Label => "Not In Any Diagram";

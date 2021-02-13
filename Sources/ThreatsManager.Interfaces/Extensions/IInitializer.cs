@@ -7,7 +7,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// </summary>
     /// <remarks>This can be used to create Property Schemas, pre-populate the Threat Model or other tasks.
     /// <para>Initializers are called as a result of the creation of a new Threat Model.</para></remarks>
-    public interface IInitializer
+    [ExtensionDescription("Initializer")]
+    public interface IInitializer : IExtension
     {
         /// <summary>
         /// Initialize the Threat Model.

@@ -9,7 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace SampleExtensions.RibbonExtensions
 {
-    [Extension(typeof(IMainRibbonExtension), "45636082-DB4B-4E9A-8D25-06384EFA104F",
+    [Extension("45636082-DB4B-4E9A-8D25-06384EFA104F",
         "Azure Scanning Context Aware Action", 100, ExecutionMode.Expert)]
     public class ScanAzureSubscription : IMainRibbonExtension, IDesktopAlertAwareExtension
     {

@@ -20,33 +20,21 @@ namespace ThreatsManager.MsTmt.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(Resources.TmtObjectPropertySchema, Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(Resources.TmtObjectPropertySchema, Resources.DefaultNamespace);
-                result.AppliesTo = Scope.Entity | Scope.DataFlow | Scope.TrustBoundary;
-                result.Priority = 30;
-                result.Visible = false;
-                result.System = true;
-                result.AutoApply = false;
-                result.Description = Resources.TmtObjectPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(Resources.TmtObjectPropertySchema, Resources.DefaultNamespace) ?? _model.AddSchema(Resources.TmtObjectPropertySchema, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.Entity | Scope.DataFlow | Scope.TrustBoundary;
+            result.Priority = 30;
+            result.Visible = false;
+            result.System = true;
+            result.AutoApply = false;
+            result.Description = Resources.TmtObjectPropertySchemaDescription;
 
-            var id = result.GetPropertyType(ThreatModelObjectId);
-            if (id == null)
-            {
-                id = result.AddPropertyType(ThreatModelObjectId, PropertyValueType.String);
-                id.Visible = false;
-                id.Description = Resources.ThreatModelObjectIdDescription;
-            }
+            var id = result.GetPropertyType(ThreatModelObjectId) ?? result.AddPropertyType(ThreatModelObjectId, PropertyValueType.String);
+            id.Visible = false;
+            id.Description = Resources.ThreatModelObjectIdDescription;
 
-            var instanceId = result.GetPropertyType(ThreatModelInstanceId);
-            if (instanceId == null)
-            {
-                instanceId = result.AddPropertyType(ThreatModelInstanceId, PropertyValueType.String);
-                instanceId.Visible = false;
-                instanceId.Description = Resources.ThreatModelInstanceIdDescription;
-            }
+            var instanceId = result.GetPropertyType(ThreatModelInstanceId) ?? result.AddPropertyType(ThreatModelInstanceId, PropertyValueType.String);
+            instanceId.Visible = false;
+            instanceId.Description = Resources.ThreatModelInstanceIdDescription;
 
             return result;
         }

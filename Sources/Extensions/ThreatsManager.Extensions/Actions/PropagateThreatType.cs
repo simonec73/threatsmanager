@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
@@ -11,17 +10,13 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
 {
-    [Export(typeof(IContextAwareAction))]
-    [ExportMetadata("Id", "FA566F92-541F-4817-B53B-199C4BA098D6")]
-    [ExportMetadata("Label", "Propagate Threat Type Name and Description Context Aware Action")]
-    [ExportMetadata("Priority", 30)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("FA566F92-541F-4817-B53B-199C4BA098D6", 
+        "Propagate Threat Type Name and Description Context Aware Action", 63, ExecutionMode.Simplified)]
     public class PropagateThreatType : IIdentityContextAwareAction, IAsker
     {
         public Scope Scope => Scope.ThreatType;
         public string Label => "Propagate Threat Type Info";
-        public string Group => "Propagate";
+        public string Group => "Other";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;
@@ -38,6 +33,11 @@ namespace ThreatsManager.Extensions.Actions
             }
 
             return result;
+        }
+
+        public bool IsVisible(object item)
+        {
+            return true;
         }
 
         public bool Execute([NotNull] IIdentity identity)

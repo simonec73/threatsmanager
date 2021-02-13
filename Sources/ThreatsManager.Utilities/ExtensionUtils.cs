@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Utilities
 {
@@ -15,6 +19,7 @@ namespace ThreatsManager.Utilities
     /// </summary>
     public static class ExtensionUtils
     {
+        #region Extension Properties.
         /// <summary>
         /// Get the Extension Identifier.
         /// </summary>
@@ -91,13 +96,15 @@ namespace ThreatsManager.Utilities
                 .Select(x => x.Title)
                 .FirstOrDefault();
         }
+        #endregion
 
+        #region Extension Enumeration.
         /// <summary>
         /// Gets all the Extensions of a specific type loaded by the Platform. 
         /// </summary>
         /// <typeparam name="T">Extension type.</typeparam>
         /// <returns>List of registered Extensions.</returns>
-        public static IEnumerable<T> GetExtensions<T>() where T : class
+        public static IEnumerable<T> GetExtensions<T>() where T : class, IExtension
         {
             IEnumerable<T> result = null;
 
@@ -105,21 +112,20 @@ namespace ThreatsManager.Utilities
             var property = type?.GetProperty("Instance");
             if (property != null)
             {
-                var instance = property.GetValue(null);
-                result = type.GetMethod("GetExtensions")?.MakeGenericMethod(typeof(T))
-                    .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new object[] { }, CultureInfo.InvariantCulture) as IEnumerable<T>;
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtensions<T>();
             }
 
             return result;
         }
 
         /// <summary>
-        /// Gets all the Extensions of a specific type loaded by the Platform. 
+        /// Gets the Extension of a specific type and ID, loaded by the Platform. 
         /// </summary>
         /// <typeparam name="T">Extension type.</typeparam>
         /// <param name="extensionId">Identifier of the Extension.</param>
-        /// <returns>List of registered Extensions.</returns>
-        public static T GetExtension<T>([Required] string extensionId) where T : class
+        /// <returns>Registered Extension.</returns>
+        public static T GetExtension<T>([Required] string extensionId) where T : class, IExtension
         {
             T result = null;
 
@@ -127,12 +133,209 @@ namespace ThreatsManager.Utilities
             var property = type?.GetProperty("Instance");
             if (property != null)
             {
-                var instance = property.GetValue(null);
-                result = type.GetMethod("GetExtension")?.MakeGenericMethod(typeof(T))
-                    .Invoke(instance, BindingFlags.Instance | BindingFlags.Public, null, new [] { (object)extensionId }, CultureInfo.InvariantCulture) as T;
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtension<T>(extensionId);
             }
 
             return result;
         }
+
+        /// <summary>
+        /// Gets the Extension of a specific type and Label, loaded by the Platform. 
+        /// </summary>
+        /// <typeparam name="T">Extension type.</typeparam>
+        /// <param name="label">Label of the Extension.</param>
+        /// <returns>Registered Extension.</returns>
+        public static T GetExtensionByLabel<T>([Required] string label) where T : class, IExtension
+        {
+            T result = null;
+
+            var type = Type.GetType("ThreatsManager.Engine.Manager, ThreatsManager.Engine", false);
+            var property = type?.GetProperty("Instance");
+            if (property != null)
+            {
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtensionByLabel<T>(label);
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Extensions Configuration.
+        /// <summary>
+        /// Folder where the Extension Configuration files are stored.
+        /// </summary>
+        public static string ExtensionConfigurationFolder;
+
+        /// <summary>
+        /// Get the specific configuration for an Extension.
+        /// </summary>
+        /// <param name="model">Current Threat Model.</param>
+        /// <param name="extensionId">Identifier of the Extension.</param>
+        /// <returns>Configuration of the Extension.</returns>
+        public static ExtensionConfiguration GetExtensionConfiguration(this IThreatModel model, 
+            [Required] string extensionId)
+        {
+            List<ConfigurationData> result = null;
+
+            var property = GetExtensionConfigurationProperty(model, extensionId);
+            if (property != null && property.Value is ExtensionConfigurationData extensionConfig)
+            {
+                var configurationData = GetConfigurationArray(extensionConfig, false)?.ToArray();
+                if (configurationData?.Any() ?? false)
+                {
+                    result = new List<ConfigurationData>(configurationData);
+                }
+            }
+
+            var config = GetGlobalConfiguration(extensionId, ExtensionConfigurationFolder);
+            if (config?.Properties?.Any() ?? false)
+            {
+                var configurationData = GetConfigurationArray(config, true)?.ToArray();
+                if (configurationData?.Any() ?? false)
+                {
+                    if (result == null)
+                        result = new List<ConfigurationData>();
+                    
+                    result.AddRange(configurationData);
+                }
+            }
+
+            return new ExtensionConfiguration(result);
+        }
+
+        /// <summary>
+        /// Set the specific configuration for an Extension.
+        /// </summary>
+        /// <param name="model">Current Threat Model.</param>
+        /// <param name="extensionId">Identifier of the Extension.</param>
+        /// <param name="configuration">Configuration of the Extension.</param>
+        public static void SetExtensionConfiguration(this IThreatModel model, 
+            [Required] string extensionId, ExtensionConfiguration configuration)
+        {
+            var data = configuration?.Data?.ToArray();
+
+            var property = GetExtensionConfigurationProperty(model, extensionId);
+            if (property != null)
+            {
+                property.Value = GetConfigurationObject(data?.Where(x => !x.Global));
+            }
+
+            SaveGlobalConfiguration(extensionId, ExtensionConfigurationFolder, GetConfigurationObject(data?.Where(x => x.Global)));
+        }
+
+        private static IPropertyJsonSerializableObject GetExtensionConfigurationProperty([NotNull] IThreatModel model, [Required] string extensionId)
+        {
+            var propertySchema =
+                model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager") ?? model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
+            propertySchema.AppliesTo = Scope.ThreatModel;
+            propertySchema.AutoApply = false;
+            propertySchema.NotExportable = true;
+            propertySchema.Priority = 100;
+            propertySchema.RequiredExecutionMode = ExecutionMode.Business;
+            propertySchema.System = true;
+            propertySchema.Visible = false;
+
+            var propertyType = propertySchema.GetPropertyType(extensionId) ?? propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
+            propertyType.Visible = false;
+            propertyType.DoNotPrint = true;
+
+            return (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
+        }
+
+        private static ExtensionConfigurationData GetConfigurationObject(IEnumerable<ConfigurationData> configuration)
+        {
+            ExtensionConfigurationData result = null;
+
+            var items = configuration?.ToArray();
+            if (items?.Any() ?? false)
+            {
+                result = new ExtensionConfigurationData()
+                {
+                    Properties = items.ToDictionary(x => x.Name, y => y.Value)
+                };
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<ConfigurationData> GetConfigurationArray(ExtensionConfigurationData configuration, bool global)
+        {
+            IEnumerable<ConfigurationData> result = null;
+
+            var items = configuration?.Properties;
+            if (items?.Any() ?? false)
+            {
+                result = items.Select(x => new ConfigurationData(x.Key, x.Value, global));
+            }
+
+            return result;
+        }
+
+        private static ExtensionConfigurationData GetGlobalConfiguration([Required] string extensionId, [Required] string folder)
+        {
+            ExtensionConfigurationData result = null;
+
+            var pathName = Path.Combine(folder, $"{extensionId}.tmg");
+
+            if (File.Exists(pathName))
+            {
+                using (var file = File.OpenRead(pathName))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        file.CopyTo(ms);
+                        var jsonText = Encoding.Unicode.GetString(ms.ToArray());
+                        result = JsonConvert.DeserializeObject<ExtensionConfigurationData>(jsonText,
+                            new JsonSerializerSettings()
+                            {
+#pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
+#pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
+                                TypeNameHandling = TypeNameHandling.All,
+#pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
+#pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
+                                SerializationBinder = new KnownTypesBinder(),
+                                MissingMemberHandling = MissingMemberHandling.Ignore
+                            });
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private static void SaveGlobalConfiguration([Required] string extensionId, [Required] string folder, ExtensionConfigurationData config)
+        {
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            var pathName = Path.Combine(folder, $"{extensionId}.tmg");
+
+            if (File.Exists(pathName))
+                File.Delete(pathName);
+
+            using (var file = File.OpenWrite(pathName))
+            {
+                using (var writer = new BinaryWriter(file))
+                {
+                    var serialization = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(config, 
+                        Formatting.Indented, new JsonSerializerSettings()
+                        {
+#pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
+#pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
+                            TypeNameHandling = TypeNameHandling.All
+#pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
+#pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
+                        }));
+
+                    writer.Write(serialization);
+                }
+            }
+
+        }
+        #endregion
     }
 }

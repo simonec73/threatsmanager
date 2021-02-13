@@ -8,7 +8,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// <summary>
     /// Interface implemented by the extensions that require to show actions in the Main Ribbon.
     /// </summary>
-    public interface IMainRibbonExtension
+    [ExtensionDescription("Main Ribbon Button")]
+    public interface IMainRibbonExtension : IExtension
     {
         /// <summary>
         /// Event raised when there is the need to iterate between the open Panels.

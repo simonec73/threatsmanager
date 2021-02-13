@@ -10,12 +10,8 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "A4ADAC0C-46BB-4306-925C-C09CA4976E83")]
-    [ExportMetadata("Label", "Partially mitigated Threat Types Counter Status Info Provider")]
-    [ExportMetadata("Priority", 30)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("A4ADAC0C-46BB-4306-925C-C09CA4976E83", 
+        "Partially mitigated Threat Types Counter Status Info Provider", 30, ExecutionMode.Simplified)]
     public class PartiallyMitigatedThreatTypesCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

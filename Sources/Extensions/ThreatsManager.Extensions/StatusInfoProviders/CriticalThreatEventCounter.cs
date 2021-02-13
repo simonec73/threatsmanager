@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -11,12 +10,8 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.StatusInfoProviders
 {
-    [Export(typeof(IStatusInfoProviderExtension))]
-    [ExportMetadata("Id", "FA4E8CC1-4EB9-459F-A766-358423765B8A")]
-    [ExportMetadata("Label", "Critical Severity Threat Event Counter Status Info Provider")]
-    [ExportMetadata("Priority", 40)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("FA4E8CC1-4EB9-459F-A766-358423765B8A", 
+        "Critical Severity Threat Event Counter Status Info Provider", 40, ExecutionMode.Simplified)]
     public class CriticalThreatEventCounter : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

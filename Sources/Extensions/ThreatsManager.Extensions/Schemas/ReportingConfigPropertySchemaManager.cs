@@ -19,41 +19,29 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.AppliesTo = Scope.ThreatModel;
-                result.AutoApply = true;
-                result.Priority = 10;
-                result.Visible = false;
-                result.System = true;
-                result.Description = Resources.ReportingConfigPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.ThreatModel;
+            result.AutoApply = true;
+            result.Priority = 10;
+            result.Visible = false;
+            result.System = true;
+            result.NotExportable = true;
+            result.Description = Resources.ReportingConfigPropertySchemaDescription;
 
-            var excelSelectedFields = result.GetPropertyType("ExcelSelectedFields");
-            if (excelSelectedFields == null)
-            {
-                excelSelectedFields = result.AddPropertyType("ExcelSelectedFields", PropertyValueType.Array);
-                excelSelectedFields.Visible = false;
-                excelSelectedFields.Description = Resources.PropertyExcelSelectedFields;
-            }
+            var excelSelectedFields = result.GetPropertyType("ExcelSelectedFields") ?? result.AddPropertyType("ExcelSelectedFields", PropertyValueType.Array);
+            excelSelectedFields.Visible = false;
+            excelSelectedFields.DoNotPrint = true;
+            excelSelectedFields.Description = Resources.PropertyExcelSelectedFields;
 
-            var wordDocumentPath = result.GetPropertyType("WordDocumentPath");
-            if (wordDocumentPath == null)
-            {
-                wordDocumentPath = result.AddPropertyType("WordDocumentPath", PropertyValueType.SingleLineString);
-                wordDocumentPath.Visible = false;
-                wordDocumentPath.Description = Resources.PropertyWordDocumentPath;
-            }
+            var wordDocumentPath = result.GetPropertyType("WordDocumentPath") ?? result.AddPropertyType("WordDocumentPath", PropertyValueType.SingleLineString);
+            wordDocumentPath.Visible = false;
+            wordDocumentPath.DoNotPrint = true;
+            wordDocumentPath.Description = Resources.PropertyWordDocumentPath;
 
-            var wordSections = result.GetPropertyType("WordSections");
-            if (wordSections == null)
-            {
-                wordSections = result.AddPropertyType("WordSections", PropertyValueType.JsonSerializableObject);
-                wordSections.Visible = false;
-                wordSections.Description = Resources.PropertyWordSections;
-            }
+            var wordSections = result.GetPropertyType("WordSections") ?? result.AddPropertyType("WordSections", PropertyValueType.JsonSerializableObject);
+            wordSections.Visible = false;
+            wordSections.DoNotPrint = true;
+            wordSections.Description = Resources.PropertyWordSections;
 
             return result;
         }

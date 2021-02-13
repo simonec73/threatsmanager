@@ -19,35 +19,24 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.AppliesTo = Scope.ThreatModel;
-                result.AutoApply = true;
-                result.Priority = 10;
-                result.Visible = false;
-                result.System = true;
-                result.Description = Resources.ThreatModelConfigPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.ThreatModel;
+            result.AutoApply = true;
+            result.Priority = 10;
+            result.Visible = false;
+            result.System = true;
+            result.NotExportable = true;
+            result.Description = Resources.ThreatModelConfigPropertySchemaDescription;
 
-            var horizontalSpacing = result.GetPropertyType("Diagram Layout Horizontal Spacing");
-            if (horizontalSpacing == null)
-            {
-                horizontalSpacing =
-                    result.AddPropertyType("Diagram Layout Horizontal Spacing", PropertyValueType.Integer);
-                horizontalSpacing.Visible = false;
-                horizontalSpacing.Description = Resources.PropertyHorizontalSpacing;
-            }
+            var horizontalSpacing = result.GetPropertyType("Diagram Layout Horizontal Spacing") ?? result.AddPropertyType("Diagram Layout Horizontal Spacing", PropertyValueType.Integer);
+            horizontalSpacing.Visible = false;
+            horizontalSpacing.DoNotPrint = true;
+            horizontalSpacing.Description = Resources.PropertyHorizontalSpacing;
 
-            var verticalSpacing = result.GetPropertyType("Diagram Layout Vertical Spacing");
-            if (verticalSpacing == null)
-            {
-                verticalSpacing =
-                    result.AddPropertyType("Diagram Layout Vertical Spacing", PropertyValueType.Integer);
-                verticalSpacing.Visible = false;
-                verticalSpacing.Description = Resources.PropertyVerticalSpacing;
-            }
+            var verticalSpacing = result.GetPropertyType("Diagram Layout Vertical Spacing") ?? result.AddPropertyType("Diagram Layout Vertical Spacing", PropertyValueType.Integer);
+            verticalSpacing.Visible = false;
+            verticalSpacing.DoNotPrint = true;
+            verticalSpacing.Description = Resources.PropertyVerticalSpacing;
 
             return result;
         }

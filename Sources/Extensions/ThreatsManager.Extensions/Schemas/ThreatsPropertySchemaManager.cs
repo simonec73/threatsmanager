@@ -19,26 +19,20 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-                result.AppliesTo = Scope.ThreatType | Scope.ThreatEvent;
-                result.AutoApply = true;
-                result.Priority = 10;
-                result.Visible = true;
-                result.System = true;
-                result.RequiredExecutionMode = ExecutionMode.Expert;
-                result.Description = Properties.Resources.ThreatsPropertySchemaDescription;
-            }
+            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+            result.AppliesTo = Scope.ThreatType | Scope.ThreatEvent;
+            result.AutoApply = true;
+            result.Priority = 10;
+            result.Visible = true;
+            result.System = true;
+            result.NotExportable = false;
+            result.RequiredExecutionMode = ExecutionMode.Expert;
+            result.Description = Resources.ThreatsPropertySchemaDescription;
 
-            var keywords = result.GetPropertyType("Keywords");
-            if (keywords == null)
-            {
-                keywords = result.AddPropertyType("Keywords", PropertyValueType.Tokens);
-                keywords.Visible = true;
-                keywords.Description = Resources.PropertyKeywords;
-            }
+            var keywords = result.GetPropertyType("Keywords") ?? result.AddPropertyType("Keywords", PropertyValueType.Tokens);
+            keywords.Visible = true;
+            keywords.DoNotPrint = true;
+            keywords.Description = Resources.PropertyKeywords;
 
             return result;
         }

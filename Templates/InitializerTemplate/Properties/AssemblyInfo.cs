@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Simone Curzi")]
 [assembly: AssemblyProduct("InitializerTemplate")]
-[assembly: AssemblyCopyright("Copyright © Simone Curzi 2020")]
+[assembly: AssemblyCopyright("Copyright © Simone Curzi 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

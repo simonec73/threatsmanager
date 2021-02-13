@@ -12,8 +12,7 @@ namespace $rootnamespace$
     /// $safeitemname$ is used to show a button in the Ribbon.
     /// </summary>
     // TODO: Change Label, Priority and ExecutionMode. 
-    [Extension(typeof(IMainRibbonExtension), "$guid1$", 
-        "$itemname$ Main Ribbon Extension", 100, ExecutionMode.Simplified)]
+    [Extension("$guid1$", "$itemname$ Main Ribbon Extension", 100, ExecutionMode.Simplified)]
     public class $safeitemname$ : IMainRibbonExtension, IDesktopAlertAwareExtension
     {
         public event Action<IMainRibbonExtension> IteratePanels;

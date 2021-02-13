@@ -22,6 +22,17 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// Flag that specifies if the Property Type is visible.
         /// </summary>
         bool Visible { get; set; }
+
+        /// <summary>
+        /// Flag that specifies if the related Properties can be printed in Reports. 
+        /// </summary>
+        bool DoNotPrint { get; set; }
+
+        /// <summary>
+        /// Label of the Custom Property Viewer Extension to use to show the Property.
+        /// </summary>
+        /// <remarks>If not specified, the property will be shown using the standard viewer.</remarks>
+        string CustomPropertyViewer { get; set; }
  
         /// <summary>
         /// Creates a duplicate of the current Property Type and attaches it to the Container passed as argument.

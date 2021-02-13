@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -10,13 +11,21 @@ namespace ThreatsManager.Utilities
     public class KnownTypesBinder : ISerializationBinder
     {
         private static readonly Dictionary<string, Type> _knownTypes = new Dictionary<string, Type>();
+        private static readonly Dictionary<string, Type> _equivalences = new Dictionary<string, Type>();
 
         public static event Action<string, string> TypeNotFound;
 
         static KnownTypesBinder()
         {
+            AddKnownType(typeof(object));
+            AddKnownType(typeof(bool));
+            AddKnownType(typeof(string));
+            AddKnownType(typeof(int));
+            AddKnownType(typeof(decimal));
+            AddKnownType(typeof(System.Drawing.PointF));
             AddKnownType(typeof(IListItem));
             AddKnownType(typeof(ListItem));
+            AddKnownType(typeof(ExtensionConfigurationData));
         }
 
         public static void AddKnownType([NotNull] Type type)
@@ -24,6 +33,14 @@ namespace ThreatsManager.Utilities
             var name = type.FullName;
             if (!string.IsNullOrWhiteSpace(name) && !_knownTypes.ContainsKey(name))
                 _knownTypes.Add(name, type);
+        }
+
+        public static void AddEquivalence([Required] string assemblyName, [Required] string typeName,
+            [NotNull] Type equivalentType)
+        {
+            var name = $"{assemblyName}#{typeName}";
+            if (!_equivalences.ContainsKey(name))
+                _equivalences.Add(name, equivalentType);
         }
 
         public bool HasUnknownTypes { get; private set; }
@@ -34,8 +51,13 @@ namespace ThreatsManager.Utilities
 
             try
             {
+                var qualifiedTypeName = $"{assemblyName}#{typeName}";
                 if (_knownTypes.ContainsKey(typeName))
                     result = _knownTypes[typeName];
+                else if (_equivalences.ContainsKey(qualifiedTypeName))
+                {
+                    result = _equivalences[qualifiedTypeName];
+                }
                 else
                 {
 #if NETCOREAPP
@@ -118,10 +140,16 @@ namespace ThreatsManager.Utilities
                                 if (position == 0)
                                 {
                                     var tn = typeName.Substring(startIndex, index - startIndex);
-                                    var innerTypeName = tn.Split(',')[0].Trim();
+                                    var split = tn.Split(',');
+                                    var innerTypeName = split[0].Trim();
+                                    var innerAssemblyName = split[1].Trim();
+                                    var innerQualifiedTypeName = $"{innerAssemblyName}#{innerTypeName}";
                                     if (_knownTypes.ContainsKey(innerTypeName))
                                     {
                                         typeList.Add(_knownTypes[innerTypeName]);
+                                    } else if (_equivalences.ContainsKey(innerQualifiedTypeName))
+                                    {
+                                        typeList.Add(_equivalences[innerQualifiedTypeName]);
                                     }
                                 }
                                 break;

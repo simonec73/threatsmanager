@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Quality.Analyzers
 {
-    [Export(typeof(IQualityAnalyzer))]
-    [ExportMetadata("Id", "DAEB7324-13B8-4827-8655-F295E96D99E4")]
-    [ExportMetadata("Label", "Partially Connected Data Store Quality Analyzer")]
-    [ExportMetadata("Priority", 12)]
-    [ExportMetadata("Parameters", null)]
-    [ExportMetadata("Mode", ExecutionMode.Simplified)]
+    [Extension("DAEB7324-13B8-4827-8655-F295E96D99E4", "Partially Connected Data Store Quality Analyzer", 12, ExecutionMode.Simplified)]
     public class PartiallyConnectedStorage : IQualityAnalyzer
     {
         public string Label => "Partially Connected Data Stores";
