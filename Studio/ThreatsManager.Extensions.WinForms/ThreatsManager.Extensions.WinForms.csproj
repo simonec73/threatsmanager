@@ -1608,8 +1608,8 @@
     <Content Include="Resources\import_huge.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Toolkit.Forms.UI.Controls.WebView">
-      <Version>6.1.2</Version>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.705.50</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
@@ -1635,6 +1635,7 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
 xcopy "$(TargetDir)*.pdb" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
-xcopy "$(SolutionDir)..\Build\repo\net472\ThreatsManager.PackageManagers.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y</PostBuildEvent>
+xcopy "$(SolutionDir)..\Build\repo\net472\ThreatsManager.PackageManagers.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
+xcopy "$(TargetDir)\x86\*.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

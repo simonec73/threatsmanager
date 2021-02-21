@@ -130,7 +130,7 @@ namespace ThreatsManager.Extensions.Panels.Learning
         {
             if (sender is Node node && node.Tag is Page lesson)
             {
-                _browser.Navigate(lesson.Url);
+                _browser.CoreWebView2.Navigate(lesson.Url);
             }
         }
     }

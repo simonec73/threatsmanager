@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using DevComponents.AdvTree;
+using Microsoft.Web.WebView2.Core;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Utilities;
@@ -20,6 +22,16 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
         public TroubleshootingPanel()
         {
             InitializeComponent();
+            InitializeAsync();
+        }
+        
+        private async void InitializeAsync()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string cacheFolder = Path.Combine(localAppData, "WindowsFormsWebView2");
+            var environment = await CoreWebView2Environment.CreateAsync(null, cacheFolder);
+
+            await _browser.EnsureCoreWebView2Async(environment);
         }
 
         #region Implementation of interface IStaticPanel.
@@ -75,7 +87,7 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
         {
             if (sender is Node node && node.Tag is Page lesson)
             {
-                _browser.Navigate(lesson.Url);
+                _browser.CoreWebView2.Navigate(lesson.Url);
             }
         }
     }

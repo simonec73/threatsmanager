@@ -956,6 +956,7 @@
             this._userDictFile.DefaultExt = "txt";
             this._userDictFile.Filter = "Text file (*.txt)|*.txt";
             this._userDictFile.Title = "User Dictionary File";
+            this._userDictFile.RestoreDirectory = true;
             // 
             // OptionsForm
             // 

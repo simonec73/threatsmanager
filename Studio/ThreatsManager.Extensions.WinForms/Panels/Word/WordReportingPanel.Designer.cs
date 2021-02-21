@@ -176,6 +176,7 @@
             this._openFile.DefaultExt = "docx";
             this._openFile.Filter = "Word documents (*.docx)|*.docx|All files (*.*)|*.*";
             this._openFile.Title = "Select the Word document";
+            this._openFile.RestoreDirectory = true;
             // 
             // metroTileItem1
             // 

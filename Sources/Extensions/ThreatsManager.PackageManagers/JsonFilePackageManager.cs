@@ -21,6 +21,7 @@ namespace ThreatsManager.PackageManagers
         public bool CanHandle(LocationType locationType, [Required] string location)
         {
             return SupportedLocations.HasFlag(locationType) &&
+                   !location.StartsWith(@"\\") &&
                    string.Compare(Path.GetExtension(location), ".tmj", StringComparison.OrdinalIgnoreCase) == 0;
         }
 

@@ -61,7 +61,8 @@ namespace ThreatsManager.Extensions.Actions
                             DereferenceLinks = true,
                             Filter = "Threat Model (*.tm)|*.tm|Threat Model Template (*.tmt)|*.tmt|Threat Model Json Template (*.tmk)|*.tmk",
                             FilterIndex = 0,
-                            Title = "Select file to be merged"
+                            Title = "Select file to be merged",
+                            RestoreDirectory = true
                         };
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {

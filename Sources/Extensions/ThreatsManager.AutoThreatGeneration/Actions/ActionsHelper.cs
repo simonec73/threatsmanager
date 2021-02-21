@@ -137,7 +137,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                     foreach (var mitigation in mitigations)
                     {
                         var rule = GetRule(mitigation);
-                        if (rule.Evaluate(identity))
+                        if (rule?.Evaluate(identity) ?? false)
                         {
                             var strength = mitigation.Strength;
                             if (rule.StrengthId.HasValue &&

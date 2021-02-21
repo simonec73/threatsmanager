@@ -282,6 +282,7 @@
             this._saveFile.DefaultExt = "tmt";
             this._saveFile.Filter = "Threat Model Template (*.tmt)|*.tmt";
             this._saveFile.Title = "Select destination file";
+            this._saveFile.RestoreDirectory = true;
             // 
             // layoutGroup2
             // 

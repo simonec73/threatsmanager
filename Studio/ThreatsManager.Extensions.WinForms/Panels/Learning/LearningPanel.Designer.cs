@@ -32,7 +32,7 @@
             this.nodeConnector1 = new DevComponents.AdvTree.NodeConnector();
             this.elementStyle1 = new DevComponents.DotNetBar.ElementStyle();
             this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
-            this._browser = new Microsoft.Toolkit.Forms.UI.Controls.WebView();
+            this._browser = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)(this._tree)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._browser)).BeginInit();
             this.SuspendLayout();
@@ -103,12 +103,15 @@
             // 
             // _browser
             // 
+            this._browser.BackColor = System.Drawing.Color.White;
+            this._browser.CreationProperties = null;
             this._browser.Dock = System.Windows.Forms.DockStyle.Fill;
             this._browser.Location = new System.Drawing.Point(306, 0);
             this._browser.MinimumSize = new System.Drawing.Size(20, 20);
             this._browser.Name = "_browser";
             this._browser.Size = new System.Drawing.Size(360, 612);
             this._browser.TabIndex = 2;
+            this._browser.ZoomFactor = 1D;
             // 
             // LearningPanel
             // 
@@ -130,6 +133,6 @@
         private DevComponents.AdvTree.NodeConnector nodeConnector1;
         private DevComponents.DotNetBar.ElementStyle elementStyle1;
         private DevComponents.DotNetBar.ExpandableSplitter expandableSplitter1;
-        private Microsoft.Toolkit.Forms.UI.Controls.WebView _browser;
+        private Microsoft.Web.WebView2.WinForms.WebView2 _browser;
     }
 }

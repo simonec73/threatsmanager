@@ -59,7 +59,7 @@
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 294);
+            this.panel1.Location = new System.Drawing.Point(0, 311);
             this.panel1.Margin = new System.Windows.Forms.Padding(6);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(557, 63);
@@ -111,15 +111,15 @@
             this.layoutControlItem6,
             this._layoutDescription,
             this.layoutControlItem2});
-            this._layout.Size = new System.Drawing.Size(557, 294);
+            this._layout.Size = new System.Drawing.Size(557, 311);
             this._layout.TabIndex = 0;
             // 
             // _imageSelector
             // 
-            this._imageSelector.Location = new System.Drawing.Point(4, 213);
+            this._imageSelector.Location = new System.Drawing.Point(4, 193);
             this._imageSelector.Margin = new System.Windows.Forms.Padding(0);
             this._imageSelector.Name = "_imageSelector";
-            this._imageSelector.Size = new System.Drawing.Size(549, 75);
+            this._imageSelector.Size = new System.Drawing.Size(549, 112);
             this._imageSelector.TabIndex = 3;
             // 
             // _entityType
@@ -139,7 +139,7 @@
             this._description.Location = new System.Drawing.Point(68, 61);
             this._description.Margin = new System.Windows.Forms.Padding(0);
             this._description.Name = "_description";
-            this._description.Size = new System.Drawing.Size(485, 144);
+            this._description.Size = new System.Drawing.Size(485, 124);
             this._description.TabIndex = 2;
             this._description.Text = "";
             // 
@@ -187,7 +187,7 @@
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._imageSelector;
-            this.layoutControlItem2.Height = 83;
+            this.layoutControlItem2.Height = 120;
             this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 18);
             this.layoutControlItem2.Name = "layoutControlItem2";
             this.layoutControlItem2.Text = "Label:";
@@ -247,7 +247,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(557, 357);
+            this.ClientSize = new System.Drawing.Size(557, 374);
             this.Controls.Add(this._layout);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(6);

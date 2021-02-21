@@ -86,6 +86,7 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
                         dialog.DefaultExt = "pdf";
                         dialog.Filter = "Acrobat file (*.pdf)|*.pdf|All files (*.*)|*.*";
                         dialog.Title = "Save Quality Report";
+                        dialog.RestoreDirectory = true;
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
                             if (GeneratePdf(dialog.FileName))
@@ -105,6 +106,7 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
                         dialog2.DefaultExt = "xlsx";
                         dialog2.Filter = "Excel 2016 files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
                         dialog2.Title = "Save Quality Report";
+                        dialog2.RestoreDirectory = true;
                         if (dialog2.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
                             if (GenerateXlsx(dialog2.FileName))
