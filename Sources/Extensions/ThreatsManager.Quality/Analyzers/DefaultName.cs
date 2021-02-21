@@ -78,17 +78,17 @@ namespace ThreatsManager.Quality.Analyzers
                     if (entity is IExternalInteractor)
                     {
                         if (eiRegex == null)
-                            eiRegex = new Regex($"{model.GetIdentityTypeName(entity)} [0-9]*");
+                            eiRegex = new Regex($"^{model.GetIdentityTypeName(entity)} [0-9]+$");
                         regex = eiRegex;
                     } else if (entity is IProcess)
                     {
                         if (pRegex == null)
-                            pRegex = new Regex($"{model.GetIdentityTypeName(entity)} [0-9]*");
+                            pRegex = new Regex($"^{model.GetIdentityTypeName(entity)} [0-9]+$");
                         regex = pRegex;
                     } if (entity is IDataStore)
                     {
                         if (dsRegex == null)
-                            dsRegex = new Regex($"{model.GetIdentityTypeName(entity)} [0-9]*");
+                            dsRegex = new Regex($"^{model.GetIdentityTypeName(entity)} [0-9]+$");
                         regex = dsRegex;
                     }                  
                     
@@ -115,7 +115,7 @@ namespace ThreatsManager.Quality.Analyzers
                 foreach (var group in groups)
                 {
                     if (tbRegex == null)
-                        tbRegex = new Regex($"{model.GetIdentityTypeName(group)} [0-9]*");
+                        tbRegex = new Regex($"^{model.GetIdentityTypeName(group)} [0-9]+$");
 
                     if (!string.IsNullOrWhiteSpace(group.Name) && (tbRegex?.Match(group.Name).Success ?? false))
                         found.Add(group);
