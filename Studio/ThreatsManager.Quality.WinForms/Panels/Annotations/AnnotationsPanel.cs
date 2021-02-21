@@ -26,7 +26,7 @@ using ToolTip = DevComponents.DotNetBar.ToolTip;
 namespace ThreatsManager.Quality.Panels.Annotations
 {
     public partial class AnnotationsPanel : UserControl, IShowThreatModelPanel<Form>, 
-        ICustomRibbonExtension, IInitializableObject
+        ICustomRibbonExtension, IInitializableObject, IDesktopAlertAwareExtension
     {
         enum WhatToShow
         {
@@ -48,6 +48,9 @@ namespace ThreatsManager.Quality.Panels.Annotations
 
             _annotation.AnnotationUpdated += OnAnnotationUpdated;
         }
+
+        public event Action<string> ShowMessage;
+        public event Action<string> ShowWarning;
 
         private void OnAnnotationUpdated()
         {

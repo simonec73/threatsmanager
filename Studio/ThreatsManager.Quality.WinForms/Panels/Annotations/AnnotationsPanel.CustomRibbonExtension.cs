@@ -199,8 +199,8 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         CheckPathExists = true,
                         RestoreDirectory = true,
                         DefaultExt = "csv",
-                        Filter = "CSV file (*.csv)|*.csv",
-                        Title = "Create CSV file with open Topics",
+                        Filter = "CSV file (*.csv)|*.csv|Excel file (*.xlsx)|*.xlsx",
+                        Title = "Create a file with open Topics",
                         ValidateNames = true
                     };
                     if (saveFileDialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
@@ -217,8 +217,8 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         CheckPathExists = true,
                         RestoreDirectory = true,
                         DefaultExt = "csv",
-                        Filter = "CSV file (*.csv)|*.csv",
-                        Title = "Create CSV file with all Topics",
+                        Filter = "CSV file (*.csv)|*.csv|Excel file (*.xlsx)|*.xlsx",
+                        Title = "Create a file with all Topics",
                         ValidateNames = true
                     };
                     if (saveFileDialog2.ShowDialog(Form.ActiveForm) == DialogResult.OK)
@@ -251,80 +251,93 @@ namespace ThreatsManager.Quality.Panels.Annotations
             Add(list, _model.GetFlowTemplates(_schemaManager, _propertyType, openOnly));
             Add(list, _model.GetTrustBoundaryTemplates(_schemaManager, _propertyType, openOnly));
 
-            if (list?.Any() ?? false)
+            if (list.Any())
             {
-                using (var file = new System.IO.FileStream(fileName, FileMode.Create))
+                using (var engine = new ExcelReportEngine())
                 {
-                    using (var writer = new StreamWriter(file, Encoding.UTF8))
+                    var page = engine.AddPage("Report");
+                    List<string> fields = new List<string> {"Object Type", "Name", "Context", "Annotation Type",
+                        "Annotation Text", "Asked By", "Asked On", "Asked Via", "Answered"};
+                    engine.AddHeader(page, fields.ToArray());
+
+                    foreach (var item in list)
                     {
-                        writer.WriteLine("Object Type,Name,Context,Annotation Type,Annotation Text,Asked By,Asked On,Asked Via,Answered");
-
-                        foreach (var item in list)
+                        string objectType = null;
+                        string name = null;
+                        string context = null;
+                        if (item is IIdentity identity)
                         {
-                            string objectType = null;
-                            string name = null;
-                            string context = null;
-                            if (item is IIdentity identity)
-                            {
-                                objectType = _model.GetIdentityTypeName(identity);
-                                name = identity.Name;
-                            }
-                            else if (item is IThreatEventMitigation threatEventMitigation)
-                            {
-                                objectType = "Threat Event Mitigation";
-                                name = threatEventMitigation.Mitigation.Name;
-                                context =
-                                    $"'{threatEventMitigation.ThreatEvent.Name}' on '{threatEventMitigation.ThreatEvent.Parent.Name}'";
-                            } else if (item is IThreatTypeMitigation threatTypeMitigation)
-                            {
-                                objectType = "Threat Type Mitigation";
-                                name = threatTypeMitigation.Mitigation.Name;
-                                context =
-                                    $"{threatTypeMitigation.ThreatType.Name}";
-                            }
+                            objectType = _model.GetIdentityTypeName(identity);
+                            name = identity.Name;
+                        }
+                        else if (item is IThreatEventMitigation threatEventMitigation)
+                        {
+                            objectType = "Threat Event Mitigation";
+                            name = threatEventMitigation.Mitigation.Name;
+                            context =
+                                $"'{threatEventMitigation.ThreatEvent.Name}' on '{threatEventMitigation.ThreatEvent.Parent.Name}'";
+                        }
+                        else if (item is IThreatTypeMitigation threatTypeMitigation)
+                        {
+                            objectType = "Threat Type Mitigation";
+                            name = threatTypeMitigation.Mitigation.Name;
+                            context =
+                                $"{threatTypeMitigation.ThreatType.Name}";
+                        }
 
-                            var annotations = _schemaManager.GetAnnotations(item)?.ToArray();
-                            if (annotations?.Any() ?? false)
+                        var annotations = _schemaManager.GetAnnotations(item)?.ToArray();
+                        if (annotations?.Any() ?? false)
+                        {
+                            foreach (var annotation in annotations)
                             {
-                                foreach (var annotation in annotations)
+                                if (!openOnly ||
+                                    (annotation is TopicToBeClarified topic && !topic.Answered))
                                 {
-                                    if (!openOnly ||
-                                        (annotation is TopicToBeClarified topic && !topic.Answered))
+                                    string annotationType;
+                                    string text = annotation.Text;
+                                    string askedBy = null;
+                                    string askedOn = null;
+                                    string askedVia = null;
+                                    string answered = null;
+                                    if (annotation is TopicToBeClarified topicToBeClarified)
                                     {
-                                        string annotationType;
-                                        string text = annotation.Text;
-                                        string askedBy = null;
-                                        string askedOn = null;
-                                        string askedVia = null;
-                                        string answered = null;
-                                        if (annotation is TopicToBeClarified topicToBeClarified)
-                                        {
-                                            annotationType = "Topic to be clarified";
-                                            askedBy = topicToBeClarified.AskedBy;
-                                            askedOn = topicToBeClarified.AskedOn.ToShortDateString();
-                                            askedVia = topicToBeClarified.AskedVia;
-                                            answered = topicToBeClarified.Answered.ToString();
-                                        }
-                                        else if (annotation is Highlight highlight)
-                                        {
-                                            annotationType = "Highlight";
-                                        }
-                                        else if (annotation is ReviewNote reviewNote)
-                                        {
-                                            annotationType = null;
-                                        }
-                                        else
-                                        {
-                                            annotationType = "Note";
-                                        }
-
-                                        if (annotationType != null)
-                                            writer.WriteLine(
-                                                $"\"{objectType}\",\"{name}\",\"{context}\",\"{annotationType}\",\"{text}\",\"{askedBy}\",\"{askedOn}\",\"{askedVia}\",\"{answered}\"");
+                                        annotationType = "Topic to be clarified";
+                                        askedBy = topicToBeClarified.AskedBy;
+                                        askedOn = topicToBeClarified.AskedOn.ToShortDateString();
+                                        askedVia = topicToBeClarified.AskedVia;
+                                        answered = topicToBeClarified.Answered.ToString();
                                     }
+                                    else if (annotation is Highlight highlight)
+                                    {
+                                        annotationType = "Highlight";
+                                    }
+                                    else if (annotation is ReviewNote reviewNote)
+                                    {
+                                        annotationType = null;
+                                    }
+                                    else
+                                    {
+                                        annotationType = "Note";
+                                    }
+
+                                    if (annotationType != null)
+                                        engine.AddRow(page, new[]
+                                        {
+                                            objectType, name, context, annotationType,
+                                            text, askedBy, askedOn, askedVia, answered
+                                        });
                                 }
                             }
                         }
+                    }
+
+                    try
+                    {
+                        engine.Save(fileName);
+                    }
+                    catch (Exception exc)
+                    {
+                        ShowWarning?.Invoke(exc.Message);
                     }
                 }
             }

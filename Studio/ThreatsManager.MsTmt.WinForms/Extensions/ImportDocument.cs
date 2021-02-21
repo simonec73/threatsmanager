@@ -61,7 +61,8 @@ namespace ThreatsManager.MsTmt.Extensions
                             DefaultExt = "tm7",
                             Filter = "TMT documents (*.tm7)|*.tm7|TMT templates (*.tb7)|*.tb7",
                             FilterIndex = 1,
-                            Multiselect = false
+                            Multiselect = false,
+                            RestoreDirectory = true
                         };
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {

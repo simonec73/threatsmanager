@@ -1079,6 +1079,10 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             foreach (var row in rows)
                                 row["Name"].Value = mitigation.Name;
                             break;
+                        case "ControlType":
+                            foreach (var row in rows)
+                                row["ControlType"].Value = mitigation.ControlType.ToString();
+                            break;
                     }
                 }
             }

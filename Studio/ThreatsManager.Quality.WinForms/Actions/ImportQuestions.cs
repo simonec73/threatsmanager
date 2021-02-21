@@ -62,8 +62,7 @@ namespace ThreatsManager.Quality.Actions
                             DefaultExt = "tmq",
                             Filter = "Questions file (*.tmq)|*.tmq",
                             RestoreDirectory = true,
-                            Title = "Import Questions",
-
+                            Title = "Import Questions"
                         };
                         if (openFileDialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {

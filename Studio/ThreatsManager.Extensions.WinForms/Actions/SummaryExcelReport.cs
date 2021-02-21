@@ -56,6 +56,7 @@ namespace ThreatsManager.Extensions.Actions
                         dialog.DefaultExt = "xlsx";
                         dialog.Filter = "Excel 2016 files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
                         dialog.Title = "Save Summary Excel Report";
+                        dialog.RestoreDirectory = true;
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
                             var threats = AnalyzeThreatModel(threatModel);

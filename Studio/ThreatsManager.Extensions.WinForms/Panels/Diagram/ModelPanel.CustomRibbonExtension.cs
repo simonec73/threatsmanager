@@ -362,6 +362,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     dialog2.Filter = "PNG (*.png)|*.png|JPEG (*.jpg)|*.jpg|GIF (*.gif)|Bitmap (*.bmp)";
                     dialog2.SupportMultiDottedExtensions = true;
                     dialog2.Title = "Export Diagram as Image";
+                    dialog2.RestoreDirectory = true;
                     if (dialog2.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
                         _loading = true;

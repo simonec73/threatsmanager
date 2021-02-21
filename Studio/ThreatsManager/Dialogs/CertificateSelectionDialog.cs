@@ -67,7 +67,8 @@ namespace ThreatsManager.Dialogs
                 DefaultExt = "dll",
                 Filter = "Assemblies (*.dll)|*.dll|Executables (*.exe)|*.exe|All files (*.*)|*.*",
                 Multiselect = false,
-                Title = "Select the signed assembly signed with the trusted certificate"
+                Title = "Select the signed assembly signed with the trusted certificate",
+                RestoreDirectory = true
             };
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {

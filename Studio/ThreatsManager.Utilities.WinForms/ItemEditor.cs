@@ -847,7 +847,6 @@ namespace ThreatsManager.Utilities.WinForms
                 _threatEventMenuDefinition.MenuClicked += OnThreatEventMenuClicked;
                 var menu = _threatEventMenuDefinition.CreateMenu();
                 menu.Opening += OnThreatEventMenuOpening;
-                menu.Closed += OnThreatEventMenuClosed;
                 listBox.ContextMenuStrip = menu;
             }
 
@@ -1053,7 +1052,6 @@ namespace ThreatsManager.Utilities.WinForms
                 _threatEventMitigationMenuDefinition.MenuClicked += OnThreatEventMitigationMenuClicked;
                 var menu = _threatEventMitigationMenuDefinition.CreateMenu();
                 menu.Opening += OnThreatEventMitigationMenuOpening;
-                menu.Closed += OnThreatEventMitigationMenuClosed;
                 listBox.ContextMenuStrip = menu;
             }
 
@@ -1088,7 +1086,6 @@ namespace ThreatsManager.Utilities.WinForms
                 _threatTypeMitigationMenuDefinition.MenuClicked += OnThreatTypeMitigationMenuClicked;
                 var menu = _threatTypeMitigationMenuDefinition.CreateMenu();
                 menu.Opening += OnThreatTypeMitigationMenuOpening;
-                menu.Closed += OnThreatTypeMitigationMenuClosed;
                 listBox.ContextMenuStrip = menu;
             }
 
@@ -2090,11 +2087,6 @@ namespace ThreatsManager.Utilities.WinForms
                 action.Execute(_menuThreatEvent);
             }
         }
-        
-        private void OnThreatEventMenuClosed(object sender, ToolStripDropDownClosedEventArgs e)
-        {
-            _menuThreatEvent = null;
-        }
 
         private void OnThreatEventMitigationMenuOpening(object sender, CancelEventArgs e)
         {
@@ -2122,11 +2114,6 @@ namespace ThreatsManager.Utilities.WinForms
                 action.Execute(_menuThreatEventMitigation);
             }
         }
-        
-        private void OnThreatEventMitigationMenuClosed(object sender, ToolStripDropDownClosedEventArgs e)
-        {
-            _menuThreatEventMitigation = null;
-        }
 
         private void OnThreatTypeMitigationMenuOpening(object sender, CancelEventArgs e)
         {
@@ -2153,11 +2140,6 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 action.Execute(_menuThreatTypeMitigation);
             }
-        }
-        
-        private void OnThreatTypeMitigationMenuClosed(object sender, ToolStripDropDownClosedEventArgs e)
-        {
-            _menuThreatTypeMitigation = null;
         }
         #endregion
 

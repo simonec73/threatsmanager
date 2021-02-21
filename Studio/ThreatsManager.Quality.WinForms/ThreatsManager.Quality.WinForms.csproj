@@ -218,6 +218,7 @@
       <DependentUpon>AnnotationControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Initializers\AnnotationsInitializer.cs" />
+    <Compile Include="Panels\Annotations\ExcelReportEngine.cs" />
     <Compile Include="Panels\ReviewNotes\ReviewNotesPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -539,6 +539,7 @@
             this._saveFile.DefaultExt = "xlsx";
             this._saveFile.Filter = "Excel 2016 files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
             this._saveFile.Title = "Save Excel Report";
+            this._saveFile.RestoreDirectory = true;
             // 
             // layoutControlItem19
             // 

@@ -246,6 +246,7 @@
             this._openFile.DefaultExt = "tmt";
             this._openFile.Filter = "Threat Model Template (*.tmt)|*.tmt|Threat Model Json Template (*.tmk)|*.tmk";
             this._openFile.Title = "Select template file";
+            this._openFile.RestoreDirectory = true;
             // 
             // ImportSchemaDialog
             // 

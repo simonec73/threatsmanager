@@ -242,7 +242,8 @@ namespace ThreatsManager
                     {
                         OpenOutcome outcome = OpenOutcome.KO;
 
-                        if (string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tm") == 0)
+                        if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tm") == 0) ||
+                            string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmj") == 0)
                         {
                             var packageManager = Manager.Instance.GetExtensions<IPackageManager>()?
                                 .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
@@ -250,10 +251,14 @@ namespace ThreatsManager
                             {
                                 outcome = await OpenAsync(packageManager, LocationType.FileSystem, fileName);
                             }
-
-                            if (outcome == OpenOutcome.OK)
+                            else
                             {
-                                _model?.SuspendDirty();
+                                ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
+                            }
+
+                            if (outcome == OpenOutcome.OK && _model != null)
+                            {
+                                _model.SuspendDirty();
                                 ShowDesktopAlert("Document successfully opened.");
                             }
                         }
@@ -286,7 +291,7 @@ namespace ThreatsManager
                             }
                         }
 
-                        if (outcome != OpenOutcome.OK)
+                        if (outcome != OpenOutcome.OK || _model == null)
                         {
                             InitializeStatus(null);
                         }
@@ -636,6 +641,10 @@ namespace ThreatsManager
                         UpdateFormsList();
                         AddKnownDocument(packageManager, LocationType.FileSystem, _openFile.FileName);
                         ShowDesktopAlert("Document successfully opened.");
+                    }
+                    else
+                    {
+                        ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
                     }
                 }
             }
@@ -1248,6 +1257,10 @@ namespace ThreatsManager
                                 case OpenOutcome.Ownership:
                                     break;
                             }
+                        }
+                        else
+                        {
+                            ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
                         }
                     }
                 }
