@@ -286,18 +286,28 @@ namespace ThreatsManager.Utilities
                     using (var ms = new MemoryStream())
                     {
                         file.CopyTo(ms);
-                        var jsonText = Encoding.Unicode.GetString(ms.ToArray());
-                        result = JsonConvert.DeserializeObject<ExtensionConfigurationData>(jsonText,
-                            new JsonSerializerSettings()
-                            {
+
+                        string jsonText;
+                        var json = ms.ToArray();
+                        if (json.Length > 0)
+                        {
+                            if (json[0] == 0xFF)
+                                jsonText = Encoding.Unicode.GetString(json, 2, json.Length - 2);
+                            else
+                                jsonText = Encoding.Unicode.GetString(json);
+
+                            result = JsonConvert.DeserializeObject<ExtensionConfigurationData>(jsonText,
+                                new JsonSerializerSettings()
+                                {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
 #pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-                                TypeNameHandling = TypeNameHandling.All,
+                                    TypeNameHandling = TypeNameHandling.All,
 #pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                                SerializationBinder = new KnownTypesBinder(),
-                                MissingMemberHandling = MissingMemberHandling.Ignore
-                            });
+                                    SerializationBinder = new KnownTypesBinder(),
+                                    MissingMemberHandling = MissingMemberHandling.Ignore
+                                });
+                        }
                     }
                 }
             }
@@ -330,7 +340,9 @@ namespace ThreatsManager.Utilities
 #pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
                         }));
-
+                    
+                    writer.Write(0xFF);
+                    writer.Write(0xFE);
                     writer.Write(serialization);
                 }
             }

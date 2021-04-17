@@ -144,7 +144,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Packaging, Version=1.4.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Packaging, Version=1.4.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Packaging.dll</HintPath>
     </Reference>

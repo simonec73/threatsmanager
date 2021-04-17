@@ -102,67 +102,77 @@ namespace ThreatsManager.Utilities
         public static IThreatModel Deserialize([NotNull] byte[] json, 
             bool ignoreMissingMembers = false, Guid? newThreatModelId = null)//, bool addToKnownInstances = true)
         {
-            var jsonText = Encoding.Unicode.GetString(json);
+            IThreatModel result = null;
 
-            if (newThreatModelId.HasValue && newThreatModelId != Guid.Empty)
+            if (json.Length > 0)
             {
-                var parsed = JObject.Parse(jsonText);
-                var id = parsed.GetValue("id")?.ToObject<string>();
-                if (!string.IsNullOrWhiteSpace(id))
+                string jsonText = null;
+
+                if (json[0] == 0xFF)
+                    jsonText = Encoding.Unicode.GetString(json, 2, json.Length - 2);
+                else
+                    jsonText = Encoding.Unicode.GetString(json);
+
+                if (newThreatModelId.HasValue && newThreatModelId != Guid.Empty)
                 {
-                    jsonText = jsonText.Replace(id, newThreatModelId?.ToString("D"));
+                    var parsed = JObject.Parse(jsonText);
+                    var id = parsed.GetValue("id")?.ToObject<string>();
+                    if (!string.IsNullOrWhiteSpace(id))
+                    {
+                        jsonText = jsonText.Replace(id, newThreatModelId?.ToString("D"));
+                    }
                 }
-            }
 
-            var binder = new KnownTypesBinder();
+                var binder = new KnownTypesBinder();
 
-            var result = JsonConvert.DeserializeObject(jsonText, new JsonSerializerSettings()
-            {
+                result = JsonConvert.DeserializeObject(jsonText, new JsonSerializerSettings()
+                {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
 #pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-                TypeNameHandling = TypeNameHandling.All,
+                    TypeNameHandling = TypeNameHandling.All,
 #pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                SerializationBinder = binder,
-                MissingMemberHandling = ignoreMissingMembers ? MissingMemberHandling.Ignore : MissingMemberHandling.Error
-            }) as IThreatModel;
+                    SerializationBinder = binder,
+                    MissingMemberHandling = ignoreMissingMembers ? MissingMemberHandling.Ignore : MissingMemberHandling.Error
+                }) as IThreatModel;
 
-            if (result != null)
-            {
-                try
+                if (result != null)
                 {
-                    if (!binder.HasUnknownTypes)
-                        result.ResetDirty();
-
-                    result.SuspendDirty();
-
-                    if (_instances.Any(x => x.Id == result.Id))
+                    try
                     {
-                        throw new ExistingModelException(result);
-                    }
-                    else
-                    {
-                        result.Cleanup();
-                        result.PropertySchemasNormalization();
+                        if (!binder.HasUnknownTypes)
+                            result.ResetDirty();
 
-                        _instances.Add(result);
+                        result.SuspendDirty();
 
-                        var method = result.GetType()
-                            .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] { }, null);
-                        if (method != null)
-                            method.Invoke(result, null);
-
-                        var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
-                        if (processors?.Any() ?? false)
+                        if (_instances.Any(x => x.Id == result.Id))
                         {
-                            foreach (var processor in processors)
-                                processor.Process(result);
+                            throw new ExistingModelException(result);
+                        }
+                        else
+                        {
+                            result.Cleanup();
+                            result.PropertySchemasNormalization();
+
+                            _instances.Add(result);
+
+                            var method = result.GetType()
+                                .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] { }, null);
+                            if (method != null)
+                                method.Invoke(result, null);
+
+                            var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
+                            if (processors?.Any() ?? false)
+                            {
+                                foreach (var processor in processors)
+                                    processor.Process(result);
+                            }
                         }
                     }
-                }
-                finally
-                {
-                    result.ResumeDirty();
+                    finally
+                    {
+                        result.ResumeDirty();
+                    }
                 }
             }
 
@@ -176,7 +186,7 @@ namespace ThreatsManager.Utilities
         /// <returns>Serialized Json of the Threat Model, as byte array.</returns>
         public static byte[] Serialize([NotNull] IThreatModel model)
         {
-            return Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings()
+            var buf = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings()
             {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
 #pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
@@ -184,6 +194,13 @@ namespace ThreatsManager.Utilities
 #pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
             }));
+
+            var result = new byte[buf.Length + 2];
+            result[0] = 0xFF;
+            result[1] = 0xFE;
+            buf.CopyTo(result, 2);
+
+            return result;
         }
 
         /// <summary>

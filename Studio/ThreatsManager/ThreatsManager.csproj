@@ -160,7 +160,7 @@
     <Reference Include="ThreatsManager.AutoGenRules">
       <HintPath>..\..\Build\repo\net472\ThreatsManager.AutoGenRules.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Engine, Version=1.4.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Engine, Version=1.4.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Engine.dll</HintPath>
     </Reference>
@@ -168,11 +168,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=1.4.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Interfaces, Version=1.4.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=1.4.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Utilities, Version=1.4.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
