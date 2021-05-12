@@ -341,8 +341,8 @@ namespace ThreatsManager.Utilities
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
                         }));
                     
-                    writer.Write(0xFF);
-                    writer.Write(0xFE);
+                    writer.Write((byte)0xFF);
+                    writer.Write((byte)0xFE);
                     writer.Write(serialization);
                 }
             }
