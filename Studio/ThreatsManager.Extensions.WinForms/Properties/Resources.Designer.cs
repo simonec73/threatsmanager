@@ -63,6 +63,46 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap arrows_join_diagonal {
+            get {
+                object obj = ResourceManager.GetObject("arrows_join_diagonal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_join_diagonal_big {
+            get {
+                object obj = ResourceManager.GetObject("arrows_join_diagonal_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_join_diagonal_huge {
+            get {
+                object obj = ResourceManager.GetObject("arrows_join_diagonal_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_join_diagonal_small {
+            get {
+                object obj = ResourceManager.GetObject("arrows_join_diagonal_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrows_merge {
             get {
                 object obj = ResourceManager.GetObject("arrows_merge", resourceCulture);
@@ -96,6 +136,46 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap arrows_merge_small {
             get {
                 object obj = ResourceManager.GetObject("arrows_merge_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_merge_small1 {
+            get {
+                object obj = ResourceManager.GetObject("arrows_merge_small1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_spread_diagonal {
+            get {
+                object obj = ResourceManager.GetObject("arrows_spread_diagonal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_spread_diagonal_big {
+            get {
+                object obj = ResourceManager.GetObject("arrows_spread_diagonal_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrows_spread_diagonal_huge {
+            get {
+                object obj = ResourceManager.GetObject("arrows_spread_diagonal_huge", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2883,6 +2963,46 @@ namespace ThreatsManager.Extensions.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap roadmap {
+            get {
+                object obj = ResourceManager.GetObject("roadmap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap roadmap_big {
+            get {
+                object obj = ResourceManager.GetObject("roadmap_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap roadmap_huge {
+            get {
+                object obj = ResourceManager.GetObject("roadmap_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap roadmap_small {
+            get {
+                object obj = ResourceManager.GetObject("roadmap_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Property Schema to store the Roadmap Status for Mitigations..
         /// </summary>
         internal static string RoadmapPropertySchemaDescription {
@@ -3444,6 +3564,46 @@ namespace ThreatsManager.Extensions.Properties {
         internal static string ThreatsPropertySchemaDescription {
             get {
                 return ResourceManager.GetString("ThreatsPropertySchemaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tools {
+            get {
+                object obj = ResourceManager.GetObject("tools", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tools_big {
+            get {
+                object obj = ResourceManager.GetObject("tools_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tools_huge {
+            get {
+                object obj = ResourceManager.GetObject("tools_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tools_small {
+            get {
+                object obj = ResourceManager.GetObject("tools_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

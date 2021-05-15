@@ -30,7 +30,7 @@ namespace ThreatsManager.Quality.Annotations
         {
             bool result = false;
 
-            var dialog = new AnnotationDialog(new ReviewNote());
+            var dialog = new AnnotationDialog(_model, _container , new ReviewNote());
             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
             {
                 var schemaManager = new AnnotationsPropertySchemaManager(_model);

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -216,6 +217,29 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     result.Add(new CommandsBarDefinition("Remove", "Remove", removeList));
                 }
 
+                var fixList = new List<IActionDefinition>()
+                {
+                    new ActionDefinition(Id, "FixDiagram", "Fix Current Diagram",
+                        Properties.Resources.tools_big,
+                        Properties.Resources.tools)
+                };
+                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Fix", x.Key) == 0) ?? false)
+                {
+                    var definitions = _commandsBarContextAwareActions["Fix"];
+                    List<IActionDefinition> actions = new List<IActionDefinition>();
+                    foreach (var definition in definitions)
+                    {
+                        foreach (var command in definition.Commands)
+                        {
+                            actions.Add(command);
+                        }
+                    }
+
+                    fixList.AddRange(actions);
+                    _commandsBarContextAwareActions.Remove("Fix");
+                }
+                result.Add(new CommandsBarDefinition("Fix", "Fix", fixList));
+
                 if (_commandsBarContextAwareActions?.Any() ?? false)
                 {
                     foreach (var definitions in _commandsBarContextAwareActions.Values)
@@ -294,6 +318,21 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         else
                         {
                             ShowWarning?.Invoke("Diagram removal has failed.");
+                        }
+                    }
+                    break;
+                case "FixDiagram":
+                    var fixDiagram = new FixDiagram();
+                    if (fixDiagram.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    {
+                        switch (fixDiagram.Issue)
+                        {
+                            case DiagramIssue.TooSmall:
+                                HandleTooSmall();
+                                break;
+                            case DiagramIssue.TooLarge:
+                                HandleTooLarge();
+                                break;
                         }
                     }
                     break;
@@ -385,6 +424,38 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             shapesAction.Execute(shapes, links);
                     }
                     break;
+            }
+        }
+
+        private void HandleTooSmall()
+        {
+            var schemaManager = new DiagramPropertySchemaManager(_diagram.Model);
+            var propertyType = schemaManager.GetDpiFactorPropertyType();
+            if (propertyType != null)
+            {
+                if ((_diagram.GetProperty(propertyType) ?? 
+                     _diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
+                {
+                    property.Value /= 2;
+                    MessageBox.Show(this,
+                        "The Diagram will now be closed.\nPlease open it again and apply the minor fixes which may eventually be required",
+                        "Diagram fix", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ParentForm?.Close();
+                }
+            }
+        }
+
+        private void HandleTooLarge()
+        {
+            var schemaManager = new DiagramPropertySchemaManager(_diagram.Model);
+            var propertyType = schemaManager.GetDpiFactorPropertyType();
+            if (propertyType != null)
+            {
+                if ((_diagram.GetProperty(propertyType) ?? 
+                     _diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
+                {
+                    property.Value *= 2;
+                }
             }
         }
 

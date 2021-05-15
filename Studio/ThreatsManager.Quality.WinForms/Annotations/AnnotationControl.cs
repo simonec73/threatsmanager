@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
+using DevComponents.DotNetBar.Layout;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities.WinForms;
+using ThreatsManager.Utilities.WinForms.Dialogs;
 
 namespace ThreatsManager.Quality.Annotations
 {
@@ -18,11 +23,35 @@ namespace ThreatsManager.Quality.Annotations
         public AnnotationControl()
         {
             InitializeComponent();
+
+            AddSpellCheck(_text);
         }
 
         public event Action AnnotationUpdated;
 
         public bool IsInitialized => _annotation != null;
+
+        public void SetObject([NotNull] IThreatModel model, [NotNull] object obj)
+        {
+            if (obj is IIdentity identity)
+            {
+                _objectContainer.Text = model.GetIdentityTypeName(identity);
+                _objectName.Text = "      " + identity.Name;
+                _objectName.Image = identity.GetImage(ImageSize.Small);
+            } else if (obj is IThreatEventMitigation threatEventMitigation)
+            {
+                _objectContainer.Text = "Threat Event Mitigation";
+                _objectName.Text = "      " + 
+                                   $"Mitigation '{threatEventMitigation.Mitigation.Name}' for '{threatEventMitigation.ThreatEvent.Name}' on '{threatEventMitigation.ThreatEvent.Parent.Name}";
+                _objectName.Image = Icons.Resources.mitigations_small;
+            } else if (obj is IThreatTypeMitigation threatTypeMitigation)
+            {
+                _objectContainer.Text = "Threat Type Mitigation";
+                _objectName.Text = "      " + 
+                                   $"Mitigation '{threatTypeMitigation.Mitigation.Name}' for '{threatTypeMitigation.ThreatType.Name}'";
+                _objectName.Image = Icons.Resources.standard_mitigations_small;
+            } 
+        }
 
         public Annotation Annotation
         {
@@ -220,6 +249,55 @@ namespace ThreatsManager.Quality.Annotations
             {
                 topicToBeClarified.Answered = _answered.Checked;
                 AnnotationUpdated?.Invoke();
+            }
+        }
+
+        private void _askedVia_ButtonCustomClick(object sender, EventArgs e)
+        {
+            _askedVia.Text = "Email";
+        }
+
+        private void _askedVia_ButtonCustom2Click(object sender, EventArgs e)
+        {
+            _askedVia.Text = "Call";
+        }
+
+        private void AddSpellCheck([NotNull] TextBoxBase control)
+        {
+            try
+            {
+                if (control is RichTextBox richTextBox)
+                {
+                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
+                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
+                }
+                else
+                {
+                    _spellAsYouType.AddTextBoxBase(control);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void _textContainer_MarkupLinkClick(object sender, DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs e)
+        {
+            if (sender is LayoutControlItem layoutControlItem)
+            {
+                if (layoutControlItem.Control is RichTextBox richTextBox)
+                {
+                    using (var dialog = new TextEditorDialog
+                    {
+                        Multiline = true, 
+                        Text = richTextBox.Text,
+                        ReadOnly = richTextBox.ReadOnly
+                    })
+                    {
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                            richTextBox.Text = dialog.Text;
+                    }
+                }
             }
         }
     }

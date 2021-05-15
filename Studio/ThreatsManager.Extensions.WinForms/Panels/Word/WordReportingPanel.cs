@@ -190,9 +190,13 @@ namespace ThreatsManager.Extensions.Panels.Word
 
                 result = true;
             }
-            catch (ZipException)
+            catch (IOException)
             {
-                ShowWarning?.Invoke("Reference document may be corrupted.");
+                ShowWarning?.Invoke("Reference document may be in use in Word, please close it and try again.\nIf the problem persists, then the file may not be accessible.");
+            }
+            catch
+            {
+                ShowWarning?.Invoke("Reference document may be corrupted or not a Word document.");
             }
             finally
             {
@@ -379,9 +383,12 @@ namespace ThreatsManager.Extensions.Panels.Word
                 {
                     string schemaNs = null;
                     string schemaName = null;
+                    var show = false;
                     if (field is PropertyTypeField ptField && 
-                        ptField.PropertyType is IPropertyType propertyType)
+                        ptField.PropertyType is IPropertyType propertyType &&
+                        !propertyType.DoNotPrint)
                     {
+                        show = true;
                         var schema = _model.GetSchema(propertyType.SchemaId);
                         if (schema != null)
                         {
@@ -390,8 +397,10 @@ namespace ThreatsManager.Extensions.Panels.Word
                         }
                     }
                     else if (field is TablePropertyTypeField tptField && 
-                             tptField.PropertyType is IPropertyType tPropertyType)
+                             tptField.PropertyType is IPropertyType tPropertyType &&
+                             !tPropertyType.DoNotPrint)
                     {
+                        show = true;
                         var schema = _model.GetSchema(tPropertyType.SchemaId);
                         if (schema != null)
                         {
@@ -400,12 +409,15 @@ namespace ThreatsManager.Extensions.Panels.Word
                         }
                     }
 
-                    var row = new GridRow(field.ToString(), schemaNs, schemaName)
+                    if (show)
                     {
-                        Tag = field,
-                        Checked = selected?.Contains(field) ?? false
-                    };
-                    result.Rows.Add(row);
+                        var row = new GridRow(field.ToString(), schemaNs, schemaName)
+                        {
+                            Tag = field,
+                            Checked = selected?.Contains(field) ?? false
+                        };
+                        result.Rows.Add(row);
+                    }
                 }
             }
 

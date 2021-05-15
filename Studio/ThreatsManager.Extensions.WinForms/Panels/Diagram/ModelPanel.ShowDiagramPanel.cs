@@ -74,17 +74,24 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             }
                         }
 
-                        //if (groups?.Any() ?? false)
-                        //{
-                        //    foreach (var group in groups)
-                        //    {
-                        //        if (group.Identity is IGroup groupIdentity)
-                        //        {
-                        //            var groupNode = GetGroup(groupIdentity);
-                        //            groupNode.RefreshBorder();
-                        //        }
-                        //    }
-                        //}
+                        if (groups?.Any() ?? false)
+                        {
+                            foreach (var group in groups)
+                            {
+                                if (group.Identity is IGroup groupIdentity)
+                                {
+                                    var groupNode = GetGroup(groupIdentity);
+                                    groupNode.RefreshBorder();
+                                }
+                            }
+                        }
+
+                        if (_links?.Any() ?? false)
+                        {
+                            var links = _links.Values.ToArray();
+                            foreach (var link in links)
+                                link.UpdateRoute();
+                        }
 
                         _graph.DocPosition = _graph.DocumentTopLeft;
                     }

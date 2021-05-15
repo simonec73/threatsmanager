@@ -29,19 +29,21 @@ namespace ThreatsManager.Quality.Annotations
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
-            this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._text = new System.Windows.Forms.RichTextBox();
-            this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._answeredBy = new System.Windows.Forms.TextBox();
-            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._answeredOn = new DevComponents.Editors.DateTimeAdv.DateTimeInput();
-            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._answeredVia = new System.Windows.Forms.TextBox();
+            this._answeredVia = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem7 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._spellAsYouType = new Keyoti.RapidSpell.RapidSpellAsYouType(this.components);
             this.layoutControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._answeredOn)).BeginInit();
             this.SuspendLayout();
@@ -66,17 +68,6 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControl1.Size = new System.Drawing.Size(522, 320);
             this.layoutControl1.TabIndex = 0;
             // 
-            // layoutControlItem1
-            // 
-            this.layoutControlItem1.Control = this._text;
-            this.layoutControlItem1.Height = 99;
-            this.layoutControlItem1.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Text = "Text";
-            this.layoutControlItem1.Width = 100;
-            this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // _text
             // 
             this._text.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -84,19 +75,9 @@ namespace ThreatsManager.Quality.Annotations
             this._text.Margin = new System.Windows.Forms.Padding(0);
             this._text.Name = "_text";
             this._text.Size = new System.Drawing.Size(437, 253);
-            this._text.TabIndex = 4;
+            this._text.TabIndex = 0;
             this._text.Text = "";
             this._text.TextChanged += new System.EventHandler(this._text_TextChanged);
-            // 
-            // layoutControlItem2
-            // 
-            this.layoutControlItem2.Control = this._answeredBy;
-            this.layoutControlItem2.Height = 28;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Text = "Answered By";
-            this.layoutControlItem2.Width = 100;
-            this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // _answeredBy
             // 
@@ -104,18 +85,8 @@ namespace ThreatsManager.Quality.Annotations
             this._answeredBy.Margin = new System.Windows.Forms.Padding(0);
             this._answeredBy.Name = "_answeredBy";
             this._answeredBy.Size = new System.Drawing.Size(437, 20);
-            this._answeredBy.TabIndex = 5;
+            this._answeredBy.TabIndex = 1;
             this._answeredBy.TextChanged += new System.EventHandler(this._answeredBy_TextChanged);
-            // 
-            // layoutControlItem4
-            // 
-            this.layoutControlItem4.Control = this._answeredOn;
-            this.layoutControlItem4.Height = 28;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
-            this.layoutControlItem4.Name = "layoutControlItem4";
-            this.layoutControlItem4.Text = "Answered On";
-            this.layoutControlItem4.Width = 50;
-            this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // _answeredOn
             // 
@@ -162,27 +133,28 @@ namespace ThreatsManager.Quality.Annotations
             this._answeredOn.Name = "_answeredOn";
             this._answeredOn.Size = new System.Drawing.Size(119, 20);
             this._answeredOn.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._answeredOn.TabIndex = 6;
+            this._answeredOn.TabIndex = 2;
             this._answeredOn.ValueChanged += new System.EventHandler(this._answeredOn_ValueChanged);
             this._answeredOn.ButtonCustomClick += new System.EventHandler(this._answeredOn_ButtonCustomClick);
             // 
-            // layoutControlItem5
-            // 
-            this.layoutControlItem5.Control = this._answeredVia;
-            this.layoutControlItem5.Height = 28;
-            this.layoutControlItem5.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem5.Name = "layoutControlItem5";
-            this.layoutControlItem5.Text = "Answered Via";
-            this.layoutControlItem5.Width = 50;
-            this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // _answeredVia
             // 
+            // 
+            // 
+            // 
+            this._answeredVia.Border.Class = "TextBoxBorder";
+            this._answeredVia.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._answeredVia.ButtonCustom.Symbol = "";
+            this._answeredVia.ButtonCustom.Visible = true;
+            this._answeredVia.ButtonCustom2.Symbol = "";
+            this._answeredVia.ButtonCustom2.Visible = true;
             this._answeredVia.Location = new System.Drawing.Point(285, 293);
             this._answeredVia.Margin = new System.Windows.Forms.Padding(0);
             this._answeredVia.Name = "_answeredVia";
             this._answeredVia.Size = new System.Drawing.Size(233, 20);
-            this._answeredVia.TabIndex = 7;
+            this._answeredVia.TabIndex = 3;
+            this._answeredVia.ButtonCustomClick += new System.EventHandler(this._answeredVia_ButtonCustomClick);
+            this._answeredVia.ButtonCustom2Click += new System.EventHandler(this._answeredVia_ButtonCustom2Click);
             this._answeredVia.TextChanged += new System.EventHandler(this._answeredVia_TextChanged);
             // 
             // layoutControlItem3
@@ -192,9 +164,10 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControlItem3.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             this.layoutControlItem3.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Text = "Text";
+            this.layoutControlItem3.Text = "<a href=\"Text\">Text</a>";
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this.layoutControlItem3.MarkupLinkClick += new DevComponents.DotNetBar.Layout.MarkupLinkClickEventHandler(this.layoutControlItem3_MarkupLinkClick);
             // 
             // layoutControlItem6
             // 
@@ -225,6 +198,93 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControlItem8.Width = 100;
             this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
+            // layoutControlItem1
+            // 
+            this.layoutControlItem1.Control = this._text;
+            this.layoutControlItem1.Height = 99;
+            this.layoutControlItem1.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Text = "Text";
+            this.layoutControlItem1.Width = 100;
+            this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem2
+            // 
+            this.layoutControlItem2.Control = this._answeredBy;
+            this.layoutControlItem2.Height = 28;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Text = "Answered By";
+            this.layoutControlItem2.Width = 100;
+            this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem4
+            // 
+            this.layoutControlItem4.Control = this._answeredOn;
+            this.layoutControlItem4.Height = 28;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem4.Name = "layoutControlItem4";
+            this.layoutControlItem4.Text = "Answered On";
+            this.layoutControlItem4.Width = 50;
+            this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem5
+            // 
+            this.layoutControlItem5.Control = this._answeredVia;
+            this.layoutControlItem5.Height = 28;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Text = "Answered Via";
+            this.layoutControlItem5.Width = 50;
+            this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _spellAsYouType
+            // 
+            this._spellAsYouType.AddMenuText = "Add";
+            this._spellAsYouType.AllowAnyCase = false;
+            this._spellAsYouType.AllowMixedCase = true;
+            this._spellAsYouType.AutoCorrectEnabled = true;
+            this._spellAsYouType.CheckAsYouType = true;
+            this._spellAsYouType.CheckCompoundWords = false;
+            this._spellAsYouType.CheckDisabledTextBoxes = false;
+            this._spellAsYouType.CheckReadOnlyTextBoxes = false;
+            this._spellAsYouType.ConsiderationRange = 300;
+            this._spellAsYouType.ContextMenuStripEnabled = true;
+            this._spellAsYouType.DictFilePath = null;
+            this._spellAsYouType.FindCapitalizedSuggestions = true;
+            this._spellAsYouType.GUILanguage = Keyoti.RapidSpell.LanguageType.ENGLISH;
+            this._spellAsYouType.IgnoreAllMenuText = "Ignore All";
+            this._spellAsYouType.IgnoreCapitalizedWords = false;
+            this._spellAsYouType.IgnoreIncorrectSentenceCapitalization = false;
+            this._spellAsYouType.IgnoreInEnglishLowerCaseI = false;
+            this._spellAsYouType.IgnoreMenuText = "Ignore";
+            this._spellAsYouType.IgnoreURLsAndEmailAddresses = true;
+            this._spellAsYouType.IgnoreWordsWithDigits = true;
+            this._spellAsYouType.IgnoreXML = false;
+            this._spellAsYouType.IncludeUserDictionaryInSuggestions = false;
+            this._spellAsYouType.LanguageParser = Keyoti.RapidSpell.LanguageType.ENGLISH;
+            this._spellAsYouType.LookIntoHyphenatedText = true;
+            this._spellAsYouType.OptionsEnabled = true;
+            this._spellAsYouType.OptionsFileName = "ThreatsManagerPlatform_Spell.xml";
+            this._spellAsYouType.OptionsStorageLocation = Keyoti.RapidSpell.Options.UserOptions.StorageType.IsolatedStorage;
+            this._spellAsYouType.RemoveDuplicateWordText = "Remove duplicate word";
+            this._spellAsYouType.SeparateHyphenWords = false;
+            this._spellAsYouType.ShowAddMenuOption = true;
+            this._spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase = true;
+            this._spellAsYouType.ShowSuggestionsContextMenu = true;
+            this._spellAsYouType.ShowSuggestionsWhenTextIsSelected = false;
+            this._spellAsYouType.SuggestionsMethod = Keyoti.RapidSpell.SuggestionsMethodType.HashingSuggestions;
+            this._spellAsYouType.SuggestSplitWords = true;
+            this._spellAsYouType.TextBoxBase = null;
+            this._spellAsYouType.TextComponent = null;
+            this._spellAsYouType.UnderlineColor = System.Drawing.Color.Red;
+            this._spellAsYouType.UnderlineStyle = Keyoti.RapidSpell.UnderlineStyle.Wavy;
+            this._spellAsYouType.UpdateAllTextBoxes = true;
+            this._spellAsYouType.UserDictionaryFile = null;
+            this._spellAsYouType.V2Parser = true;
+            this._spellAsYouType.WarnDuplicates = true;
+            // 
             // AnswerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -246,7 +306,7 @@ namespace ThreatsManager.Quality.Annotations
         private System.Windows.Forms.RichTextBox _text;
         private System.Windows.Forms.TextBox _answeredBy;
         private DevComponents.Editors.DateTimeAdv.DateTimeInput _answeredOn;
-        private System.Windows.Forms.TextBox _answeredVia;
+        private DevComponents.DotNetBar.Controls.TextBoxX _answeredVia;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem3;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem6;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem7;
@@ -255,5 +315,6 @@ namespace ThreatsManager.Quality.Annotations
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem2;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem4;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem5;
+        private Keyoti.RapidSpell.RapidSpellAsYouType _spellAsYouType;
     }
 }

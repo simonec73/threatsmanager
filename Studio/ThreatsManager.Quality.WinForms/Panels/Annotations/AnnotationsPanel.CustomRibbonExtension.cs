@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
-using Syncfusion.XPS;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Quality.Annotations;
@@ -237,19 +232,20 @@ namespace ThreatsManager.Quality.Panels.Annotations
         private void ExportCsv([Required] string fileName, bool openOnly)
         {
             var list = new List<IPropertiesContainer>();
-            Add(list, _model.GetExternalInteractors(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetProcesses(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetDataStores(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetFlows(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetTrustBoundaries(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetThreatEvents(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetThreatEventMitigations(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetThreatTypes(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetKnownMitigations(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetStandardMitigations(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetEntityTemplates(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetFlowTemplates(_schemaManager, _propertyType, openOnly));
-            Add(list, _model.GetTrustBoundaryTemplates(_schemaManager, _propertyType, openOnly));
+            Add(list, _model.GetExternalInteractors(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetProcesses(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetDataStores(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetFlows(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetTrustBoundaries(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetThreatEvents(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetThreatEventMitigations(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetThreatTypes(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetKnownMitigations(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetStandardMitigations(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetEntityTemplates(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetFlowTemplates(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetTrustBoundaryTemplates(_schemaManager, _propertyType, null, openOnly));
+            Add(list, _model.GetDiagrams(_schemaManager, _propertyType, null, openOnly));
 
             if (list.Any())
             {

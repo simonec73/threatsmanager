@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
 
@@ -88,7 +87,7 @@ namespace ThreatsManager
                 if (cancellation.IsCancellationRequested)
                 {
                     await CancelAsync(cancellation);
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                 }
 
                 var lastWrite = File.GetLastWriteTime(_fileName);
@@ -124,7 +123,11 @@ namespace ThreatsManager
                 if (cancellation.IsCancellationRequested)
                 {
                     await CancelAsync(cancellation);
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
+                }
+                else
+                {
+                    await Task.Delay(3000);
                 }
             } while (true);
         }

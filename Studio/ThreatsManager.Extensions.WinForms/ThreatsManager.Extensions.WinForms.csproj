@@ -179,6 +179,12 @@
     <Compile Include="Dialogs\DiagramSortDialog.Designer.cs">
       <DependentUpon>DiagramSortDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\FixDiagram.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FixDiagram.Designer.cs">
+      <DependentUpon>FixDiagram.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ImagedComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1068,6 +1074,9 @@
     <EmbeddedResource Include="Dialogs\DiagramSortDialog.resx">
       <DependentUpon>DiagramSortDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FixDiagram.resx">
+      <DependentUpon>FixDiagram.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ImportSchemaDialog.resx">
       <DependentUpon>ImportSchemaDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -1588,6 +1597,29 @@
     <None Include="Resources\funnel.png" />
     <None Include="Resources\funnel_big.png" />
     <None Include="Resources\funnel_huge.png" />
+    <None Include="Resources\roadmap.png" />
+    <None Include="Resources\roadmap_big.png" />
+    <None Include="Resources\roadmap_huge.png" />
+    <None Include="Resources\roadmap_small.png" />
+    <None Include="Resources\tools_small.png" />
+    <None Include="Resources\tools.png" />
+    <None Include="Resources\tools_big.png" />
+    <None Include="Resources\tools_huge.png" />
+    <None Include="Resources\mouse_huge.png" />
+    <None Include="Resources\mouse_big.png" />
+    <None Include="Resources\mouse.png" />
+    <None Include="Resources\mouse_small.png" />
+    <None Include="Resources\elephant_small.png" />
+    <None Include="Resources\elephant.png" />
+    <None Include="Resources\elephant_big.png" />
+    <None Include="Resources\elephant_huge.png" />
+    <None Include="Resources\arrows_spread_diagonal.png" />
+    <None Include="Resources\arrows_spread_diagonal_big.png" />
+    <None Include="Resources\arrows_spread_diagonal_huge.png" />
+    <None Include="Resources\arrows_join_diagonal.png" />
+    <None Include="Resources\arrows_join_diagonal_big.png" />
+    <None Include="Resources\arrows_join_diagonal_huge.png" />
+    <None Include="Resources\arrows_join_diagonal_small.png" />
     <Content Include="Shortcuts.txt" />
     <Content Include="Colors.txt" />
     <Content Include="Resources\threats_selection_small.png" />
@@ -1612,22 +1644,22 @@
       <Version>1.0.705.50</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>6.7.11</Version>
+      <Version>6.9.4</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>6.7.11</Version>
+      <Version>6.9.4</Version>
     </PackageReference>
     <PackageReference Include="Svg">
-      <Version>3.1.1</Version>
+      <Version>3.2.3</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.DocIO.WinForms">
-      <Version>18.3.0.38</Version>
+      <Version>19.1.0.58</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.XlsIO.WinForms">
-      <Version>18.3.0.38</Version>
+      <Version>19.1.0.58</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

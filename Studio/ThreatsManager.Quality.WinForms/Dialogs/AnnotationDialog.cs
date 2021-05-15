@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Quality.Annotations;
 
 namespace ThreatsManager.Quality.Dialogs
@@ -13,8 +14,9 @@ namespace ThreatsManager.Quality.Dialogs
             InitializeComponent();
         }
 
-        public AnnotationDialog([NotNull] Annotation annotation, bool editMode = false) : this()
+        public AnnotationDialog([NotNull] IThreatModel model, [NotNull] object obj, [NotNull] Annotation annotation, bool editMode = false) : this()
         {
+            _annotation.SetObject(model, obj);
             _annotation.Annotation = annotation;
             _editMode = editMode;
 
@@ -56,11 +58,7 @@ namespace ThreatsManager.Quality.Dialogs
             }
         }
 
-        public Annotation Annotation
-        {
-            get => _annotation.Annotation;
-            set => _annotation.Annotation = value;
-        }
+        public Annotation Annotation => _annotation.Annotation;
 
         private void _cancel_Click(object sender, System.EventArgs e)
         {

@@ -880,6 +880,7 @@ namespace ThreatsManager
         //    }
         //}
 
+        [Dispatched]
         private void RefreshCaption()
         {
             var modelName = _model?.Name;
@@ -986,6 +987,18 @@ namespace ThreatsManager
             catch (FileNotFoundException)
             {
                 ShowDesktopAlert("File has not been found.", true);
+                model = null;
+                messageRaised = true;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                ShowDesktopAlert("Directory has not been found.", true);
+                model = null;
+                messageRaised = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                ShowDesktopAlert("The model cannot be opened because you do now have the required rights.", true);
                 model = null;
                 messageRaised = true;
             }
@@ -1156,6 +1169,10 @@ namespace ThreatsManager
                         _errorsOnLoading | autoAddDateTime, enabledExtensions, out var newLocation);
                     _model?.SetLocation(newLocation);
                 }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                ShowDesktopAlert("The model cannot be saved because you do now have the required rights.", true);
             }
             catch (Exception e)
             {

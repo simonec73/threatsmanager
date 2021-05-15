@@ -481,16 +481,27 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
         {
             if (!_loading && _schemas.SelectedItem is IPropertySchema schema && (!schema.System || _promoted))
             {
-                if (_updaters?.Any() ?? false)
+                if (string.IsNullOrWhiteSpace(_name.Text))
                 {
-                    foreach (var updater in _updaters)
-                    {
-                        updater.UpdateSchemaName(_model, schema.Name, 
-                            schema.Namespace, _name.Text, schema.Namespace);
-                    }
-                }
+                    _loading = true;
+                    _name.Text = schema.Name;
+                    _loading = false;
 
-                schema.Name = _name.Text;
+                    ShowWarning?.Invoke("The Schema name cannot be empty.");
+                }
+                else
+                {
+                    if (_updaters?.Any() ?? false)
+                    {
+                        foreach (var updater in _updaters)
+                        {
+                            updater.UpdateSchemaName(_model, schema.Name,
+                                schema.Namespace, _name.Text, schema.Namespace);
+                        }
+                    }
+
+                    schema.Name = _name.Text;
+                }
             }
         }
 
@@ -498,16 +509,27 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
         {
             if (!_loading && _schemas.SelectedItem is IPropertySchema schema && (!schema.System || _promoted))
             {
-                if (_updaters?.Any() ?? false)
+                if (string.IsNullOrWhiteSpace(_namespace.Text))
                 {
-                    foreach (var updater in _updaters)
-                    {
-                        updater.UpdateSchemaName(_model, schema.Name, 
-                            schema.Namespace, schema.Name, _namespace.Text);
-                    }
-                }
+                    _loading = true;
+                    _namespace.Text = schema.Namespace;
+                    _loading = false;
 
-                schema.Namespace = _namespace.Text;
+                    ShowWarning?.Invoke("The Schema namespace cannot be empty.");
+                }
+                else
+                {
+                    if (_updaters?.Any() ?? false)
+                    {
+                        foreach (var updater in _updaters)
+                        {
+                            updater.UpdateSchemaName(_model, schema.Name,
+                                schema.Namespace, schema.Name, _namespace.Text);
+                        }
+                    }
+
+                    schema.Namespace = _namespace.Text;
+                }
             }
         }
 

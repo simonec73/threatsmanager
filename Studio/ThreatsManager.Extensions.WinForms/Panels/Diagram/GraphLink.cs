@@ -75,6 +75,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             if (_link?.DataFlow is IDataFlow flow)
             {
                 ((INotifyPropertyChanged)flow).PropertyChanged -= OnPropertyChanged;
+                _link.PropertyValueChanged -= OnLinkPropertyValueChanged;
                 _link.DataFlow.ThreatEventAdded -= ThreatEventsChanged;
                 _link.DataFlow.ThreatEventRemoved -= ThreatEventsChanged;
                 _threatsMarker.ThreatEventClicked -= OnThreatEventClicked;
@@ -166,7 +167,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             SelectedThreatEvent?.Invoke(threatEvent);
         }
-
 
         public DpiState DpiState
         {

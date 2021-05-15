@@ -16,6 +16,17 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
+            ddc = _grid.PrimaryGrid.Columns["Description"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
+
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
             if (rows.Any())
             {

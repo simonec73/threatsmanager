@@ -502,6 +502,26 @@ namespace ThreatsManager.DevOps.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iteration_big_delete {
+            get {
+                object obj = ResourceManager.GetObject("iteration_big_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap iteration_delete {
+            get {
+                object obj = ResourceManager.GetObject("iteration_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iteration_huge {
             get {
                 object obj = ResourceManager.GetObject("iteration_huge", resourceCulture);
@@ -512,9 +532,29 @@ namespace ThreatsManager.DevOps.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iteration_huge_delete {
+            get {
+                object obj = ResourceManager.GetObject("iteration_huge_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iteration_small {
             get {
                 object obj = ResourceManager.GetObject("iteration_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap iteration_small_delete {
+            get {
+                object obj = ResourceManager.GetObject("iteration_small_delete", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
