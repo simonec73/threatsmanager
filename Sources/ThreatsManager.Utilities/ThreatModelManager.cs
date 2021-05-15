@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -125,16 +126,19 @@ namespace ThreatsManager.Utilities
 
                 var binder = new KnownTypesBinder();
 
-                result = JsonConvert.DeserializeObject(jsonText, new JsonSerializerSettings()
+                using (var textReader = new StringReader(jsonText))
+                using (var reader = new JsonTextReader(textReader))
                 {
-#pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
-#pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-                    TypeNameHandling = TypeNameHandling.All,
-#pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
-#pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                    SerializationBinder = binder,
-                    MissingMemberHandling = ignoreMissingMembers ? MissingMemberHandling.Ignore : MissingMemberHandling.Error
-                }) as IThreatModel;
+                    var serializer = new JsonSerializer
+                    {
+                        TypeNameHandling = TypeNameHandling.All,
+                        SerializationBinder = binder,
+                        MissingMemberHandling = ignoreMissingMembers
+                            ? MissingMemberHandling.Ignore
+                            : MissingMemberHandling.Error
+                    };
+                    result = serializer.Deserialize<IThreatModel>(reader);
+                }
 
                 if (result != null)
                 {
@@ -186,14 +190,16 @@ namespace ThreatsManager.Utilities
         /// <returns>Serialized Json of the Threat Model, as byte array.</returns>
         public static byte[] Serialize([NotNull] IThreatModel model)
         {
-            var buf = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings()
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+
+            using(JsonWriter writer = new JsonTextWriter(sw))
             {
-#pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
-#pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-                TypeNameHandling = TypeNameHandling.All
-#pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
-#pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-            }));
+                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                serializer.Serialize(writer, model);
+            }
+
+            var buf = Encoding.Unicode.GetBytes(sb.ToString());
 
             var result = new byte[buf.Length + 2];
             result[0] = 0xFF;

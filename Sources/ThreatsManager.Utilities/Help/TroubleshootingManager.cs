@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Net.Cache;
 using System.Reflection;
@@ -110,11 +111,15 @@ namespace ThreatsManager.Utilities.Help
 
                     try
                     {
-                        definition = JsonConvert.DeserializeObject<TroubleshootingDefinition>(json,
-                            new JsonSerializerSettings()
+                        using (var textReader = new StringReader(json))
+                        using (var reader = new JsonTextReader(textReader))
+                        {
+                            var serializer = new JsonSerializer
                             {
                                 TypeNameHandling = TypeNameHandling.None
-                            });
+                            };
+                            definition = serializer.Deserialize<TroubleshootingDefinition>(reader);
+                        }
                     }
                     catch (JsonReaderException)
                     {
