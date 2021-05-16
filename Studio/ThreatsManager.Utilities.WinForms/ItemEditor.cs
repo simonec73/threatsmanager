@@ -231,9 +231,10 @@ namespace ThreatsManager.Utilities.WinForms
                                     ClearDynamicLayout();
                                 }
 
-                                _itemName.Visible = value != null;
-                                _itemType.Visible = value != null;
-                                _itemPicture.Visible = value != null;
+                                _itemNameLayout.Visible = value != null;
+                                _itemTypeLayout.Visible = value != null;
+                                _refreshLayout.Visible = value != null;
+                                _itemPictureLayout.Visible = value != null;
                                 _description.Visible = value != null;
                             }
                             finally
@@ -281,7 +282,9 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     threatEventsContainer.ThreatEventAdded -= ThreatEventAdded;
                     threatEventsContainer.ThreatEventRemoved -= ThreatEventRemoved;
-                    _threatEventMenuDefinition.MenuClicked -= OnThreatEventMenuClicked;
+                    
+                    if (_threatEventMenuDefinition != null)
+                        _threatEventMenuDefinition.MenuClicked -= OnThreatEventMenuClicked;
                 }
 
                 if (_item is IThreatModel model)

@@ -169,6 +169,14 @@ namespace ThreatsManager.Extensions.Panels.Word
 
                         _lastDocument = fileName;
                     }
+                    catch (IOException)
+                    {
+                        ShowWarning?.Invoke("Reference document may be in use in Word, please close it and try again.\nIf the problem persists, then the file may not be accessible.");
+                    }
+                    catch
+                    {
+                        ShowWarning?.Invoke("Reference document may be corrupted or not a Word document.");
+                    }
                     finally
                     {
                         doc?.Close();

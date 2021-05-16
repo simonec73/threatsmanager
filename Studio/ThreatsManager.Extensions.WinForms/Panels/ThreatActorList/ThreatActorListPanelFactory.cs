@@ -10,7 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.ThreatActorList
 {
-    [Extension("DAC53A50-C060-4E5F-814B-D6BF3BC23B06", "Threat Actor List", 30, ExecutionMode.Expert)]
+    [Extension("DAC53A50-C060-4E5F-814B-D6BF3BC23B06", "Threat Actor List", 30, ExecutionMode.Pioneer)]
     public partial class ThreatActorListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IContextAwareExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.

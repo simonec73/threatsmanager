@@ -276,6 +276,12 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 for (int i = 0; i < row.Cells.Count; i++)
                     row.Cells[i].PropertyChanged -= OnThreatTypeCellChanged;
 
+                var ddc = row.Rows.OfType<GridPanel>().FirstOrDefault()?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
+
                 RemoveEventSubscriptionsFromChildren(row);
             }
             else if (row?.Tag is IThreatEvent threatEvent)
@@ -294,6 +300,18 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 threatEvent.ScenarioRemoved -= OnScenarioRemoved;
                 threatEvent.ThreatEventMitigationAdded -= OnThreatEventMitigationAdded;
                 threatEvent.ThreatEventMitigationRemoved -= OnThreatEventMitigationRemoved;
+
+                var panel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Scenarios") == 0);
+                var ddc = panel?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
+                ddc = panel?.Columns["Motivation"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
 
                 RemoveSuperTooltipProvider(row.Cells["Parent"]);
 

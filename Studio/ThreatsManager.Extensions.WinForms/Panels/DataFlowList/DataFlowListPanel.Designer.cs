@@ -34,6 +34,12 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
 
             _properties.Item = null;
 
+            GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
+
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
             if (rows.Any())
             {

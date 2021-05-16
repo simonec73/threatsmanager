@@ -71,30 +71,42 @@ namespace ThreatsManager.Quality.Actions
                                 using (var ms = new MemoryStream())
                                 {
                                     file.CopyTo(ms);
-                                    var jsonText = Encoding.Unicode.GetString(ms.ToArray());
-                                    var questions =
-                                        JsonConvert.DeserializeObject<ICollection<Question>>(jsonText, new JsonSerializerSettings()
-                                        {
-#pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
-#pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-                                            TypeNameHandling = TypeNameHandling.All,
-#pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
-#pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                                            SerializationBinder = new KnownTypesBinder(),
-                                            MissingMemberHandling = MissingMemberHandling.Ignore
-                                        })?.ToArray();
 
-                                    if (questions?.Any() ?? false)
+                                    var json = ms.ToArray();
+                                    if (json.Length > 0)
                                     {
-                                        var schemaManager = new QuestionsPropertySchemaManager(threatModel);
-                                        var existing = schemaManager.GetQuestions()?.ToArray();
+                                        string jsonText;
+                                        if (json[0] == 0xFF)
+                                            jsonText = Encoding.Unicode.GetString(json, 2, json.Length - 2);
+                                        else
+                                            jsonText = Encoding.Unicode.GetString(json);
 
-                                        foreach (var question in questions)
+                                        IEnumerable<Question> questions;
+                                        using (var textReader = new StringReader(jsonText))
+                                        using (var reader = new JsonTextReader(textReader))
                                         {
-                                            if (!(existing?.Any(x =>
-                                                string.CompareOrdinal(x.Text, question.Text) == 0) ?? false))
+                                            var serializer = new JsonSerializer
                                             {
-                                                schemaManager.AddQuestion(question);
+                                                TypeNameHandling = TypeNameHandling.All,
+                                                SerializationBinder = new KnownTypesBinder(),
+                                                MissingMemberHandling = MissingMemberHandling.Ignore
+                                            };
+                                            questions = serializer.Deserialize<ICollection<Question>>(reader)?.ToArray();
+                                        }
+
+
+                                        if (questions?.Any() ?? false)
+                                        {
+                                            var schemaManager = new QuestionsPropertySchemaManager(threatModel);
+                                            var existing = schemaManager.GetQuestions()?.ToArray();
+
+                                            foreach (var question in questions)
+                                            {
+                                                if (!(existing?.Any(x =>
+                                                    string.CompareOrdinal(x.Text, question.Text) == 0) ?? false))
+                                                {
+                                                    schemaManager.AddQuestion(question);
+                                                }
                                             }
                                         }
                                     }

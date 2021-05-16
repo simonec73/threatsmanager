@@ -47,6 +47,12 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this._properties = new ThreatsManager.Utilities.WinForms.ItemEditor();
             this.expandableSplitter2 = new DevComponents.DotNetBar.ExpandableSplitter();
             this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
+            this._filterContainer = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._filter = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._apply = new System.Windows.Forms.Button();
+            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._left.SuspendLayout();
             this._right.SuspendLayout();
             this.SuspendLayout();
@@ -56,6 +62,8 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this._left.BackColor = System.Drawing.Color.White;
             this._left.Controls.Add(this._objects);
             this._left.Controls.Add(this._objectTypes);
+            this._left.Controls.Add(this._filter);
+            this._left.Controls.Add(this._apply);
             this._left.Dock = System.Windows.Forms.DockStyle.Left;
             this._left.Location = new System.Drawing.Point(0, 0);
             this._left.Name = "_left";
@@ -64,8 +72,10 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             // 
             this._left.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem1,
+            this.layoutControlItem3,
+            this.layoutControlItem5,
             this.layoutControlItem2});
-            this._left.Size = new System.Drawing.Size(277, 624);
+            this._left.Size = new System.Drawing.Size(330, 624);
             this._left.TabIndex = 0;
             // 
             // _objects
@@ -74,13 +84,13 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this.ObjectName});
             this._objects.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this._objects.HideSelection = false;
-            this._objects.Location = new System.Drawing.Point(4, 33);
+            this._objects.Location = new System.Drawing.Point(4, 64);
             this._objects.Margin = new System.Windows.Forms.Padding(0);
             this._objects.MultiSelect = false;
             this._objects.Name = "_objects";
-            this._objects.Size = new System.Drawing.Size(269, 587);
+            this._objects.Size = new System.Drawing.Size(322, 556);
             this._objects.SmallImageList = this._imageList;
-            this._objects.TabIndex = 1;
+            this._objects.TabIndex = 3;
             this._objects.UseCompatibleStateImageBehavior = false;
             this._objects.View = System.Windows.Forms.View.Details;
             this._objects.SelectedIndexChanged += new System.EventHandler(this._objects_SelectedIndexChanged);
@@ -98,7 +108,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this._objectTypes.Location = new System.Drawing.Point(72, 4);
             this._objectTypes.Margin = new System.Windows.Forms.Padding(0);
             this._objectTypes.Name = "_objectTypes";
-            this._objectTypes.Size = new System.Drawing.Size(201, 21);
+            this._objectTypes.Size = new System.Drawing.Size(254, 21);
             this._objectTypes.TabIndex = 0;
             this._objectTypes.SelectedValueChanged += new System.EventHandler(this._objectTypes_SelectedValueChanged);
             // 
@@ -149,7 +159,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this.expandableSplitter1.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this.expandableSplitter1.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
             this.expandableSplitter1.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this.expandableSplitter1.Location = new System.Drawing.Point(277, 0);
+            this.expandableSplitter1.Location = new System.Drawing.Point(330, 0);
             this.expandableSplitter1.Name = "expandableSplitter1";
             this.expandableSplitter1.Size = new System.Drawing.Size(6, 624);
             this.expandableSplitter1.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
@@ -161,14 +171,14 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this._right.BackColor = System.Drawing.Color.White;
             this._right.Controls.Add(this._annotation);
             this._right.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._right.Location = new System.Drawing.Point(283, 0);
+            this._right.Location = new System.Drawing.Point(336, 0);
             this._right.Name = "_right";
             // 
             // 
             // 
             this._right.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this._annotationLayoutControlItem});
-            this._right.Size = new System.Drawing.Size(538, 624);
+            this._right.Size = new System.Drawing.Size(485, 624);
             this._right.TabIndex = 2;
             // 
             // _annotation
@@ -178,7 +188,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this._annotation.Location = new System.Drawing.Point(4, 4);
             this._annotation.Margin = new System.Windows.Forms.Padding(0);
             this._annotation.Name = "_annotation";
-            this._annotation.Size = new System.Drawing.Size(530, 616);
+            this._annotation.Size = new System.Drawing.Size(477, 616);
             this._annotation.TabIndex = 0;
             // 
             // _annotationLayoutControlItem
@@ -245,7 +255,71 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this._superTooltip.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._superTooltip.MaximumWidth = 400;
             // 
-            // AnnotationsPanel
+            // _filterContainer
+            // 
+            this._filterContainer.Control = this._filter;
+            this._filterContainer.Height = 28;
+            this._filterContainer.MinSize = new System.Drawing.Size(120, 0);
+            this._filterContainer.Name = "_filterContainer";
+            this._filterContainer.Text = "Filter";
+            this._filterContainer.Width = 99;
+            this._filterContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _filter
+            // 
+            // 
+            // 
+            // 
+            this._filter.Border.Class = "TextBoxBorder";
+            this._filter.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._filter.ButtonCustom.Symbol = "";
+            this._filter.ButtonCustom.Visible = true;
+            this._filter.Location = new System.Drawing.Point(72, 33);
+            this._filter.Margin = new System.Windows.Forms.Padding(0);
+            this._filter.Name = "_filter";
+            this._filter.PreventEnterBeep = true;
+            this._filter.Size = new System.Drawing.Size(171, 20);
+            this._filter.TabIndex = 1;
+            this._filter.ButtonCustomClick += new System.EventHandler(this._filter_ButtonCustomClick);
+            // 
+            // layoutControlItem3
+            // 
+            this.layoutControlItem3.Control = this._filter;
+            this.layoutControlItem3.Height = 28;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Text = "Filter";
+            this.layoutControlItem3.Width = 99;
+            this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem4
+            // 
+            this.layoutControlItem4.Control = this._apply;
+            this.layoutControlItem4.Height = 31;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem4.Name = "layoutControlItem4";
+            this.layoutControlItem4.Width = 83;
+            // 
+            // _apply
+            // 
+            this._apply.Location = new System.Drawing.Point(251, 33);
+            this._apply.Margin = new System.Windows.Forms.Padding(0);
+            this._apply.Name = "_apply";
+            this._apply.Size = new System.Drawing.Size(75, 23);
+            this._apply.TabIndex = 2;
+            this._apply.Text = "Apply";
+            this._apply.UseVisualStyleBackColor = true;
+            this._apply.Click += new System.EventHandler(this._apply_Click);
+            // 
+            // layoutControlItem5
+            // 
+            this.layoutControlItem5.Control = this._apply;
+            this.layoutControlItem5.Height = 31;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Width = 83;
+            // 
+            // ReviewNotesPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -254,7 +328,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             this.Controls.Add(this._properties);
             this.Controls.Add(this.expandableSplitter1);
             this.Controls.Add(this._left);
-            this.Name = "AnnotationsPanel";
+            this.Name = "ReviewNotesPanel";
             this.Size = new System.Drawing.Size(1136, 624);
             this._left.ResumeLayout(false);
             this._right.ResumeLayout(false);
@@ -278,5 +352,11 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
         private DevComponents.DotNetBar.SuperTooltip _superTooltip;
         private Quality.Annotations.AnnotationControl _annotation;
         private DevComponents.DotNetBar.Layout.LayoutControlItem _annotationLayoutControlItem;
+        private DevComponents.DotNetBar.Controls.TextBoxX _filter;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem3;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem _filterContainer;
+        private System.Windows.Forms.Button _apply;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem5;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem4;
     }
 }

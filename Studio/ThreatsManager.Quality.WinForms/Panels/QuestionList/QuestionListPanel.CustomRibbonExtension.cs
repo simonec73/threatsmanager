@@ -96,16 +96,20 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                             using (var writer = new BinaryWriter(file))
                             {
                                 var questions = _schemaManager.GetQuestions();
-                                var serialization = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(questions, 
-                                    Formatting.Indented, new JsonSerializerSettings()
-                                {
-#pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
-#pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-                                    TypeNameHandling = TypeNameHandling.All
-#pragma warning restore SEC0030 // Insecure Deserialization - Newtonsoft JSON
-#pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
-                                }));
 
+                                StringBuilder sb = new StringBuilder();
+                                StringWriter sw = new StringWriter(sb);
+
+                                using(JsonWriter jtw = new JsonTextWriter(sw))
+                                {
+                                    var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                                    serializer.Serialize(jtw, questions);
+                                }
+
+                                var serialization = Encoding.Unicode.GetBytes(sb.ToString());
+                    
+                                writer.Write((byte)0xFF);
+                                writer.Write((byte)0xFE);
                                 writer.Write(serialization);
                             }
                         }

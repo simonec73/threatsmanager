@@ -45,7 +45,7 @@ namespace ThreatsManager.DevOps.Actions
             return null;
         }
 
-        public void ExecuteRibbonAction([NotNull] IThreatModel threatModel, IActionDefinition action)
+        public async void ExecuteRibbonAction([NotNull] IThreatModel threatModel, IActionDefinition action)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace ThreatsManager.DevOps.Actions
                 {
                     case "Configure":
                         var dialog = new DevOpsConfigurationDialog();
-                        dialog.Initialize(threatModel);
+                        await dialog.Initialize(threatModel);
                         dialog.ShowDialog(Form.ActiveForm);
                         var connector = DevOpsManager.GetConnector(threatModel);
                         Connect.ChangeDisconnectButtonStatus(connector, true);

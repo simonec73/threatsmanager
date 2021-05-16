@@ -1537,7 +1537,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void DuplicatePropertySchemas([PostSharp.Patterns.Contracts.NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
-            var schemas = Schemas?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
+            var schemas = Schemas?.Where(x => !x.NotExportable && (list?.Contains(x.Id) ?? false)).ToArray();
             if (schemas?.Any() ?? false)
             {
                 foreach (var schema in schemas)
@@ -2040,7 +2040,9 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var property in list)
                 {
-                    if (!known.Contains(property.PropertyTypeId))
+                    var schema = this.GetSchema(property.PropertyType.SchemaId);
+
+                    if (!known.Contains(property.PropertyTypeId) && !schema.NotExportable)
                     {
                         result = false;
                         break;

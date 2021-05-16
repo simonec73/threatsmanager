@@ -22,6 +22,7 @@ namespace ThreatsManager.DevOps.Initializers
             KnownTypesBinder.AddKnownType(typeof(Iteration));
             KnownTypesBinder.AddKnownType(typeof(Iterations));
             KnownTypesBinder.AddKnownType(typeof(IterationRisk));
+            KnownTypesBinder.AddKnownType(typeof(IterationInfo));
         }
     }
 }

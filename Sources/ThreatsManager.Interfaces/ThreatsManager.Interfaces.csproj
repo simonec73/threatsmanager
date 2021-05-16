@@ -3,15 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <Description>Common Interfaces used to define the object, entities and extensions that compose the Threats Manager Platform and allow to extend it.</Description>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
+    <AssemblyVersion>1.4.2.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
     <Copyright>Copyright © Simone Curzi, 2018-2021. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Interfaces/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
-    <FileVersion>1.4.0.0</FileVersion>
-    <Version>1.4.0</Version>
+    <FileVersion>1.4.2.0</FileVersion>
+    <Version>1.4.2</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -41,8 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.7.11" />
-    <PackageReference Include="PostSharp.Patterns.Common" Version="6.7.11" />
+    <PackageReference Include="PostSharp" Version="6.9.4" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="6.9.4" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>

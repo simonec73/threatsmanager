@@ -301,7 +301,7 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
-        public void SetFirstSeenOn([NotNull] IMitigation mitigation, [NotNull] Iteration info)
+        public void SetFirstSeenOn([NotNull] IMitigation mitigation, Iteration info)
         {
             var iterationFirstSeenPropertyType = GetIterationFirstSeenPropertyType();
             var mitigationExposurePropertyType = GetMitigationExposurePropertyType();
@@ -312,8 +312,16 @@ namespace ThreatsManager.DevOps.Schemas
                 if (propertyFirstSeen is IPropertyJsonSerializableObject firstSeen &&
                     propertyMitigationExposure is IPropertySingleLineString mitigationExposure)
                 {
-                    firstSeen.Value = new IterationInfo(info);
-                    mitigationExposure.StringValue = GetMitigationExposure(mitigation);
+                    if (info == null)
+                    {
+                        firstSeen.StringValue = null;
+                        mitigationExposure.StringValue = null;
+                    }
+                    else
+                    {
+                        firstSeen.Value = new IterationInfo(info);
+                        mitigationExposure.StringValue = GetMitigationExposure(mitigation);
+                    }
                 }
             }
         }

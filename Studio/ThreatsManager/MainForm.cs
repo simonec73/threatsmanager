@@ -294,38 +294,41 @@ namespace ThreatsManager
                         if (outcome != OpenOutcome.OK || _model == null)
                         {
                             InitializeStatus(null);
+                            _model.SuspendDirty();
                         }
                     }
                     else
                     {
                         InitializeStatus(null);
+                        _model.SuspendDirty();
                     }
                 }
                 else
                 {
                     InitializeStatus(null);
+                    _model.SuspendDirty();
                 }
+
+                LoadExtensions();
+                _mergeIndex = _ribbon.Items.IndexOf(_title);
+
+                LoadStatusInfoProviders();
+
+                // TODO: chiudere la notifica di caricamento delle estensioni.
+
+                LoadKnownDocuments();
+
+                CheckUpdateAvailability();
+
+                ConfigureTimer();
+
+                SpellCheckConfig.UserDictionary = config.UserDictionary;
+                KnownTypesBinder.TypeNotFound += OnTypeNotFound;
             }
             finally
             {
                 _model?.ResumeDirty();
             }
-
-            LoadExtensions();
-            _mergeIndex = _ribbon.Items.IndexOf(_title);
-
-            LoadStatusInfoProviders();
-
-            // TODO: chiudere la notifica di caricamento delle estensioni.
-
-            LoadKnownDocuments();
-
-            CheckUpdateAvailability();
-
-            ConfigureTimer();
-
-            SpellCheckConfig.UserDictionary = config.UserDictionary;
-            KnownTypesBinder.TypeNotFound += OnTypeNotFound;
         }
 
         private void OnTypeNotFound(string assemblyName, string typeName)
@@ -880,6 +883,7 @@ namespace ThreatsManager
         //    }
         //}
 
+        [Dispatched]
         private void RefreshCaption()
         {
             var modelName = _model?.Name;
@@ -940,10 +944,10 @@ namespace ThreatsManager
                     }
                 }
 
-                if (latest != null && 
-                    MessageBox.Show(Form.ActiveForm, 
-                    $"A newer version is available, created on {dateTime.ToString("g")}.\nDo you want to open the newest version instead?",
-                    "Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                if (latest != null) // && 
+                    //MessageBox.Show(Form.ActiveForm, 
+                    //$"A newer version is available, created on {dateTime.ToString("g")}.\nDo you want to open the newest version instead?",
+                    //"Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                 {
                     location = latest;
                 }
@@ -986,6 +990,18 @@ namespace ThreatsManager
             catch (FileNotFoundException)
             {
                 ShowDesktopAlert("File has not been found.", true);
+                model = null;
+                messageRaised = true;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                ShowDesktopAlert("Directory has not been found.", true);
+                model = null;
+                messageRaised = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                ShowDesktopAlert("The model cannot be opened because you do now have the required rights.", true);
                 model = null;
                 messageRaised = true;
             }
@@ -1156,6 +1172,10 @@ namespace ThreatsManager
                         _errorsOnLoading | autoAddDateTime, enabledExtensions, out var newLocation);
                     _model?.SetLocation(newLocation);
                 }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                ShowDesktopAlert("The model cannot be saved because you do now have the required rights.", true);
             }
             catch (Exception e)
             {

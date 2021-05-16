@@ -485,19 +485,20 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
             [NotNull] IPropertyType propertyType)
         {
             var list = new List<IPropertiesContainer>();
-            Add(list, _model.GetExternalInteractors(schemaManager, propertyType));
-            Add(list, _model.GetProcesses(schemaManager, propertyType));
-            Add(list, _model.GetDataStores(schemaManager, propertyType));
-            Add(list, _model.GetFlows(schemaManager, propertyType));
-            Add(list, _model.GetTrustBoundaries(schemaManager, propertyType));
-            Add(list, _model.GetThreatEvents(schemaManager, propertyType));
-            Add(list, _model.GetThreatEventMitigations(schemaManager, propertyType));
-            Add(list, _model.GetThreatTypes(schemaManager, propertyType));
-            Add(list, _model.GetKnownMitigations(schemaManager, propertyType));
-            Add(list, _model.GetStandardMitigations(schemaManager, propertyType));
-            Add(list, _model.GetEntityTemplates(schemaManager, propertyType));
-            Add(list, _model.GetFlowTemplates(schemaManager, propertyType));
-            Add(list, _model.GetTrustBoundaryTemplates(schemaManager, propertyType));
+            Add(list, _model.GetExternalInteractors(schemaManager, propertyType, null));
+            Add(list, _model.GetProcesses(schemaManager, propertyType, null));
+            Add(list, _model.GetDataStores(schemaManager, propertyType, null));
+            Add(list, _model.GetFlows(schemaManager, propertyType, null));
+            Add(list, _model.GetTrustBoundaries(schemaManager, propertyType, null));
+            Add(list, _model.GetThreatEvents(schemaManager, propertyType, null));
+            Add(list, _model.GetThreatEventMitigations(schemaManager, propertyType, null));
+            Add(list, _model.GetThreatTypes(schemaManager, propertyType, null));
+            Add(list, _model.GetKnownMitigations(schemaManager, propertyType, null));
+            Add(list, _model.GetStandardMitigations(schemaManager, propertyType, null));
+            Add(list, _model.GetEntityTemplates(schemaManager, propertyType, null));
+            Add(list, _model.GetFlowTemplates(schemaManager, propertyType, null));
+            Add(list, _model.GetTrustBoundaryTemplates(schemaManager, propertyType, null));
+            Add(list, _model.GetDiagrams(schemaManager, propertyType, null));
 
             return list;
         }

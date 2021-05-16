@@ -120,19 +120,20 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
         private void ExportCsv([Required] string fileName)
         {
             var list = new List<IPropertiesContainer>();
-            Add(list, _model.GetExternalInteractors(_schemaManager, _propertyType));
-            Add(list, _model.GetProcesses(_schemaManager, _propertyType));
-            Add(list, _model.GetDataStores(_schemaManager, _propertyType));
-            Add(list, _model.GetFlows(_schemaManager, _propertyType));
-            Add(list, _model.GetTrustBoundaries(_schemaManager, _propertyType));
-            Add(list, _model.GetThreatEvents(_schemaManager, _propertyType));
-            Add(list, _model.GetThreatEventMitigations(_schemaManager, _propertyType));
-            Add(list, _model.GetThreatTypes(_schemaManager, _propertyType));
-            Add(list, _model.GetKnownMitigations(_schemaManager, _propertyType));
-            Add(list, _model.GetStandardMitigations(_schemaManager, _propertyType));
-            Add(list, _model.GetEntityTemplates(_schemaManager, _propertyType));
-            Add(list, _model.GetFlowTemplates(_schemaManager, _propertyType));
-            Add(list, _model.GetTrustBoundaryTemplates(_schemaManager, _propertyType));
+            Add(list, _model.GetExternalInteractors(_schemaManager, _propertyType, null));
+            Add(list, _model.GetProcesses(_schemaManager, _propertyType, null));
+            Add(list, _model.GetDataStores(_schemaManager, _propertyType, null));
+            Add(list, _model.GetFlows(_schemaManager, _propertyType, null));
+            Add(list, _model.GetTrustBoundaries(_schemaManager, _propertyType, null));
+            Add(list, _model.GetThreatEvents(_schemaManager, _propertyType, null));
+            Add(list, _model.GetThreatEventMitigations(_schemaManager, _propertyType, null));
+            Add(list, _model.GetThreatTypes(_schemaManager, _propertyType, null));
+            Add(list, _model.GetKnownMitigations(_schemaManager, _propertyType, null));
+            Add(list, _model.GetStandardMitigations(_schemaManager, _propertyType, null));
+            Add(list, _model.GetEntityTemplates(_schemaManager, _propertyType, null));
+            Add(list, _model.GetFlowTemplates(_schemaManager, _propertyType, null));
+            Add(list, _model.GetTrustBoundaryTemplates(_schemaManager, _propertyType, null));
+            Add(list, _model.GetDiagrams(_schemaManager, _propertyType, null));
 
             if (list?.Any() ?? false)
             {

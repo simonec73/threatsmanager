@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.Aspects;
@@ -73,10 +75,19 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
 #pragma warning disable SEC0030 // Insecure Deserialization - Newtonsoft JSON
-            get => JsonConvert.SerializeObject(Value, Formatting.Indented, new JsonSerializerSettings()
+            get
             {
-                TypeNameHandling = TypeNameHandling.All
-            });
+                StringBuilder sb = new StringBuilder();
+                StringWriter sw = new StringWriter(sb);
+
+                using(JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                    serializer.Serialize(writer, Value);
+                }
+
+                return sb.ToString();
+            }
 
             set
             {
@@ -85,11 +96,17 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    Value = JsonConvert.DeserializeObject(value, new JsonSerializerSettings()
+                    using (var textReader = new StringReader(value))
+                    using (var reader = new JsonTextReader(textReader))
                     {
-                        TypeNameHandling = TypeNameHandling.All,
-                        SerializationBinder = new KnownTypesBinder()
-                    });
+                        var serializer = new JsonSerializer
+                        {
+                            TypeNameHandling = TypeNameHandling.All,
+                            SerializationBinder = new KnownTypesBinder(),
+                            MissingMemberHandling = MissingMemberHandling.Ignore
+                        };
+                        Value = serializer.Deserialize(reader);
+                    }
                 }
                 else
                 {

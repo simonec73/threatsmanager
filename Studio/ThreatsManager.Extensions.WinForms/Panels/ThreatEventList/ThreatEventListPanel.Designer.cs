@@ -26,7 +26,14 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             _grid.RowActivated -= _grid_RowActivated;
             _grid.MouseClick -= _grid_MouseClick;
 
+            _properties.OpenDiagram -= OpenDiagram;
             _properties.Item = null;
+
+            GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
 
             if (_model != null)
             {

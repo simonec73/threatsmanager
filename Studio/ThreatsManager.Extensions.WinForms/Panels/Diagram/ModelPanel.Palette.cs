@@ -318,7 +318,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         RecurseExistingGroups(trustBoundary.Parent, parentGroup, groups);
                 }
 
-                if (AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300))) is GraphGroup currentGroup)
+                var shape = _diagram.AddShape(trustBoundary, point, new SizeF(600, 300));
+                if (shape != null && AddShape(shape) is GraphGroup currentGroup)
                     groups.Push(currentGroup);
 
             }

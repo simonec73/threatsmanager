@@ -4,11 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Extensions.Panels.Word.Engine.Fields;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Extensions.Panels.Word.Engine
 {
@@ -83,6 +85,41 @@ namespace ThreatsManager.Extensions.Panels.Word.Engine
                             Image = Resources.mitigations_small;
                             ItemType = ItemType.Mitigation;
                         }
+                        else if (string.CompareOrdinal(Code, "CriticalThreatTypes") == 0)
+                        {
+                            Name = "Critical Threat Types";
+                            var critical = _model.GetSeverity((int) DefaultSeverity.Critical);
+                            if (critical != null)
+                                Image = CreateColorBitmap(critical.BackColor);
+                        }
+                        else if (string.CompareOrdinal(Code, "HighThreatTypes") == 0)
+                        {
+                            Name = "High Threat Types";
+                            var high = _model.GetSeverity((int) DefaultSeverity.High);
+                            if (high != null)
+                                Image = CreateColorBitmap(high.BackColor);
+                        }
+                        else if (string.CompareOrdinal(Code, "MediumThreatTypes") == 0)
+                        {
+                            Name = "Medium Threat Types";
+                            var medium = _model.GetSeverity((int) DefaultSeverity.Medium);
+                            if (medium != null)
+                                Image = CreateColorBitmap(medium.BackColor);
+                        }
+                        else if (string.CompareOrdinal(Code, "LowThreatTypes") == 0)
+                        {
+                            Name = "Low Threat Types";
+                            var low = _model.GetSeverity((int) DefaultSeverity.Low);
+                            if (low != null)
+                                Image = CreateColorBitmap(low.BackColor);
+                        }
+                        else if (string.CompareOrdinal(Code, "InfoThreatTypes") == 0)
+                        {
+                            Name = "Info Threat Types";
+                            var info = _model.GetSeverity((int) DefaultSeverity.Info);
+                            if (info != null)
+                                Image = CreateColorBitmap(info.BackColor);
+                        }
                         else
                         {
                             Name = Code;
@@ -106,6 +143,11 @@ namespace ThreatsManager.Extensions.Panels.Word.Engine
                             Name = "Mitigations";
                             Image = Properties.Resources.chart_pie_small;
                             ItemType = ItemType.Mitigation;
+                        }
+                        else if (string.CompareOrdinal(Code, "Roadmap") == 0)
+                        {
+                            Name = "Roadmap";
+                            Image = Properties.Resources.roadmap_small;
                         }
                         else
                         {
@@ -300,6 +342,19 @@ namespace ThreatsManager.Extensions.Panels.Word.Engine
             {
                 throw new ArgumentException();
             }
+        }
+
+        private Bitmap CreateColorBitmap(KnownColor color)
+        {
+            Bitmap result = new Bitmap(16, 16);
+            using (Graphics graph = Graphics.FromImage(result))
+            {
+                Rectangle ImageSize = new Rectangle(0,0,16,16);
+                var brush = new SolidBrush(Color.FromKnownColor(color));
+                graph.FillRectangle(brush, ImageSize);
+            }
+
+            return result;
         }
 
         public string Name { get; }

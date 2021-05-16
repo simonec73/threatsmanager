@@ -15,7 +15,7 @@ namespace ThreatsManager.DevOps.Actions
     {
         public Scope Scope => Scope.Mitigation;
         public string Label => "Assign to Iteration";
-        public string Group => "test";
+        public string Group => "Iterations";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;

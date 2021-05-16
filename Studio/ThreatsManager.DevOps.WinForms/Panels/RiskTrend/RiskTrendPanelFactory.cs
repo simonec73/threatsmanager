@@ -8,7 +8,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.Panels.RiskTrend
 {
-    [Extension("A107AF8C-F969-4532-BB34-F8BAD3CE600C", "Risk Trend Panel", 100, ExecutionMode.Business)]
+    [Extension("A107AF8C-F969-4532-BB34-F8BAD3CE600C", "Risk Trend Panel", 100, ExecutionMode.Pioneer)]
     public partial class RiskTrendPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {
         public InstanceMode Behavior => InstanceMode.Single;

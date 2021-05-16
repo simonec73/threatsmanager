@@ -109,8 +109,8 @@
             // 
             this._saveFile.DefaultExt = "tmt";
             this._saveFile.Filter = "Threat Model Template (*.tmt)|*.tmt";
-            this._saveFile.Title = "Select destination file";
             this._saveFile.RestoreDirectory = true;
+            this._saveFile.Title = "Select destination file";
             // 
             // _wizard
             // 
@@ -138,7 +138,6 @@
             this._wizard.HeaderCaptionFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this._wizard.HeaderDescriptionFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._wizard.HeaderDescriptionIndent = 16;
-            this._wizard.HeaderImage = Properties.Resources.astrologer_big;
             this._wizard.HeaderImageSize = new System.Drawing.Size(64, 64);
             // 
             // 
@@ -306,6 +305,7 @@
             this._name.Name = "_name";
             this._name.Size = new System.Drawing.Size(457, 20);
             this._name.TabIndex = 0;
+            this._name.TextChanged += new System.EventHandler(this._name_TextChanged);
             // 
             // layoutControlItem2
             // 

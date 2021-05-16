@@ -1,4 +1,6 @@
-﻿namespace ThreatsManager.MsTmt.Dialogs
+﻿using DevComponents.DotNetBar.SuperGrid;
+
+namespace ThreatsManager.MsTmt.Dialogs
 {
     partial class FlowMergeDialog
     {
@@ -13,6 +15,12 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();

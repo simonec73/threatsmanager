@@ -490,7 +490,7 @@ namespace ThreatsManager.Extensions.Dialogs
                             var propertyType = _model.GetPropertyType(prop.PropertyTypeId);
                             if (propertyType != null)
                             {
-                                if (!schemas.Contains(propertyType.SchemaId))
+                                if (!schemas.Contains(propertyType.SchemaId) && !(_model.GetSchema(propertyType.SchemaId)?.NotExportable ?? true))
                                     schemas.Add(propertyType.SchemaId);
 
                                 if ((_extractors?.Any() ?? false) && 
@@ -753,6 +753,13 @@ namespace ThreatsManager.Extensions.Dialogs
                 eWizardButtonState.True : eWizardButtonState.False;
         }
         #endregion
+
+        private void _name_TextChanged(object sender, EventArgs e)
+        {
+            _pageTMProperties.NextButtonEnabled = string.IsNullOrWhiteSpace(_name.Text)
+                ? eWizardButtonState.False
+                : eWizardButtonState.True;
+        }
 
         private void _description_LinkClicked(object sender, LinkClickedEventArgs e)
         {

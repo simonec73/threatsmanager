@@ -1254,4 +1254,52 @@ Are you sure you want still to get full access rights? </value>
   <data name="funnel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\funnel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="roadmap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\roadmap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="roadmap_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\roadmap_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="roadmap_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\roadmap_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="roadmap_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\roadmap_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tools" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tools.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tools_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tools_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tools_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tools_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tools_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tools_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_join_diagonal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_join_diagonal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_join_diagonal_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_join_diagonal_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_join_diagonal_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_join_diagonal_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_join_diagonal_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_join_diagonal_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_merge_small1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_merge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_spread_diagonal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_spread_diagonal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_spread_diagonal_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_spread_diagonal_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrows_spread_diagonal_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrows_spread_diagonal_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

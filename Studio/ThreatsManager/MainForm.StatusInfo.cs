@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.Dialogs;
 using ThreatsManager.Engine;
 using ThreatsManager.Interfaces.Extensions;
@@ -151,6 +152,7 @@ namespace ThreatsManager
             }
         }
 
+        [Dispatched]
         private void UpdateStatusInfo(string id, string status)
         {
             var label = _statusBar.Items.OfType<LabelItem>()

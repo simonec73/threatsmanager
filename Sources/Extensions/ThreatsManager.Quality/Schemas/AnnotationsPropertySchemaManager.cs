@@ -32,6 +32,7 @@ namespace ThreatsManager.Quality.Schemas
             schema.System = true;
             schema.AutoApply = false;
             schema.NotExportable = true;
+            schema.Priority = 1000;
 
             return schema;
         }

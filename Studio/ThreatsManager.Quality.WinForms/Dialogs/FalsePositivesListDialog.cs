@@ -46,15 +46,18 @@ namespace ThreatsManager.Quality.Dialogs
 
             _falsePositives.PrimaryGrid.Rows.Clear();
 
-            var propertyType = new QualityPropertySchemaManager(_model).GetFalsePositivePropertyType();
-
-            if (propertyType != null)
+            if (analyzer != null)
             {
-                AddItem(analyzer, _model, propertyType);
-                AddItems(analyzer, _model.Entities, propertyType);
-                AddItems(analyzer, _model.DataFlows, propertyType);
-                AddItems(analyzer, _model.Groups, propertyType);
-                AddItems(analyzer, _model.Diagrams, propertyType);
+                var propertyType = new QualityPropertySchemaManager(_model).GetFalsePositivePropertyType();
+
+                if (propertyType != null)
+                {
+                    AddItem(analyzer, _model, propertyType);
+                    AddItems(analyzer, _model.Entities, propertyType);
+                    AddItems(analyzer, _model.DataFlows, propertyType);
+                    AddItems(analyzer, _model.Groups, propertyType);
+                    AddItems(analyzer, _model.Diagrams, propertyType);
+                }
             }
         }
 

@@ -24,6 +24,8 @@ namespace ThreatsManager.Utilities.WinForms
 {
     public partial class ItemEditor
     {
+        private Dictionary<Control, EventHandler> _changeActions = new Dictionary<Control, EventHandler>();
+
         #region Label.
         private static Label AddSingleLineLabel([NotNull] LayoutControl container,
             [Required] string label, string text, Bitmap image = null)
@@ -161,11 +163,15 @@ namespace ThreatsManager.Utilities.WinForms
                 ShortcutsEnabled = true
             };
             if (changeAction != null)
-                control.TextChanged += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     if (sender is TextBox textBox)
                         changeAction(textBox);
-                };
+                }
+                _changeActions.Add(control, handler);
+                control.TextChanged += handler;
+            }
             else
                 control.TextChanged += TextPropertyChanged;
             var item = new LayoutControlItem()
@@ -255,11 +261,15 @@ namespace ThreatsManager.Utilities.WinForms
                 ShortcutsEnabled = true
             };
             if (changeAction != null)
-                control.TextChanged += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     if (sender is RichTextBox textBox)
                         changeAction(textBox);
-                };
+                }
+                _changeActions.Add(control, handler);
+                control.TextChanged += handler;
+            }
             else
                 control.TextChanged += TextPropertyChanged;
             var item = new LayoutControlItem()
@@ -300,17 +310,21 @@ namespace ThreatsManager.Utilities.WinForms
         #endregion
 
         #region Boolean properties.
-        private static SwitchButton AddBool([NotNull] LayoutControl container,
+        private SwitchButton AddBool([NotNull] LayoutControl container,
             [Required] string label, bool value, string description,
             Action<bool> changeAction, bool readOnly)
         {
             var control = new SwitchButton() {Value = value, Width = 100, IsReadOnly = readOnly};
             if (changeAction != null)
-                control.ValueChanged += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     if (sender is SwitchButton switchButton)
                         changeAction(switchButton.Value);
-                };
+                }
+                _changeActions.Add(control, handler);
+                control.ValueChanged += handler;
+            }
             else
                 control.ValueChanged += BoolPropertyChanged;
             var item = new LayoutControlItem()
@@ -329,7 +343,7 @@ namespace ThreatsManager.Utilities.WinForms
             return control;
         }
 
-        private static SwitchButton AddBool([NotNull] LayoutControl container,
+        private SwitchButton AddBool([NotNull] LayoutControl container,
             [NotNull] IPropertyBool property, bool readOnly)
         {
             var control = AddBool(container, property.PropertyType.Name, property.Value,
@@ -349,17 +363,21 @@ namespace ThreatsManager.Utilities.WinForms
         #endregion
 
         #region Integer properties.
-        private static IntegerInput AddInteger([NotNull] LayoutControl container,
+        private IntegerInput AddInteger([NotNull] LayoutControl container,
             [Required] string label, int value, string description,
             Action<int> changeAction, bool readOnly)
         {
             var control = new IntegerInput() {Value = value, Width = 100, IsInputReadOnly = readOnly};
             if (changeAction != null)
-                control.ValueChanged += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     if (sender is IntegerInput integerInput)
                         changeAction(integerInput.Value);
-                };
+                }
+                _changeActions.Add(control, handler);
+                control.ValueChanged += handler;
+            }
             else
                 control.ValueChanged += IntegerPropertyChanged;
             var item = new LayoutControlItem()
@@ -378,7 +396,7 @@ namespace ThreatsManager.Utilities.WinForms
             return control;
         }
 
-        private static IntegerInput AddInteger([NotNull] LayoutControl container,
+        private IntegerInput AddInteger([NotNull] LayoutControl container,
             [NotNull] IPropertyInteger property, bool readOnly)
         {
             var control = AddInteger(container, property.PropertyType.Name, property.Value,
@@ -398,17 +416,21 @@ namespace ThreatsManager.Utilities.WinForms
         #endregion
 
         #region Decimal properties.
-        private static DoubleInput AddDecimal([NotNull] LayoutControl container,
+        private DoubleInput AddDecimal([NotNull] LayoutControl container,
             [Required] string label, decimal value, string description,
             Action<decimal> changeAction, bool readOnly)
         {
             var control = new DoubleInput() {Value = Convert.ToDouble(value), Width = 100, DisplayFormat = "F2", IsInputReadOnly = readOnly};
             if (changeAction != null)
-                control.ValueChanged += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     if (sender is DoubleInput doubleInput)
                         changeAction(Convert.ToDecimal(doubleInput.Value));
-                };
+                }
+                _changeActions.Add(control, handler);
+                control.ValueChanged += handler;
+            }
             else
                 control.ValueChanged += DecimalPropertyChanged;
             var item = new LayoutControlItem()
@@ -427,7 +449,7 @@ namespace ThreatsManager.Utilities.WinForms
             return control;
         }
 
-        private static DoubleInput AddDecimal([NotNull] LayoutControl container,
+        private DoubleInput AddDecimal([NotNull] LayoutControl container,
             [NotNull] IPropertyDecimal property, bool readOnly)
         {
             var control = AddDecimal(container, property.PropertyType.Name, property.Value,
@@ -553,7 +575,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private static ComboBox AddCombo([NotNull] LayoutControl container,
+        private ComboBox AddCombo([NotNull] LayoutControl container,
             [Required] string label, string selected,
             [NotNull] IEnumerable<string> values, Action<string> changeAction, bool readOnly)
         {
@@ -565,7 +587,15 @@ namespace ThreatsManager.Utilities.WinForms
             control.Items.AddRange(values.ToArray());
             control.SelectedItem = selected;
             if (changeAction != null)
-                control.SelectedIndexChanged += (sender, args) => { changeAction((string) control.SelectedItem); };
+            {
+                void handler(object sender, EventArgs args)
+                {
+                    if (sender is ComboBox comboBox)
+                        changeAction((string) control.SelectedItem);
+                }
+                _changeActions.Add(control, handler);
+                control.SelectedIndexChanged += handler;
+            }
             var item = new LayoutControlItem()
             {
                 Text = label,
@@ -619,7 +649,10 @@ namespace ThreatsManager.Utilities.WinForms
                     Tag = control
                 };
                 if (addItemEventHandler != null)
+                {
+                    _changeActions.Add(addButton, addItemEventHandler);
                     addButton.Click += addItemEventHandler;
+                }
 
                 var addButtonItem = new LayoutControlItem()
                 {
@@ -1260,10 +1293,14 @@ namespace ThreatsManager.Utilities.WinForms
                 FlatAppearance = {BorderSize = 0}
             };
             if (clickAction != null)
-                result.Click += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     clickAction(result);
-                };
+                }
+                _changeActions.Add(result, handler);
+                result.Click += handler;
+            }
             else
             {
                 result.Click += ButtonClicked;
@@ -1295,10 +1332,14 @@ namespace ThreatsManager.Utilities.WinForms
         {
             var result = new Button() {Text = label, Image = image, Enabled = !readOnly};
             if (clickAction != null)
-                result.Click += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     clickAction(result);
-                };
+                }
+                _changeActions.Add(result, handler);
+                result.Click += handler;
+            }
             else
             {
                 result.Click += ButtonClicked;
@@ -1347,10 +1388,14 @@ namespace ThreatsManager.Utilities.WinForms
 
             };
             if (changeAction != null)
-                result.ValueChanged += (sender, args) =>
+            {
+                void handler(object sender, EventArgs args)
                 {
                     changeAction(result);
-                };
+                }
+                _changeActions.Add(result, handler);
+                result.ValueChanged += handler;
+            }
             else
             {
                 result.ValueChanged += DateTimePickerValueChanged;
@@ -1378,7 +1423,6 @@ namespace ThreatsManager.Utilities.WinForms
                 block.Text = picker.Value.ToString();
             }
         }
-
         #endregion
 
         #region Remove Events.
@@ -1390,23 +1434,58 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 textBox.TextChanged -= TextPropertyChanged;
                 item.MarkupLinkClick -= OnMarkupLinkClick;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    textBox.TextChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is RichTextBox richTextBox)
             {
                 richTextBox.TextChanged -= TextPropertyChanged;
                 item.MarkupLinkClick -= OnMarkupLinkClick;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    richTextBox.TextChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is SwitchButton switchButton)
             {
                 switchButton.ValueChanged -= BoolPropertyChanged;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    switchButton.ValueChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             } 
             else if (control is IntegerInput integerInput)
             {
                 integerInput.ValueChanged -= IntegerPropertyChanged;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    integerInput.ValueChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is DoubleInput doubleInput)
             {
                 doubleInput.ValueChanged -= DecimalPropertyChanged;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    doubleInput.ValueChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is TokenEditor tokenEditor)
             {
@@ -1416,10 +1495,16 @@ namespace ThreatsManager.Utilities.WinForms
             else if (control is ComboBox comboBox)
             {
                 comboBox.SelectedIndexChanged -= ComboPropertyChanged;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    comboBox.SelectedIndexChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is ListBox listBox)
             {
-
             }
             else if (control is Button button)
             {
@@ -1430,10 +1515,24 @@ namespace ThreatsManager.Utilities.WinForms
                 button.Click -= ClickedListClear;
                 button.Click -= ButtonClicked;
                 _superTooltip.SetSuperTooltip(button, null);
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    button.Click -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is DateTimePicker dateTimePicker)
             {
                 dateTimePicker.ValueChanged -= DateTimePickerValueChanged;
+
+                if (_changeActions.ContainsKey(control))
+                {
+                    var handler = _changeActions[control];
+                    dateTimePicker.ValueChanged -= handler;
+                    _changeActions.Remove(control);
+                }
             }
             else if (control is LinkLabel linkLabel)
             {
