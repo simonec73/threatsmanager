@@ -57,8 +57,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Effort\" />
-  </ItemGroup>
-
 </Project>
