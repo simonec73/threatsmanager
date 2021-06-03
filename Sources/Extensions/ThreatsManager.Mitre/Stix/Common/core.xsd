@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="rootSchema">
+    <xsd:sequence>
+      <xsd:element name="type">
+        <xsd:annotation>
+          <xsd:documentation>The type property identifies the type of STIX Object (SDO, Relationship Object, etc). The value of the type field MUST be one of the types defined by a STIX Object (e.g., indicator).</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="^([a-z][a-z0-9]*)+(-[a-z0-9]+)*\-?$" />
+            <xsd:minLength value="3" />
+            <xsd:maxLength value="250" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="spec_version">
+        <xsd:annotation>
+          <xsd:documentation>The version of the STIX specification used to represent this object.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="2.0" />
+            <xsd:enumeration value="2.1" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="id" type="identifier.json">
+        <xsd:annotation>
+          <xsd:documentation>The id property universally and uniquely identifies this object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="created_by_ref" type="identifier.json">
+        <xsd:annotation>
+          <xsd:documentation>The ID of the Source object that describes who created this object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="labels">
+        <xsd:complexType>
+          <xsd:annotation>
+            <xsd:documentation>The labels property specifies a set of terms used to describe this object.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Items" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="created" type="xsd:anyType">
+        <xsd:annotation>
+          <xsd:documentation>The created property represents the time at which the first version of this object was created. The timstamp value MUST be precise to the nearest millisecond.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="modified" type="xsd:anyType">
+        <xsd:annotation>
+          <xsd:documentation>The modified property represents the time that this particular version of the object was modified. The timstamp value MUST be precise to the nearest millisecond.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="revoked" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>The revoked property indicates whether the object has been revoked.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="confidence">
+        <xsd:annotation>
+          <xsd:documentation>Identifies the confidence that the creator has in the correctness of their data.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0" />
+            <xsd:maxInclusive value="100" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="lang" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Identifies the language of the text content in this object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="external_references" type="external-reference.json" />
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="object_marking_refs" type="identifier.json" />
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="granular_markings" type="granular-marking.json" />
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
