@@ -7,6 +7,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class Relationship
     {
+        public Relationship()
+        {
+
+        }
+
         internal Relationship(RelationshipType type, [Required] string source, [Required] string id, string viewId = null)
         {
             Type = type;

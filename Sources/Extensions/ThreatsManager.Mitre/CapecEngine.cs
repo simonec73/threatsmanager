@@ -26,7 +26,25 @@ namespace ThreatsManager.Mitre
         [InitializationRequired]
         public void EnrichGraph([NotNull] MitreGraph graph)
         {
-            
+            graph.RegisterSource(_catalog.Name, _catalog.Version, _catalog.Date);
+
+            var views = _catalog.Views?
+                .Where(x => x.Type == ViewTypeEnumeration.Graph && x.Status != StatusEnumeration.Deprecated && x.Status != StatusEnumeration.Obsolete)
+                .ToArray();
+            if (views?.Any() ?? false)
+            {
+                foreach (var v in views)
+                    graph.CreateNode(v);
+            }
+
+            var categories = _catalog.Categories?
+                .Where(x => x.Status != StatusEnumeration.Deprecated && x.Status != StatusEnumeration.Obsolete)
+                .ToArray();
+            if (categories?.Any() ?? false)
+            {
+                foreach (var c in categories)
+                    graph.CreateNode(c);
+            }
         }
     }
 }

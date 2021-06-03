@@ -5,6 +5,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class DetectionMethod
     {
+        public DetectionMethod()
+        {
+
+        }
+
         public DetectionMethod(string method, string description, string effectiveness)
         {
             Method = method;

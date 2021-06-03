@@ -6,6 +6,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class ExternalNode : Node
     {
+        public ExternalNode()
+        {
+
+        }
+
         internal ExternalNode([NotNull] MitreGraph graph, string source, string id, string url, string description) : base(graph, source, id)
         {
             Url = url;

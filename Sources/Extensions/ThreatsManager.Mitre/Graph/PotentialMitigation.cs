@@ -6,6 +6,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class PotentialMitigation
     {
+        public PotentialMitigation()
+        {
+
+        }
+
         public PotentialMitigation(IEnumerable<string> phases, string mitigationStrategy, string description, string effectiveness)
         {
             Phases = phases;

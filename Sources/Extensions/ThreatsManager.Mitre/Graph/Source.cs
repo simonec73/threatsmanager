@@ -7,6 +7,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class Source
     {
+        public Source()
+        {
+
+        }
+
         public Source([Required] string source, [Required] string version, DateTime timestamp)
         {
             Name = source;

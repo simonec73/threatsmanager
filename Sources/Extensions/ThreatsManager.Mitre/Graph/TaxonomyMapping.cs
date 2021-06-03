@@ -5,6 +5,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class TaxonomyMapping
     {
+        public TaxonomyMapping()
+        {
+
+        }
+
         public TaxonomyMapping(string taxonomy, string id, string name, bool exactFit)
         {
             Taxonomy = taxonomy;

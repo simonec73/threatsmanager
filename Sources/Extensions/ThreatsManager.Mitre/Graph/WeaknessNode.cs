@@ -11,6 +11,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class WeaknessNode : Node
     {
+        public WeaknessNode()
+        {
+
+        }
+
         internal WeaknessNode([NotNull] MitreGraph graph, [NotNull] WeaknessType weakness) : base(graph, "CWE", weakness.ID)
         {
             Name = weakness.Name;

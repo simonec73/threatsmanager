@@ -6,6 +6,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class Context
     {
+        public Context()
+        {
+
+        }
+
         public Context(ContextType contextType, string className, string name)
         {
             ContextType = contextType;

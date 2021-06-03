@@ -6,6 +6,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject("Audience")]
     public class Audience
     {
+        public Audience()
+        {
+
+        }
+
         public Audience([Required] string name, string description)
         {
             Name = name;

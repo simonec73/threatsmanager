@@ -8,6 +8,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class Node
     {
+        protected Node()
+        {
+
+        }
+
         public Node([NotNull] MitreGraph graph, [Required] string source, [Required] string id)
         {
             Graph = graph;

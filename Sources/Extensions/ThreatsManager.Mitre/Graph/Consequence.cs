@@ -6,6 +6,11 @@ namespace ThreatsManager.Mitre.Graph
     [JsonObject(MemberSerialization.OptIn)]
     public class Consequence
     {
+        public Consequence()
+        {
+
+        }
+
         public Consequence(IEnumerable<string> scopes, IEnumerable<string> impacts, string notes)
         {
             Scopes = scopes;

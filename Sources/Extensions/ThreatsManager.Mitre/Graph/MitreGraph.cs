@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Mitre.Cwe;
 
 namespace ThreatsManager.Mitre.Graph
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class MitreGraph
     {
+        #region Public properties.
         [JsonProperty("sources")]
         public List<Source> Sources { get; private set; }
 
         [JsonProperty("nodes")]
         public List<Node> Nodes { get; private set; }
+        #endregion
 
         #region Public member functions.
         public void RegisterSource([Required] string source, [Required] string version, DateTime timestamp)
@@ -27,6 +30,17 @@ namespace ThreatsManager.Mitre.Graph
                                  timestamp != x.Timestamp))
             {
                 Sources.Add(new Source(source, version, timestamp));
+            }
+        }
+
+        public void ReconcileRelationships()
+        {
+            if (Nodes?.Any() ?? false)
+            {
+                foreach (var node in Nodes)
+                {
+                    Reconcile(node);
+                }
             }
         }
 
@@ -103,27 +117,121 @@ namespace ThreatsManager.Mitre.Graph
         }
         #endregion
 
+        #region Serialize/deserialize.
+        public byte[] Serialize()
+        {
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                var serializer = new JsonSerializer
+                {
+                    TypeNameHandling = TypeNameHandling.Objects,
+                    Formatting = Formatting.Indented
+                };
+                serializer.Serialize(writer, this);
+            }
+
+            var buf = Encoding.Unicode.GetBytes(sb.ToString());
+
+            var result = new byte[buf.Length + 2];
+            result[0] = 0xFF;
+            result[1] = 0xFE;
+            buf.CopyTo(result, 2);
+
+            return result;
+        }
+
+        public void Serialize([Required] string fileName)
+        {
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+
+            using (var file = File.OpenWrite(fileName))
+            {
+                using (var writer = new BinaryWriter(file))
+                {
+                    var serialization = Serialize();
+                    writer.Write(serialization);
+                }
+            }
+        }
+
+        public static MitreGraph Deserialize(byte[] json)
+        {
+            MitreGraph result = null;
+
+            if (json.Length > 0)
+            {
+                string jsonText;
+
+                if (json[0] == 0xFF)
+                    jsonText = Encoding.Unicode.GetString(json, 2, json.Length - 2);
+                else
+                    jsonText = Encoding.Unicode.GetString(json);
+
+                using (var textReader = new StringReader(jsonText))
+                using (var reader = new JsonTextReader(textReader))
+                {
+                    var serializer = new JsonSerializer
+                    {
+                        TypeNameHandling = TypeNameHandling.Objects
+                    };
+                    result = serializer.Deserialize<MitreGraph>(reader);
+                }
+            }
+
+            return result;
+        }
+
+        public static MitreGraph Deserialize([Required] string fileName)
+        {
+            MitreGraph result;
+
+            using (var file = File.OpenRead(fileName))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    var bytes = ms.ToArray();
+                    result = Deserialize(bytes);
+                }
+            }
+
+            return result;
+        }
+        #endregion
+
         #region Internal methods used to build the Graph.
         internal Node CreateNode<T>(T source) where T : class
         {
             Node result = null;
 
-            if (source is WeaknessType weakness)
+            if (source is Cwe.WeaknessType weakness)
             {
                 result = new WeaknessNode(this, weakness);
             }
-            else if (source is ObservedExampleTypeObserved_Example weaknessExample)
+            else if (source is Cwe.ObservedExampleTypeObserved_Example weaknessExample)
             {
                 result = new ExternalNode(this, "CVE", weaknessExample.Reference,
                     weaknessExample.Link, weaknessExample.Description.ConvertToString());
             }
-            else if (source is CategoryType category)
+            else if (source is Cwe.CategoryType cweCategory)
             {
-                result = new CategoryNode(this, category);
+                result = new CategoryNode(this, cweCategory);
             }
-            else if (source is ViewType view)
+            else if (source is Cwe.ViewType cweView)
             {
-                result = new ViewNode(this, view);
+                result = new ViewNode(this, cweView);
+            }
+            else if (source is Capec.CategoryType capecCategory)
+            {
+                result = new CategoryNode(this, capecCategory);
+            }
+            else if (source is Capec.ViewType capecView)
+            {
+                result = new ViewNode(this, capecView);
             }
 
             if (result != null)
@@ -134,17 +242,6 @@ namespace ThreatsManager.Mitre.Graph
             }
 
             return result;
-        }
-
-        internal void ReconcileRelationships()
-        {
-            if (Nodes?.Any() ?? false)
-            {
-                foreach (var node in Nodes)
-                {
-                    Reconcile(node);
-                }
-            }
         }
         #endregion
 
