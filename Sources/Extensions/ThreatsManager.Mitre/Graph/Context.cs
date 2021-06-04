@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace ThreatsManager.Mitre.Graph
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Context
     {
         public Context()

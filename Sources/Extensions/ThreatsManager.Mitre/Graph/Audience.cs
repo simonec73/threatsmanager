@@ -3,7 +3,7 @@ using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.Mitre.Graph
 {
-    [JsonObject("Audience")]
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Audience
     {
         public Audience()

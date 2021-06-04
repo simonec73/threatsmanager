@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace ThreatsManager.Mitre.Graph
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class PotentialMitigation
     {
         public PotentialMitigation()

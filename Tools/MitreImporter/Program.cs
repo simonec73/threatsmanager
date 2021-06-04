@@ -61,6 +61,11 @@ namespace MitreImporter
         {
             Console.WriteLine($"Sources: {graph.Sources.Count}.");
             Console.WriteLine($"Nodes: {graph.Nodes.Count}.");
+            Console.WriteLine($"Attack Patterns: {graph.Nodes.OfType<AttackPatternNode>().Count()}");
+            Console.WriteLine($"Categories: {graph.Nodes.OfType<CategoryNode>().Count()}");
+            Console.WriteLine($"Externals: {graph.Nodes.OfType<ExternalNode>().Count()}");
+            Console.WriteLine($"Views: {graph.Nodes.OfType<ViewNode>().Count()}");
+            Console.WriteLine($"Weaknesses: {graph.Nodes.OfType<WeaknessNode>().Count()}");
         }
     }
 }

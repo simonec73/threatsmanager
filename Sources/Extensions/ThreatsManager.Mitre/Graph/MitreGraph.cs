@@ -8,7 +8,7 @@ using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.Mitre.Graph
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class MitreGraph
     {
         #region Public properties.
@@ -232,6 +232,10 @@ namespace ThreatsManager.Mitre.Graph
             else if (source is Capec.ViewType capecView)
             {
                 result = new ViewNode(this, capecView);
+            }
+            else if (source is Capec.AttackPatternType capecAttackPattern)
+            {
+                result = new AttackPatternNode(this, capecAttackPattern);
             }
 
             if (result != null)

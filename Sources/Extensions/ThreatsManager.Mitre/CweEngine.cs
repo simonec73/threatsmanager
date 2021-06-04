@@ -42,7 +42,9 @@ namespace ThreatsManager.Mitre
                     graph.CreateNode(c);
             }
 
-            var weaknesses = _catalog.Weaknesses?.ToArray();
+            var weaknesses = _catalog.Weaknesses?
+                .Where(x => x.Status != StatusEnumeration.Deprecated && x.Status != StatusEnumeration.Obsolete)
+                .ToArray();
             if (weaknesses?.Any() ?? false)
             {
                 foreach (var w in weaknesses)

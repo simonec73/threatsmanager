@@ -5,7 +5,7 @@ using PostSharp.Patterns.Contracts;
 
 namespace ThreatsManager.Mitre.Graph
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public abstract class Node
     {
         protected Node()

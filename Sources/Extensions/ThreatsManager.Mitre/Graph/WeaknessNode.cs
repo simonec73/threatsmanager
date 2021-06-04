@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Mitre.Cwe;
 using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Mitre.Graph
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]
     public class WeaknessNode : Node
     {
         public WeaknessNode()
@@ -18,9 +19,16 @@ namespace ThreatsManager.Mitre.Graph
 
         internal WeaknessNode([NotNull] MitreGraph graph, [NotNull] WeaknessType weakness) : base(graph, "CWE", weakness.ID)
         {
+            if (weakness.Status == StatusEnumeration.Deprecated || weakness.Status == StatusEnumeration.Obsolete)
+                throw new ArgumentException(Properties.Resources.InvalidStatus, "weakness");
+
             Name = weakness.Name;
             Description = weakness.Description;
             ExtendedDescription = weakness.Extended_Description.ConvertToString();
+            if (Enum.TryParse<Evaluation>(weakness.Likelihood_Of_Exploit.ToString(), out var likelihood))
+                Likelihood = likelihood;
+            else
+                Likelihood = Evaluation.Unknown;
 
             #region Add relationships.
             var relWeaknesses = weakness.Related_Weaknesses?.ToArray();
@@ -117,6 +125,17 @@ namespace ThreatsManager.Mitre.Graph
             }
             #endregion
 
+            #region Add Potential Mitigations.
+            var potentialMitigations = weakness.Potential_Mitigations?.ToArray();
+            if (potentialMitigations?.Any() ?? false)
+            {
+                foreach (var potentialMitigation in potentialMitigations)
+                {
+                    AddPotentialMitigations(potentialMitigation);
+                }
+            }
+            #endregion
+
             #region Add Taxonomy Mappings.
             var taxonomyMappings = weakness.Taxonomy_Mappings?.ToArray();
             if (taxonomyMappings?.Any() ?? false)
@@ -131,6 +150,10 @@ namespace ThreatsManager.Mitre.Graph
 
         [JsonProperty("extDesc")]
         public string ExtendedDescription { get; private set; }
+        
+        [JsonProperty("likelihood")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Evaluation Likelihood { get; private set; }
 
         [JsonProperty("contexts")]
         public List<Context> Contexts { get; private set; }
@@ -140,6 +163,9 @@ namespace ThreatsManager.Mitre.Graph
 
         [JsonProperty("detectionMethods")]
         public List<DetectionMethod> DetectionMethods { get; private set; }
+
+        [JsonProperty("mitigations")]
+        public List<PotentialMitigation> PotentialMitigations { get; private set; }
 
         [JsonProperty("taxonomyMappings")]
         public List<TaxonomyMapping> TaxonomyMappings { get; private set; }
@@ -162,6 +188,7 @@ namespace ThreatsManager.Mitre.Graph
             {
                 IEnumerable<string> scopes = null;
                 IEnumerable<string> impacts = null;
+                Evaluation likelihood = Evaluation.Unknown;
 
                 var s = consequence.Scope?.ToArray();
                 if (s?.Any() ?? false)
@@ -175,12 +202,17 @@ namespace ThreatsManager.Mitre.Graph
                     impacts = i.Select(x => x.GetXmlEnumLabel());
                 }
 
+                if (Enum.TryParse<Evaluation>(consequence.Likelihood.ToString(), out var l))
+                {
+                    likelihood = l;
+                }
+
                 var notes = consequence.Note?.ConvertToString();
 
                 if (Consequences == null)
                     Consequences = new List<Consequence>();
 
-                Consequences.Add(new Consequence(scopes, impacts, notes));
+                Consequences.Add(new Consequence(scopes, impacts, likelihood, notes));
             }
         }
 
@@ -193,6 +225,18 @@ namespace ThreatsManager.Mitre.Graph
 
                 DetectionMethods.Add(new DetectionMethod(detectionMethod.Method.GetXmlEnumLabel(), 
                     detectionMethod.Description.ConvertToString(), detectionMethod.Effectiveness.GetXmlEnumLabel()));
+            }
+        }
+
+        private void AddPotentialMitigations(PotentialMitigationsTypeMitigation mitigation)
+        {
+            if (mitigation != null)
+            {
+                if (PotentialMitigations == null)
+                    PotentialMitigations = new List<PotentialMitigation>();
+
+                PotentialMitigations.Add(new PotentialMitigation(mitigation.Phase.Select(x => x.ToString()),
+                    mitigation.Strategy.ToString(), mitigation.Description.ConvertToString(), mitigation.Effectiveness.ToString()));
             }
         }
 

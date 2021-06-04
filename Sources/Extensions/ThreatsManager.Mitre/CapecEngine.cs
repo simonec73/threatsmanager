@@ -2,7 +2,6 @@
 using System.Linq;
 using ThreatsManager.Mitre.Capec;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Reflection.MethodBody;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Mitre.Graph;
 using ThreatsManager.Utilities.Aspects;
@@ -44,6 +43,15 @@ namespace ThreatsManager.Mitre
             {
                 foreach (var c in categories)
                     graph.CreateNode(c);
+            }
+
+            var attackPatterns = _catalog.Attack_Patterns?
+                .Where(x => x.Status != StatusEnumeration.Deprecated && x.Status != StatusEnumeration.Obsolete)
+                .ToArray();
+            if (attackPatterns?.Any() ?? false)
+            {
+                foreach (var a in attackPatterns)
+                    graph.CreateNode(a);
             }
         }
     }
