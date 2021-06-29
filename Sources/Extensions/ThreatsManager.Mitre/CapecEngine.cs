@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ThreatsManager.Mitre.Capec;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
