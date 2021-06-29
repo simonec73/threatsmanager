@@ -1,7 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using PostSharp.Patterns.Contracts;
-
-namespace ThreatsManager.DevOps
+﻿namespace ThreatsManager.DevOps
 {
     /// <summary>
     /// Information related to an item stored in the DevOps system.

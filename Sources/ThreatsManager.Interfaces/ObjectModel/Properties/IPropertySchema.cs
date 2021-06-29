@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ThreatsManager.Interfaces.ObjectModel.Properties
+﻿namespace ThreatsManager.Interfaces.ObjectModel.Properties
 {
     /// <summary>
     /// Interface defining a Property Schema, that is a container of Properties, associated to a Namespace.

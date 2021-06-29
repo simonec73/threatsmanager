@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ThreatsManager.DevOps
+﻿namespace ThreatsManager.DevOps
 {
     public enum NotificationType
     {

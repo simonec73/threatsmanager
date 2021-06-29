@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;

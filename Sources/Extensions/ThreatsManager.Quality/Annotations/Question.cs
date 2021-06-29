@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ThreatsManager.AutoGenRules.Engine;
 
 namespace ThreatsManager.Quality.Annotations

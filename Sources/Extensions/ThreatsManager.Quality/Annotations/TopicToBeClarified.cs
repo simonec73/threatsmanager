@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Quality.Annotations
 {

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Interfaces.Extensions.Panels

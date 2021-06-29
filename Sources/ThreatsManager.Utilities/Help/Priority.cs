@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ThreatsManager.Utilities.Help
+﻿namespace ThreatsManager.Utilities.Help
 {
     /// <summary>
     /// Priority of the definition.

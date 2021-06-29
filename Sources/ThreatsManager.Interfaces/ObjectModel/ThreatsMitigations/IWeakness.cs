@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
+﻿using ThreatsManager.Interfaces.ObjectModel.Properties;
 
 namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
 {

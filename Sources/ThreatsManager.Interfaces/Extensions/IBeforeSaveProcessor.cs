@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ThreatsManager.Interfaces.ObjectModel;
+﻿using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Interfaces.Extensions
 {

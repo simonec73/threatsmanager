@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using ThreatsManager.MsTmt.Properties;
 
 namespace ThreatsManager.MsTmt.Model
 {

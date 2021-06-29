@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Properties;
-using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {

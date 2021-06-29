@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using PostSharp.Patterns.Contracts;
-using ThreatsManager.DevOps.Properties;
+﻿using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions;
 using ThreatsManager.Interfaces;
