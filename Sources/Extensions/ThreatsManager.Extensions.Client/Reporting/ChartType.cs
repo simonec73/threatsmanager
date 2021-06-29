@@ -1,4 +1,4 @@
-﻿namespace ThreatsManager.Interfaces.Extensions.Reporting
+﻿namespace ThreatsManager.Extensions.Reporting
 {
     /// <summary>
     /// Types of Chart that are supported.

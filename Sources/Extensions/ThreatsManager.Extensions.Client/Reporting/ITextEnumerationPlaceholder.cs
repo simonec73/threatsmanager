@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 
-namespace ThreatsManager.Interfaces.Extensions.Reporting
+namespace ThreatsManager.Extensions.Reporting
 {
     /// <summary>
     /// Placeholder manager for Reporting, to replace the placeholder with an enumeration of strings.

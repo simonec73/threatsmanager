@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace ThreatsManager.Interfaces.Extensions.Reporting
+﻿namespace ThreatsManager.Extensions.Reporting
 {
     /// <summary>
     /// Base interface for Placeholders.
@@ -8,8 +6,8 @@ namespace ThreatsManager.Interfaces.Extensions.Reporting
     public interface IPlaceholder
     {
         /// <summary>
-        /// Suffix for the Placeholder.
+        /// Placeholder qualifier.
         /// </summary>
-        string Suffix { get; }
+        string Qualifier { get; }
     }
 }

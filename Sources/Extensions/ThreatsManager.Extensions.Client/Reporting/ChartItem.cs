@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace ThreatsManager.Interfaces.Extensions.Reporting
+namespace ThreatsManager.Extensions.Reporting
 {
     /// <summary>
     /// Item to be shown in the Chart.
@@ -12,8 +12,8 @@ namespace ThreatsManager.Interfaces.Extensions.Reporting
         /// </summary>
         /// <param name="label">Label to use for the Chart Item.</param>
         /// <param name="value">Value of the Chart Item.</param>
-        /// <param name="color">Color to use for the Chart Item.</param>
-        public ChartItem(string label, float value, KnownColor color)
+        /// <param name="color">[Optional] Color to use for the Chart Item.</param>
+        public ChartItem(string label, float value, KnownColor? color = null)
         {
             Label = label;
             Value = value;
@@ -33,6 +33,7 @@ namespace ThreatsManager.Interfaces.Extensions.Reporting
         /// <summary>
         /// Color to use for the Chart Item.
         /// </summary>
-        public KnownColor Color { get; private set; }
+        /// <remarks>It is optional.</remarks>
+        public KnownColor? Color { get; private set; }
     }
 }
