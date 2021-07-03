@@ -52,7 +52,8 @@ namespace ThreatsManager.Extensions.Reporting
                        propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
             {
                 result = new TextRow(propertyType.Name,
-                    $"[{child.Model.GetIdentityTypeInitial(identity)}] {identity.Name}", new [] {identity.Id});
+                    $"{identity.Name}", 
+                    $"[{ child.Model.GetIdentityTypeInitial(identity) }] ", null,new[] {identity.Id});
             } else if (property is IPropertyJsonSerializableObject propertyJsonSerializableObject)
             {
                 var propertyViewerId = propertyJsonSerializableObject.PropertyType.CustomPropertyViewer;

@@ -28,14 +28,18 @@ namespace ThreatsManager.Extensions.Reporting
         /// Constructor.
         /// </summary>
         /// <param name="label">Label of the Row.</param>
-        /// <param name="text">Text to be shown.</param>
+        /// <param name="text">Text to be used if no LinkIds correspond to an actual object.</param>
+        /// <param name="prefix">Prefix to compose the final text.</param>
+        /// <param name="suffix">Suffix to compose the final text.</param>
         /// <param name="linkIds">Identifiers of items in a List to which the text should be linked to.</param>
         /// <param name="textColor">[Optional] Color of the text. If missing, the default value will be used.</param>
         /// <param name="backColor">[Optional] Color of the background. If missing, the default value will be used.</param>
-        public TextRow(string label, string text, IEnumerable<Guid> linkIds, KnownColor? textColor = null, KnownColor? backColor = null) :
+        public TextRow(string label, string text, string prefix, string suffix, IEnumerable<Guid> linkIds, KnownColor? textColor = null, KnownColor? backColor = null) :
             this(label, text, textColor, backColor)
         {
             LinkIds = linkIds;
+            Prefix = prefix;
+            Suffix = suffix;
         }
 
         /// <summary>
@@ -46,7 +50,18 @@ namespace ThreatsManager.Extensions.Reporting
         /// <summary>
         /// Text of the Row.
         /// </summary>
+        /// <remarks>It is applied if no LinkID works.</remarks>
         public string Text { get; private set; }
+
+        /// <summary>
+        /// Prefix to compose the final text.
+        /// </summary>
+        public string Prefix { get; private set; }
+
+        /// <summary>
+        /// Suffix to compose the final text.
+        /// </summary>
+        public string Suffix { get; private set; }
 
         /// <summary>
         /// Color of the Text.

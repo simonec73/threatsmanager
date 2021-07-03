@@ -101,8 +101,10 @@ namespace ThreatsManager.Extensions.Reporting
                         items.Add(new TextRow("Description", threatType.Description));
                         items.Add(new ListRow("Affected Objects", 
                             threatEvents.Select(x => 
-                                new Cell($"[{model.GetIdentityTypeInitial(x.Parent)}] {x.Parent.Name} ({x.Severity.Name})", new []
-                                    {x.ParentId}))));
+                                new Cell($"{x.Parent.Name}", 
+                                    $"[{model.GetIdentityTypeInitial(x.Parent)}] ",
+                                    $" ({x.Severity.Name})",
+                                    new [] {x.ParentId}))));
                         items.Add(new TableRow("Approved Mitigations", new[]
                         {
                             new TableColumn("Object", 150),
@@ -211,9 +213,12 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] {item.ThreatEvent.Parent.Name}", new []
+                    cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
+                        $"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] ",
+                        null,
+                        new[]
                         {item.ThreatEvent.ParentId}));
-                    cells.Add(new Cell(item.Mitigation.Name, new [] {item.MitigationId}));
+                    cells.Add(new Cell(item.Mitigation.Name, null, null, new [] {item.MitigationId}));
                     cells.Add(new Cell(item.ThreatEvent.Severity.Name));
                     cells.Add(new Cell(item.Strength.Name));
                 }
@@ -235,8 +240,10 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"[{item.Model.GetIdentityTypeInitial(item.Parent)}] {item.Parent.Name}", new []
-                        {item.ParentId}));
+                    cells.Add(new Cell($"{item.Parent.Name}",
+                        $"[{item.Model.GetIdentityTypeInitial(item.Parent)}] ",
+                        null, 
+                        new [] {item.ParentId}));
                     cells.Add(new Cell(item.GetProperty(propertyType)?.StringValue));
                 }
 

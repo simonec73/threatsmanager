@@ -86,11 +86,13 @@ namespace ThreatsManager.Extensions.Reporting
                     var items = new List<ItemRow>();
                     items.Add(new TextRow("Severity", threatEvent.Severity.Name,
                         threatEvent.Severity.TextColor, threatEvent.Severity.BackColor));
-                    items.Add(new TextRow("Threat Type", threatEvent.ThreatType.Name, new [] {threatEvent.ThreatTypeId}));
+                    items.Add(new TextRow("Threat Type", threatEvent.ThreatType.Name, null, null, new [] {threatEvent.ThreatTypeId}));
                     items.Add(new TextRow("Description", threatEvent.Description));
                     items.Add(new TextRow("Associated To", 
-                        $"[{model.GetIdentityTypeInitial(threatEvent.Parent)}] {threatEvent.Parent.Name}", new []
-                            {threatEvent.ParentId}));
+                        $"{threatEvent.Parent.Name}",
+                        $"[{model.GetIdentityTypeInitial(threatEvent.Parent)}] ",
+                        null,
+                        new [] {threatEvent.ParentId}));
                     items.Add(new TableRow("Approved Mitigations", new []
                     {
                         new TableColumn("Mitigation", 350),
@@ -152,7 +154,7 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell(item.Mitigation.Name, new [] {item.MitigationId}));
+                    cells.Add(new Cell(item.Mitigation.Name, null, null, new [] {item.MitigationId}));
                     cells.Add(new Cell(item.ThreatEvent.Severity.Name));
                     cells.Add(new Cell(item.Strength.Name));
                 }

@@ -137,9 +137,10 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] {item.ThreatEvent.Parent.Name}", new []
-                        {item.ThreatEvent.ParentId}));
-                    cells.Add(new Cell(item.ThreatEvent.Name, new [] {item.ThreatEvent.Id, item.ThreatEvent.ThreatTypeId}));
+                    cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}", 
+                        $"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] ", null, new [] {item.ThreatEvent.ParentId}));
+                    cells.Add(new Cell(item.ThreatEvent.Name, null, null, 
+                        new [] {item.ThreatEvent.Id, item.ThreatEvent.ThreatTypeId}));
                     cells.Add(new Cell(item.Strength.Name ?? DefaultStrength.Average.GetEnumLabel()));
                     cells.Add(new Cell(item.Status.GetEnumLabel()));
                 }
@@ -165,8 +166,10 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] {item.ThreatEvent.Parent.Name}", new[]
-                        {item.ThreatEvent.ParentId}));
+                    cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}", 
+                        $"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] ",
+                        null,
+                        new[] {item.ThreatEvent.ParentId}));
                     cells.Add(new Cell(item.Directives));
                 }
 
