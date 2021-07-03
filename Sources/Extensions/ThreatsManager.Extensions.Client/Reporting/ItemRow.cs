@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.Design;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Reporting
 {
@@ -11,6 +14,10 @@ namespace ThreatsManager.Extensions.Reporting
     /// </summary>
     public abstract class ItemRow 
     {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="label">The label to be used for the row.</param>
         protected ItemRow(string label)
         {
             Label = label;
@@ -26,7 +33,13 @@ namespace ThreatsManager.Extensions.Reporting
         /// </summary>
         public string Label { get; private set; }
 
-        public static ItemRow Create([NotNull] IProperty property)
+        /// <summary>
+        /// Creates a new ItemRow for a given Property.
+        /// </summary>
+        /// <param name="container">Container of the Property.</param>
+        /// <param name="property">Property to be analyzed.</param>
+        /// <returns>The created ItemRow.</returns>
+        public static ItemRow Create([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
         {
             ItemRow result = null;
 
@@ -34,24 +47,65 @@ namespace ThreatsManager.Extensions.Reporting
 
             if (property is IPropertyArray propertyArray)
             {
-                result = new ListRow(propertyType.Name, propertyArray.Value);
+                result = new ListRow(propertyType.Name, propertyArray.Value?.Select(x => new Cell(x)));
             } else if (property is IPropertyIdentityReference propertyIdentityReference && 
                        propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
             {
                 result = new TextRow(propertyType.Name,
-                    $"[{child.Model.GetIdentityTypeInitial(identity)}] {identity.Name}");
+                    $"[{child.Model.GetIdentityTypeInitial(identity)}] {identity.Name}", new [] {identity.Id});
             } else if (property is IPropertyJsonSerializableObject propertyJsonSerializableObject)
             {
-                // TODO: print something out of the object.
+                var propertyViewerId = propertyJsonSerializableObject.PropertyType.CustomPropertyViewer;
+                if (!string.IsNullOrWhiteSpace(propertyViewerId))
+                {
+                    var factory = ExtensionUtils.GetExtension<IPropertyViewerFactory>(propertyViewerId);
+                    if (factory != null)
+                    {
+                        var propertyViewer = factory.CreatePropertyViewer(container, property);
+                        if (propertyViewer != null)
+                        {
+                            var blocks = propertyViewer.Blocks?.Where(x => x.Printable).ToArray();
+                            if (blocks?.Any() ?? false)
+                            {
+                                result = new TableRow(property.PropertyType.Name, new[]
+                                {
+                                    new TableColumn("Property", 150),
+                                    new TableColumn("Value", 350)
+                                }, GetCells(blocks));
+                            }
+                        }
+                    }
+                }
             } else if (property is IPropertyList propertyList)
             {
                 result = new TextRow(propertyType.Name, propertyList.Value?.Label);
             } else if (property is IPropertyListMulti propertyListMulti)
             {
-                result = new ListRow(propertyType.Name, propertyListMulti.Values?.Select(x => x.Label));
+                result = new ListRow(propertyType.Name, propertyListMulti.Values?.Select(x => new Cell(x.Label)));
             } else
             {
                 result = new TextRow(propertyType.Name, property.StringValue);
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<Cell> GetCells(IEnumerable<IPropertyViewerBlock> blocks)
+        {
+            IEnumerable<Cell> result = null;
+
+            var list = blocks?.ToArray();
+            if (list?.Any() ?? false)
+            {
+                var cells = new List<Cell>();
+
+                foreach (var item in list)
+                {
+                    cells.Add(new Cell(item.Label));
+                    cells.Add(new Cell(item.Text));
+                }
+
+                result = cells;
             }
 
             return result;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -7,9 +8,21 @@ using ThreatsManager.Interfaces.ObjectModel;
 namespace ThreatsManager.Extensions.Reporting
 {
     [Extension("4964236B-01CC-4FC6-9E7A-D4BEA3AF7F1A", "Chart Threat Types Placeholder", 34, ExecutionMode.Business)]
-    public class ChartThreatTypesPlaceholder : IChartPlaceholder
+    public class ChartThreatTypesPlaceholderFactory : IPlaceholderFactory
     {
         public string Qualifier => "ChartThreatTypes";
+
+        public IPlaceholder Create(string parameters = null)
+        {
+            return new ChartThreatTypesPlaceholder();
+        }
+    }
+
+    public class ChartThreatTypesPlaceholder : IChartPlaceholder
+    {
+        public string Name => "Threat Types";
+        public PlaceholderSection Section => PlaceholderSection.Chart;
+        public Bitmap Image => null;
 
         public ChartType StandardChartType => ChartType.Pie;
 

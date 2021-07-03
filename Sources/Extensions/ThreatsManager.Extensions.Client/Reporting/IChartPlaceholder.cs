@@ -8,8 +8,7 @@ namespace ThreatsManager.Extensions.Reporting
     /// <summary>
     /// Interface representing a placeholder for Reporting, to replace the placeholder with a Chart.
     /// </summary>
-    [ExtensionDescription("Reporting Placeholder for Chart")]
-    public interface IChartPlaceholder : IPlaceholder, IExtension
+    public interface IChartPlaceholder : IPlaceholder
     {
         /// <summary>
         /// Chart type to be used. A different Chart Type may be used, potentially.

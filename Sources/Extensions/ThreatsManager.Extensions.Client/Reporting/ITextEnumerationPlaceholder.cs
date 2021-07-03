@@ -8,8 +8,7 @@ namespace ThreatsManager.Extensions.Reporting
     /// <summary>
     /// Placeholder manager for Reporting, to replace the placeholder with an enumeration of strings.
     /// </summary>
-    [ExtensionDescription("Reporting Placeholder for Enumeration of Strings")]
-    public interface ITextEnumerationPlaceholder : IPlaceholder, IExtension
+    public interface ITextEnumerationPlaceholder : IPlaceholder
     {
         /// <summary>
         /// Get the enumeration of strings to be used to replace the placeholder.

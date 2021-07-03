@@ -7,8 +7,7 @@ namespace ThreatsManager.Extensions.Reporting
     /// <summary>
     /// Placeholder manager for Reporting, to replace the placeholder with text.
     /// </summary>
-    [ExtensionDescription("Reporting Placeholder for Text")]
-    public interface ITextPlaceholder : IPlaceholder, IExtension
+    public interface ITextPlaceholder : IPlaceholder
     {
         /// <summary>
         /// Get the text to be used to replace the placeholder.

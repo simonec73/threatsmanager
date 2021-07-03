@@ -7,8 +7,7 @@ namespace ThreatsManager.Extensions.Reporting
     /// <summary>
     /// Interface representing a placeholder for Reporting, to replace the placeholder with an integer.
     /// </summary>
-    [ExtensionDescription("Reporting Placeholder for Counters")]
-    public interface ICounter : IPlaceholder, IExtension
+    public interface ICounterPlaceholder : IPlaceholder
     {
         /// <summary>
         /// Get the integer to be used to replace the placeholder.

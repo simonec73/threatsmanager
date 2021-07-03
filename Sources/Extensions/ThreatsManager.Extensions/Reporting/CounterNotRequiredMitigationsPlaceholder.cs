@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
@@ -8,9 +9,21 @@ using ThreatsManager.Interfaces.ObjectModel;
 namespace ThreatsManager.Extensions.Reporting
 {
     [Extension("B7CD96CF-0D82-4F6F-9798-AE8085C0260B", "Not Required Mitigations Counter Placeholder", 33, ExecutionMode.Business)]
-    public class CounterNotRequiredMitigationsPlaceholder : ICounter
+    public class CounterNotRequiredMitigationsPlaceholderFactory : IPlaceholderFactory
     {
         public string Qualifier => "CounterNotRequiredMitigations";
+
+        public IPlaceholder Create(string parameters = null)
+        {
+            return new CounterNotRequiredMitigationsPlaceholder();
+        }
+    }
+
+    public class CounterNotRequiredMitigationsPlaceholder : ICounterPlaceholder
+    {
+        public string Name => "No action required mitigations";
+        public PlaceholderSection Section => PlaceholderSection.Counter;
+        public Bitmap Image => null;
 
         public int GetCounter(IThreatModel model)
         {

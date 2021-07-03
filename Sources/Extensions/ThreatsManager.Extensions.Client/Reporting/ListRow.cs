@@ -13,8 +13,8 @@ namespace ThreatsManager.Extensions.Reporting
         /// Constructor.
         /// </summary>
         /// <param name="label">Label of the Row.</param>
-        /// <param name="lines">Lines of text to be shown.</param>
-        public ListRow(string label, IEnumerable<string> lines) : base(label)
+        /// <param name="lines">Lines to be shown.</param>
+        public ListRow(string label, IEnumerable<Cell> lines) : base(label)
         {
             Lines = lines;
         }
@@ -27,6 +27,6 @@ namespace ThreatsManager.Extensions.Reporting
         /// <summary>
         /// Lines part of the Row.
         /// </summary>
-        public IEnumerable<string> Lines { get; private set; }
+        public IEnumerable<Cell> Lines { get; private set; }
     }
 }

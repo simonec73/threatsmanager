@@ -1,4 +1,8 @@
-﻿namespace ThreatsManager.Extensions.Reporting
+﻿using System.Drawing;
+using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
+
+namespace ThreatsManager.Extensions.Reporting
 {
     /// <summary>
     /// Base interface for Placeholders.
@@ -6,8 +10,19 @@
     public interface IPlaceholder
     {
         /// <summary>
-        /// Placeholder qualifier.
+        /// Name of the Placeholder.
         /// </summary>
-        string Qualifier { get; }
+        string Name { get; }
+
+        /// <summary>
+        /// Section of the Placeholder.
+        /// </summary>
+        PlaceholderSection Section { get; }
+
+        /// <summary>
+        /// Image associated to the Placeholder. 
+        /// </summary>
+        /// <remarks>It is optional. Size must be 16x16 pixels.</remarks>
+        Bitmap Image { get; }
     }
 }

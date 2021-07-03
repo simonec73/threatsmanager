@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace ThreatsManager.Extensions.Reporting
 {
@@ -14,11 +16,26 @@ namespace ThreatsManager.Extensions.Reporting
         /// <param name="text">Text to be shown.</param>
         /// <param name="textColor">[Optional] Color of the text. If missing, the default value will be used.</param>
         /// <param name="backColor">[Optional] Color of the background. If missing, the default value will be used.</param>
-        public TextRow(string label, string text, KnownColor? textColor = null, KnownColor? backColor = null) : base(label)
+        public TextRow(string label, string text, KnownColor? textColor = null, KnownColor? backColor = null) :
+            base(label)
         {
             Text = text;
             TextColor = textColor;
             BackColor = backColor;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="label">Label of the Row.</param>
+        /// <param name="text">Text to be shown.</param>
+        /// <param name="linkIds">Identifiers of items in a List to which the text should be linked to.</param>
+        /// <param name="textColor">[Optional] Color of the text. If missing, the default value will be used.</param>
+        /// <param name="backColor">[Optional] Color of the background. If missing, the default value will be used.</param>
+        public TextRow(string label, string text, IEnumerable<Guid> linkIds, KnownColor? textColor = null, KnownColor? backColor = null) :
+            this(label, text, textColor, backColor)
+        {
+            LinkIds = linkIds;
         }
 
         /// <summary>
@@ -40,5 +57,11 @@ namespace ThreatsManager.Extensions.Reporting
         /// Color of the Background.
         /// </summary>
         public KnownColor? BackColor { get; private set; }
+
+        /// <summary>
+        /// Identifier of items in a List to which the content of the cell should be linked to.
+        /// </summary>
+        /// <remarks>The Ids are listed in priority order: the first which is a match is applied.</remarks>
+        public IEnumerable<Guid> LinkIds { get; private set; }
     }
 }
