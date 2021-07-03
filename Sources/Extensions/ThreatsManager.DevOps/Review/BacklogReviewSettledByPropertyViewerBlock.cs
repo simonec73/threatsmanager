@@ -15,6 +15,8 @@ namespace ThreatsManager.DevOps.Review
         public string Label => "Settled By";
         public string Text { get; set; }
         public Bitmap Image => null;
+        public bool Printable => true;
+
         public bool Execute()
         {
             return false;

@@ -30,6 +30,11 @@ namespace ThreatsManager.Interfaces.Extensions
         Bitmap Image { get; }
 
         /// <summary>
+        /// True if the block can be printed.
+        /// </summary>
+        bool Printable { get; }
+
+        /// <summary>
         /// Executes the Action associated with the Block.
         /// </summary>
         /// <returns>True if the execution succeeded, false otherwise.</returns>
