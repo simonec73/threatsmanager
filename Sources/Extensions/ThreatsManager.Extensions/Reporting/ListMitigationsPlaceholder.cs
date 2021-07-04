@@ -46,8 +46,6 @@ namespace ThreatsManager.Extensions.Reporting
                     var properties = mitigation.Properties?
                         .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
                                     (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
-                        .OrderBy(x => model.GetSchema(x.PropertyType.SchemaId).Priority)
-                        .ThenBy(x => x.PropertyType.Priority)
                         .Select(x => x.PropertyType)
                         .ToArray();
 
@@ -61,7 +59,11 @@ namespace ThreatsManager.Extensions.Reporting
                     }
                 }
 
-                result = dict.ToArray();
+                result = dict
+                    .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
+                    .ThenBy(x => x.Value.Priority)
+                    .ThenBy(x => x.Key)
+                    .ToArray();
             }
 
             return result;
@@ -108,6 +110,7 @@ namespace ThreatsManager.Extensions.Reporting
                                         (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
                             .OrderBy(x => model.GetSchema(x.PropertyType.SchemaId).Priority)
                             .ThenBy(x => x.PropertyType.Priority)
+                            .ThenBy(x => x.PropertyType.Name)
                             .Select(x => ItemRow.Create(mitigation, x))
                             .ToArray();
                         if (properties?.Any() ?? false)

@@ -46,8 +46,6 @@ namespace ThreatsManager.Extensions.Reporting
                     var properties = threatType.Properties?
                         .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
                                     (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
-                        .OrderBy(x => model.GetSchema(x.PropertyType.SchemaId).Priority)
-                        .ThenBy(x => x.PropertyType.Priority)
                         .Select(x => x.PropertyType)
                         .ToArray();
 
@@ -70,7 +68,15 @@ namespace ThreatsManager.Extensions.Reporting
                     }
                 }
 
-                result = dict.ToArray();
+                result = dict.Where(x => !x.Key.StartsWith("[From Events] "))
+                    .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
+                    .ThenBy(x => x.Value.Priority)
+                    .ThenBy(x => x.Key)
+                    .Union(dict.Where(x => x.Key.StartsWith("[From Events] "))
+                        .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
+                        .ThenBy(x => x.Value.Priority)
+                        .ThenBy(x => x.Key))
+                    .ToArray();
             }
 
             return result;
@@ -88,6 +94,12 @@ namespace ThreatsManager.Extensions.Reporting
             if (threatTypes?.Any() ?? false)
             {
                 var list = new List<ListItem>();
+
+                var eventProperties = new ListThreatEventsPlaceholder().GetProperties(model)?
+                    .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
+                    .ThenBy(x => x.Value.Priority)
+                    .ThenBy(x => x.Key)
+                    .ToArray();
 
                 foreach (var threatType in threatTypes)
                 {
@@ -147,12 +159,12 @@ namespace ThreatsManager.Extensions.Reporting
                                         (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
                             .OrderBy(x => model.GetSchema(x.PropertyType.SchemaId).Priority)
                             .ThenBy(x => x.PropertyType.Priority)
+                            .ThenBy(x => x.PropertyType.Name)
                             .Select(x => ItemRow.Create(threatType, x))
                             .ToArray();
                         if (properties?.Any() ?? false)
                             items.AddRange(properties);
 
-                        var eventProperties = new ListThreatEventsPlaceholder().GetProperties(model)?.ToArray();
                         if (eventProperties?.Any() ?? false)
                         {
                             foreach (var ep in eventProperties)
