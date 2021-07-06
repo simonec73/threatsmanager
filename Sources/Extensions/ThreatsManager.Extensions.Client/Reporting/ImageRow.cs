@@ -2,17 +2,17 @@
 
 namespace ThreatsManager.Extensions.Reporting
 {
-    public class BitmapRow : ItemRow
+    public class ImageRow : ItemRow
     {
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="label">Label of the Row.</param>
-        /// <param name="bitmap">Image to be shown.</param>
+        /// <param name="image">Image to be shown.</param>
         /// <param name="caption">[Optional] Caption of the image.</param>
-        public BitmapRow(string label, Bitmap bitmap, string caption = null) : base(label)
+        public ImageRow(string label, Image image, string caption = null) : base(label)
         {
-            Image = bitmap;
+            Image = image;
             Caption = caption;
         }
 
@@ -24,7 +24,7 @@ namespace ThreatsManager.Extensions.Reporting
         /// <summary>
         /// Image of the Row.
         /// </summary>
-        public Bitmap Image { get; private set; }
+        public Image Image { get; private set; }
 
         /// <summary>
         /// Caption of the Image.

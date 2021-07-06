@@ -63,7 +63,9 @@ namespace ThreatsManager.Extensions.Reporting
                     {
                         foreach (var ep in eventProperties)
                         {
-                            dict.Add($"[From Events] {ep.Key}", ep.Value);
+                            var text = $"[From Events] {ep.Key}";
+                            if (!dict.ContainsKey(text))
+                                dict.Add(text, ep.Value);
                         }
                     }
                 }
