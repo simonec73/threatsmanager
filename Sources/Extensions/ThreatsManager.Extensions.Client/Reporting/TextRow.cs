@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace ThreatsManager.Extensions.Reporting
 {
@@ -16,12 +17,18 @@ namespace ThreatsManager.Extensions.Reporting
         /// <param name="text">Text to be shown.</param>
         /// <param name="textColor">[Optional] Color of the text. If missing, the default value will be used.</param>
         /// <param name="backColor">[Optional] Color of the background. If missing, the default value will be used.</param>
-        public TextRow(string label, string text, KnownColor? textColor = null, KnownColor? backColor = null) :
+        /// <param name="bold">[Optional] Indicates if the text must be bold.</param>
+        /// <param name="centered">[Optional] Indicates if the text must be centered.</param>
+        /// <param name="width">[Optional] Maximum width of the text.</param>
+        public TextRow(string label, string text, KnownColor? textColor = null, KnownColor? backColor = null, bool bold = false, bool centered = false, float width = 0f) :
             base(label)
         {
             Text = text;
             TextColor = textColor;
             BackColor = backColor;
+            Bold = bold;
+            Centered = centered;
+            Width = width;
         }
 
         /// <summary>
@@ -34,8 +41,12 @@ namespace ThreatsManager.Extensions.Reporting
         /// <param name="linkIds">Identifiers of items in a List to which the text should be linked to.</param>
         /// <param name="textColor">[Optional] Color of the text. If missing, the default value will be used.</param>
         /// <param name="backColor">[Optional] Color of the background. If missing, the default value will be used.</param>
-        public TextRow(string label, string text, string prefix, string suffix, IEnumerable<Guid> linkIds, KnownColor? textColor = null, KnownColor? backColor = null) :
-            this(label, text, textColor, backColor)
+        /// <param name="bold">[Optional] Indicates if the text must be bold.</param>
+        /// <param name="centered">[Optional] Indicates if the text must be centered.</param>
+        /// <param name="width">[Optional] Maximum width of the text.</param>
+        public TextRow(string label, string text, string prefix, string suffix, IEnumerable<Guid> linkIds, 
+            KnownColor? textColor = null, KnownColor? backColor = null, bool bold = false, bool centered = false, float width = 0f) :
+            this(label, text, textColor, backColor, bold, centered, width)
         {
             LinkIds = linkIds;
             Prefix = prefix;
@@ -72,6 +83,22 @@ namespace ThreatsManager.Extensions.Reporting
         /// Color of the Background.
         /// </summary>
         public KnownColor? BackColor { get; private set; }
+
+        /// <summary>
+        /// Specifies if the text must be bold.
+        /// </summary>
+        public bool Bold { get; private set; }
+
+        /// <summary>
+        /// Specifies if the text must be centered.
+        /// </summary>
+        public bool Centered { get; private set; }
+
+        /// <summary>
+        /// Maximum width of the Text.
+        /// </summary>
+        /// <remarks>If greater than 0, then the text is boxed.</remarks>
+        public float Width { get; private set; }
 
         /// <summary>
         /// Identifier of items in a List to which the content of the cell should be linked to.

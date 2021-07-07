@@ -20,7 +20,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class ChartThreatEventsPlaceholder : IChartPlaceholder
     {
-        public string Name => "Threat Events";
+        public string Name => "ThreatEvents";
+        public string Label => "Threat Events";
         public PlaceholderSection Section => PlaceholderSection.Chart;
         public Bitmap Image => null;
 

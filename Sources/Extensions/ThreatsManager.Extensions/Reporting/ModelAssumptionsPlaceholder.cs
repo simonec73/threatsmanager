@@ -19,6 +19,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ModelAssumptionsPlaceholder : ITextEnumerationPlaceholder
     {
         public string Name => "Assumptions";
+        public string Label => "Assumptions";
         public PlaceholderSection Section => PlaceholderSection.Model;
         public Bitmap Image => null;
 

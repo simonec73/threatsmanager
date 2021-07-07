@@ -17,7 +17,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterThreatTypesPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Threat Types";
+        public string Name => "ThreatTypes";
+        public string Label => "Threat Types";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

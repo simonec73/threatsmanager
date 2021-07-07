@@ -21,7 +21,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterNotRequiredMitigationsPlaceholder : ICounterPlaceholder
     {
-        public string Name => "No action required mitigations";
+        public string Name => "NoActionRequiredMitigations";
+        public string Label => "No action required mitigations";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

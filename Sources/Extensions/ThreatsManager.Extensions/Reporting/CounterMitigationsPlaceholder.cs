@@ -18,6 +18,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class CounterMitigationsPlaceholder : ICounterPlaceholder
     {
         public string Name => "Mitigations";
+        public string Label => "Mitigations";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

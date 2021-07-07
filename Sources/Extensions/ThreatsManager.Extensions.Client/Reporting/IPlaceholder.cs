@@ -15,6 +15,11 @@ namespace ThreatsManager.Extensions.Reporting
         string Name { get; }
 
         /// <summary>
+        /// Label of the Placeholder.
+        /// </summary>
+        string Label { get; }
+
+        /// <summary>
         /// Section of the Placeholder.
         /// </summary>
         PlaceholderSection Section { get; }

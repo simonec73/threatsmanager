@@ -23,7 +23,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class ListThreatEventsPlaceholder : IListPlaceholder
     {
-        public string Name => "Threat Events";
+        public string Name => "ThreatEvents";
+        public string Label => "Threat Events";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.threat_event_small;
 
@@ -87,7 +88,7 @@ namespace ThreatsManager.Extensions.Reporting
                 {
                     var items = new List<ItemRow>();
                     items.Add(new TextRow("Severity", threatEvent.Severity.Name,
-                        threatEvent.Severity.TextColor, threatEvent.Severity.BackColor));
+                        threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, true, true, 75));
                     items.Add(new TextRow("Threat Type", threatEvent.ThreatType.Name, null, null, new [] {threatEvent.ThreatTypeId}));
                     items.Add(new TextRow("Description", threatEvent.Description));
                     items.Add(new TextRow("Associated To", 
@@ -158,7 +159,7 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var item in list)
                 {
                     cells.Add(new Cell(item.Mitigation.Name, null, null, new [] {item.MitigationId}));
-                    cells.Add(new Cell(item.ThreatEvent.Severity.Name));
+                    cells.Add(new Cell(item.ThreatEvent.Severity.Name, item.ThreatEvent.Severity.TextColor, item.ThreatEvent.Severity.BackColor, false, true));
                     cells.Add(new Cell(item.Strength.Name));
                 }
 

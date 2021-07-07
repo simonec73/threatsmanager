@@ -22,7 +22,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class ListExternalInteractorsPlaceholder : IListPlaceholder
     {
-        public string Name => "External Interactors";
+        public string Name => "ExternalInteractors";
+        public string Label => "External Interactors";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.external_small;
 

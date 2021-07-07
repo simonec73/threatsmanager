@@ -23,6 +23,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ListProcessesPlaceholder : IListPlaceholder
     {
         public string Name => "Processes";
+        public string Label => "Processes";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.process_small;
 

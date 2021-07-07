@@ -22,7 +22,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class ListStoragesPlaceholder : IListPlaceholder
     {
-        public string Name => "Data Stores";
+        public string Name => "DataStores";
+        public string Label => "Data Stores";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.storage_small;
 

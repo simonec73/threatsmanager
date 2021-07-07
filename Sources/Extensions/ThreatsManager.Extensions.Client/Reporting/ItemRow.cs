@@ -47,13 +47,19 @@ namespace ThreatsManager.Extensions.Reporting
 
             if (property is IPropertyArray propertyArray)
             {
-                result = new ListRow(propertyType.Name, propertyArray.Value?.Select(x => new Cell(x)));
-            } else if (property is IPropertyIdentityReference propertyIdentityReference && 
-                       propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
+                result = new ListRow(propertyType.Name, propertyArray.Value?.Select(x => new Line(x?.TrimEnd(' ', '\r', '\n'))));
+            } else if (property is IPropertyIdentityReference propertyIdentityReference)
             {
-                result = new TextRow(propertyType.Name,
-                    $"{identity.Name}", 
-                    $"[{ child.Model.GetIdentityTypeInitial(identity) }] ", null,new[] {identity.Id});
+                if (propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
+                {
+                    result = new TextRow(propertyType.Name,
+                        $"{identity.Name}",
+                        $"[{child.Model.GetIdentityTypeInitial(identity)}] ", null, new[] {identity.Id});
+                }
+                else
+                {
+                    result = new EmptyRow(propertyType.Name);
+                }
             } else if (property is IPropertyJsonSerializableObject propertyJsonSerializableObject)
             {
                 var propertyViewerId = propertyJsonSerializableObject.PropertyType.CustomPropertyViewer;
@@ -79,13 +85,13 @@ namespace ThreatsManager.Extensions.Reporting
                 }
             } else if (property is IPropertyList propertyList)
             {
-                result = new TextRow(propertyType.Name, propertyList.Value?.Label);
+                result = new TextRow(propertyType.Name, propertyList.Value?.Label?.TrimEnd(' ', '\r', '\n'));
             } else if (property is IPropertyListMulti propertyListMulti)
             {
-                result = new ListRow(propertyType.Name, propertyListMulti.Values?.Select(x => new Cell(x.Label)));
+                result = new ListRow(propertyType.Name, propertyListMulti.Values?.Select(x => new Line(x.Label?.TrimEnd(' ', '\r', '\n'))));
             } else
             {
-                result = new TextRow(propertyType.Name, property.StringValue);
+                result = new TextRow(propertyType.Name, property.StringValue?.TrimEnd(' ', '\r', '\n'));
             }
 
             return result;
@@ -103,7 +109,7 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var item in list)
                 {
                     cells.Add(new Cell(item.Label));
-                    cells.Add(new Cell(item.Text));
+                    cells.Add(new Cell(item.Text?.TrimEnd(' ', '\r', '\n')));
                 }
 
                 result = cells;

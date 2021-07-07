@@ -22,7 +22,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class ListTrustBoundariesPlaceholder : IListPlaceholder
     {
-        public string Name => "Trust Boundaries";
+        public string Name => "TrustBoundaries";
+        public string Label => "Trust Boundaries";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.trust_boundary_small;
 

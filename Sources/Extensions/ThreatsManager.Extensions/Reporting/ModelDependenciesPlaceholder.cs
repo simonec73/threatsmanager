@@ -19,6 +19,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ModelDependenciesPlaceholder : ITextEnumerationPlaceholder
     {
         public string Name => "Dependencies";
+        public string Label => "Dependencies";
         public PlaceholderSection Section => PlaceholderSection.Model;
         public Bitmap Image => null;
 

@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterHighThreatTypesPlaceholder : ICounterPlaceholder
     {
-        public string Name => "High Severity Threat Types";
+        public string Name => "HighSeverityThreatTypes";
+        public string Label => "High Severity Threat Types";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

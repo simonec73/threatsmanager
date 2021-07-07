@@ -24,6 +24,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ListMitigationsPlaceholder : IListPlaceholder
     {
         public string Name => "Mitigations";
+        public string Label => "Mitigations";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.mitigations_small;
 

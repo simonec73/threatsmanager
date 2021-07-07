@@ -14,7 +14,7 @@ namespace ThreatsManager.Extensions.Reporting
         /// </summary>
         /// <param name="label">Label of the Row.</param>
         /// <param name="lines">Lines to be shown.</param>
-        public ListRow(string label, IEnumerable<Cell> lines) : base(label)
+        public ListRow(string label, IEnumerable<Line> lines) : base(label)
         {
             Lines = lines;
         }
@@ -27,6 +27,6 @@ namespace ThreatsManager.Extensions.Reporting
         /// <summary>
         /// Lines part of the Row.
         /// </summary>
-        public IEnumerable<Cell> Lines { get; private set; }
+        public IEnumerable<Line> Lines { get; private set; }
     }
 }

@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterCriticalThreatTypesPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Critical Threat Types";
+        public string Name => "CriticalThreatTypes";
+        public string Label => "Critical Threat Types";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

@@ -18,6 +18,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ModelDescriptionPlaceholder : ITextPlaceholder
     {
         public string Name => "Description";
+        public string Label => "Description";
         public PlaceholderSection Section => PlaceholderSection.Model;
         public Bitmap Image => null;
 

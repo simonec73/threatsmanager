@@ -5,52 +5,35 @@ using System.Linq;
 namespace ThreatsManager.Extensions.Reporting
 {
     /// <summary>
-    /// A row for an List Item containing a table.
+    /// A table item.
     /// </summary>
-    public class TableRow : ItemRow
+    public class TableItem
     {
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="label">Label of the Row.</param>
+        /// <param name="label">Label to use for the Table Item.</param>
         /// <param name="columns">Headers to be shown for the table.</param>
         /// <param name="cells">Cells composing the table.</param>
-        public TableRow(string label, IEnumerable<TableColumn> columns, IEnumerable<Cell> cells) : base(label)
+        public TableItem(string label, IEnumerable<TableColumn> columns, IEnumerable<Cell> cells)
         {
+            Label = label;
             Columns = columns;
             Cells = cells;
         }
 
         /// <summary>
-        /// Flag specifying if the row should be visible or not.
+        /// Label to use for the Table Item.
         /// </summary>
-        public override bool Visible
-        {
-            get
-            {
-                var result = false;
-
-                if ((Cells?.Any() ?? false) && (Cells?.Any() ?? false))
-                {
-                    var cols = Columns?.Count() ?? 0;
-                    if (cols > 0)
-                    {
-                        var div = Math.DivRem(Cells?.Count() ?? 0, cols, out var rem);
-                        result = div > 0 && rem == 0;
-                    }
-                }
-
-                return result;
-            }
-        }
+        public string Label { get; private set; }
 
         /// <summary>
-        /// Lines part of the Row.
+        /// Definition of the Headers composing the Table Item.
         /// </summary>
         public IEnumerable<TableColumn> Columns { get; private set; }
 
         /// <summary>
-        /// Cells composing the Row.
+        /// Cells composing the Table Item.
         /// </summary>
         public IEnumerable<Cell> Cells { get; private set; }
 
@@ -58,10 +41,10 @@ namespace ThreatsManager.Extensions.Reporting
         /// Returns the number of rows defined in the table.
         /// </summary>
         /// <returns></returns>
-        public int RowCount => (Columns?.Any() ?? false) ? (Cells?.Count() ?? 0) / Columns.Count() : 0;
+        public int RowCount => (Columns?.Any() ?? false) ? (Cells?.Count() ?? 0) / Columns.Count() : 0; 
 
         /// <summary>
-        /// Get a cell given its coordinates.
+        /// Get a cell given its cohordinates.
         /// </summary>
         /// <param name="row">Index of the Row, zero based.</param>
         /// <param name="col">Index of the Column, zero based.</param>

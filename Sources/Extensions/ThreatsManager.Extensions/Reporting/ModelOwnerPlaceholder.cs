@@ -18,6 +18,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ModelOwnerPlaceholder : ITextPlaceholder
     {
         public string Name => "Owner";
+        public string Label => "Owner";
         public PlaceholderSection Section => PlaceholderSection.Model;
         public Bitmap Image => null;
 

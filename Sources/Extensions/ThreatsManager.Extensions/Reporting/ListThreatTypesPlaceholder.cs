@@ -23,7 +23,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class ListThreatTypesPlaceholder : IListPlaceholder
     {
-        public string Name => "Threat Types";
+        public string Name => "ThreatTypes";
+        public string Label => "Threat Types";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.threat_types_small;
 
@@ -111,11 +112,11 @@ namespace ThreatsManager.Extensions.Reporting
                         var items = new List<ItemRow>();
 
                         items.Add(new TextRow("Severity", threatType.Severity.Name,
-                            threatType.Severity.TextColor, threatType.Severity.BackColor));
+                            threatType.Severity.TextColor, threatType.Severity.BackColor, true, true, 75));
                         items.Add(new TextRow("Description", threatType.Description));
                         items.Add(new ListRow("Affected Objects", 
                             threatEvents.Select(x => 
-                                new Cell($"{x.Parent.Name}", 
+                                new Line($"{x.Parent.Name}", 
                                     $"[{model.GetIdentityTypeInitial(x.Parent)}] ",
                                     $" ({x.Severity.Name})",
                                     new [] {x.ParentId}))));
@@ -233,7 +234,7 @@ namespace ThreatsManager.Extensions.Reporting
                         new[]
                         {item.ThreatEvent.ParentId}));
                     cells.Add(new Cell(item.Mitigation.Name, null, null, new [] {item.MitigationId}));
-                    cells.Add(new Cell(item.ThreatEvent.Severity.Name));
+                    cells.Add(new Cell(item.ThreatEvent.Severity.Name, item.ThreatEvent.Severity.TextColor, item.ThreatEvent.Severity.BackColor, false, true));
                     cells.Add(new Cell(item.Strength.Name));
                 }
 

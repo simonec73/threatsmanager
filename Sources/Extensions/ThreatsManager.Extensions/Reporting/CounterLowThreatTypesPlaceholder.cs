@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterLowThreatTypesPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Low Severity Threat Types";
+        public string Name => "LowSeverityThreatTypes";
+        public string Label => "Low Severity Threat Types";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

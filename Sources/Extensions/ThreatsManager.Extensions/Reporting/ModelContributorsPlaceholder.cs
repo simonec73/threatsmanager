@@ -19,6 +19,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ModelContributorsPlaceholder : ITextEnumerationPlaceholder
     {
         public string Name => "Contributors";
+        public string Label => "Contributors";
         public PlaceholderSection Section => PlaceholderSection.Model;
         public Bitmap Image => null;
 

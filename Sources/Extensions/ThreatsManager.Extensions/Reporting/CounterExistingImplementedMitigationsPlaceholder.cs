@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterExistingImplementedMitigationsPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Existing + Implemented Mitigations";
+        public string Name => "Existing+ImplementedMitigations";
+        public string Label => "Existing + Implemented Mitigations";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

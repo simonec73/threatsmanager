@@ -32,7 +32,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class GroupedListMitigationsPlaceholder : IGroupedListPlaceholder
     {
-        public string Name => "Mitigations (grouped)";
+        public string Name => "MitigationsGrouped";
+        public string Label => "Mitigations (grouped)";
         public PlaceholderSection Section => PlaceholderSection.List;
         public Bitmap Image => Icons.Resources.mitigations_small;
 

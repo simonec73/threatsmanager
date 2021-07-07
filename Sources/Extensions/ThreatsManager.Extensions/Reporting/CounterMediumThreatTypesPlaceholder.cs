@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterMediumThreatTypesPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Medium Severity Threat Types";
+        public string Name => "MediumSeverityThreatTypes";
+        public string Label => "Medium Severity Threat Types";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

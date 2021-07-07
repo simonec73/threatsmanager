@@ -23,6 +23,7 @@ namespace ThreatsManager.Extensions.Reporting
     public class ChartMitigationsPlaceholder : IChartPlaceholder
     {
         public string Name => "Mitigations";
+        public string Label => "Mitigations";
         public PlaceholderSection Section => PlaceholderSection.Chart;
         public Bitmap Image => null;
 

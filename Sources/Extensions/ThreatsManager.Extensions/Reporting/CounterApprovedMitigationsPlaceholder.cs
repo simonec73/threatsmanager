@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterApprovedMitigationsPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Approved Mitigations";
+        public string Name => "ApprovedMitigations";
+        public string Label => "Approved Mitigations";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 

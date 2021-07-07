@@ -21,7 +21,8 @@ namespace ThreatsManager.Extensions.Reporting
 
     public class CounterLongTermMitigationsPlaceholder : ICounterPlaceholder
     {
-        public string Name => "Long Term Mitigations";
+        public string Name => "LongTermMitigations";
+        public string Label => "Long Term Mitigations";
         public PlaceholderSection Section => PlaceholderSection.Counter;
         public Bitmap Image => null;
 
