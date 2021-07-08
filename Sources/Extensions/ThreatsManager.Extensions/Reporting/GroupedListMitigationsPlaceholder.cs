@@ -19,11 +19,12 @@ namespace ThreatsManager.Extensions.Reporting
         {
             var placeholder = new GroupedListMitigationsPlaceholder();
             var split = parameters?.Split('#');
-            if ((split?.Any() ?? false) && split.Length == 3)
+            if ((split?.Any() ?? false) && split.Length == 4)
             {
                 placeholder.SchemaNamespace = split[0];
                 placeholder.SchemaName = split[1];
                 placeholder.PropertyName = split[2];
+                placeholder.ItemStyle = split[3];
             }
 
             return placeholder;
@@ -42,12 +43,13 @@ namespace ThreatsManager.Extensions.Reporting
         public string SchemaNamespace { get; set; }
         public string SchemaName { get; set; }
         public string PropertyName { get; set; }
+        public string ItemStyle { get; set; }
 
         public IEnumerable<KeyValuePair<string, IPropertyType>> GetProperties([NotNull] IThreatModel model)
         {
             IEnumerable<KeyValuePair<string, IPropertyType>> result = null;
 
-            var mitigations = model.GetUniqueMitigations()?
+            var mitigations = model.Mitigations?
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -90,7 +92,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<KeyValuePair<string, IEnumerable<ListItem>>> result = null;
 
-            var mitigations = model.GetUniqueMitigations()?
+            var mitigations = model.Mitigations?
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -106,6 +108,7 @@ namespace ThreatsManager.Extensions.Reporting
                         .Where(x => x.HasProperty(propertyType))
                         .Select(x => x.GetProperty(propertyType)?.StringValue)
                         .OrderBy(x => x)
+                        .Distinct()
                         .ToArray();
 
                     if (possibleValues.Any())

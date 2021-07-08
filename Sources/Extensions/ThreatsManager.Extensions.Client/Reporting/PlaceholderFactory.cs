@@ -35,7 +35,7 @@ namespace ThreatsManager.Extensions.Reporting
             if (factories?.Any() ?? false)
             {
                 var regex = new Regex(
-                    @"\[ThreatsManagerPlatform:(?<qualifier>[\w]+):?(?<params>[\S]*)?\]");
+                    @"\[ThreatsManagerPlatform:(?<qualifier>[\w]+):?(?<params>[\S ]*)?\]");
                 var match = regex.Match(fullQualifier);
                 if (match.Success)
                 {

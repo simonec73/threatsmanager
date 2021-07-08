@@ -27,6 +27,11 @@ namespace ThreatsManager.Extensions.Reporting
         string PropertyName { get; set; }
 
         /// <summary>
+        /// The name of the style to use for each grouped item.
+        /// </summary>
+        string ItemStyle { get; set; }
+
+        /// <summary>
         /// If true, the placeholder must be shown in tabular form.
         /// </summary>
         /// <remarks>If the list is in tabular form, then each row shows the label, otherwise it is hidden.</remarks>

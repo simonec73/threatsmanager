@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ThreatsManager.AutoThreatGeneration": {
+      "commandName": "Executable",
+      "executablePath": "C:\\src\\Threats Manager Platform\\Dev\\ThreatsManager\\bin\\Debug\\ThreatsManager.exe"
+    }
+  }
+}

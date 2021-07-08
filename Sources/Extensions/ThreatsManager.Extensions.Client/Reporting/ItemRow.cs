@@ -85,10 +85,10 @@ namespace ThreatsManager.Extensions.Reporting
                 }
             } else if (property is IPropertyList propertyList)
             {
-                result = new TextRow(propertyType.Name, propertyList.Value?.Label?.TrimEnd(' ', '\r', '\n'));
+                result = new TextRow(propertyType.Name, propertyList.Value?.ToString()?.TrimEnd(' ', '\r', '\n'));
             } else if (property is IPropertyListMulti propertyListMulti)
             {
-                result = new ListRow(propertyType.Name, propertyListMulti.Values?.Select(x => new Line(x.Label?.TrimEnd(' ', '\r', '\n'))));
+                result = new ListRow(propertyType.Name, propertyListMulti.Values?.Select(x => new Line(x.ToString()?.TrimEnd(' ', '\r', '\n'))));
             } else
             {
                 result = new TextRow(propertyType.Name, property.StringValue?.TrimEnd(' ', '\r', '\n'));
