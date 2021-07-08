@@ -24,9 +24,14 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         bool Visible { get; set; }
 
         /// <summary>
-        /// Flag that specifies if the related Properties can be printed in Reports. 
+        /// Flag that specifies if the Property Type can be printed in Reports. 
         /// </summary>
         bool DoNotPrint { get; set; }
+
+        /// <summary>
+        /// Flag that specifies if the Property Type can be edited in the Item Editor. 
+        /// </summary>
+        bool ReadOnly { get; set; }
 
         /// <summary>
         /// Label of the Custom Property Viewer Extension to use to show the Property.
