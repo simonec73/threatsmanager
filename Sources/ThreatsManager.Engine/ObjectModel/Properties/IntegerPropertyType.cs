@@ -97,6 +97,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     Description = Description,
                     Visible = Visible,
                     DoNotPrint = DoNotPrint,
+                    ReadOnly = ReadOnly,
                     CustomPropertyViewer = CustomPropertyViewer,
                     Priority = Priority
                 };
