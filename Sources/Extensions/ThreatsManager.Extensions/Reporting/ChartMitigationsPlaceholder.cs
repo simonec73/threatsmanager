@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
@@ -41,7 +42,31 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var status in states)
                 {
-                    list.Add(new ChartItem(status, model.CountMitigationsByStatus(status.GetEnumValue<MitigationStatus>())));
+                    var mitigationStatus = status.GetEnumValue<MitigationStatus>();
+                    KnownColor color;
+                    switch (mitigationStatus)
+                    {
+                        case MitigationStatus.Existing:
+                            color = KnownColor.Green;
+                            break;
+                        case MitigationStatus.Proposed:
+                            color = KnownColor.Orange;
+                            break;
+                        case MitigationStatus.Approved:
+                            color = KnownColor.Yellow;
+                            break;
+                        case MitigationStatus.Implemented:
+                            color = KnownColor.Olive;
+                            break;
+                        case MitigationStatus.Planned:
+                            color = KnownColor.YellowGreen;
+                            break;
+                        default:
+                            color = KnownColor.Black;
+                            break;
+                    }
+
+                    list.Add(new ChartItem(status, model.CountMitigationsByStatus(mitigationStatus), color));
                 }
 
                 result = list;

@@ -45,8 +45,7 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var threatEvent in threatEvents)
                 {
                     var properties = threatEvent.Properties?
-                        .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
-                                    (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
+                        .Where(x => !(x.PropertyType?.DoNotPrint ?? true))
                         .Select(x => x.PropertyType)
                         .ToArray();
 

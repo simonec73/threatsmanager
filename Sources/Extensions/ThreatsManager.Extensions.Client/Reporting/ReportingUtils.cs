@@ -28,8 +28,7 @@ namespace ThreatsManager.Extensions.Reporting
                     foreach (var schema in schemas)
                     {
                         var itemRows = container.Properties?
-                            .Where(x => (x.PropertyType?.Visible ?? false) &&
-                                        !(x.PropertyType?.DoNotPrint ?? false) &&
+                            .Where(x => !(x.PropertyType?.DoNotPrint ?? false) &&
                                         x.PropertyType.SchemaId == schema.Id &&
                                         x.PropertyType != except)
                             .OrderBy(x => x.PropertyType?.Priority ?? 0)

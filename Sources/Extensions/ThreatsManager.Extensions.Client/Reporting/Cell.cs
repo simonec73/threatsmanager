@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Reporting
 {
@@ -53,6 +59,55 @@ namespace ThreatsManager.Extensions.Reporting
             LinkIds = linkIds;
             Prefix = prefix;
             Suffix = suffix;
+        }
+
+        /// <summary>
+        /// Creates a new ItemRow for a given Property.
+        /// </summary>
+        /// <param name="container">Container of the Property.</param>
+        /// <param name="property">Property to be analyzed.</param>
+        /// <returns>The created ItemRow.</returns>
+        public static Cell Create([NotNull] IPropertiesContainer container, [NotNull] IProperty property)
+        {
+            Cell result = null;
+
+            var propertyType = property.PropertyType;
+
+            if (property is IPropertyIdentityReference propertyIdentityReference)
+            {
+                if (propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
+                {
+                    result = new Cell($"{identity.Name}", 
+                        $"[{child.Model.GetIdentityTypeInitial(identity)}] ", null, 
+                        new[] { identity.Id });
+                }
+            }
+            else if (property is IPropertyJsonSerializableObject propertyJsonSerializableObject)
+            {
+                var propertyViewerId = propertyJsonSerializableObject.PropertyType.CustomPropertyViewer;
+                if (!string.IsNullOrWhiteSpace(propertyViewerId))
+                {
+                    var factory = ExtensionUtils.GetExtensionByLabel<IPropertyViewerFactory>(propertyViewerId);
+                    if (factory != null)
+                    {
+                        var propertyViewer = factory.CreatePropertyViewer(container, property);
+                        if (propertyViewer != null)
+                        {
+                            var blocks = propertyViewer.Blocks?.Where(x => x.Printable).ToArray();
+                            if (blocks?.Any() ?? false)
+                            {
+                                result = new Cell(blocks.First().Text);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (property is IPropertyList propertyList)
+            {
+                result = new Cell(propertyList.Value?.ToString()?.TrimEnd(' ', '\r', '\n'));
+            }
+
+            return result;
         }
 
         /// <summary>

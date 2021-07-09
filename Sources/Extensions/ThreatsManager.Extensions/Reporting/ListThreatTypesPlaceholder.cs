@@ -45,8 +45,7 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var threatType in threatTypes)
                 {
                     var properties = threatType.Properties?
-                        .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
-                                    (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
+                        .Where(x => !(x.PropertyType?.DoNotPrint ?? true))
                         .Select(x => x.PropertyType)
                         .ToArray();
 
@@ -248,11 +247,19 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"{item.Parent.Name}",
-                        $"[{item.Model.GetIdentityTypeInitial(item.Parent)}] ",
-                        null, 
-                        new [] {item.ParentId}));
-                    cells.Add(new Cell(item.GetProperty(propertyType)?.StringValue));
+                    var property = item.GetProperty(propertyType);
+                    if (property != null)
+                    {
+                        var cell = Cell.Create(item, property);
+                        if (cell != null)
+                        {
+                            cells.Add(new Cell($"{item.Parent.Name}",
+                                $"[{item.Model.GetIdentityTypeInitial(item.Parent)}] ",
+                                null,
+                                new[] {item.ParentId}));
+                            cells.Add(cell);
+                        }
+                    }
                 }
 
                 result = cells;

@@ -65,7 +65,7 @@ namespace ThreatsManager.Extensions.Reporting
                 var propertyViewerId = propertyJsonSerializableObject.PropertyType.CustomPropertyViewer;
                 if (!string.IsNullOrWhiteSpace(propertyViewerId))
                 {
-                    var factory = ExtensionUtils.GetExtension<IPropertyViewerFactory>(propertyViewerId);
+                    var factory = ExtensionUtils.GetExtensionByLabel<IPropertyViewerFactory>(propertyViewerId);
                     if (factory != null)
                     {
                         var propertyViewer = factory.CreatePropertyViewer(container, property);
@@ -93,6 +93,9 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 result = new TextRow(propertyType.Name, property.StringValue?.TrimEnd(' ', '\r', '\n'));
             }
+
+            if (result == null)
+                result = new EmptyRow(propertyType.Name);
 
             return result;
         }

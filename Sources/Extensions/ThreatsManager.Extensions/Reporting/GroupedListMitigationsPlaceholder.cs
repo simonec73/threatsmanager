@@ -60,8 +60,8 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var mitigation in mitigations)
                 {
                     var properties = mitigation.Properties?
-                        .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
-                                    model.GetSchema(x.PropertyType.SchemaId) is IPropertySchema schema && schema.Visible &&
+                        .Where(x => !(x.PropertyType?.DoNotPrint ?? true) &&
+                                    model.GetSchema(x.PropertyType.SchemaId) is IPropertySchema schema &&
                                     (string.CompareOrdinal(schema.Namespace, SchemaNamespace) != 0 ||
                                      string.CompareOrdinal(schema.Name, SchemaName) != 0 ||
                                      string.CompareOrdinal(x.PropertyType.Name, PropertyName) != 0))
