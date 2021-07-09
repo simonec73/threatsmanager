@@ -59,8 +59,9 @@ namespace ThreatsManager.Extensions.Reporting
 
                 result = dict
                     .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
+                    .ThenBy(x => model.GetSchema(x.Value.SchemaId).Namespace)
+                    .ThenBy(x => model.GetSchema(x.Value.SchemaId).Name)
                     .ThenBy(x => x.Value.Priority)
-                    .ThenBy(x => x.Key)
                     .ToArray();
             }
 
@@ -81,16 +82,9 @@ namespace ThreatsManager.Extensions.Reporting
                 {
                     var items = new List<ItemRow>();
                     items.Add(new TextRow("Description", boundary.Description));
-                    var properties = boundary.Properties?
-                        .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
-                                    (model.GetSchema(x.PropertyType.SchemaId)?.Visible ?? false))
-                        .OrderBy(x => model.GetSchema(x.PropertyType.SchemaId).Priority)
-                        .ThenBy(x => x.PropertyType.Priority)
-                        .ThenBy(x => x.PropertyType.Name)
-                        .Select(x => ItemRow.Create(boundary, x))
-                        .ToArray();
-                    if (properties?.Any() ?? false)
-                        items.AddRange(properties);
+                    var itemRows = boundary.GetItemRows()?.ToArray();
+                    if (itemRows?.Any() ?? false)
+                        items.AddRange(itemRows);
 
                     list.Add(new ListItem(boundary.Name, boundary.Id, items));
                 }

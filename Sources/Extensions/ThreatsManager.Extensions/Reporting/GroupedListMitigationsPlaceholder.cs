@@ -81,7 +81,6 @@ namespace ThreatsManager.Extensions.Reporting
                 result = dict
                     .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
                     .ThenBy(x => x.Value.Priority)
-                    .ThenBy(x => x.Key)
                     .ToArray();
             }
 
@@ -150,6 +149,8 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 var list = new List<ListItem>();
 
+                var propertyType = model.GetSchema(SchemaName, SchemaNamespace)?.GetPropertyType(PropertyName);
+
                 foreach (var mitigation in mitigations)
                 {
                     var items = new List<ItemRow>();
@@ -157,19 +158,10 @@ namespace ThreatsManager.Extensions.Reporting
                     items.Add(new TextRow("Control Type", mitigation.ControlType.GetEnumLabel()));
                     items.Add(new TextRow("Description", mitigation.Description));
 
-                    var properties = mitigation.Properties?
-                        .Where(x => x.PropertyType != null && x.PropertyType.Visible && !x.PropertyType.DoNotPrint &&
-                                    model.GetSchema(x.PropertyType.SchemaId) is IPropertySchema schema && schema.Visible &&
-                                    (string.CompareOrdinal(schema.Namespace, SchemaNamespace) != 0 ||
-                                     string.CompareOrdinal(schema.Name, SchemaName) != 0 ||
-                                     string.CompareOrdinal(x.PropertyType.Name, PropertyName) != 0))
-                        .OrderBy(x => model.GetSchema(x.PropertyType.SchemaId).Priority)
-                        .ThenBy(x => x.PropertyType.Priority)
-                        .ThenBy(x => x.PropertyType.Name)
-                        .Select(x => ItemRow.Create(mitigation, x))
+                    var itemRows = mitigation.GetItemRows(propertyType)?
                         .ToArray();
-                    if (properties?.Any() ?? false)
-                        items.AddRange(properties);
+                    if (itemRows?.Any() ?? false)
+                        items.AddRange(itemRows);
 
                     list.Add(new ListItem(mitigation.Name, mitigation.Id, items));
                 }
