@@ -98,20 +98,43 @@ namespace ThreatsManager.Interfaces
         [EnumLabel("Threat Event Mitigation")]
         ThreatEventMitigation = 1024,
         /// <summary>
+        /// Threat Event Vulnerability.
+        /// </summary>
+        [EnumLabel("Threat Event Vulnerability")]
+        ThreatEventVulnerability = 536870912,
+        /// <summary>
         /// Everything related to Threats.
         /// </summary>
         [UiHidden]
-        Threats = ThreatType | ThreatEvent | ThreatEventScenario,
+        Threats = ThreatType | ThreatEvent | ThreatEventScenario | Weakness | Vulnerability | ThreatEventVulnerability,
         /// <summary>
-        /// Standard Mitigation.
+        /// Known Mitigation.
         /// </summary>
-        [EnumLabel("Standard Mitigation")]
+        [EnumLabel("Mitigation")]
         Mitigation = 2048,
         /// <summary>
         /// Threat Type Mitigation.
         /// </summary>
         [EnumLabel("Threat Type Mitigation")]
         ThreatTypeMitigation = 4096,
+        /// <summary>
+        /// Weakness.
+        /// </summary>
+        Weakness = 8388608,
+        /// <summary>
+        /// Vulnerability.
+        /// </summary>
+        Vulnerability = 33554432,
+        /// <summary>
+        /// Weakness Mitigation.
+        /// </summary>
+        [EnumLabel("Weakness Mitigation")]
+        WeaknessMitigation = 67108864,
+        /// <summary>
+        /// Vulnerability Mitigation.
+        /// </summary>
+        [EnumLabel("Vulnerability Mitigation")]
+        VulnerabilityMitigation = 134217728,
         /// <summary>
         /// Threat Actor.
         /// </summary>
@@ -122,6 +145,11 @@ namespace ThreatsManager.Interfaces
         /// </summary>
         [UiHidden]
         Severity = 16384,
+        /// <summary>
+        /// Strength.
+        /// </summary>
+        [UiHidden]
+        Strength = 268435456,
         /// <summary>
         /// Property Type.
         /// </summary>
@@ -156,11 +184,16 @@ namespace ThreatsManager.Interfaces
         [EnumLabel("Threat Model")]
         ThreatModel = 16777216,
         /// <summary>
-        /// Everything.
+        /// All Property Containers.
         /// </summary>
         [UiHidden]
-        All = Entity | ItemTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor | 
-              Severity | PropertyType | PropertySchema | Diagram | ThreatTypeMitigation | ThreatEventMitigation |
-              EntityShape | GroupShape | Link | ThreatModel
+        PropertyContainers = Entity | ItemTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor |
+                               Severity | Strength | Diagram | ThreatTypeMitigation | ThreatEventMitigation |
+                               EntityShape | GroupShape | Link | ThreatModel | WeaknessMitigation | VulnerabilityMitigation,
+       /// <summary>
+       /// Everything.
+       /// </summary>
+       [UiHidden]
+       All = PropertyContainers | PropertyType | PropertySchema
     }
 }

@@ -478,6 +478,8 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         #region General properties and methods.
+        public Scope PropertiesScope => Scope.ThreatModel;
+
         [JsonProperty("owner")]
         public string Owner { get; set; }
 
@@ -2454,6 +2456,10 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

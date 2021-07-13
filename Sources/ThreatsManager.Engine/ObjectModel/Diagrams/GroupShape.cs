@@ -40,6 +40,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.GroupShape;
+
         private IGroup _group;
 
         [JsonProperty("id")]
@@ -117,6 +119,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

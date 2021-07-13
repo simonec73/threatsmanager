@@ -60,7 +60,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -72,7 +72,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -84,7 +84,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -100,7 +100,7 @@ namespace ThreatsManager.Engine.ObjectModel
                             {
                                 foreach (var et in currentEntityThreats)
                                 {
-                                    Apply(schema, et);
+                                    et?.Apply(schema);
                                 }
                             }
                         }
@@ -115,7 +115,7 @@ namespace ThreatsManager.Engine.ObjectModel
                             {
                                 foreach (var ft in currentFlowThreats)
                                 {
-                                    Apply(schema, ft);
+                                    ft?.Apply(schema);
                                 }
                             }
                         }
@@ -138,7 +138,7 @@ namespace ThreatsManager.Engine.ObjectModel
                                     {
                                         foreach (var currEts in ets)
                                         {
-                                            Apply(schema, currEts);
+                                            currEts?.Apply(schema);
                                         }
                                     }
                                 }
@@ -160,7 +160,7 @@ namespace ThreatsManager.Engine.ObjectModel
                                     {
                                         foreach (var currFts in fts)
                                         {
-                                            Apply(schema, currFts);
+                                            currFts?.Apply(schema);
                                         }
                                     }
                                 }
@@ -176,7 +176,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -188,14 +188,14 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
 
                 if (schema.AppliesTo.HasFlag(Scope.ThreatModel))
                 {
-                    Apply(schema, this);
+                    this.Apply(schema);
                 }
 
                 if (schema.AppliesTo.HasFlag(Scope.ThreatActor))
@@ -205,7 +205,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -217,7 +217,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -238,7 +238,7 @@ namespace ThreatsManager.Engine.ObjectModel
                             if (mitigations?.Any() ?? false)
                             {
                                 foreach (var mitigation in mitigations)
-                                    Apply(schema, mitigation);
+                                    mitigation?.Apply(schema);
                             }
                         }
                     }
@@ -259,7 +259,7 @@ namespace ThreatsManager.Engine.ObjectModel
                                     if (etms?.Any() ?? false)
                                     {
                                         foreach (var etm in etms)
-                                            Apply(schema, etm);
+                                            etm?.Apply(schema);
                                     }
                                 }
                             }
@@ -279,7 +279,7 @@ namespace ThreatsManager.Engine.ObjectModel
                                     if (ftms?.Any() ?? false)
                                     {
                                         foreach (var ftm in ftms)
-                                            Apply(schema, ftm);
+                                            ftm?.Apply(schema);
                                     }
                                 }
                             }
@@ -294,7 +294,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -309,7 +309,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var current in list)
                 {
-                    Apply(schema, current);
+                    current?.Apply(schema);
                 }
             }
 
@@ -324,32 +324,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var current in templates)
                 {
-                    Apply(schema, current);
-                }
-            }
-        }
-
-        private void Apply([NotNull] IPropertySchema schema, [NotNull] IPropertiesContainer container)
-        {
-            var existingProp = container.Properties?.ToArray();
-            var schemaProp = schema.PropertyTypes?.ToArray();
-            var missing = existingProp == null ? schemaProp : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
-            var inExcess = existingProp?.Where(x => x.PropertyType != null &&
-                x.PropertyType.SchemaId == schema.Id && !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false)).Select(x => x.PropertyType).ToArray();
-
-            if (missing?.Any() ?? false)
-            {
-                foreach (var item in missing)
-                {
-                    container.AddProperty(item, null);
-                }
-            }
-
-            if (inExcess?.Any() ?? false)
-            {
-                foreach (var item in inExcess)
-                {
-                    container.RemoveProperty(item);
+                    current?.Apply(schema);
                 }
             }
         }
@@ -403,7 +378,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 {
                     foreach (var schema in schemas)
                     {
-                        Apply(schema, container);
+                        container?.Apply(schema);
                     }
 
                     result = true;

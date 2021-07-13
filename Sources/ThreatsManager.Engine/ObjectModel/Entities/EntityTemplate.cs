@@ -79,6 +79,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
         public event Action<IDirty, bool> DirtyChanged;
         public bool IsDirty { get; }
         public void SetDirty()
@@ -104,9 +108,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected Guid _modelId { get; set; }
         protected IThreatModel _model { get; set; }
         private List<IProperty> _properties { get; set; }
-        #endregion        
- 
+        #endregion
+
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.EntityTemplate;
+
         public override string ToString()
         {
             return Name ?? "<undefined>";

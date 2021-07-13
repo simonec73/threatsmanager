@@ -36,6 +36,11 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         IEnumerable<IProperty> Properties { get; }
 
         /// <summary>
+        /// Scope associated to the container.
+        /// </summary>
+        Scope PropertiesScope { get; }
+
+        /// <summary>
         /// Verifies if the Container includes a Property of the specified Property Type.
         /// </summary>
         /// <param name="propertyType">Property Type for which the property is sought.</param>
@@ -81,5 +86,13 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// Remove all properties from the list.
         /// </summary>
         void ClearProperties();
+
+        /// <summary>
+        /// Apply a Property Schema to the container.
+        /// </summary>
+        /// <param name="schema">Property Schema to be applied.</param>
+        /// <remarks>It will be applied only if the Scope of the Schema is compatible with the container,
+        /// and if it has not been applied yet.</remarks>
+        void Apply(IPropertySchema schema);
     }
 }

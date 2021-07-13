@@ -46,6 +46,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool IsInitialized => Model != null && _threatEventId != Guid.Empty && _mitigationId != Guid.Empty;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatEventMitigation;
+
         [JsonProperty("mitigationId")]
         private Guid _mitigationId;
 
@@ -147,6 +149,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public void ClearProperties()
         {
+        }
+
+        public void Apply(IPropertySchema schema)
+        {
+            throw new NotImplementedException();
         }
 
         public IThreatEvent ThreatEvent { get; }

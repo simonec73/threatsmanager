@@ -92,6 +92,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
@@ -175,6 +179,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.ExternalInteractor;
+
         public override string ToString()
         {
             return Name ?? "<undefined>";
