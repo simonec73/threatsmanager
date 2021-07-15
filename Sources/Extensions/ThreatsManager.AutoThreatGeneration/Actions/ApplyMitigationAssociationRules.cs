@@ -10,12 +10,12 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 namespace ThreatsManager.AutoThreatGeneration.Actions
 {
     [Extension("C2029A88-0E8E-49F1-A9DF-3FEFAF5582CB", 
-        "Apply Mitigation Association Rule to Threat Event Context Aware Action", 35, ExecutionMode.Simplified)]
+        "Apply Mitigation Association Rule to Threat Event Context Aware Action", 53, ExecutionMode.Simplified)]
     public class ApplyMitigationAssociationRules : IIdentityContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Apply Mitigation Association Rules";
-        public string Group => "Associate";
+        public string Group => "ItemActions";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;

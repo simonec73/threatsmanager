@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-    using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Engine;
 using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.AutoThreatGeneration.Engine;
@@ -180,6 +180,16 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         public static MitigationSelectionRule GetRule([NotNull] IThreatTypeMitigation threatTypeMitigation)
         {
             return threatTypeMitigation.GetRule(threatTypeMitigation.Model) as MitigationSelectionRule;
+        }
+
+        public static SelectionRule GetRule([NotNull] IWeakness weakness)
+        {
+            return weakness.GetRule(weakness.Model);
+        }
+
+        public static MitigationSelectionRule GetRule([NotNull] IWeaknessMitigation weaknessMitigation)
+        {
+            return weaknessMitigation.GetRule(weaknessMitigation.Model) as MitigationSelectionRule;
         }
 
         public static SelectionRule GetRule(this IPropertiesContainer container, IThreatModel model = null)
