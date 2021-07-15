@@ -17,6 +17,7 @@ namespace ThreatsManager.Quality.Initializers
             KnownTypesBinder.AddKnownType(typeof(AnnotationAnswer));
             KnownTypesBinder.AddKnownType(typeof(TopicToBeClarified));
             KnownTypesBinder.AddKnownType(typeof(Question));
+            KnownTypesBinder.AddKnownType(typeof(Questions));
             KnownTypesBinder.AddKnownType(typeof(Highlight));
             KnownTypesBinder.AddKnownType(typeof(ReviewNote));
         }
