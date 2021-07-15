@@ -135,7 +135,19 @@ namespace ThreatsManager.Utilities
 
                             var targetProperty = target.GetProperty(targetPropertyType);
                             if (targetProperty == null)
+                            {
                                 target.AddProperty(targetPropertyType, property.StringValue);
+                            }
+                            else
+                            {
+                                if (targetProperty is IPropertyJsonSerializableObject jsonSerializableObject &&
+                                    jsonSerializableObject.Value is IMergeable mergeable &&
+                                    property is IPropertyJsonSerializableObject sourceJsonSerializableObject &&
+                                    sourceJsonSerializableObject.Value is IMergeable sourceMergeable)
+                                {
+                                    mergeable.Merge(sourceMergeable);
+                                }
+                            }
                         }
                     }
                 }

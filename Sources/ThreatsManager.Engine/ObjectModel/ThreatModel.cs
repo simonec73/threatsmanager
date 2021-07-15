@@ -2339,7 +2339,11 @@ namespace ThreatsManager.Engine.ObjectModel
                                     string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
                         var s = GetStrength(mitigation.StrengthId);
                         if (m != null && s != null)
-                            existing.AddMitigation(m, s);
+                        {
+                            var em = existing.Mitigations?.FirstOrDefault(x => x.MitigationId == m.Id) ?? 
+                                     existing.AddMitigation(m, s);
+                            em.MergeProperties(mitigation);
+                        }
                     }
                 }
             }
