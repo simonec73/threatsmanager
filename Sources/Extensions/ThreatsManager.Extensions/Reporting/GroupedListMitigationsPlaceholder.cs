@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -114,20 +115,26 @@ namespace ThreatsManager.Extensions.Reporting
                     {
                         foreach (var possibleValue in possibleValues)
                         {
-                            var selectedMitigations = mitigations
-                                .Where(x => x.HasProperty(propertyType) &&
-                                            string.CompareOrdinal(x.GetProperty(propertyType).StringValue, possibleValue) == 0)
-                                .ToArray();
-
-                            var listItems = GetListItems(model, selectedMitigations)?.ToArray();
-                            if (listItems?.Any() ?? false)
+                            if (!string.IsNullOrWhiteSpace(possibleValue))
                             {
-                                list.Add(new KeyValuePair<string, IEnumerable<ListItem>>(possibleValue, listItems));
+                                var selectedMitigations = mitigations
+                                    .Where(x => x.HasProperty(propertyType) &&
+                                                string.CompareOrdinal(x.GetProperty(propertyType).StringValue,
+                                                    possibleValue) == 0)
+                                    .ToArray();
+
+                                var listItems = GetListItems(model, selectedMitigations)?.ToArray();
+                                if (listItems?.Any() ?? false)
+                                {
+                                    list.Add(new KeyValuePair<string, IEnumerable<ListItem>>(possibleValue, listItems));
+                                }
                             }
                         }
                     }
 
-                    var remainingMitigations = mitigations.Where(x => !x.HasProperty(propertyType)).ToArray();
+                    var remainingMitigations = mitigations
+                        .Where(x => !x.HasProperty(propertyType) || string.IsNullOrWhiteSpace(x.GetProperty(propertyType)?.StringValue))
+                        .ToArray();
                     var remainingListItems = GetListItems(model, remainingMitigations)?.ToArray();
                     if (remainingListItems?.Any() ?? false)
                     {
