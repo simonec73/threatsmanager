@@ -140,24 +140,30 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                         if (rule?.Evaluate(identity) ?? false)
                         {
                             var strength = mitigation.Strength;
-                            if (rule.StrengthId.HasValue &&
-                                model.GetStrength(rule.StrengthId.Value) is IStrength strengthOverride)
-                                strength = strengthOverride;
 
-                            if (rule.Status.HasValue)
-                                generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength,
-                                                 rule.Status.Value) !=
-                                             null);
-                            else
-                                generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength) !=
-                                             null);
-                            result |= generated;
-
-                            if (generated && rule.SeverityId.HasValue &&
-                                model.GetSeverity(rule.SeverityId.Value) is ISeverity severity &&
-                                (maximumSeverity == null || maximumSeverity.Id > severity.Id))
+                            if (rule is MitigationSelectionRule mitigationRule)
                             {
-                                maximumSeverity = severity;
+                                if (mitigationRule.StrengthId.HasValue &&
+                                    model.GetStrength(mitigationRule.StrengthId.Value) is IStrength strengthOverride)
+                                    strength = strengthOverride;
+
+                                if (mitigationRule.Status.HasValue)
+                                    generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength,
+                                                     mitigationRule.Status.Value) != null);
+                                else
+                                    generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength) != null);
+                                result |= generated;
+
+                                if (generated && mitigationRule.SeverityId.HasValue &&
+                                    model.GetSeverity(mitigationRule.SeverityId.Value) is ISeverity severity &&
+                                    (maximumSeverity == null || maximumSeverity.Id > severity.Id))
+                                {
+                                    maximumSeverity = severity;
+                                }
+                            }
+                            else
+                            {
+                                result |= (threatEvent.AddMitigation(mitigation.Mitigation, strength) != null);
                             }
                         }
                     }
@@ -177,9 +183,9 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             return threatType.GetRule(threatType.Model);
         }
 
-        public static MitigationSelectionRule GetRule([NotNull] IThreatTypeMitigation threatTypeMitigation)
+        public static SelectionRule GetRule([NotNull] IThreatTypeMitigation threatTypeMitigation)
         {
-            return threatTypeMitigation.GetRule(threatTypeMitigation.Model) as MitigationSelectionRule;
+            return threatTypeMitigation.GetRule(threatTypeMitigation.Model);
         }
 
         public static SelectionRule GetRule([NotNull] IWeakness weakness)
@@ -187,9 +193,9 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             return weakness.GetRule(weakness.Model);
         }
 
-        public static MitigationSelectionRule GetRule([NotNull] IWeaknessMitigation weaknessMitigation)
+        public static SelectionRule GetRule([NotNull] IWeaknessMitigation weaknessMitigation)
         {
-            return weaknessMitigation.GetRule(weaknessMitigation.Model) as MitigationSelectionRule;
+            return weaknessMitigation.GetRule(weaknessMitigation.Model);
         }
 
         public static SelectionRule GetRule(this IPropertiesContainer container, IThreatModel model = null)
