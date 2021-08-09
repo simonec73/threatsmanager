@@ -4,30 +4,37 @@ namespace ThreatsManager.Mitre.Graph
 {
     public enum RelationshipType
     {
-        [EnumLabel("Child of")]
+        [EnumLabel("is child of")]
         ChildOf,
-        [EnumLabel("Parent of")]
+        [EnumLabel("is parent of")]
         ParentOf,
-        [EnumLabel("Starts with")]
+        [EnumLabel("starts with")]
         StartsWith,
-        [EnumLabel("Starts")]
+        [EnumLabel("starts")]
         Starts,
-        [EnumLabel("Can follow")]
+        [EnumLabel("can follow")]
         CanFollow,
-        [EnumLabel("Can precede")]
+        [EnumLabel("can precede")]
         CanPrecede,
-        [EnumLabel("Required by")]
+        [EnumLabel("is required by")]
         RequiredBy,
+        [EnumLabel("requires")]
         Requires,
-        [EnumLabel("Can also be")]
+        [EnumLabel("can also be")]
         CanAlsoBe,
-        [EnumLabel("Peer of")]
+        [EnumLabel("is peer of")]
         PeerOf,
+        [EnumLabel("abstracts")]
         Abstracts,
-        [EnumLabel("Is an example of")]
+        [EnumLabel("is an example of")]
         IsAnExampleOf,
+        [EnumLabel("leverages")]
         Leverages,
-        [EnumLabel("Is leveraged by")]
-        IsLeveragedBy
+        [EnumLabel("is leveraged by")]
+        IsLeveragedBy,
+        [EnumLabel("mitigates")]
+        Mitigates,
+        [EnumLabel("is mitigated by")]
+        IsMitigatedBy
     }
 }

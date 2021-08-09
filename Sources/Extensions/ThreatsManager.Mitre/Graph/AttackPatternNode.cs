@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Mitre.Attack;
 using ThreatsManager.Mitre.Capec;
 using ThreatsManager.Utilities;
 
@@ -93,6 +94,49 @@ namespace ThreatsManager.Mitre.Graph
             }
             #endregion
         }
+        
+        internal AttackPatternNode([NotNull] MitreGraph graph, [NotNull] AttackObject attackPattern) : base(graph, "ATT&CK", attackPattern.AttackId)
+        {
+            if (attackPattern.Deprecated || attackPattern.Revoked)
+                throw new ArgumentException(Properties.Resources.InvalidStatus, "attackPattern");
+
+            Name = attackPattern.Name;
+            Description = attackPattern.Description;
+            Likelihood = Evaluation.Unknown;
+            Severity = Evaluation.Unknown;
+
+            #region Add relationships.
+            var capec = attackPattern.ExternalReferences?
+                .Where(x => string.CompareOrdinal(x.Source, "capec") == 0)
+                .ToArray();
+            if (capec?.Any() ?? false)
+            {
+                foreach (var c in capec)
+                {
+                    AddRelationship(RelationshipType.PeerOf, "CAPEC", c.ExternalId.Substring(6));
+                }
+            }
+            #endregion
+
+            #region Add the other properties.
+            var platforms = attackPattern.Platforms?.ToArray();
+            if (platforms?.Any() ?? false)
+                Platforms = new List<string>(platforms);
+
+            var permissions = attackPattern.PermissionsRequired?.ToArray();
+            if (permissions?.Any() ?? false)
+                PermissionsRequired = new List<string>(permissions);
+
+            Detection = attackPattern.Detection;
+
+            var kcfs = attackPattern.KillChainPhases?
+                .Where(x => string.CompareOrdinal(x.Name, "mitre-attack") == 0)
+                .Select(x => x.Phase)
+                .ToArray();
+            if (kcfs?.Any() ?? false)
+                KillChainPhases = new List<string>(kcfs);
+            #endregion
+        }
 
         [JsonProperty("likelihood")]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -110,6 +154,18 @@ namespace ThreatsManager.Mitre.Graph
 
         [JsonProperty("taxonomyMappings")]
         public List<TaxonomyMapping> TaxonomyMappings { get; private set; }
+
+        [JsonProperty("platforms")]
+        public List<string> Platforms { get; private set; }
+
+        [JsonProperty("permissions")]
+        public List<string> PermissionsRequired { get; private set; }
+
+        [JsonProperty("detection")]
+        public string Detection { get; private set; }
+
+        [JsonProperty("phases")]
+        public List<string> KillChainPhases { get; private set; }
 
         #region Private Member Functions.
         private void AddConsequence(ConsequencesTypeConsequence consequence)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Mitre.Attack;
 
 namespace ThreatsManager.Mitre.Graph
 {
@@ -236,6 +237,18 @@ namespace ThreatsManager.Mitre.Graph
             else if (source is Capec.AttackPatternType capecAttackPattern)
             {
                 result = new AttackPatternNode(this, capecAttackPattern);
+            }
+            else if (source is AttackObject attackObject)
+            {
+                switch (attackObject.Type)
+                {
+                    case "attack-pattern":
+                        result = new AttackPatternNode(this, attackObject);
+                        break;
+                    case "course-of-action":
+                        result = new MitigationNode(this, attackObject);
+                        break;
+                }
             }
 
             if (result != null)

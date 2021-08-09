@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using ThreatsManager.Mitre;
 using ThreatsManager.Mitre.Graph;
 
@@ -39,6 +38,16 @@ namespace MitreImporter
                         capecEngine.EnrichGraph(graph);
                     }
 
+                    var attackFile = Directory.GetFiles(args[0], "enterprise-attack.json", SearchOption.TopDirectoryOnly)?
+                        .OrderByDescending(x => x)
+                        .FirstOrDefault();
+                    if (attackFile != null)
+                    {
+                        var attack = File.ReadAllText(attackFile);
+                        var attackEngine = new AttackEngine("Enterprise ATT&CK", "1.0", attack);
+                        attackEngine.EnrichGraph(graph);
+                    }
+
                     graph.ReconcileRelationships();
                     Print(graph);
 
@@ -47,8 +56,6 @@ namespace MitreImporter
                     graph.Serialize(path);
 
                     Console.WriteLine($"Created file {path}.");
-
-                    Print(MitreGraph.Deserialize(path));
                 }
                 else
                 {
@@ -61,11 +68,12 @@ namespace MitreImporter
         {
             Console.WriteLine($"Sources: {graph.Sources.Count}.");
             Console.WriteLine($"Nodes: {graph.Nodes.Count}.");
-            Console.WriteLine($"Attack Patterns: {graph.Nodes.OfType<AttackPatternNode>().Count()}");
-            Console.WriteLine($"Categories: {graph.Nodes.OfType<CategoryNode>().Count()}");
-            Console.WriteLine($"Externals: {graph.Nodes.OfType<ExternalNode>().Count()}");
-            Console.WriteLine($"Views: {graph.Nodes.OfType<ViewNode>().Count()}");
-            Console.WriteLine($"Weaknesses: {graph.Nodes.OfType<WeaknessNode>().Count()}");
+            Console.WriteLine($"- Attack Patterns: {graph.Nodes.OfType<AttackPatternNode>().Count()}.");
+            Console.WriteLine($"- Categories: {graph.Nodes.OfType<CategoryNode>().Count()}.");
+            Console.WriteLine($"- Externals: {graph.Nodes.OfType<ExternalNode>().Count()}.");
+            Console.WriteLine($"- Views: {graph.Nodes.OfType<ViewNode>().Count()}.");
+            Console.WriteLine($"- Weaknesses: {graph.Nodes.OfType<WeaknessNode>().Count()}.");
+            Console.WriteLine($"- Mitigations : {graph.Nodes.OfType<MitigationNode>().Count()}.");
         }
     }
 }

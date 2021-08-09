@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace ThreatsManager.Mitre.Attack
@@ -16,6 +18,23 @@ namespace ThreatsManager.Mitre.Attack
         public string SpecVersion;
 
         [JsonProperty("objects")]
-        public IEnumerable<Object> Objects;
+        public IEnumerable<AttackObject> Objects;
+
+        public DateTime GetLastChangeDateTime()
+        {
+            var result = DateTime.MinValue;
+
+            var objs = Objects?.ToArray();
+            if (objs?.Any() ?? false)
+            {
+                foreach (var obj in objs)
+                {
+                    if (obj.Modified > result)
+                        result = obj.Modified;
+                }
+            }
+
+            return result;
+        }
     }
 }
