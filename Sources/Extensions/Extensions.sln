@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.AutoGenRules
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Extensions.Client", "ThreatsManager.Extensions.Client\ThreatsManager.Extensions.Client.csproj", "{2E38BD51-B814-4CF5-8336-394A065B2A7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.Mitre", "ThreatsManager.Mitre\ThreatsManager.Mitre.csproj", "{07906AC4-4A74-4778-8D3E-103A146A6656}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Mitre", "ThreatsManager.Mitre\ThreatsManager.Mitre.csproj", "{07906AC4-4A74-4778-8D3E-103A146A6656}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.QuantitativeRisk", "ThreatsManager.QuantitativeRisk\ThreatsManager.QuantitativeRisk.csproj", "{4E741278-7437-4A5E-850B-BB08AD5569A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{07906AC4-4A74-4778-8D3E-103A146A6656}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07906AC4-4A74-4778-8D3E-103A146A6656}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07906AC4-4A74-4778-8D3E-103A146A6656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
