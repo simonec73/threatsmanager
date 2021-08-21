@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace ThreatsManager.QuantitativeRisk.Engine
 {
     /// <summary>
     /// Loss Magnitude. The probable magnitude of primary and secondary loss resulting from an event.
     /// </summary>
-    public class LossMagnitude : Definition
+    [JsonObject(MemberSerialization.OptIn)]
+    public class LossMagnitude : FactBased
     {
-        private List<Loss> _losses = new List<Loss>();
+        [JsonProperty("losses")]
+        private List<Loss> _losses { get; set; }
 
         /// <summary>
         /// Primary Loss Magnitude. Primary stakeholder loss that materialize directly as a result of the event.
@@ -27,6 +30,7 @@ namespace ThreatsManager.QuantitativeRisk.Engine
         /// <summary>
         /// Secondary Loss Event Frequency. The percentage of primary events that have secondary effects.
         /// </summary>
+        [JsonProperty("slef")]
         public Probability SecondaryLossEventFrequency { get; set; }
 
         /// <summary>
