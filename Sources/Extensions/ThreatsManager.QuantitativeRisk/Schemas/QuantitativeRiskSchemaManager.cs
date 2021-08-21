@@ -1,9 +1,14 @@
-﻿using PostSharp.Patterns.Contracts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualBasic;
+using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Diagnostics.Custom;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.QuantitativeRisk.Engine;
+using ThreatsManager.QuantitativeRisk.Facts;
 using ThreatsManager.QuantitativeRisk.Properties;
 
 namespace ThreatsManager.QuantitativeRisk.Schemas
@@ -34,6 +39,16 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             currency.Visible = false;
             currency.DoNotPrint = true;
             currency.Description = Resources.CurrencyProperty;
+
+            var context = result.GetPropertyType("Context") ?? result.AddPropertyType("Context", PropertyValueType.SingleLineString);
+            context.Visible = false;
+            context.DoNotPrint = true;
+            context.Description = Resources.FactContextProperty;
+
+            var facts = result.GetPropertyType("Facts") ?? result.AddPropertyType("Facts", PropertyValueType.JsonSerializableObject);
+            facts.Visible = false;
+            facts.DoNotPrint = true;
+            facts.Description = Resources.FactsProperty;
 
             return result;
         }
@@ -105,5 +120,96 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             return result;
         }
+
+        #region Facts management.
+        public string GetContext()
+        {
+            string result = null;
+
+            var schema = GetSchema();           
+            var propertyType = schema?.GetPropertyType("Context");
+            if (propertyType != null)
+            {
+                result = _model.GetProperty(propertyType)?.StringValue;
+            }
+
+            return result;
+        }
+
+        public void SetContext([Required] string context)
+        {
+            var schema = GetSchema();           
+            var propertyType = schema?.GetPropertyType("Context");
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property != null)
+                    property.StringValue = context;
+            }
+        }
+
+        public IEnumerable<Fact> GetFacts()
+        {
+            IEnumerable<Fact> result = null;
+
+            var schema = GetSchema();           
+            var propertyType = schema?.GetPropertyType("Facts");
+            if (propertyType != null && _model.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                jsonSerializableObject.Value is FactContainer container)
+            {
+                result = container.Facts;
+            }
+
+            return result;
+        }
+
+        public bool AddFact([NotNull] Fact fact)
+        {
+            bool result = false;
+
+            var schema = GetSchema();           
+            var propertyType = schema?.GetPropertyType("Facts");
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                {
+                    if (jsonSerializableObject.Value is FactContainer container)
+                    {
+                        result = container.Add(fact);
+                    }
+                    else
+                    {
+                        container = new FactContainer();
+                        result = container.Add(fact);
+                        jsonSerializableObject.Value = container;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public bool RemoveFact([NotNull] Fact fact)
+        {
+            bool result = false;
+
+            var schema = GetSchema();           
+            var propertyType = schema?.GetPropertyType("Facts");
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                {
+                    if (jsonSerializableObject.Value is FactContainer container)
+                    {
+                        result = container.Remove(fact);
+                    }
+                }
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

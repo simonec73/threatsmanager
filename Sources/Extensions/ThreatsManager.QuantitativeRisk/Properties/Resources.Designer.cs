@@ -115,6 +115,24 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Context associated to the Facts.
+        /// </summary>
+        internal static string FactContextProperty {
+            get {
+                return ResourceManager.GetString("FactContextProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List of the Facts known within the Threat Model.
+        /// </summary>
+        internal static string FactsProperty {
+            get {
+                return ResourceManager.GetString("FactsProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loss Event Frequency is not valid.
         /// </summary>
         internal static string InvalidLEF {

@@ -135,6 +135,12 @@
   <data name="EvaluationSchemaName" xml:space="preserve">
     <value>QuantitativeRiskEval</value>
   </data>
+  <data name="FactContextProperty" xml:space="preserve">
+    <value>Context associated to the Facts</value>
+  </data>
+  <data name="FactsProperty" xml:space="preserve">
+    <value>List of the Facts known within the Threat Model</value>
+  </data>
   <data name="InvalidLEF" xml:space="preserve">
     <value>Loss Event Frequency is not valid</value>
   </data>
