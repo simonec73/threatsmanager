@@ -132,7 +132,6 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 if (mitigations?.Any() ?? false)
                 {
                     ISeverity maximumSeverity = null;
-                    var generated = false;
 
                     foreach (var mitigation in mitigations)
                     {
@@ -147,11 +146,8 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                                     model.GetStrength(mitigationRule.StrengthId.Value) is IStrength strengthOverride)
                                     strength = strengthOverride;
 
-                                if (mitigationRule.Status.HasValue)
-                                    generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength,
-                                                     mitigationRule.Status.Value) != null);
-                                else
-                                    generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength) != null);
+                                var status = mitigationRule.Status ?? MitigationStatus.Undefined;
+                                var generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength, status) != null);
                                 result |= generated;
 
                                 if (generated && mitigationRule.SeverityId.HasValue &&
@@ -163,7 +159,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                             }
                             else
                             {
-                                result |= (threatEvent.AddMitigation(mitigation.Mitigation, strength) != null);
+                                result |= (threatEvent.AddMitigation(mitigation.Mitigation, strength, MitigationStatus.Undefined) != null);
                             }
                         }
                     }
