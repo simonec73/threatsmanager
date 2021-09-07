@@ -310,6 +310,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     }
                 }
             }
+
+            var properties = _properties?.ToArray();
+            if (properties?.Any() ?? false)
+            {
+                foreach (var property in properties)
+                {
+                    property.Changed += OnPropertyChanged;
+                }
+            }
         }
 
         private IThreatModel GetModel()
