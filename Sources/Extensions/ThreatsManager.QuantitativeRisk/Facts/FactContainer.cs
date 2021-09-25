@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
@@ -38,9 +39,14 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         public bool Remove([NotNull] Fact fact)
         {
+            return Remove(fact.Id);
+        }
+        
+        public bool Remove(Guid factId)
+        {
             bool result = false;
 
-            var existing = Facts?.FirstOrDefault(x => x.Id == fact.Id);
+            var existing = Facts?.FirstOrDefault(x => x.Id == factId);
             if (existing != null)
             {
                 result = Facts.Remove(existing);

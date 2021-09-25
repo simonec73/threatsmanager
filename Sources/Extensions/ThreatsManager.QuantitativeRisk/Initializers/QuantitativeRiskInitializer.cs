@@ -1,30 +1,16 @@
-﻿using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
-using ThreatsManager.QuantitativeRisk.Engine;
-using ThreatsManager.QuantitativeRisk.Facts;
-using ThreatsManager.Utilities;
+﻿using ThreatsManager.Interfaces.Extensions;
+using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.ObjectModel;
 
-namespace ThreatsManager.Quality.Initializers
+namespace ThreatsManager.QuantitativeRisk.Initializers
 {
-    [Extension("036D0E98-A88E-4327-A967-FC10C0499272", "Quantitative Risk Initializer", 10, ExecutionMode.Business)]
-    public class QuantitativeRiskInitializer : IExtensionInitializer
+    [Extension("1F84A8C7-6EBE-46D1-BE84-8B1D1FC33087", "Quantitative Risk Initializer", 10, ExecutionMode.Pioneer)]
+    public class QuantitativeRiskInitializer : BaseInitializer, IInitializer
     {
-        public void Initialize()
+        public void Initialize([NotNull] IThreatModel model)
         {
-            KnownTypesBinder.AddKnownType(typeof(Fact));
-            KnownTypesBinder.AddKnownType(typeof(FactContainer));
-            KnownTypesBinder.AddKnownType(typeof(ContactFrequency));
-            KnownTypesBinder.AddKnownType(typeof(Estimation));
-            KnownTypesBinder.AddKnownType(typeof(FactBased));
-            KnownTypesBinder.AddKnownType(typeof(Frequency));
-            KnownTypesBinder.AddKnownType(typeof(Loss));
-            KnownTypesBinder.AddKnownType(typeof(LossEventFrequency));
-            KnownTypesBinder.AddKnownType(typeof(LossMagnitude));
-            KnownTypesBinder.AddKnownType(typeof(Magnitude));
-            KnownTypesBinder.AddKnownType(typeof(Probability));
-            KnownTypesBinder.AddKnownType(typeof(Risk));
-            KnownTypesBinder.AddKnownType(typeof(ThreatEventFrequency));
-            KnownTypesBinder.AddKnownType(typeof(Vulnerability));
+            DoInitialize(model);
         }
     }
 }

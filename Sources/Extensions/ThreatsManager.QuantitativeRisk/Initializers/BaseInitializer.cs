@@ -1,16 +1,17 @@
-﻿using System.Globalization;
-using ThreatsManager.Interfaces.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.QuantitativeRisk.Facts;
 using ThreatsManager.QuantitativeRisk.Schemas;
 
 namespace ThreatsManager.QuantitativeRisk.Initializers
 {
-    [Extension("49798631-1E7A-4C13-824B-969839A189E4", "Quantitative Risk Schema Initializer", 10, ExecutionMode.Pioneer)]
-    public class QuantitativeRiskSchemaInitializer : IInitializer
+    public class BaseInitializer
     {
-        public void Initialize([NotNull] IThreatModel model)
+        protected void DoInitialize(IThreatModel model)
         {
             var schemaManager = new QuantitativeRiskSchemaManager(model);
             schemaManager.GetEvaluationSchema();
@@ -26,6 +27,8 @@ namespace ThreatsManager.QuantitativeRisk.Initializers
             {
                 model.AddProperty(propertyType, NumberFormatInfo.CurrentInfo.CurrencySymbol);
             }
+
+            FactsManager.RegisterThreatModel(model);
         }
     }
 }
