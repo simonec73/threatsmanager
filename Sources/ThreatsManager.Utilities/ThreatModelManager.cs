@@ -132,6 +132,7 @@ namespace ThreatsManager.Utilities
                     {
                         TypeNameHandling = TypeNameHandling.All,
                         SerializationBinder = binder,
+                        MaxDepth = 128,
                         MissingMemberHandling = ignoreMissingMembers
                             ? MissingMemberHandling.Ignore
                             : MissingMemberHandling.Error
