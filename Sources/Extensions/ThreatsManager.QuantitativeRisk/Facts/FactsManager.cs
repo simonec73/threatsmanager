@@ -34,6 +34,17 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         #region Used Facts.
         /// <summary>
+        /// Get the Fact with a specific identifier.
+        /// </summary>
+        /// <param name="id">Identifier of the Fact to be searched.</param>
+        /// <returns>Fact, if found.</returns>
+        /// <remarks>The Fact is searched among the used Facts.</remarks>
+        public Fact Get(Guid id)
+        {
+            return _schemaManager?.GetFacts()?.FirstOrDefault(x => x.Id == id);
+        }
+
+        /// <summary>
         /// Lists all the known Facts.
         /// </summary>
         public IEnumerable<Fact> UsedFacts => _schemaManager?.GetFacts();
@@ -88,6 +99,7 @@ namespace ThreatsManager.QuantitativeRisk.Facts
         #endregion
 
         #region Search.
+
         /// <summary>
         /// Returns the Facts belonging to a specific Context.
         /// </summary>

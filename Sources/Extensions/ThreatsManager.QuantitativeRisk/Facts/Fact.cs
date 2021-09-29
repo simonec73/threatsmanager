@@ -79,6 +79,23 @@ namespace ThreatsManager.QuantitativeRisk.Facts
             }
         }
 
+        [JsonProperty("notes")]
+        private string _notes;
+
+        public string Notes
+        {
+            get => _notes;
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value) && string.CompareOrdinal(value, _notes) != 0)
+                {
+                    _notes = value;
+                    ModifiedBy = UserName.GetDisplayName();
+                    ModifiedOn = DateTime.Now;
+                }
+            }
+        }
+
         [JsonProperty("createdBy")]
         public string CreatedBy { get; protected set; }
 
