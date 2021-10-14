@@ -86,15 +86,22 @@ namespace ThreatsManager.MsTmt.Model
                             node.SelectSingleNode("a:ImageSource", nsManager)?.InnerText;
                         if (imageText != null)
                         {
-                            var imageBytes = Convert.FromBase64String(imageText);
-                            if ((imageBytes?.Length ?? 0) > 0)
+                            try
                             {
-                                using (var stream = new MemoryStream())
+                                var imageBytes = Convert.FromBase64String(imageText);
+                                if ((imageBytes?.Length ?? 0) > 0)
                                 {
-                                    stream.Write(imageBytes, 0, imageBytes.Length);
-                                    stream.Seek(0, SeekOrigin.Begin);
-                                    image = (Bitmap) Image.FromStream(stream);
+                                    using (var stream = new MemoryStream())
+                                    {
+                                        stream.Write(imageBytes, 0, imageBytes.Length);
+                                        stream.Seek(0, SeekOrigin.Begin);
+                                        image = (Bitmap)Image.FromStream(stream);
+                                    }
                                 }
+                            }
+                            catch (FormatException)
+                            {
+                                // We can ignore: the image is not set correctly.
                             }
                         }
 
