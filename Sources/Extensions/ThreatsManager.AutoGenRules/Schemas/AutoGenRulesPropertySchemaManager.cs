@@ -46,5 +46,51 @@ namespace ThreatsManager.AutoGenRules.Schemas
 
             return result;
         }
+
+        public IPropertyType GetTopPropertyType()
+        {
+            IPropertyType result = null;
+
+            var schema = GetSchema();
+            if (schema != null)
+            {
+                result = schema.GetPropertyType("Top") ?? schema.AddPropertyType("Top", PropertyValueType.Boolean);
+                result.Visible = false;
+                result.DoNotPrint = true;
+                result.Description = Resources.PropertyTop;
+            }
+
+            return result;
+        }
+
+        public bool IsTop([NotNull] IPropertiesContainer container)
+        {
+            bool result = false;
+
+            var propertyType = GetTopPropertyType();
+            if (propertyType != null)
+            {
+                var property = container.GetProperty(propertyType);
+                if (property is IPropertyBool boolProperty)
+                {
+                    result = boolProperty.Value;
+                }
+            }
+
+            return result;
+        }
+
+        public void SetTop([NotNull] IPropertiesContainer container, bool top)
+        {
+            var propertyType = GetTopPropertyType();
+            if (propertyType != null)
+            {
+                var property = container.GetProperty(propertyType) ?? container.AddProperty(propertyType, null);
+                if (property is IPropertyBool boolProperty)
+                {
+                    boolProperty.Value = top;
+                }
+            }
+        }
     }
 }

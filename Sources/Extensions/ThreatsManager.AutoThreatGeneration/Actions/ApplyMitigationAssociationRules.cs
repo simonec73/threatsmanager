@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ThreatsManager.AutoThreatGeneration.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -11,7 +12,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 {
     [Extension("C2029A88-0E8E-49F1-A9DF-3FEFAF5582CB", 
         "Apply Mitigation Association Rule to Threat Event Context Aware Action", 53, ExecutionMode.Simplified)]
-    public class ApplyMitigationAssociationRules : IIdentityContextAwareAction, IDesktopAlertAwareExtension
+    public class ApplyMitigationAssociationRules : IIdentityContextAwareAction, IDesktopAlertAwareExtension, IAsker
     {
         public Scope Scope => Scope.ThreatEvent;
         public string Label => "Apply Mitigation Association Rules";
@@ -42,16 +43,39 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         {
             if (identity is IThreatEvent threatEvent)
             {
-                if (threatEvent.ApplyMitigations())
-                    ShowMessage?.Invoke("Mitigations associated successfully.");
+                if (threatEvent.HasTop())
+                {
+                    Ask?.Invoke(this, threatEvent, "Association of Mitigations",
+                        $"Do you want to associate all Mitigations to {identity.Name}?\nPress Yes to confirm.\nPress No to associate only the Top Mitigations.\nPress Cancel to avoid associating anything.",
+                        false, RequestOptions.YesNoCancel);
+                }
                 else
                 {
-                    ShowWarning?.Invoke("No Mitigation has been associated.");
+                    Ask?.Invoke(this, threatEvent, "Association of Mitigations",
+                        $"Do you want to associate Mitigations to {identity.Name}?",
+                        false, RequestOptions.OkCancel);
                 }
 
             }
 
             return true;
+        }
+
+        public event Action<IAsker, object, string, string, bool, RequestOptions> Ask;
+        public void Answer(object context, AnswerType answer)
+        {
+            if (answer == AnswerType.Yes || answer == AnswerType.Ok || answer == AnswerType.No)
+            {
+                if (context is IThreatEvent threatEvent)
+                {
+                    if (threatEvent.ApplyMitigations(answer == AnswerType.No))
+                        ShowMessage?.Invoke(Resources.SuccessAssociation);
+                    else
+                    {
+                        ShowWarning?.Invoke(Resources.WarningNoAssociations);
+                    }
+                }
+            }
         }
     }
 }
