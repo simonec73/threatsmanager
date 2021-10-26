@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -11,7 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Reporting
 {
-    [Extension("168C7073-44EA-41C8-8885-830B2FD804B4", "Mitigation List Placeholder", 44, ExecutionMode.Business)]
+    [Extension("168C7073-44EA-41C8-8885-830B2FD804B4", "Grouped Mitigation List Placeholder", 44, ExecutionMode.Business)]
     public class GroupedListMitigationsPlaceholderFactory : IPlaceholderFactory
     {
         public string Qualifier => "GroupedListMitigations";
