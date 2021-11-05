@@ -91,78 +91,29 @@ namespace ThreatsManager.Engine.ObjectModel
  
                 if (schema.AppliesTo.HasFlag(Scope.ThreatEvent))
                 {
-                    var listEntities = _entities?.Select(x => x.ThreatEvents).ToArray();
-                    if (listEntities?.Any() ?? false)
+                    var threatEvents = GetThreatEvents();
+                    if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var currentEntityThreats in listEntities)
+                        foreach (var threatEvent in threatEvents)
                         {
-                            if (currentEntityThreats?.Any() ?? false)
-                            {
-                                foreach (var et in currentEntityThreats)
-                                {
-                                    et?.Apply(schema);
-                                }
-                            }
-                        }
-                    }
-
-                    var listFlows = _dataFlows?.Select(x => x.ThreatEvents).ToArray();
-                    if (listFlows?.Any() ?? false)
-                    {
-                        foreach (var currentFlowThreats in listFlows)
-                        {
-                            if (currentFlowThreats?.Any() ?? false)
-                            {
-                                foreach (var ft in currentFlowThreats)
-                                {
-                                    ft?.Apply(schema);
-                                }
-                            }
+                            threatEvent.Apply(schema);
                         }
                     }
                 }
   
                 if (schema.AppliesTo.HasFlag(Scope.ThreatEventScenario))
                 {
-                    var listEntities = _entities?.Select(x => x.ThreatEvents).ToArray();
-                    if (listEntities?.Any() ?? false)
+                    var threatEvents = GetThreatEvents();
+                    if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var currentEntityThreats in listEntities)
+                        foreach (var threatEvent in threatEvents)
                         {
-                            if (currentEntityThreats?.Any() ?? false)
+                            var ets = threatEvent.Scenarios?.ToArray();
+                            if (ets?.Any() ?? false)
                             {
-                                foreach (var et in currentEntityThreats)
+                                foreach (var currEts in ets)
                                 {
-                                    var ets = et.Scenarios?.ToArray();
-                                    if (ets?.Any() ?? false)
-                                    {
-                                        foreach (var currEts in ets)
-                                        {
-                                            currEts?.Apply(schema);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    var listFlows = _dataFlows?.Select(x => x.ThreatEvents).ToArray();
-                    if (listFlows?.Any() ?? false)
-                    {
-                        foreach (var currentFlowThreats in listFlows)
-                        {
-                            if (currentFlowThreats?.Any() ?? false)
-                            {
-                                foreach (var ft in currentFlowThreats)
-                                {
-                                    var fts = ft.Scenarios?.ToArray();
-                                    if (fts?.Any() ?? false)
-                                    {
-                                        foreach (var currFts in fts)
-                                        {
-                                            currFts?.Apply(schema);
-                                        }
-                                    }
+                                    currEts?.Apply(schema);
                                 }
                             }
                         }
@@ -246,42 +197,16 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
                 {
-                    var listEntities = _entities?.Select(x => x.ThreatEvents).ToArray();
-                    if (listEntities?.Any() ?? false)
+                    var threatEvents = GetThreatEvents();
+                    if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var currentEntityThreats in listEntities)
+                        foreach (var threatEvent in threatEvents)
                         {
-                            if (currentEntityThreats?.Any() ?? false)
+                            var tms = threatEvent.Mitigations?.ToArray();
+                            if (tms?.Any() ?? false)
                             {
-                                foreach (var et in currentEntityThreats)
-                                {
-                                    var etms = et.Mitigations?.ToArray();
-                                    if (etms?.Any() ?? false)
-                                    {
-                                        foreach (var etm in etms)
-                                            etm?.Apply(schema);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    var listFlows = _dataFlows?.Select(x => x.ThreatEvents).ToArray();
-                    if (listFlows?.Any() ?? false)
-                    {
-                        foreach (var currentFlowThreats in listFlows)
-                        {
-                            if (currentFlowThreats?.Any() ?? false)
-                            {
-                                foreach (var ft in currentFlowThreats)
-                                {
-                                    var ftms = ft.Mitigations?.ToArray();
-                                    if (ftms?.Any() ?? false)
-                                    {
-                                        foreach (var ftm in ftms)
-                                            ftm?.Apply(schema);
-                                    }
-                                }
+                                foreach (var tm in tms)
+                                    tm?.Apply(schema);
                             }
                         }
                     }
