@@ -14,7 +14,7 @@ The code has been thought to be opened with Visual Studio 2019. The Community Ed
 You need also to install the following prerequisites:
 
 - .Net Core SDK 3.1.404 or later from <https://dotnet.microsoft.com/download/dotnet-core/3.1>.
-- PostSharp Tools for Visual Studio **v6.9.4** (<https://www.postsharp.net/downloads/postsharp-6.9/v6.9.4>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
+- PostSharp Tools for Visual Studio **v6.9.11** (<https://www.postsharp.net/downloads/postsharp-6.9/v6.9.11>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
 
 ### PostSharp
 
@@ -48,6 +48,8 @@ The sources include the sources for some Extensions. The code collected here doe
 |ThreatsManager.DevOps              |Library to support integration with DevOps systems like Azure DevOps.     |
 |ThreatsManager.Extensions          |Main Extensions library.                                                  |
 |ThreatsManager.Extensions.Client   |Library used to provide further extensibility capabilities over the functionalities provided by ThreatsManager.Extensions.|
+|ThreatsManager.Mitre               |Library used to provide support for the MITRE Graph, which implements a new way to consume and use some of the most recognized sources of info as part of your Threat Modeling experience.| 
 |ThreatsManager.MsTmt               |Library to support conversion of Microsoft Threat Modeling Tool documents and Templates to the Threats Manager Platform format|
 |ThreatsManager.PackageManagers     |Library including the code for the standard functions to save and load Threats Manager Platforms documents.|
-|ThreatsManager.Quality             |Library to support evaluation and improvement of the quality of Threat Models.| 
+|ThreatsManager.Quality             |Library to support evaluation and improvement of the quality of Threat Models.|
+|ThreatsManager.QuantitativeRisk    |Library implementing Quantitative Risk Analysis based on FAIR.|
