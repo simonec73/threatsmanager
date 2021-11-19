@@ -169,7 +169,9 @@ namespace ThreatsManager.Utilities
                             if (processors?.Any() ?? false)
                             {
                                 foreach (var processor in processors)
+                                {
                                     processor.Process(result);
+                                }
                             }
                         }
                     }

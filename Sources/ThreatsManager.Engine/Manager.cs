@@ -372,6 +372,7 @@ namespace ThreatsManager.Engine
             _configuration.Initialize(_extensionsManager);
 
             RegisterContextAwareActionsEventHandlers();
+            RegisterPostLoadProcessorsEventHandlers();
         }
         #endregion
 
@@ -393,6 +394,22 @@ namespace ThreatsManager.Engine
                         removeIdentityFromModelRequiredAction.IdentityRemovingRequired += RemoveIdentityFromModel;
 
                     if (action is IDesktopAlertAwareExtension desktopAlertAware)
+                    {
+                        desktopAlertAware.ShowMessage += s => _showMessage?.Invoke(s);
+                        desktopAlertAware.ShowWarning += s => _showWarning?.Invoke(s);
+                    }
+                }
+            }
+        }
+
+        private void RegisterPostLoadProcessorsEventHandlers()
+        {
+            var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
+            if (processors?.Any() ?? false)
+            {
+                foreach (var processor in processors)
+                {
+                    if (processor is IDesktopAlertAwareExtension desktopAlertAware)
                     {
                         desktopAlertAware.ShowMessage += s => _showMessage?.Invoke(s);
                         desktopAlertAware.ShowWarning += s => _showWarning?.Invoke(s);
