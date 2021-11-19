@@ -40,8 +40,15 @@ namespace ThreatsManager.DevOps
         /// Initiates connection to a DevOps server.
         /// </summary>
         /// <param name="url">Main URL for the server.</param>
+        /// <param name="personalAccessToken">Token used to access the DevOps software.</param>
+        void Connect(string url, string personalAccessToken);
+
+        /// <summary>
+        /// Gets the projects associated to the current connection.
+        /// </summary>
+        /// <returns></returns>
         /// <returns>List of Projects that the user can connect to.</returns>
-        IEnumerable<string> Connect(string url);
+        Task<IEnumerable<string>> GetProjectsAsync();
 
         /// <summary>
         /// Connect to a specific Project.

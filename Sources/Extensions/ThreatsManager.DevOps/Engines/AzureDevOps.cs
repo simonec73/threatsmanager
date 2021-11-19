@@ -10,7 +10,6 @@ using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using PostSharp.Patterns.Contracts;
-using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.WebApi;
@@ -27,9 +26,9 @@ namespace ThreatsManager.DevOps.Engines
     public class AzureDevOps : IDevOpsConnector, IInitializableObject
     {
         #region Private member variables.
-        private string _url;
-        private VssConnection _connection;
-        private WorkItemTrackingHttpClient _client;
+        private Uri _uri;
+        private bool _connected;
+        private string _accessToken;
         private const string DefaultTag = "ThreatModeling";
         private string _workItemType;
         private Guid _projectId;
@@ -96,32 +95,53 @@ namespace ThreatsManager.DevOps.Engines
         public event Action<IDevOpsConnector> Disconnected;
         public event Action<IDevOpsConnector, string> ProjectOpened;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        public IEnumerable<string> Connect([Required] string url)
+        public void Connect([Required] string url, [Required] string personalAccessToken)
+        {
+            _uri = new Uri(url);
+            _accessToken = personalAccessToken;
+        }
+
+        private VssConnection GetConnection()
+        {
+            VssConnection result = null;
+
+            if (_accessToken != null)
+            {
+                var creds = new VssBasicCredential(string.Empty, _accessToken);
+                result = new VssConnection(_uri, creds);
+
+                if (!_connected)
+                {
+                    _connected = true;
+                    Connected?.Invoke(this, _uri.AbsoluteUri);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<IEnumerable<string>> GetProjectsAsync()
         {
             IEnumerable<string> result = null;
 
-            try
+            if (_availableProjects == null)
             {
-                _url = url;
-
-                _connection = new VssConnection(new Uri(_url), new VssClientCredentials());
-                using (var projectClient = _connection.GetClient<ProjectHttpClient>())
+                try
                 {
-                    _availableProjects = projectClient.GetProjects().Result
-                        .ToDictionary(x => x.Name, y => y.Id);
+                    using (var connection = GetConnection())
+                    using (var projectClient = connection.GetClient<ProjectHttpClient>())
+                    {
+                        var projects = await projectClient.GetProjects();
+                        _availableProjects = projects?.ToDictionary(x => x.Name, y => y.Id);
+                    }
                 }
-
-                Connected?.Invoke(this, url);
-
-                result = _availableProjects?.Keys;
+                catch
+                {
+                    _availableProjects = null;
+                }
             }
-            catch
-            {
-                _connection = null;
-                _url = null;
-                _availableProjects = null;
-            }
+
+            result = _availableProjects?.Keys;
 
             return result;
         }
@@ -132,7 +152,7 @@ namespace ThreatsManager.DevOps.Engines
 
             try
             {
-                if (!string.IsNullOrEmpty(_url))
+                if (_uri != null)
                 {
                     var project = _availableProjects?
                         .FirstOrDefault(x => string.CompareOrdinal(projectName, x.Key) == 0);
@@ -160,28 +180,17 @@ namespace ThreatsManager.DevOps.Engines
         [InitializationRequired]
         public void Disconnect()
         {
-            _url = null;
+            _uri = null;
             _availableProjects = null;
-
-            if (_client != null)
-            {
-                _client.Dispose();
-                _client = null;
-            }
-
-            if (_connection != null)
-            {
-                _connection.Disconnect();
-                _connection.Dispose();
-                _connection = null;
-            }
+            _accessToken = null;
+            _connected = false;
 
             Disconnected?.Invoke(this);
         }
 
         public bool IsConnected()
         {
-            return !string.IsNullOrWhiteSpace(Project) && !string.IsNullOrEmpty(_url) && _connection != null;
+            return !string.IsNullOrWhiteSpace(Project) && _uri != null && _connected && _accessToken != null;
         }
 
         public bool IsConfigured()
@@ -189,7 +198,7 @@ namespace ThreatsManager.DevOps.Engines
             return MasterParent != null && !string.IsNullOrWhiteSpace(WorkItemType) && WorkItemStateMappings.Any() && WorkItemFieldMappings.Any();
         }
 
-        public string Url => _url;
+        public string Url => _uri.AbsoluteUri;
 
         public string Project {get; private set;}
         #endregion
@@ -212,22 +221,23 @@ namespace ThreatsManager.DevOps.Engines
                             "And [System.Title] Contains '" + filter + "' "
                 };
 
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                try
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
                 {
-                    var ids = (await _client.QueryByWiqlAsync(query).ConfigureAwait(false))?
-                        .WorkItems.Select(item => item.Id).ToArray();
-
-                    if (ids?.Any() ?? false)
+                    try
                     {
-                        result = await InternalGetDevOpsItemsInfoAsync(ids).ConfigureAwait(false);
+                        var ids = (await client.QueryByWiqlAsync(query).ConfigureAwait(false))?
+                            .WorkItems.Select(item => item.Id).ToArray();
+
+                        if (ids?.Any() ?? false)
+                        {
+                            result = await InternalGetDevOpsItemsInfoAsync(ids, client).ConfigureAwait(false);
+                        }
                     }
-                }
-                catch
-                {
-                    result = null;
+                    catch
+                    {
+                        result = null;
+                    }
                 }
             }
 
@@ -244,23 +254,26 @@ namespace ThreatsManager.DevOps.Engines
         {
             IEnumerable<Iteration> result = null;
 
-            var workHttpClient = _connection.GetClient<WorkHttpClient>();
-
-            try
+            using (var connection = GetConnection())
+            using (var workHttpClient = connection.GetClient<WorkHttpClient>())
             {
-                var queryResult = await workHttpClient.GetTeamIterationsAsync(new TeamContext(_projectId)).ConfigureAwait(false);
-                result = queryResult?.Select(x => new Iteration()
+                try
                 {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    Url = x.Url,
-                    Start = x.Attributes?.StartDate,
-                    End = x.Attributes?.FinishDate
-                });
-            }
-            catch
-            {
-                result = null;
+                    var queryResult = await workHttpClient.GetTeamIterationsAsync(new TeamContext(_projectId))
+                        .ConfigureAwait(false);
+                    result = queryResult?.Select(x => new Iteration()
+                    {
+                        Id = x.Id.ToString(),
+                        Name = x.Name,
+                        Url = x.Url,
+                        Start = x.Attributes?.StartDate,
+                        End = x.Attributes?.FinishDate
+                    });
+                }
+                catch
+                {
+                    result = null;
+                }
             }
 
             return result;
@@ -273,17 +286,18 @@ namespace ThreatsManager.DevOps.Engines
         {
             if (_itemTypes == null)
             {
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                try
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
                 {
-                    var queryResult = await _client.GetWorkItemTypesAsync(Project).ConfigureAwait(false);
-                    _itemTypes = queryResult.Select(x => x.Name).ToArray();
-                }
-                catch
-                {
-                    // Ok to suppress errors here.
+                    try
+                    {
+                        var queryResult = await client.GetWorkItemTypesAsync(Project).ConfigureAwait(false);
+                        _itemTypes = queryResult.Select(x => x.Name).ToArray();
+                    }
+                    catch
+                    {
+                        // Ok to suppress errors here.
+                    }
                 }
             }
 
@@ -327,18 +341,20 @@ namespace ThreatsManager.DevOps.Engines
         {
             if (_itemStates == null && !string.IsNullOrEmpty(_workItemType))
             {
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                try
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
                 {
-                    var queryResult = await _client.GetWorkItemTypeStatesAsync(Project, _workItemType).ConfigureAwait(false);
-                    _itemStates = queryResult.Select(x => x.Name).ToArray();
+                    try
+                    {
+                        var queryResult = await client.GetWorkItemTypeStatesAsync(Project, _workItemType)
+                            .ConfigureAwait(false);
+                        _itemStates = queryResult.Select(x => x.Name).ToArray();
 
-                }
-                catch
-                {
-                    // Ok to suppress error here.
+                    }
+                    catch
+                    {
+                        // Ok to suppress error here.
+                    }
                 }
             }
             
@@ -374,27 +390,28 @@ namespace ThreatsManager.DevOps.Engines
         {
             if (_fields == null)
             {
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                try
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
                 {
-                    var fields = (await _client.GetFieldsAsync(Project).ConfigureAwait(false))?.ToArray();
-                    if (fields?.Any() ?? false)
+                    try
                     {
-                        var list = new List<DevOpsField>();
-                        foreach (var field in fields)
+                        var fields = (await client.GetFieldsAsync(Project).ConfigureAwait(false))?.ToArray();
+                        if (fields?.Any() ?? false)
                         {
-                            if (field.Usage == FieldUsage.WorkItem)
-                                list.Add(new DevOpsField(field.ReferenceName, field.Name));
-                        }
+                            var list = new List<DevOpsField>();
+                            foreach (var field in fields)
+                            {
+                                if (field.Usage == FieldUsage.WorkItem)
+                                    list.Add(new DevOpsField(field.ReferenceName, field.Name));
+                            }
 
-                        _fields = list;
+                            _fields = list;
+                        }
                     }
-                }
-                catch
-                {
-                    // Ok to suppress error here.
+                    catch
+                    {
+                        // Ok to suppress error here.
+                    }
                 }
             }
 
@@ -412,31 +429,31 @@ namespace ThreatsManager.DevOps.Engines
 
             if (!string.IsNullOrWhiteSpace(WorkItemType))
             {
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                try
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
                 {
-                    var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation).ConfigureAwait(false);
-                    if (workItemInfo != null)
+                    try
                     {
-                        result = workItemInfo.Id;
-                    }
-                    else
-                    {
-                        var request = CreateRequest(mitigation);
-
-                        if (request != null)
+                        var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation, client).ConfigureAwait(false);
+                        if (workItemInfo != null)
                         {
-                            var workItem = _client
-                                .CreateWorkItemAsync(request, Project, WorkItemType);
-                            result = (await workItem.ConfigureAwait(false))?.Id ?? -1;
+                            result = workItemInfo.Id;
+                        }
+                        else
+                        {
+                            var request = CreateRequest(mitigation);
+
+                            if (request != null)
+                            {
+                                var workItem = client.CreateWorkItemAsync(request, Project, WorkItemType);
+                                result = (await workItem.ConfigureAwait(false))?.Id ?? -1;
+                            }
                         }
                     }
-                }
-                catch
-                {
-                    result = -1;
+                    catch
+                    {
+                        result = -1;
+                    }
                 }
             }
 
@@ -448,16 +465,17 @@ namespace ThreatsManager.DevOps.Engines
         {
             WorkItemInfo result = null;
 
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-            try
+            using (var connection = GetConnection())
+            using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
             {
-                result = await InternalGetWorkItemInfoAsync(mitigation).ConfigureAwait(false);
-            }
-            catch
-            {
-                result = null;
+                try
+                {
+                    result = await InternalGetWorkItemInfoAsync(mitigation, client).ConfigureAwait(false);
+                }
+                catch
+                {
+                    result = null;
+                }
             }
 
             return result;
@@ -468,16 +486,18 @@ namespace ThreatsManager.DevOps.Engines
         {
             WorkItemInfo result = null;
 
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-            try
+            using (var connection = GetConnection())
+            using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
             {
-                result = (await InternalGetWorkItemsInfoAsync(new[] { id }).ConfigureAwait(false))?.FirstOrDefault();
-            }
-            catch
-            {
-                result = null;
+                try
+                {
+                    result = (await InternalGetWorkItemsInfoAsync(new[] { id }, client).ConfigureAwait(false))
+                        ?.FirstOrDefault();
+                }
+                catch
+                {
+                    result = null;
+                }
             }
 
             return result;
@@ -492,10 +512,11 @@ namespace ThreatsManager.DevOps.Engines
 
             if (items?.Any() ?? false)
             {
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                result = await InternalGetWorkItemsInfoAsync(items).ConfigureAwait(false);
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
+                {
+                    result = await InternalGetWorkItemsInfoAsync(items, client).ConfigureAwait(false);
+                }
             }
 
             return result;
@@ -542,15 +563,16 @@ namespace ThreatsManager.DevOps.Engines
                     Query = builder.ToString()
                 };
 
-                if (_client == null)
-                    _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-                var queryResult = await _client.QueryByWiqlAsync(query).ConfigureAwait(false);
-                var ids = queryResult?.WorkItems?.Select(item => item.Id).ToArray();
-
-                if (ids?.Any() ?? false)
+                using (var connection = GetConnection())
+                using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
                 {
-                    result = await InternalGetWorkItemsInfoAsync(ids).ConfigureAwait(false);
+                    var queryResult = await client.QueryByWiqlAsync(query).ConfigureAwait(false);
+                    var ids = queryResult?.WorkItems?.Select(item => item.Id).ToArray();
+
+                    if (ids?.Any() ?? false)
+                    {
+                        result = await InternalGetWorkItemsInfoAsync(ids, client).ConfigureAwait(false);
+                    }
                 }
             }
 
@@ -562,13 +584,14 @@ namespace ThreatsManager.DevOps.Engines
         {
             bool result = false;
 
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-            var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation).ConfigureAwait(false);
-            if (workItemInfo != null)
+            using (var connection = GetConnection())
+            using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
             {
-                result = await InternalSetWorkItemStateAsync(workItemInfo.Id, newStatus).ConfigureAwait(false);
+                var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation, client).ConfigureAwait(false);
+                if (workItemInfo != null)
+                {
+                    result = await InternalSetWorkItemStateAsync(workItemInfo.Id, newStatus, client).ConfigureAwait(false);
+                }
             }
 
             return result;
@@ -577,10 +600,11 @@ namespace ThreatsManager.DevOps.Engines
         [InitializationRequired]
         public async Task<bool> SetWorkItemStateAsync(int id, WorkItemStatus newStatus)
         {
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-            return await InternalSetWorkItemStateAsync(id, newStatus).ConfigureAwait(false);
+            using (var connection = GetConnection())
+            using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
+            {
+                return await InternalSetWorkItemStateAsync(id, newStatus, client).ConfigureAwait(false);
+            }
         }
 
         [InitializationRequired]
@@ -588,16 +612,17 @@ namespace ThreatsManager.DevOps.Engines
         {
             IEnumerable<Comment> result;
 
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-            try
+            using (var connection = GetConnection())
+            using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
             {
-                result = await InternalGetWorkItemCommentsAsync(mitigation).ConfigureAwait(false);
-            }
-            catch
-            {
-                result = null;
+                try
+                {
+                    result = await InternalGetWorkItemCommentsAsync(mitigation, client).ConfigureAwait(false);
+                }
+                catch
+                {
+                    result = null;
+                }
             }
 
             return result;
@@ -608,16 +633,17 @@ namespace ThreatsManager.DevOps.Engines
         {
             IEnumerable<Comment> result;
 
-            if (_client == null)
-                _client = _connection.GetClient<WorkItemTrackingHttpClient>();
-
-            try
+            using (var connection = GetConnection())
+            using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
             {
-                result = await InternalGetWorkItemCommentsAsync(id).ConfigureAwait(false);
-            }
-            catch
-            {
-                result = null;
+                try
+                {
+                    result = await InternalGetWorkItemCommentsAsync(id, client).ConfigureAwait(false);
+                }
+                catch
+                {
+                    result = null;
+                }
             }
 
             return result;
@@ -753,15 +779,17 @@ namespace ThreatsManager.DevOps.Engines
             return result;
         }
 
-        private async Task<WorkItemInfo> InternalGetWorkItemInfoAsync([NotNull] IMitigation mitigation)
+        private async Task<WorkItemInfo> InternalGetWorkItemInfoAsync([NotNull] IMitigation mitigation, 
+            [NotNull] WorkItemTrackingHttpClient client)
         {
-            return await InternalGetWorkItemInfoAsync(mitigation,
+            return await InternalGetWorkItemInfoAsync(mitigation, client,
                 $"Select [Id] From WorkItems Where [System.TeamProject] = '{Project}' And [System.WorkItemType] = '{WorkItemType}' And [System.Title] = '{mitigation.Name}'").ConfigureAwait(false) ??
-                                  await InternalGetWorkItemInfoAsync(mitigation,
+                                  await InternalGetWorkItemInfoAsync(mitigation, client,
                 $"Select [Id] From WorkItems Where [System.TeamProject] = '{Project}' And [System.Title] = '{mitigation.Name.Replace("'", "''")}'").ConfigureAwait(false);
         }
 
-        private async Task<WorkItemInfo> InternalGetWorkItemInfoAsync([NotNull] IMitigation mitigation, string queryText)
+        private async Task<WorkItemInfo> InternalGetWorkItemInfoAsync([NotNull] IMitigation mitigation, 
+            [NotNull] WorkItemTrackingHttpClient client, string queryText)
         {
             WorkItemInfo result = null;
 
@@ -772,7 +800,7 @@ namespace ThreatsManager.DevOps.Engines
                     Query = queryText
                 };
 
-                var queryResult = await _client.QueryByWiqlAsync(query).ConfigureAwait(false);
+                var queryResult = await client.QueryByWiqlAsync(query).ConfigureAwait(false);
                 var ids = queryResult?.WorkItems.Select(item => item.Id).ToArray();
 
                 if ((ids?.Any() ?? false) && ids.FirstOrDefault() is int id)
@@ -784,13 +812,13 @@ namespace ThreatsManager.DevOps.Engines
             return result;
         }
 
-        private async Task<IEnumerable<WorkItemInfo>> InternalGetWorkItemsInfoAsync(IEnumerable<int> ids)
+        private async Task<IEnumerable<WorkItemInfo>> InternalGetWorkItemsInfoAsync(IEnumerable<int> ids, [NotNull] WorkItemTrackingHttpClient client)
         {
             IEnumerable<WorkItemInfo> result = null;
 
             var fields = new[] {"System.Id", "System.State", "System.AssignedTo"};
 
-            var items = await _client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
+            var items = await client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
             if (items?.Any() ?? false)
             {
                 var list = new List<WorkItemInfo>();
@@ -822,7 +850,7 @@ namespace ThreatsManager.DevOps.Engines
             return result;
         }
 
-        private async Task<bool> InternalSetWorkItemStateAsync(int id, WorkItemStatus newStatus)
+        private async Task<bool> InternalSetWorkItemStateAsync(int id, WorkItemStatus newStatus, [NotNull] WorkItemTrackingHttpClient client)
         {
             bool result = false;
 
@@ -840,7 +868,7 @@ namespace ThreatsManager.DevOps.Engines
                     }
                 };
 
-                var updatedWorkItem = await _client.UpdateWorkItemAsync(patchDocument, id).ConfigureAwait(false);
+                var updatedWorkItem = await client.UpdateWorkItemAsync(patchDocument, id).ConfigureAwait(false);
                 if (updatedWorkItem != null)
                     result = true;
             }
@@ -848,12 +876,13 @@ namespace ThreatsManager.DevOps.Engines
             return result;
         }
 
-        private async Task<IEnumerable<DevOpsItemInfo>> InternalGetDevOpsItemsInfoAsync([NotNull] IEnumerable<int> ids)
+        private async Task<IEnumerable<DevOpsItemInfo>> InternalGetDevOpsItemsInfoAsync([NotNull] IEnumerable<int> ids, 
+            [NotNull] WorkItemTrackingHttpClient client)
         {
             IEnumerable<DevOpsItemInfo> result = null;
             var fields = new[] { "System.Id", "System.Title", "System.WorkItemType", "System.AssignedTo" };
 
-            var items = await _client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
+            var items = await client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
 
             if (items?.Any() ?? false)
             {
@@ -881,25 +910,25 @@ namespace ThreatsManager.DevOps.Engines
             return result;
         }
 
-        private async Task<IEnumerable<Comment>> InternalGetWorkItemCommentsAsync(IMitigation mitigation)
+        private async Task<IEnumerable<Comment>> InternalGetWorkItemCommentsAsync(IMitigation mitigation, [NotNull] WorkItemTrackingHttpClient client)
         {
             IEnumerable<Comment> result = null;
 
-            var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation);
+            var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation, client);
 
             if (workItemInfo != null)
             {
-                result = await InternalGetWorkItemCommentsAsync(workItemInfo.Id);
+                result = await InternalGetWorkItemCommentsAsync(workItemInfo.Id, client);
             }
 
             return result;
         }
 
-        private async Task<IEnumerable<Comment>> InternalGetWorkItemCommentsAsync(int id)
+        private async Task<IEnumerable<Comment>> InternalGetWorkItemCommentsAsync(int id, [NotNull] WorkItemTrackingHttpClient client)
         {
             IEnumerable<Comment> result = null;
 
-            var items = await _client.GetCommentsAsync(Project, id).ConfigureAwait(false);
+            var items = await client.GetCommentsAsync(Project, id).ConfigureAwait(false);
             if ((items?.Count ?? 0) > 0)
             {
                 result = items.Comments.Select(x => new Comment(x.Text, x.CreatedBy.DisplayName, x.CreatedDate.Date));
