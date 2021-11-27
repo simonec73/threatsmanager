@@ -3,16 +3,21 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
-    <PackageReference Include="ThreatsManager.Engine" Version="1.4.2" />
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
+    <PackageReference Include="ThreatsManager.Engine" Version="1.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Extensions\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj" />
     <ProjectReference Include="..\..\Sources\Extensions\ThreatsManager.MsTmt\ThreatsManager.MsTmt.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(ProjectDir)..\..\Sources\Extensions\ThreatsManager.AutoGenRules\$(OutDir)*.dll&quot; &quot;$(TargetDir)Extensions\&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)..\..\Sources\Extensions\ThreatsManager.AutoThreatGeneration\$(OutDir)*.dll&quot; &quot;$(TargetDir)Extensions\&quot; /Y" />
+  </Target>
 
 </Project>

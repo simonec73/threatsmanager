@@ -102,6 +102,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         var serializer = new JsonSerializer
                         {
                             TypeNameHandling = TypeNameHandling.All,
+                            MaxDepth = 128, 
                             SerializationBinder = new KnownTypesBinder(),
                             MissingMemberHandling = MissingMemberHandling.Ignore
                         };

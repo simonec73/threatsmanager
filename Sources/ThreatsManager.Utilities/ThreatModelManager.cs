@@ -197,7 +197,7 @@ namespace ThreatsManager.Utilities
 
             using(JsonWriter writer = new JsonTextWriter(sw))
             {
-                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, MaxDepth = 128, Formatting = Formatting.Indented};
                 serializer.Serialize(writer, model);
             }
 
