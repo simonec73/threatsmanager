@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using ThreatsManager.Interfaces;
+﻿using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 

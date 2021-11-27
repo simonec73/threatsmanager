@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ThreatsManager.Interfaces.Extensions.Panels
+﻿namespace ThreatsManager.Interfaces.Extensions.Panels
 {
     /// <summary>
     /// Base interface representing a Configuration Panel Factory, that is a creator of Panels to extend the Configuration interface.

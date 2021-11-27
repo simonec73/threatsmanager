@@ -8,7 +8,6 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -133,6 +132,7 @@ namespace ThreatsManager.Utilities
                     {
                         TypeNameHandling = TypeNameHandling.All,
                         SerializationBinder = binder,
+                        MaxDepth = 128,
                         MissingMemberHandling = ignoreMissingMembers
                             ? MissingMemberHandling.Ignore
                             : MissingMemberHandling.Error
@@ -169,7 +169,9 @@ namespace ThreatsManager.Utilities
                             if (processors?.Any() ?? false)
                             {
                                 foreach (var processor in processors)
+                                {
                                     processor.Process(result);
+                                }
                             }
                         }
                     }
@@ -195,7 +197,7 @@ namespace ThreatsManager.Utilities
 
             using(JsonWriter writer = new JsonTextWriter(sw))
             {
-                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, MaxDepth = 128, Formatting = Formatting.Indented};
                 serializer.Serialize(writer, model);
             }
 

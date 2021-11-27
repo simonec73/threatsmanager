@@ -68,5 +68,41 @@ namespace ThreatsManager.AutoThreatGeneration.Properties {
                 return ResourceManager.GetString("DefaultNamespace", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mitigations associated successfully..
+        /// </summary>
+        internal static string SuccessAssociation {
+            get {
+                return ResourceManager.GetString("SuccessAssociation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threat Events generated successfully..
+        /// </summary>
+        internal static string SuccessGeneration {
+            get {
+                return ResourceManager.GetString("SuccessGeneration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Mitigation has been associated..
+        /// </summary>
+        internal static string WarningNoAssociations {
+            get {
+                return ResourceManager.GetString("WarningNoAssociations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Threat Event or Mitigation has been generated..
+        /// </summary>
+        internal static string WarningNothingGenerated {
+            get {
+                return ResourceManager.GetString("WarningNothingGenerated", resourceCulture);
+            }
+        }
     }
 }

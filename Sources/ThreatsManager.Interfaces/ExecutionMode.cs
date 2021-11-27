@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ThreatsManager.Interfaces
+﻿namespace ThreatsManager.Interfaces
 {
     /// <summary>
     /// Modes of execution of the Platform.

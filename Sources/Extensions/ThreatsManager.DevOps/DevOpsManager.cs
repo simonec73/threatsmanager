@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;

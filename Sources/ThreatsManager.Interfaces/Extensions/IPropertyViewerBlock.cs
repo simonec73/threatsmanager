@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace ThreatsManager.Interfaces.Extensions
 {
@@ -29,6 +28,11 @@ namespace ThreatsManager.Interfaces.Extensions
         /// </summary>
         /// <remarks>It is typically 64x64 pixels.</remarks>
         Bitmap Image { get; }
+
+        /// <summary>
+        /// True if the block can be printed.
+        /// </summary>
+        bool Printable { get; }
 
         /// <summary>
         /// Executes the Action associated with the Block.

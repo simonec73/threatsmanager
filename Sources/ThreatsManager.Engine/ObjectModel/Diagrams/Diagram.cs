@@ -152,6 +152,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
         public IEnumerable<IProperty> Properties { get; }
+
         public bool HasProperty(IPropertyType propertyType)
         {
             return false;
@@ -177,6 +178,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 
@@ -211,6 +216,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #endregion
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.Diagram;
+
         [JsonProperty("order")]
         public int Order { get; set; }
 

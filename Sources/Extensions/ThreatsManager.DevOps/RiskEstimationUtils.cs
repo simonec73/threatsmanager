@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ThreatsManager.Extensions.Schemas;
+﻿using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.DevOps

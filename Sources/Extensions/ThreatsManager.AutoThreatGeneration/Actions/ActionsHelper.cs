@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-    using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Engine;
 using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.AutoThreatGeneration.Engine;
@@ -16,21 +16,38 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         private const string OldSchemaName = "Automatic Threat Event Generation Extension Configuration";
         private const string OldPropertyName = "AutoGenRule";
 
-        public static bool GenerateThreatEvents(this IThreatModel model)
+        private class ThreatTypeInfo
+        {
+            public ThreatTypeInfo([NotNull] IThreatType threatType, [NotNull] SelectionRule rule, bool topOnly)
+            {
+                ThreatType = threatType;
+                Rule = rule;
+                TopOnly = topOnly;
+            }
+
+            public IThreatType ThreatType { get; private set; }
+            public SelectionRule Rule { get; private set; }
+            public bool TopOnly { get; private set; }
+        }
+
+        #region Public functions.
+        public static bool GenerateThreatEvents(this IThreatModel model, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
         {
             var result = false;
 
-            var threatTypesWithRules = GetThreatTypesWithRules(model)?.ToArray();
+            if (schemaManager == null)
+                schemaManager = new AutoGenRulesPropertySchemaManager(model);
+            var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
             if (threatTypesWithRules?.Any() ?? false)
             {
-                ApplyThreatTypes(model, threatTypesWithRules);
+                ApplyThreatTypes(model, threatTypesWithRules, schemaManager);
 
                 var entities = model.Entities?.ToArray();
                 if (entities?.Any() ?? false)
                 {
                     foreach (var entity in entities)
                     {
-                        ApplyThreatTypes(entity, threatTypesWithRules);
+                        ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
                     }
                 }
                 var dataFlows = model.DataFlows?.ToArray();
@@ -38,7 +55,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 {
                     foreach (var dataFlow in dataFlows)
                     {
-                        ApplyThreatTypes(dataFlow, threatTypesWithRules);
+                        ApplyThreatTypes(dataFlow, threatTypesWithRules, schemaManager);
                     }
                 }
 
@@ -48,16 +65,18 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             return result;
         }
         
-        public static bool GenerateThreatEvents(this IEntity entity)
+        public static bool GenerateThreatEvents(this IEntity entity, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
         {
             bool result = false;
 
             if (entity.Model is IThreatModel model)
             {
-                var threatTypesWithRules = GetThreatTypesWithRules(model)?.ToArray();
+                if (schemaManager == null)
+                    schemaManager = new AutoGenRulesPropertySchemaManager(model);
+                var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
                 if (threatTypesWithRules?.Any() ?? false)
                 {
-                    ApplyThreatTypes(entity, threatTypesWithRules);
+                    ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
                     result = true;
                 }
             }
@@ -65,16 +84,18 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             return result;
         }
         
-        public static bool GenerateThreatEvents(this IDataFlow flow)
+        public static bool GenerateThreatEvents(this IDataFlow flow, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
         {
             bool result = false;
 
             if (flow.Model is IThreatModel model)
             {
-                var threatTypesWithRules = GetThreatTypesWithRules(model)?.ToArray();
+                if (schemaManager == null)
+                    schemaManager = new AutoGenRulesPropertySchemaManager(model);
+                var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
                 if (threatTypesWithRules?.Any() ?? false)
                 {
-                    ApplyThreatTypes(flow, threatTypesWithRules);
+                    ApplyThreatTypes(flow, threatTypesWithRules, schemaManager);
                     result = true;
                 }
             }
@@ -82,57 +103,23 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             return result;
         }
 
-        private static bool ApplyThreatTypes([NotNull] IIdentity identity, 
-            [NotNull] IEnumerable<KeyValuePair<IThreatType, SelectionRule>> threatTypesWithRules)
+        public static bool ApplyMitigations(this IThreatEvent threatEvent, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
         {
             bool result = false;
 
-            foreach (var threatTypeWithRule in threatTypesWithRules)
-            {
-                result |= ApplyThreatType(identity, threatTypeWithRule.Key, threatTypeWithRule.Value);
-            }
-
-            return result;
-        }
-
-        private static bool ApplyThreatType([NotNull] IIdentity identity,
-            [NotNull] IThreatType threatType, [NotNull] SelectionRule rule)
-        {
-            bool result = false;
-
-            if (rule.Evaluate(identity) && identity is IThreatEventsContainer container)
-            {
-                var threatEvent = container.AddThreatEvent(threatType);
-                if (threatEvent == null)
-                {
-                    threatEvent = container.ThreatEvents.FirstOrDefault(x => x.ThreatTypeId == threatType.Id);
-                }
-                else
-                {
-                    result = true;
-                }
-
-                if (threatEvent != null)
-                {
-                    result |= threatEvent.ApplyMitigations();
-                }
-            }
-
-            return result;
-        }
-
-        public static bool ApplyMitigations(this IThreatEvent threatEvent)
-        {
-            bool result = false;
-
-            if (threatEvent.ThreatType is IThreatType threatType && threatEvent.Model is IThreatModel model &&
+            if (threatEvent.ThreatType is IThreatType threatType && 
+                threatEvent.Model is IThreatModel model &&
                 threatEvent.Parent is IIdentity identity)
             {
-                var mitigations = threatType.Mitigations?.ToArray();
+                if (schemaManager == null)
+                    schemaManager = new AutoGenRulesPropertySchemaManager(model);
+
+                var mitigations = threatType.Mitigations?
+                    .Where(x => !topOnly || schemaManager.IsTop(x))
+                    .ToArray();
                 if (mitigations?.Any() ?? false)
                 {
                     ISeverity maximumSeverity = null;
-                    var generated = false;
 
                     foreach (var mitigation in mitigations)
                     {
@@ -140,24 +127,27 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                         if (rule?.Evaluate(identity) ?? false)
                         {
                             var strength = mitigation.Strength;
-                            if (rule.StrengthId.HasValue &&
-                                model.GetStrength(rule.StrengthId.Value) is IStrength strengthOverride)
-                                strength = strengthOverride;
 
-                            if (rule.Status.HasValue)
-                                generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength,
-                                                 rule.Status.Value) !=
-                                             null);
-                            else
-                                generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength) !=
-                                             null);
-                            result |= generated;
-
-                            if (generated && rule.SeverityId.HasValue &&
-                                model.GetSeverity(rule.SeverityId.Value) is ISeverity severity &&
-                                (maximumSeverity == null || maximumSeverity.Id > severity.Id))
+                            if (rule is MitigationSelectionRule mitigationRule)
                             {
-                                maximumSeverity = severity;
+                                if (mitigationRule.StrengthId.HasValue &&
+                                    model.GetStrength(mitigationRule.StrengthId.Value) is IStrength strengthOverride)
+                                    strength = strengthOverride;
+
+                                var status = mitigationRule.Status ?? MitigationStatus.Undefined;
+                                var generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength, status) != null);
+                                result |= generated;
+
+                                if (generated && mitigationRule.SeverityId.HasValue &&
+                                    model.GetSeverity(mitigationRule.SeverityId.Value) is ISeverity severity &&
+                                    (maximumSeverity == null || maximumSeverity.Id > severity.Id))
+                                {
+                                    maximumSeverity = severity;
+                                }
+                            }
+                            else
+                            {
+                                result |= (threatEvent.AddMitigation(mitigation.Mitigation, strength, MitigationStatus.Undefined) != null);
                             }
                         }
                     }
@@ -177,9 +167,19 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             return threatType.GetRule(threatType.Model);
         }
 
-        public static MitigationSelectionRule GetRule([NotNull] IThreatTypeMitigation threatTypeMitigation)
+        public static SelectionRule GetRule([NotNull] IThreatTypeMitigation threatTypeMitigation)
         {
-            return threatTypeMitigation.GetRule(threatTypeMitigation.Model) as MitigationSelectionRule;
+            return threatTypeMitigation.GetRule(threatTypeMitigation.Model);
+        }
+
+        public static SelectionRule GetRule([NotNull] IWeakness weakness)
+        {
+            return weakness.GetRule(weakness.Model);
+        }
+
+        public static SelectionRule GetRule([NotNull] IWeaknessMitigation weaknessMitigation)
+        {
+            return weaknessMitigation.GetRule(weaknessMitigation.Model);
         }
 
         public static SelectionRule GetRule(this IPropertiesContainer container, IThreatModel model = null)
@@ -237,15 +237,124 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             }
         }
 
-        private static IEnumerable<KeyValuePair<IThreatType, SelectionRule>> GetThreatTypesWithRules(
-            [NotNull] IThreatModel model)
+        public static bool HasTop(this IThreatModel model, AutoGenRulesPropertySchemaManager schemaManager = null)
         {
-            IEnumerable<KeyValuePair<IThreatType, SelectionRule>> result = null;
+            bool result = false;
 
-            var threatTypes = model.ThreatTypes?.ToArray();
+            if (schemaManager == null)
+                schemaManager = new AutoGenRulesPropertySchemaManager(model);
+
+            var threatTypes = model.ThreatTypes?.Where(x => schemaManager.IsTop(x)).ToArray();
             if (threatTypes?.Any() ?? false)
             {
-                List<KeyValuePair<IThreatType, SelectionRule>> list = null;
+                foreach (var threatType in threatTypes)
+                {
+                    if (threatType.Mitigations?.Any(x => schemaManager.IsTop(x)) ?? false)
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static bool HasTop(this IThreatEvent threatEvent, AutoGenRulesPropertySchemaManager schemaManager = null)
+        {
+            return threatEvent?.ThreatType?.HasTop(schemaManager) ?? false;
+        }
+
+        public static bool HasTop(this IThreatType threatType, AutoGenRulesPropertySchemaManager schemaManager = null)
+        {
+            bool result = false;
+
+            if (schemaManager == null)
+                schemaManager = new AutoGenRulesPropertySchemaManager(threatType.Model);
+
+            if (schemaManager.IsTop(threatType))
+            {
+                if (threatType.Mitigations?.Any(x => schemaManager.IsTop(x)) ?? false)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        public static bool HasTop(this IThreatTypeMitigation mitigation, AutoGenRulesPropertySchemaManager schemaManager = null)
+        {
+            if (schemaManager == null)
+                schemaManager = new AutoGenRulesPropertySchemaManager(mitigation.Model);
+
+            return schemaManager.IsTop(mitigation);
+        }
+
+        public static void SetTop(this IPropertiesContainer container, bool top,
+            AutoGenRulesPropertySchemaManager schemaManager = null)
+        {
+            if (container is IThreatModelChild child && (container is IThreatType || container is IThreatTypeMitigation))
+            {
+                if (schemaManager == null)
+                    schemaManager = new AutoGenRulesPropertySchemaManager(child.Model);
+
+                schemaManager.SetTop(container, top);
+            }
+        }
+        #endregion
+
+        #region Private auxiliary functions.
+        private static bool ApplyThreatTypes([NotNull] IIdentity identity, 
+            [NotNull] IEnumerable<ThreatTypeInfo> threatTypesWithRules, [NotNull] AutoGenRulesPropertySchemaManager schemaManager)
+        {
+            bool result = false;
+
+            foreach (var threatTypeWithRule in threatTypesWithRules)
+            {
+                result |= ApplyThreatType(identity, threatTypeWithRule, schemaManager);
+            }
+
+            return result;
+        }
+
+        private static bool ApplyThreatType([NotNull] IIdentity identity, [NotNull] ThreatTypeInfo tti, 
+            [NotNull] AutoGenRulesPropertySchemaManager schemaManager)
+        {
+            bool result = false;
+
+            if (tti.Rule.Evaluate(identity) && identity is IThreatEventsContainer container)
+            {
+                var threatEvent = container.AddThreatEvent(tti.ThreatType);
+                if (threatEvent == null)
+                {
+                    threatEvent = container.ThreatEvents.FirstOrDefault(x => x.ThreatTypeId == tti.ThreatType.Id);
+                }
+                else
+                {
+                    result = true;
+                }
+
+                if (threatEvent != null)
+                {
+                    result |= threatEvent.ApplyMitigations(tti.TopOnly, schemaManager);
+                }
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<ThreatTypeInfo> GetThreatTypesWithRules(
+            [NotNull] IThreatModel model, bool topOnly, [NotNull] AutoGenRulesPropertySchemaManager schemaManager)
+        {
+            IEnumerable<ThreatTypeInfo> result = null;
+
+            var threatTypes = model.ThreatTypes?
+                .Where(x => !topOnly || schemaManager.IsTop(x))
+                .ToArray();
+            if (threatTypes?.Any() ?? false)
+            {
+                List<ThreatTypeInfo> list = null;
 
                 foreach (var threatType in threatTypes)
                 {
@@ -253,8 +362,8 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                     if (rule != null)
                     {
                         if (list == null)
-                            list = new List<KeyValuePair<IThreatType, SelectionRule>>();
-                        list.Add(new KeyValuePair<IThreatType, SelectionRule>(threatType, rule));
+                            list = new List<ThreatTypeInfo>();
+                        list.Add(new ThreatTypeInfo(threatType, rule, topOnly));
                     }
                 }
 
@@ -262,5 +371,6 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             }
             return result;
         }
+        #endregion
     }
 }

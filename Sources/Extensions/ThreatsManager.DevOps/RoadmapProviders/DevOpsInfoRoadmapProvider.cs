@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PostSharp.Patterns.Contracts;
+﻿using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions;
 using ThreatsManager.Interfaces;

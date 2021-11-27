@@ -15,7 +15,7 @@ namespace TmtImport
             {
                 if (Directory.Exists(args[0]))
                 {
-                    Console.WriteLine("Threat Modeling Program - MS TMT Files Converter");
+                    Console.WriteLine("Threats Manager Platform - MS TMT Files Converter");
 
                     var loader = new ModelLoader();
 
@@ -23,7 +23,7 @@ namespace TmtImport
                 }
                 else
                 {
-                    throw new FileNotFoundException("Unable to find the specified file.", args[0]);
+                    throw new DirectoryNotFoundException();
                 }
             }
         }

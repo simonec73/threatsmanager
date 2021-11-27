@@ -49,6 +49,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool IsInitialized => Model != null && _id != Guid.Empty;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatEventScenario;
+
         [JsonProperty("severity")]
         private int _severityId;
 
@@ -172,6 +174,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

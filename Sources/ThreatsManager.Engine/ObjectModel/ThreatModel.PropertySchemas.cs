@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.ObjectModel.Properties;
@@ -60,7 +61,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -72,7 +73,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -84,85 +85,36 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
  
                 if (schema.AppliesTo.HasFlag(Scope.ThreatEvent))
                 {
-                    var listEntities = _entities?.Select(x => x.ThreatEvents).ToArray();
-                    if (listEntities?.Any() ?? false)
+                    var threatEvents = GetThreatEvents();
+                    if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var currentEntityThreats in listEntities)
+                        foreach (var threatEvent in threatEvents)
                         {
-                            if (currentEntityThreats?.Any() ?? false)
-                            {
-                                foreach (var et in currentEntityThreats)
-                                {
-                                    Apply(schema, et);
-                                }
-                            }
-                        }
-                    }
-
-                    var listFlows = _dataFlows?.Select(x => x.ThreatEvents).ToArray();
-                    if (listFlows?.Any() ?? false)
-                    {
-                        foreach (var currentFlowThreats in listFlows)
-                        {
-                            if (currentFlowThreats?.Any() ?? false)
-                            {
-                                foreach (var ft in currentFlowThreats)
-                                {
-                                    Apply(schema, ft);
-                                }
-                            }
+                            threatEvent.Apply(schema);
                         }
                     }
                 }
   
                 if (schema.AppliesTo.HasFlag(Scope.ThreatEventScenario))
                 {
-                    var listEntities = _entities?.Select(x => x.ThreatEvents).ToArray();
-                    if (listEntities?.Any() ?? false)
+                    var threatEvents = GetThreatEvents();
+                    if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var currentEntityThreats in listEntities)
+                        foreach (var threatEvent in threatEvents)
                         {
-                            if (currentEntityThreats?.Any() ?? false)
+                            var ets = threatEvent.Scenarios?.ToArray();
+                            if (ets?.Any() ?? false)
                             {
-                                foreach (var et in currentEntityThreats)
+                                foreach (var currEts in ets)
                                 {
-                                    var ets = et.Scenarios?.ToArray();
-                                    if (ets?.Any() ?? false)
-                                    {
-                                        foreach (var currEts in ets)
-                                        {
-                                            Apply(schema, currEts);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    var listFlows = _dataFlows?.Select(x => x.ThreatEvents).ToArray();
-                    if (listFlows?.Any() ?? false)
-                    {
-                        foreach (var currentFlowThreats in listFlows)
-                        {
-                            if (currentFlowThreats?.Any() ?? false)
-                            {
-                                foreach (var ft in currentFlowThreats)
-                                {
-                                    var fts = ft.Scenarios?.ToArray();
-                                    if (fts?.Any() ?? false)
-                                    {
-                                        foreach (var currFts in fts)
-                                        {
-                                            Apply(schema, currFts);
-                                        }
-                                    }
+                                    currEts?.Apply(schema);
                                 }
                             }
                         }
@@ -176,7 +128,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -188,14 +140,14 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
 
                 if (schema.AppliesTo.HasFlag(Scope.ThreatModel))
                 {
-                    Apply(schema, this);
+                    this.Apply(schema);
                 }
 
                 if (schema.AppliesTo.HasFlag(Scope.ThreatActor))
@@ -205,7 +157,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -217,7 +169,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -238,7 +190,7 @@ namespace ThreatsManager.Engine.ObjectModel
                             if (mitigations?.Any() ?? false)
                             {
                                 foreach (var mitigation in mitigations)
-                                    Apply(schema, mitigation);
+                                    mitigation?.Apply(schema);
                             }
                         }
                     }
@@ -246,42 +198,16 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
                 {
-                    var listEntities = _entities?.Select(x => x.ThreatEvents).ToArray();
-                    if (listEntities?.Any() ?? false)
+                    var threatEvents = GetThreatEvents();
+                    if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var currentEntityThreats in listEntities)
+                        foreach (var threatEvent in threatEvents)
                         {
-                            if (currentEntityThreats?.Any() ?? false)
+                            var tms = threatEvent.Mitigations?.ToArray();
+                            if (tms?.Any() ?? false)
                             {
-                                foreach (var et in currentEntityThreats)
-                                {
-                                    var etms = et.Mitigations?.ToArray();
-                                    if (etms?.Any() ?? false)
-                                    {
-                                        foreach (var etm in etms)
-                                            Apply(schema, etm);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    var listFlows = _dataFlows?.Select(x => x.ThreatEvents).ToArray();
-                    if (listFlows?.Any() ?? false)
-                    {
-                        foreach (var currentFlowThreats in listFlows)
-                        {
-                            if (currentFlowThreats?.Any() ?? false)
-                            {
-                                foreach (var ft in currentFlowThreats)
-                                {
-                                    var ftms = ft.Mitigations?.ToArray();
-                                    if (ftms?.Any() ?? false)
-                                    {
-                                        foreach (var ftm in ftms)
-                                            Apply(schema, ftm);
-                                    }
-                                }
+                                foreach (var tm in tms)
+                                    tm?.Apply(schema);
                             }
                         }
                     }
@@ -294,7 +220,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         foreach (var current in list)
                         {
-                            Apply(schema, current);
+                            current?.Apply(schema);
                         }
                     }
                 }
@@ -309,7 +235,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var current in list)
                 {
-                    Apply(schema, current);
+                    current?.Apply(schema);
                 }
             }
 
@@ -324,32 +250,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var current in templates)
                 {
-                    Apply(schema, current);
-                }
-            }
-        }
-
-        private void Apply([NotNull] IPropertySchema schema, [NotNull] IPropertiesContainer container)
-        {
-            var existingProp = container.Properties?.ToArray();
-            var schemaProp = schema.PropertyTypes?.ToArray();
-            var missing = existingProp == null ? schemaProp : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
-            var inExcess = existingProp?.Where(x => x.PropertyType != null &&
-                x.PropertyType.SchemaId == schema.Id && !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false)).Select(x => x.PropertyType).ToArray();
-
-            if (missing?.Any() ?? false)
-            {
-                foreach (var item in missing)
-                {
-                    container.AddProperty(item, null);
-                }
-            }
-
-            if (inExcess?.Any() ?? false)
-            {
-                foreach (var item in inExcess)
-                {
-                    container.RemoveProperty(item);
+                    current?.Apply(schema);
                 }
             }
         }
@@ -403,7 +304,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 {
                     foreach (var schema in schemas)
                     {
-                        Apply(schema, container);
+                        container?.Apply(schema);
                     }
 
                     result = true;

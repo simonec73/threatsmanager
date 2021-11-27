@@ -51,6 +51,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool IsInitialized => _id != Guid.Empty && Model != null;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatActor;
+
         [JsonProperty("actor")]
         private DefaultActor _actor = DefaultActor.Unknown;
 
@@ -125,6 +127,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

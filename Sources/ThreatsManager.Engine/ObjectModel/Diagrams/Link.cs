@@ -41,6 +41,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.Link;
+
         [JsonProperty("id")]
         private Guid _associatedId;
 
@@ -108,6 +110,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

@@ -39,6 +39,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     Context = Context,
                     _cachedList = _cachedList,
                     Visible = Visible,
+                    DoNotPrint = DoNotPrint,
+                    ReadOnly = ReadOnly,
                     Priority = Priority
                 };
                 container.Add(result);

@@ -46,6 +46,12 @@ namespace ThreatsManager.Engine.Aspects
         public bool DoNotPrint { get; set; }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        [CopyCustomAttributes(typeof(JsonPropertyAttribute),
+            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
+        [JsonProperty("readOnly")]
+        public bool ReadOnly { get; set; }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
             OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
         [JsonProperty("propertyViewer")]

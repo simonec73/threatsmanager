@@ -478,6 +478,8 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         #region General properties and methods.
+        public Scope PropertiesScope => Scope.ThreatModel;
+
         [JsonProperty("owner")]
         public string Owner { get; set; }
 
@@ -2337,7 +2339,11 @@ namespace ThreatsManager.Engine.ObjectModel
                                     string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
                         var s = GetStrength(mitigation.StrengthId);
                         if (m != null && s != null)
-                            existing.AddMitigation(m, s);
+                        {
+                            var em = existing.Mitigations?.FirstOrDefault(x => x.MitigationId == m.Id) ?? 
+                                     existing.AddMitigation(m, s);
+                            em.MergeProperties(mitigation);
+                        }
                     }
                 }
             }
@@ -2454,6 +2460,10 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

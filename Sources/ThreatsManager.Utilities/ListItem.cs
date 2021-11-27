@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
-using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Utilities
 {

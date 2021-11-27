@@ -249,8 +249,42 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     dirtyObject.SetDirty();
             }
         }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        public void Apply(IPropertySchema schema)
+        {
+            if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
+            {
+                var existingProp = container.Properties?.ToArray();
+                var schemaProp = schema.PropertyTypes?.ToArray();
+                var missing = existingProp == null
+                    ? schemaProp
+                    : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
+                var inExcess = existingProp?.Where(x => x.PropertyType != null &&
+                                                        x.PropertyType.SchemaId == schema.Id &&
+                                                        !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
+                    .Select(x => x.PropertyType).ToArray();
+
+                if (missing?.Any() ?? false)
+                {
+                    foreach (var item in missing)
+                    {
+                        container.AddProperty(item, null);
+                    }
+                }
+
+                if (inExcess?.Any() ?? false)
+                {
+                    foreach (var item in inExcess)
+                    {
+                        container.RemoveProperty(item);
+                    }
+                }
+            }
+        }
         #endregion
 
+        #region Additional methods.
         [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7, 
             Visibility = Visibility.Assembly)]
         [CopyCustomAttributes(typeof(OnDeserializedAttribute))]
@@ -276,6 +310,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     }
                 }
             }
+
+            var properties = _properties?.ToArray();
+            if (properties?.Any() ?? false)
+            {
+                foreach (var property in properties)
+                {
+                    property.Changed += OnPropertyChanged;
+                }
+            }
         }
 
         private IThreatModel GetModel()
@@ -289,5 +332,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
             return result;
         }
+        #endregion
     }
 }

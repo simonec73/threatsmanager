@@ -41,6 +41,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool IsInitialized => Model != null && _weaknessId != Guid.Empty && _mitigationId != Guid.Empty;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.WeaknessMitigation;
+
         [JsonProperty("weaknessId")]
         private Guid _weaknessId;
 
@@ -142,6 +144,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

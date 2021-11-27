@@ -64,6 +64,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public static bool UseThreatTypeInfo { get; set; }
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatEvent;
+
         [JsonProperty("id")]
         private Guid _id { get; set; }
 
@@ -276,6 +278,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

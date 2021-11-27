@@ -889,7 +889,7 @@ namespace ThreatsManager.MsTmt
 
             if (!string.IsNullOrWhiteSpace(ruleText))
             {
-                ICharStream stream = CharStreams.fromstring(ruleText);
+                ICharStream stream = CharStreams.fromString(ruleText);
                 ITokenSource lexer = new TmtLexer(stream, TextWriter.Null, TextWriter.Null);
                 ITokenStream tokens = new CommonTokenStream(lexer);
                 TmtParser parser = new TmtParser(tokens) {BuildParseTree = true};

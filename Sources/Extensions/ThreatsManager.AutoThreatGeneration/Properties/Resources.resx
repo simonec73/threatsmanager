@@ -120,4 +120,16 @@
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
   </data>
+  <data name="WarningNothingGenerated" xml:space="preserve">
+    <value>No Threat Event or Mitigation has been generated.</value>
+  </data>
+  <data name="SuccessGeneration" xml:space="preserve">
+    <value>Threat Events generated successfully.</value>
+  </data>
+  <data name="SuccessAssociation" xml:space="preserve">
+    <value>Mitigations associated successfully.</value>
+  </data>
+  <data name="WarningNoAssociations" xml:space="preserve">
+    <value>No Mitigation has been associated.</value>
+  </data>
 </root>

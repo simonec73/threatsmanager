@@ -82,6 +82,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
         public IEnumerable<IEntity> Entities { get; }
         public IEntity GetEntity(Guid id)
         {
@@ -142,6 +146,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.TrustBoundary;
+
         [JsonProperty("template")]
         internal Guid _templateId;
 

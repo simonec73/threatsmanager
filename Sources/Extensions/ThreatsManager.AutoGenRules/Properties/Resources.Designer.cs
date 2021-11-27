@@ -104,5 +104,14 @@ namespace ThreatsManager.AutoGenRules.Properties {
                 return ResourceManager.GetString("PropertyAutoGenRule", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flag to identify objects to be included in the Top list..
+        /// </summary>
+        internal static string PropertyTop {
+            get {
+                return ResourceManager.GetString("PropertyTop", resourceCulture);
+            }
+        }
     }
 }

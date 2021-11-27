@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.XPath;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Engine;
 using ThreatsManager.Interfaces.ObjectModel;

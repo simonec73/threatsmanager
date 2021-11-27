@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MitreImporter": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\src\\Repos\\threatsmanager\\Sources\\Extensions\\ThreatsManager.Mitre\\Material"
+    }
+  }
+}

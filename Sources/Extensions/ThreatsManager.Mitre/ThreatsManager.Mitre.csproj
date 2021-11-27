@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <Description>Threats Manager Platform MITRE Extensions library.</Description>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <Authors>Simone Curzi</Authors>
+    <Company>Simone Curzi</Company>
+    <Product>Threats Manager Platform</Product>
+    <Copyright>Copyright © Simone Curzi, 2018-2021. All Rights Reserved.</Copyright>
+    <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
+    <FileVersion>1.5.0.0</FileVersion>
+    <Version>1.5.0</Version>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license" Link="PostSharp.license" />
+    <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="PostSharp" Version="6.9.11" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
+    <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
+    <ProjectReference Include="..\ThreatsManager.Extensions.Client\ThreatsManager.Extensions.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'net472' ">
+      <HintPath>..\..\Resources\net472\ThreatsManager.Icons.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+      <HintPath>..\..\Resources\netcoreapp3.1\ThreatsManager.Icons.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

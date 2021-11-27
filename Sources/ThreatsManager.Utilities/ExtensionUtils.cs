@@ -96,6 +96,37 @@ namespace ThreatsManager.Utilities
                 .Select(x => x.Title)
                 .FirstOrDefault();
         }
+
+        /// <summary>
+        /// Get the Extension priority.
+        /// </summary>
+        /// <param name="value">Extension whose priority is to be returned.</param>
+        /// <returns>Priority of the Extension.</returns>
+        /// <remarks>If the object is not an Extension, then the method returns 0.</remarks>
+        public static int GetExtensionPriority(this object value)
+        {
+            int result = 0;
+
+            Type type = value.GetType();
+
+            var attribs = type.GetCustomAttributes(
+                typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
+
+            var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Priority") == 0);
+            if (attrib != null && attrib.Value is int attribValue)
+            {
+                result = attribValue;
+            }
+            else
+            {
+                var extensionAttribute = type.GetCustomAttributes(typeof(ExtensionAttribute), false)
+                    .OfType<ExtensionAttribute>().FirstOrDefault();
+                if (extensionAttribute != null)
+                    result = extensionAttribute.Priority;
+            }
+
+            return result;
+        }
         #endregion
 
         #region Extension Enumeration.

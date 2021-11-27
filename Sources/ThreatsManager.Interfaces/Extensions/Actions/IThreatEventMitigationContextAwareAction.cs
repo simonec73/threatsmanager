@@ -10,8 +10,8 @@ namespace ThreatsManager.Interfaces.Extensions.Actions
         /// <summary>
         /// Action execution.
         /// </summary>
-        /// <param name="identity">Object on which the Action must be executed.</param>
+        /// <param name="mitigation">Object on which the Action must be executed.</param>
         /// <returns>True if the action succeeded, false otherwise.</returns>
-        bool Execute(IThreatEventMitigation identity);
+        bool Execute(IThreatEventMitigation mitigation);
     }
 }

@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnnotationsDescription" xml:space="preserve">
-    <value>Annotations to objects.</value>
-  </data>
-  <data name="AnnotationsPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema that collects properties related to the Quality Extension annotations functionality.</value>
-  </data>
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
   </data>

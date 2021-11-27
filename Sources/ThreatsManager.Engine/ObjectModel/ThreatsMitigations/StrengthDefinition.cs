@@ -40,6 +40,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool IsInitialized => Model != null;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.Strength;
+
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -123,6 +125,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

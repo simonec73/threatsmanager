@@ -44,6 +44,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public int Priority { get; set; }
         public bool Visible { get; set; }
         public bool DoNotPrint { get; set; }
+        public bool ReadOnly { get; set; }
         public string CustomPropertyViewer { get; set; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -90,6 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     Description = Description,
                     Visible = Visible,
                     DoNotPrint = DoNotPrint,
+                    ReadOnly = ReadOnly,
                     CustomPropertyViewer = CustomPropertyViewer,
                     Priority = Priority
                 };

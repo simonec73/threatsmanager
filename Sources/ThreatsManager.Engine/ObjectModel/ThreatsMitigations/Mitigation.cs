@@ -42,6 +42,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool IsInitialized => Model != null && _id != Guid.Empty;
 
         #region Specific implementation.
+        public Scope PropertiesScope => Scope.Mitigation;
+
         [JsonProperty("controlType")]
         [JsonConverter(typeof(StringEnumConverter))]
         public SecurityControlType ControlType { get; set; }
@@ -114,6 +116,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
         {
         }
 

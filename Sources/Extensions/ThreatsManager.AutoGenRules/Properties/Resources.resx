@@ -132,4 +132,7 @@
   <data name="PropertyAutoGenRule" xml:space="preserve">
     <value>Configuration of the Automatic Generation rules.</value>
   </data>
+  <data name="PropertyTop" xml:space="preserve">
+    <value>Flag to identify objects to be included in the Top list.</value>
+  </data>
 </root>

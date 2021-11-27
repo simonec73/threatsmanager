@@ -1,6 +1,4 @@
-﻿using System;
-using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
+﻿using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Interfaces.Extensions
 {
