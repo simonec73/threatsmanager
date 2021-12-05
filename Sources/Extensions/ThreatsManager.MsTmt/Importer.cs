@@ -717,7 +717,7 @@ namespace ThreatsManager.MsTmt
                 {
                     var tt = source.GetThreatType(threatPerType.Key);
                     IThreatType threatType = null;
-                    if (!string.IsNullOrWhiteSpace(tt.Name))
+                    if (!string.IsNullOrWhiteSpace(tt?.Name))
                     {
                         ISeverity severity;
                         if (Enum.TryParse<DefaultSeverity>(tt.Priority, out var severityId))
@@ -738,22 +738,25 @@ namespace ThreatsManager.MsTmt
                             {
                                 foreach (var property in threatTypeProperties)
                                 {
-                                    switch (property.Name)
+                                    if (property != null)
                                     {
-                                        case "Title":
-                                            break;
-                                        case "UserThreatDescription":
-                                            break;
-                                        case "Priority":
-                                            break;
-                                        default:
-                                            var propertyType = schema.GetPropertyType(property.Label);
-                                            if (propertyType != null)
-                                            {
-                                                threatType.AddProperty(propertyType, property.Values.FirstOrDefault());
-                                            }
+                                        switch (property.Name)
+                                        {
+                                            case "Title":
+                                                break;
+                                            case "UserThreatDescription":
+                                                break;
+                                            case "Priority":
+                                                break;
+                                            default:
+                                                var propertyType = schema.GetPropertyType(property.Label);
+                                                if (propertyType != null)
+                                                {
+                                                    threatType.AddProperty(propertyType, property.Values?.FirstOrDefault());
+                                                }
 
-                                            break;
+                                                break;
+                                        }
                                     }
                                 }
                             }

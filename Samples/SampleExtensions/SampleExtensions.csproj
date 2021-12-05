@@ -51,8 +51,8 @@
     <Reference Include="PostSharp.Patterns.Common, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
       <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.9.11\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Model, Version=6.9.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.9.4\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Model, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.9.11\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp.Patterns.Threading, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
       <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.9.11\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
@@ -72,16 +72,16 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="ThreatsManager.Icons, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.1.5.0\lib\net472\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.1.5.1\lib\net472\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=1.5.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Interfaces.1.5.0\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
+    <Reference Include="ThreatsManager.Interfaces, Version=1.5.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Interfaces.1.5.1\lib\net472\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Packaging, Version=1.5.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.1.5.0\lib\net472\ThreatsManager.Packaging.dll</HintPath>
+    <Reference Include="ThreatsManager.Packaging, Version=1.5.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.5.1\lib\net472\ThreatsManager.Packaging.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=1.5.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.1.5.0\lib\net472\ThreatsManager.Utilities.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities, Version=1.5.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.1.5.1\lib\net472\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
