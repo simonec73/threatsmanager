@@ -70,6 +70,7 @@ namespace ThreatsManager.DevOps.Engines
             _workItemMapping.SetStandardMapping("Inactive", WorkItemStatus.Done);
             _workItemMapping.SetStandardMapping("Completed", WorkItemStatus.Done);
             _workItemMapping.SetStandardMapping("Removed", WorkItemStatus.Removed);
+            _workItemMapping.SetStandardMapping("Resolved", WorkItemStatus.InProgress);
 
             _workItemFieldMapping.SetStandardMapping("System.Title", new IdentityField(IdentityFieldType.Name));
             _workItemFieldMapping.SetStandardMapping("System.Description", new IdentityField(IdentityFieldType.Description));

@@ -15,7 +15,7 @@ namespace ThreatsManager.Utilities
 
         public static bool ContainsCaseInsensitive(this IEnumerable<string> list, [Required] string text)
         {
-            return list?.Any(x => string.Compare(x, text, StringComparer.InvariantCultureIgnoreCase) == 0) ?? false;
+            return list?.Any(x => string.Compare(x, text, StringComparison.InvariantCultureIgnoreCase) == 0) ?? false;
         }
 
         public static IEnumerable<string> TagSplit(this string text)
