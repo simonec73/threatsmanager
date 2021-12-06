@@ -61,6 +61,24 @@ namespace ThreatsManager.Quality.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Annotations to objects..
+        /// </summary>
+        internal static string AnnotationsDescription {
+            get {
+                return ResourceManager.GetString("AnnotationsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects properties related to the Quality Extension annotations functionality..
+        /// </summary>
+        internal static string AnnotationsPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("AnnotationsPropertySchemaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Topic to be Clarified Generation confirmation.
         /// </summary>
         internal static string ApplyTopicsAutoGenRules_Caption {
@@ -77,6 +95,24 @@ namespace ThreatsManager.Quality.Properties {
         internal static string ApplyTopicsAutoGenRules_Confirm {
             get {
                 return ResourceManager.GetString("ApplyTopicsAutoGenRules_Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property used to enable the calculation of the Severity for a Threat Event..
+        /// </summary>
+        internal static string CalculatedSeverityDescription {
+            get {
+                return ResourceManager.GetString("CalculatedSeverityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects properties related to the Quality Extension Calculated Severity functionality..
+        /// </summary>
+        internal static string CalculatedSeverityPropertySchemaDescription {
+            get {
+                return ResourceManager.GetString("CalculatedSeverityPropertySchemaDescription", resourceCulture);
             }
         }
         
@@ -246,6 +282,166 @@ namespace ThreatsManager.Quality.Properties {
         internal static string DefaultNamespace {
             get {
                 return ResourceManager.GetString("DefaultNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap element {
+            get {
+                object obj = ResourceManager.GetObject("element", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap element_big {
+            get {
+                object obj = ResourceManager.GetObject("element_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap element_huge {
+            get {
+                object obj = ResourceManager.GetObject("element_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap element_small {
+            get {
+                object obj = ResourceManager.GetObject("element_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_cascade {
+            get {
+                object obj = ResourceManager.GetObject("elements_cascade", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_cascade_big {
+            get {
+                object obj = ResourceManager.GetObject("elements_cascade_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_cascade_huge {
+            get {
+                object obj = ResourceManager.GetObject("elements_cascade_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_cascade_small {
+            get {
+                object obj = ResourceManager.GetObject("elements_cascade_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_tree {
+            get {
+                object obj = ResourceManager.GetObject("elements_tree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_tree_big {
+            get {
+                object obj = ResourceManager.GetObject("elements_tree_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_tree_huge {
+            get {
+                object obj = ResourceManager.GetObject("elements_tree_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_tree_small {
+            get {
+                object obj = ResourceManager.GetObject("elements_tree_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_two {
+            get {
+                object obj = ResourceManager.GetObject("elements_two", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_two_big {
+            get {
+                object obj = ResourceManager.GetObject("elements_two_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_two_huge {
+            get {
+                object obj = ResourceManager.GetObject("elements_two_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap elements_two_small {
+            get {
+                object obj = ResourceManager.GetObject("elements_two_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -962,6 +1158,46 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap threat_event_big_sum {
+            get {
+                object obj = ResourceManager.GetObject("threat_event_big_sum", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap threat_event_huge_sum {
+            get {
+                object obj = ResourceManager.GetObject("threat_event_huge_sum", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap threat_event_small_sum {
+            get {
+                object obj = ResourceManager.GetObject("threat_event_small_sum", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap threat_event_sum {
+            get {
+                object obj = ResourceManager.GetObject("threat_event_sum", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap wax_seal {
             get {
                 object obj = ResourceManager.GetObject("wax_seal", resourceCulture);
@@ -982,6 +1218,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap wax_seal_black {
+            get {
+                object obj = ResourceManager.GetObject("wax_seal_black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap wax_seal_huge {
             get {
                 object obj = ResourceManager.GetObject("wax_seal_huge", resourceCulture);
@@ -995,6 +1241,16 @@ namespace ThreatsManager.Quality.Properties {
         internal static System.Drawing.Bitmap wax_seal_small {
             get {
                 object obj = ResourceManager.GetObject("wax_seal_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wax_seal_white {
+            get {
+                object obj = ResourceManager.GetObject("wax_seal_white", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

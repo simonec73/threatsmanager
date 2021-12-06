@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Northwoods.Go;
 using Northwoods.Go.Layout;
 using PostSharp.Patterns.Contracts;
+using Syncfusion.XlsIO.Parser.Biff_Records;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -722,7 +725,54 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             var selection = Selection;
             SelectAll();
-            return GetBitmapFromCollection(Selection);
+            var result = GetBitmapFromCollection(Selection);
+            Selection.Clear();
+            Selection.AddRange(selection);
+            return result;
+        }
+
+        public Metafile ToMetafile()
+        {
+            var selection = Selection;
+            SelectAll();
+            RectangleF bounds = GoDocument.ComputeBounds(Selection, this);
+
+            Graphics gbm = CreateGraphics();
+            IntPtr bufdc = gbm.GetHdc();
+            MemoryStream str = new MemoryStream();
+            Metafile mf = new Metafile(str, bufdc, bounds, MetafileFrameUnit.Pixel, EmfType.EmfPlusDual);
+
+            Graphics gmf = Graphics.FromImage(mf);
+            gmf.PageUnit = GraphicsUnit.Pixel;
+            gmf.SmoothingMode = this.SmoothingMode;
+            gmf.TextRenderingHint = this.TextRenderingHint;
+            gmf.InterpolationMode = this.InterpolationMode;
+            gmf.CompositingQuality = this.CompositingQuality;
+            gmf.PixelOffsetMode = this.PixelOffsetMode;
+
+            RectangleF b = bounds;
+            b.Inflate(1, 1);
+            PaintPaperColor(gmf, b);
+
+            foreach (GoObject obj in Selection)
+            {
+                if (!obj.CanView())
+                    continue;
+                obj.Paint(gmf, this);
+            }
+
+            gmf.Dispose();
+
+            gbm.ReleaseHdc(bufdc);
+            gbm.Dispose();
+            mf.Dispose();
+
+            byte[] data = str.GetBuffer();
+
+            Selection.Clear();
+            Selection.AddRange(selection);
+
+            return new Metafile(new MemoryStream(data, false));
         }
         #endregion
     }

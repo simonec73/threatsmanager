@@ -110,49 +110,49 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
             menuDiagram.FalsePositiveClicked += OnFalsePositiveClicked;
         }
 
-        private void OnExternalInteractorMenuClicked(Point point, IContextAwareAction action)
+        private void OnExternalInteractorMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IExternalInteractor interactor)
                 action.Execute(interactor);
         }
 
-        private void OnProcessMenuClicked(Point point, IContextAwareAction action)
+        private void OnProcessMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IProcess process)
                 action.Execute(process);
         }
 
-        private void OnDataStoreMenuClicked(Point point, IContextAwareAction action)
+        private void OnDataStoreMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IDataStore dataStore)
                 action.Execute(dataStore);
         }
 
-        private void OnDataFlowMenuClicked(Point point, IContextAwareAction action)
+        private void OnDataFlowMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IDataFlow dataFlow)
                 action.Execute(dataFlow);
         }
 
-        private void OnTrustBoundaryMenuClicked(Point point, IContextAwareAction action)
+        private void OnTrustBoundaryMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is ITrustBoundary trustBoundary)
                 action.Execute(trustBoundary);
         }
 
-        private void OnThreatModelMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatModelMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IThreatModel model)
                 action.Execute(model);
         }
 
-        private void OnThreatEventMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatEventMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IThreatEvent threatEvent)
                 action.Execute(threatEvent);
         }
 
-        private void OnDiagramMenuClicked(Point point, IContextAwareAction action)
+        private void OnDiagramMenuClicked(IContextAwareAction action, object context)
         {
             if (_selectedRow != null && _selectedRow.Tag is IDiagram diagram)
                 action.Execute(diagram);

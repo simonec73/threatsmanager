@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
+using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -24,8 +25,6 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         public MitigationsKanbanPanel() : base()
         {
             InitializeComponent();
-
-            Initialize(EnumExtensions.GetEnumLabels<WorkItemStatus>());
         }
 
         #region Implementation of interface IShowThreatModelPanel.
@@ -35,6 +34,7 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         {
             _model = threatModel;
 
+            InitializePalettes();
             LoadModel();
 
             DevOpsManager.RefreshDone += DevOpsManagerOnRefreshDone;
@@ -55,11 +55,14 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                 ClearPalettes();
 
                 var schemaManager = new RoadmapPropertySchemaManager(_model);
+                var devOpsSchemaManager = new DevOpsPropertySchemaManager(_model);
+                var connector = DevOpsManager.GetConnector(_model); 
                 IEnumerable<IMitigation> mitigations;
                 if (_filter == RoadmapStatus.NoActionRequired)
                 {
                     mitigations = _model?.GetUniqueMitigations()?
-                        .Where(x => schemaManager.GetStatus(x) != RoadmapStatus.NoActionRequired)
+                        .Where(x => (schemaManager.GetStatus(x) != RoadmapStatus.NoActionRequired) || 
+                                    (connector != null && devOpsSchemaManager.GetDevOpsInfo(x, connector) != null))
                         .OrderBy(x => x.Name).ToArray();
                 }
                 else
@@ -90,6 +93,27 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
             finally
             {
                 _loading = false;
+            }
+        }
+
+        private async void InitializePalettes()
+        {
+            var connector = DevOpsManager.GetConnector(_model);
+            var itemStatesAsync = await connector.GetWorkItemStatesAsync();
+            var itemStates = itemStatesAsync?.ToArray();
+            if (itemStates?.Any() ?? false)
+            {
+                var mappings = connector.WorkItemStateMappings?.ToArray();
+                var captions = new List<string>();
+                captions.Add(WorkItemStatus.Unknown.GetEnumLabel());
+                var labels = itemStates
+                    .Where(x => mappings.Any(y => string.CompareOrdinal(x, y.Key) == 0))
+                    .Select(x => mappings.Where(y => string.CompareOrdinal(x, y.Key) == 0).First().Value.GetEnumLabel())
+                    .Where(x => x != null)
+                    .Distinct();
+                if (labels.Any())
+                    captions.AddRange(labels);
+                Initialize(captions);
             }
         }
         #endregion

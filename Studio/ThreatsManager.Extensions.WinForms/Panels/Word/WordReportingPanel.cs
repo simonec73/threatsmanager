@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
-using Syncfusion.Compression.Zip;
-using Syncfusion.DocIO;
-using Syncfusion.DocIO.DLS;
-using ThreatsManager.Extensions.Panels.Word.Engine;
-using ThreatsManager.Extensions.Panels.Word.Engine.Fields;
+using ThreatsManager.Extensions.Reporting;
 using ThreatsManager.Extensions.Schemas;
+using ThreatsManager.Extensions.Word;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -28,6 +23,7 @@ namespace ThreatsManager.Extensions.Panels.Word
         #region Private member variables.
         private readonly Guid _id = Guid.NewGuid();
         private IThreatModel _model;
+        private ReportGenerator _reportGenerator;
         private bool _loading;
         #endregion
 
@@ -36,7 +32,6 @@ namespace ThreatsManager.Extensions.Panels.Word
             InitializeComponent();
             InitializeGrid();
         }
-
 
         public event Action<string> ShowMessage;
         
@@ -49,7 +44,19 @@ namespace ThreatsManager.Extensions.Panels.Word
 
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
+            if (_model != null)
+            {
+                _reportGenerator.ProgressUpdated -= ReportGeneratorOnProgressUpdated;
+                _reportGenerator.ShowMessage -= ReportGeneratorOnShowMessage;
+                _reportGenerator.ShowWarning -= ReportGeneratorOnShowWarning;
+            }
+
             _model = threatModel;
+            _reportGenerator = new ReportGenerator(_model);
+            _reportGenerator.ProgressUpdated += ReportGeneratorOnProgressUpdated;
+            _reportGenerator.ShowMessage += ReportGeneratorOnShowMessage;
+            _reportGenerator.ShowWarning += ReportGeneratorOnShowWarning;
+            
             var wordFile = WordFile;
             if (!string.IsNullOrWhiteSpace(wordFile))
             {
@@ -60,6 +67,21 @@ namespace ThreatsManager.Extensions.Panels.Word
                     LoadDocStructure(file);
                 }
             }
+        }
+
+        private void ReportGeneratorOnShowWarning(string text)
+        {
+            ShowWarning?.Invoke(text);
+        }
+
+        private void ReportGeneratorOnShowMessage(string text)
+        {
+            ShowMessage?.Invoke(text);
+        }
+
+        private void ReportGeneratorOnProgressUpdated(int percentage)
+        {
+            UpdateProgress(percentage);
         }
         #endregion
 
@@ -76,6 +98,7 @@ namespace ThreatsManager.Extensions.Panels.Word
                     path = GetRelativePath(modelPath, _openFile.FileName);
 
                 WordFile = _wordFile.Text = path;
+                _docStructure.PrimaryGrid.Rows.Clear();
                 LoadDocStructure(_openFile.FileName);
             }
         }
@@ -172,31 +195,22 @@ namespace ThreatsManager.Extensions.Panels.Word
 
             try
             {
-                var doc = new WordDocument();
-                doc.OpenReadOnly(fileName, FormatType.Automatic);
+                var structure = _reportGenerator.LoadStructure(fileName)?.ToArray();
 
-                var items = doc.FindAll(new Regex(@"\[ThreatsManagerPlatform:[\w]*\]"))?
-                    .Where(x => !x.IsToc())
-                    .Select(x => new Placeholder(x.SelectedText, _model))
-                    .Distinct(new PlaceholderComparer())
-                    .OrderBy(x => x.Name)
-                    .ToArray();
+                if (structure?.Any() ?? false)
+                {
+                    CreatePlaceholderPanel(PlaceholderSection.Model, structure);
+                    CreatePlaceholderPanel(PlaceholderSection.Counter, structure);
+                    CreatePlaceholderPanel(PlaceholderSection.Chart, structure);
+                    CreatePlaceholderPanel(PlaceholderSection.List, structure);
+                    CreatePlaceholderPanel(PlaceholderSection.Table, structure);
 
-                CreatePlaceholderPanel(PlaceholderSection.Model, items);
-                CreatePlaceholderPanel(PlaceholderSection.Counter, items);
-                CreatePlaceholderPanel(PlaceholderSection.Chart, items);
-                CreatePlaceholderPanel(PlaceholderSection.List, items);
-                CreatePlaceholderPanel(PlaceholderSection.Table, items);
-
-                result = true;
-            }
-            catch (IOException)
-            {
-                ShowWarning?.Invoke("Reference document may be in use in Word, please close it and try again.\nIf the problem persists, then the file may not be accessible.");
+                    result = true;
+                }
             }
             catch
             {
-                ShowWarning?.Invoke("Reference document may be corrupted or not a Word document.");
+                ShowWarning?.Invoke("An error occurred while loading the reference document structure.");
             }
             finally
             {
@@ -206,7 +220,7 @@ namespace ThreatsManager.Extensions.Panels.Word
             return result;
         }
 
-        private void CreatePlaceholderPanel(PlaceholderSection section, IEnumerable<Placeholder> placeholders)
+        private void CreatePlaceholderPanel(PlaceholderSection section, IEnumerable<IPlaceholder> placeholders)
         {
             var sectionItems = placeholders?.Where(x => x.Section == section).ToArray();
             if (sectionItems?.Any() ?? false)
@@ -236,8 +250,6 @@ namespace ThreatsManager.Extensions.Panels.Word
                 var panel = CreateSimplePanel(section, sectionItems);
                 if (section == PlaceholderSection.List)
                     UpgradeToListPanel(panel);
-                else if (section == PlaceholderSection.Table)
-                    UpgradeToTablePanel(panel);
                 row.Rows.Add(panel);
             }
         }
@@ -263,7 +275,7 @@ namespace ThreatsManager.Extensions.Panels.Word
             });
         }
 
-        private GridPanel CreateSimplePanel(PlaceholderSection section, [NotNull] IEnumerable<Placeholder> placeholders)
+        private GridPanel CreateSimplePanel(PlaceholderSection section, [NotNull] IEnumerable<IPlaceholder> placeholders)
         {
             GridPanel result = null;
 
@@ -289,7 +301,7 @@ namespace ThreatsManager.Extensions.Panels.Word
 
             foreach (var ph in placeholders)
             {
-                var row = new GridRow(ph.Name) {Tag = ph};
+                var row = new GridRow(ph.Label) {Tag = ph};
                 var image = ph.Image;
                 if (image != null)
                     row.Cells[0].CellStyles.Default.Image = image;
@@ -306,9 +318,14 @@ namespace ThreatsManager.Extensions.Panels.Word
             {
                 foreach (var row in rows)
                 {
-                    if (row.Tag is Placeholder placeholder)
+                    if (row.Tag is IListPlaceholder placeholder)
                     {
-                        var panel = CreateListPanel(placeholder);
+                        var panel = CreateListPanel(placeholder.Name, placeholder.GetProperties(_model));
+                        if (panel != null)
+                            row.Rows.Add(panel);
+                    } else if (row.Tag is IGroupedListPlaceholder groupedListPlaceholder)
+                    {
+                        var panel = CreateListPanel(groupedListPlaceholder.Name, groupedListPlaceholder.GetProperties(_model));
                         if (panel != null)
                             row.Rows.Add(panel);
                     }
@@ -316,28 +333,9 @@ namespace ThreatsManager.Extensions.Panels.Word
             }
         }
 
-        private void UpgradeToTablePanel([NotNull] GridPanel simplePanel)
-        {
-            var rows = simplePanel.Rows.OfType<GridRow>().ToArray();
-            if (rows.Any())
-            {
-                foreach (var row in rows)
-                {
-                    if (row.Tag is Placeholder placeholder)
-                    {
-                        var panel = CreateTablePanel(placeholder);
-                        if (panel != null)
-                            row.Rows.Add(panel);
-                    }
-                }
-            }
-        }
-
-        private GridPanel CreateListPanel([NotNull] Placeholder placeholder)
+        private GridPanel CreateListPanel([Required] string placeholderName, IEnumerable<KeyValuePair<string, IPropertyType>> fields)
         {
             GridPanel result = null;
-
-            var fields = placeholder.Fields?.ToArray();
 
             if (fields?.Any() ?? false)
             {
@@ -378,43 +376,16 @@ namespace ThreatsManager.Extensions.Panels.Word
                     AllowEdit = false
                 });
 
-                var selected = placeholder.Selected?.ToArray();
+                var ignored = GetIgnoredFields(placeholderName)?.ToArray();
                 foreach (var field in fields)
                 {
-                    string schemaNs = null;
-                    string schemaName = null;
-                    var show = false;
-                    if (field is PropertyTypeField ptField && 
-                        ptField.PropertyType is IPropertyType propertyType &&
-                        !propertyType.DoNotPrint)
+                    var schema = _model.GetSchema(field.Value.SchemaId);
+                    if (schema != null)
                     {
-                        show = true;
-                        var schema = _model.GetSchema(propertyType.SchemaId);
-                        if (schema != null)
+                        var row = new GridRow(field.Key, schema.Namespace, schema.Name)
                         {
-                            schemaNs = schema.Namespace;
-                            schemaName = schema.Name;
-                        }
-                    }
-                    else if (field is TablePropertyTypeField tptField && 
-                             tptField.PropertyType is IPropertyType tPropertyType &&
-                             !tPropertyType.DoNotPrint)
-                    {
-                        show = true;
-                        var schema = _model.GetSchema(tPropertyType.SchemaId);
-                        if (schema != null)
-                        {
-                            schemaNs = schema.Namespace;
-                            schemaName = schema.Name;
-                        }
-                    }
-
-                    if (show)
-                    {
-                        var row = new GridRow(field.ToString(), schemaNs, schemaName)
-                        {
-                            Tag = field,
-                            Checked = selected?.Contains(field) ?? false
+                            Tag = field.Value,
+                            Checked = !(ignored?.Contains(field.Key) ?? false)
                         };
                         result.Rows.Add(row);
                     }
@@ -424,92 +395,93 @@ namespace ThreatsManager.Extensions.Panels.Word
             return result;
         }
 
-        private GridPanel CreateTablePanel([NotNull] Placeholder placeholder)
+        public IEnumerable<string> GetPlaceholdersWithIgnoredFields()
         {
-            GridPanel result = null;
+            IEnumerable<string> result = null;
 
-            var widths = placeholder.PropertyWidths?.ToArray();
-
-            if (widths?.Any() ?? false)
+            var schemaManager = new WordPropertySchemaManager(_model);
+            var schema = schemaManager.GetSchema();
+            var propertyType = schema?.GetPropertyType("IgnoredListFields");
+            if (propertyType != null)
             {
-                result = new GridPanel
-                {
-                    Name = "TableProperties",
-                    AllowRowDelete = false,
-                    AllowRowInsert = false,
-                    AllowRowResize = true,
-                    ShowRowDirtyMarker = false,
-                    ShowTreeButtons = true,
-                    ShowTreeLines = true,
-                    InitialSelection = RelativeSelection.None
-                };
+                var property = _model.GetProperty(propertyType) as IPropertyArray;
+                result = property?.Value?.Select(x => x.Split('#').FirstOrDefault())
+                    .Distinct().Where(x => !string.IsNullOrWhiteSpace(x));
+            }
 
-                result.Columns.Add(new GridColumn("Name")
-                {
-                    HeaderText = "Property Name",
-                    Width = 300,
-                    DataType = typeof(string),
-                    AllowEdit = false
-                });
+            return result;
+        }
 
-                var index = result.Columns.Add(new GridColumn("Width")
-                {
-                    HeaderText = "Width (%)",
-                    Width = 100,
-                    DataType = typeof(float),
-                    EditorType = typeof(GridDoubleInputEditControl),
-                    AllowEdit = true
-                });
-                var control = (GridDoubleInputEditControl)result.Columns[index].EditControl;
-                control.ShowUpDown = false;
-                control.ButtonClear.Visible = true;
-                control.ButtonClear.Enabled = true;
+        public IEnumerable<string> GetIgnoredFields(string placeholderName)
+        {
+            IEnumerable<string> result = null;
 
-                foreach (var width in widths)
+            var schemaManager = new WordPropertySchemaManager(_model);
+            var schema = schemaManager.GetSchema();
+            var propertyType = schema?.GetPropertyType("IgnoredListFields");
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) as IPropertyArray;
+                var values = property?.Value?.Where(x => x.StartsWith($"{placeholderName}#")).ToArray();
+                if (values?.Any() ?? false)
                 {
-                    var row = new GridRow(width.Key, width.Value);
-                    row.Cells[1].PropertyChanged += OnWidthChanged;
-                    result.Rows.Add(row);
+                    result = values.Select(x => x.Replace($"{placeholderName}#", ""));
                 }
             }
 
             return result;
         }
 
-        private void OnWidthChanged(object sender, PropertyChangedEventArgs e)
+        public void SetIgnoredFields(string placeholderName, IEnumerable<string> fields)
         {
-            var cell = sender as GridCell;
-
-            if (!_loading && cell != null)
+            var schemaManager = new WordPropertySchemaManager(_model);
+            var schema = schemaManager.GetSchema();
+            var propertyType = schema?.GetPropertyType("IgnoredListFields");
+            if (propertyType != null)
             {
-                try
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property is IPropertyArray propertyArray)
                 {
-                    _loading = true;
-                    var row = cell.GridRow;
-                    if (row.GridPanel is GridPanel panel && panel.Parent is GridRow parent &&
-                        parent.Tag is Placeholder placeholder)
+                    var list = new List<string>();
+                    var existing = propertyArray.Value?
+                        .Where(x => !string.IsNullOrWhiteSpace(x) && !x.StartsWith($"{placeholderName}#"))
+                        .ToArray();
+                    if (existing?.Any() ?? false)
                     {
-                        switch (cell.GridColumn.Name)
-                        {
-                            case "Width":
-                                placeholder.Set(row.Cells[0].Value.ToString(), (float) cell.Value);
-                                break;
-                        }
+                        list.AddRange(existing);
                     }
-                }
-                finally
-                {
-                    _loading = false;
+                    if (fields?.Any() ?? false)
+                    {
+                        list.AddRange(fields.Select(x => $"{placeholderName}#{x}"));
+                    }
+                    propertyArray.Value = list;
                 }
             }
         }
 
         private void _docStructure_AfterCheck(object sender, GridAfterCheckEventArgs e)
         {
-            if (e.Item is GridRow row && row.Tag is Field field && 
-                row.GridPanel.Parent is GridRow parent && parent.Tag is Placeholder placeholder)
+            if (e.Item is GridRow row && row.Tag is IPropertyType propertyType &&
+                row.GridPanel.Parent is GridRow parent && parent.Tag is IPlaceholder placeholder)
             {
-                placeholder.Set(field, row.Checked);
+                var field = row.Cells.FirstOrDefault()?.Value?.ToString();
+
+                if (!string.IsNullOrWhiteSpace(field))
+                {
+                    var ignored = GetIgnoredFields(placeholder.Name)?.ToArray();
+                    if (row.Checked && (ignored?.Contains(field) ?? false))
+                    {
+                        SetIgnoredFields(placeholder.Name, ignored.Where(x => string.CompareOrdinal(x, field) != 0));
+                    }
+                    else if (!row.Checked && !(ignored?.Contains(field) ?? false))
+                    {
+                        var list = new List<string>();
+                        if (ignored?.Any() ?? false)
+                            list.AddRange(ignored);
+                        list.Add(field);
+                        SetIgnoredFields(placeholder.Name, list);
+                    }
+                }
             }
         }
         #endregion

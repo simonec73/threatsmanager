@@ -77,7 +77,6 @@
             this.ClientSize = new System.Drawing.Size(738, 468);
             this.Controls.Add(this._side);
             this.Controls.Add(this._bottom);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(6);
             this.MinimizeBox = false;
             this.Name = "ExtensionsConfigDialog";

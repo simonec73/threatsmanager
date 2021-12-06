@@ -16,6 +16,7 @@ namespace ThreatsManager.Utilities.WinForms
     {
         protected Dictionary<string, List<IContextAwareAction>> _actions;
         protected List<string> _buckets;
+        private static object _context;
 
         /// <summary>
         /// Constructor.
@@ -47,7 +48,7 @@ namespace ThreatsManager.Utilities.WinForms
         /// <summary>
         /// Event raised when the Menu action is clicked.
         /// </summary>
-        public event Action<Point, IContextAwareAction> MenuClicked;
+        public event Action<IContextAwareAction, object> MenuClicked;
 
         /// <summary>
         /// Creates the Menu associated to the MenuDefinition.
@@ -80,6 +81,7 @@ namespace ThreatsManager.Utilities.WinForms
         /// <param name="context">Context of the analysis.</param>
         public static void UpdateVisibility(ContextMenuStrip menu, object context)
         {
+            _context = context;
             var items = menu?.Items.OfType<ToolStripMenuItem>().Where(x => x.Tag is IContextAwareAction).ToArray();
             if (items?.Any() ?? false)
             {
@@ -121,6 +123,7 @@ namespace ThreatsManager.Utilities.WinForms
         /// <param name="context">Context of the analysis.</param>
         public static void UpdateVisibility(ContextMenu menu, object context)
         {
+            _context = context;
             var items = menu?.MenuItems.OfType<MenuItem>().Where(x => x.Tag is IContextAwareAction).ToArray();
             if (items?.Any() ?? false)
             {
@@ -197,8 +200,7 @@ namespace ThreatsManager.Utilities.WinForms
             if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IContextAwareAction action)
             {
-                var point = menuItem.GetCurrentParent().Location;
-                MenuClicked?.Invoke(point, action);
+                MenuClicked?.Invoke(action, _context);
             }
         }
         #endregion

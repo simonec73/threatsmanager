@@ -1,16 +1,17 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Dialogs;
 using ThreatsManager.Quality.Schemas;
+using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Quality.Annotations
 {
-    public class AnnotationPropertyViewerBlock : IPropertyViewerBlock
+    public class AnnotationPropertyViewerBlock : IPropertyViewerBlock, IInitializableObject
     {
         private readonly IPropertiesContainer _container;
         private readonly Annotation _annotation;
@@ -50,6 +51,7 @@ namespace ThreatsManager.Quality.Annotations
             }
         }
 
+        [InitializationRequired]
         public bool Execute()
         {
             var result = false;
@@ -125,5 +127,7 @@ namespace ThreatsManager.Quality.Annotations
         }
 
         public Bitmap Image { get; }
+        public bool Printable => BlockType == PropertyViewerBlockType.String;
+        public bool IsInitialized => _model != null;
     }
 }

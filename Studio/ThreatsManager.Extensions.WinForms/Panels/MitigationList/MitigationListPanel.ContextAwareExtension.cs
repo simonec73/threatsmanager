@@ -29,17 +29,15 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             menuThreatEventMitigation.MenuClicked += OnThreatEventMitigationMenuClicked;
         }
 
-        private void OnMitigationMenuClicked(Point point, IContextAwareAction action)
+        private void OnMitigationMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IMitigation mitigation)
+            if (context is IMitigation mitigation)
                 action.Execute(mitigation);
         }
 
-        private void OnThreatEventMitigationMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatEventMitigationMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatEventMitigation mitigation)
+            if (context is IThreatEventMitigation mitigation)
                 action.Execute(mitigation);
         }
     }

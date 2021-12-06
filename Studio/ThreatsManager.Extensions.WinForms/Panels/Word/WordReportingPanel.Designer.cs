@@ -13,6 +13,10 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            _reportGenerator.ProgressUpdated -= ReportGeneratorOnProgressUpdated;
+            _reportGenerator.ShowMessage -= ReportGeneratorOnShowMessage;
+            _reportGenerator.ShowWarning -= ReportGeneratorOnShowWarning;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Xml;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -97,6 +98,11 @@ namespace ThreatsManager.MsTmt.Extensions
                         }
                         break;
                 }
+            }
+            catch (XmlException)
+            {
+                ShowWarning?.Invoke("TMT file import failed, probably because the document is malformed.");
+                throw;
             }
             catch
             {

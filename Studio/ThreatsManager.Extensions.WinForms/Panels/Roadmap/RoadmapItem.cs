@@ -18,7 +18,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 {
     public class RoadmapItem : GoBoxNode
     {
-        private const float DefaultWidth = 350f;
+        private const float DefaultWidth = 320f;
+        private const float DefaultMargin = 50f;
         private IMitigation _mitigation;
         private List<string> _buckets;
         private Dictionary<string, List<IContextAwareAction>> _actions;
@@ -236,10 +237,10 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
         {
             var list = Items;
             var recordItem = new RoadmapSubItem();
-            recordItem.Label.Width = (DefaultWidth / 2f) - 50f;
-            recordItem.Label.WrappingWidth = (DefaultWidth / 2f) - 50f;
+            recordItem.Label.Width = (DefaultWidth / 2f) - DefaultMargin;
+            recordItem.Label.WrappingWidth = (DefaultWidth / 2f) - DefaultMargin;
             recordItem.Label.Text = key;
-            recordItem.Value.WrappingWidth = DefaultWidth / 2f;
+            recordItem.Value.WrappingWidth = DefaultWidth / 2f - DefaultMargin;
             if (value != null)
                 recordItem.Value.Text = value;
             list.Add(recordItem);
@@ -290,7 +291,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                 AutoResizes = false,
                 StringTrimming = StringTrimming.EllipsisCharacter,
                 FontSize = 9,
-                Width = DefaultWidth - 50,
+                Width = DefaultWidth - DefaultMargin,
                 TextColor = Color.White,
                 Height = 16 * Dpi.Factor.Height
             };
@@ -318,14 +319,14 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
         public void SetWidth(int width)
         {
             Header.Width = width;
-            Header[0].Width = width - 50;
+            Header[0].Width = width - DefaultMargin;
             Items.Width = width;
             var items = Items.OfType<RoadmapSubItem>().ToArray();
             foreach (var item in items)
             {
-                item.Label.Width = (width / 2f) - 50f;
-                item.Label.WrappingWidth = (width / 2f) - 50f;
-                item.Value.WrappingWidth = width / 2f;
+                item.Label.Width = (width / 2f) - DefaultMargin;
+                item.Label.WrappingWidth = (width / 2f) - DefaultMargin;
+                item.Value.WrappingWidth = width / 2f - DefaultMargin;
             }
         }
     }

@@ -259,6 +259,136 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_big {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_big_long_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_big_long_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_big_mid_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_big_mid_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_big_short_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_big_short_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_huge {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_huge_long_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_huge_long_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_huge_mid_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_huge_mid_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_huge_short_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_huge_short_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_long_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_long_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_mid_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_mid_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_short_term {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_short_term", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Azure_DevOps_small {
+            get {
+                object obj = ResourceManager.GetObject("Azure_DevOps_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap book {
             get {
                 object obj = ResourceManager.GetObject("book", resourceCulture);

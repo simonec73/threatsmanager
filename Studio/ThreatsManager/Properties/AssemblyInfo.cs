@@ -18,6 +18,6 @@ using Exceptionless.Configuration;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5A1C45C2-307C-45BB-BDFF-F8936B4B5D4B")]
 
-[assembly: Exceptionless("PUT_YOUR_API_KEY_HERE")]
+[assembly: Exceptionless("NeEivrblxLGpQNYGNG0eTBPatx2I12DkjtiMpDyV")]
 
 //[assembly: WeakEvent]

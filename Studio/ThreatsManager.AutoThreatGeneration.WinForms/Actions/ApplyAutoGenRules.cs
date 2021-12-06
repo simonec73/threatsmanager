@@ -48,7 +48,17 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 switch (action.Name)
                 {
                     case "ApplyAutoGenRules":
-                        Ask?.Invoke(this, threatModel, Resources.ApplyAutoGenRules_Caption, Resources.ApplyAutoGenRules_Confirm, false, RequestOptions.OkCancel);
+                        if (threatModel.HasTop())
+                        {
+                            Ask?.Invoke(this, threatModel, Resources.ApplyAutoGenRules_Caption, 
+                                $"Do you want to generate all Threat Events and Mitigations?\nPress Yes to confirm.\nPress No to generate only the Top Threats and Mitigations.\nPress Cancel to avoid generating anything.",
+                                false, RequestOptions.YesNoCancel);
+                        }
+                        else
+                        {
+                            Ask?.Invoke(this, threatModel, Resources.ApplyAutoGenRules_Caption, Resources.ApplyAutoGenRules_Confirm, 
+                                false, RequestOptions.OkCancel);
+                        }
                         break;
                 }
             }
@@ -61,9 +71,9 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 
         public void Answer(object context, AnswerType answer)
         {
-            if (answer == AnswerType.Ok && context is IThreatModel threatModel)
+            if ((answer == AnswerType.Yes || answer == AnswerType.Ok || answer == AnswerType.No) && context is IThreatModel threatModel)
             {
-                if (threatModel.GenerateThreatEvents())
+                if (threatModel.GenerateThreatEvents(answer == AnswerType.No))
                     ShowMessage?.Invoke("Threat Events generated successfully.");
                 else
                 {

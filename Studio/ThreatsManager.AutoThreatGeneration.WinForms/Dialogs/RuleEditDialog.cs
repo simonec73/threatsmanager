@@ -20,7 +20,6 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
     public partial class RuleEditDialog : Form, IRuleEditorDialog, IInitializableObject
     {
         private IThreatModel _model;
-        private ListBoxItem _lastMouseOverItem;
 
         public RuleEditDialog()
         {

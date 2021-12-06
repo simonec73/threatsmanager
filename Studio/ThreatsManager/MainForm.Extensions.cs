@@ -17,6 +17,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 
@@ -487,7 +488,7 @@ namespace ThreatsManager
             {
                 ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
                 var panel = factory.Create(identity, out IActionDefinition action);
-                var form = CreateForm(factory, panel, action, formId);
+                var form = CreateForm(factory, panel, action, formId, identity);
                 form.Closed += OnFormClosed;
             }
         }
@@ -735,7 +736,7 @@ namespace ThreatsManager
                                 ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
                                 var panel = factory.Create(actionDefinition);
                                 if (actionDefinition.Tag is IIdentity identity)
-                                    CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity));
+                                    CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity), identity);
                             }
                         }
                         else
@@ -789,7 +790,8 @@ namespace ThreatsManager
         }
 
         private PanelContainerForm CreateForm([NotNull] IPanelFactory<Form> factory, 
-            [NotNull] IPanel<Form> panel, [NotNull] IActionDefinition action, [Required] string formId)
+            [NotNull] IPanel<Form> panel, [NotNull] IActionDefinition action, [Required] string formId, 
+            IIdentity identity)
         {
             PanelContainerForm result = null;
 
@@ -858,6 +860,12 @@ namespace ThreatsManager
                     {
                         AddChildButton(mainRibbonExtension, action);
                     }
+                }
+
+                if (panel is IShowScenarioPanel<Form> showScenario && identity is IThreatEventScenario scenario)
+                {
+                    result.Text = action.Label;
+                    showScenario.SetScenario(scenario);
                 }
 
                 if (panel is IStaticPanel<Form> staticPanel)

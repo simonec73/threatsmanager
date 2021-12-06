@@ -16,7 +16,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
     {
         public Interfaces.Scope Scope => Interfaces.Scope.ThreatTypeMitigation;
         public string Label => "Edit Automatic Mitigation Association Rule...";
-        public string Group => "ThreatType";
+        public string Group => "AutoGen";
         public Bitmap Icon => Resources.standard_mitigations_big_gearwheel;
         public Bitmap SmallIcon => Resources.standard_mitigations_gearwheel;
         public Shortcut Shortcut => Shortcut.None;

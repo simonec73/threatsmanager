@@ -19,7 +19,7 @@ using ThreatsManager.Utilities.WinForms;
 namespace ThreatsManager.Extensions.Panels.Roadmap
 {
     public partial class RoadmapPanel : UserControl, IShowThreatModelPanel<Form>, 
-        ICustomRibbonExtension, IPanelOpenerExtension, IExecutionModeSupport, IContextAwareExtension
+        ICustomRibbonExtension, IPanelOpenerExtension, IExecutionModeSupport, IContextAwareExtension, IDesktopAlertAwareExtension
     {
         private readonly Guid _id = Guid.NewGuid();
         private IThreatModel _model;
@@ -122,6 +122,9 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
         #endregion
 
         public event Action<IPanelFactory, IIdentity> OpenPanel;
+
+        public event Action<string> ShowMessage;
+        public event Action<string> ShowWarning;
 
         #region Control Events.
         private void _notAssessed_ExpandedChanged(object sender, ExpandedChangeEventArgs e)

@@ -10,8 +10,6 @@ using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
-using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms.Rules;
 
@@ -20,7 +18,6 @@ namespace ThreatsManager.AutoGenRules.Dialogs
     public partial class RuleEditDialog : Form, IRuleEditorDialog, IInitializableObject
     {
         private IThreatModel _model;
-        private ListBoxItem _lastMouseOverItem;
 
         public RuleEditDialog()
         {

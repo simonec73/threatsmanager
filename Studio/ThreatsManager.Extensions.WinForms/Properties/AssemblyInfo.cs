@@ -6,7 +6,7 @@ using ThreatsManager.Utilities.Help;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ThreatsManager.Extensions.WinForms")]
-[assembly: AssemblyDescription("Assembly containing the main Extensions for the Threats Manager Platform.")]
+[assembly: AssemblyDescription("Assembly containing the main Extensions for Threats Manager Studio.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

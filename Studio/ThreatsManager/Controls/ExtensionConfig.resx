@@ -117,4 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ResourcesGuard_ThresholdReached" xml:space="preserve">
+    <value>Threats Manager Studio is reaching the maximum amount of available system resources.
+To avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.</value>
+  </data>
 </root>

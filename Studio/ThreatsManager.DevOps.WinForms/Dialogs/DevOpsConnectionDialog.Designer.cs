@@ -40,6 +40,8 @@
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._accessToken = new System.Windows.Forms.TextBox();
+            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this._layout.SuspendLayout();
             this.SuspendLayout();
@@ -81,6 +83,7 @@
             // _layout
             // 
             this._layout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._layout.Controls.Add(this._accessToken);
             this._layout.Controls.Add(this._loadProjects);
             this._layout.Controls.Add(this._projectList);
             this._layout.Controls.Add(this._serverUrl);
@@ -95,6 +98,7 @@
             this._layout.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem1,
             this.layoutControlItem2,
+            this.layoutControlItem5,
             this.layoutControlItem4,
             this.layoutControlItem3});
             this._layout.Size = new System.Drawing.Size(438, 366);
@@ -103,11 +107,11 @@
             // _loadProjects
             // 
             this._loadProjects.Enabled = false;
-            this._loadProjects.Location = new System.Drawing.Point(359, 33);
+            this._loadProjects.Location = new System.Drawing.Point(359, 61);
             this._loadProjects.Margin = new System.Windows.Forms.Padding(0);
             this._loadProjects.Name = "_loadProjects";
             this._loadProjects.Size = new System.Drawing.Size(75, 23);
-            this._loadProjects.TabIndex = 2;
+            this._loadProjects.TabIndex = 3;
             this._loadProjects.Text = "Load";
             this._loadProjects.UseVisualStyleBackColor = true;
             this._loadProjects.Click += new System.EventHandler(this._loadProjects_Click);
@@ -115,11 +119,11 @@
             // _projectList
             // 
             this._projectList.FormattingEnabled = true;
-            this._projectList.Location = new System.Drawing.Point(4, 81);
+            this._projectList.Location = new System.Drawing.Point(4, 109);
             this._projectList.Margin = new System.Windows.Forms.Padding(0);
             this._projectList.Name = "_projectList";
-            this._projectList.Size = new System.Drawing.Size(430, 277);
-            this._projectList.TabIndex = 3;
+            this._projectList.Size = new System.Drawing.Size(430, 251);
+            this._projectList.TabIndex = 4;
             this._projectList.SelectedIndexChanged += new System.EventHandler(this._projectList_SelectedIndexChanged);
             // 
             // _serverUrl
@@ -127,7 +131,7 @@
             this._serverUrl.Location = new System.Drawing.Point(107, 33);
             this._serverUrl.Margin = new System.Windows.Forms.Padding(0);
             this._serverUrl.Name = "_serverUrl";
-            this._serverUrl.Size = new System.Drawing.Size(244, 20);
+            this._serverUrl.Size = new System.Drawing.Size(327, 20);
             this._serverUrl.TabIndex = 1;
             this._serverUrl.TextChanged += new System.EventHandler(this._serverUrl_TextChanged);
             // 
@@ -159,7 +163,7 @@
             this.layoutControlItem2.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem2.Name = "layoutControlItem2";
             this.layoutControlItem2.Text = "Server URL";
-            this.layoutControlItem2.Width = 99;
+            this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem4
@@ -182,6 +186,26 @@
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
+            // _accessToken
+            // 
+            this._accessToken.Location = new System.Drawing.Point(107, 61);
+            this._accessToken.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            this._accessToken.Name = "_accessToken";
+            this._accessToken.Size = new System.Drawing.Size(244, 20);
+            this._accessToken.TabIndex = 2;
+            this._accessToken.UseSystemPasswordChar = true;
+            this._accessToken.TextChanged += new System.EventHandler(this._accessToken_TextChanged);
+            // 
+            // layoutControlItem5
+            // 
+            this.layoutControlItem5.Control = this._accessToken;
+            this.layoutControlItem5.Height = 28;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Text = "Access Token";
+            this.layoutControlItem5.Width = 99;
+            this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
             // DevOpsConnectionDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -197,6 +221,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Connect to DevOps";
+            this.Load += new System.EventHandler(this.DevOpsConnectionDialog_Load);
             this.panel1.ResumeLayout(false);
             this._layout.ResumeLayout(false);
             this._layout.PerformLayout();
@@ -218,5 +243,7 @@
         private System.Windows.Forms.Button _loadProjects;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem4;
         private System.Windows.Forms.Button _ok;
+        private System.Windows.Forms.TextBox _accessToken;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem5;
     }
 }

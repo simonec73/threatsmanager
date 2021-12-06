@@ -22,10 +22,9 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             menu.MenuClicked += OnMenuClicked;
         }
 
-        private void OnMenuClicked(Point point, IContextAwareAction action)
+        private void OnMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IItemTemplate itemTemplate)
+            if (context is IItemTemplate itemTemplate)
                 action.Execute(itemTemplate);
         }
     }

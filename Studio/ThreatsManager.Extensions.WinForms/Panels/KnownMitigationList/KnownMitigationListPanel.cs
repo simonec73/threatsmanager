@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -63,6 +64,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             LoadModel();
         }
 
+        [Dispatched]
         private void ModelChildRemoved(IIdentity identity)
         {
             if (identity is IMitigation mitigation)
@@ -82,6 +84,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             }
         }
 
+        [Dispatched]
         private void ModelChildCreated(IIdentity identity)
         {
             var filter = _filter.Text;
@@ -98,6 +101,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             }
         }
 
+        [Dispatched]
         private void ThreatTypeMitigationAdded([NotNull] IThreatTypeMitigationsContainer container, [NotNull] IThreatTypeMitigation threatTypeMitigation)
         {
             var row = GetRow(threatTypeMitigation);
@@ -113,6 +117,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             }
         }
 
+        [Dispatched]
         private void ThreatTypeMitigationRemoved([NotNull] IThreatTypeMitigationsContainer container, [NotNull] IThreatTypeMitigation threatTypeMitigation)
         {
             var row = GetRow(threatTypeMitigation);
@@ -254,6 +259,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             }
         }
 
+        [Dispatched]
         private void OnEntityPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IMitigation mitigation)
@@ -634,17 +640,26 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
  
         private static void UpdateMitigationLevel([NotNull] IThreatType threatType, [NotNull] GridRow row)
         {
-            switch (threatType.GetMitigationLevel())
+            try
             {
-                case MitigationLevel.NotMitigated:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
-                    break;
-                case MitigationLevel.Partial:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
-                    break;
-                case MitigationLevel.Complete:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
-                    break;
+                switch (threatType.GetMitigationLevel())
+                {
+                    case MitigationLevel.NotMitigated:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
+                        break;
+                    case MitigationLevel.Partial:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
+                        break;
+                    case MitigationLevel.Complete:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
+                        break;
+                }
+
+            }
+            catch
+            {
+
+                // Ignore
             }
         }
         #endregion

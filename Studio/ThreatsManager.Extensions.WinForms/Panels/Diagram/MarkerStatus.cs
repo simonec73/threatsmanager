@@ -1,6 +1,6 @@
 ﻿namespace ThreatsManager.Extensions.Panels.Diagram
 {
-    enum MarkerStatus
+    public enum MarkerStatus
     {
         Full,
         Hidden

@@ -237,7 +237,9 @@ namespace ThreatsManager.DevOps.Panels
         #region Access to Palettes.
         protected WorkItemStatus GetPaletteWorkItemStatus(int index)
         {
-            return Enum.GetValues(typeof(WorkItemStatus)).OfType<WorkItemStatus>().ElementAt(index);
+            var caption = _captions[index];
+
+            return EnumExtensions.GetEnumValue<WorkItemStatus>(caption);
         }
 
         protected void ClearPalettes()

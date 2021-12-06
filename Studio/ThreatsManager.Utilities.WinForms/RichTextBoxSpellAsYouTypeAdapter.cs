@@ -7,6 +7,7 @@ namespace ThreatsManager.Utilities.WinForms
     public class RichTextBoxSpellAsYouTypeAdapter : RichTextBoxIAYTAdapter
     {
         static readonly float _factor;
+        private RichTextBox _textBox;
 
         static RichTextBoxSpellAsYouTypeAdapter()
         {
@@ -15,6 +16,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         public RichTextBoxSpellAsYouTypeAdapter(RichTextBox rtb, bool contextMenu) : base(rtb, contextMenu)
         {
+            _textBox = rtb;
         }
 
         public override int GetBaselineOffsetAtCharIndex(int i)
@@ -23,5 +25,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             return (int)(offset * _factor);
         }
+
+        public RichTextBox TextBox => _textBox;
     }
 }

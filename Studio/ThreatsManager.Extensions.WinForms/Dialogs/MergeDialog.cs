@@ -180,7 +180,7 @@ namespace ThreatsManager.Extensions.Dialogs
                     _comparison = TemplateManager.OpenTemplate(sourceFile);
                     result = DoComparison();
                 }
-                catch (JsonSerializationException e)
+                catch (JsonSerializationException)
                 {
                 }
             }

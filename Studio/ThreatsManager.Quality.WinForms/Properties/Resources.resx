@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AnnotationsDescription" xml:space="preserve">
+    <value>Annotations to objects.</value>
+  </data>
+  <data name="AnnotationsPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties related to the Quality Extension annotations functionality.</value>
+  </data>
   <data name="ApplyTopicsAutoGenRules_Caption" xml:space="preserve">
     <value>Auto Topic to be Clarified Generation confirmation</value>
   </data>
@@ -124,6 +130,12 @@
     <value>You are about to automatically generate the Topics to be Clarified.
 This may generate a lot of them.
 Do you confirm?</value>
+  </data>
+  <data name="CalculatedSeverityDescription" xml:space="preserve">
+    <value>Property used to enable the calculation of the Severity for a Threat Event.</value>
+  </data>
+  <data name="CalculatedSeverityPropertySchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects properties related to the Quality Extension Calculated Severity functionality.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="checkbox" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -176,6 +188,54 @@ Do you confirm?</value>
   </data>
   <data name="DefaultNamespace" xml:space="preserve">
     <value>https://www.simoneonsecurity.com/tm/2018</value>
+  </data>
+  <data name="element" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\element.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_cascade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_cascade.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_cascade_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_cascade_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_cascade_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_cascade_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_cascade_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_cascade_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_tree" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_tree.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_tree_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_tree_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_tree_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_tree_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_tree_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_tree_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_two_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_two_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_two_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_two_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="elements_two_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\elements_two_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="element_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\element_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="element_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\element_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="element_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\element_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="emoticon_frown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\emoticon_frown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -390,17 +450,35 @@ Do you confirm?</value>
   <data name="speech_balloon_question_small_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speech_balloon_question_small_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="threat_event_big_sum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_event_big_sum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_event_huge_sum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_event_huge_sum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_event_small_sum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_event_small_sum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="threat_event_sum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\threat_event_sum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="wax_seal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wax_seal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="wax_seal_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wax_seal_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="wax_seal_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wax_seal_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="wax_seal_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wax_seal_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="wax_seal_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wax_seal_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wax_seal_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wax_seal_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="xlsx" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xlsx.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

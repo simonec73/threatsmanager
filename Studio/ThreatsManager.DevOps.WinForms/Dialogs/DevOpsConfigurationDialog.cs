@@ -151,19 +151,21 @@ namespace ThreatsManager.DevOps.Dialogs
                 if (connector != null)
                 {
                     string filter = comboBox.Text;
-                    comboBox.Items.Clear();
 
                     var itemsAsync = await connector.GetItemsAsync(filter);
                     var items = itemsAsync?.ToArray();
                     if (items?.Any() ?? false)
+                    {
+                        comboBox.Items.Clear();
                         comboBox.Items.AddRange(items);
 
-                    comboBox.DroppedDown = true;
-                    comboBox.IntegralHeight = true;
-                    comboBox.SelectedIndex = -1;
-                    comboBox.Text = filter;
-                    comboBox.SelectionStart = filter.Length;
-                    comboBox.SelectionLength = 0;
+                        comboBox.DroppedDown = true;
+                        comboBox.IntegralHeight = true;
+                        comboBox.SelectedIndex = -1;
+                        comboBox.Text = filter;
+                        comboBox.SelectionStart = filter.Length;
+                        comboBox.SelectionLength = 0;
+                    }
                 }
             }
         }

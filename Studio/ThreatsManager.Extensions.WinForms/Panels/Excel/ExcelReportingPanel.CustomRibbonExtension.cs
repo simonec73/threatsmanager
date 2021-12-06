@@ -118,7 +118,7 @@ namespace ThreatsManager.Extensions.Panels.Excel
                 else if (text != null)
                     ShowMessage?.Invoke($"{text} has been executed successfully.");
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 ShowWarning?.Invoke($"An error occurred during the execution of the action.");
                 throw;

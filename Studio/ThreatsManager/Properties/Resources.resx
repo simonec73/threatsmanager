@@ -422,4 +422,7 @@ and this is even more true for constructive criticism.</value>
   <data name="RansomwareProtectionMessage" xml:space="preserve">
     <value>It is not possible to write the User Dictionary. If you have configured Ransomware Protection, please mark the Threats Manager Studio as trusted.</value>
   </data>
+  <data name="ResourcesGuard_ThresholdReached" xml:space="preserve">
+    <value>Threats Manager Studio is reaching the maximum amount of available system resources.\nTo avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.\nThis message will not be repeated.</value>
+  </data>
 </root>

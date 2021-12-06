@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -59,9 +60,6 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
         #endregion
 
         public bool IsInitialized => _model != null;
-
-        //public IActionDefinition ActionDefinition => new ActionDefinition(Id, "Mitigation", "Mitigation List", 
-        //    Resources.mitigations_big, Resources.mitigations);
         
         private void OpenDiagram(Guid diagramId)
         {
@@ -130,49 +128,11 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                     ((INotifyPropertyChanged) threatEvent).PropertyChanged += OnThreatEventPropertyChanged;
                 }
 
-                Dictionary<IMitigation, List<IThreatEventMitigation>> mitigations =
-                    new Dictionary<IMitigation, List<IThreatEventMitigation>>();
+                AddThreatEventEvents(_model.Entities);
+                AddThreatEventEvents(_model.DataFlows);
+                AddThreatEventEvents(_model);
 
-                var eventsMitigations = threatEvents.Select(x => x.Mitigations).ToArray();
-                foreach (var em in eventsMitigations)
-                {
-                    var emArray = em?.ToArray();
-                    if (emArray?.Any() ?? false)
-                    {
-                        foreach (var m in emArray)
-                        {
-                            List<IThreatEventMitigation> mList;
-                            if (mitigations.ContainsKey(m.Mitigation))
-                                mList = mitigations[m.Mitigation];
-                            else
-                            {
-                                mList = new List<IThreatEventMitigation>();
-                                mitigations.Add(m.Mitigation, mList);
-                            }
-
-                            mList.Add(m);
-                        }
-                    }
-                }
-
-                var filter = _filter.Text;
-                var filterSpecial = EnumExtensions.GetEnumValue<MitigationListFilter>((string)_specialFilter.SelectedItem);
-
-                if (mitigations.Any())
-                {
-                    var sorted = mitigations.Keys.OrderBy(x => x.Name).ToArray();
-                    foreach (var mitigation in sorted)
-                    {
-                        var sortedMitigations = mitigations[mitigation]?
-                            .OrderBy(x => x.ThreatEvent.Name)
-                            .ThenBy(x => x.ThreatEvent.Parent.Name)
-                            .ToArray();
-                        if (IsSelected(mitigation, sortedMitigations, filter, filterSpecial))
-                            AddGridRow(mitigation, sortedMitigations, panel);
-                    }
-
-                    _currentRow = _grid.PrimaryGrid.Rows.OfType<GridRow>().FirstOrDefault();
-                }
+                AddMitigations(threatEvents, panel);
             }
             finally
             {
@@ -181,6 +141,143 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             }
         }
 
+        private void AddMitigations(IEnumerable<IThreatEvent> threatEvents, GridPanel panel)
+        {
+            var mitigations = new Dictionary<IMitigation, List<IThreatEventMitigation>>();
+
+            var eventsMitigations = threatEvents.Select(x => x.Mitigations).ToArray();
+            foreach (var em in eventsMitigations)
+            {
+                var emArray = em?.ToArray();
+                if (emArray?.Any() ?? false)
+                {
+                    foreach (var m in emArray)
+                    {
+                        List<IThreatEventMitigation> mList;
+                        if (mitigations.ContainsKey(m.Mitigation))
+                            mList = mitigations[m.Mitigation];
+                        else
+                        {
+                            mList = new List<IThreatEventMitigation>();
+                            mitigations.Add(m.Mitigation, mList);
+                        }
+
+                        mList.Add(m);
+                    }
+                }
+            }
+
+            var filter = _filter.Text;
+            var filterSpecial = EnumExtensions.GetEnumValue<MitigationListFilter>((string)_specialFilter.SelectedItem);
+
+            if (mitigations.Any())
+            {
+                var sorted = mitigations.Keys.OrderBy(x => x.Name).ToArray();
+                foreach (var mitigation in sorted)
+                {
+                    var sortedMitigations = mitigations[mitigation]?
+                        .OrderBy(x => x.ThreatEvent.Name)
+                        .ThenBy(x => x.ThreatEvent.Parent.Name)
+                        .ToArray();
+                    if (IsSelected(mitigation, sortedMitigations, filter, filterSpecial))
+                    {
+                        var row = GetRow(mitigation);
+                        if (row == null)
+                            AddGridRow(mitigation, sortedMitigations, panel);
+                        else
+                        {
+                            var subPanel = row.Rows.OfType<GridPanel>().FirstOrDefault(x =>
+                                string.CompareOrdinal(x.Name, "ThreatEventMitigations") == 0);
+                            if (subPanel != null)
+                            {
+                                foreach (var m in sortedMitigations)
+                                {
+                                    if (GetRow(m) == null)
+                                        AddGridRow(m, subPanel);
+                                }
+                            }
+                            else
+                            {
+                                subPanel = CreateThreatEventsPanel(mitigation, sortedMitigations);
+                                if (subPanel != null)
+                                    row.Rows.Add(subPanel);
+                            }
+                        }
+                    }
+                }
+
+                _currentRow = panel.Rows.OfType<GridRow>().FirstOrDefault();
+            }
+        }
+
+        private void AddThreatEventEvents(IEnumerable<IThreatEventsContainer> containers)
+        {
+            if (containers?.Any() ?? false)
+            {
+                foreach (var container in containers)
+                    AddThreatEventEvents(container);
+            }
+        }
+
+        private void AddThreatEventEvents(IThreatEventsContainer container)
+        {
+            if (container != null)
+            {
+                container.ThreatEventAdded += OnThreatEventAdded;
+                container.ThreatEventRemoved += OnThreatEventRemoved;
+            }
+        }
+
+        private void RemoveThreatEventEvents(IEnumerable<IThreatEventsContainer> containers)
+        {
+            if (containers?.Any() ?? false)
+            {
+                foreach (var container in containers)
+                    RemoveThreatEventEvents(container);
+            }
+        }
+
+        private void RemoveThreatEventEvents(IThreatEventsContainer container)
+        {
+            if (container != null)
+            {
+                container.ThreatEventAdded -= OnThreatEventAdded;
+                container.ThreatEventRemoved -= OnThreatEventRemoved;
+            }
+        }
+
+        private void OnThreatEventAdded(IThreatEventsContainer container, IThreatEvent threatEvent)
+        {
+            ((INotifyPropertyChanged) threatEvent).PropertyChanged += OnThreatEventPropertyChanged;
+        }
+
+        private void OnThreatEventRemoved(IThreatEventsContainer container, IThreatEvent threatEvent)
+        {
+            ((INotifyPropertyChanged) threatEvent).PropertyChanged -= OnThreatEventPropertyChanged;
+
+            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
+            foreach (var row in rows)
+            {
+                var panel = row.Rows.OfType<GridPanel>()
+                    .FirstOrDefault(x => string.CompareOrdinal("ThreatEventMitigations", x.Name) == 0);
+                if (panel != null)
+                {
+                    var toBeRemoved = panel.Rows.OfType<GridRow>().Where(x =>
+                        (x.Tag is IThreatEventMitigation threatEventMitigation) &&
+                        threatEventMitigation.ThreatEvent.Id == threatEvent.Id).ToArray();
+                    if (toBeRemoved?.Any() ?? false)
+                    {
+                        foreach (var tbr in toBeRemoved)
+                        {
+                            RemoveEventSubscriptions(tbr);
+                            panel.Rows.Remove(tbr);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Dispatched]
         private void OnThreatEventPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatEvent threatEvent)
@@ -274,6 +371,22 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
             foreach (var row in rows)
                 RemoveEventSubscriptions(row);
+
+            List<IThreatEvent> threatEvents = new List<IThreatEvent>();
+            AddThreatEvents(threatEvents, _model.Entities?.Select(x => x.ThreatEvents).ToArray());
+            AddThreatEvents(threatEvents, _model.DataFlows?.Select(x => x.ThreatEvents).ToArray());
+            var modelThreats = _model.ThreatEvents?.ToArray();
+            if (modelThreats?.Any() ?? false)
+                threatEvents.AddRange(modelThreats);
+
+            foreach (var threatEvent in threatEvents)
+            {
+                ((INotifyPropertyChanged) threatEvent).PropertyChanged -= OnThreatEventPropertyChanged;
+            }
+
+            RemoveThreatEventEvents(_model.Entities);
+            RemoveThreatEventEvents(_model.DataFlows);
+            RemoveThreatEventEvents(_model);
         }
 
         private void RemoveEventSubscriptions(GridRow row)
@@ -343,6 +456,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             }
         }
 
+        [Dispatched]
         private void OnMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IMitigation mitigation)
@@ -495,6 +609,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             mitigation.ThreatEvent.ThreatEventMitigationRemoved += OnThreatEventMitigationRemoved;
         }
         
+        [Dispatched]
         private void OnImageChanged([NotNull] IEntity entity, ImageSize size)
         {
             var sourceRows = GetRowsForEntity(entity)?.ToArray();
@@ -534,6 +649,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             return result;
         }
 
+        [Dispatched]
         private void OnThreatEventMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatEventMitigation threatEventMitigation)
@@ -559,6 +675,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventMitigationParentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IIdentity identity && string.CompareOrdinal(e.PropertyName, "Name") == 0)
@@ -606,6 +723,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventMitigationAdded([NotNull] IThreatEventMitigationsContainer container, [NotNull] IThreatEventMitigation mitigation)
         {
             if (!_loading)
@@ -628,6 +746,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventMitigationRemoved([NotNull] IThreatEventMitigationsContainer container, [NotNull] IThreatEventMitigation mitigation)
         {
             if (!_loading)
@@ -819,17 +938,24 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
 
         private static void UpdateMitigationLevel([NotNull] IThreatEvent threatEvent, [NotNull] GridRow row)
         {
-            switch (threatEvent.GetMitigationLevel())
+            try
             {
-                case MitigationLevel.NotMitigated:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
-                    break;
-                case MitigationLevel.Partial:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
-                    break;
-                case MitigationLevel.Complete:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
-                    break;
+                switch (threatEvent.GetMitigationLevel())
+                {
+                    case MitigationLevel.NotMitigated:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
+                        break;
+                    case MitigationLevel.Partial:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
+                        break;
+                    case MitigationLevel.Complete:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
+                        break;
+                }
+            }
+            catch
+            {
+                // Ignore
             }
         }
 

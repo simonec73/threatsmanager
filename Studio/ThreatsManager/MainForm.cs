@@ -39,7 +39,7 @@ namespace ThreatsManager
         private LocationType _currentLocationType;
         private string _currentLocation;
         private IPackageManager _currentPackageManager;
-        private SecureString _password;
+        //private SecureString _password;
         private bool _closing;
         private ExecutionMode _executionMode;
 
@@ -208,6 +208,12 @@ namespace ThreatsManager
             }
             #endregion
 
+            #region Resource Guard.
+            var resourceGuard = new ResourcesGuard();
+            resourceGuard.StartChecking();
+            #endregion
+
+            #region User dictionary configuration.
             if (!string.IsNullOrWhiteSpace(config.UserDictionary) && !File.Exists(config.UserDictionary))
             {
                 try
@@ -222,7 +228,9 @@ namespace ThreatsManager
                     ShowDesktopAlert(Resources.RansomwareProtectionMessage, true);
                 }
             }
+            #endregion
 
+            #region Extensions configuration.
             if (string.IsNullOrWhiteSpace(config.ExtensionsConfigFolder))
             {
                 config.ExtensionsConfigFolder = Program.Folder;
@@ -231,6 +239,7 @@ namespace ThreatsManager
             ExtensionUtils.ExtensionConfigurationFolder = config.ExtensionsConfigFolder;
 
             InitializeExtensionsManagement();
+            #endregion
 
             try
             {
@@ -378,6 +387,7 @@ namespace ThreatsManager
             if (!e.Cancel)
             {
                 DocumentLocker.ReleaseLock();
+                ResourcesGuard.StopChecking();
                 _closing = true;
             }
         }
@@ -887,8 +897,8 @@ namespace ThreatsManager
         private void RefreshCaption()
         {
             var modelName = _model?.Name;
-            if ((modelName?.Length ?? 0) > 50)
-                modelName = modelName.Substring(0, 50) + "…";
+            if ((modelName?.Length ?? 0) > 200)
+                modelName = modelName.Substring(0, 200) + "…";
             var text = $@"{((_model?.IsDirty ?? false) ? "*" : "")}{modelName}";
             Text = $@"{((_model?.IsDirty ?? false) ? "*" : "")}{Resources.Title} - {_model?.Name}";
 

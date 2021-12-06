@@ -53,8 +53,17 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                 result.Add(new CommandsBarDefinition("Export", "Export", new IActionDefinition[]
                 {
                     new ActionDefinition(Id, "ExportCsv", "Export for Azure DevOps",
-                        Properties.Resources.xlsx_big,
-                        Properties.Resources.xlsx),
+                        Properties.Resources.Azure_DevOps_big,
+                        Properties.Resources.Azure_DevOps),
+                    new ActionDefinition(Id, "ExportShortCsv", "Export Short Term for Azure DevOps",
+                        Properties.Resources.Azure_DevOps_big_short_term,
+                        Properties.Resources.Azure_DevOps_short_term),
+                    new ActionDefinition(Id, "ExportMidCsv", "Export Medium Term for Azure DevOps",
+                        Properties.Resources.Azure_DevOps_big_mid_term,
+                        Properties.Resources.Azure_DevOps_mid_term),
+                    new ActionDefinition(Id, "ExportLongCsv", "Export Long Term for Azure DevOps",
+                        Properties.Resources.Azure_DevOps_big_long_term,
+                        Properties.Resources.Azure_DevOps_long_term),
                 }));
 
                 if (_commandsBarContextAwareActions?.Any() ?? false)
@@ -90,8 +99,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            string text = null;
-            bool warning = false;
+            //string text = null;
+            //bool warning = false;
 
             try
             {
@@ -132,6 +141,60 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                             ExportCsv(saveFileDialog.FileName);
                         }
                         break;
+                    case "ExportShortCsv":
+                        var saveFileDialogShort = new SaveFileDialog()
+                        {
+                            AddExtension = true,
+                            AutoUpgradeEnabled = true,
+                            CheckFileExists = false,
+                            CheckPathExists = true,
+                            RestoreDirectory = true,
+                            DefaultExt = "csv",
+                            Filter = "CSV file (*.csv)|*.csv",
+                            Title = "Create CSV file for Azure DevOps",
+                            ValidateNames = true
+                        };
+                        if (saveFileDialogShort.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            ExportCsv(saveFileDialogShort.FileName, RoadmapStatus.ShortTerm);
+                        }
+                        break;
+                    case "ExportMidCsv":
+                        var saveFileDialogMid = new SaveFileDialog()
+                        {
+                            AddExtension = true,
+                            AutoUpgradeEnabled = true,
+                            CheckFileExists = false,
+                            CheckPathExists = true,
+                            RestoreDirectory = true,
+                            DefaultExt = "csv",
+                            Filter = "CSV file (*.csv)|*.csv",
+                            Title = "Create CSV file for Azure DevOps",
+                            ValidateNames = true
+                        };
+                        if (saveFileDialogMid.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            ExportCsv(saveFileDialogMid.FileName, RoadmapStatus.MidTerm);
+                        }
+                        break;
+                    case "ExportLongCsv":
+                        var saveFileDialogLong = new SaveFileDialog()
+                        {
+                            AddExtension = true,
+                            AutoUpgradeEnabled = true,
+                            CheckFileExists = false,
+                            CheckPathExists = true,
+                            RestoreDirectory = true,
+                            DefaultExt = "csv",
+                            Filter = "CSV file (*.csv)|*.csv",
+                            Title = "Create CSV file for Azure DevOps",
+                            ValidateNames = true
+                        };
+                        if (saveFileDialogLong.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            ExportCsv(saveFileDialogLong.FileName, RoadmapStatus.LongTerm);
+                        }
+                        break;
                     case "Refresh":
                         LoadModel();
                         break;
@@ -158,35 +221,73 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
         }
 
-        private void ExportCsv([Required] string fileName)
+        private void ExportCsv([Required] string fileName, RoadmapStatus requiredStatus = RoadmapStatus.NotAssessed)
         {
             var mitigations = _model?.GetUniqueMitigations()?.OrderBy(x => x.Name).ToArray();
 
             if (mitigations?.Any() ?? false)
             {
-                using (var file = new System.IO.FileStream(fileName, FileMode.Create))
+                using (var engine = new ExcelReportEngine())
                 {
-                    using (var writer = new StreamWriter(file, Encoding.UTF8))
+                    var page = engine.AddPage("Report");
+                    List<string> fields = new List<string> {"Work Item Type", "Title", "Description", "State", "Priority"};
+                    engine.AddHeader(page, fields.ToArray());
+
+                    var schema = new RoadmapPropertySchemaManager(_model);
+
+                    foreach (var mitigation in mitigations)
                     {
-                        writer.WriteLine("Work Item Type,Title,Description,State,Priority");
+                        var status = mitigation.GetStatus();
 
-                        foreach (var mitigation in mitigations)
+                        switch (requiredStatus)
                         {
-                            var status = mitigation.GetStatus(out var automatedCalculation);
-
-                            switch (status)
-                            {
-                                case RoadmapStatus.ShortTerm:
-                                    writer.WriteLine($"\"Task\",\"{mitigation.Name}\",\"{TextToHtml(mitigation.Description)}\",\"To Do\",\"1\"");
-                                    break;
-                                case RoadmapStatus.MidTerm:
-                                    writer.WriteLine($"\"Task\",\"{mitigation.Name}\",\"{TextToHtml(mitigation.Description)}\",\"To Do\",\"2\"");
-                                    break;
-                                case RoadmapStatus.LongTerm:
-                                    writer.WriteLine($"\"Task\",\"{mitigation.Name}\",\"{TextToHtml(mitigation.Description)}\",\"To Do\",\"3\"");
-                                    break;
-                            }
+                            case RoadmapStatus.ShortTerm:
+                                if (status == RoadmapStatus.ShortTerm)
+                                {
+                                    engine.AddRow(page, new[]
+                                    {
+                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                    });
+                                }
+                                break;
+                            case RoadmapStatus.MidTerm:
+                                if (status == RoadmapStatus.MidTerm)
+                                {
+                                    engine.AddRow(page, new[]
+                                    {
+                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                    });
+                                }
+                                break;
+                            case RoadmapStatus.LongTerm:
+                                if (status == RoadmapStatus.LongTerm)
+                                {
+                                    engine.AddRow(page, new[]
+                                    {
+                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                    });
+                                }
+                                break;
+                            default:
+                                if (status == RoadmapStatus.ShortTerm || status == RoadmapStatus.MidTerm || status == RoadmapStatus.LongTerm)
+                                {
+                                    engine.AddRow(page, new[]
+                                    {
+                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                    });
+                                }
+                                break;
                         }
+                    }
+
+                    try
+                    {
+                        engine.Save(fileName);
+                        ShowMessage?.Invoke("CSV for ADO created successfully.");
+                    }
+                    catch (Exception exc)
+                    {
+                        ShowWarning?.Invoke(exc.Message);
                     }
                 }
             }

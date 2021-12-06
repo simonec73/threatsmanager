@@ -302,6 +302,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                         try
                         {
                             _loading = true;
+                            _grid.PrimaryGrid.CollapseAll();
                             _grid.PrimaryGrid.ExpandAll(0);
                             Application.DoEvents();
                         }
