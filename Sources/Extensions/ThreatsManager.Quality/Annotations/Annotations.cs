@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 
@@ -41,6 +42,20 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _annotations.Remove(annotation);
                 AnnotationRemoved?.Invoke(annotation);
+            }
+        }
+
+        public void Clear()
+        {
+            var annotations = Items?.ToArray();
+            if (annotations?.Any() ?? false)
+            {
+                foreach (var annotation in annotations)
+                {
+                    AnnotationRemoved?.Invoke(annotation);
+                }
+
+                _annotations.Clear();
             }
         }
     }
