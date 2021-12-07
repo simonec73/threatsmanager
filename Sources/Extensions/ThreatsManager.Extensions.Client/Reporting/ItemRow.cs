@@ -74,11 +74,19 @@ namespace ThreatsManager.Extensions.Reporting
                             var blocks = propertyViewer.Blocks?.Where(x => x.Printable).ToArray();
                             if (blocks?.Any() ?? false)
                             {
-                                result = new TableRow(property.PropertyType.Name, new[]
+                                if (blocks.Length == 1)
                                 {
-                                    new TableColumn("Property", 150),
-                                    new TableColumn("Value", 350)
-                                }, GetCells(blocks));
+                                    var block = blocks[0];
+                                    result = new TextRow(block.Label, block.Text);
+                                }
+                                else
+                                {
+                                    result = new TableRow(property.PropertyType.Name, new[]
+                                    {
+                                        new TableColumn("Property", 150),
+                                        new TableColumn("Value", 350)
+                                    }, GetCells(blocks));
+                                }
                             }
                         }
                     }
