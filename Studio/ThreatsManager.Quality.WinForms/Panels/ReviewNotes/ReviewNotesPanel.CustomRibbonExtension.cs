@@ -10,7 +10,6 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Quality.Annotations;
-using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Resources = ThreatsManager.Icons.Resources;
@@ -43,6 +42,10 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
                             Properties.Resources.clipboard_check_edit_big_delete,
                             Properties.Resources.clipboard_check_edit_delete,
                             false, Shortcut.None),
+                        new ActionDefinition(Id, "ClearAllReviewNotes", "Clear All Review Notes",
+                            Properties.Resources.clear_big,
+                            Properties.Resources.clear,
+                            true, Shortcut.None),
                     }),
                     new CommandsBarDefinition("Export", "Export", new IActionDefinition[]
                     {
@@ -66,8 +69,6 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            var schemaManager = new AnnotationsPropertySchemaManager(_model);
-
             _right.SuspendLayout();
 
             switch (action.Name)
@@ -76,19 +77,41 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
                     if (_selected != null)
                     {
                         var review = new ReviewNote();
-                        schemaManager.AddAnnotation(_selected, review);
+                        _schemaManager.AddAnnotation(_selected, review);
                         AddButton(review);
                     }
                     break;
                 case "RemoveReviewNote":
                     if (_selected != null && _annotation.Annotation is ReviewNote reviewNote &&
                         MessageBox.Show("You are about to remove the currently selected Review Note. Are you sure?",
+                            "Clear All Review Notes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
+                            MessageBoxDefaultButton.Button2) == DialogResult.OK)
+                    {
+                        _schemaManager.RemoveAnnotation(_selected, reviewNote);
+                        _annotation.Annotation = null;
+                        RemoveButton(reviewNote);
+                    }
+                    break;
+                case "ClearAllReviewNotes":
+                    if (MessageBox.Show("You are about to remove all the Review Notes. Are you sure?",
                             "Remove Review Note", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
-                        schemaManager.RemoveAnnotation(_selected, reviewNote);
+                        _schemaManager.RemoveAnnotations(_model);
+                        RemoveAnnotations(_model.Entities);
+                        RemoveAnnotations(_model.DataFlows);
+                        RemoveAnnotations(_model.Groups);
+                        RemoveAnnotations(_model.GetThreatEvents());
+                        RemoveAnnotations(_model.GetThreatEventMitigations());
+                        RemoveAnnotations(_model.ThreatTypes);
+                        RemoveAnnotations(_model.Mitigations);
+                        RemoveAnnotations(_model.GetThreatTypeMitigations());
+                        RemoveAnnotations(_model.EntityTemplates);
+                        RemoveAnnotations(_model.FlowTemplates);
+                        RemoveAnnotations(_model.TrustBoundaryTemplates);
+                        RemoveAnnotations(_model.Diagrams);
                         _annotation.Annotation = null;
-                        RemoveButton(reviewNote);
+                        LoadModel();
                     }
                     break;
                 case "Export":
@@ -115,6 +138,20 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
             }
 
             _right.ResumeLayout();
+        }
+
+        private void RemoveAnnotations(IEnumerable<IPropertiesContainer> containers)
+        {
+            var items = containers?
+                .Where(x => _schemaManager.HasReviewNotes(x))
+                .ToArray();
+            if (items?.Any() ?? false)
+            {
+                foreach (var item in items)
+                {
+                    _schemaManager.RemoveAnnotations(item);
+                }
+            }
         }
 
         private void ExportCsv([Required] string fileName)

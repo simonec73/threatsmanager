@@ -47,7 +47,7 @@ namespace ThreatsManager.Quality.Schemas
             if (schema != null)
             {
                 result = schema.GetPropertyType(Annotations) ?? schema.AddPropertyType(Annotations, PropertyValueType.JsonSerializableObject);
-                result.DoNotPrint = true;
+                result.DoNotPrint = false;
                 result.Visible = true;
                 result.CustomPropertyViewer = "Annotations Property Viewer";
                 result.Description = Resources.AnnotationsDescription;
@@ -158,6 +158,20 @@ namespace ThreatsManager.Quality.Schemas
                     jsonSerializableObject.Value is Annotations.Annotations annotations)
                 {
                     annotations.Remove(annotation);
+                }
+            }
+        }
+
+        public void RemoveAnnotations([NotNull] IPropertiesContainer container)
+        {
+            var propertyType = GetAnnotationsPropertyType();
+            if (propertyType != null)
+            {
+                var property = container.GetProperty(propertyType);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is Annotations.Annotations annotations)
+                {
+                    annotations.Clear();
                 }
             }
         }

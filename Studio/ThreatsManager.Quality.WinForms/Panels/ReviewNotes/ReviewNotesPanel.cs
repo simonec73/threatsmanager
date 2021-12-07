@@ -366,23 +366,31 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
 
         private void RemoveButtons()
         {
-            var items = _right.RootGroup.Items.OfType<LayoutControlItem>().Where(x => x.Control is Button).ToArray();
-            if (items.Any())
+            _right.SuspendLayout();
+            try
             {
-                foreach (var item in items)
+                var items = _right.RootGroup.Items.OfType<LayoutControlItem>().Where(x => x.Control is Button).ToArray();
+                if (items.Any())
                 {
-                    if (item.Control is Button button)
+                    foreach (var item in items)
                     {
-                        button.Click -= AnnotationButtonClick;
-                        item.Control = null;
-                        _right.Controls.Remove(button);
-                        _superTooltip.SetSuperTooltip(button, null);
-                    }
+                        if (item.Control is Button button)
+                        {
+                            button.Click -= AnnotationButtonClick;
+                            item.Control = null;
+                            _right.Controls.Remove(button);
+                            _superTooltip.SetSuperTooltip(button, null);
+                        }
 
-                    _right.RootGroup.Items.Remove(item);
+                        _right.RootGroup.Items.Remove(item);
+                    }
                 }
+                _annotationLayoutControlItem.Visible = false;
             }
-            _annotationLayoutControlItem.Visible = false;
+            finally
+            {
+                _right.ResumeLayout(true);
+            }
         }
 
         private void AnnotationButtonClick(object sender, EventArgs e)

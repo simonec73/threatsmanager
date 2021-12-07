@@ -761,6 +761,18 @@
   <ItemGroup>
     <None Include="Resources\wax_seal_black.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_small.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)Extensions\$(ProjectName)\" /Y
