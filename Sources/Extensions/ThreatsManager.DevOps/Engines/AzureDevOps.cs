@@ -725,7 +725,7 @@ namespace ThreatsManager.DevOps.Engines
                         {
                             var property = mitigation.GetProperty(field.PropertyType);
                             if (property != null)
-                                value = property.StringValue;
+                                value = property.StringValue?.Replace("\n", "<br/>");
                         }
                         break;
                 }
