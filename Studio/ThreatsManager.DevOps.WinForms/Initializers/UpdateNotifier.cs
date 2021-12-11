@@ -11,7 +11,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.Initializers
 {
-    [Extension("D527CFC8-E594-415A-A993-3FC1175C6487", "DevOps Update Notifier", 100, ExecutionMode.Business)]
+    [Extension("D527CFC8-E594-415A-A993-3FC1175C6487", "DevOps Update Notifier", 100, ExecutionMode.Management)]
     public class UpdateNotifier : IExtensionInitializer, IDesktopAlertAwareExtension
     {
         public void Initialize()

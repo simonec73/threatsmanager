@@ -10,7 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.Actions
 {
-    [Extension("EF25DA12-4E06-43B9-BB7F-D94068E08522", "Manage Iterations Action", 63, ExecutionMode.Simplified)]
+    [Extension("EF25DA12-4E06-43B9-BB7F-D94068E08522", "Manage Iterations Action", 63, ExecutionMode.Management)]
     public class ManageIterations : IMainRibbonExtension
     {
         public IEnumerable<IActionDefinition> GetStartPanelsList(IThreatModel model)

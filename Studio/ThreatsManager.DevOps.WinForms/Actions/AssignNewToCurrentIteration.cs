@@ -12,7 +12,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
 {
-    [Extension("410C2F55-D3C8-4CCA-8BB5-CF1DB9115FDB", "Assign new Mitigations to the current Iteration Context Aware Action", 20, ExecutionMode.Simplified)]
+    [Extension("410C2F55-D3C8-4CCA-8BB5-CF1DB9115FDB", "Assign new Mitigations to the current Iteration Context Aware Action", 20, ExecutionMode.Management)]
     public class AssignNewToCurrentIteration : IIdentityContextAwareAction, ICommandsBarContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.ThreatModel;

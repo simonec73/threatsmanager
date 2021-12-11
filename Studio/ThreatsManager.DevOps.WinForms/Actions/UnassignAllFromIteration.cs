@@ -12,7 +12,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
 {
-    [Extension("A14CDCC0-0B32-401B-B075-7CF6E2A8D326", "Unassign all Mitigations from Iterations Context Aware Action", 30, ExecutionMode.Simplified)]
+    [Extension("A14CDCC0-0B32-401B-B075-7CF6E2A8D326", "Unassign all Mitigations from Iterations Context Aware Action", 30, ExecutionMode.Management)]
     public class UnassignAllFromIteration : IIdentityContextAwareAction, ICommandsBarContextAwareAction, IDesktopAlertAwareExtension
     {
         public Scope Scope => Scope.ThreatModel;
