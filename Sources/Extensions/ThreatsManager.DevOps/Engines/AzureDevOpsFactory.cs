@@ -7,7 +7,7 @@ namespace ThreatsManager.DevOps.Engines
     /// Azure DevOps Factory.
     /// </summary>
     /// <remarks>Supports only</remarks>
-    [Extension("0EB212AB-EBA8-483D-A76C-E2D31CEFFCE1", "Azure DevOps Connector", 10, ExecutionMode.Simplified)]
+    [Extension("0EB212AB-EBA8-483D-A76C-E2D31CEFFCE1", "Azure DevOps Connector", 10, ExecutionMode.Management)]
     public class AzureDevOpsFactory : IDevOpsConnectorFactory
     {
         public IDevOpsConnector Create()
