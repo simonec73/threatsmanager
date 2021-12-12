@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Threading.Tasks;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Schemas;
@@ -247,6 +246,13 @@ namespace ThreatsManager.DevOps
                             }
                         }
                     }
+                }
+
+                var missing = mitigations.Where(x => x.Value != null && (infos?.All(y => y.Id != x.Value.Id) ?? true)).ToArray();
+                if (missing.Any())
+                {
+                    foreach (var m in missing)
+                        schemaManager.RemoveDevOpsInfos(m.Key);
                 }
             }
 
