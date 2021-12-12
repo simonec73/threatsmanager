@@ -139,8 +139,9 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 if (control is RichTextBox richTextBox)
                 {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
+                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox,
                         _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
+
                 }
                 else
                 {
@@ -355,9 +356,9 @@ namespace ThreatsManager.Utilities.WinForms
                         mitigationEntity.ImageChanged -= OnThreatEventMitigationImageChanged;
                     }
                     ((INotifyPropertyChanged) mitigation.ThreatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
-                    var labetThreatEventMitigation = GetControl("Threat Event Mitigation", "Associated To");
-                    if (labetThreatEventMitigation != null)
-                        _superTooltip.SetSuperTooltip(labetThreatEventMitigation, null);
+                    var labelThreatEventMitigation = GetControl("Threat Event Mitigation", "Associated To");
+                    if (labelThreatEventMitigation != null)
+                        _superTooltip.SetSuperTooltip(labelThreatEventMitigation, null);
                 }
 
                 var panels = _dynamicLayout.Controls.OfType<ExpandablePanel>().ToArray();
@@ -371,12 +372,32 @@ namespace ThreatsManager.Utilities.WinForms
                         {
                             foreach (var control in controls)
                             {
-                                if (control is TextBox)
+                                if (control is TextBox textBox)
                                 {
                                     ClearEventInvocations(control, "TextChanged");
-                                } else if (control is RichTextBox)
+                                    try
+                                    {
+                                        _spellAsYouType.RemoveTextBoxBase(textBox);
+                                    }
+                                    catch
+                                    {
+                                    }
+                                } else if (control is RichTextBox richTextBox)
                                 {
                                     ClearEventInvocations(control, "TextChanged");
+                                    var component = _spellAsYouType.GetTextComponents()?
+                                        .OfType<RichTextBoxSpellAsYouTypeAdapter>()
+                                        .FirstOrDefault(x => x.TextBox == richTextBox);
+                                    if (component != null)
+                                    {
+                                        try
+                                        {
+                                            _spellAsYouType.RemoveTextComponent(component);
+                                        }
+                                        catch
+                                        {
+                                        }
+                                    }
                                 } else if (control is SwitchButton)
                                 {
                                     ClearEventInvocations(control, "ValueChanged");
@@ -490,9 +511,46 @@ namespace ThreatsManager.Utilities.WinForms
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!_loading && !this.ContainsFocus)
+            if (!_loading)
             {
-                ShowItem(_item);
+                if (!this.ContainsFocus)
+                    ShowItem(_item);
+                else
+                {
+                    var identity = sender as IIdentity;
+                    var dataFlow = sender as IDataFlow;
+                    var threatType = sender as IThreatType;
+                    var threatEvent = sender as IThreatEvent;
+
+                    // TODO: cover the other "standard" properties and objects.
+                    switch (e.PropertyName)
+                    {
+                        case "Name":
+                            if (identity != null)
+                                _itemName.Text = identity.Name;
+                            break;
+                        case "Description":
+                            if (identity != null)
+                                _itemDescription.Text = identity.Description;
+                            break;
+                        case "FlowType":
+                            if (dataFlow != null && GetControl("Flow", "Flow Type") is ComboBox comboFlow)
+                            {
+                                comboFlow.SelectedItem = dataFlow.FlowType.GetEnumLabel();
+                            }
+                            break;
+                        case "Severity":
+                            if (threatType != null && GetControl("Threat Type", "Severity") is ComboBox comboTT)
+                            {
+                                comboTT.SelectedItem = threatType.Severity.Name;
+                            } else if (threatEvent != null &&
+                                       GetControl("Threat Event", "Severity") is ComboBox comboTE)
+                            {
+                                comboTE.SelectedItem = threatEvent.Severity.Name;
+                            }
+                            break;
+                    }
+                }
             }
         }
 
@@ -751,7 +809,7 @@ namespace ThreatsManager.Utilities.WinForms
 
                     foreach (var property in properties)
                     {
-                        // TODO: Implement property refresh management.
+                        var ro = _readonly || property.ReadOnly || property.PropertyType.ReadOnly;
 
                         if (!string.IsNullOrWhiteSpace(property.PropertyType?.CustomPropertyViewer))
                         {
@@ -763,38 +821,38 @@ namespace ThreatsManager.Utilities.WinForms
                                 var viewer = factory.CreatePropertyViewer(container, property);
                                 if (viewer != null)
                                 {
-                                    AddPropertyViewer(section, viewer, _readonly);
+                                    AddPropertyViewer(section, viewer, ro);
                                 }
                             }
                         } else if (property is IPropertySingleLineString propertySingleLineString)
                         {
-                            var text = AddSingleLineText(section, propertySingleLineString, _readonly);
+                            var text = AddSingleLineText(section, propertySingleLineString, ro);
                             AddSpellCheck(text);
                         }
                         else if (property is IPropertyString propertyString)
                         {
-                            var richTextBox = AddText(section, propertyString, _readonly);
+                            var richTextBox = AddText(section, propertyString, ro);
                             AddSpellCheck(richTextBox);
                         }
                         else if (property is IPropertyBool propertyBool)
                         {
-                            AddBool(section, propertyBool, _readonly);
+                            AddBool(section, propertyBool, ro);
                         }
                         else if (property is IPropertyTokens propertyTokens)
                         {
-                            AddTokens(section, propertyTokens, _readonly);
+                            AddTokens(section, propertyTokens, ro);
                         }
                         else if (property is IPropertyArray propertyArray)
                         {
-                            AddList(section, propertyArray, _readonly);
+                            AddList(section, propertyArray, ro);
                         }
                         else if (property is IPropertyDecimal propertyDecimal)
                         {
-                            AddDecimal(section, propertyDecimal, _readonly);
+                            AddDecimal(section, propertyDecimal, ro);
                         }
                         else if (property is IPropertyInteger propertyInteger)
                         {
-                            AddInteger(section, propertyInteger, _readonly);
+                            AddInteger(section, propertyInteger, ro);
                         }
                         else if (property is IPropertyIdentityReference propertyIdentityReference)
                         {
@@ -814,7 +872,7 @@ namespace ThreatsManager.Utilities.WinForms
                         }
                         else if (property is IPropertyList propertyList)
                         {
-                            AddCombo(section, propertyList, _readonly);
+                            AddCombo(section, propertyList, ro);
                             //AddSingleLineLabel(section, property.PropertyType.Name, property.StringValue);
                         }
                         else if (property is IPropertyListMulti)
@@ -1664,13 +1722,33 @@ namespace ThreatsManager.Utilities.WinForms
         private void _itemName_TextChanged(object sender, EventArgs e)
         {
             if ((_item is IIdentity identity) && (string.CompareOrdinal(identity.Name, _itemName.Text) != 0))
-                identity.Name = _itemName.Text;
+            {
+                try
+                {
+                    _loading = true;
+                    identity.Name = _itemName.Text;
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
         }
 
         private void _itemDescription_TextChanged(object sender, EventArgs e)
         {
             if ((_item is IIdentity identity) && (string.CompareOrdinal(identity.Description, _itemDescription.Text) != 0))
-                identity.Description = _itemDescription.Text;
+            {
+                try
+                {
+                    _loading = true;
+                    identity.Description = _itemDescription.Text;
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
         }
 
         private void ChildPropertyAdded(IIdentity identity, IPropertyType propertyType, IProperty property)
@@ -1848,6 +1926,7 @@ namespace ThreatsManager.Utilities.WinForms
             expandablePanel.TitleStyle.Border = eBorderType.SingleLine;
             expandablePanel.TitleStyle.BorderColor.ColorSchemePart = eColorSchemePart.PanelBorder;
             expandablePanel.TitleStyle.ForeColor.Color = Color.Black;
+            expandablePanel.TitleStyle.UseMnemonic = false;
 
             var innerLayoutControl = new LayoutControl
             {
@@ -2082,7 +2161,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private void OnThreatEventMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatEventMenuClicked(IContextAwareAction action, object context)
         {
             var control = GetControl("Threat Events", string.Empty);
             if (control is ListBox listBox && _menuThreatEvent != null)
@@ -2109,7 +2188,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private void OnThreatEventMitigationMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatEventMitigationMenuClicked(IContextAwareAction action, object context)
         {
             var control = GetControl("Threat Event", "Mitigations");
             if (control is ListBox listBox && _menuThreatEventMitigation != null)
@@ -2136,7 +2215,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private void OnThreatTypeMitigationMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatTypeMitigationMenuClicked(IContextAwareAction action, object context)
         {
             var control = GetControl("Threat Type", "Standard Mitigations");
             if (control is ListBox listBox && _menuThreatTypeMitigation != null)

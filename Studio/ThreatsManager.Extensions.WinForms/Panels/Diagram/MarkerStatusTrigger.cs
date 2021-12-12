@@ -2,7 +2,7 @@
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
-    static class MarkerStatusTrigger
+    public static class MarkerStatusTrigger
     {
         static MarkerStatusTrigger()
         {

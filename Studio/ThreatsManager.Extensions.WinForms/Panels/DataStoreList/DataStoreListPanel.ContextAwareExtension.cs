@@ -22,10 +22,9 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             menu.MenuClicked += OnMenuClicked;
         }
 
-        private void OnMenuClicked(Point point, IContextAwareAction action)
+        private void OnMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IDataStore dataStore)
+            if (context is IDataStore dataStore)
                 action.Execute(dataStore);
         }
     }

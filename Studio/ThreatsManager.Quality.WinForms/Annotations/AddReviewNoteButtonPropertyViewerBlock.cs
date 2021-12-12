@@ -45,5 +45,6 @@ namespace ThreatsManager.Quality.Annotations
         public string Label => "Add Review Note";
         public string Text { get; set; }
         public Bitmap Image => null;
+        public bool Printable => false;
     }
 }

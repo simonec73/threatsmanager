@@ -7,7 +7,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.StatusInfoProviders
 {
-    [Extension("731CE9F1-6973-4619-A7A7-44654CB0EE78", "DevOps Connection Url Status Info Provider", 100, ExecutionMode.Business)]
+    [Extension("731CE9F1-6973-4619-A7A7-44654CB0EE78", "DevOps Connection Url Status Info Provider", 100, ExecutionMode.Management)]
     public class ConnectionUrlStatus : IStatusInfoProviderExtension
     {
         private IThreatModel _model;

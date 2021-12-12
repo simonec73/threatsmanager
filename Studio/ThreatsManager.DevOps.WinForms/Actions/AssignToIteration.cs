@@ -9,8 +9,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
 {
-    [Extension("83FA5293-988D-4FD4-A962-D9726EB6F25A", "Assign a Mitigation to an Iteration Context Aware Action", 
-        40, ExecutionMode.Simplified)]
+    [Extension("83FA5293-988D-4FD4-A962-D9726EB6F25A", "Assign a Mitigation to an Iteration Context Aware Action", 40, ExecutionMode.Management)]
     public class AssignToIteration : IIdentityContextAwareAction
     {
         public Scope Scope => Scope.Mitigation;

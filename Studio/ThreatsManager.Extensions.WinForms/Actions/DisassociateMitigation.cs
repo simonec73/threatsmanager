@@ -15,8 +15,6 @@ namespace ThreatsManager.Extensions.Actions
     public class DisassociateMitigation : IThreatEventMitigationContextAwareAction,
         IThreatTypeMitigationContextAwareAction, IDesktopAlertAwareExtension
     {
-        private ExecutionMode _executionMode = ExecutionMode.Expert;
-
         public Scope Scope => Scope.ThreatEventMitigation | Scope.ThreatTypeMitigation;
         public string Label => "Disassociate the Mitigation";
         public string Group => "Associate";

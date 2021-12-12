@@ -71,8 +71,8 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         [InitializationRequired]
         public async void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            string text = null;
-            bool warning = false;
+            //string text = null;
+            //bool warning = false;
 
             try
             {

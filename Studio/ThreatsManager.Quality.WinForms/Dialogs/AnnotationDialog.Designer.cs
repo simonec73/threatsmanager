@@ -40,6 +40,7 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             // panel1
             // 
+            this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;

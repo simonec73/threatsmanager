@@ -209,35 +209,43 @@ namespace ThreatsManager.DevOps.Panels
         #endregion
 
         #region Status Management.
-        protected virtual void SetFirst(object item)
+        protected virtual bool SetFirst(object item)
         {
+            return false;
         }
 
-        protected virtual void SetSecond(object item)
+        protected virtual bool SetSecond(object item)
         {
+            return false;
         }
 
-        protected virtual void SetThird(object item)
+        protected virtual bool SetThird(object item)
         {
+            return false;
         }
 
-        protected virtual void SetFourth(object item)
+        protected virtual bool SetFourth(object item)
         {
+            return false;
         }
 
-        protected virtual void SetFifth(object item)
+        protected virtual bool SetFifth(object item)
         {
+            return false;
         }
 
-        protected virtual void SetSixth(object item)
+        protected virtual bool SetSixth(object item)
         {
+            return false;
         }
         #endregion
 
         #region Access to Palettes.
         protected WorkItemStatus GetPaletteWorkItemStatus(int index)
         {
-            return Enum.GetValues(typeof(WorkItemStatus)).OfType<WorkItemStatus>().ElementAt(index);
+            var caption = _captions[index];
+
+            return EnumExtensions.GetEnumValue<WorkItemStatus>(caption);
         }
 
         protected void ClearPalettes()

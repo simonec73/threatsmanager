@@ -73,7 +73,7 @@ namespace ThreatsManager.Extensions.Actions
                         break;
                 }
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 ShowWarning?.Invoke("Summary Excel Report failed.");
             }

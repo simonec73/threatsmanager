@@ -35,7 +35,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             ShowsNegativeCoordinates = false;
             Size = new System.Drawing.Size(185, 376);
             HidesSelection = true;
-            ShowHorizontalScrollBar = GoViewScrollBarVisibility.IfNeeded;
+            ShowHorizontalScrollBar = GoViewScrollBarVisibility.Hide;
             ShowVerticalScrollBar = GoViewScrollBarVisibility.IfNeeded;
 
             RemoveMitigation += OnRemoveMitigation;

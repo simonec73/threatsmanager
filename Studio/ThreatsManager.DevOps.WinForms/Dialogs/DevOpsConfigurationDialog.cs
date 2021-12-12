@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model.TypeAdapters;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 
@@ -151,19 +153,21 @@ namespace ThreatsManager.DevOps.Dialogs
                 if (connector != null)
                 {
                     string filter = comboBox.Text;
-                    comboBox.Items.Clear();
 
                     var itemsAsync = await connector.GetItemsAsync(filter);
                     var items = itemsAsync?.ToArray();
                     if (items?.Any() ?? false)
+                    {
+                        comboBox.Items.Clear();
                         comboBox.Items.AddRange(items);
 
-                    comboBox.DroppedDown = true;
-                    comboBox.IntegralHeight = true;
-                    comboBox.SelectedIndex = -1;
-                    comboBox.Text = filter;
-                    comboBox.SelectionStart = filter.Length;
-                    comboBox.SelectionLength = 0;
+                        comboBox.DroppedDown = true;
+                        comboBox.IntegralHeight = true;
+                        comboBox.SelectedIndex = -1;
+                        comboBox.Text = filter;
+                        comboBox.SelectionStart = filter.Length;
+                        comboBox.SelectionLength = 0;
+                    }
                 }
             }
         }
@@ -254,6 +258,7 @@ namespace ThreatsManager.DevOps.Dialogs
                                 {
                                     var knownState = knownStateString.GetEnumValue<WorkItemStatus>();
                                     connector.SetWorkItemStateMapping(devOpsState, knownState);
+                                    DevOpsManager.UpdateConfig(_model);
                                     if (knownState == WorkItemStatus.Unknown)
                                     {
                                         cell.Value = connector.WorkItemStateMappings?
@@ -281,60 +286,26 @@ namespace ThreatsManager.DevOps.Dialogs
                 row.Tag is IDevOpsField field &&
                 cell.Value is IdentityField identityField)
             {
-                var connector = DevOpsManager.GetConnector(_model);
-                if (connector != null)
+                var pair = await ManageField(field, identityField);
+                if (pair.Key != null && pair.Value != null)
                 {
-                    var fieldsAsync = await connector.GetWorkItemDevOpsFieldsAsync();
-                    var fields = fieldsAsync?.ToArray();
-                    if (fields?.Any() ?? false)
-                    {
-                        var dialog = new FieldAssociationDialog();
-                        dialog.Initialize(_model, fields);
-                        dialog.SetField(field, identityField);
-                        if (dialog.ShowDialog(this) == DialogResult.OK)
-                        {
-                            connector.SetWorkItemFieldMapping(field, null);
-                            field = dialog.Field;
-                            identityField = dialog.IdentityField;
-                            if (field != null && identityField != null)
-                            {
-                                connector.SetWorkItemFieldMapping(field, identityField);
-                                row.Cells["Field"].Value = field.Label;
-                                cell.Value = identityField;
-                                row.Tag = field;
-                            }
-                        }
-                    }
+                    row.Cells["Field"].Value = pair.Key.Label;
+                    cell.Value = pair.Value;
+                    row.Tag = pair.Key;
                 }
             }
         }
 
         private async void _add_Click(object sender, EventArgs e)
         {
-            var connector = DevOpsManager.GetConnector(_model);
-            if (connector != null)
+            var pair = await ManageField(null, null);
+            if (pair.Key != null && pair.Value != null)
             {
-                var fieldsAsync = await connector.GetWorkItemDevOpsFieldsAsync();
-                var fields = fieldsAsync?.ToArray();
-                if (fields?.Any() ?? false)
+                var row = new GridRow(pair.Key.Label, pair.Value)
                 {
-                    var dialog = new FieldAssociationDialog();
-                    dialog.Initialize(_model, fields);
-                    if (dialog.ShowDialog(this) == DialogResult.OK)
-                    {
-                        var field = dialog.Field;
-                        var identityField = dialog.IdentityField;
-                        if (field != null && identityField != null)
-                        {
-                            connector.SetWorkItemFieldMapping(field, identityField);
-                            var row = new GridRow(field.Label, identityField)
-                            {
-                                Tag = field
-                            };
-                            _gridFields.PrimaryGrid.Rows.Add(row);
-                        }
-                    }
-                }
+                    Tag = pair.Key
+                };
+                _gridFields.PrimaryGrid.Rows.Add(row);
             }
         }
 
@@ -354,10 +325,43 @@ namespace ThreatsManager.DevOps.Dialogs
                     if (connector != null)
                     {
                         connector.SetWorkItemFieldMapping(field, null);
+                        DevOpsManager.UpdateConfig(_model);
                         _gridFields.PrimaryGrid.Rows.Remove(selectedRow);
                     }
                 }
             }
+        }
+
+        private async Task<KeyValuePair<IDevOpsField, IdentityField>> ManageField(IDevOpsField field, IdentityField identityField)
+        {
+            KeyValuePair<IDevOpsField, IdentityField> result = new KeyValuePair<IDevOpsField, IdentityField>(null, null);
+
+            var connector = DevOpsManager.GetConnector(_model);
+            if (connector != null)
+            {
+                var fieldsAsync = await connector.GetWorkItemDevOpsFieldsAsync();
+                var fields = fieldsAsync?.ToArray();
+                if (fields?.Any() ?? false)
+                {
+                    var dialog = new FieldAssociationDialog();
+                    dialog.Initialize(_model, fields);
+                    if (field != null && identityField != null)
+                        dialog.SetField(field, identityField);
+                    if (dialog.ShowDialog(this) == DialogResult.OK)
+                    {
+                        field = dialog.Field;
+                        identityField = dialog.IdentityField;
+                        if (field != null && identityField != null)
+                        {
+                            connector.SetWorkItemFieldMapping(field, identityField);
+                            DevOpsManager.UpdateConfig(_model);
+                            result = new KeyValuePair<IDevOpsField, IdentityField>(field, identityField);
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

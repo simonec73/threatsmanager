@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.Extensions;
@@ -253,7 +254,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                 {
                     var page = engine.AddPage("Report");
                     List<string> fields = new List<string> {"Object Type", "Name", "Context", "Annotation Type",
-                        "Annotation Text", "Asked By", "Asked On", "Asked Via", "Answered"};
+                        "Annotation Text", "Asked By", "Asked On", "Asked Via", "Answered", "Answer"};
                     engine.AddHeader(page, fields.ToArray());
 
                     foreach (var item in list)
@@ -295,6 +296,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                                     string askedOn = null;
                                     string askedVia = null;
                                     string answered = null;
+                                    string answers = null;
                                     if (annotation is TopicToBeClarified topicToBeClarified)
                                     {
                                         annotationType = "Topic to be clarified";
@@ -302,6 +304,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                                         askedOn = topicToBeClarified.AskedOn.ToShortDateString();
                                         askedVia = topicToBeClarified.AskedVia;
                                         answered = topicToBeClarified.Answered.ToString();
+                                        answers = GetAnswers(topicToBeClarified.Answers);
                                     }
                                     else if (annotation is Highlight highlight)
                                     {
@@ -320,7 +323,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                                         engine.AddRow(page, new[]
                                         {
                                             objectType, name, context, annotationType,
-                                            text, askedBy, askedOn, askedVia, answered
+                                            text, askedBy, askedOn, askedVia, answered, answers
                                         });
                                 }
                             }
@@ -330,6 +333,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     try
                     {
                         engine.Save(fileName);
+                        ShowMessage?.Invoke("File created successfully.");
                     }
                     catch (Exception exc)
                     {
@@ -337,6 +341,32 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     }
                 }
             }
+            else
+            {
+                ShowWarning?.Invoke("The file has not been created because it would be empty.");
+            }
+        }
+
+        private string GetAnswers(IEnumerable<AnnotationAnswer> answers)
+        {
+            string result = null;
+
+            var list = answers?.ToArray();
+            if (list?.Any() ?? false)
+            {
+                var builder = new StringBuilder();
+
+                foreach (var item in list)
+                {
+                    builder.AppendLine($"-- By {item.AnsweredBy} on {item.AnsweredOn.ToShortDateString()} via {item.AnsweredVia}");
+                    builder.AppendLine(item.Text);
+                    builder.AppendLine();
+                }
+
+                result = builder.ToString();
+            }
+
+            return result;
         }
 
         private void Add([NotNull] List<IPropertiesContainer> list, IEnumerable<IPropertiesContainer> containers)

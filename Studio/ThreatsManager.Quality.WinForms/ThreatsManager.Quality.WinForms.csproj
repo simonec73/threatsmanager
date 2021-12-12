@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\PostSharp.6.9.4\build\PostSharp.props" Condition="Exists('..\packages\PostSharp.6.9.4\build\PostSharp.props')" />
+  <Import Project="..\packages\PostSharp.6.9.11\build\PostSharp.props" Condition="Exists('..\packages\PostSharp.6.9.11\build\PostSharp.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -52,14 +52,11 @@
     <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
     <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
     <Reference Include="DevComponents.Instrumentation, Version=14.1.0.35, Culture=neutral, PublicKeyToken=f90dc37c26666a67, processorArchitecture=MSIL" />
-    <Reference Include="Fizzler, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4ebff4844e382110, processorArchitecture=MSIL">
-      <HintPath>..\packages\Fizzler.1.2.0\lib\netstandard2.0\Fizzler.dll</HintPath>
+    <Reference Include="Fizzler, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4ebff4844e382110, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fizzler.1.3.0\lib\netstandard2.0\Fizzler.dll</HintPath>
     </Reference>
     <Reference Include="Keyoti.RapidSpell.NET4">
       <HintPath>..\..\Build\nuget\bin\net472\Keyoti.RapidSpell.NET4.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Toolkit.Forms.UI.Controls.WebView">
-      <HintPath>..\..\..\..\Users\simon\.nuget\packages\microsoft.toolkit.forms.ui.controls.webview\6.1.2\lib\net462\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -71,41 +68,41 @@
     <Reference Include="Northwoods.Go.Layout">
       <HintPath>..\References\Northwoods.Go.Layout.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp, Version=6.9.4.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Redist.6.9.4\lib\net45\PostSharp.dll</HintPath>
+    <Reference Include="PostSharp, Version=6.9.11.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Redist.6.9.11\lib\net45\PostSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.9.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.6.9.4\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.6.9.11\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Common, Version=6.9.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.9.4\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Common, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.6.9.11\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Model, Version=6.9.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.9.4\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Model, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.6.9.11\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Threading, Version=6.9.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.9.4\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Threading, Version=6.9.11.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.6.9.11\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
     </Reference>
-    <Reference Include="Svg, Version=3.2.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
-      <HintPath>..\packages\Svg.3.2.3\lib\net461\Svg.dll</HintPath>
+    <Reference Include="Svg, Version=3.3.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.3.3.0\lib\net461\Svg.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Compression.Base, Version=19.1460.0.58, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Compression.Base.19.1.0.58\lib\net46\Syncfusion.Compression.Base.dll</HintPath>
+    <Reference Include="Syncfusion.Compression.Base, Version=19.3460.0.43, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Compression.Base.19.3.0.43\lib\net46\Syncfusion.Compression.Base.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Gauge.Windows, Version=19.1460.0.58, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Gauge.Windows.19.1.0.58\lib\net46\Syncfusion.Gauge.Windows.dll</HintPath>
+    <Reference Include="Syncfusion.Gauge.Windows, Version=19.3460.0.43, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Gauge.Windows.19.3.0.43\lib\net46\Syncfusion.Gauge.Windows.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Licensing, Version=19.1460.0.58, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Licensing.19.1.0.58\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    <Reference Include="Syncfusion.Licensing, Version=19.3460.0.43, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.19.3.0.43\lib\net46\Syncfusion.Licensing.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Pdf.Base, Version=19.1460.0.58, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Pdf.WinForms.19.1.0.58\lib\net46\Syncfusion.Pdf.Base.dll</HintPath>
+    <Reference Include="Syncfusion.Pdf.Base, Version=19.3460.0.43, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Pdf.WinForms.19.3.0.43\lib\net46\Syncfusion.Pdf.Base.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Shared.Base, Version=19.1460.0.58, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Shared.Base.19.1.0.58\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
+    <Reference Include="Syncfusion.Shared.Base, Version=19.3460.0.43, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Shared.Base.19.3.0.43\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.XlsIO.Base, Version=19.1460.0.58, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.XlsIO.WinForms.19.1.0.58\lib\net46\Syncfusion.XlsIO.Base.dll</HintPath>
+    <Reference Include="Syncfusion.XlsIO.Base, Version=19.3460.0.43, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.XlsIO.WinForms.19.3.0.43\lib\net46\Syncfusion.XlsIO.Base.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -124,8 +121,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -153,7 +150,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Packaging, Version=1.4.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Packaging, Version=1.5.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net472\ThreatsManager.Packaging.dll</HintPath>
     </Reference>
@@ -189,6 +186,22 @@
     <Compile Include="Annotations\AnswerControl.Designer.cs">
       <DependentUpon>AnswerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="CalculatedSeverity\AdjustedByPropertyViewerBlock.cs" />
+    <Compile Include="CalculatedSeverity\AdjustedOnPropertyViewerBlock.cs" />
+    <Compile Include="CalculatedSeverity\AdjustReasonPropertyViewerBlock.cs" />
+    <Compile Include="CalculatedSeverity\AdjustFactorPropertyViewerBlock.cs" />
+    <Compile Include="CalculatedSeverity\AdjustSeverityPropertyViewerBlock.cs" />
+    <Compile Include="CalculatedSeverity\CalculatedSeverityPropertyViewer.cs" />
+    <Compile Include="CalculatedSeverity\ApplyCalculatedSeverityPropertyViewerBlock.cs" />
+    <Compile Include="CalculatedSeverity\CalculatedSeverityPropertyViewerFactory.cs" />
+    <Compile Include="CalculatedSeverity\DeltaValue.cs" />
+    <Compile Include="CalculatedSeverity\SeverityCalculator.cs" />
+    <Compile Include="Dialogs\AdjustSeverityDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AdjustSeverityDialog.Designer.cs">
+      <DependentUpon>AdjustSeverityDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\AnnotationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -219,6 +232,7 @@
     <Compile Include="Dialogs\RuleFilterDialog.designer.cs">
       <DependentUpon>RuleFilterDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="QualityConfigurationManager.cs" />
     <Compile Include="ExtensionsContainer.cs" />
     <Compile Include="Annotations\AnnotationControl.cs">
       <SubType>UserControl</SubType>
@@ -228,6 +242,28 @@
     </Compile>
     <Compile Include="Initializers\AnnotationsInitializer.cs" />
     <Compile Include="Panels\Annotations\ExcelReportEngine.cs" />
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanel.Designer.cs">
+      <DependentUpon>CalculatedSeverityListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanelFactory.cs" />
+    <Compile Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Panels\Configuration\ConfigurationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\Configuration\ConfigurationPanel.Designer.cs">
+      <DependentUpon>ConfigurationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Configuration\ConfigurationPanelFactory.cs" />
     <Compile Include="Panels\ReviewNotes\ReviewNotesPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -296,10 +332,22 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Schemas\AnnotationsPropertySchemaManager.cs" />
+    <Compile Include="Schemas\CalculatedSeverityConfiguration.cs" />
+    <Compile Include="Schemas\CalculatedSeverityPropertySchemaManager.cs" />
+    <Compile Include="StatusInfoProviders\AnsweredTopicCounter.cs" />
+    <Compile Include="StatusInfoProviders\HighlightCounter.cs" />
+    <Compile Include="StatusInfoProviders\NoteCounter.cs" />
+    <Compile Include="StatusInfoProviders\OpenTopicCounter.cs" />
+    <Compile Include="StatusInfoProviders\ReviewNoteCounter.cs" />
+    <Compile Include="StatusInfoProviders\TopicToBeClarifiedCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Annotations\AnswerControl.resx">
       <DependentUpon>AnswerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AdjustSeverityDialog.resx">
+      <DependentUpon>AdjustSeverityDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AnnotationDialog.resx">
       <DependentUpon>AnnotationDialog.cs</DependentUpon>
@@ -318,6 +366,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\RuleFilterDialog.resx">
       <DependentUpon>RuleFilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\CalculatedSeverityList\CalculatedSeverityListPanel.resx">
+      <DependentUpon>CalculatedSeverityListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\Configuration\ConfigurationPanel.resx">
+      <DependentUpon>ConfigurationPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\ReviewNotes\ReviewNotesPanel.resx">
       <DependentUpon>ReviewNotesPanel.cs</DependentUpon>
@@ -653,7 +707,72 @@
   <ItemGroup>
     <None Include="Resources\clipboard_check_edit_small_delete.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\threat_event_sum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_big_sum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_huge_sum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\threat_event_small_sum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_two_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_two_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_two_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\element.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\element_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\element_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\element_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_cascade.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_cascade_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_cascade_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elements_cascade_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wax_seal_black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_huge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_small.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)Extensions\$(ProjectName)\" /Y
@@ -663,8 +782,8 @@ xcopy "$(TargetDir)*.pdb" "$(SolutionDir)Extensions\$(ProjectName)\" /Y</PostBui
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\PostSharp.6.9.4\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.9.4\build\PostSharp.props'))" />
-    <Error Condition="!Exists('..\packages\PostSharp.6.9.4\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.9.4\build\PostSharp.targets'))" />
+    <Error Condition="!Exists('..\packages\PostSharp.6.9.11\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.9.11\build\PostSharp.props'))" />
+    <Error Condition="!Exists('..\packages\PostSharp.6.9.11\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.6.9.11\build\PostSharp.targets'))" />
   </Target>
-  <Import Project="..\packages\PostSharp.6.9.4\build\PostSharp.targets" Condition="Exists('..\packages\PostSharp.6.9.4\build\PostSharp.targets')" />
+  <Import Project="..\packages\PostSharp.6.9.11\build\PostSharp.targets" Condition="Exists('..\packages\PostSharp.6.9.11\build\PostSharp.targets')" />
 </Project>

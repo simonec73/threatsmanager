@@ -56,20 +56,22 @@ namespace ThreatsManager.DevOps.Engines
             _workItemMapping.SetStandardMapping("To Do", WorkItemStatus.Created);
             _workItemMapping.SetStandardMapping("New", WorkItemStatus.Created);
             _workItemMapping.SetStandardMapping("Open", WorkItemStatus.Created);
-            _workItemMapping.SetStandardMapping("Active", WorkItemStatus.Created);
             _workItemMapping.SetStandardMapping("Requested", WorkItemStatus.Created);
             _workItemMapping.SetStandardMapping("Design", WorkItemStatus.Created);
             _workItemMapping.SetStandardMapping("In Planning", WorkItemStatus.Planned);
             _workItemMapping.SetStandardMapping("Approved", WorkItemStatus.Planned);
             _workItemMapping.SetStandardMapping("Ready", WorkItemStatus.Planned);
             _workItemMapping.SetStandardMapping("Accepted", WorkItemStatus.Planned);
+            _workItemMapping.SetStandardMapping("Active", WorkItemStatus.InProgress);
             _workItemMapping.SetStandardMapping("In Progress", WorkItemStatus.InProgress);
             _workItemMapping.SetStandardMapping("Committed", WorkItemStatus.InProgress);
+            _workItemMapping.SetStandardMapping("Resolved", WorkItemStatus.InProgress);            
             _workItemMapping.SetStandardMapping("Done", WorkItemStatus.Done);
             _workItemMapping.SetStandardMapping("Closed", WorkItemStatus.Done);
             _workItemMapping.SetStandardMapping("Inactive", WorkItemStatus.Done);
             _workItemMapping.SetStandardMapping("Completed", WorkItemStatus.Done);
             _workItemMapping.SetStandardMapping("Removed", WorkItemStatus.Removed);
+
 
             _workItemFieldMapping.SetStandardMapping("System.Title", new IdentityField(IdentityFieldType.Name));
             _workItemFieldMapping.SetStandardMapping("System.Description", new IdentityField(IdentityFieldType.Description));
@@ -590,7 +592,10 @@ namespace ThreatsManager.DevOps.Engines
                 var workItemInfo = await InternalGetWorkItemInfoAsync(mitigation, client).ConfigureAwait(false);
                 if (workItemInfo != null)
                 {
-                    result = await InternalSetWorkItemStateAsync(workItemInfo.Id, newStatus, client).ConfigureAwait(false);
+                    if (newStatus == WorkItemStatus.Unknown)
+                        result = await InternalRemoveWorkItemAsync(workItemInfo.Id, client).ConfigureAwait(false);
+                    else    
+                        result = await InternalSetWorkItemStateAsync(workItemInfo.Id, newStatus, client).ConfigureAwait(false);
                 }
             }
 
@@ -600,11 +605,18 @@ namespace ThreatsManager.DevOps.Engines
         [InitializationRequired]
         public async Task<bool> SetWorkItemStateAsync(int id, WorkItemStatus newStatus)
         {
+            bool result = false;
+
             using (var connection = GetConnection())
             using (var client = connection.GetClient<WorkItemTrackingHttpClient>())
             {
-                return await InternalSetWorkItemStateAsync(id, newStatus, client).ConfigureAwait(false);
+                if (newStatus == WorkItemStatus.Unknown)
+                    result = await InternalRemoveWorkItemAsync(id, client).ConfigureAwait(false);
+                else    
+                    result = await InternalSetWorkItemStateAsync(id, newStatus, client).ConfigureAwait(false);
             }
+
+            return result;
         }
 
         [InitializationRequired]
@@ -724,7 +736,7 @@ namespace ThreatsManager.DevOps.Engines
                         {
                             var property = mitigation.GetProperty(field.PropertyType);
                             if (property != null)
-                                value = property.StringValue;
+                                value = property.StringValue?.Replace("\n", "<br/>");
                         }
                         break;
                 }
@@ -795,17 +807,24 @@ namespace ThreatsManager.DevOps.Engines
 
             if (!string.IsNullOrWhiteSpace(WorkItemType))
             {
-                var query = new Wiql()
+                try
                 {
-                    Query = queryText
-                };
+                    var query = new Wiql()
+                    {
+                        Query = queryText
+                    };
 
-                var queryResult = await client.QueryByWiqlAsync(query).ConfigureAwait(false);
-                var ids = queryResult?.WorkItems.Select(item => item.Id).ToArray();
+                    var queryResult = await client.QueryByWiqlAsync(query).ConfigureAwait(false);
+                    var ids = queryResult?.WorkItems.Select(item => item.Id).ToArray();
 
-                if ((ids?.Any() ?? false) && ids.FirstOrDefault() is int id)
+                    if ((ids?.Any() ?? false) && ids.FirstOrDefault() is int id)
+                    {
+                        result = (await GetWorkItemsInfoAsync(new[] { id }).ConfigureAwait(false))?.FirstOrDefault();
+                    }
+                }
+                catch (VssServiceException)
                 {
-                    result = (await GetWorkItemsInfoAsync(new[] {id}).ConfigureAwait(false))?.FirstOrDefault();
+                    result = null;
                 }
             }
 
@@ -818,7 +837,7 @@ namespace ThreatsManager.DevOps.Engines
 
             var fields = new[] {"System.Id", "System.State", "System.AssignedTo"};
 
-            var items = await client.GetWorkItemsAsync(Project, ids, fields).ConfigureAwait(false);
+            var items = await client.GetWorkItemsAsync(Project, ids, fields, null, null, WorkItemErrorPolicy.Omit).ConfigureAwait(false);
             if (items?.Any() ?? false)
             {
                 var list = new List<WorkItemInfo>();
@@ -936,6 +955,18 @@ namespace ThreatsManager.DevOps.Engines
 
             return result;
         }
+        
+        private async Task<bool> InternalRemoveWorkItemAsync(int id, [NotNull] WorkItemTrackingHttpClient client)
+        {
+            bool result = false;
+
+            var deletedWorkItem = await client.DeleteWorkItemAsync(id, false).ConfigureAwait(false);
+            if (deletedWorkItem != null)
+                result = true;
+
+            return result;
+        }
+
         #endregion
     }
 }

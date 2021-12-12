@@ -8,7 +8,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps.RoadmapProviders
 {
-    [Extension("3A5FBD28-EE02-4E60-AB45-4782D4E8FBA2", "DevOps Info Roadmap Property Provider", 35, ExecutionMode.Business)]
+    [Extension("3A5FBD28-EE02-4E60-AB45-4782D4E8FBA2", "DevOps Info Roadmap Property Provider", 35, ExecutionMode.Management)]
     public class DevOpsInfoRoadmapProvider : IRoadmapPropertyProvider
     {
         public string Name => "DevOps Status";

@@ -214,8 +214,45 @@ namespace ThreatsManager.DevOps
                                 schemaManager.SetDevOpsStatus(pair.Key, connector, info.Id, info.Url, info.AssignedTo, info.Status);
                                 result++;
                             }
+
+                            MitigationStatus status; 
+                            switch (info.Status)
+                            {
+                                case WorkItemStatus.Created:
+                                    status = MitigationStatus.Approved;
+                                    break;
+                                case WorkItemStatus.Planned:
+                                    status = MitigationStatus.Planned;
+                                    break;
+                                case WorkItemStatus.InProgress:
+                                    status = MitigationStatus.Planned;
+                                    break;
+                                case WorkItemStatus.Done:
+                                    status = MitigationStatus.Implemented;
+                                    break;
+                                default:
+                                    status = MitigationStatus.Proposed;
+                                    break;
+                            }
+
+                            var tems = model.GetThreatEventMitigations(pair.Key);
+                            if (tems?.Any() ?? false)
+                            {
+                                foreach (var tem in tems)
+                                {
+                                    if (tem.Status != status)
+                                        tem.Status = status;
+                                }
+                            }
                         }
                     }
+                }
+
+                var missing = mitigations.Where(x => x.Value != null && (infos?.All(y => y.Id != x.Value.Id) ?? true)).ToArray();
+                if (missing.Any())
+                {
+                    foreach (var m in missing)
+                        schemaManager.RemoveDevOpsInfos(m.Key);
                 }
             }
 

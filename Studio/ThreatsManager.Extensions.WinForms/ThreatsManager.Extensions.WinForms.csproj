@@ -126,13 +126,37 @@
     <Compile Include="..\ThreatsManager\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Actions\ApplyPropertySchema.cs" />
+    <Compile Include="Actions\ApplySeverityToThreatEvents.cs" />
+    <Compile Include="Actions\ApplyStrengthToMitigations.cs" />
+    <Compile Include="Actions\ApplyStatusToMitigations.cs" />
     <Compile Include="Actions\ChangeTemplate.cs" />
     <Compile Include="Actions\CopyThreatEvent.cs" />
     <Compile Include="Actions\DisassociateMitigation.cs" />
     <Compile Include="Actions\AssociateMitigation.cs" />
     <Compile Include="Actions\EditThreatType.cs" />
+    <Compile Include="Actions\RemovePropertySchema.cs" />
+    <Compile Include="Actions\AssociateMultipleMitigations.cs" />
     <Compile Include="Actions\ToggleTextLocation.cs" />
     <Compile Include="Dialogs\ActionType.cs" />
+    <Compile Include="Dialogs\AssociateMitigationsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AssociateMitigationsDialog.Designer.cs">
+      <DependentUpon>AssociateMitigationsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RemoveSchemaDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RemoveSchemaDialog.Designer.cs">
+      <DependentUpon>RemoveSchemaDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ApplySchemaDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ApplySchemaDialog.Designer.cs">
+      <DependentUpon>ApplySchemaDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ChangeTemplateDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -244,6 +268,27 @@
     <Compile Include="Dialogs\ResidualRiskEstimatorConfigurationDialog.Designer.cs">
       <DependentUpon>ResidualRiskEstimatorConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\SelectSeverityDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SelectSeverityDialog.Designer.cs">
+      <DependentUpon>SelectSeverityDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SelectStrengthDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SelectStrengthDialog.Designer.cs">
+      <DependentUpon>SelectStrengthDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SelectStatusDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SelectStatusDialog.Designer.cs">
+      <DependentUpon>SelectStatusDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Diagram\MarkerStatus.cs" />
+    <Compile Include="Panels\Diagram\MarkerStatusTrigger.cs" />
+    <Compile Include="Panels\Roadmap\ExcelReportEngine.cs" />
     <Compile Include="Panels\Roadmap\RoadmapFilter.cs" />
     <Compile Include="Dialogs\RoadmapFilterDialog.cs">
       <SubType>Form</SubType>
@@ -264,12 +309,7 @@
     <Compile Include="Panels\DataStoreList\DataStoreListFilter.cs" />
     <Compile Include="Panels\Diagram\AssociatedDiagramMarker.cs" />
     <Compile Include="Panels\Diagram\DpiState.cs" />
-    <Compile Include="Panels\Diagram\MarkerStatus.cs" />
-    <Compile Include="Panels\Diagram\MarkerStatusTrigger.cs" />
     <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListFilter.cs" />
-    <Compile Include="Panels\GridCellSuperTooltipProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Panels\Learning\LearningPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -308,7 +348,6 @@
     <Compile Include="Panels\Roadmap\RoadmapItem.cs" />
     <Compile Include="Panels\Roadmap\RoadmapSubItem.cs" />
     <Compile Include="Panels\Roadmap\RoadmapPanelFactory.ContextAwareExtension.cs" />
-    <Compile Include="Panels\Roadmap\RoadmapExtensions.cs" />
     <Compile Include="Panels\Roadmap\RoadmapPalette.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -336,6 +375,22 @@
       <DependentUpon>MitigationStatusChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Panels\ThreatEventList\ThreatEventListFilter.cs" />
+    <Compile Include="Panels\WeaknessList\WeaknessListFilter.cs" />
+    <Compile Include="Panels\WeaknessList\WeaknessListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\WeaknessList\WeaknessListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\WeaknessList\WeaknessListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\WeaknessList\WeaknessListPanel.Designer.cs">
+      <DependentUpon>WeaknessListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\WeaknessList\WeaknessListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\WeaknessList\WeaknessListPanelFactory.cs" />
+    <Compile Include="Panels\WeaknessList\WeaknessListPanelFactory.MainRibbonExtension.cs" />
     <Compile Include="Panels\ThreatTypesChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -443,9 +498,6 @@
     <Compile Include="Panels\PropertySchemaList\PropertySchemaListPanel.Designer.cs">
       <DependentUpon>PropertySchemaListPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\StrengthComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Panels\StrengthList\StrengthListPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -535,15 +587,6 @@
     <Compile Include="Panels\NotImplementedPanel.Designer.cs">
       <DependentUpon>NotImplementedPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\EnumComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Panels\SeverityComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Panels\ThreatActorComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Panels\ThreatEventList\ThreatEventListPanel.ContextAwareExtension.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -556,7 +599,6 @@
     <Compile Include="Panels\ThreatEventList\ThreatEventListPanel.Designer.cs">
       <DependentUpon>ThreatEventListPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\ThreatEventList\ThreatTypeComparer.cs" />
     <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.ContextAwareExtension.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -569,39 +611,12 @@
     <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.Designer.cs">
       <DependentUpon>ThreatTypeListPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\Word\Engine\Fields\AffectedObjectsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\FlowTypeField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\TablePropertyTypeField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\TargetField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\SourceField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\DirectivesField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\ApprovedMitigationsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\AssociatedToField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\DescriptionField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\ExistingMitigationsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\Field.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\ImplementedMitigationsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\AffectedThreatsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\MitigationsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\PlannedMitigationsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\PropertyTypeField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\ProposedMitigationsField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\SeverityField.cs" />
-    <Compile Include="Panels\Word\Engine\Fields\ControlTypeField.cs" />
-    <Compile Include="Panels\Word\Engine\ItemType.cs" />
-    <Compile Include="Panels\Word\Engine\Row.cs" />
-    <Compile Include="Panels\Word\Engine\Table.cs" />
-    <Compile Include="Panels\Word\Engine\Placeholder.cs" />
-    <Compile Include="Panels\Word\Engine\PlaceholderComparer.cs" />
-    <Compile Include="Panels\Word\Engine\PlaceholderSection.cs" />
     <Compile Include="Panels\Word\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Panels\Word\ProgressDialog.Designer.cs">
       <DependentUpon>ProgressDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\Word\Engine\TableType.cs" />
-    <Compile Include="Panels\Word\WordExtensions.cs" />
     <Compile Include="Panels\Word\WordReportingPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -702,6 +717,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Reporting\ChartLongTermProjection.cs" />
+    <Compile Include="Reporting\ChartMidTermProjection.cs" />
+    <Compile Include="Reporting\ChartShortTermProjection.cs" />
+    <Compile Include="Reporting\ChartRoadmapPlaceholder.cs" />
+    <Compile Include="Reporting\ListDiagramsPlaceholder.cs" />
+    <Compile Include="Reporting\TableRoadmapPlaceholder.cs" />
     <Compile Include="Schemas\CapecPropertySchemaManager.cs" />
     <Compile Include="Schemas\DiagramPropertySchemaManager.cs" />
     <Compile Include="Panels\ThreatSources\MitreCatalogControl.cs">
@@ -1062,6 +1083,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\AssociateMitigationsDialog.resx">
+      <DependentUpon>AssociateMitigationsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RemoveSchemaDialog.resx">
+      <DependentUpon>RemoveSchemaDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ApplySchemaDialog.resx">
+      <DependentUpon>ApplySchemaDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ChangeTemplateDialog.resx">
       <DependentUpon>ChangeTemplateDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -1107,6 +1137,15 @@
     <EmbeddedResource Include="Dialogs\RoadmapFilterDialog.resx">
       <DependentUpon>RoadmapFilterDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SelectSeverityDialog.resx">
+      <DependentUpon>SelectSeverityDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SelectStrengthDialog.resx">
+      <DependentUpon>SelectStrengthDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SelectStatusDialog.resx">
+      <DependentUpon>SelectStatusDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Panels\Configuration\ConfigurationPanel.resx">
       <DependentUpon>ConfigurationPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -1127,6 +1166,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\MitigationStatusChart.resx">
       <DependentUpon>MitigationStatusChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\WeaknessList\WeaknessListPanel.resx">
+      <DependentUpon>WeaknessListPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\ThreatTypesChart.resx">
       <DependentUpon>ThreatTypesChart.cs</DependentUpon>
@@ -1620,6 +1662,20 @@
     <None Include="Resources\arrows_join_diagonal_big.png" />
     <None Include="Resources\arrows_join_diagonal_huge.png" />
     <None Include="Resources\arrows_join_diagonal_small.png" />
+    <None Include="Resources\Azure DevOps_small.png" />
+    <None Include="Resources\Azure DevOps_128.png" />
+    <None Include="Resources\Azure DevOps_big.png" />
+    <None Include="Resources\Azure DevOps.png" />
+    <None Include="Resources\Azure DevOps_huge.png" />
+    <None Include="Resources\Azure DevOps_short_term.png" />
+    <None Include="Resources\Azure DevOps_big_long_term.png" />
+    <None Include="Resources\Azure DevOps_big_mid_term.png" />
+    <None Include="Resources\Azure DevOps_big_short_term.png" />
+    <None Include="Resources\Azure DevOps_huge_long_term.png" />
+    <None Include="Resources\Azure DevOps_huge_mid_term.png" />
+    <None Include="Resources\Azure DevOps_huge_short_term.png" />
+    <None Include="Resources\Azure DevOps_long_term.png" />
+    <None Include="Resources\Azure DevOps_mid_term.png" />
     <Content Include="Shortcuts.txt" />
     <Content Include="Colors.txt" />
     <Content Include="Resources\threats_selection_small.png" />
@@ -1641,33 +1697,38 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.705.50</Version>
+      <Version>1.0.1020.30</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>6.9.4</Version>
+      <Version>6.9.11</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>6.9.4</Version>
+      <Version>6.9.11</Version>
     </PackageReference>
     <PackageReference Include="Svg">
-      <Version>3.2.3</Version>
+      <Version>3.3.0</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.DocIO.WinForms">
-      <Version>19.1.0.58</Version>
+      <Version>19.3.0.43</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.XlsIO.WinForms">
-      <Version>19.1.0.58</Version>
+      <Version>19.3.0.43</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ThreatsManager.Extensions.Word\ThreatsManager.Extensions.Word.csproj">
+      <Project>{ce23c9bf-5841-412f-a20c-b0b96bb12686}</Project>
+      <Name>ThreatsManager.Extensions.Word</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
 xcopy "$(TargetDir)*.pdb" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
 xcopy "$(SolutionDir)..\Build\repo\net472\ThreatsManager.PackageManagers.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y
-xcopy "$(TargetDir)\x86\*.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y</PostBuildEvent>
+xcopy "$(TargetDir)\runtimes\win-x86\native\*.*" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

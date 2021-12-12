@@ -64,6 +64,15 @@ namespace ThreatsManager.DevOps.Schemas
             return result;
         }
 
+        public void RemoveDevOpsInfos([NotNull] IMitigation mitigation)
+        {
+            var propertyType = GetDevOpsInfoPropertyType();
+            if (propertyType != null)
+            {
+                mitigation.RemoveProperty(propertyType);
+            }
+        }
+
         public void SetDevOpsStatus([NotNull] IMitigation mitigation, 
             [NotNull] IDevOpsConnector connector, int id, string itemUrl, string assignedTo, WorkItemStatus status)
         {

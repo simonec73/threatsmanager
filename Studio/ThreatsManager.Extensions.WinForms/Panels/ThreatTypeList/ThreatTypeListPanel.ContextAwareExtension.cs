@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -29,17 +26,15 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
             menuThreatTypeMitigation.MenuClicked += OnThreatTypeMitigationMenuClicked;
         }
 
-        private void OnThreatTypeMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatTypeMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatType threatType)
+            if (context is IThreatType threatType)
                 action.Execute(threatType);
         }
 
-        private void OnThreatTypeMitigationMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatTypeMitigationMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatTypeMitigation mitigation)
+            if (context is IThreatTypeMitigation mitigation)
                 action.Execute(mitigation);
         }
     }

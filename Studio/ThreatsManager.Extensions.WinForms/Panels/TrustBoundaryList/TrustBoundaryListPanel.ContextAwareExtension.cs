@@ -25,10 +25,9 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
             menu.MenuClicked += OnMenuClicked;
         }
 
-        private void OnMenuClicked(Point point, IContextAwareAction action)
+        private void OnMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is ITrustBoundary trustBoundary)
+            if (context is ITrustBoundary trustBoundary)
                 action.Execute(trustBoundary);
         }
     }

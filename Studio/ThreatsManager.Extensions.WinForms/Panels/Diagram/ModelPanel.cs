@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
+using Syncfusion.XlsIO.Parser.Biff_Records;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -186,6 +189,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         internal Bitmap GetBitmap()
         {
             return _graph.ToBitmap();
+        }
+
+        internal Image GetMetafile()
+        {
+            return _graph.ToMetafile();
         }
 
         private void OpenDiagram(Guid diagramId)

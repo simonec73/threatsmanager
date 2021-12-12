@@ -50,5 +50,6 @@ namespace ThreatsManager.Quality.Annotations
         public string Label => "Add Notes";
         public string Text { get; set; }
         public Bitmap Image => null;
+        public bool Printable => false;
     }
 }

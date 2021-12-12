@@ -7,7 +7,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.DevOps.RoadmapProviders
 {
-    [Extension("4AF3DDCB-DFBD-400E-B05B-90C36E979F1A", "Iteration Roadmap Property Provider", 30, ExecutionMode.Business)]
+    [Extension("4AF3DDCB-DFBD-400E-B05B-90C36E979F1A", "Iteration Roadmap Property Provider", 30, ExecutionMode.Management)]
     public class IterationRoadmapProvider : IRoadmapPropertyProvider
     {
         public string Name => "Iteration";

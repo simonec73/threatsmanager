@@ -5,8 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.AutoGenRules.Engine;
-using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.AutoThreatGeneration.Actions;
 using ThreatsManager.AutoThreatGeneration.Dialogs;
 using ThreatsManager.Icons;
@@ -17,6 +17,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
 {
@@ -52,6 +53,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             LoadModel();
         }
 
+        [Dispatched]
         private void ModelChildRemoved(IIdentity identity)
         {
             if (identity is IThreatType threatType)
@@ -65,6 +67,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             }
         }
 
+        [Dispatched]
         private void ModelChildCreated(IIdentity identity)
         {
             if (identity is IThreatType threatType)
@@ -108,6 +111,15 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                     ddc.ButtonClear.Visible = true;
                     ddc.ButtonClearClick += DdcButtonClearClick;
                 }
+
+                panel.Columns.Add(new GridColumn("Top")
+                {
+                    HeaderText = "Top",
+                    DataType = typeof(bool),
+                    Width = 75,
+                    EditorType = typeof(GridSwitchButtonEditControl),
+                    AllowEdit = true
+                });
  
                 panel.Columns.Add(new GridColumn("AutoGenRule")
                 {
@@ -182,6 +194,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
 
             var row = new GridRow(
                 threatType.Name,
+                threatType.HasTop(),
                 rule ? "Edit Rule" : "Create Rule");
             ((INotifyPropertyChanged) threatType).PropertyChanged += OnThreatTypePropertyChanged;
             threatType.PropertyValueChanged += OnThreatTypePropertyValueChanged;
@@ -189,6 +202,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             UpdateMitigationLevel(threatType, row);
             panel.Rows.Add(row);
             row.Cells[0].PropertyChanged += OnThreatTypeCellChanged;
+            row.Cells[1].PropertyChanged += OnThreatTypeCellChanged;
 
             threatType.ThreatTypeMitigationAdded += OnThreatTypeMitigationAdded;
             threatType.ThreatTypeMitigationRemoved += OnThreatTypeMitigationRemoved;
@@ -229,6 +243,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             }
         }
 
+        [Dispatched]
         private void OnThreatTypeMitigationAdded(IThreatTypeMitigationsContainer container, IThreatTypeMitigation mitigation)
         {
             if (container is IThreatType threatType)
@@ -260,6 +275,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             }
         }
 
+        [Dispatched]
         private void OnThreatTypeMitigationRemoved(IThreatTypeMitigationsContainer container, IThreatTypeMitigation mitigation)
         {
             if (container is IThreatType threatType)
@@ -282,6 +298,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             }
         }
 
+        [Dispatched]
         private void OnThreatTypePropertyValueChanged(IPropertiesContainer container, IProperty property)
         {
             if (container is IThreatType threatType && property is IPropertyJsonSerializableObject jsonProperty &&
@@ -289,7 +306,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             {
                 var row = GetRow(threatType);
                 if (row != null)
-                    row.Cells[1].Value = selectionRule.Root != null ? "Edit Rule" : "Create Rule";
+                    row.Cells["AutoGenRule"].Value = selectionRule.Root != null ? "Edit Rule" : "Create Rule";
             }
         }
 
@@ -307,6 +324,9 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                             case "Name":
                                 threatType.Name = (string) cell.Value;
                                 break;
+                            case "Top":
+                                threatType.SetTop((bool)(cell.Value ?? false));
+                                break;
                         }
                     }
                 }
@@ -317,6 +337,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             }
         }
 
+        [Dispatched]
         private void OnThreatTypePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatType threatType)
@@ -380,6 +401,15 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                     AllowEdit = false
                 });
 
+                result.Columns.Add(new GridColumn("Top")
+                {
+                    HeaderText = "Top",
+                    DataType = typeof(bool),
+                    Width = 75,
+                    EditorType = typeof(GridSwitchButtonEditControl),
+                    AllowEdit = true
+                });
+
                 result.Columns.Add(new GridColumn("AutoGenRule")
                 {
                     HeaderText = "Automatic Threat Generation Rule",
@@ -439,17 +469,47 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
 
             GridRow row = new GridRow(
                 mitigation.Mitigation.Name,
+                mitigation.HasTop(),
                 rule ? "Edit Rule" : "Create Rule")
             {
                 Tag = mitigation
             };
             panel.Rows.Add(row);
+            row.Cells[1].PropertyChanged += OnMitigationCellChanged;
 
             ((INotifyPropertyChanged)mitigation).PropertyChanged += OnMitigationPropertyChanged;
             ((INotifyPropertyChanged)mitigation.Mitigation).PropertyChanged += OnMitigationPropertyChanged;
             mitigation.PropertyValueChanged += OnMitigationPropertyValueChanged;
+            mitigation.PropertyAdded += OnMitigationPropertyValueChanged;
+            mitigation.Mitigation.PropertyValueChanged += OnMitigationPropertyValueChanged;
+            mitigation.Mitigation.PropertyAdded += OnMitigationPropertyValueChanged;
         }
 
+        private void OnMitigationCellChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (!_loading && sender is GridCell cell)
+            {
+                try
+                {
+                    _loading = true;
+                    if (cell.GridRow.Tag is IThreatTypeMitigation mitigation)
+                    {
+                        switch (cell.GridColumn.Name)
+                        {
+                            case "Top":
+                                mitigation.SetTop((bool)(cell.Value ?? false));
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+
+        [Dispatched]
         private void OnMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IMitigation mitigation)
@@ -467,14 +527,25 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
             }
         }
 
+        [Dispatched]
         private void OnMitigationPropertyValueChanged(IPropertiesContainer container, IProperty property)
         {
-            if (container is IThreatTypeMitigation mitigation && property is IPropertyJsonSerializableObject jsonProperty &&
+            if (property is IPropertyJsonSerializableObject jsonProperty &&
                 jsonProperty.Value is SelectionRule selectionRule)
             {
-                var row = GetRow(mitigation);
-                if (row != null)
-                    row.Cells[1].Value = selectionRule.Root != null ? "Edit Rule" : "Create Rule";
+                if (container is IThreatTypeMitigation ttm)
+                {
+                    var row = GetRow(ttm);
+                    if (row != null)
+                        row.Cells["AutoGenRule"].Value = selectionRule.Root != null ? "Edit Rule" : "Create Rule";
+                }
+
+                if (container is IMitigation mitigation)
+                {
+                    var row = GetRow(mitigation);
+                    if (row != null)
+                        row.Cells["AutoGenRule"].Value = selectionRule.Root != null ? "Edit Rule" : "Create Rule";
+                }
             }
         }
 
@@ -643,9 +714,15 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                 var row = GetRow(e.Location);
 
                 if (row?.Tag is IThreatType)
+                {
+                    MenuDefinition.UpdateVisibility(_threatTypeMenu, row.Tag);
                     _threatTypeMenu?.Show(_grid.PointToScreen(e.Location));
+                }
                 if (row?.Tag is IThreatTypeMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_threatTypeMitigationMenu, row.Tag);
                     _threatTypeMitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
 
@@ -669,17 +746,24 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
 
         private static void UpdateMitigationLevel([NotNull] IThreatType threatType, [NotNull] GridRow row)
         {
-            switch (threatType.GetMitigationLevel())
+            try
             {
-                case MitigationLevel.NotMitigated:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
-                    break;
-                case MitigationLevel.Partial:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
-                    break;
-                case MitigationLevel.Complete:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
-                    break;
+                switch (threatType.GetMitigationLevel())
+                {
+                    case MitigationLevel.NotMitigated:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
+                        break;
+                    case MitigationLevel.Partial:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
+                        break;
+                    case MitigationLevel.Complete:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
+                        break;
+                }
+            }
+            catch
+            {
+                // Ignore
             }
         }
         #endregion

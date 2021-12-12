@@ -123,6 +123,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
             else
             {
+                schemaManager.SetDpiFactor(diagram);
+
                 var links = diagram.Links?.ToArray();
 
                 if (links?.Any() ?? false)
@@ -170,10 +172,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                                 result = DpiState.TooBig;
                         }
                     }
-                }
-                else
-                {
-                    schemaManager.SetDpiFactor(diagram);
                 }
             }
 

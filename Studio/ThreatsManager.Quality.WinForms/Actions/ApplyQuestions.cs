@@ -124,6 +124,7 @@ namespace ThreatsManager.Quality.Actions
                     Generate(question, et, asm);
                     Generate(question, ft, asm);
                     Generate(question, tbt, asm);
+                    Generate(question, model, asm);
                 }
 
                 result = true;
@@ -140,14 +141,20 @@ namespace ThreatsManager.Quality.Actions
             {
                 foreach (var item in items)
                 {
-                    if (question.Rule?.Evaluate(item) ?? false)
-                    {
-                        schemaManager.AddAnnotation(item, new TopicToBeClarified()
-                        {
-                            Text = question.Text
-                        });
-                    }
+                    Generate(question, item, schemaManager);
                 }
+            }
+        }
+
+        private void Generate([NotNull] Question question, [NotNull] IPropertiesContainer container, 
+            [NotNull] AnnotationsPropertySchemaManager schemaManager)
+        {
+            if (question.Rule?.Evaluate(container) ?? false)
+            {
+                schemaManager.AddAnnotation(container, new TopicToBeClarified()
+                {
+                    Text = question.Text
+                });
             }
         }
     }

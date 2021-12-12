@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreatsManager.Interfaces;
+﻿using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
-using ThreatsManager.Quality.Annotations;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
 
@@ -17,6 +11,7 @@ namespace ThreatsManager.Quality.Initializers
         public void Initialize()
         {
             KnownTypesBinder.AddKnownType(typeof(Annotations.Annotations));
+            KnownTypesBinder.AddKnownType(typeof(CalculatedSeverityConfiguration));
         }
     }
 }

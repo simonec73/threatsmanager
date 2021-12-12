@@ -39,31 +39,27 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             menuThreatEventMitigation.MenuClicked += OnThreatEventMitigationMenuClicked;
         }
 
-        private void OnThreatEventMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatEventMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatEvent threatEvent)
+            if (context is IThreatEvent threatEvent)
                 action.Execute(threatEvent);
         }
 
-        private void OnThreatTypeMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatTypeMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatType threatType)
+            if (context is IThreatType threatType)
                 action.Execute(threatType);
         }
 
-        private void OnScenarioMenuClicked(Point point, IContextAwareAction action)
+        private void OnScenarioMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatEventScenario scenario)
+            if (context is IThreatEventScenario scenario)
                 action.Execute(scenario);
         }
 
-        private void OnThreatEventMitigationMenuClicked(Point point, IContextAwareAction action)
+        private void OnThreatEventMitigationMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IThreatEventMitigation mitigation)
+            if (context is IThreatEventMitigation mitigation)
                 action.Execute(mitigation);
         }
     }

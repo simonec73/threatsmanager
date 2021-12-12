@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
+using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -24,8 +25,6 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         public MitigationsKanbanPanel() : base()
         {
             InitializeComponent();
-
-            Initialize(EnumExtensions.GetEnumLabels<WorkItemStatus>());
         }
 
         #region Implementation of interface IShowThreatModelPanel.
@@ -35,6 +34,7 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         {
             _model = threatModel;
 
+            InitializePalettes();
             LoadModel();
 
             DevOpsManager.RefreshDone += DevOpsManagerOnRefreshDone;
@@ -55,11 +55,14 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                 ClearPalettes();
 
                 var schemaManager = new RoadmapPropertySchemaManager(_model);
+                var devOpsSchemaManager = new DevOpsPropertySchemaManager(_model);
+                var connector = DevOpsManager.GetConnector(_model); 
                 IEnumerable<IMitigation> mitigations;
                 if (_filter == RoadmapStatus.NoActionRequired)
                 {
                     mitigations = _model?.GetUniqueMitigations()?
-                        .Where(x => schemaManager.GetStatus(x) != RoadmapStatus.NoActionRequired)
+                        .Where(x => (schemaManager.GetStatus(x) != RoadmapStatus.NoActionRequired) || 
+                                    (connector != null && devOpsSchemaManager.GetDevOpsInfo(x, connector) != null))
                         .OrderBy(x => x.Name).ToArray();
                 }
                 else
@@ -92,6 +95,26 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                 _loading = false;
             }
         }
+
+        private void InitializePalettes()
+        {
+            var connector = DevOpsManager.GetConnector(_model);
+            var itemStates = connector.GetWorkItemStatesAsync().Result?.ToArray();
+            if (itemStates?.Any() ?? false)
+            {
+                var mappings = connector.WorkItemStateMappings?.ToArray();
+                var captions = new List<string>();
+                captions.Add(WorkItemStatus.Unknown.GetEnumLabel());
+                var labels = itemStates
+                    .Where(x => mappings.Any(y => string.CompareOrdinal(x, y.Key) == 0))
+                    .Select(x => mappings.Where(y => string.CompareOrdinal(x, y.Key) == 0).First().Value.GetEnumLabel())
+                    .Where(x => x != null)
+                    .Distinct();
+                if (labels.Any())
+                    captions.AddRange(labels);
+                Initialize(captions);
+            }
+        }
         #endregion
 
         public IActionDefinition ActionDefinition => 
@@ -101,62 +124,93 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
 
         
         #region Status Management.
-        protected override void SetFirst(object item)
+        protected override bool SetFirst(object item)
         {
-            if (!_loading && item is IMitigation mitigation)
+            bool result = false;
+
+            if (!_loading && item is IMitigation mitigation &&
+                MessageBox.Show(Form.ActiveForm, "This action is going to remove the Mitigation from the DevOps system. Are you sure?", "Mitigation removal", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                Set(mitigation, 0);
+                result = Set(mitigation, 0);
+
+                var schemaManager = new DevOpsPropertySchemaManager(_model);
+                schemaManager.RemoveDevOpsInfos(mitigation);
             }
+
+            return result;
         }
 
-        protected override void SetSecond(object item)
+        protected override bool SetSecond(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 1);
+                result = Set(mitigation, 1);
             }
+
+            return result;
         }
 
-        protected override void SetThird(object item)
+        protected override bool SetThird(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 2);
+                result = Set(mitigation, 2);
             }
+
+            return result;
         }
 
-        protected override void SetFourth(object item)
+        protected override bool SetFourth(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 3);
+                result = Set(mitigation, 3);
             }
+
+            return result;
         }
 
-        protected override void SetFifth(object item)
+        protected override bool SetFifth(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 4);
+                result = Set(mitigation, 4);
             }
+
+            return result;
         }
 
-        protected override void SetSixth(object item)
+        protected override bool SetSixth(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 5);
+                result = Set(mitigation, 5);
             }
+
+            return result;
         }
 
-        private void Set(IMitigation mitigation, int pos)
+        private bool Set(IMitigation mitigation, int pos)
         {
+            bool result = false;
             var status = GetPaletteWorkItemStatus(pos);
 
             try
             {
                 _loading = true;
                 DevOpsManager.SetMitigationsStatusAsync(mitigation, status);
+                result = true;
             }
             catch (WorkItemCreationException)
             {
@@ -172,6 +226,8 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
             {
                 _loading = false;
             }
+
+            return result;
         }
         #endregion
     }

@@ -25,10 +25,9 @@ namespace ThreatsManager.Extensions.Panels.ProcessList
             menu.MenuClicked += OnMenuClicked;
         }
 
-        private void OnMenuClicked(Point point, IContextAwareAction action)
+        private void OnMenuClicked(IContextAwareAction action, object context)
         {
-            var selectedRow = GetRow(_grid.PointToClient(point));
-            if (selectedRow != null && selectedRow.Tag is IProcess process)
+            if (context is IProcess process)
                 action.Execute(process);
         }
     }

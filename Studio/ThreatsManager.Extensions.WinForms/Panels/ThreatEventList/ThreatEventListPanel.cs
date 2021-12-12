@@ -8,6 +8,7 @@ using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using DevComponents.DotNetBar.SuperGrid.Style;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -67,6 +68,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             LoadModel();
         }
 
+        [Dispatched]
         private void OnThreatEventRemoved([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             var row = GetRow(threatEvent);
@@ -81,6 +83,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventAdded([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             var filter = _filter.Text;
@@ -91,6 +94,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void ModelChildRemoved(IIdentity identity)
         {
             if (identity is IThreatType threatType)
@@ -374,6 +378,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnThreatTypePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatType threatType)
@@ -497,6 +502,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             return row;
         }
         
+        [Dispatched]
         private void OnImageChanged([NotNull] IEntity entity, ImageSize size)
         {
             var sourceRows = GetRowsForEntity(entity)?.ToArray();
@@ -537,20 +543,28 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
 
         private static void UpdateMitigationLevel([NotNull] IThreatEvent threatEvent, [NotNull] GridRow row)
         {
-            switch (threatEvent.GetMitigationLevel())
+            try
             {
-                case MitigationLevel.NotMitigated:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
-                    break;
-                case MitigationLevel.Partial:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
-                    break;
-                case MitigationLevel.Complete:
-                    row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
-                    break;
+                switch (threatEvent.GetMitigationLevel())
+                {
+                    case MitigationLevel.NotMitigated:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_small;
+                        break;
+                    case MitigationLevel.Partial:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_orange_small;
+                        break;
+                    case MitigationLevel.Complete:
+                        row.Cells[0].CellStyles.Default.Image = Resources.threat_circle_green_small;
+                        break;
+                }
+            }
+            catch
+            {
+                // Ignore
             }
         }
 
+        [Dispatched]
         private void OnThreatEventPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatEvent threatEvent)
@@ -592,6 +606,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventParentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IIdentity identity && string.CompareOrdinal(e.PropertyName, "Name") == 0)
@@ -607,6 +622,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnScenarioAdded(IThreatEventScenariosContainer container, IThreatEventScenario scenario)
         {
             if (container is IThreatEvent threatEvent)
@@ -656,6 +672,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnScenarioRemoved(IThreatEventScenariosContainer container, IThreatEventScenario scenario)
         {
             if (container is IThreatEvent threatEvent)
@@ -676,6 +693,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventMitigationAdded(IThreatEventMitigationsContainer container, IThreatEventMitigation mitigation)
         {
             if (container is IThreatEvent threatEvent)
@@ -731,6 +749,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
 
+        [Dispatched]
         private void OnThreatEventMitigationRemoved(IThreatEventMitigationsContainer container, IThreatEventMitigation mitigation)
         {
             if (container is IThreatEvent threatEvent)
@@ -902,6 +921,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             ((INotifyPropertyChanged) scenario).PropertyChanged += OnScenarioPropertyChanged;
         }
 
+        [Dispatched]
         private void OnScenarioPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatEventScenario scenario)
@@ -1059,6 +1079,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             ((INotifyPropertyChanged) mitigation.Mitigation).PropertyChanged += OnMitigationPropertyChanged;
         }
         
+        [Dispatched]
         private void OnThreatEventMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IThreatEventMitigation mitigation)
@@ -1084,6 +1105,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             }
         }
        
+        [Dispatched]
         private void OnMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IMitigation mitigation)

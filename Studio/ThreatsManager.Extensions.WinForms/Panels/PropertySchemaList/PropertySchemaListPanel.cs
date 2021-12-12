@@ -98,7 +98,7 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                 panel.Columns.Add(new GridColumn("Name")
                 {
                     HeaderText = "Name",
-                    Width = 200,
+                    Width = 175,
                     DataType = typeof(string),
                     EditorType = typeof(GridTextBoxDropDownEditControl),
                     AllowEdit = true
@@ -113,7 +113,7 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                 panel.Columns.Add(new GridColumn("Description")
                 {
                     HeaderText = "Description",
-                    Width = 400,
+                    Width = 350,
                     DataType = typeof(string),
                     EditorType = typeof(GridTextBoxDropDownEditControl),
                     AllowEdit = true
@@ -155,6 +155,15 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                 panel.Columns.Add(new GridColumn("Printable")
                 {
                     HeaderText = "Printable",
+                    Width = 75,
+                    DataType = typeof(bool),
+                    EditorType = typeof(GridSwitchButtonEditControl),
+                    AllowEdit = true
+                });
+
+                panel.Columns.Add(new GridColumn("ReadOnly")
+                {
+                    HeaderText = "Read Only",
                     Width = 75,
                     DataType = typeof(bool),
                     EditorType = typeof(GridSwitchButtonEditControl),
@@ -260,13 +269,14 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                     propertyType.Priority,
                     propertyType.Visible,
                     !propertyType.DoNotPrint,
+                    propertyType.ReadOnly,
                     context)
                 {
                     Tag = propertyType,
                     AllowEdit = !schema.System || _promoted
                 };
 
-                row.Cells[6].AllowEdit = isList;
+                row.Cells[7].AllowEdit = isList;
 
                 ((INotifyPropertyChanged) propertyType).PropertyChanged += OnPropertyTypePropertyChanged;
                 for (int i = 0; i < row.Cells.Count; i++)
@@ -308,6 +318,9 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                             break;
                         case "DoNotPrint":
                             row["Printable"].Value = !propertyType.DoNotPrint;
+                            break;
+                        case "ReadOnly":
+                            row["ReadOnly"].Value = propertyType.ReadOnly;
                             break;
                     }
                 }
@@ -384,6 +397,9 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                                 break;
                             case "Printable":
                                 propertyType.DoNotPrint = !((bool) cell.Value);
+                                break;
+                            case "ReadOnly":
+                                propertyType.ReadOnly = (bool) cell.Value;
                                 break;
                             case "Values":
                                 if (propertyType is IListPropertyType listPt)

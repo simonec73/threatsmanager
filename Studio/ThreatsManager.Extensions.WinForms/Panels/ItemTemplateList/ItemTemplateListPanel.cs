@@ -168,7 +168,6 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
         private void AddGridRow([NotNull] IItemTemplate template, [NotNull] GridPanel panel)
         {
             string itemType = null;
-            Image image = null;
             if (template is IEntityTemplate entityTemplate)
             {
                 itemType = entityTemplate.EntityType.GetEnumLabel();

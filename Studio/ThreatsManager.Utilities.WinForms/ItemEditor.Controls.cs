@@ -48,7 +48,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
@@ -83,7 +83,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
@@ -114,7 +114,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
@@ -176,7 +176,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.TextChanged += TextPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = $"<a href=\"SingleLineText\">{name}</a>",
+                Text = $"<a href=\"SingleLineText\">{name.Replace("&", "&&")}</a>",
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -274,7 +274,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.TextChanged += TextPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = $"<a href=\"Text\">{name}</a>",
+                Text = $"<a href=\"Text\">{name.Replace("&", "&&")}</a>",
                 Control = control,
                 Height = 150,
                 HeightType = eLayoutSizeType.Absolute,
@@ -329,7 +329,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.ValueChanged += BoolPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = 20 + (int)(10 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -382,7 +382,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.ValueChanged += IntegerPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -435,7 +435,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.ValueChanged += DecimalPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -491,7 +491,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = property.PropertyType.Name,
+                Text = property.PropertyType.Name.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -552,7 +552,7 @@ namespace ThreatsManager.Utilities.WinForms
 
                     var item = new LayoutControlItem()
                     {
-                        Text = listPropertyType.Name,
+                        Text = listPropertyType.Name.Replace("&", "&&"),
                         Control = control,
                         Height = (int) (25 * Dpi.Factor.Height),
                         HeightType = eLayoutSizeType.Absolute,
@@ -598,7 +598,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (25 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -626,6 +626,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.Items.AddRange(items.ToArray());
             var item = new LayoutControlItem()
             {
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (150 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -633,7 +634,6 @@ namespace ThreatsManager.Utilities.WinForms
                 WidthType = eLayoutSizeType.Percent,
                 Padding = new Padding(4)
             };
-            item.Text = label;
             if (string.IsNullOrWhiteSpace(label))
             {
                 item.TextVisible = false;
@@ -882,6 +882,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (150 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -889,7 +890,6 @@ namespace ThreatsManager.Utilities.WinForms
                 WidthType = eLayoutSizeType.Percent,
                 Padding = new Padding(4)
             };
-            item.Text = label;
             if (string.IsNullOrWhiteSpace(label))
             {
                 item.TextVisible = false;
@@ -1058,7 +1058,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var controlItem = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (150 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -1235,10 +1235,12 @@ namespace ThreatsManager.Utilities.WinForms
             var blocks = viewer.Blocks?.ToArray();
             if (blocks?.Any() ?? false)
             {
-                Control control = null;
+                Control control;
 
                 foreach (var block in blocks)
                 {
+                    control = null;
+
                     switch (block.BlockType)
                     {
                         case PropertyViewerBlockType.Label:
@@ -1307,7 +1309,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
                 Height = (int) (48 * Dpi.Factor.Height),
@@ -1346,7 +1348,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
                 Height = (int) (36 * Dpi.Factor.Height),
@@ -1366,7 +1368,7 @@ namespace ThreatsManager.Utilities.WinForms
             if (sender is Button button && button.Tag is IPropertyViewerBlock propertyViewerBlock)
             {
                 if (propertyViewerBlock.Execute() && button.Parent is LayoutControl layoutControl &&
-                    layoutControl.Tag is IPropertyViewer viewer)
+                        layoutControl.Tag is IPropertyViewer viewer)
                 {
                     layoutControl.SuspendLayout();
                     layoutControl.Controls.Clear();
@@ -1402,7 +1404,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label,
+                Text = label.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
                 Height = 36,

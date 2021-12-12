@@ -55,8 +55,8 @@ namespace ThreatsManager.Extensions.Panels.Learning
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            string text = null;
-            bool warning = false;
+            //string text = null;
+            //bool warning = false;
 
             switch (action.Name)
             {
