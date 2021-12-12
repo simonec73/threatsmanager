@@ -209,28 +209,34 @@ namespace ThreatsManager.DevOps.Panels
         #endregion
 
         #region Status Management.
-        protected virtual void SetFirst(object item)
+        protected virtual bool SetFirst(object item)
         {
+            return false;
         }
 
-        protected virtual void SetSecond(object item)
+        protected virtual bool SetSecond(object item)
         {
+            return false;
         }
 
-        protected virtual void SetThird(object item)
+        protected virtual bool SetThird(object item)
         {
+            return false;
         }
 
-        protected virtual void SetFourth(object item)
+        protected virtual bool SetFourth(object item)
         {
+            return false;
         }
 
-        protected virtual void SetFifth(object item)
+        protected virtual bool SetFifth(object item)
         {
+            return false;
         }
 
-        protected virtual void SetSixth(object item)
+        protected virtual bool SetSixth(object item)
         {
+            return false;
         }
         #endregion
 

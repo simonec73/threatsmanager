@@ -96,11 +96,10 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
             }
         }
 
-        private async void InitializePalettes()
+        private void InitializePalettes()
         {
             var connector = DevOpsManager.GetConnector(_model);
-            var itemStatesAsync = await connector.GetWorkItemStatesAsync();
-            var itemStates = itemStatesAsync?.ToArray();
+            var itemStates = connector.GetWorkItemStatesAsync().Result?.ToArray();
             if (itemStates?.Any() ?? false)
             {
                 var mappings = connector.WorkItemStateMappings?.ToArray();
@@ -125,62 +124,93 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
 
         
         #region Status Management.
-        protected override void SetFirst(object item)
+        protected override bool SetFirst(object item)
         {
-            if (!_loading && item is IMitigation mitigation)
+            bool result = false;
+
+            if (!_loading && item is IMitigation mitigation &&
+                MessageBox.Show(Form.ActiveForm, "This action is going to remove the Mitigation from the DevOps system. Are you sure?", "Mitigation removal", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                Set(mitigation, 0);
+                result = Set(mitigation, 0);
+
+                var schemaManager = new DevOpsPropertySchemaManager(_model);
+                schemaManager.RemoveDevOpsInfos(mitigation);
             }
+
+            return result;
         }
 
-        protected override void SetSecond(object item)
+        protected override bool SetSecond(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 1);
+                result = Set(mitigation, 1);
             }
+
+            return result;
         }
 
-        protected override void SetThird(object item)
+        protected override bool SetThird(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 2);
+                result = Set(mitigation, 2);
             }
+
+            return result;
         }
 
-        protected override void SetFourth(object item)
+        protected override bool SetFourth(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 3);
+                result = Set(mitigation, 3);
             }
+
+            return result;
         }
 
-        protected override void SetFifth(object item)
+        protected override bool SetFifth(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 4);
+                result = Set(mitigation, 4);
             }
+
+            return result;
         }
 
-        protected override void SetSixth(object item)
+        protected override bool SetSixth(object item)
         {
+            bool result = false;
+
             if (!_loading && item is IMitigation mitigation)
             {
-                Set(mitigation, 5);
+                result = Set(mitigation, 5);
             }
+
+            return result;
         }
 
-        private void Set(IMitigation mitigation, int pos)
+        private bool Set(IMitigation mitigation, int pos)
         {
+            bool result = false;
             var status = GetPaletteWorkItemStatus(pos);
 
             try
             {
                 _loading = true;
                 DevOpsManager.SetMitigationsStatusAsync(mitigation, status);
+                result = true;
             }
             catch (WorkItemCreationException)
             {
@@ -196,6 +226,8 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
             {
                 _loading = false;
             }
+
+            return result;
         }
         #endregion
     }

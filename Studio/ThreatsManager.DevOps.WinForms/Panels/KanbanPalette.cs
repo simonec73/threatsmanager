@@ -35,13 +35,13 @@ namespace ThreatsManager.DevOps.Panels
             ShowsNegativeCoordinates = false;
             Size = new System.Drawing.Size(185, 376);
             HidesSelection = true;
-            ShowHorizontalScrollBar = GoViewScrollBarVisibility.IfNeeded;
+            ShowHorizontalScrollBar = GoViewScrollBarVisibility.Hide;
             ShowVerticalScrollBar = GoViewScrollBarVisibility.IfNeeded;
 
             RemoveItem += OnRemoveItem;
         }
 
-        public event Action<object> ItemDropped;
+        public event Func<object, bool> ItemDropped;
 
         public int ContainerId { get; set; }
 
@@ -117,11 +117,17 @@ namespace ThreatsManager.DevOps.Panels
             if (Selection.Primary is KanbanItem node &&
                 node.Document is GoDocument doc)
             {
-                RemoveItem?.Invoke(node.Item);
+                if (ItemDropped?.Invoke(node.Item) ?? false)
+                {
+                    RemoveItem?.Invoke(node.Item);
+                    AddNode(node);
+                    node.Container = ContainerId;
+                }
+                else
+                {
+                    RemoveNode(node);
+                }
 
-                AddNode(node);
-                ItemDropped?.Invoke(node.Item);
-                node.Container = ContainerId;
                 RefreshNodes();
             }
         }
