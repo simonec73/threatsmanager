@@ -3,15 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <Description>Threats Manager Platform DevOps Integration library.</Description>
-    <AssemblyVersion>1.5.1.0</AssemblyVersion>
+    <AssemblyVersion>1.5.2.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
-    <Copyright>Copyright © Simone Curzi, 2018-2021. All Rights Reserved.</Copyright>
+    <Copyright>Copyright © Simone Curzi, 2018-2022. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
-    <FileVersion>1.5.1.0</FileVersion>
-    <Version>1.5.1</Version>
+    <FileVersion>1.5.2.0</FileVersion>
+    <Version>1.5.2</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.170.0" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.170.0" />
-    <PackageReference Include="PostSharp" Version="6.9.11" />
+    <PackageReference Include="PostSharp" Version="6.10.5" />
   </ItemGroup>
 
   <ItemGroup>
