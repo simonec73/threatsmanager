@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using PostSharp.Patterns.Contracts;
@@ -62,6 +63,7 @@ namespace ThreatsManager.MsTmt
             itemTypes += ImportFlowTemplates(model, threatModel);
             ImportElements(model, threatModel, dpiFactor, out diagrams, 
                 out externalInteractors, out processes, out dataStores, out trustBoundaries);
+            ParentElements(model, threatModel);
             flows = ImportDataFlows(model, threatModel);
             ImportThreats(model, threatModel, unassignedThreatHandler, out threatTypes, out customThreatTypes, out threats, out missingThreats);
         }
@@ -483,6 +485,82 @@ namespace ThreatsManager.MsTmt
                             diagram.AddGroupShape(boundary.Id,
                                 new PointF((element.Value.Position.X + element.Value.Size.Width / 2f) * dpiFactor, (element.Value.Position.Y + element.Value.Size.Height / 2f) * dpiFactor),
                                 new SizeF(element.Value.Size.Width * dpiFactor, element.Value.Size.Height * dpiFactor));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ParentElements([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        {
+            var schemaManager = new ObjectPropertySchemaManager(target);
+
+            var trustBoundaries = source.Elements?
+                .Where(x => x.Value.ElementType == ElementType.BorderBoundary)
+                .OrderByDescending(x => x.Value.Size.Width * x.Value.Size.Height)
+                .ToArray();
+
+            var count = trustBoundaries?.Length ?? 0;
+            if (count > 1)
+            {
+                for (int i = 0; i < count - 1; i++)
+                {
+                    var parent = trustBoundaries[i];
+
+                    for (int j = i + 1; j < count; j++)
+                    {
+                        var child = trustBoundaries[j];
+                        if (IsParent(parent.Value, child.Value))
+                        {
+                            var p = GetTrustBoundary(parent.Key.ToString(), target, schemaManager);
+                            var c = GetTrustBoundary(child.Key.ToString(), target, schemaManager);
+                            if (p != null && c != null)
+                            {
+                                c.SetParent(p);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (count > 0)
+            {
+                var entities = source.Elements?
+                    .Where(x => x.Value.ElementType == ElementType.StencilRectangle ||
+                                x.Value.ElementType == ElementType.StencilEllipse ||
+                                x.Value.ElementType == ElementType.StencilParallelLines)
+                    .ToArray();
+
+                if (entities?.Any() ?? false)
+                {
+                    trustBoundaries = trustBoundaries                
+                        .OrderBy(x => x.Value.Size.Width * x.Value.Size.Height)
+                        .ToArray();
+
+                    foreach (var entity in entities)
+                    {
+                        string parentKey = null;
+
+                        foreach (var trustBoundary in trustBoundaries)
+                        {
+                            if (IsParent(trustBoundary.Value, entity.Value))
+                            {
+                                parentKey = trustBoundary.Key.ToString();
+                                break;
+                            }
+                        }
+
+                        if (parentKey !=null)
+                        {
+                            var parent = GetTrustBoundary(parentKey, target, schemaManager);
+                            if (parent != null)
+                            {
+                                var e = GetEntity(entity.Key.ToString(), target, schemaManager);
+                                if (e != null)
+                                {
+                                    e.SetParent(parent);
+                                }
+                            }
                         }
                     }
                 }
@@ -943,6 +1021,31 @@ namespace ThreatsManager.MsTmt
                    string.CompareOrdinal(propertyName, "Priority") == 0;
         }
 
+        private bool IsParent([NotNull] ElementInfo parent, [NotNull] ElementInfo child)
+        {
+            bool result = false;
+
+            if (parent.ElementType == ElementType.BorderBoundary)
+            {
+                if (child.ElementType == ElementType.StencilRectangle ||
+                    child.ElementType == ElementType.StencilEllipse ||
+                    child.ElementType == ElementType.StencilParallelLines)
+                {
+                    result = parent.Position.X <= child.Position.X && parent.Position.Y <= child.Position.Y &&
+                             parent.Position.X + parent.Size.Width >= child.Position.X &&
+                             parent.Position.Y + parent.Size.Height >= child.Position.Y;
+                }
+                else if (child.ElementType == ElementType.BorderBoundary)
+                {
+                    result = parent.Position.X <= child.Position.X && parent.Position.Y <= child.Position.Y &&
+                             parent.Position.X + parent.Size.Width >= child.Position.X + child.Size.Width &&
+                             parent.Position.Y + parent.Size.Height >= child.Position.Y + child.Size.Height;
+                }
+            }
+
+            return result;
+        }
+
         private IEntity GetEntity([Required] string msEntityId, [NotNull] IThreatModel model,
             [NotNull] ObjectPropertySchemaManager schemaManager)
         {
@@ -957,6 +1060,28 @@ namespace ThreatsManager.MsTmt
                     if (string.CompareOrdinal(id, msEntityId) == 0)
                     {
                         result = entity;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private ITrustBoundary GetTrustBoundary([Required] string msGroupId, [NotNull] IThreatModel model,
+            [NotNull] ObjectPropertySchemaManager schemaManager)
+        {
+            ITrustBoundary result = null;
+
+            var groups = model.Groups?.OfType<ITrustBoundary>().ToArray();
+            if (groups != null)
+            {
+                foreach (var group in groups)
+                {
+                    var id = schemaManager.GetInstanceId(group);
+                    if (string.CompareOrdinal(id, msGroupId) == 0)
+                    {
+                        result = group;
                         break;
                     }
                 }
