@@ -138,6 +138,9 @@
   <data name="FactContextProperty" xml:space="preserve">
     <value>Context associated to the Facts</value>
   </data>
+  <data name="FactProviderProperty" xml:space="preserve">
+    <value>Selected Fact Provider.</value>
+  </data>
   <data name="FactsProperty" xml:space="preserve">
     <value>List of the Facts known within the Threat Model</value>
   </data>
@@ -188,6 +191,9 @@
   </data>
   <data name="RiskProperty" xml:space="preserve">
     <value>Risk</value>
+  </data>
+  <data name="ThresholdsProperty" xml:space="preserve">
+    <value>List of the Thresholds to determine the Severities from the estimated most probable ALE.</value>
   </data>
   <data name="UndefinedLEF" xml:space="preserve">
     <value>Loss Event Frequency cannot be undefined</value>

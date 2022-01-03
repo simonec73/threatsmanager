@@ -124,6 +124,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Selected Fact Provider..
+        /// </summary>
+        internal static string FactProviderProperty {
+            get {
+                return ResourceManager.GetString("FactProviderProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List of the Facts known within the Threat Model.
         /// </summary>
         internal static string FactsProperty {
@@ -273,6 +282,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         internal static string RiskProperty {
             get {
                 return ResourceManager.GetString("RiskProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List of the Thresholds to determine the Severities from the estimated most probable ALE..
+        /// </summary>
+        internal static string ThresholdsProperty {
+            get {
+                return ResourceManager.GetString("ThresholdsProperty", resourceCulture);
             }
         }
         
