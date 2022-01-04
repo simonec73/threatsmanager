@@ -59,6 +59,21 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             thresholds.DoNotPrint = true;
             thresholds.Description = Resources.ThresholdsProperty;
 
+            var lowerPercentile = result.GetPropertyType("LowerPercentile") ?? result.AddPropertyType("LowerPercentile", PropertyValueType.Integer);
+            lowerPercentile.Visible = false;
+            lowerPercentile.DoNotPrint = true;
+            lowerPercentile.Description = Resources.LowerPercentileProperty;
+
+            var upperPercentile = result.GetPropertyType("UpperPercentile") ?? result.AddPropertyType("UpperPercentile", PropertyValueType.Integer);
+            upperPercentile.Visible = false;
+            upperPercentile.DoNotPrint = true;
+            upperPercentile.Description = Resources.UpperPercentileProperty;
+
+            var referenceMeasure = result.GetPropertyType("ReferenceMeasure") ?? result.AddPropertyType("ReferenceMeasure", PropertyValueType.SingleLineString);
+            referenceMeasure.Visible = false;
+            referenceMeasure.DoNotPrint = true;
+            referenceMeasure.Description = Resources.ReferenceMeasureProperty;
+
             return result;
         }
 
@@ -130,6 +145,92 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             set
             {
                 var propertyType = GetSchema()?.GetPropertyType("FactProvider");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    property.StringValue = value;
+                }
+            }
+        }
+
+        public int LowerPercentile
+        {
+            get
+            {
+                int result = 10;
+
+                var propertyType = GetSchema()?.GetPropertyType("LowerPercentile");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "10");
+                    if (property is IPropertyInteger propertyInteger)
+                    {
+                        result = propertyInteger.Value;
+                    }
+                }
+
+                return result;
+            }
+
+            set
+            {
+                var propertyType = GetSchema()?.GetPropertyType("LowerPercentile");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    property.StringValue = value.ToString();
+                }
+            }
+        }
+
+        public int UpperPercentile
+        {
+            get
+            {
+                int result = 90;
+
+                var propertyType = GetSchema()?.GetPropertyType("UpperPercentile");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "90");
+                    if (property is IPropertyInteger propertyInteger)
+                    {
+                        result = propertyInteger.Value;
+                    }
+                }
+
+                return result;
+            }
+
+            set
+            {
+                var propertyType = GetSchema()?.GetPropertyType("UpperPercentile");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    property.StringValue = value.ToString();
+                }
+            }
+        }
+
+        public string ReferenceMeasure
+        {
+            get
+            {
+                string result = null;
+
+                var propertyType = GetSchema()?.GetPropertyType("ReferenceMeasure");
+                if (propertyType != null)
+                {
+                    result = (_model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "Mode"))?.StringValue;
+                }
+
+                return result;
+            }
+
+            set
+            {
+                var propertyType = GetSchema()?.GetPropertyType("ReferenceMeasure");
                 if (propertyType != null)
                 {
                     var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);

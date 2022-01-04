@@ -232,6 +232,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Property containing the Lower Percentile configuration..
+        /// </summary>
+        internal static string LowerPercentileProperty {
+            get {
+                return ResourceManager.GetString("LowerPercentileProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Primary Loss is defined.
         /// </summary>
         internal static string NoPrimaryLoss {
@@ -277,6 +286,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reference measure configuration..
+        /// </summary>
+        internal static string ReferenceMeasureProperty {
+            get {
+                return ResourceManager.GetString("ReferenceMeasureProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Risk.
         /// </summary>
         internal static string RiskProperty {
@@ -309,6 +327,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         internal static string UndefinedLM {
             get {
                 return ResourceManager.GetString("UndefinedLM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property containing the Upper Percentile configuration..
+        /// </summary>
+        internal static string UpperPercentileProperty {
+            get {
+                return ResourceManager.GetString("UpperPercentileProperty", resourceCulture);
             }
         }
     }

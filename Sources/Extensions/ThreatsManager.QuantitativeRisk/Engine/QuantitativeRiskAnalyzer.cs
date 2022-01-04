@@ -224,20 +224,6 @@ namespace ThreatsManager.QuantitativeRisk.Engine
                         {
                             var found = false;
                             if (risk.LossMagnitude.PrimaryLosses.Any(
-                                x => x.Form == LossForm.CompetitiveAdvantage && x.IsValid))
-                                found = true;
-                            else
-                                result.Add(new ValidationResult(
-                                    string.Format(Resources.InvalidPrimaryLoss,
-                                        LossForm.CompetitiveAdvantage.GetEnumLabel()), false));
-                            if (risk.LossMagnitude.PrimaryLosses.Any(
-                                x => x.Form == LossForm.FinesJudgements && x.IsValid))
-                                found = true;
-                            else
-                                result.Add(new ValidationResult(
-                                    string.Format(Resources.InvalidPrimaryLoss,
-                                        LossForm.FinesJudgements.GetEnumLabel()), false));
-                            if (risk.LossMagnitude.PrimaryLosses.Any(
                                 x => x.Form == LossForm.Productivity && x.IsValid))
                                 found = true;
                             else
@@ -252,13 +238,6 @@ namespace ThreatsManager.QuantitativeRisk.Engine
                                 result.Add(new ValidationResult(
                                     string.Format(Resources.InvalidPrimaryLoss,
                                         LossForm.Replacement.GetEnumLabel()),
-                                    false));
-                            if (risk.LossMagnitude.PrimaryLosses.Any(
-                                x => x.Form == LossForm.Reputation && x.IsValid))
-                                found = true;
-                            else
-                                result.Add(new ValidationResult(
-                                    string.Format(Resources.InvalidPrimaryLoss, LossForm.Reputation.GetEnumLabel()),
                                     false));
                             if (risk.LossMagnitude.PrimaryLosses.Any(
                                 x => x.Form == LossForm.Response && x.IsValid))
@@ -293,35 +272,12 @@ namespace ThreatsManager.QuantitativeRisk.Engine
                                         LossForm.FinesJudgements.GetEnumLabel()),
                                     false));
                             if (risk.LossMagnitude.SecondaryLosses.Any(
-                                x => x.Form == LossForm.Productivity && x.IsValid))
-                                found = true;
-                            else
-                                result.Add(new ValidationResult(
-                                    string.Format(Resources.InvalidSecondaryLoss,
-                                        LossForm.Productivity.GetEnumLabel()),
-                                    false));
-                            if (risk.LossMagnitude.SecondaryLosses.Any(
-                                x => x.Form == LossForm.Replacement && x.IsValid))
-                                found = true;
-                            else
-                                result.Add(new ValidationResult(
-                                    string.Format(Resources.InvalidSecondaryLoss,
-                                        LossForm.Replacement.GetEnumLabel()),
-                                    false));
-                            if (risk.LossMagnitude.SecondaryLosses.Any(
                                 x => x.Form == LossForm.Reputation && x.IsValid))
                                 found = true;
                             else
                                 result.Add(new ValidationResult(
                                     string.Format(Resources.InvalidSecondaryLoss,
                                         LossForm.Reputation.GetEnumLabel()),
-                                    false));
-                            if (risk.LossMagnitude.SecondaryLosses.Any(
-                                x => x.Form == LossForm.Response && x.IsValid))
-                                found = true;
-                            else
-                                result.Add(new ValidationResult(
-                                    string.Format(Resources.InvalidSecondaryLoss, LossForm.Response.GetEnumLabel()),
                                     false));
 
                             if (!found)
@@ -361,7 +317,8 @@ namespace ThreatsManager.QuantitativeRisk.Engine
                 result = new double[SamplesCount];
                 foreach (var loss in risk.LossMagnitude.PrimaryLosses)
                 {
-                    if (loss.IsValid)
+                    if (loss.IsValid && 
+                        (loss.Form == LossForm.Productivity || loss.Form == LossForm.Replacement || loss.Form == LossForm.Response))
                     {
                         var samples = GetSamples(loss.MagnitudeMin, loss.MagnitudeMostLikely,
                             loss.MagnitudeMax, loss.MagnitudeConfidence);
@@ -388,7 +345,8 @@ namespace ThreatsManager.QuantitativeRisk.Engine
                 result = new double[SamplesCount];
                 foreach (var loss in risk.LossMagnitude.SecondaryLosses)
                 {
-                    if (loss.IsValid)
+                    if (loss.IsValid && 
+                        (loss.Form == LossForm.CompetitiveAdvantage || loss.Form == LossForm.FinesJudgements || loss.Form == LossForm.Reputation))
                     {
                         var samples = GetSamples(loss.MagnitudeMin, loss.MagnitudeMostLikely,
                             loss.MagnitudeMax, loss.MagnitudeConfidence);
