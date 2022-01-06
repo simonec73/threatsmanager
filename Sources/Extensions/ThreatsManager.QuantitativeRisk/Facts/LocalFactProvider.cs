@@ -16,6 +16,16 @@ namespace ThreatsManager.QuantitativeRisk.Facts
         private const string cLocalFactsFileName = "localfacts.json";
         private FactContainer _container;
 
+        public IEnumerable<FactProviderParameter> GetParameters()
+        {
+            return null;
+        }
+
+        public void SetParameters(IDictionary<string, string> parameters)
+        {
+
+        }
+
         public bool RegisterFact(Fact fact)
         {
             var result = false;

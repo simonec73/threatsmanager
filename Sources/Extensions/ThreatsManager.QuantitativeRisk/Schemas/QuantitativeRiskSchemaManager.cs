@@ -9,6 +9,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.QuantitativeRisk.Engine;
 using ThreatsManager.QuantitativeRisk.Facts;
 using ThreatsManager.QuantitativeRisk.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.QuantitativeRisk.Schemas
 {
@@ -49,6 +50,12 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             factProvider.DoNotPrint = true;
             factProvider.Description = Resources.FactProviderProperty;
 
+            var fpParameters = result.GetPropertyType("FactProviderParams") ??
+                               result.AddPropertyType("FactProviderParams", PropertyValueType.JsonSerializableObject);
+            fpParameters.Visible = false;
+            fpParameters.DoNotPrint = true;
+            fpParameters.Description = Resources.FactProviderParamsProperty;
+
             var facts = result.GetPropertyType("Facts") ?? result.AddPropertyType("Facts", PropertyValueType.JsonSerializableObject);
             facts.Visible = false;
             facts.DoNotPrint = true;
@@ -73,6 +80,11 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             referenceMeasure.Visible = false;
             referenceMeasure.DoNotPrint = true;
             referenceMeasure.Description = Resources.ReferenceMeasureProperty;
+
+            var iterations = result.GetPropertyType("Iterations") ?? result.AddPropertyType("Iterations", PropertyValueType.Integer);
+            upperPercentile.Visible = false;
+            upperPercentile.DoNotPrint = true;
+            upperPercentile.Description = Resources.IterationsProperty;
 
             return result;
         }
@@ -149,6 +161,53 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
                 {
                     var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
                     property.StringValue = value;
+                }
+            }
+        }
+
+        public IFactProvider Provider
+        {
+            get
+            {
+                return ExtensionUtils.GetExtension<IFactProvider>(FactProviderId);
+            }
+        }
+
+        public IEnumerable<Parameter> GetFactProviderParameters()
+        {
+            IEnumerable<Parameter> result = null;
+
+            var propertyType = GetSchema()?.GetPropertyType("FactProviderParams");
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType);
+                if (property is IPropertyJsonSerializableObject jsonObject)
+                {
+                    var parameters = jsonObject.Value as Parameters;
+                    result = parameters?.Items.AsEnumerable();
+                }
+            }
+
+            return result;
+        }
+
+        public void SetFactProviderParameters(IEnumerable<Parameter> parameters)
+        {
+            var propertyType = GetSchema()?.GetPropertyType("FactProviderParams");
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                if (property is IPropertyJsonSerializableObject jsonObject)
+                {
+                    var container = new Parameters();
+                    
+                    var p = parameters?.ToArray();
+                    if (p?.Any() ?? false)
+                    {
+                        container.Items = new List<Parameter>(p);
+                    }
+
+                    jsonObject.Value = container;
                 }
             }
         }
@@ -235,6 +294,36 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
                 {
                     var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
                     property.StringValue = value;
+                }
+            }
+        }
+
+        public int Iterations
+        {
+            get
+            {
+                int result = 100000;
+
+                var propertyType = GetSchema()?.GetPropertyType("Iterations");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "100000");
+                    if (property is IPropertyInteger propertyInteger)
+                    {
+                        result = propertyInteger.Value;
+                    }
+                }
+
+                return result;
+            }
+
+            set
+            {
+                var propertyType = GetSchema()?.GetPropertyType("Iterations");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    property.StringValue = value.ToString();
                 }
             }
         }

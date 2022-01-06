@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 
@@ -12,6 +11,18 @@ namespace ThreatsManager.QuantitativeRisk.Facts
     [ExtensionDescription("Fact Provider")]
     public interface IFactProvider : IExtension
     {
+        /// <summary>
+        /// Get configuration parameters for the Fact Provider.
+        /// </summary>
+        /// <returns>Definition of the required parameters.</returns>
+        IEnumerable<FactProviderParameter> GetParameters();
+
+        /// <summary>
+        /// Set configuration parameters for the Fact Provider.
+        /// </summary>
+        /// <param name="parameters">Dictionary containing the parameters and their value.</param>
+        void SetParameters(IDictionary<string, string> parameters);
+
         /// <summary>
         /// Registers a fact in the Fact Provider.
         /// </summary>

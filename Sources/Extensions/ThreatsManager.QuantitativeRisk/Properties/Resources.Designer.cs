@@ -124,6 +124,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Property containing the values of the parameters required by the Fact Provider..
+        /// </summary>
+        internal static string FactProviderParamsProperty {
+            get {
+                return ResourceManager.GetString("FactProviderParamsProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selected Fact Provider..
         /// </summary>
         internal static string FactProviderProperty {
@@ -228,6 +237,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         internal static string InvalidSLEFDistribution {
             get {
                 return ResourceManager.GetString("InvalidSLEFDistribution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property containing the number of iterations to use for the Monte Carlo simulation..
+        /// </summary>
+        internal static string IterationsProperty {
+            get {
+                return ResourceManager.GetString("IterationsProperty", resourceCulture);
             }
         }
         
