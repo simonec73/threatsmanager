@@ -15,18 +15,21 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         }
 
-        public FactProbRange([Required] string context, [Required] string source, [Required] string text, 
+        public FactProbRange([Required] string context, [Required] string source, [Required] string name, 
             double min, double max, double mostProbable, Confidence confidence)
-            : base(context, source, text, min, max)
+            : base(context, source, name, min, max)
         {
             _mostProbable = min;
             _confidence = confidence;
         }
 
         private FactProbRange([NotNull] FactHardNumber hn) 
-            : this(hn.Context, hn.Source, hn.Text, hn.Value, hn.Value, hn.Value, Confidence.Moderate)
+            : this(hn.Context, hn.Source, hn.Name, hn.Value, hn.Value, hn.Value, Confidence.Moderate)
         {
             Id = hn.Id;
+            Details = hn.Details;
+            Tags = hn.Tags;
+            ReferenceDate = hn.ReferenceDate;
             CreatedBy = hn.CreatedBy;
             CreatedOn = hn.CreatedOn;
             ModifiedBy = UserName.GetDisplayName();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
@@ -15,12 +16,12 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         }
 
-        public Fact([Required] string context, [Required] string source, [Required] string text)
+        public Fact([Required] string context, [Required] string source, [Required] string name)
         {
             Id = Guid.NewGuid();
             _context = context;
             _source = source;
-            _text = text;
+            _name = name;
             CreatedBy = UserName.GetDisplayName();
             CreatedOn = DateTime.Now;
         }
@@ -62,39 +63,77 @@ namespace ThreatsManager.QuantitativeRisk.Facts
             }
         }
 
-        [JsonProperty("text")]
-        private string _text;
+        [JsonProperty("name")]
+        private string _name;
 
-        public string Text
+        public string Name
         {
-            get => _text;
+            get => _name;
             set
             {
-                if (!string.IsNullOrWhiteSpace(value) && string.CompareOrdinal(value, _text) != 0)
+                if (!string.IsNullOrWhiteSpace(value) && string.CompareOrdinal(value, _name) != 0)
                 {
-                    _text = value;
+                    _name = value;
                     ModifiedBy = UserName.GetDisplayName();
                     ModifiedOn = DateTime.Now;
                 }
             }
         }
 
-        [JsonProperty("notes")]
-        private string _notes;
+        [JsonProperty("details")]
+        private string _details;
 
-        public string Notes
+        public string Details
         {
-            get => _notes;
+            get => _details;
             set
             {
-                if (!string.IsNullOrWhiteSpace(value) && string.CompareOrdinal(value, _notes) != 0)
+                if (!string.IsNullOrWhiteSpace(value) && string.CompareOrdinal(value, _details) != 0)
                 {
-                    _notes = value;
+                    _details = value;
                     ModifiedBy = UserName.GetDisplayName();
                     ModifiedOn = DateTime.Now;
                 }
             }
         }
+
+        [JsonProperty("tags")]
+        private List<string> _tags;
+
+        public IEnumerable<string> Tags
+        {
+            get => _tags?.ToArray();
+            set
+            {
+                bool different = true;
+
+                if ((value?.Count() ?? 0) == (_tags?.Count ?? 0))
+                {
+                    different = false;
+                    if (value?.Any() ?? false)
+                    {
+                        foreach (var item in value)
+                        {
+                            if (!_tags.Contains(item))
+                            {
+                                different = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (different)
+                {
+                    _tags = new List<string>(value);
+                    ModifiedBy = UserName.GetDisplayName();
+                    ModifiedOn = DateTime.Now;
+                }
+            }
+        }
+
+        [JsonProperty("refDate")]
+        public DateTime ReferenceDate { get; set; }
 
         [JsonProperty("createdBy")]
         public string CreatedBy { get; protected set; }

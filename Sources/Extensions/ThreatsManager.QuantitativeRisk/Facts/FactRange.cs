@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Utilities;
@@ -13,17 +14,20 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         }
 
-        public FactRange([Required] string context, [Required] string source, [Required] string text, double min, double max)
-            : base(context, source, text)
+        public FactRange([Required] string context, [Required] string source, [Required] string name, double min, double max)
+            : base(context, source, name)
         {
             _min = min;
             _max = max;
         }
 
         private FactRange([NotNull] FactHardNumber hn) 
-            : this(hn.Context, hn.Source, hn.Text, hn.Value, hn.Value)
+            : this(hn.Context, hn.Source, hn.Name, hn.Value, hn.Value)
         {
             Id = hn.Id;
+            Details = hn.Details;
+            Tags = hn.Tags;
+            ReferenceDate = hn.ReferenceDate;
             CreatedBy = hn.CreatedBy;
             CreatedOn = hn.CreatedOn;
             ModifiedBy = UserName.GetDisplayName();

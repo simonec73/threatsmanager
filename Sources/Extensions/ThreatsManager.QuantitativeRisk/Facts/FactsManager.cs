@@ -104,21 +104,23 @@ namespace ThreatsManager.QuantitativeRisk.Facts
         /// Returns the Facts belonging to a specific Context.
         /// </summary>
         /// <param name="context">Context for the Facts.</param>
+        /// <param name="tags">Tags for the Facts.</param>
         /// <param name="filter">[Optional] Filter to be applied.</param>
         /// <returns>Enumeration of the selected Facts.</returns>
         /// <remarks>Searches the facts among those marked as used and from the reference Fact Provider, if configured.</remarks>
-        public IEnumerable<Fact> Search(string context, string filter = null)
+        public IEnumerable<Fact> Search(string context, IEnumerable<string> tags = null, string filter = null)
         {
             IEnumerable<Fact> result = null;
 
             var usedFacts = _schemaManager?.GetFacts()?
                 .Where(x => string.Compare(context, x.Context, StringComparison.InvariantCultureIgnoreCase) == 0 &&
                             (string.IsNullOrWhiteSpace(filter) ||
-                             (x.Text?.ToLower().Contains(filter.ToLower()) ?? false) ||
-                             (x.Source?.ToLower().Contains(filter.ToLower()) ?? false)))
+                             (x.Name?.ToLower().Contains(filter.ToLower()) ?? false) ||
+                             (x.Source?.ToLower().Contains(filter.ToLower()) ?? false) ||
+                             (x.Details?.ToLower().Contains(filter.ToLower()) ?? false)))
                 .ToArray();
 
-            var facts = FactProvider?.GetFacts(context, filter)?.ToArray();
+            var facts = FactProvider?.GetFacts(context, tags, filter)?.ToArray();
 
             if (usedFacts?.Any() ?? false)
             {
