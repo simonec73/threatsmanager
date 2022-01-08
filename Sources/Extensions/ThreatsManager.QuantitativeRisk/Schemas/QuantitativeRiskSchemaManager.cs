@@ -169,7 +169,12 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
         {
             get
             {
-                return ExtensionUtils.GetExtension<IFactProvider>(FactProviderId);
+                IFactProvider result = null;
+
+                if (!string.IsNullOrWhiteSpace(FactProviderId))
+                    result = ExtensionUtils.GetExtension<IFactProvider>(FactProviderId);
+
+                return result;
             }
         }
 

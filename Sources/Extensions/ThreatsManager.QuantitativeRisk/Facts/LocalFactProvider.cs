@@ -130,6 +130,7 @@ namespace ThreatsManager.QuantitativeRisk.Facts
             return _container?.Facts?
                 .Where(x => (includeObsolete || !x.Obsolete) && 
                     string.Compare(context, x.Context, StringComparison.InvariantCultureIgnoreCase) == 0 && 
+                    x.Tags.Any(y => tags?.Contains(y) ?? true) &&
                     (string.IsNullOrWhiteSpace(filter) || 
                      (x.Name?.ToLower().Contains(filter.ToLower()) ?? false) || 
                      (x.Source?.ToLower().Contains(filter.ToLower()) ?? false) || 

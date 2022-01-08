@@ -25,6 +25,7 @@ namespace ThreatsManager.QuantitativeRisk.Facts
         {
             _instance._model = model;
             _instance._schemaManager = new QuantitativeRiskSchemaManager(model);
+            _instance.FactProvider = _instance._schemaManager.Provider;
         }
 
         /// <summary>
