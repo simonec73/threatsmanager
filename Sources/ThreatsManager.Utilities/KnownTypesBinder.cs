@@ -21,6 +21,7 @@ namespace ThreatsManager.Utilities
             AddKnownType(typeof(string));
             AddKnownType(typeof(int));
             AddKnownType(typeof(decimal));
+            AddKnownType(typeof(Guid));
             AddKnownType(typeof(System.Drawing.PointF));
             AddKnownType(typeof(IListItem));
             AddKnownType(typeof(ListItem));
