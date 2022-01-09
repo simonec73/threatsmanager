@@ -26,6 +26,14 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         }
 
+        public Fact GetFact(Guid id)
+        {
+            if (_container == null)
+                _container = LoadFacts();
+
+            return _container?.Facts?.FirstOrDefault(x => x.Id == id);
+        }
+
         public bool RegisterFact(Fact fact)
         {
             var result = false;
@@ -39,6 +47,7 @@ namespace ThreatsManager.QuantitativeRisk.Facts
                         _container = new FactContainer();
                 }
 
+                _container.Remove(fact.Id);
                 _container.Add(fact);
                 SaveFacts(_container);
                 result = true;

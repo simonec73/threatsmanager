@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Microsoft.VisualBasic;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -441,6 +442,40 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
                     if (property != null)
                         property.StringValue = value;
                 }
+            }
+        }
+
+        public IEnumerable<string> Contexts => GetFacts()?.Select(x => x.Context).Distinct().OrderBy(x => x);
+
+        public IEnumerable<string> Tags
+        {
+            get
+            {
+                IEnumerable<string> result = null;
+
+                var facts = GetFacts()?.ToArray();
+                if (facts?.Any() ?? false)
+                {
+                    var list = new List<string>();
+
+                    foreach (var fact in facts)
+                    {
+                        var tags = fact.Tags?.ToArray();
+                        if (tags?.Any() ?? false)
+                        {
+                            foreach (var tag in tags)
+                            {
+                                if (!list.Contains(tag))
+                                    list.Add(tag);
+                            }
+                        }
+                    }
+
+                    if (list.Any())
+                        result = list.AsReadOnly();
+                }
+
+                return result;
             }
         }
 

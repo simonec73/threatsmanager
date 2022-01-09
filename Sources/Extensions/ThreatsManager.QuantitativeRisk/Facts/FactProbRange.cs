@@ -19,7 +19,7 @@ namespace ThreatsManager.QuantitativeRisk.Facts
             double min, double max, double mostProbable, Confidence confidence)
             : base(context, source, name, min, max)
         {
-            _mostProbable = min;
+            _mostProbable = mostProbable;
             _confidence = confidence;
         }
 

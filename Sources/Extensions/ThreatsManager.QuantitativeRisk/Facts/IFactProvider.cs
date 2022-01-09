@@ -24,6 +24,13 @@ namespace ThreatsManager.QuantitativeRisk.Facts
         void SetParameters(IDictionary<string, string> parameters);
 
         /// <summary>
+        /// Get a Fact given is identifier.
+        /// </summary>
+        /// <param name="id">Fact identifier.</param>
+        /// <returns>Fact, if retrieved, otherwise null.</returns>
+        Fact GetFact(Guid id);
+
+        /// <summary>
         /// Registers a fact in the Fact Provider.
         /// </summary>
         /// <param name="fact">Fact to be registered.</param>
