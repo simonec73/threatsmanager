@@ -167,7 +167,8 @@ namespace ThreatsManager.QuantitativeRisk.Facts
                     {
                         var serializer = new JsonSerializer
                         {
-                            TypeNameHandling = TypeNameHandling.None
+                            TypeNameHandling = TypeNameHandling.Auto,
+                            SerializationBinder = new KnownTypesBinder()
                         };
                         result = serializer.Deserialize<FactContainer>(reader);
                     }
@@ -187,7 +188,7 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
             using(JsonWriter writer = new JsonTextWriter(sw))
             {
-                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.None, Formatting = Formatting.Indented};
+                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented};
                 serializer.Serialize(writer, container);
             }
 
