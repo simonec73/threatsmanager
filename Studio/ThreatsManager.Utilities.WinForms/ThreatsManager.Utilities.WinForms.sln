@@ -25,10 +25,10 @@ Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 1
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://dev.azure.com/simonecurzi
+		SccTeamFoundationServer = https://simonecurzi.visualstudio.com/
 		SccProjectUniqueName0 = ThreatsManager.Utilities.WinForms.csproj
 		SccProjectName0 = .
-		SccAuxPath0 = https://dev.azure.com/simonecurzi
+		SccAuxPath0 = https://simonecurzi.visualstudio.com
 		SccLocalPath0 = .
 		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 	EndGlobalSection

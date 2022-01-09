@@ -72,14 +72,23 @@ namespace ThreatsManager.Dialogs
             };
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                var assembly = Assembly.ReflectionOnlyLoadFrom(dialog.FileName);
-#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-                var certificate = assembly.GetModules().First().GetSignerCertificate();
-#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
-                if (certificate != null)
+                try
                 {
-                    _fileName.Text = dialog.FileName;
-                    Certificate = new CertificateConfig(certificate);
+                    var assembly = Assembly.ReflectionOnlyLoadFrom(dialog.FileName);
+#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
+                    var certificate = assembly.GetModules().First().GetSignerCertificate();
+#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
+                    if (certificate != null)
+                    {
+                        _fileName.Text = dialog.FileName;
+                        Certificate = new CertificateConfig(certificate);
+                    }
+                }
+                catch (BadImageFormatException)
+                {
+                    MessageBox.Show(
+                        "The file is not a valid assembly containing a certificate. Please select a different file. You most typically want to select an Extension library.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -71,8 +71,8 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                 case "RemoveQuestion":
                     if (_currentRow?.Tag is Question question2)
                     {
-                        var text = question2.Text.Trim().TrimEnd('?');
-                        if (text.Length > 15)
+                        var text = question2.Text?.Trim().TrimEnd('?');
+                        if ((text?.Length ?? 0) > 15)
                             text = $"{text.Substring(0, 15)}...";
                         if (MessageBox.Show($"Are you sure you want to delete question '{text}'?", 
                             "Remove Question", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.OK)

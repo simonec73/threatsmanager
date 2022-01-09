@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using ThreatsManager.DevOps.Dialogs;
 using ThreatsManager.DevOps.Panels.MitigationsKanban;
+using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -61,7 +62,15 @@ namespace ThreatsManager.DevOps.Actions
                 {
                     case "Connect":
                         var dialog = new DevOpsConnectionDialog();
-                        dialog.Connector = connector;
+                        if (connector == null)
+                        {
+                            var schemaManager = new DevOpsConfigPropertySchemaManager(threatModel);
+                            dialog.Connection = schemaManager.ConnectionInfo;
+                        }
+                        else
+                        {
+                            dialog.Connector = connector;
+                        }
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
                             connector = dialog.Connector;
