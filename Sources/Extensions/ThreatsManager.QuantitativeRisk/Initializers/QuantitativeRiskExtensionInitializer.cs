@@ -13,6 +13,9 @@ namespace ThreatsManager.Quality.Initializers
         {
             KnownTypesBinder.AddKnownType(typeof(Fact));
             KnownTypesBinder.AddKnownType(typeof(FactContainer));
+            KnownTypesBinder.AddKnownType(typeof(FactHardNumber));
+            KnownTypesBinder.AddKnownType(typeof(FactProbRange));
+            KnownTypesBinder.AddKnownType(typeof(FactRange));
             KnownTypesBinder.AddKnownType(typeof(ContactFrequency));
             KnownTypesBinder.AddKnownType(typeof(Estimation));
             KnownTypesBinder.AddKnownType(typeof(FactBased));
@@ -25,6 +28,8 @@ namespace ThreatsManager.Quality.Initializers
             KnownTypesBinder.AddKnownType(typeof(Risk));
             KnownTypesBinder.AddKnownType(typeof(ThreatEventFrequency));
             KnownTypesBinder.AddKnownType(typeof(Vulnerability));
+            KnownTypesBinder.AddKnownType(typeof(Threshold));
+            KnownTypesBinder.AddKnownType(typeof(Thresholds));
         }
     }
 }

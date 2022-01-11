@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.DevOps.Initializers
 {
@@ -20,14 +21,16 @@ namespace ThreatsManager.DevOps.Initializers
 
         public async void Process(IThreatModel model)
         {
+            Connect.ChangeDisconnectButtonStatus(null, false);
+
             var schemaManager = new DevOpsConfigPropertySchemaManager(model);
             var connector = schemaManager.GetDevOpsConnector(out var url, out var project);
             if (connector != null && !string.IsNullOrWhiteSpace(url) && !string.IsNullOrWhiteSpace(project))
             {
                 try
                 {
-                    var tokenManager = new AccessTokenManager();
-                    var token = tokenManager.GetToken(url);
+                    var tokenManager = new SecretsManager();
+                    var token = tokenManager.GetSecret(url);
                     if (!string.IsNullOrWhiteSpace(token))
                     {
                         connector.Connect(url, token);

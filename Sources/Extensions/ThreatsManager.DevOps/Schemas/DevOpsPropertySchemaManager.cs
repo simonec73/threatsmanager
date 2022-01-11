@@ -301,7 +301,7 @@ namespace ThreatsManager.DevOps.Schemas
             {
                 var property = mitigation.GetProperty(propertyType);
                 if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
-                    jsonSerializableObject.Value is IterationInfo iterationInfo)
+                    jsonSerializableObject.Value is IterationInfo iterationInfo && iterationInfo.IsValid)
                 {
                     result = iterationInfo;
                 }

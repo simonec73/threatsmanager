@@ -124,6 +124,24 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Property containing the values of the parameters required by the Fact Provider..
+        /// </summary>
+        internal static string FactProviderParamsProperty {
+            get {
+                return ResourceManager.GetString("FactProviderParamsProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected Fact Provider..
+        /// </summary>
+        internal static string FactProviderProperty {
+            get {
+                return ResourceManager.GetString("FactProviderProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List of the Facts known within the Threat Model.
         /// </summary>
         internal static string FactsProperty {
@@ -223,6 +241,24 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Property containing the number of iterations to use for the Monte Carlo simulation..
+        /// </summary>
+        internal static string IterationsProperty {
+            get {
+                return ResourceManager.GetString("IterationsProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property containing the Lower Percentile configuration..
+        /// </summary>
+        internal static string LowerPercentileProperty {
+            get {
+                return ResourceManager.GetString("LowerPercentileProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Primary Loss is defined.
         /// </summary>
         internal static string NoPrimaryLoss {
@@ -268,11 +304,29 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reference measure configuration..
+        /// </summary>
+        internal static string ReferenceMeasureProperty {
+            get {
+                return ResourceManager.GetString("ReferenceMeasureProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Risk.
         /// </summary>
         internal static string RiskProperty {
             get {
                 return ResourceManager.GetString("RiskProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List of the Thresholds to determine the Severities from the estimated most probable ALE..
+        /// </summary>
+        internal static string ThresholdsProperty {
+            get {
+                return ResourceManager.GetString("ThresholdsProperty", resourceCulture);
             }
         }
         
@@ -291,6 +345,15 @@ namespace ThreatsManager.QuantitativeRisk.Properties {
         internal static string UndefinedLM {
             get {
                 return ResourceManager.GetString("UndefinedLM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property containing the Upper Percentile configuration..
+        /// </summary>
+        internal static string UpperPercentileProperty {
+            get {
+                return ResourceManager.GetString("UpperPercentileProperty", resourceCulture);
             }
         }
     }

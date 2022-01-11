@@ -138,6 +138,12 @@
   <data name="FactContextProperty" xml:space="preserve">
     <value>Context associated to the Facts</value>
   </data>
+  <data name="FactProviderParamsProperty" xml:space="preserve">
+    <value>Property containing the values of the parameters required by the Fact Provider.</value>
+  </data>
+  <data name="FactProviderProperty" xml:space="preserve">
+    <value>Selected Fact Provider.</value>
+  </data>
   <data name="FactsProperty" xml:space="preserve">
     <value>List of the Facts known within the Threat Model</value>
   </data>
@@ -171,6 +177,12 @@
   <data name="InvalidSLEFDistribution" xml:space="preserve">
     <value>Secondary Loss Event Frequency does not define a valid distribution</value>
   </data>
+  <data name="IterationsProperty" xml:space="preserve">
+    <value>Property containing the number of iterations to use for the Monte Carlo simulation.</value>
+  </data>
+  <data name="LowerPercentileProperty" xml:space="preserve">
+    <value>Property containing the Lower Percentile configuration.</value>
+  </data>
   <data name="NoPrimaryLoss" xml:space="preserve">
     <value>No Primary Loss is defined</value>
   </data>
@@ -186,13 +198,22 @@
   <data name="QuantitativeRiskSchemaName" xml:space="preserve">
     <value>Quantitative Risk</value>
   </data>
+  <data name="ReferenceMeasureProperty" xml:space="preserve">
+    <value>Reference measure configuration.</value>
+  </data>
   <data name="RiskProperty" xml:space="preserve">
     <value>Risk</value>
+  </data>
+  <data name="ThresholdsProperty" xml:space="preserve">
+    <value>List of the Thresholds to determine the Severities from the estimated most probable ALE.</value>
   </data>
   <data name="UndefinedLEF" xml:space="preserve">
     <value>Loss Event Frequency cannot be undefined</value>
   </data>
   <data name="UndefinedLM" xml:space="preserve">
     <value>Loss Magnitude cannot be undefined</value>
+  </data>
+  <data name="UpperPercentileProperty" xml:space="preserve">
+    <value>Property containing the Upper Percentile configuration.</value>
   </data>
 </root>

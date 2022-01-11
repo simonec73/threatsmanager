@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using PostSharp.Patterns.Contracts;
@@ -56,12 +57,13 @@ namespace ThreatsManager.MsTmt
             var model = new ThreatModel(fileName);
 
             ImportModelInfo(model, threatModel);
-            ImportBaseElementTemplates(model, threatModel);
-            ImportBaseFlowTemplates(model, threatModel);
-            itemTypes = ImportEntityTemplates(model, threatModel);
+            itemTypes = ImportBaseElementTemplates(model, threatModel);
+            itemTypes += ImportBaseFlowTemplates(model, threatModel);
+            itemTypes += ImportEntityTemplates(model, threatModel);
             itemTypes += ImportFlowTemplates(model, threatModel);
             ImportElements(model, threatModel, dpiFactor, out diagrams, 
                 out externalInteractors, out processes, out dataStores, out trustBoundaries);
+            ParentElements(model, threatModel);
             flows = ImportDataFlows(model, threatModel);
             ImportThreats(model, threatModel, unassignedThreatHandler, out threatTypes, out customThreatTypes, out threats, out missingThreats);
         }
@@ -153,56 +155,68 @@ namespace ThreatsManager.MsTmt
             }
         }
 
-        private void ImportBaseElementTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        private int ImportBaseElementTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
         {
+            int result = 0;
+
             var elements = source.ElementTypes?
                 .Where(x => x.IsGeneric)
                 .ToArray();
 
             if (elements?.Any() ?? false)
             {
-                IPropertySchema schema = null;
                 var baseEISchema = new BaseExternalInteractorPropertySchemaManager(target).GetSchema();
+                AddStandardPropertyTypes(baseEISchema);
                 var basePSchema = new BaseProcessPropertySchemaManager(target).GetSchema();
+                AddStandardPropertyTypes(basePSchema);
                 var baseDSSchema = new BaseDataStorePropertySchemaManager(target).GetSchema();
+                AddStandardPropertyTypes(baseDSSchema);
                 var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
+                AddStandardPropertyTypes(baseTBSchema);
 
-                foreach (var element in elements)
+                if (HasStandardStructure(elements))
                 {
-                    switch (element.ElementType)
+                    IPropertySchema schema = null;
+
+                    foreach (var element in elements)
                     {
-                        case ElementType.StencilRectangle:
-                            schema = baseEISchema;
-                            break;
-                        case ElementType.StencilEllipse:
-                            schema = basePSchema;
-                            break;
-                        case ElementType.StencilParallelLines:
-                            schema = baseDSSchema;
-                            break;
-                        case ElementType.BorderBoundary:
-                        case ElementType.LineBoundary:
-                            schema = baseTBSchema;
-                            break;
-                    }
+                        switch (element.ElementType)
+                        {
+                            case ElementType.StencilRectangle:
+                                schema = baseEISchema;
+                                break;
+                            case ElementType.StencilEllipse:
+                                schema = basePSchema;
+                                break;
+                            case ElementType.StencilParallelLines:
+                                schema = baseDSSchema;
+                                break;
+                            case ElementType.BorderBoundary:
+                            case ElementType.LineBoundary:
+                                schema = baseTBSchema;
+                                break;
+                        }
 
-                    if (schema != null)
-                    {
-                        var properties = element.Properties?.ToArray();
-
-                        var outOfScope = schema.GetPropertyType("Out of Scope") ?? 
-                                         schema.AddPropertyType("Out of Scope", PropertyValueType.Boolean);
-                        var reason = schema.GetPropertyType("Reason For Out Of Scope") ?? 
-                                     schema.AddPropertyType("Reason For Out Of Scope", PropertyValueType.String);
-
-                        AddProperties(schema, null, properties);
+                        if (schema != null)
+                        {
+                            var properties = element.Properties?.ToArray();
+                            AddProperties(schema, null, properties);
+                        }
                     }
                 }
+                else // We need to import all base elements!
+                {
+                    result = ImportEntityTemplates(elements, target);
+                }
             }
+
+            return result;
         }
 
-        private void ImportBaseFlowTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        private int ImportBaseFlowTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
         {
+            int result = 0;
+
             var connectors = source.FlowTypes?
                 .Where(x => x.IsGeneric)
                 .ToArray();
@@ -210,33 +224,43 @@ namespace ThreatsManager.MsTmt
             if (connectors?.Any() ?? false)
             {
                 var schema = new BaseFlowPropertySchemaManager(target).GetSchema();
+                AddStandardPropertyTypes(schema);
 
-                if (!(schema.PropertyTypes?.Any(x =>
-                    string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
+                if (HasStandardStructure(connectors))
                 {
-                    var outOfScope = schema.AddPropertyType("Out of Scope",
-                        PropertyValueType.Boolean);
-                    if (outOfScope != null)
+                    //if (!(schema.PropertyTypes?.Any(x =>
+                    //        string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
+                    //{
+                    //    var outOfScope = schema.AddPropertyType("Out of Scope",
+                    //        PropertyValueType.Boolean);
+                    //    if (outOfScope != null)
+                    //    {
+                    //        outOfScope.Priority = -2;
+                    //    }
+                    //}
+
+                    //if (!(schema.PropertyTypes?.Any(x =>
+                    //        string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
+                    //{
+                    //    var reasonOutOfScope =
+                    //        schema.AddPropertyType("Reason For Out Of Scope",
+                    //            PropertyValueType.String);
+                    //    if (reasonOutOfScope != null)
+                    //        reasonOutOfScope.Priority = -1;
+                    //}
+
+                    foreach (var connector in connectors)
                     {
-                        outOfScope.Priority = -2;
+                        AddProperties(schema, null, connector.Properties?.ToArray());
                     }
                 }
-
-                if (!(schema.PropertyTypes?.Any(x =>
-                    string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
+                else
                 {
-                    var reasonOutOfScope =
-                        schema.AddPropertyType("Reason For Out Of Scope",
-                            PropertyValueType.String);
-                    if (reasonOutOfScope != null)
-                        reasonOutOfScope.Priority = -1;
-                }
-
-                foreach (var connector in connectors)
-                {
-                    AddProperties(schema, null, connector.Properties?.ToArray());
+                    result = ImportFlowTemplates(connectors, target);
                 }
             }
+
+            return result;
         }
 
         private int ImportEntityTemplates([NotNull] ThreatModel source, [NotNull] IThreatModel target)
@@ -248,78 +272,125 @@ namespace ThreatsManager.MsTmt
 
             if (elements?.Any() ?? false)
             {
-                var schemaManager = new ObjectPropertySchemaManager(target);
+                result = ImportEntityTemplates(elements, target);
+            }
 
-                IEntityTemplate entityTemplate;
-                ITrustBoundaryTemplate trustBoundaryTemplate;
-                Interfaces.Scope scope;
-                IPropertySchema baseSchema;
-                var baseEISchema = new BaseExternalInteractorPropertySchemaManager(target).GetSchema();
-                var basePSchema = new BaseProcessPropertySchemaManager(target).GetSchema();
-                var baseDSSchema = new BaseDataStorePropertySchemaManager(target).GetSchema();
-                var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
+            return result;
+        }
 
-                foreach (var element in elements)
+        private int ImportEntityTemplates([NotNull] IEnumerable<ElementTypeInfo> elements, [NotNull] IThreatModel target)
+        {
+            int result = 0;
+
+            var schemaManager = new ObjectPropertySchemaManager(target);
+
+            IEntityTemplate entityTemplate;
+            ITrustBoundaryTemplate trustBoundaryTemplate;
+            Interfaces.Scope scope;
+            IPropertySchema baseSchema;
+            var baseEISchema = new BaseExternalInteractorPropertySchemaManager(target).GetSchema();
+            var basePSchema = new BaseProcessPropertySchemaManager(target).GetSchema();
+            var baseDSSchema = new BaseDataStorePropertySchemaManager(target).GetSchema();
+            var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
+
+            foreach (var element in elements)
+            {
+                IItemTemplate parent = null;
+                IPropertySchema schema = null;
+                if (!element.IsGeneric)
                 {
-                    switch (element.ElementType)
+                    var parentTypeId = element.ParentTypeId;
+                    if (!string.IsNullOrWhiteSpace(parentTypeId))
                     {
-                        case ElementType.StencilRectangle:
-                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
-                                element.Image, element.Image, element.Image,
-                                EntityType.ExternalInteractor);
-                            trustBoundaryTemplate = null;
-                            scope = Scope.ExternalInteractor;
-                            baseSchema = baseEISchema;
-                            result++;
-                            break;
-                        case ElementType.StencilEllipse:
-                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
-                                element.Image, element.Image, element.Image,
-                                EntityType.Process);
-                            trustBoundaryTemplate = null;
-                            scope = Scope.Process;
-                            baseSchema = basePSchema;
-                            result++;
-                            break;
-                        case ElementType.StencilParallelLines:
-                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
-                                element.Image, element.Image, element.Image,
-                                EntityType.DataStore);
-                            trustBoundaryTemplate = null;
-                            scope = Scope.DataStore;
-                            baseSchema = baseDSSchema;
-                            result++;
-                            break;
-                        case ElementType.LineBoundary:
-                        case ElementType.BorderBoundary:
-                            entityTemplate = null;
-                            trustBoundaryTemplate = target.AddTrustBoundaryTemplate(element.Name, element.Description);
-                            scope = Scope.TrustBoundary;
-                            baseSchema = baseTBSchema;
-                            result++;
-                            break;
-                        default:
-                            entityTemplate = null;
-                            trustBoundaryTemplate = null;
-                            scope = Scope.Undefined;
-                            baseSchema = null;
-                            break;
-                    }
+                        parent = GetEntityTemplate(parentTypeId, target, schemaManager);
+                        if (parent == null)
+                            parent = GetTrustBoundaryTemplate(parentTypeId, target, schemaManager);
 
-                    if (entityTemplate != null)
+                        if (parent != null)
+                        {
+                            schema = target.GetSchema(parent.Name, Resources.DefaultNamespace);
+                        }
+                    }
+                }
+
+                switch (element.ElementType)
+                {
+                    case ElementType.StencilRectangle:
+                        entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
+                            element.Image, element.Image, element.Image,
+                            EntityType.ExternalInteractor);
+                        trustBoundaryTemplate = null;
+                        scope = Scope.ExternalInteractor;
+                        baseSchema = baseEISchema;
+                        result++;
+                        break;
+                    case ElementType.StencilEllipse:
+                        entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
+                            element.Image, element.Image, element.Image,
+                            EntityType.Process);
+                        trustBoundaryTemplate = null;
+                        scope = Scope.Process;
+                        baseSchema = basePSchema;
+                        result++;
+                        break;
+                    case ElementType.StencilParallelLines:
+                        entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
+                            element.Image, element.Image, element.Image,
+                            EntityType.DataStore);
+                        trustBoundaryTemplate = null;
+                        scope = Scope.DataStore;
+                        baseSchema = baseDSSchema;
+                        result++;
+                        break;
+                    case ElementType.LineBoundary:
+                    case ElementType.BorderBoundary:
+                        entityTemplate = null;
+                        trustBoundaryTemplate = target.AddTrustBoundaryTemplate(element.Name, element.Description);
+                        scope = Scope.TrustBoundary;
+                        baseSchema = baseTBSchema;
+                        result++;
+                        break;
+                    default:
+                        entityTemplate = null;
+                        trustBoundaryTemplate = null;
+                        scope = Scope.Undefined;
+                        baseSchema = null;
+                        break;
+                }
+
+                if (entityTemplate != null)
+                {
+                    schemaManager.SetObjectId(entityTemplate, element.TypeId);
+                    if (baseSchema != null)
                     {
                         InitializeBaseSchema(entityTemplate, baseSchema);
-                        schemaManager.SetObjectId(entityTemplate, element.TypeId);
                         var properties = element.Properties?.ToArray();
-
                         AddProperties(target, element.Name, scope, baseSchema, entityTemplate, properties);
-                    } else if (trustBoundaryTemplate != null)
+                    }
+
+                    if (schema != null)
+                    {
+                        InitializeBaseSchema(entityTemplate, schema);
+                        var properties = element.Properties?.ToArray();
+                        AddProperties(target, element.Name, scope, schema, entityTemplate, properties);
+                    }
+                } 
+                else if (trustBoundaryTemplate != null)
+                {
+                    schemaManager.SetObjectId(trustBoundaryTemplate, element.TypeId);
+
+                    var properties = element.Properties?.ToArray();
+
+                    if (baseSchema != null)
                     {
                         InitializeBaseSchema(trustBoundaryTemplate, baseSchema);
-                        schemaManager.SetObjectId(trustBoundaryTemplate, element.TypeId);
-                        var properties = element.Properties?.ToArray();
-
                         AddProperties(target, element.Name, scope, baseSchema, trustBoundaryTemplate, properties);
+                    }
+
+                    if (schema != null)
+                    {
+                        InitializeBaseSchema(entityTemplate, schema);
+                        AddProperties(target, element.Name, scope, schema, entityTemplate, properties);
                     }
                 }
             }
@@ -336,21 +407,55 @@ namespace ThreatsManager.MsTmt
 
             if (connectors?.Any() ?? false)
             {
-                var schemaManager = new ObjectPropertySchemaManager(target);
-                var baseSchema = new BaseFlowPropertySchemaManager(target).GetSchema();
+                result = ImportFlowTemplates(connectors, target);
+            }
 
-                foreach (var connector in connectors)
+            return result;
+        }
+
+        private int ImportFlowTemplates([NotNull] IEnumerable<ElementTypeInfo> connectors, [NotNull] IThreatModel target)
+        {
+            int result = 0;
+
+            var schemaManager = new ObjectPropertySchemaManager(target);
+            var baseSchema = new BaseFlowPropertySchemaManager(target).GetSchema();
+
+            foreach (var connector in connectors)
+            {
+                IItemTemplate parent = null;
+                IPropertySchema schema = null;
+                if (!connector.IsGeneric)
                 {
-                    var template = target.AddFlowTemplate(connector.Name, connector.Description);
-                    if (template != null)
+                    var parentTypeId = connector.ParentTypeId;
+                    if (!string.IsNullOrWhiteSpace(parentTypeId))
                     {
-                        result++;
+                        parent = GetFlowTemplate(parentTypeId, target, schemaManager);
 
+                        if (parent != null)
+                        {
+                            schema = target.GetSchema(parent.Name, Resources.DefaultNamespace);
+                        }
+                    }
+                }
+
+                var template = target.AddFlowTemplate(connector.Name, connector.Description);
+                if (template != null)
+                {
+                    result++;
+                    schemaManager.SetObjectId(template, connector.TypeId);
+
+                    var properties = connector.Properties?.ToArray();
+
+                    if (baseSchema != null)
+                    {
                         InitializeBaseSchema(template, baseSchema);
-                        schemaManager.SetObjectId(template, connector.TypeId);
-                        var properties = connector.Properties?.ToArray();
-
                         AddProperties(target, connector.Name, Scope.DataFlow, baseSchema, template, properties);
+                    }
+
+                    if (schema != null)
+                    {
+                        InitializeBaseSchema(template, schema);
+                        AddProperties(target, connector.Name, Scope.DataFlow, schema, template, properties);
                     }
                 }
             }
@@ -489,6 +594,82 @@ namespace ThreatsManager.MsTmt
             }
         }
 
+        private void ParentElements([NotNull] ThreatModel source, [NotNull] IThreatModel target)
+        {
+            var schemaManager = new ObjectPropertySchemaManager(target);
+
+            var trustBoundaries = source.Elements?
+                .Where(x => x.Value.ElementType == ElementType.BorderBoundary)
+                .OrderByDescending(x => x.Value.Size.Width * x.Value.Size.Height)
+                .ToArray();
+
+            var count = trustBoundaries?.Length ?? 0;
+            if (count > 1)
+            {
+                for (int i = 0; i < count - 1; i++)
+                {
+                    var parent = trustBoundaries[i];
+
+                    for (int j = i + 1; j < count; j++)
+                    {
+                        var child = trustBoundaries[j];
+                        if (IsParent(parent.Value, child.Value))
+                        {
+                            var p = GetTrustBoundary(parent.Key.ToString(), target, schemaManager);
+                            var c = GetTrustBoundary(child.Key.ToString(), target, schemaManager);
+                            if (p != null && c != null)
+                            {
+                                c.SetParent(p);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (count > 0)
+            {
+                var entities = source.Elements?
+                    .Where(x => x.Value.ElementType == ElementType.StencilRectangle ||
+                                x.Value.ElementType == ElementType.StencilEllipse ||
+                                x.Value.ElementType == ElementType.StencilParallelLines)
+                    .ToArray();
+
+                if (entities?.Any() ?? false)
+                {
+                    trustBoundaries = trustBoundaries                
+                        .OrderBy(x => x.Value.Size.Width * x.Value.Size.Height)
+                        .ToArray();
+
+                    foreach (var entity in entities)
+                    {
+                        string parentKey = null;
+
+                        foreach (var trustBoundary in trustBoundaries)
+                        {
+                            if (IsParent(trustBoundary.Value, entity.Value))
+                            {
+                                parentKey = trustBoundary.Key.ToString();
+                                break;
+                            }
+                        }
+
+                        if (parentKey !=null)
+                        {
+                            var parent = GetTrustBoundary(parentKey, target, schemaManager);
+                            if (parent != null)
+                            {
+                                var e = GetEntity(entity.Key.ToString(), target, schemaManager);
+                                if (e != null)
+                                {
+                                    e.SetParent(parent);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private int ImportDataFlows([NotNull] ThreatModel source, [NotNull] IThreatModel target)
         {
             int result = 0;
@@ -580,6 +761,14 @@ namespace ThreatsManager.MsTmt
                     }
                 }
             }
+        }
+
+        private static void AddStandardPropertyTypes([NotNull] IPropertySchema schema)
+        {
+            var outOfScope = schema.GetPropertyType("Out of Scope") ??
+                             schema.AddPropertyType("Out of Scope", PropertyValueType.Boolean);
+            var reason = schema.GetPropertyType("Reason For Out Of Scope") ??
+                         schema.AddPropertyType("Reason For Out Of Scope", PropertyValueType.String);
         }
 
         private static void InitializeBaseSchema([NotNull] IItemTemplate template, [NotNull] IPropertySchema baseSchema)
@@ -936,11 +1125,111 @@ namespace ThreatsManager.MsTmt
             }
         }
 
+        private bool HasStandardStructure([NotNull] IEnumerable<ElementTypeInfo> elements)
+        {
+            return !(elements.Where(x => x.ElementType == ElementType.StencilRectangle).Count() > 1 ||
+                   elements.Where(x => x.ElementType == ElementType.StencilEllipse).Count() > 1 ||
+                   elements.Where(x => x.ElementType == ElementType.StencilParallelLines).Count() > 1 ||
+                   elements.Where(x => x.ElementType == ElementType.BorderBoundary).Count() > 1 ||
+                   elements.Where(x => x.ElementType == ElementType.Connector).Count() > 1);
+        }
+
         private bool IsSpecial([Required] string propertyName)
         {
             return string.CompareOrdinal(propertyName, "Title") == 0 ||
                    string.CompareOrdinal(propertyName, "UserThreatDescription") == 0 ||
                    string.CompareOrdinal(propertyName, "Priority") == 0;
+        }
+
+        private bool IsParent([NotNull] ElementInfo parent, [NotNull] ElementInfo child)
+        {
+            bool result = false;
+
+            if (parent.ElementType == ElementType.BorderBoundary && string.CompareOrdinal(parent.Page, child.Page) == 0)
+            {
+                if (child.ElementType == ElementType.StencilRectangle ||
+                    child.ElementType == ElementType.StencilEllipse ||
+                    child.ElementType == ElementType.StencilParallelLines)
+                {
+                    result = parent.Position.X <= child.Position.X && parent.Position.Y <= child.Position.Y &&
+                             parent.Position.X + parent.Size.Width >= child.Position.X &&
+                             parent.Position.Y + parent.Size.Height >= child.Position.Y;
+                }
+                else if (child.ElementType == ElementType.BorderBoundary)
+                {
+                    result = parent.Position.X <= child.Position.X && parent.Position.Y <= child.Position.Y &&
+                             parent.Position.X + parent.Size.Width >= child.Position.X + child.Size.Width &&
+                             parent.Position.Y + parent.Size.Height >= child.Position.Y + child.Size.Height;
+                }
+            }
+
+            return result;
+        }
+        
+        private IEntityTemplate GetEntityTemplate([Required] string typeId, [NotNull] IThreatModel model,
+            [NotNull] ObjectPropertySchemaManager schemaManager)
+        {
+            IEntityTemplate result = null;
+
+            var templates = model.EntityTemplates?.ToArray();
+            if (templates != null)
+            {
+                foreach (var template in templates)
+                {
+                    var id = schemaManager.GetObjectId(template);
+                    if (string.CompareOrdinal(id, typeId) == 0)
+                    {
+                        result = template;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+        private IFlowTemplate GetFlowTemplate([Required] string typeId, [NotNull] IThreatModel model,
+            [NotNull] ObjectPropertySchemaManager schemaManager)
+        {
+            IFlowTemplate result = null;
+
+            var templates = model.FlowTemplates?.ToArray();
+            if (templates != null)
+            {
+                foreach (var template in templates)
+                {
+                    var id = schemaManager.GetObjectId(template);
+                    if (string.CompareOrdinal(id, typeId) == 0)
+                    {
+                        result = template;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+        private ITrustBoundaryTemplate GetTrustBoundaryTemplate([Required] string typeId, [NotNull] IThreatModel model,
+            [NotNull] ObjectPropertySchemaManager schemaManager)
+        {
+            ITrustBoundaryTemplate result = null;
+
+            var templates = model.TrustBoundaryTemplates?.ToArray();
+            if (templates != null)
+            {
+                foreach (var template in templates)
+                {
+                    var id = schemaManager.GetObjectId(template);
+                    if (string.CompareOrdinal(id, typeId) == 0)
+                    {
+                        result = template;
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         private IEntity GetEntity([Required] string msEntityId, [NotNull] IThreatModel model,
@@ -957,6 +1246,28 @@ namespace ThreatsManager.MsTmt
                     if (string.CompareOrdinal(id, msEntityId) == 0)
                     {
                         result = entity;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private ITrustBoundary GetTrustBoundary([Required] string msGroupId, [NotNull] IThreatModel model,
+            [NotNull] ObjectPropertySchemaManager schemaManager)
+        {
+            ITrustBoundary result = null;
+
+            var groups = model.Groups?.OfType<ITrustBoundary>().ToArray();
+            if (groups != null)
+            {
+                foreach (var group in groups)
+                {
+                    var id = schemaManager.GetInstanceId(group);
+                    if (string.CompareOrdinal(id, msGroupId) == 0)
+                    {
+                        result = group;
                         break;
                     }
                 }

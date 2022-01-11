@@ -15,8 +15,12 @@ namespace ThreatsManager.Quality.CalculatedSeverity
                 var totalStrength = (threatEvent.Mitigations?
                     .Where(x => x.Status == MitigationStatus.Existing || x.Status == MitigationStatus.Implemented)
                     .Sum(x => x.StrengthId) ?? 0) - configDelta;
+
+                var severity = Math.Max(threatEvent.ThreatType.SeverityId,
+                    threatEvent.Scenarios?.Max(x => x.SeverityId) ?? 0);
+
                 var projected =
-                    (int) Math.Max(Math.Ceiling(threatEvent.ThreatType.SeverityId * (1.0 - (Math.Min(totalStrength, 100.0) / 100.0))), 1.0);
+                    (int) Math.Max(Math.Ceiling(severity * (1.0 - (Math.Min(totalStrength, 100.0) / 100.0))), 1.0);
                 result = threatEvent.Model?.GetMappedSeverity(projected);
             }
 

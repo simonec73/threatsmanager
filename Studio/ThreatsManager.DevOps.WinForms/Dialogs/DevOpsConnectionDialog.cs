@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.DevOps.Dialogs
 {
     public partial class DevOpsConnectionDialog : Form
     {
         private IDevOpsConnector _connector;
-        private readonly AccessTokenManager _tokenManager;
+        private readonly SecretsManager _tokenManager;
         private IEnumerable<string> _urls;
+        private string _projectName;
 
         public DevOpsConnectionDialog()
         {
@@ -22,7 +25,7 @@ namespace ThreatsManager.DevOps.Dialogs
                 _factories.Items.AddRange(factories);
             }
 
-            _tokenManager = new AccessTokenManager();
+            _tokenManager = new SecretsManager();
         }
 
         public IDevOpsConnector Connector
@@ -42,7 +45,7 @@ namespace ThreatsManager.DevOps.Dialogs
 
                     _factories.SelectedItem = factory;
                     _serverUrl.Text = value.Url;
-                    _accessToken.Text = _tokenManager.GetToken(value.Url);
+                    _accessToken.Text = _tokenManager.GetSecret(value.Url);
                     _projectList.Items.Clear();
                     if (!string.IsNullOrWhiteSpace(value.Project))
                         _projectList.Items.Add(value.Project);
@@ -51,11 +54,28 @@ namespace ThreatsManager.DevOps.Dialogs
             }
         }
 
+        public DevOpsConnection Connection
+        {
+            set
+            {
+                if (value != null)
+                {
+                    var factory = _factories.Items
+                        .OfType<IDevOpsConnectorFactory>()
+                        .FirstOrDefault(x => string.CompareOrdinal(x.GetExtensionId(), value.ExtensionId) == 0);
+
+                    _factories.SelectedItem = factory;
+                    _serverUrl.Text = value.Url;
+                    _projectName = value.Project;
+                }
+            }
+        }
+
         public string ProjectName => _projectList.SelectedItem as string;
 
         private void DevOpsConnectionDialog_Load(object sender, EventArgs e)
         {
-            _urls = _tokenManager.Urls;
+            _urls = _tokenManager.Existing;
         }
 
         private async void _loadProjects_Click(object sender, EventArgs e)
@@ -75,9 +95,16 @@ namespace ThreatsManager.DevOps.Dialogs
                     var projects = (await _connector.GetProjectsAsync())?.ToArray();
                     if (projects?.Any() ?? false)
                     {
-                        _tokenManager.SetToken(_serverUrl.Text, _accessToken.Text);
+                        _tokenManager.SetSecret(_serverUrl.Text, _accessToken.Text);
                         _projectList.Items.Clear();
                         _projectList.Items.AddRange(projects);
+
+                        if (!string.IsNullOrWhiteSpace(_projectName))
+                        {
+                            var index = _projectList.FindStringExact(_projectName);
+                            if (index >= 0)
+                                _projectList.SelectedIndex = index;
+                        }
                     }
                     else
                     {
@@ -103,7 +130,7 @@ namespace ThreatsManager.DevOps.Dialogs
         {
             if (!string.IsNullOrWhiteSpace(_serverUrl.Text) && _urls.ContainsCaseInsensitive(_serverUrl.Text?.Trim('/')))
             {
-                var token = _tokenManager.GetToken(_serverUrl.Text);
+                var token = _tokenManager.GetSecret(_serverUrl.Text);
                 if (!string.IsNullOrWhiteSpace(token))
                     _accessToken.Text = token;
             }

@@ -13,16 +13,19 @@ namespace ThreatsManager.QuantitativeRisk.Facts
 
         }
 
-        public FactHardNumber([Required] string context, [Required] string source, [Required] string text, double value)
-            : base(context, source, text)
+        public FactHardNumber([Required] string context, [Required] string source, [Required] string name, double value)
+            : base(context, source, name)
         {
             _value = value;
         }
 
         private FactHardNumber([NotNull] FactProbRange pr) 
-            : this(pr.Context, pr.Source, pr.Text, pr.MostProbable)
+            : this(pr.Context, pr.Source, pr.Name, pr.MostProbable)
         {
             Id = pr.Id;
+            Details = pr.Details;
+            Tags = pr.Tags;
+            ReferenceDate = pr.ReferenceDate;
             CreatedBy = pr.CreatedBy;
             CreatedOn = pr.CreatedOn;
             ModifiedBy = UserName.GetDisplayName();

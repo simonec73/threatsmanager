@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 
@@ -12,6 +11,25 @@ namespace ThreatsManager.QuantitativeRisk.Facts
     [ExtensionDescription("Fact Provider")]
     public interface IFactProvider : IExtension
     {
+        /// <summary>
+        /// Get configuration parameters for the Fact Provider.
+        /// </summary>
+        /// <returns>Definition of the required parameters.</returns>
+        IEnumerable<FactProviderParameter> GetParameters();
+
+        /// <summary>
+        /// Set configuration parameters for the Fact Provider.
+        /// </summary>
+        /// <param name="parameters">Dictionary containing the parameters and their value.</param>
+        void SetParameters(IDictionary<string, string> parameters);
+
+        /// <summary>
+        /// Get a Fact given is identifier.
+        /// </summary>
+        /// <param name="id">Fact identifier.</param>
+        /// <returns>Fact, if retrieved, otherwise null.</returns>
+        Fact GetFact(Guid id);
+
         /// <summary>
         /// Registers a fact in the Fact Provider.
         /// </summary>
@@ -40,11 +58,19 @@ namespace ThreatsManager.QuantitativeRisk.Facts
         IEnumerable<string> Contexts { get; }
 
         /// <summary>
+        /// Gets the list of already defined Tags.
+        /// </summary>
+        IEnumerable<string> Tags { get; }
+
+        /// <summary>
         /// Returns the Facts belonging to a specific Context.
         /// </summary>
         /// <param name="context">Context for the Facts.</param>
+        /// <param name="tags">[Optional] Tags for the Facts.</param>
         /// <param name="filter">[Optional] Filter to be applied.</param>
-        /// <returns>Enumeration of the selected Facts.</returns>
-        IEnumerable<Fact> GetFacts(string context, string filter = null);
+        /// <param name="includeObsolete">[Optional] Flag specifying if obsolete Facts should be included.</param>
+        /// <returns>Enumeration of the Facts assigned to the specified context,
+        /// containing at least a tag from the provided list, and containing the text provided as filter in their Text or Notes.</returns>
+        IEnumerable<Fact> GetFacts(string context, IEnumerable<string> tags = null, string filter = null, bool includeObsolete = false);
     }
 }

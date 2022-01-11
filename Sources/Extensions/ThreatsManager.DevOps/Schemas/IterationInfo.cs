@@ -9,12 +9,17 @@ namespace ThreatsManager.DevOps.Schemas
     [JsonObject(MemberSerialization.OptIn)]
     public class IterationInfo
     {
-        public IterationInfo([NotNull] Iteration currentIteration)
+        public IterationInfo(Iteration currentIteration)
         {
-            _iterationId = currentIteration.Id;
-            _assignedBy = Utilities.UserName.GetDisplayName();
-            _assignedOn = DateTime.Now;
+            if (currentIteration != null)
+            {
+                _iterationId = currentIteration.Id;
+                _assignedBy = Utilities.UserName.GetDisplayName();
+                _assignedOn = DateTime.Now;
+            }
         }
+
+        public bool IsValid => !string.IsNullOrWhiteSpace(_iterationId);
 
         [JsonProperty("iterationId")]
         private string _iterationId { get; set; }

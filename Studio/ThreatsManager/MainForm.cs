@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using System.Text;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
@@ -981,10 +980,10 @@ namespace ThreatsManager
                 exc.ToExceptionless().Submit();
                 model = null;
                 using (var dialog = new ErrorDialog
-                {
-                    Title = "Threat Model Opening failure",
-                    Description = exc.Message
-                })
+                       {
+                           Title = "Threat Model Opening failure",
+                           Description = exc.Message
+                       })
                 {
                     dialog.ShowDialog(this);
                 }
@@ -1012,6 +1011,12 @@ namespace ThreatsManager
             catch (UnauthorizedAccessException)
             {
                 ShowDesktopAlert("The model cannot be opened because you do now have the required rights.", true);
+                model = null;
+                messageRaised = true;
+            }
+            catch (IOException e)
+            {
+                ShowDesktopAlert(e.Message, true);
                 model = null;
                 messageRaised = true;
             }

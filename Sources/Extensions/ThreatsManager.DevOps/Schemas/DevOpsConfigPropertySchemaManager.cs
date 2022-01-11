@@ -125,6 +125,28 @@ namespace ThreatsManager.DevOps.Schemas
                 }
             }
         }
+
+        public DevOpsConnection ConnectionInfo
+        {
+            get
+            {
+                DevOpsConnection result = null;
+
+                var propertyType = GetPropertyTypeDevOpsConnector();
+
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is DevOpsConnection connection)
+                    {
+                        result = connection;
+                    }
+                }
+
+                return result;
+            }
+        }
         #endregion
 
         #region Iterations.
