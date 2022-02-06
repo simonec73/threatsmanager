@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
@@ -27,7 +28,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_vulnerabilities))]
-        public Property<List<IVulnerability>> _vulnerabilities;
+        public Property<IList<IVulnerability>> _vulnerabilities;
         #endregion
 
         #region Implementation of interface IVulnerabilitiesContainer.
@@ -64,7 +65,7 @@ namespace ThreatsManager.Engine.Aspects
             }
         }
 
-        [OnEventRemoveHandlerAdvice(Master = nameof(OnVulnerabilityAddedAdd))]
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnVulnerabilityRemovedAdd))]
         public void OnVulnerabilityRemovedRemove(EventInterceptionArgs args)
         {
             _vulnerabilityRemoved -= (Action<IVulnerabilitiesContainer, IVulnerability>)args.Handler;
@@ -103,9 +104,9 @@ namespace ThreatsManager.Engine.Aspects
                 _vulnerabilities?.Set(vulnerabilities);
             }
 
-            _vulnerabilities.Add(vulnerability);
+            vulnerabilities.Add(vulnerability);
             if (Instance is IVulnerabilitiesContainer container)
-                _vulnerabilityAdded?.Invoke(container, result);
+                _vulnerabilityAdded?.Invoke(container, vulnerability);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 14)]
@@ -119,7 +120,7 @@ namespace ThreatsManager.Engine.Aspects
 
                 if (model != null)
                 {
-                    if (_vulnerabilities?.All(x => x.WeaknessId != weakness.Id) ?? true)
+                    if (_vulnerabilities?.Get()?.All(x => x.WeaknessId != weakness.Id) ?? true)
                     {
                         result = new Vulnerability(weakness, identity);
                         Add(result);
@@ -140,7 +141,7 @@ namespace ThreatsManager.Engine.Aspects
             var vulnerability = GetVulnerability(id);
             if (vulnerability != null)
             {
-                result = _vulnerabilities?.Get()?.Remove(vulnerability);
+                result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
                 if (result)
                 {
                     if (Instance is IDirty dirtyObject)

@@ -95,7 +95,7 @@ namespace ThreatsManager.Engine.Aspects
             var entities = _entities?.Get();
             if (entities == null)
             { 
-                var entities = new AdvisableCollection<IEntityShape>();
+                entities = new AdvisableCollection<IEntityShape>();
                 _entities?.Set(entities);
             }
 

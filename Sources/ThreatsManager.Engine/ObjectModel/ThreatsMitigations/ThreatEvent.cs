@@ -374,6 +374,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Child]
         [JsonProperty("scenarios")]
         private IList<IThreatEventScenario> _scenarios { get; set; }
+        [Child]
+        [JsonProperty("mitigations")]
         private IList<IThreatEventMitigation> _mitigations { get; set; }
         #endregion
 
@@ -412,6 +414,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
         }
 
+        [Child]
         [JsonProperty("threatEventVulnerabilities")]
         private List<IThreatEventVulnerability> _vulnerabilities { get; set; }
 
