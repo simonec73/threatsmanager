@@ -127,6 +127,29 @@ namespace ThreatsManager.Utilities
 
             return result;
         }
+
+        /// <summary>
+        /// Get the Universal Identifier of the Extension.
+        /// </summary>
+        /// <param name="value">Extension whose Universal Identifier is to be returned.</param>
+        /// <returns>Universal Identifier of the Extension.</returns>
+        /// <remarks>If the object is not an Extension or if the Universal Identifier has not been defined, then the method returns null.</remarks>
+        public static string GetExtensionUniversalId(this object value)
+        {
+            string result = null;
+
+            Type type = value.GetType();
+
+            var attrib = type.GetCustomAttributes(
+                typeof(UniversalIdentifierAttribute), false)?.FirstOrDefault() as UniversalIdentifierAttribute;
+
+            if (attrib != null)
+            {
+                result = attrib.Name;
+            }
+
+            return result;
+        }
         #endregion
 
         #region Extension Enumeration.
@@ -187,6 +210,27 @@ namespace ThreatsManager.Utilities
             {
                 var instance = property.GetValue(null) as IExtensionManager;
                 result = instance?.GetExtensionByLabel<T>(label);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the Extension of a specific type Universal Identifier, loaded by the Platform. 
+        /// </summary>
+        /// <typeparam name="T">Extension type.</typeparam>
+        /// <param name="universalId">Universal Identifier of the searched Extension.</param>
+        /// <returns>Registered Extension.</returns>
+        public static T GetExtensionByUniversalId<T>([Required] string universalId) where T : class, IExtension
+        {
+            T result = null;
+
+            var type = Type.GetType("ThreatsManager.Engine.Manager, ThreatsManager.Engine", false);
+            var property = type?.GetProperty("Instance");
+            if (property != null)
+            {
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtensionByUniversalId<T>(universalId);
             }
 
             return result;

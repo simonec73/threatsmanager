@@ -30,5 +30,13 @@ namespace ThreatsManager.Utilities
         /// <param name="label">Label of the Extension.</param>
         /// <returns>Instance of the Extension.</returns>
         T GetExtensionByLabel<T>(string label) where T : class, IExtension;
+
+        /// <summary>
+        /// Get a specific Extension, given its type and Universal ID.
+        /// </summary>
+        /// <typeparam name="T">Interface implemented by the Extension.</typeparam>
+        /// <param name="universalId">Universal Identifier of the Extension.</param>
+        /// <returns>Instance of the Extension.</returns>
+        T GetExtensionByUniversalId<T>(string universalId) where T : class, IExtension;
     }
 }

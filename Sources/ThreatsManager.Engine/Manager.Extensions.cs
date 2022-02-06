@@ -43,6 +43,11 @@ namespace ThreatsManager.Engine
             return result;
         }
 
+        public T GetExtensionByUniversalId<T>([Required] string universalId) where T : class, IExtension
+        {
+            return _extensionsManager.GetExtensionByUniversalId<T>(universalId);
+        }
+
         public IEnumerable<T> GetExtensions<T>() where T : class, IExtension
         {
             return _extensionsManager.GetExtensions<T>()?

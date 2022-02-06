@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +25,8 @@ namespace ThreatsManager.Engine
 #pragma warning disable 649
         [ImportMany(typeof(IExtension))] 
         private IEnumerable<Lazy<IExtension, IExtensionMetadata>> _extensions;
+
+        private IDictionary<string, string> _extensionsByUniversalId;
 #pragma warning restore 649
 
         public void AddExtensionsAssembly([Required] string path)
@@ -47,6 +48,9 @@ namespace ThreatsManager.Engine
             try
             {
                 _container.ComposeParts(this);
+
+                LoadUniversalIDs();
+
                 if (loadHelp)
                     LoadHelpConfiguration();
             }
@@ -124,7 +128,6 @@ namespace ThreatsManager.Engine
                 .Metadata;
         }
 
-        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
         public IEnumerable<KeyValuePair<IExtensionMetadata, T>> GetExtensions<T>() where T : class, IExtension
         {
             return _extensions?
@@ -146,6 +149,20 @@ namespace ThreatsManager.Engine
             return _extensions?
                 .FirstOrDefault(x => (x?.Metadata != null) && string.CompareOrdinal(label, x.Metadata.Label) == 0)?
                 .Value as T;
+        }
+
+        public T GetExtensionByUniversalId<T>([Required] string universalId) where T : class, IExtension
+        {
+            T result = default(T);
+
+            var id = _extensionsByUniversalId?
+                .Where(x => string.CompareOrdinal(x.Key, universalId) == 0)?
+                .Select(x => x.Value)
+                .FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(id))
+                result = GetExtension<T>(id);
+
+            return result;
         }
 
         private bool IsExecutionModeCompliant(ExecutionMode requiredMode)
@@ -180,6 +197,28 @@ namespace ThreatsManager.Engine
             }
 
             return result;
+        }
+
+        private void LoadUniversalIDs()
+        {
+            var extensions = _extensions?.Select(x => x.Value)?.ToArray();
+            if (extensions?.Any() ?? false)
+            {
+                var dict = new Dictionary<string, string>();
+                foreach (var extension in extensions)
+                {
+                    var universalId = extension.GetExtensionUniversalId();
+                    if (!string.IsNullOrWhiteSpace(universalId))
+                    {
+                        dict.Add(universalId, extension.GetExtensionId());
+                    }
+                }
+
+                if (dict.Any())
+                {
+                    _extensionsByUniversalId = dict;
+                }
+            }
         }
 
         [Background]
