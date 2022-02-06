@@ -109,7 +109,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (GetThreatType(name) == null)
             {
-                result = new ThreatType(this, name, severity);
+                result = new ThreatType(name, severity);
                 Add(result);
                 RegisterEvents(result);
             }

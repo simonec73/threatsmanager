@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Patterns.Collections;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
@@ -15,58 +16,60 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //private List<IGroupShape> _groups { get; set; }
+    //[JsonProperty("groups")]
+    //[Child]
+    //private IList<IGroupShape> _groups { get; set; }
     //#endregion    
 
     [PSerializable]
     public class GroupShapesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("groups")]
-        public List<IGroupShape> _groups { get; set; }
+        [ImportMember(nameof(_groups))]
+        public Property<IList<IGroupShape>> _groups;
         #endregion
 
         #region Implementation of interface IGroupShapesContainerAspect.
         private Action<IGroupShapesContainer, IGroupShape> _groupShapeAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IGroupShapesContainer, IGroupShape> GroupShapeAdded
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "GroupShapeAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnGroupShapeAddedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_groupShapeAdded == null || !_groupShapeAdded.GetInvocationList().Contains(args.Handler))
             {
-                if (_groupShapeAdded == null || !_groupShapeAdded.GetInvocationList().Contains(value))
-                {
-                    _groupShapeAdded += value;
-                }
+                _groupShapeAdded += (Action<IGroupShapesContainer, IGroupShape>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove
-            {
-                _groupShapeAdded -= value;
-            }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnGroupShapeAddedAdd))]
+        public void OnGroupShapeAddedRemove(EventInterceptionArgs args)
+        {
+            _groupShapeAdded -= (Action<IGroupShapesContainer, IGroupShape>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<IGroupShapesContainer, IGroup> _groupShapeRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IGroupShapesContainer, IGroup> GroupShapeRemoved
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "GroupShapeRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnGroupShapeRemovedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_groupShapeRemoved == null || !_groupShapeRemoved.GetInvocationList().Contains(args.Handler))
             {
-                if (_groupShapeRemoved == null || !_groupShapeRemoved.GetInvocationList().Contains(value))
-                {
-                    _groupShapeRemoved += value;
-                }
-            }
-            remove
-            {
-                _groupShapeRemoved -= value;
+                _groupShapeRemoved += (Action<IGroupShapesContainer, IGroup>)args.Handler;
+                args.ProceedAddHandler();
             }
         }
 
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnGroupShapeRemovedAdd))]
+        public void OnGroupShapeRemovedRemove(EventInterceptionArgs args)
+        {
+            _groupShapeRemoved -= (Action<IGroupShapesContainer, IGroup>)args.Handler;
+            args.ProceedRemoveHandler();
+        }
+
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<IGroupShape> Groups => _groups?.AsReadOnly();
+        public IEnumerable<IGroupShape> Groups => _groups?.Get()?.AsEnumerable();
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public IGroupShape GetShape(IGroup group)
@@ -80,7 +83,7 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IGroupShape GetGroupShape(Guid groupId)
         {
-            return _groups?.FirstOrDefault(x => x.AssociatedId == groupId);
+            return _groups?.Get()?.FirstOrDefault(x => x.AssociatedId == groupId);
         }
         
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
@@ -90,9 +93,16 @@ namespace ThreatsManager.Engine.Aspects
                 throw new ArgumentNullException(nameof(groupShape));
 
             if (_groups == null)
-                _groups = new List<IGroupShape>();
+            {
+                var groups = new AdvisableCollection<IGroupShape>();
+                _groups?.Set(groups);
+            }
 
-            _groups.Add(groupShape);
+            _groups?.Get().Add(groupShape);
+            if (Instance is IGroupShapesContainer container)
+            {
+                _groupShapeAdded?.Invoke(container, groupShape);
+            }
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 15)]
@@ -105,18 +115,15 @@ namespace ThreatsManager.Engine.Aspects
 
             if (GetGroupShape(group.Id) == null && Instance is IThreatModelChild child)
             {
-                if (_groups == null)
-                    _groups = new List<IGroupShape>();
                 result = new GroupShape(child.Model, group)
                 {
                     Position = position,
                     Size = size
                 };
-                _groups.Add(result);
+
+                Add(result);
                 if (Instance is IDirty dirtyObject)
                     dirtyObject.SetDirty();
-                if (Instance is IGroupShapesContainer container)
-                    _groupShapeAdded?.Invoke(container, result);
             }
 
             return result;
@@ -148,14 +155,7 @@ namespace ThreatsManager.Engine.Aspects
             var groupShape = GetGroupShape(groupId);
             if (groupShape != null)
             {
-                result = _groups.Remove(groupShape);
-                if (result)
-                {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                    if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
-                        _groupShapeRemoved?.Invoke(container, group);
-                }
+                result = RemoveShape(groupShape);
             }
 
             return result;
@@ -167,28 +167,16 @@ namespace ThreatsManager.Engine.Aspects
             if (group == null)
                 throw new ArgumentNullException(nameof(group));
 
-            bool result = false;
-
-            var groupShape = GetShape(group);
-            if (groupShape != null)
-            {
-                result = _groups.Remove(groupShape);
-                if (result)
-                {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                    if (Instance is IGroupShapesContainer container)
-                        _groupShapeRemoved?.Invoke(container, group);
-                }
-            }
-
-            return result;
+            return RemoveGroupShape(group.Id);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
         public bool RemoveShape(IGroupShape groupShape)
         {
-            var result = _groups?.Remove(groupShape) ?? false;
+            if (groupShape == null)
+                throw new ArgumentNullException(nameof(groupShape));
+
+            var result = _groups?.Get()?.Remove(groupShape) ?? false;
             if (result)
             {
                 if (Instance is IDirty dirtyObject)

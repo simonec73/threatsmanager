@@ -51,7 +51,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 var threatActor = GetThreatActor(actor);
                 if (threatActor == null)
                 {
-                    result = new ThreatActor(this, actor);
+                    result = new ThreatActor(actor);
                     Add(result);
                     RegisterEvents(result);
                 }
@@ -63,7 +63,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public IThreatActor AddThreatActor([Required] string name, string description)
         {
-            IThreatActor result = new ThreatActor(this, name)
+            IThreatActor result = new ThreatActor(name)
             {
                 Description = description
             };

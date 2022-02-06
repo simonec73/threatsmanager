@@ -111,7 +111,7 @@ namespace ThreatsManager.Engine.Aspects
                 {
                     if (_vulnerabilities?.All(x => x.WeaknessId != weakness.Id) ?? true)
                     {
-                        result = new Vulnerability(model, weakness, identity);
+                        result = new Vulnerability(weakness, identity);
                         if (_vulnerabilities == null)
                             _vulnerabilities = new List<IVulnerability>();
                         _vulnerabilities.Add(result);

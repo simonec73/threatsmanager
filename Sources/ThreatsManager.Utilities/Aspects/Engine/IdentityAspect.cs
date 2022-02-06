@@ -2,13 +2,17 @@
 using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
+    //[JsonProperty("id")]
     //protected Guid _id { get; set; }
+    //[JsonProperty("name")]
+    //protected string _name { get; set; }
+    //[JsonProperty("description")]
+    //protected string _description { get; set; }
     //#endregion
 
     /// <summary>
@@ -19,29 +23,33 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     public class IdentityAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Family)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("id")]
-        public Guid _id { get; set; }
+        [ImportMember(nameof(_id))]
+        public Property<Guid> _id;
+
+        [ImportMember(nameof(_name))]
+        public Property<string> _name;
+
+        [ImportMember(nameof(_description))]
+        public Property<string> _description;
         #endregion
 
         #region Implementation of interface IIdentity.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public Guid Id => _id;
+        public Guid Id => _id?.Get() ?? Guid.Empty;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,LinesOfCodeAvoided = 1)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name 
+        { 
+            get => _name?.Get();
+            set => _name?.Set(value); 
+        }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("description")]
-        public string Description { get; set; }
+        public string Description
+        {
+            get => _description?.Get();
+            set => _description?.Set(value);
+        }
         #endregion
     }
 }

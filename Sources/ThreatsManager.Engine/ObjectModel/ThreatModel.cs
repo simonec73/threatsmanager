@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Exceptions;
@@ -2523,10 +2524,17 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
-        private List<IThreatEvent> _threatEvents { get; set; }
-        private List<IVulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        private IList<IThreatEvent> _threatEvents { get; set; }
+        private IList<IVulnerability> _vulnerabilities { get; set; }
         #endregion
     }
 }

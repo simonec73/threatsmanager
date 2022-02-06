@@ -50,7 +50,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 name = GetFirstAvailableMitigationName();
             }
 
-            IMitigation result = new Mitigation(this, name);
+            IMitigation result = new Mitigation(name);
             Add(result);
             RegisterEvents(result);
 

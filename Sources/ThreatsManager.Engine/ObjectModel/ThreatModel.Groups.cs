@@ -52,7 +52,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (typeof(T) == typeof(ITrustBoundary))
             {
-                result = new TrustBoundary(this, name) as T;
+                result = new TrustBoundary(name) as T;
                 if (_groups == null)
                     _groups = new List<IGroup>();
                 _groups.Add(result);
@@ -67,7 +67,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public ITrustBoundary AddTrustBoundary([Required] string name, ITrustBoundaryTemplate template)
         {
-            ITrustBoundary result = new TrustBoundary(this, name)
+            ITrustBoundary result = new TrustBoundary(name)
             {
                 _templateId = template?.Id ?? Guid.Empty
             };

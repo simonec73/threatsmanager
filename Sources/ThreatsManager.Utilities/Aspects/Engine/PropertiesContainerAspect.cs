@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Patterns.Collections;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -15,19 +15,17 @@ using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
-    //private List<IProperty> _properties { get; set; }
+    //[Child]
+    //[JsonProperty("properties")]
+    //private IList<IProperty> _properties { get; set; }
     //#endregion    
 
     [PSerializable]
     public class PropertiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute),
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("properties")]
-        public List<IProperty> _properties { get; set; }
+        [ImportMember(nameof(_properties))]
+        public Property<IList<IProperty>> _properties;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
             LinesOfCodeAvoided = 2, Visibility = Visibility.Private)]
@@ -44,51 +42,66 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         #region Implementation of interface IPropertiesContainer.
         private Action<IPropertiesContainer, IProperty> _propertyAdded;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "PropertyAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnPropertyAddedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_propertyAdded == null || !_propertyAdded.GetInvocationList().Contains(args.Handler))
             {
-                if (_propertyAdded == null || !_propertyAdded.GetInvocationList().Contains(value))
-                {
-                    _propertyAdded += value;
-                }
+                _propertyAdded += (Action<IPropertiesContainer, IProperty>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove { _propertyAdded -= value; }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyAddedAdd))]
+        public void OnPropertyAddedRemove(EventInterceptionArgs args)
+        {
+            _propertyAdded -= (Action<IPropertiesContainer, IProperty>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<IPropertiesContainer, IProperty> _propertyRemoved;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "PropertyRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnPropertyRemovedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_propertyRemoved == null || !_propertyRemoved.GetInvocationList().Contains(args.Handler))
             {
-                if (_propertyRemoved == null || !_propertyRemoved.GetInvocationList().Contains(value))
-                {
-                    _propertyRemoved += value;
-                }
+                _propertyRemoved += (Action<IPropertiesContainer, IProperty>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove { _propertyRemoved -= value; }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyRemovedAdd))]
+        public void OnPropertyRemovedRemove(EventInterceptionArgs args)
+        {
+            _propertyRemoved -= (Action<IPropertiesContainer, IProperty>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<IPropertiesContainer, IProperty> _propertyValueChanged;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "PropertyValueChanged", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnPropertyValueChangedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_propertyValueChanged == null || !_propertyValueChanged.GetInvocationList().Contains(args.Handler))
             {
-                if (_propertyValueChanged == null || !_propertyValueChanged.GetInvocationList().Contains(value))
-                {
-                    _propertyValueChanged += value;
-                }
+                _propertyValueChanged += (Action<IPropertiesContainer, IProperty>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove { _propertyValueChanged -= value; }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyValueChangedAdd))]
+        public void OnPropertyValueChangedRemove(EventInterceptionArgs args)
+        {
+            _propertyValueChanged -= (Action<IPropertiesContainer, IProperty>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<IProperty> Properties => _properties?.AsReadOnly();
+        public IEnumerable<IProperty> Properties => _properties?.Get()?.AsEnumerable();
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public bool HasProperty(IPropertyType propertyType)
@@ -96,7 +109,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             if (propertyType == null)
                 throw new ArgumentNullException(nameof(propertyType));
 
-            return _properties?.Any(x => x.PropertyTypeId == propertyType.Id) ?? false;
+            return _properties?.Get()?.Any(x => x.PropertyTypeId == propertyType.Id) ?? false;
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
@@ -105,7 +118,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             if (propertyType == null)
                 throw new ArgumentNullException(nameof(propertyType));
 
-            return _properties?.FirstOrDefault(x => x.PropertyTypeId == propertyType.Id);
+            return _properties?.Get()?.FirstOrDefault(x => x.PropertyTypeId == propertyType.Id);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 20)]
@@ -149,10 +162,14 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
             if (result != null)
             {
-                if (_properties == null)
-                    _properties = new List<IProperty>();
+                var properties = _properties?.Get();
+                if (properties == null)
+                { 
+                    properties = new AdvisableCollection<IProperty>();
+                    _properties?.Set(properties);
+                }
                 result.StringValue = value;
-                _properties.Add(result);
+                properties?.Add(result);
 
                 if (Instance is IDirty dirtyObject)
                     dirtyObject.SetDirty();
@@ -174,7 +191,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             var model = GetModel();
             if (model != null && schema != null && propertyType != null && !HasProperty(propertyType))
             {
-                if (_properties?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
+                if (_properties?.Get()?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
                     InternalAddProperty(model, propertyType, null);
             }
         }
@@ -190,7 +207,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             var property = GetProperty(propertyType);
             if (property != null)
             {
-                result = _properties?.Remove(property) ?? false;
+                result = _properties?.Get()?.Remove(property) ?? false;
                 if (result)
                 {
                     if (Instance is IDirty dirtyObject)
@@ -208,12 +225,12 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         {
             bool result = false;
 
-            var properties = _properties?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
+            var properties = _properties?.Get()?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
             if (properties?.Any() ?? false) 
             {
                 foreach (var property in properties)
                 {
-                    if (_properties.Remove(property))
+                    if (_properties?.Get()?.Remove(property) ?? false)
                     {
                         if (Instance is IPropertiesContainer container)
                             _propertyRemoved?.Invoke(container, property);
@@ -234,7 +251,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void ClearProperties()
         {
-            var properties = _properties?.ToArray();
+            var properties = _properties?.Get()?.ToArray();
 
             if (properties?.Any() ?? false)
             {
@@ -244,7 +261,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         _propertyRemoved?.Invoke(container, property);
                 }
 
-                _properties?.Clear();
+                _properties?.Get()?.Clear();
                 if (Instance is IDirty dirtyObject)
                     dirtyObject.SetDirty();
             }
@@ -291,7 +308,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         [OnDeserialized]
         public void PostDeserialization(StreamingContext context)
         {
-            var schemas = _properties?
+            var schemas = _properties?.Get()?
                 .Select(x => x.PropertyType)
                 .Where(x => x != null)
                 .Select(x => x.SchemaId)
@@ -311,7 +328,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 }
             }
 
-            var properties = _properties?.ToArray();
+            var properties = _properties?.Get()?.ToArray();
             if (properties?.Any() ?? false)
             {
                 foreach (var property in properties)

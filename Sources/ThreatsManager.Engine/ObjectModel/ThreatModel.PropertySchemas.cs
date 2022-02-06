@@ -332,7 +332,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 if (_schemas == null)
                     _schemas = new List<IPropertySchema>();
-                result = new PropertySchema(this, name, nspace);
+                result = new PropertySchema(name, nspace);
                 _schemas.Add(result);
                 SetDirty();
                 RegisterEvents(result);

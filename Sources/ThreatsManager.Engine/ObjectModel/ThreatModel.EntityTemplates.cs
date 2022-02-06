@@ -58,7 +58,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public IEntityTemplate AddEntityTemplate([Required] string name, string description, 
             Bitmap bigImage, Bitmap image, Bitmap smallImage, [NotNull] IEntity source)
         {
-            var result = new EntityTemplate(this, name)
+            var result = new EntityTemplate(name)
             {
                 Description = description,
                 BigImage = bigImage ?? source.GetImage(ImageSize.Big), 
@@ -82,7 +82,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public IEntityTemplate AddEntityTemplate([Required] string name, string description, 
             Bitmap bigImage, Bitmap image, Bitmap smallImage, EntityType entityType)
         {
-            var result = new EntityTemplate(this, name)
+            var result = new EntityTemplate(name)
             {
                 Description = description,
                 EntityType = entityType

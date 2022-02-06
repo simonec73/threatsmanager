@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
@@ -15,6 +13,8 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
@@ -30,6 +30,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [EntityShapesContainerAspect]
     [GroupShapesContainerAspect]
     [LinksContainerAspect]
+    [Recordable]
     public class Diagram : IDiagram, IInitializableObject
     {
         public Diagram()
@@ -37,14 +38,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             
         }
 
-        public Diagram([NotNull] IThreatModel model, [Required] string name) : this()
+        public Diagram([Required] string name) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
-
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -53,7 +50,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public IThreatModel Model { get; }
+        public IThreatModel Model { get; private set; }
         public event Action<IEntityShapesContainer, IEntityShape> EntityShapeAdded;
         public event Action<IEntityShapesContainer, IEntity> EntityShapeRemoved;
         public IEnumerable<IEntityShape> Entities { get; }
@@ -206,13 +203,29 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IEntityShape> _entities { get; set; }
-        private List<IGroupShape> _groups { get; set; }
-        private List<ILink> _links { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("entities")]
+        private IList<IEntityShape> _entities { get; set; }
+        [Child]
+        private IList<IGroupShape> _groups { get; set; }
+        [Child]
+        private IList<ILink> _links { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.

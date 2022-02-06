@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -27,6 +28,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
     [ThreatEventMitigationsContainerAspect]
+    [Recordable]
     [TypeLabel("Threat Event")]
     public class ThreatEvent : IThreatEvent, IInitializableObject
     {
@@ -35,13 +37,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         }
 
-        public ThreatEvent([NotNull] IThreatModel model, [NotNull] IThreatType threatType, [NotNull] IIdentity parent) : this()
+        public ThreatEvent([NotNull] IThreatType threatType) : this()
         {
             _id = Guid.NewGuid();
-            _model = model;
-            _modelId = model.Id;
-            _parentId = parent.Id;
-            _parent = parent;
             _threatType = threatType;
             _threatTypeId = threatType.Id;
             Name = threatType.Name;
@@ -55,13 +53,123 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     AddProperty(property);
                 }
             }
-
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty && _threatTypeId != Guid.Empty;
 
         public static bool UseThreatTypeInfo { get; set; }
+
+        #region Default implementation.
+        [Reference]
+        [field: NotRecorded]
+        public IThreatModel Model { get; }
+        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
+        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
+        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
+        public IEnumerable<IProperty> Properties { get; }
+        public bool HasProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+        public IProperty GetProperty(IPropertyType propertyType)
+        {
+            return null;
+        }
+
+        public IProperty AddProperty(IPropertyType propertyType, string value)
+        {
+            return null;
+        }
+
+        public bool RemoveProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+
+        public bool RemoveProperty(Guid propertyTypeId)
+        {
+            return false;
+        }
+
+        public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
+        public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
+        public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved;
+
+        [Reference]
+        [field: NotRecorded]
+        public IEnumerable<IThreatEventScenario> Scenarios { get; }
+        public IThreatEventScenario GetScenario(Guid id)
+        {
+            return null;
+        }
+
+        public IThreatEventScenario AddScenario(IThreatActor threatActor, ISeverity severity, string name = null)
+        {
+            return null;
+        }
+
+        public void Add(IThreatEventScenario scenario)
+        {
+        }
+
+        public bool RemoveScenario(Guid id)
+        {
+            return false;
+        }
+
+        public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded;
+        public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved;
+        [Reference]
+        [field: NotRecorded]
+        public IEnumerable<IThreatEventMitigation> Mitigations { get; }
+        public IThreatEventMitigation GetMitigation(Guid mitigationId)
+        {
+            return null;
+        }
+
+        public IThreatEventMitigation AddMitigation(IMitigation mitigation, IStrength strength, 
+            MitigationStatus status = MitigationStatus.Proposed, string directives = null)
+        {
+            return null;
+        }
+
+        public void Add(IThreatEventMitigation mitigation)
+        {
+        }
+
+        public bool RemoveMitigation(Guid mitigationId)
+        {
+            return false;
+        }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
+        #endregion
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatEvent;
@@ -93,8 +201,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("parent")]
         private Guid _parentId;
-
-        private IIdentity _parent;
+        
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_parentId")]
+        private IIdentity _parent { get; set;}
 
         public Guid ParentId => _parentId;
 
@@ -121,6 +232,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public int SeverityId => _severityId;
 
+        [Reference]
         private ISeverity _severity;
 
         [InitializationRequired]
@@ -144,6 +256,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public Guid ThreatTypeId => _threatTypeId;
 
+        [Reference]
         private IThreatType _threatType;
 
         [InitializationRequired]
@@ -247,116 +360,21 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
         #endregion
 
-        #region Default implementation.
-        public IThreatModel Model { get; }
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        public IEnumerable<IProperty> Properties { get; }
-        public bool HasProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-        public IProperty GetProperty(IPropertyType propertyType)
-        {
-            return null;
-        }
-
-        public IProperty AddProperty(IPropertyType propertyType, string value)
-        {
-            return null;
-        }
-
-        public bool RemoveProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-
-        public bool RemoveProperty(Guid propertyTypeId)
-        {
-            return false;
-        }
-
-        public void ClearProperties()
-        {
-        }
-
-        public void Apply(IPropertySchema schema)
-        {
-        }
-
-        public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
-        public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved;
-
-        public IEnumerable<IThreatEventScenario> Scenarios { get; }
-        public IThreatEventScenario GetScenario(Guid id)
-        {
-            return null;
-        }
-
-        public IThreatEventScenario AddScenario(IThreatActor threatActor, ISeverity severity, string name = null)
-        {
-            return null;
-        }
-
-        public void Add(IThreatEventScenario scenario)
-        {
-        }
-
-        public bool RemoveScenario(Guid id)
-        {
-            return false;
-        }
-
-        public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded;
-        public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved;
-        public IEnumerable<IThreatEventMitigation> Mitigations { get; }
-        public IThreatEventMitigation GetMitigation(Guid mitigationId)
-        {
-            return null;
-        }
-
-        public IThreatEventMitigation AddMitigation(IMitigation mitigation, IStrength strength, 
-            MitigationStatus status = MitigationStatus.Proposed, string directives = null)
-        {
-            return null;
-        }
-
-        public void Add(IThreatEventMitigation mitigation)
-        {
-        }
-
-        public bool RemoveMitigation(Guid mitigationId)
-        {
-            return false;
-        }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-        #endregion
-
         #region Additional placeholders required.
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
-        private List<IThreatEventScenario> _scenarios { get; set; }
-        private List<IThreatEventMitigation> _mitigations { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("scenarios")]
+        private IList<IThreatEventScenario> _scenarios { get; set; }
+        private IList<IThreatEventMitigation> _mitigations { get; set; }
         #endregion
 
         #region Implementation of interface IThreatEventVulnerabilitiesContainer.

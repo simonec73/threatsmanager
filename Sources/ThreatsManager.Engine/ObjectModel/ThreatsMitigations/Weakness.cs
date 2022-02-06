@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -22,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [Recordable]
     [TypeLabel("Weakness")]
     public partial class Weakness : IWeakness, IInitializableObject
     {
@@ -29,20 +32,96 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
         
-        public Weakness([NotNull] IThreatModel model, 
-            [Required] string name, [NotNull] ISeverity severity) : this()
+        public Weakness([Required] string name, [NotNull] ISeverity severity) : this()
         {
             _id = Guid.NewGuid();
-            _model = model;
-            _modelId = model.Id;
             Name = name;
             _severity = severity;
             _severityId = severity.Id;
-
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
+
+        #region Default implementations.
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
+        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
+        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        public IEnumerable<IProperty> Properties { get; }
+        public bool HasProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+        public IProperty GetProperty(IPropertyType propertyType)
+        {
+            return null;
+        }
+
+        public IProperty AddProperty(IPropertyType propertyType, string value)
+        {
+            return null;
+        }
+
+        public bool RemoveProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+
+        public bool RemoveProperty(Guid propertyTypeId)
+        {
+            return false;
+        }
+
+        public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
+        public IThreatModel Model { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        #endregion
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Weakness;
@@ -142,82 +221,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [InitializationRequired]
         public IVulnerability GenerateVulnerability([NotNull] IIdentity identity)
         {
-            return new Vulnerability(Model, this, identity);
+            return new Vulnerability(this, identity);
         }
 
         public override string ToString()
         {
             return Name ?? "<undefined>";
         }
-        #endregion
-
-        #region Default implementations.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        public IEnumerable<IProperty> Properties { get; }
-        public bool HasProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-        public IProperty GetProperty(IPropertyType propertyType)
-        {
-            return null;
-        }
-
-        public IProperty AddProperty(IPropertyType propertyType, string value)
-        {
-            return null;
-        }
-
-        public bool RemoveProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-
-        public bool RemoveProperty(Guid propertyTypeId)
-        {
-            return false;
-        }
-
-        public void ClearProperties()
-        {
-        }
-
-        public void Apply(IPropertySchema schema)
-        {
-        }
-
-        public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-        #endregion
-
-        #region Additional placeholders required.
-        protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
         #endregion
     }
 }

@@ -111,7 +111,7 @@ namespace ThreatsManager.Engine.Aspects
                 {
                     if (_threatEvents?.All(x => x.ThreatTypeId != threatType.Id) ?? true)
                     {
-                        result = new ThreatEvent(model, threatType, identity);
+                        result = new ThreatEvent(threatType);
                         if (_threatEvents == null)
                             _threatEvents = new List<IThreatEvent>();
                         _threatEvents.Add(result);

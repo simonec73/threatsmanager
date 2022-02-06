@@ -2,6 +2,8 @@
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -19,6 +21,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertyAspect]
+    [Recordable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyList, ThreatsManager.Engine")]
     public class PropertyList : IPropertyList, IInitializableObject
     {
@@ -38,11 +41,21 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public bool IsInitialized => Model != null && _id != Guid.Empty && PropertyTypeId != Guid.Empty;
 
         #region Additional placeholders required.
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
         #endregion
-        
+
         #region Default implementation.
         public Guid Id { get; }
         public event Action<IProperty> Changed;

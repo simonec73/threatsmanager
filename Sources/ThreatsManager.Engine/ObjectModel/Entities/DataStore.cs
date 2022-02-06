@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -27,6 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [Recordable]
     [TypeLabel("Data Store")]
     [TypeInitial("D")]
     public class DataStore : IDataStore, IInitializableObject
@@ -35,14 +38,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public DataStore([NotNull] IThreatModel model, [Required] string name) : this()
+        public DataStore([Required] string name) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
-   
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -167,12 +166,24 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
-        private List<IThreatEvent> _threatEvents { get; set; }
-        private List<IVulnerability> _vulnerabilities { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        private IList<IThreatEvent> _threatEvents { get; set; }
+        private IList<IVulnerability> _vulnerabilities { get; set; }
         private Guid _parentId { get; set; }
         private IGroup _parent { get; set; }
         #endregion

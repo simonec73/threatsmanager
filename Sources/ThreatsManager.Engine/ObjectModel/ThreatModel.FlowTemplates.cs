@@ -45,7 +45,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public IFlowTemplate AddFlowTemplate([Required] string name, string description, IDataFlow source = null)
         {
-            var result = new FlowTemplate(this, name)
+            var result = new FlowTemplate(name)
             {
                 Description = description,
                 FlowType = source?.FlowType ?? FlowType.ReadWriteCommand

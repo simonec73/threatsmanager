@@ -1,6 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -17,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
+    [Recordable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyArray, ThreatsManager.Engine")]
     public class ArrayPropertyType : IArrayPropertyType
     {
@@ -30,7 +33,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             _id = Guid.NewGuid();
             _schemaId = schema.Id;
             _model = schema.Model;
-            _modelId = schema.Model?.Id ?? Guid.Empty;
             Name = name;
             Visible = true;
         }
@@ -68,8 +70,17 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
         protected IThreatModel _model { get; set; }
         protected Guid _schemaId { get; set; }
         #endregion

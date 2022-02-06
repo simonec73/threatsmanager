@@ -45,7 +45,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public ITrustBoundaryTemplate AddTrustBoundaryTemplate([Required] string name, string description, ITrustBoundary source = null)
         {
-            var result = new TrustBoundaryTemplate(this, name)
+            var result = new TrustBoundaryTemplate(name)
             {
                 Description = description,
             };

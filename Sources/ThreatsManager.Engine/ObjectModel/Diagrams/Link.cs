@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -21,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
+    [Recordable]
     public class Link : ILink, IThreatModelChild, IInitializableObject
     {
         private IDataFlow _dataFlow;
@@ -73,9 +76,16 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
         #endregion
 
         #region Default implementation.

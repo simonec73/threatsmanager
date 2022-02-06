@@ -105,17 +105,17 @@ namespace ThreatsManager.Engine.ObjectModel
             IEntity result = null;
 
             if (typeof(T) == typeof(IProcess))
-                result = new Process(this, name)
+                result = new Process(name)
                 {
                     _templateId = template?.Id ?? Guid.Empty
                 };
             if (typeof(T) == typeof(IExternalInteractor))
-                result = new ExternalInteractor(this, name)
+                result = new ExternalInteractor(name)
                 {
                     _templateId = template?.Id ?? Guid.Empty
                 };
             if (typeof(T) == typeof(IDataStore))
-                result = new DataStore(this, name)
+                result = new DataStore(name)
                 {
                     _templateId = template?.Id ?? Guid.Empty
                 };

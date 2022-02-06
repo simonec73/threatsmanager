@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -26,6 +28,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatModelChildAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [Recordable]
     [TypeLabel("Flow")]
     [TypeInitial("F")]
     public class DataFlow : IDataFlow, IInitializableObject
@@ -35,21 +38,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             
         }
 
-        public DataFlow([NotNull] IThreatModel model, [Required] string name, Guid sourceId, Guid targetId) : this()
+        public DataFlow([Required] string name, Guid sourceId, Guid targetId) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
             _sourceId = sourceId;
             _targetId = targetId;
             FlowType = FlowType.ReadWriteCommand;
-  
-            model.AutoApplySchemas(this);
         }
 
-        public DataFlow([NotNull] IThreatModel model, [Required] string name, [NotNull] IEntity source, 
-            [NotNull] IEntity target) : this(model, name, source.Id, target.Id)
+        public DataFlow([Required] string name, [NotNull] IEntity source, [NotNull] IEntity target) : this(name, source.Id, target.Id)
         {
         }
 
@@ -169,11 +167,23 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
-        private List<IThreatEvent> _threatEvents { get; set; }
-        private List<IVulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        private IList<IThreatEvent> _threatEvents { get; set; }
+        private IList<IVulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         #endregion    
 

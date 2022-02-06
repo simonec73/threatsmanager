@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -25,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [EntitiesReadOnlyContainerAspect]
     [GroupsReadOnlyContainerAspect]
     [GroupElementAspect]
+    [Recordable]
     [TypeLabel("Trust Boundary")]
     [TypeInitial("T")]
     public class TrustBoundary : ITrustBoundary, IInitializableObject
@@ -33,14 +36,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public TrustBoundary([NotNull] IThreatModel model, [Required] string name) : this()
+        public TrustBoundary([Required] string name) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
-  
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -137,10 +136,22 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
         private Guid _parentId { get; set; }
         private IGroup _parent { get; set; }
         #endregion

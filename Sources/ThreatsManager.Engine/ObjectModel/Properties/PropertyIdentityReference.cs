@@ -1,6 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -17,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertyAspect]
+    [Recordable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyIdentityReference, ThreatsManager.Engine")]
     public class PropertyIdentityReference : IPropertyIdentityReference
     {
@@ -34,9 +37,19 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         #region Additional placeholders required.
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
         #endregion
 
         #region Default implementation.

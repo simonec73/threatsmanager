@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
+    [Recordable]
     [TypeLabel("Trust Boundary Template")]
     public class TrustBoundaryTemplate : ITrustBoundaryTemplate, IInitializableObject
     {
@@ -30,10 +31,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public TrustBoundaryTemplate([NotNull] IThreatModel model, [Required] string name)
+        public TrustBoundaryTemplate([Required] string name)
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
         }
@@ -103,10 +102,21 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.

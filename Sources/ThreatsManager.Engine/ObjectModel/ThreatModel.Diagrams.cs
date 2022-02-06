@@ -204,7 +204,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 if (_diagrams == null)
                     _diagrams = new List<IDiagram>();
-                result = new Diagram(this, name)
+                result = new Diagram(name)
                 {
                     Order = _diagrams.Any() ? _diagrams.Max(x => x.Order) + 1 : 1
                 };

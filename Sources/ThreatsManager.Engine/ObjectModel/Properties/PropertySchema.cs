@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -21,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [Recordable]
     public partial class PropertySchema : IPropertySchema
     {
         public PropertySchema()
@@ -28,21 +30,55 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertySchema([Required] IThreatModel model, [Required] string name, [Required] string nspace, int priority = 50) : this()
+        public PropertySchema([Required] string name, [Required] string nspace, int priority = 50) : this()
         {
             _id = Guid.NewGuid();
             Name = name;
             Namespace = nspace;
-            _model = model;
-            _modelId = model.Id;
             Priority = priority;
             RequiredExecutionMode = ExecutionMode.Business;
             Visible = true;
         }
 
+        #region Default implementation.
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public IThreatModel Model { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
+        #endregion
+
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
         protected IThreatModel _model { get; set; }
         #endregion
 
@@ -113,33 +149,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 _propertyTypes = new List<IPropertyType>();
 
             _propertyTypes.Add(propertyType);
-        }
-        #endregion
-
-        #region Default implementation.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
         }
         #endregion
     }

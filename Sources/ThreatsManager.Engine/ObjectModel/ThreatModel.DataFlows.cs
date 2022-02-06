@@ -86,7 +86,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_dataFlows == null)
                     _dataFlows = new List<IDataFlow>();
 
-                result = new DataFlow(this, name, sourceId, targetId);
+                result = new DataFlow(name, sourceId, targetId);
                 _dataFlows.Add(result);
                 SetDirty();
                 RegisterEvents(result);
@@ -99,7 +99,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public IDataFlow AddDataFlow([Required] string name, Guid sourceId, Guid targetId, IFlowTemplate template)
         {
-            IDataFlow result = new DataFlow(this, name, sourceId, targetId)
+            IDataFlow result = new DataFlow(name, sourceId, targetId)
             {
                 _templateId = template?.Id ?? Guid.Empty
             };

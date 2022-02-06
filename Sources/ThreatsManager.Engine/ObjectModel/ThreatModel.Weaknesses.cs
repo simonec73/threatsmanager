@@ -109,7 +109,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (GetWeakness(name) == null)
             {
-                result = new Weakness(this, name, severity);
+                result = new Weakness(name, severity);
                 Add(result);
                 RegisterEvents(result);
             }

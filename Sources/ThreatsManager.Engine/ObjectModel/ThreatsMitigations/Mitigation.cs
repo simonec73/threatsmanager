@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -22,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
+    [Recordable]
     public class Mitigation : IMitigation, IInitializableObject
     {
         public Mitigation()
@@ -29,59 +32,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         }
 
-        public Mitigation([NotNull] IThreatModel model, [Required] string name)
+        public Mitigation([Required] string name)
         {
             _id = Guid.NewGuid();
             Name = name;
-            _model = model;
-            _modelId = model.Id;
-    
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
-
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.Mitigation;
-
-        [JsonProperty("controlType")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public SecurityControlType ControlType { get; set; }
-
-        public IMitigation Clone([NotNull] IMitigationsContainer container)
-        {
-            Mitigation result = null;
-
-            if (container is IThreatModel model)
-            {
-                result = new Mitigation
-                {
-                    _id = Id, 
-                    Name = Name, 
-                    Description = Description,
-                    _model = model, 
-                    _modelId = model.Id,
-                    ControlType = ControlType
-                };
-                this.CloneProperties(result);
-                container.Add(result);
-            }
-
-            return result;
-        }
-
-        public override string ToString()
-        {
-            return Name ?? "<undefined>";
-        }
-        #endregion
-
-        #region Additional placeholders required.
-        protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
-        #endregion    
 
         #region Default implementation.
         public Guid Id { get; }
@@ -90,6 +47,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -123,6 +82,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -142,6 +103,60 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public void ResumeDirty()
         {
+        }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        #endregion    
+
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.Mitigation;
+
+        [JsonProperty("controlType")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SecurityControlType ControlType { get; set; }
+
+        public IMitigation Clone([NotNull] IMitigationsContainer container)
+        {
+            Mitigation result = null;
+
+            if (container is IThreatModel model)
+            {
+                result = new Mitigation
+                {
+                    _id = Id, 
+                    Name = Name, 
+                    Description = Description,
+                    _model = model, 
+                    _modelId = model.Id,
+                    ControlType = ControlType
+                };
+                this.CloneProperties(result);
+                container.Add(result);
+            }
+
+            return result;
+        }
+
+        public override string ToString()
+        {
+            return Name ?? "<undefined>";
         }
         #endregion
     }

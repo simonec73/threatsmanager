@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -20,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [DirtyAspect]
     [PropertyAspect]
     [ThreatModelChildAspect]
+    [Recordable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyTokens, ThreatsManager.Engine")]
     public class PropertyTokens : IPropertyTokens
     {
@@ -28,13 +31,39 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public PropertyTokens([NotNull] IThreatModel model, [NotNull] ITokensPropertyType propertyType) : this()
+        public PropertyTokens([NotNull] ITokensPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
+
+        #region Default implementation.
+        public Guid Id { get; }
+        public event Action<IProperty> Changed;
+        public Guid PropertyTypeId { get; set; }
+        public IPropertyType PropertyType { get; }
+        public bool ReadOnly { get; set; }
+        public IThreatModel Model { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
+        #endregion
 
         #region Specific implementation.
         public string StringValue
@@ -87,37 +116,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
         #endregion
 
-        #region Default implementation.
-        public Guid Id { get; }
-        public event Action<IProperty> Changed;
-        public Guid PropertyTypeId { get; set; }
-        public IPropertyType PropertyType { get; }
-        public bool ReadOnly { get; set; }
-        public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-        #endregion
-
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
         protected IThreatModel _model { get; set; }
         #endregion
     }

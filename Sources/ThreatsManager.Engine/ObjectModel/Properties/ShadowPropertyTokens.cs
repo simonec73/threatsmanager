@@ -19,7 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyTokens([NotNull] IPropertyTokens original) : base(original.Model, original.PropertyType as ITokensPropertyType)
+        public ShadowPropertyTokens([NotNull] IPropertyTokens original) : base(original.PropertyType as ITokensPropertyType)
         {
             _originalId = original.Id;
             _original = original;
