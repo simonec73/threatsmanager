@@ -86,26 +86,27 @@ namespace ThreatsManager.Engine.Aspects
             return _entities?.Get()?.FirstOrDefault(x => x.AssociatedId == entityId);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public void Add(IEntityShape entityShape)
         {
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
-            if (_entities == null)
+            var entities = _entities?.Get();
+            if (entities == null)
             { 
                 var entities = new AdvisableCollection<IEntityShape>();
                 _entities?.Set(entities);
             }
 
-            _entities?.Get().Add(entityShape);
+            entities.Add(entityShape);
             if (Instance is IEntityShapesContainer container)
             { 
                 _entityShapeAdded?.Invoke(container, entityShape);
             }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 13)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public IEntityShape AddShape(IEntity entity, PointF position)
         {
             if (entity == null)

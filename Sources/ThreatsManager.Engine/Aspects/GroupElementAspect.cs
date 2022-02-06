@@ -37,7 +37,7 @@ namespace ThreatsManager.Engine.Aspects
 
         [OnEventAddHandlerAdvice]
         [MulticastPointcut(MemberName = "ParentChanged", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
-        public void OnEventAdd(EventInterceptionArgs args)
+        public void OnParentChangedAdd(EventInterceptionArgs args)
         {
             if (_parentChanged == null || !_parentChanged.GetInvocationList().Contains(args.Handler))
             {
@@ -46,8 +46,8 @@ namespace ThreatsManager.Engine.Aspects
             }
         }
 
-        [OnEventRemoveHandlerAdvice(Master = nameof(OnEventAdd))]
-        public void OnEventRemove(EventInterceptionArgs args)
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnParentChangedAdd))]
+        public void OnParentChangedRemove(EventInterceptionArgs args)
         {
             _parentChanged -= (Action<IGroupElement, IGroup, IGroup>)args.Handler;
             args.ProceedRemoveHandler();
