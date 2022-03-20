@@ -44,11 +44,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -100,7 +104,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public void ResumeDirty()
         {
         }
-
         #endregion
 
         #region Additional placeholders required.

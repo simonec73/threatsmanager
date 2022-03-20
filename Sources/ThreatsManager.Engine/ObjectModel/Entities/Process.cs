@@ -56,9 +56,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public event Action<IGroupElement, IGroup, IGroup> ParentChanged;
         public Guid ParentId { get; }
+        [Reference]
+        [field: NotRecorded]
         public IGroup Parent { get; }
         public void SetParent(IGroup parent)
         {
@@ -67,6 +71,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -103,6 +109,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IThreatEvent> ThreatEvents { get; }
         public IThreatEvent GetThreatEvent(Guid id)
         {
@@ -145,6 +153,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IVulnerability> Vulnerabilities { get; }
         public IVulnerability GetVulnerability(Guid id)
         {
@@ -188,9 +198,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [Child]
         [JsonProperty("properties")]
         private IList<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("threatEvents")]
         private IList<IThreatEvent> _threatEvents { get; set; }
+        [Child]
+        [JsonProperty("vulnerabilities")]
         private IList<IVulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("parentId")]
         private Guid _parentId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         private IGroup _parent { get; set; }
         #endregion
 
@@ -212,10 +229,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IEntity, ImageSize> ImageChanged;
 
+        [Reference]
         [JsonProperty("bigImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _bigImage;
 
+        [field: NotRecorded]
         public Bitmap BigImage 
         {
             get => _bigImage;
@@ -230,10 +249,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _image;
 
+        [field: NotRecorded]
         public Bitmap Image 
         {
             get => _image;
@@ -248,10 +269,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _smallImage;
 
+        [field: NotRecorded]
         public Bitmap SmallImage 
         {
             get => _smallImage;
@@ -269,8 +292,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId;
 
+        [Reference]
+        [field: NotRecorded]
         internal IEntityTemplate _template { get; set; }
 
+        [field: NotRecorded]
         public IEntityTemplate Template
         {
             get

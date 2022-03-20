@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -16,8 +14,8 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //[JsonProperty("groups")]
     //[Child]
+    //[JsonProperty("groups")]
     //private IList<IGroupShape> _groups { get; set; }
     //#endregion    
 
@@ -86,19 +84,20 @@ namespace ThreatsManager.Engine.Aspects
             return _groups?.Get()?.FirstOrDefault(x => x.AssociatedId == groupId);
         }
         
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public void Add(IGroupShape groupShape)
         {
             if (groupShape == null)
                 throw new ArgumentNullException(nameof(groupShape));
 
-            if (_groups == null)
+            var groups = _groups?.Get();
+            if (groups == null)
             {
-                var groups = new AdvisableCollection<IGroupShape>();
+                groups = new AdvisableCollection<IGroupShape>();
                 _groups?.Set(groups);
             }
 
-            _groups?.Get().Add(groupShape);
+            groups.Add(groupShape);
             if (Instance is IGroupShapesContainer container)
             {
                 _groupShapeAdded?.Invoke(container, groupShape);

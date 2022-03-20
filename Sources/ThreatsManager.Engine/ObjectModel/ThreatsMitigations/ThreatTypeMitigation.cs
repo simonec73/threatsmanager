@@ -43,83 +43,16 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public bool IsInitialized => Model != null && _threatTypeId != Guid.Empty && _mitigationId != Guid.Empty;
 
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.ThreatTypeMitigation;
-
-        [JsonProperty("threatTypeId")]
-        private Guid _threatTypeId;
-
-        public Guid ThreatTypeId => _threatTypeId;
-
-        private IThreatType _threatType;
-
-        [InitializationRequired]
-        public IThreatType ThreatType => _threatType ?? (_threatType = Model.GetThreatType(_threatTypeId));
-
-        [JsonProperty("mitigationId")]
-        private Guid _mitigationId;
-
-        public Guid MitigationId => _mitigationId;
-
-        private IMitigation _mitigation;
-
-        public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
-
-        [JsonProperty("strength")]
-        private int _strengthId;
-
-        public int StrengthId => _strengthId;
-
-        private IStrength _strength;
-
-        [InitializationRequired]
-        public IStrength Strength
-        {
-            get => _strength ?? (_strength = Model?.GetStrength(_strengthId));
-
-            set
-            {
-                if (value != null && value.Equals(Model.GetStrength(value.Id)))
-                {
-                    _strength = value;
-                    _strengthId = value.Id;
-                    SetDirty();
-                }
-            }
-        }
-
-        public IThreatTypeMitigation Clone(IThreatTypeMitigationsContainer container)
-        {
-            ThreatTypeMitigation result = null;
-
-            if (container is IThreatModelChild child && child.Model is IThreatModel model)
-            {
-                result = new ThreatTypeMitigation()
-                {
-                    _model = model,
-                    _modelId = model.Id,
-                    _threatTypeId = _threatTypeId,
-                    _mitigationId = _mitigationId,
-                    _strengthId = _strengthId,
-                };
-                container.Add(result);
-            }
-
-            return result;
-        }
-
-        public override string ToString()
-        {
-            return Mitigation.Name;
-        }
-        #endregion
-
         #region Default implementation.
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -174,6 +107,83 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
         #endregion
 
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatTypeMitigation;
+
+        [JsonProperty("threatTypeId")]
+        private Guid _threatTypeId;
+
+        public Guid ThreatTypeId => _threatTypeId;
+
+        [Reference]
+        [field: NotRecorded]
+        private IThreatType _threatType;
+
+        [InitializationRequired]
+        public IThreatType ThreatType => _threatType ?? (_threatType = Model.GetThreatType(_threatTypeId));
+
+        [JsonProperty("mitigationId")]
+        private Guid _mitigationId;
+
+        public Guid MitigationId => _mitigationId;
+
+        [Reference]
+        [field: NotRecorded]
+        private IMitigation _mitigation;
+
+        public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
+
+        [JsonProperty("strength")]
+        private int _strengthId;
+
+        public int StrengthId => _strengthId;
+
+        [Reference]
+        [field: NotRecorded]
+        private IStrength _strength;
+
+        [InitializationRequired]
+        public IStrength Strength
+        {
+            get => _strength ?? (_strength = Model?.GetStrength(_strengthId));
+
+            set
+            {
+                if (value != null && value.Equals(Model.GetStrength(value.Id)))
+                {
+                    _strength = value;
+                    _strengthId = value.Id;
+                    SetDirty();
+                }
+            }
+        }
+
+        public IThreatTypeMitigation Clone(IThreatTypeMitigationsContainer container)
+        {
+            ThreatTypeMitigation result = null;
+
+            if (container is IThreatModelChild child && child.Model is IThreatModel model)
+            {
+                result = new ThreatTypeMitigation()
+                {
+                    _model = model,
+                    _modelId = model.Id,
+                    _threatTypeId = _threatTypeId,
+                    _mitigationId = _mitigationId,
+                    _strengthId = _strengthId,
+                };
+                container.Add(result);
+            }
+
+            return result;
+        }
+
+        public override string ToString()
+        {
+            return Mitigation.Name;
+        }
+        #endregion
+
         #region Additional placeholders required.
         [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
@@ -182,7 +192,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: UpdateId("Id", "_modelId")]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
         [Child]
         [JsonProperty("properties")]
         private IList<IProperty> _properties { get; set; }

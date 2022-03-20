@@ -138,7 +138,6 @@ namespace ThreatsManager.Engine
                                     var assembly = Assembly.ReflectionOnlyLoadFrom(dll);
 
                                     bool skip = false;
-                                    string reason = null;
 
                                     if (except != null && except(assembly))
                                     {

@@ -1,92 +1,102 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
+using PostSharp.Patterns.Collections;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //private List<ILink> _links { get; set; }
+    //[Child]
+    //[JsonProperty("links")]
+    //private IList<ILink> _links { get; set; }
     //#endregion    
 
     [PSerializable]
     public class LinksContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("links")]
-        public List<ILink> _links { get; set; }
+        [ImportMember(nameof(_links))]
+        public Property<IList<ILink>> _links;
         #endregion
 
         #region Implementation of interface ILinksContainer.
         private Action<ILinksContainer, ILink> _linkAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<ILinksContainer, ILink> LinkAdded
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "LinkAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnLinkAddedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_linkAdded == null || !_linkAdded.GetInvocationList().Contains(args.Handler))
             {
-                if (_linkAdded == null || !_linkAdded.GetInvocationList().Contains(value))
-                {
-                    _linkAdded += value;
-                }
+                _linkAdded += (Action<ILinksContainer, ILink>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove
-            {
-                _linkAdded -= value;
-            }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnLinkAddedAdd))]
+        public void OnLinkAddedRemove(EventInterceptionArgs args)
+        {
+            _linkAdded -= (Action<ILinksContainer, ILink>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<ILinksContainer, IDataFlow> _linkRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<ILinksContainer, IDataFlow> LinkRemoved
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "LinkRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnLinkRemovedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_linkRemoved == null || !_linkRemoved.GetInvocationList().Contains(args.Handler))
             {
-                if (_linkRemoved == null || !_linkRemoved.GetInvocationList().Contains(value))
-                {
-                    _linkRemoved += value;
-                }
-            }
-            remove
-            {
-                _linkRemoved -= value;
+                _linkRemoved += (Action<ILinksContainer, IDataFlow>)args.Handler;
+                args.ProceedAddHandler();
             }
         }
 
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnLinkRemovedAdd))]
+        public void OnLinkRemovedRemove(EventInterceptionArgs args)
+        {
+            _linkRemoved -= (Action<ILinksContainer, IDataFlow>)args.Handler;
+            args.ProceedRemoveHandler();
+        }
+
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<ILink> Links => _links?.AsReadOnly();
+        public IEnumerable<ILink> Links => _links?.Get()?.AsEnumerable();
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public ILink GetLink(Guid dataFlowId)
         {
-            return _links?.FirstOrDefault(x => x.AssociatedId == dataFlowId);
+            return _links?.Get()?.FirstOrDefault(x => x.AssociatedId == dataFlowId);
         }
         
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public void Add(ILink link)
         {
             if (link == null)
                 throw new ArgumentNullException(nameof(link));
 
-            if (_links == null)
-                _links = new List<ILink>();
+            var links = _links?.Get();
+            if (links == null)
+            {
+                links = new AdvisableCollection<ILink>();
+                _links?.Set(links);
+            }
 
-            _links.Add(link);
+            links.Add(link);
+            if (Instance is ILinksContainer container)
+            {
+                _linkAdded?.Invoke(container, link);
+            }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 13)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public ILink AddLink(IDataFlow dataFlow)
         {
             if (dataFlow == null)
@@ -96,35 +106,27 @@ namespace ThreatsManager.Engine.Aspects
 
             if (GetLink(dataFlow.Id) == null)
             {
-                if (_links == null)
-                    _links = new List<ILink>();
                 result = new Link(dataFlow);
-                _links.Add(result);
+
+                Add(result);
                 if (Instance is IDirty dirtyObject)
                     dirtyObject.SetDirty();
-                if (Instance is ILinksContainer container)
-                    _linkAdded?.Invoke(container, result);
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 8)]
         public bool RemoveLink(Guid dataFlowId)
         {
-            bool result = false;
-
-            var link = _links?.FirstOrDefault(x => x.AssociatedId == dataFlowId);
-            if (link != null)
+            var link = GetLink(dataFlowId);
+            var result = _links?.Get()?.Remove(link) ?? false;
+            if (result)
             {
-                result = _links.Remove(link);
-                if (result)
-                {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                    if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
-                        _linkRemoved?.Invoke(container, flow);
-                }
+                if (Instance is IDirty dirtyObject)
+                    dirtyObject.SetDirty();
+                if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
+                    _linkRemoved?.Invoke(container, flow);
             }
 
             return result;

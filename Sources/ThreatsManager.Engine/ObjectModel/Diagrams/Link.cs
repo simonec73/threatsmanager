@@ -43,57 +43,16 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
 
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.Link;
-
-        [JsonProperty("id")]
-        private Guid _associatedId;
-
-        public Guid AssociatedId => _associatedId;
-
-        [InitializationRequired]
-        public IDataFlow DataFlow => _dataFlow ?? (_dataFlow = _model?.GetDataFlow(_associatedId));
-
-        public ILink Clone(ILinksContainer container)
-        {
-            Link result = null;
-            if (container is IThreatModelChild child && child.Model is IThreatModel model)
-            {
-                result = new Link()
-                {
-                    _associatedId = _associatedId,
-                    _model = model,
-                    _modelId = model.Id,
-                };
-                this.CloneProperties(result);
-
-                container.Add(result);
-            }
-
-            return result;
-        }
-
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
-        #endregion
-
         #region Default implementation.
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -145,6 +104,51 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public void ResumeDirty()
         {
         }
+        #endregion
+
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.Link;
+
+        [JsonProperty("id")]
+        private Guid _associatedId;
+
+        public Guid AssociatedId => _associatedId;
+
+        [InitializationRequired]
+        public IDataFlow DataFlow => _dataFlow ?? (_dataFlow = _model?.GetDataFlow(_associatedId));
+
+        public ILink Clone(ILinksContainer container)
+        {
+            Link result = null;
+            if (container is IThreatModelChild child && child.Model is IThreatModel model)
+            {
+                result = new Link()
+                {
+                    _associatedId = _associatedId,
+                    _model = model,
+                    _modelId = model.Id,
+                };
+                this.CloneProperties(result);
+
+                container.Add(result);
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
         #endregion
     }
 }

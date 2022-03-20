@@ -109,7 +109,7 @@ namespace ThreatsManager.Engine.Aspects
                 _vulnerabilityAdded?.Invoke(container, vulnerability);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 14)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public IVulnerability AddVulnerability(IWeakness weakness)
         {
             IVulnerability result = null;
@@ -122,7 +122,7 @@ namespace ThreatsManager.Engine.Aspects
                 {
                     if (_vulnerabilities?.Get()?.All(x => x.WeaknessId != weakness.Id) ?? true)
                     {
-                        result = new Vulnerability(weakness, identity);
+                        result = new Vulnerability(weakness);
                         Add(result);
                         if (Instance is IDirty dirtyObject)
                             dirtyObject.SetDirty();

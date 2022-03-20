@@ -596,7 +596,7 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
-        [JsonProperty("_dependencies")]
+        [JsonProperty("dependencies")]
         private List<string> _dependencies;
 
         public IEnumerable<string> ExternalDependencies => _dependencies?.AsReadOnly();
@@ -2533,7 +2533,11 @@ namespace ThreatsManager.Engine.ObjectModel
         [Child]
         [JsonProperty("properties")]
         private IList<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("threatEvents")]
         private IList<IThreatEvent> _threatEvents { get; set; }
+        [Child]
+        [JsonProperty("vulnerabilities")]
         private IList<IVulnerability> _vulnerabilities { get; set; }
         #endregion
     }

@@ -48,10 +48,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -85,6 +89,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IEntity> Entities { get; }
         public IEntity GetEntity(Guid id)
         {
@@ -103,11 +109,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IGroupElement, IGroup, IGroup> ParentChanged;
         public Guid ParentId { get; }
+        [Reference]
+        [field: NotRecorded]
         public IGroup Parent { get; }
         public void SetParent(IGroup parent)
         {
         }
-        
+
+        [field: NotRecorded]
         public IEnumerable<IGroup> Groups => null;
 
         public IGroup GetGroup(Guid id)
@@ -152,7 +161,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [Child]
         [JsonProperty("properties")]
         private IList<IProperty> _properties { get; set; }
+        [JsonProperty("parentId")]
         private Guid _parentId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         private IGroup _parent { get; set; }
         #endregion
 
@@ -162,8 +174,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId;
 
+        [Reference]
+        [field: NotRecorded]
         internal ITrustBoundaryTemplate _template { get; set; }
 
+        [field: NotRecorded]
         public ITrustBoundaryTemplate Template
         {
             get

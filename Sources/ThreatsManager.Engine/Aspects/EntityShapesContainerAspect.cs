@@ -14,8 +14,8 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //[JsonProperty("entities")]
     //[Child]
+    //[JsonProperty("entities")]
     //private IList<IEntityShape> _entities { get; set; }
     //#endregion    
 

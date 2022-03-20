@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {

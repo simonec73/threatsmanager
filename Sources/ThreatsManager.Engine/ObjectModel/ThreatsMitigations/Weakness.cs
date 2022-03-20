@@ -49,6 +49,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -82,6 +84,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -129,11 +133,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("severity")]
         private int _severityId;
 
+        [Reference]
         private ISeverity _severity;
 
         public int SeverityId => _severityId;
 
         [InitializationRequired]
+        [property: NotRecorded]
         public ISeverity Severity
         {
             get => _severity ?? (_severity = Model?.GetSeverity(_severityId));
@@ -219,9 +225,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [InitializationRequired]
-        public IVulnerability GenerateVulnerability([NotNull] IIdentity identity)
+        public IVulnerability GenerateVulnerability()
         {
-            return new Vulnerability(this, identity);
+            return new Vulnerability(this);
         }
 
         public override string ToString()

@@ -51,6 +51,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public Guid WeaknessId => _weaknessId;
 
+        [Reference]
         private IWeakness _weakness;
 
         [InitializationRequired]
@@ -61,6 +62,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public Guid MitigationId => _mitigationId;
 
+        [Reference]
         private IMitigation _mitigation;
 
         public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
@@ -70,6 +72,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public int StrengthId => _strengthId;
 
+        [Reference]
         private IStrength _strength;
 
         [InitializationRequired]
@@ -115,11 +118,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         #endregion
 
         #region Default implementation.
+        [Reference]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {

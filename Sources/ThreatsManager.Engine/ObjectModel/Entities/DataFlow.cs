@@ -60,6 +60,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -96,6 +98,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IThreatEvent> ThreatEvents { get; }
         public IThreatEvent GetThreatEvent(Guid id)
         {
@@ -117,6 +121,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -140,6 +146,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IVulnerability> Vulnerabilities { get; }
         public IVulnerability GetVulnerability(Guid id)
         {
@@ -176,7 +184,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [Child]
         [JsonProperty("properties")]
         private IList<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("threatEvents")]
         private IList<IThreatEvent> _threatEvents { get; set; }
+        [Child]
+        [JsonProperty("vulnerabilities")]
         private IList<IVulnerability> _vulnerabilities { get; set; }
         [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
@@ -200,9 +212,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public Guid TargetId => _targetId;
 
+        [field: NotRecorded]
         [InitializationRequired]
         public IEntity Source => Model.GetEntity(_sourceId);
 
+        [field: NotRecorded]
         [InitializationRequired]
         public IEntity Target => Model.GetEntity(_targetId);
 
@@ -213,8 +227,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId;
 
+        [Reference]
+        [field: NotRecorded]
         internal IFlowTemplate _template { get; set; }
 
+        [field: NotRecorded]
         public IFlowTemplate Template
         {
             get

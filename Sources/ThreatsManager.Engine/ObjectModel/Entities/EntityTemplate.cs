@@ -46,11 +46,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -136,10 +140,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IEntityTemplate, ImageSize> ImageChanged;
 
+        [Reference]
         [JsonProperty("bigImage")]
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _bigImage;
 
+        [field: NotRecorded]
         public Bitmap BigImage 
         {
             get => _bigImage;
@@ -154,10 +160,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _image;
 
+        [field: NotRecorded]
         public Bitmap Image 
         {
             get => _image;
@@ -172,10 +180,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _smallImage;
 
+        [field: NotRecorded]
         public Bitmap SmallImage 
         {
             get => _smallImage;
