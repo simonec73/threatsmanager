@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.Aspects;
 
@@ -42,6 +43,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
         }
 
+        [Child]
         [JsonProperty("mitigations")]
         private List<IThreatTypeMitigation> _mitigations;
 

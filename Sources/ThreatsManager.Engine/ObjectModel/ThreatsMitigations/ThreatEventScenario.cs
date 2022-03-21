@@ -51,6 +51,76 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
 
+        #region Default implementation.
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
+        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
+        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        public bool HasProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+        [Reference]
+        [field: NotRecorded]
+        public IEnumerable<IProperty> Properties { get; }
+        public IProperty GetProperty(IPropertyType propertyType)
+        {
+            return null;
+        }
+
+        public IProperty AddProperty(IPropertyType propertyType, string value)
+        {
+            return null;
+        }
+
+        public bool RemoveProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+
+        public bool RemoveProperty(Guid propertyTypeId)
+        {
+            return false;
+        }
+
+        public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
+        [Reference]
+        [field: NotRecorded]
+        public IThreatModel Model { get; }
+
+        [Reference]
+        [field: NotRecorded]
+        public IThreatEvent ThreatEvent { get; }
+
+        public event Action<IDirty, bool> DirtyChanged;
+        public bool IsDirty { get; }
+        public void SetDirty()
+        {
+        }
+
+        public void ResetDirty()
+        {
+        }
+
+        public bool IsDirtySuspended { get; }
+        public void SuspendDirty()
+        {
+        }
+
+        public void ResumeDirty()
+        {
+        }
+        #endregion
+
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatEventScenario;
 
@@ -59,8 +129,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public int SeverityId => _severityId;
 
+        [Reference]
+        [field: NotRecorded]
         private ISeverity _severity;
 
+        [property: NotRecorded]
         [InitializationRequired]
         public ISeverity Severity
         {
@@ -84,10 +157,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("actorId")]
         private Guid _actorId;
 
+        [Reference]
+        [field: NotRecorded]
         private IThreatActor _actor;
 
         public Guid ActorId => _actorId;
 
+        [property: NotRecorded]
         [InitializationRequired]
         public IThreatActor Actor
         {
@@ -141,71 +217,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return Name ?? "<undefined>";
         }
-
-        #endregion
-
-        #region Default implementation.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        public bool HasProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-        public IEnumerable<IProperty> Properties { get; }
-        public IProperty GetProperty(IPropertyType propertyType)
-        {
-            return null;
-        }
-
-        public IProperty AddProperty(IPropertyType propertyType, string value)
-        {
-            return null;
-        }
-
-        public bool RemoveProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-
-        public bool RemoveProperty(Guid propertyTypeId)
-        {
-            return false;
-        }
-
-        public void ClearProperties()
-        {
-        }
-
-        public void Apply(IPropertySchema schema)
-        {
-        }
-
-        public IThreatModel Model { get; }
-
-        public IThreatEvent ThreatEvent { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
@@ -225,7 +236,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: UpdateId("Id", "_modelId")]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("threatEventId")]
         private Guid _threatEventId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_threatEventId")]
         private IThreatEvent _threatEvent { get; set; }
         #endregion
     }
