@@ -40,22 +40,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         public bool IsInitialized => Model != null && _id != Guid.Empty && PropertyTypeId != Guid.Empty;
 
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [JsonProperty("id")]
-        protected Guid _id { get; set; }
-        [JsonProperty("name")]
-        protected string _name { get; set; }
-        [JsonProperty("description")]
-        protected string _description { get; set; }
-        #endregion
-
         #region Default implementation.
         public Guid Id { get; }
         public event Action<IProperty> Changed;
@@ -84,13 +68,32 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("propertyTypeId")]
+        protected Guid _propertyTypeId { get; set; }
+        [JsonProperty("readOnly")]
+        protected bool _readOnly { get; set; }
+        #endregion
+
         #region Specific implementation.
         [JsonProperty("item")]
+        [NotRecorded]
         private string _item;
 
+        [Reference]
         private IListItem _value;
 
         [InitializationRequired]
+        [property: NotRecorded]
         public string StringValue
         {
             get => _item;

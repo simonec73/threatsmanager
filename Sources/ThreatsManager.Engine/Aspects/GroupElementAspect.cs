@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Utilities.Aspects;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {

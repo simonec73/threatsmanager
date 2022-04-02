@@ -39,22 +39,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             PropertyTypeId = propertyType.Id;
         }
 
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [JsonProperty("id")]
-        protected Guid _id { get; set; }
-        [JsonProperty("name")]
-        protected string _name { get; set; }
-        [JsonProperty("description")]
-        protected string _description { get; set; }
-        #endregion
-
         #region Default implementation.
         public Guid Id { get; }
         public event Action<IProperty> Changed;
@@ -83,7 +67,24 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("propertyTypeId")]
+        protected Guid _propertyTypeId { get; set; }
+        [JsonProperty("readOnly")]
+        protected bool _readOnly { get; set; }
+        #endregion
+
         #region Specific implementation.
+        [property: NotRecorded]
         public string StringValue
         {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
@@ -132,6 +133,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         [JsonProperty("value")]
+        [NotRecorded]
         private object _value;
 
         public virtual object Value

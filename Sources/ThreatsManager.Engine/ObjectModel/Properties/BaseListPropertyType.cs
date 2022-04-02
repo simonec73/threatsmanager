@@ -40,22 +40,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             Visible = true;
         }
 
-        #region Additional placeholders required.
-        [JsonProperty("id")]
-        protected Guid _id { get; set; }
-        [JsonProperty("name")]
-        protected string _name { get; set; }
-        [JsonProperty("description")]
-        protected string _description { get; set; }
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Reference]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        protected IThreatModel _model { get; set; }
-        protected Guid _schemaId { get; set; }
-        #endregion
-
         #region Default implementation.
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -88,13 +72,33 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("schema")]
+        protected Guid _schemaId { get; set; }
+        #endregion
+
         #region Specific implementation.
         /// <summary>
         /// Identifier of the List Provider that provides the list of available items.
         /// </summary>
         [JsonProperty("listProvider")]
+        [NotRecorded]
         protected string _listProviderId;
 
+        [Reference]
+        [NotRecorded]
         private IListProviderExtension _listProvider;
 
         private IListProviderExtension ListProvider
@@ -120,6 +124,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public string Context { get; set; }
 
         [JsonProperty("cachedList")]
+        [NotRecorded]
+        [Reference]
         protected IEnumerable<IListItem> _cachedList;
 
         public IEnumerable<IListItem> Values

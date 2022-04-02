@@ -65,7 +65,23 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("propertyTypeId")]
+        protected Guid _propertyTypeId { get; set; }
+        [JsonProperty("readOnly")]
+        protected bool _readOnly { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        protected IThreatModel _model { get; set; }
+        #endregion
+
         #region Specific implementation.
+        [property: NotRecorded]
         public string StringValue
         {
             get => Value?.TagConcat();
@@ -79,6 +95,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         [JsonProperty("values")]
+        [NotRecorded]
         private List<string> _values;
 
         public virtual IEnumerable<string> Value
@@ -114,17 +131,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             Changed?.Invoke(this);
         }
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("id")]
-        protected Guid _id { get; set; }
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        protected IThreatModel _model { get; set; }
         #endregion
     }
 }

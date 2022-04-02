@@ -82,6 +82,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [field: NotRecorded]
         [field: UpdateId("Id", "_modelId")]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("schema")]
         protected Guid _schemaId { get; set; }
         #endregion
 
