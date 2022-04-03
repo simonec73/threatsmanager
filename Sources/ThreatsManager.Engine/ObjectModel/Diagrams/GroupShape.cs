@@ -32,12 +32,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         }
 
-        public GroupShape([NotNull] IThreatModel model, [NotNull] IGroup group) : this()
+        public GroupShape([NotNull] IGroup group) : this()
         {
-            _modelId = model.Id;
-            _model = model;
+            _model = group.Model;
             _group = group;
-            _associatedId = group.Id;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -105,10 +103,26 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        #endregion
+
         #region Specific implementation.
         public Scope PropertiesScope => Scope.GroupShape;
 
-        private IGroup _group;
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_associatedId")]
+        private IGroup _group { get; set; }
 
         [JsonProperty("id")]
         private Guid _associatedId;
@@ -118,11 +132,64 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         [InitializationRequired]
         public IIdentity Identity => _group ?? (_group = Model?.GetGroup(_associatedId));
 
-        [JsonProperty("pos")]
-        public PointF Position { get; set; }
+        [Child]
+        private RecordablePointF _recordablePosition;
 
+        [NotRecorded]
+        [JsonProperty("pos")]
+        private PointF _position;
+
+        [property: NotRecorded]
+        public PointF Position
+        {
+            get
+            {
+                return _position;
+            }
+
+            set
+            {
+                if (!value.IsEmpty)
+                {
+                    if (_recordablePosition == null)
+                        _recordablePosition = new RecordablePointF(value);
+                    else
+                    {
+                        _recordablePosition.X = value.X;
+                        _recordablePosition.Y = value.Y;
+                    }
+                }
+            }
+        }
+
+        [Child]
+        private RecordableSizeF _recordableSize;
+
+        [NotRecorded]
         [JsonProperty("size")]
-        public SizeF Size { get; set; }
+        private SizeF _size;
+
+        public SizeF Size
+        {
+            get
+            {
+                return _size;
+            }
+
+            set
+            {
+                if (!value.IsEmpty)
+                {
+                    if (_recordableSize == null)
+                        _recordableSize = new RecordableSizeF(value);
+                    else
+                    {
+                        _recordableSize.Height = value.Height;
+                        _recordableSize.Width = value.Width;
+                    }
+                }
+            }
+        }
 
         public IGroupShape Clone([NotNull] IGroupShapesContainer container)
         {
@@ -144,19 +211,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
             return result;
         }
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
         #endregion
     }
 }

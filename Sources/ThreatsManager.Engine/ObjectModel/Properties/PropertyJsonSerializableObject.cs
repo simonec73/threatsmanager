@@ -43,8 +43,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; }
         public event Action<IProperty> Changed;
         public Guid PropertyTypeId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -132,6 +136,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
         }
 
+        [Reference]
         [JsonProperty("value")]
         [NotRecorded]
         private object _value;

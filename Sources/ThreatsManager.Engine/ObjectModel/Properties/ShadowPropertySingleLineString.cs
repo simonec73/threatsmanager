@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities.Exceptions;
@@ -25,6 +26,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         #region Default implementation.
+        [Reference]
+        [field: NonSerialized]
         public IProperty Original { get; }
         public bool IsOverridden { get; }
         public void RevertToOriginal()
@@ -37,6 +40,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         private Guid _originalId { get; set; }
         [JsonProperty("overridden")]
         private bool _overridden { get; set; }
+        [Reference]
+        [field: NonSerialized]
         private IProperty _original { get; set; }
         #endregion    
 

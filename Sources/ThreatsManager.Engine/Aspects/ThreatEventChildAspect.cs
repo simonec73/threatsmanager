@@ -10,7 +10,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[JsonProperty("threatEventId")]
     //private Guid _threatEventId { get; set; }
-    //[Parent]
+    //[Reference]
     //[field: NotRecorded]
     //[field: UpdateId("Id", "_threatEventId")]
     //private IThreatEvent _threatEvent { get; set; }

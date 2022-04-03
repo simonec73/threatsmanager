@@ -56,7 +56,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Reference]
+        [Child]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
@@ -114,6 +114,25 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public void ResumeDirty()
         {
         }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("threatEventId")]
+        private Guid _threatEventId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_threatEventId")]
+        private IThreatEvent _threatEvent { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -190,25 +209,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return Mitigation.Name ?? "<undefined>";
         }
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
-        [JsonProperty("threatEventId")]
-        private Guid _threatEventId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_threatEventId")]
-        private IThreatEvent _threatEvent { get; set; }
         #endregion
     }
 }

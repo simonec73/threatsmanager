@@ -13,6 +13,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -46,8 +47,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; }
         public event Action<IProperty> Changed;
         public Guid PropertyTypeId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -86,9 +91,10 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
+        [Child]
         [JsonProperty("items")]
         [NotRecorded]
-        private List<string> _items;
+        private IList<string> _items;
 
         [InitializationRequired]
         [property: NotRecorded]
@@ -107,13 +113,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [InitializationRequired]
         public virtual IEnumerable<string> Value
         {
-            get => _items?.AsReadOnly();
+            get => _items?.AsEnumerable();
             set
             {
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                _items = (value?.Any() ?? false) ? new List<string>(value) : null;
+                _items = (value?.Any() ?? false) ? new AdvisableCollection<string>(value) : null;
                 InvokeChanged();
             }
         }

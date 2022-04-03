@@ -112,9 +112,9 @@ namespace ThreatsManager.Engine.Aspects
 
             IGroupShape result = null;
 
-            if (GetGroupShape(group.Id) == null && Instance is IThreatModelChild child)
+            if (GetGroupShape(group.Id) == null)
             {
-                result = new GroupShape(child.Model, group)
+                result = new GroupShape(group)
                 {
                     Position = position,
                     Size = size

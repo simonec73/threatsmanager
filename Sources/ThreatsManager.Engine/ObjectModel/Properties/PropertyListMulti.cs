@@ -13,6 +13,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -46,8 +47,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; }
         public event Action<IProperty> Changed;
         public Guid PropertyTypeId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -87,9 +92,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
+        [Child]
         [JsonProperty("items")]
-        [NotRecorded]
-        private List<string> _items;
+        private IList<string> _items;
 
         [Reference]
         [NotRecorded]
@@ -134,7 +139,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         if (propertyType.Values.Any(x => x.Equals(item)))
                         {
                             if (_items == null)
-                                _items = new List<string>();
+                                _items = new AdvisableCollection<string>();
                             if (_values == null)
                                 _values = new List<IListItem>();
 

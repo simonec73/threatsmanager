@@ -26,8 +26,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [Recordable]
     public class Link : ILink, IThreatModelChild, IInitializableObject
     {
-        private IDataFlow _dataFlow;
-
         public Link()
         {
 
@@ -35,10 +33,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public Link([NotNull] IDataFlow dataFlow) : this()
         {
-            _dataFlow = dataFlow;
-            _modelId = dataFlow.Model.Id;
             _model = dataFlow.Model;
-            _associatedId = _dataFlow.Id;
+            _dataFlow = dataFlow;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -109,6 +105,11 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Link;
 
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_associatedId")]
+        private IDataFlow _dataFlow;
+
         [JsonProperty("id")]
         private Guid _associatedId;
 
@@ -135,7 +136,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
             return result;
         }
-
         #endregion
 
         #region Additional placeholders required.

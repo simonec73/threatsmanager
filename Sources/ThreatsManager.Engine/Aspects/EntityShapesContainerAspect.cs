@@ -114,9 +114,9 @@ namespace ThreatsManager.Engine.Aspects
 
             IEntityShape result = null;
 
-            if (Instance is IThreatModelChild child && GetEntityShape(entity.Id) == null)
+            if (GetEntityShape(entity.Id) == null)
             {
-                result = new EntityShape(child.Model, entity)
+                result = new EntityShape(entity)
                 {
                     Position = position
                 };

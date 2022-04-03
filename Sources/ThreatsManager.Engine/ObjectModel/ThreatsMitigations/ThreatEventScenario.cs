@@ -121,6 +121,31 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("threatEventId")]
+        private Guid _threatEventId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_threatEventId")]
+        private IThreatEvent _threatEvent { get; set; }
+        #endregion
+
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatEventScenario;
 
@@ -217,31 +242,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return Name ?? "<undefined>";
         }
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("id")]
-        protected Guid _id { get; set; }
-        [JsonProperty("name")]
-        protected string _name { get; set; }
-        [JsonProperty("description")]
-        protected string _description { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [JsonProperty("threatEventId")]
-        private Guid _threatEventId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_threatEventId")]
-        private IThreatEvent _threatEvent { get; set; }
         #endregion
     }
 }

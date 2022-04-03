@@ -45,6 +45,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public string Name { get; set; }
         public string Description { get; set; }
 
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;

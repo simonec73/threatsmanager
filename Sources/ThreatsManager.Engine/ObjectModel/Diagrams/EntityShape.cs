@@ -27,20 +27,15 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [Recordable]
     public class EntityShape : IEntityShape, IThreatModelChild, IInitializableObject
     {
-        [JsonIgnore]
-        private IEntity _entity;
-
         public EntityShape()
         {
 
         }
 
-        public EntityShape([NotNull] IThreatModel model, [NotNull] IEntity entity) : this()
+        public EntityShape([NotNull] IEntity entity) : this()
         {
-            _modelId = model.Id;
-            _model = model;
+            _model = entity.Model;
             _entity = entity;
-            _associatedId = entity.Id;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -53,7 +48,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Reference]
+        [Child]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
 
@@ -61,6 +56,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
             return false;
         }
+
         public IProperty GetProperty(IPropertyType propertyType)
         {
             return null;
@@ -109,8 +105,26 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        #endregion
+
         #region Specific implementation.
         public Scope PropertiesScope => Scope.EntityShape;
+
+        [Reference]
+        [NotRecorded]
+        [field: UpdateId("Id", "_associatedId")]
+        private IEntity _entity;
 
         [JsonProperty("id")]
         private Guid _associatedId;
@@ -120,8 +134,35 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         [InitializationRequired]
         public IIdentity Identity => _entity ?? (_entity = Model.GetEntity(_associatedId));
 
+        [Child]
+        private RecordablePointF _recordablePosition;
+
+        [NotRecorded]
         [JsonProperty("pos")]
-        public PointF Position { get; set; }
+        private PointF _position;
+
+        [property: NotRecorded]
+        public PointF Position
+        {
+            get
+            {
+                return _position;
+            }
+
+            set
+            {
+                if (!value.IsEmpty)
+                {
+                    if (_recordablePosition == null)
+                        _recordablePosition = new RecordablePointF(value);
+                    else
+                    {
+                        _recordablePosition.X = value.X;
+                        _recordablePosition.Y = value.Y;
+                    }
+                }
+            }
+        }
 
         public IEntityShape Clone([NotNull] IEntityShapesContainer container)
         {
@@ -142,19 +183,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
             return result;
         }
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
         #endregion
     }
 }

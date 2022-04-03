@@ -12,6 +12,8 @@ namespace ThreatsManager.Engine.Aspects
     //private Guid _originalId { get; set; }
     //[JsonProperty("overridden")]
     //private bool _overridden { get; set; }
+    //[Reference]
+    //[field: NonSerialized]
     //private IProperty _original { get; set; }
     //#endregion    
 

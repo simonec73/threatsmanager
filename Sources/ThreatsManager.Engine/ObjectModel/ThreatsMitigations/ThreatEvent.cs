@@ -15,6 +15,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -66,7 +67,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Reference]
+        [Child]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
@@ -104,7 +105,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved;
 
-        [Reference]
+        [Child]
         [field: NotRecorded]
         public IEnumerable<IThreatEventScenario> Scenarios { get; }
         public IThreatEventScenario GetScenario(Guid id)
@@ -128,7 +129,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded;
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved;
-        [Reference]
+        [Child]
         [field: NotRecorded]
         public IEnumerable<IThreatEventMitigation> Mitigations { get; }
         public IThreatEventMitigation GetMitigation(Guid mitigationId)
@@ -169,6 +170,25 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public void ResumeDirty()
         {
         }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("scenarios")]
+        private IList<IThreatEventScenario> _scenarios { get; set; }
+        [Child]
+        [JsonProperty("mitigations")]
+        private IList<IThreatEventMitigation> _mitigations { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -360,25 +380,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
         #endregion
 
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
-        [Child]
-        [JsonProperty("scenarios")]
-        private IList<IThreatEventScenario> _scenarios { get; set; }
-        [Child]
-        [JsonProperty("mitigations")]
-        private IList<IThreatEventMitigation> _mitigations { get; set; }
-        #endregion
-
         #region Implementation of interface IThreatEventVulnerabilitiesContainer.
         private Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> _threatEventVulnerabilityAdded;
         public event Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> ThreatEventVulnerabilityAdded
@@ -416,9 +417,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Child]
         [JsonProperty("threatEventVulnerabilities")]
-        private List<IThreatEventVulnerability> _vulnerabilities { get; set; }
+        private IList<IThreatEventVulnerability> _vulnerabilities { get; set; }
 
-        public IEnumerable<IThreatEventVulnerability> ThreatEventVulnerabilities => _vulnerabilities?.AsReadOnly();
+        public IEnumerable<IThreatEventVulnerability> ThreatEventVulnerabilities => _vulnerabilities?.AsEnumerable();
 
         public IThreatEventVulnerability GetThreatEventVulnerability(Guid vulnerabilityId)
         {
@@ -428,7 +429,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public void Add([NotNull] IThreatEventVulnerability association)
         {
             if (_vulnerabilities == null)
-                _vulnerabilities = new List<IThreatEventVulnerability>();
+                _vulnerabilities = new AdvisableCollection<IThreatEventVulnerability>();
             if (association.ThreatEvent != this || Model.FindVulnerability(association.VulnerabilityId) == null)
                 throw new ArgumentException();
 
@@ -441,7 +442,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             result = new ThreatEventVulnerability(this, vulnerability);
             if (_vulnerabilities == null)
-                _vulnerabilities = new List<IThreatEventVulnerability>();
+                _vulnerabilities = new AdvisableCollection<IThreatEventVulnerability>();
             _vulnerabilities.Add(result);
             if (Model is IDirty dirtyObject)
                 dirtyObject.SetDirty();

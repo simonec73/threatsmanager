@@ -12,6 +12,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -41,8 +42,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; }
         public event Action<IProperty> Changed;
         public Guid PropertyTypeId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IDirty, bool> DirtyChanged;
@@ -94,13 +99,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             }
         }
 
+        [Child]
         [JsonProperty("values")]
         [NotRecorded]
-        private List<string> _values;
+        private IList<string> _values;
 
         public virtual IEnumerable<string> Value
         {
-            get => _values?.AsReadOnly();
+            get => _values?.AsEnumerable();
             set
             {
                 if (ReadOnly)
@@ -109,10 +115,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (value?.Any() ?? false)
                 {
                     if (_values == null)
-                        _values = new List<string>();
+                        _values = new AdvisableCollection<string>();
                     else
                         _values.Clear();
-                    _values.AddRange(value);
+                    foreach (var item in value)
+                        _values.Add(item);
                 }
                 else
                 {

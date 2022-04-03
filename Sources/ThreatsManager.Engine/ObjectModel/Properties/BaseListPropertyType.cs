@@ -44,6 +44,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public Guid SchemaId { get; set; }
         public int Priority { get; set; }

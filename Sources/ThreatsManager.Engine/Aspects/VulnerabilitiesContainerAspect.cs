@@ -4,16 +4,11 @@ using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
-using PostSharp.Patterns.Contracts;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities.Aspects;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {

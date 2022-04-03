@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     public partial class PropertySchema
     {
+        [Child]
         [JsonProperty("propertyTypes")]
-        private List<IPropertyType> _propertyTypes;
+        private IList<IPropertyType> _propertyTypes { get; set; }
 
         public IEnumerable<IPropertyType> PropertyTypes => _propertyTypes?.OrderBy(x => x.Priority);
 
@@ -51,7 +53,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (result != null)
                 {
                     if (_propertyTypes == null)
-                        _propertyTypes = new List<IPropertyType>();
+                        _propertyTypes = new AdvisableCollection<IPropertyType>();
 
                     _propertyTypes.Add(result);
                     SetDirty();

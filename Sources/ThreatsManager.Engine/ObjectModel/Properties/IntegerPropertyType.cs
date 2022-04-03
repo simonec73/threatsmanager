@@ -41,6 +41,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public bool Locked { get; set; }
         public Guid SchemaId { get; }
