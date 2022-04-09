@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("actors")]
-        private List<IThreatActor> _actors;
+        private IList<IThreatActor> _actors;
 
-        public IEnumerable<IThreatActor> ThreatActors => _actors?.AsReadOnly();
+        public IEnumerable<IThreatActor> ThreatActors => _actors?.AsEnumerable();
 
         [InitializationRequired]
         public IThreatActor GetThreatActor(Guid id)
@@ -33,7 +35,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IThreatActor actor)
         {
             if (_actors == null)
-                _actors = new List<IThreatActor>();
+                _actors = new AdvisableCollection<IThreatActor>();
 
             _actors.Add(actor);
 

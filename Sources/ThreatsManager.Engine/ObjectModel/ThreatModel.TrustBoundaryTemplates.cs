@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Icons;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
@@ -16,10 +15,11 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("trustBoundaryTemplates")]
-        private List<ITrustBoundaryTemplate> _trustBoundaryTemplates;
+        private IList<ITrustBoundaryTemplate> _trustBoundaryTemplates;
 
-        public IEnumerable<ITrustBoundaryTemplate> TrustBoundaryTemplates => _trustBoundaryTemplates?.AsReadOnly();
+        public IEnumerable<ITrustBoundaryTemplate> TrustBoundaryTemplates => _trustBoundaryTemplates?.AsEnumerable();
 
         [InitializationRequired]
         public ITrustBoundaryTemplate GetTrustBoundaryTemplate(Guid id)
@@ -34,7 +34,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 throw new ArgumentException();
 
             if (_trustBoundaryTemplates == null)
-                _trustBoundaryTemplates = new List<ITrustBoundaryTemplate>();
+                _trustBoundaryTemplates = new AdvisableCollection<ITrustBoundaryTemplate>();
 
             _trustBoundaryTemplates.Add(trustBoundaryTemplate);
  

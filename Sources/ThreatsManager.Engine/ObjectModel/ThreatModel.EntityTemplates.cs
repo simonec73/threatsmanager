@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -16,10 +18,11 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("entityTemplates")]
-        private List<IEntityTemplate> _entityTemplates;
+        private IList<IEntityTemplate> _entityTemplates;
 
-        public IEnumerable<IEntityTemplate> EntityTemplates => _entityTemplates?.AsReadOnly();
+        public IEnumerable<IEntityTemplate> EntityTemplates => _entityTemplates?.AsEnumerable();
 
         [InitializationRequired]
         public IEntityTemplate GetEntityTemplate(Guid id)
@@ -40,7 +43,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 throw new ArgumentException();
 
             if (_entityTemplates == null)
-                _entityTemplates = new List<IEntityTemplate>();
+                _entityTemplates = new AdvisableCollection<IEntityTemplate>();
 
             _entityTemplates.Add(entityTemplate);
  

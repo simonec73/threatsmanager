@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.Aspects;
@@ -13,10 +15,11 @@ namespace ThreatsManager.Engine.ObjectModel
     {
         private static int _lastMitigation;
 
+        [Child]
         [JsonProperty("mitigations")]
-        private List<IMitigation> _mitigations;
+        private IList<IMitigation> _mitigations;
 
-        public IEnumerable<IMitigation> Mitigations => _mitigations?.AsReadOnly();
+        public IEnumerable<IMitigation> Mitigations => _mitigations?.AsEnumerable();
 
         [InitializationRequired]
         public IMitigation GetMitigation(Guid id)
@@ -34,7 +37,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IMitigation mitigation)
         {
             if (_mitigations == null)
-                _mitigations = new List<IMitigation>();
+                _mitigations = new AdvisableCollection<IMitigation>();
 
             _mitigations.Add(mitigation);
 

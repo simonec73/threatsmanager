@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -12,8 +14,9 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("strengths")]
-        private List<IStrength> _strengths;
+        private IList<IStrength> _strengths;
 
         private Action<IStrength> _strengthCreated;
         public event Action<IStrength> StrengthCreated
@@ -85,7 +88,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IStrength strength)
         {
             if (_strengths == null)
-                _strengths = new List<IStrength>();
+                _strengths = new AdvisableCollection<IStrength>();
 
             _strengths.Add(strength);
             

@@ -14,6 +14,7 @@ namespace ThreatsManager.Utilities.Aspects
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Multicast)]
     [IntroduceInterface(typeof(INotifyPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore)]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Initialization")]
+    [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "ChangeTracking")]
     public class SimpleNotifyPropertyChangedAttribute : InstanceLevelAspect, INotifyPropertyChanged
     {
         [ImportMember("OnPropertyChanged", IsRequired = false,

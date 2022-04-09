@@ -1,4 +1,5 @@
 ﻿using PostSharp.Aspects;
+using PostSharp.Aspects.Dependencies;
 using PostSharp.Serialization;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// property Id of the new IThreatModel and assigns it to property ParentId of the object containing property Model.
     /// </summary>
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(AutoApplySchemasAttribute))]
     public class UpdateIdAttribute : LocationInterceptionAspect
     {
         private string _sourcePropertyName;

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Exceptions;
@@ -30,6 +32,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [VulnerabilitiesContainerAspect]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
+    [Recordable]
     public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
     {
         #region Events management.
@@ -484,10 +487,11 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("owner")]
         public string Owner { get; set; }
 
+        [Child]
         [JsonProperty("contributors")]
-        private List<string> _contributors;
+        private IList<string> _contributors;
 
-        public IEnumerable<string> Contributors => _contributors?.AsReadOnly();
+        public IEnumerable<string> Contributors => _contributors?.AsEnumerable();
 
         public bool AddContributor([Required] string name)
         {
@@ -496,7 +500,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (!(_contributors?.Any(name.IsEqual) ?? false))
             {
                 if (_contributors == null)
-                    _contributors = new List<string>();
+                    _contributors = new AdvisableCollection<string>();
                 _contributors.Add(name);
                 SetDirty();
                 result = true;
@@ -540,10 +544,11 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
+        [Child]
         [JsonProperty("assumptions")]
-        private List<string> _assumptions;
+        private IList<string> _assumptions;
 
-        public IEnumerable<string> Assumptions => _assumptions?.AsReadOnly();
+        public IEnumerable<string> Assumptions => _assumptions?.AsEnumerable();
 
         public bool AddAssumption([Required] string text)
         {
@@ -552,7 +557,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (!(_assumptions?.Any(text.IsEqual) ?? false))
             {
                 if (_assumptions == null)
-                    _assumptions = new List<string>();
+                    _assumptions = new AdvisableCollection<string>();
                 _assumptions.Add(text);
                 SetDirty();
                 result = true;
@@ -596,10 +601,11 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
+        [Child]
         [JsonProperty("dependencies")]
-        private List<string> _dependencies;
+        private IList<string> _dependencies;
 
-        public IEnumerable<string> ExternalDependencies => _dependencies?.AsReadOnly();
+        public IEnumerable<string> ExternalDependencies => _dependencies?.AsEnumerable();
 
         public bool AddDependency([Required] string text)
         {
@@ -608,7 +614,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (!(_dependencies?.Any(text.IsEqual) ?? false))
             {
                 if (_dependencies == null)
-                    _dependencies = new List<string>();
+                    _dependencies = new AdvisableCollection<string>();
                 _dependencies.Add(text);
                 SetDirty();
                 result = true;
@@ -2438,6 +2444,8 @@ namespace ThreatsManager.Engine.ObjectModel
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -2470,6 +2478,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IThreatEvent> ThreatEvents { get; }
         public IThreatEvent GetThreatEvent(Guid id)
         {
@@ -2497,6 +2507,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        [Reference]
+        [field:NotRecorded]
         public IEnumerable<IVulnerability> Vulnerabilities { get; }
         public IVulnerability GetVulnerability(Guid id)
         {

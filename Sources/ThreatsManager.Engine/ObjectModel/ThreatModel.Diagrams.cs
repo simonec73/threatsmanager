@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities.Aspects;
@@ -147,10 +148,11 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private static int _lastDiagram;
 
+        [Child]
         [JsonProperty("diagrams")]
-        private List<IDiagram> _diagrams;
+        private IList<IDiagram> _diagrams;
 
-        public IEnumerable<IDiagram> Diagrams => _diagrams?.AsReadOnly();
+        public IEnumerable<IDiagram> Diagrams => _diagrams?.AsEnumerable();
 
         [InitializationRequired]
         public IEnumerable<IDiagram> GetDiagrams([Required] string name)
@@ -168,7 +170,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IDiagram diagram)
         {
             if (_diagrams == null)
-                _diagrams = new List<IDiagram>();
+                _diagrams = new AdvisableCollection<IDiagram>();
 
             _diagrams.Add(diagram);
         }
@@ -202,13 +204,11 @@ namespace ThreatsManager.Engine.ObjectModel
             var diagrams = GetDiagrams(name);
             if (!(diagrams?.Any() ?? false))
             {
-                if (_diagrams == null)
-                    _diagrams = new List<IDiagram>();
                 result = new Diagram(name)
                 {
                     Order = _diagrams.Any() ? _diagrams.Max(x => x.Order) + 1 : 1
                 };
-                _diagrams.Add(result);
+                Add(result);
                 SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);

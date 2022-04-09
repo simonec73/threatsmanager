@@ -8,6 +8,7 @@ namespace ThreatsManager.Utilities.Aspects
     [PSerializable]
     [ProvideAspectRole("Initialization")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, StandardRoles.Validation)]
+    [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "ChangeTracking")]
     [LinesOfCodeAvoided(2)]
     public class InitializationRequired : OnMethodBoundaryAspect
     {

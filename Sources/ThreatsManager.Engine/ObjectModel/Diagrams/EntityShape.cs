@@ -48,7 +48,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
 
@@ -160,7 +160,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                         _recordablePosition.X = value.X;
                         _recordablePosition.Y = value.Y;
                     }
+                    _position = new PointF(value.X, value.Y);
                 }
+                else
+                    _position = PointF.Empty;
             }
         }
 

@@ -19,6 +19,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     //private void CascadeUnlock() {}
     //#endregion
 
+    // TODO: Implementation must be completely revised!
+
     [PSerializable]
     public class LockableAspect : InstanceLevelAspect
     {

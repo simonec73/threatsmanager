@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -13,10 +15,11 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("weaknesses")]
-        private List<IWeakness> _weaknesses;
+        private IList<IWeakness> _weaknesses;
 
-        public IEnumerable<IWeakness> Weaknesses => _weaknesses?.AsReadOnly();
+        public IEnumerable<IWeakness> Weaknesses => _weaknesses?.AsEnumerable();
 
         [InitializationRequired]
         public IEnumerable<IWeakness> SearchWeaknesses(string filter)
@@ -94,7 +97,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IWeakness weakness)
         {
             if (_weaknesses == null)
-                _weaknesses = new List<IWeakness>();
+                _weaknesses = new AdvisableCollection<IWeakness>();
 
             _weaknesses.Add(weakness);
 

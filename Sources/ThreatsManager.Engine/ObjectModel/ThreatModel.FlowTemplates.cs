@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Icons;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
@@ -16,10 +15,11 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("flowTemplates")]
-        private List<IFlowTemplate> _flowTemplates;
+        private IList<IFlowTemplate> _flowTemplates;
 
-        public IEnumerable<IFlowTemplate> FlowTemplates => _flowTemplates?.AsReadOnly();
+        public IEnumerable<IFlowTemplate> FlowTemplates => _flowTemplates?.AsEnumerable();
 
         [InitializationRequired]
         public IFlowTemplate GetFlowTemplate(Guid id)
@@ -34,7 +34,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 throw new ArgumentException();
 
             if (_flowTemplates == null)
-                _flowTemplates = new List<IFlowTemplate>();
+                _flowTemplates = new AdvisableCollection<IFlowTemplate>();
 
             _flowTemplates.Add(flowTemplate);
  

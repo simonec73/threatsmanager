@@ -50,14 +50,12 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
-        [Parent]
+        [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
         public IThreatModel Model { get; }
         public event Action<IEntityShapesContainer, IEntityShape> EntityShapeAdded;
         public event Action<IEntityShapesContainer, IEntity> EntityShapeRemoved;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IEntityShape> Entities { get; }
         public IEntityShape GetShape(IEntity entity)
@@ -97,7 +95,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public event Action<IGroupShapesContainer, IGroupShape> GroupShapeAdded;
         public event Action<IGroupShapesContainer, IGroup> GroupShapeRemoved;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IGroupShape> Groups { get; }
         public IGroupShape GetShape(IGroup @group)
@@ -137,7 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public event Action<ILinksContainer, ILink> LinkAdded;
         public event Action<ILinksContainer, IDataFlow> LinkRemoved;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<ILink> Links { get; }
         public ILink GetLink(Guid dataFlowId)
@@ -158,7 +156,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
 

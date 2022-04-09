@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -20,7 +18,6 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Require, AspectDependencyPosition.Any, typeof(ThreatModelChildAspect))]
     public class ThreatEventScenariosContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

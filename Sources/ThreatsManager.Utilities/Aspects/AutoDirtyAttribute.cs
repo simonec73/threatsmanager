@@ -19,6 +19,7 @@ namespace ThreatsManager.Utilities.Aspects
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Multicast)]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Initialization")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Notification")]
+    [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "ChangeTracking")]
     public class AutoDirtyAttribute : InstanceLevelAspect
     {
         /// <summary>

@@ -9,7 +9,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     //#region Additional placeholders required.
     //[JsonProperty("modelId")]
     //protected Guid _modelId { get; set; }
-    //[Parent]
+    //[Parent] or [Reference]
     //[field: NotRecorded]
     //[field: UpdateId("Id", "_modelId")]
     //[field: AutoApplySchemas]

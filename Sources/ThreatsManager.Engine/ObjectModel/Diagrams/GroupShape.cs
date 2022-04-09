@@ -158,7 +158,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                         _recordablePosition.X = value.X;
                         _recordablePosition.Y = value.Y;
                     }
+                    _position = new PointF(value.X, value.Y);
                 }
+                else
+                    _position = PointF.Empty;
             }
         }
 
@@ -187,7 +190,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                         _recordableSize.Height = value.Height;
                         _recordableSize.Width = value.Width;
                     }
+                    _size = new SizeF(value.Width, value.Height);
                 }
+                else
+                    _size = SizeF.Empty;
             }
         }
 

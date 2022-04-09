@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -47,10 +49,11 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [Child]
         [JsonProperty("dataFlows")]
-        private List<IDataFlow> _dataFlows;
+        private IList<IDataFlow> _dataFlows;
 
-        public IEnumerable<IDataFlow> DataFlows => _dataFlows?.AsReadOnly();
+        public IEnumerable<IDataFlow> DataFlows => _dataFlows?.AsEnumerable();
 
         [InitializationRequired]
         public IDataFlow GetDataFlow(Guid id)
@@ -71,7 +74,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 throw new ArgumentException();
 
             if (_dataFlows == null)
-                _dataFlows = new List<IDataFlow>();
+                _dataFlows = new AdvisableCollection<IDataFlow>();
 
             _dataFlows.Add(dataFlow);
         }
@@ -83,11 +86,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (!(_dataFlows?.Any(x => (x.SourceId == sourceId) && (x.TargetId == targetId)) ?? false))
             {
-                if (_dataFlows == null)
-                    _dataFlows = new List<IDataFlow>();
-
                 result = new DataFlow(name, sourceId, targetId);
-                _dataFlows.Add(result);
+                Add(result);
                 SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
@@ -104,9 +104,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 _templateId = template?.Id ?? Guid.Empty
             };
 
-            if (_dataFlows == null)
-                _dataFlows = new List<IDataFlow>();
-            _dataFlows.Add(result);
+            Add(result);
             RegisterEvents(result);
             SetDirty();
             ChildCreated?.Invoke(result);

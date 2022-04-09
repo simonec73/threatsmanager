@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -53,10 +54,11 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [Child]
         [JsonProperty("entities")]
-        private List<IEntity> _entities;
+        private IList<IEntity> _entities;
 
-        public IEnumerable<IEntity> Entities => _entities?.AsReadOnly();
+        public IEnumerable<IEntity> Entities => _entities?.AsEnumerable();
 
         [InitializationRequired]
         public IEntity GetEntity(Guid id)
@@ -82,7 +84,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IEntity entity)
         {
             if (_entities == null)
-                _entities = new List<IEntity>();
+                _entities = new AdvisableCollection<IEntity>();
 
             _entities.Add(entity);
         }
@@ -122,9 +124,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (result != null)
             {
-                if (_entities == null)
-                    _entities = new List<IEntity>();
-                _entities.Add(result);
+                Add(result);
                 RegisterEvents(result);
                 SetDirty();
                 ChildCreated?.Invoke(result);

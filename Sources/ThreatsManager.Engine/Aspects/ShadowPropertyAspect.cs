@@ -29,7 +29,7 @@ namespace ThreatsManager.Engine.Aspects
         [ImportMember(nameof(_originalId))]
         public Property<Guid> _originalId;
 
-        [ImportMember(nameof(_originalId))]
+        [ImportMember(nameof(_original))]
         public Property<IProperty> _original;
 
         [ImportMember(nameof(_overridden))]

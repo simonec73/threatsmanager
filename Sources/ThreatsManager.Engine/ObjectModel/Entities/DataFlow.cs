@@ -212,11 +212,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public Guid TargetId => _targetId;
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         [InitializationRequired]
         public IEntity Source => Model.GetEntity(_sourceId);
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         [InitializationRequired]
         public IEntity Target => Model.GetEntity(_targetId);
 
@@ -231,7 +231,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: NotRecorded]
         internal IFlowTemplate _template { get; set; }
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public IFlowTemplate Template
         {
             get

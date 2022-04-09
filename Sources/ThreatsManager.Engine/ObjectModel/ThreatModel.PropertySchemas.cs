@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -16,8 +18,9 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("schemas")]
-        private List<IPropertySchema> _schemas;
+        private IList<IPropertySchema> _schemas;
 
         public IEnumerable<IPropertySchema> Schemas => _schemas?.OrderBy(x => x.Priority);
 
@@ -318,7 +321,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IPropertySchema propertySchema)
         {
             if (_schemas == null)
-                _schemas = new List<IPropertySchema>();
+                _schemas = new AdvisableCollection<IPropertySchema>();
 
             _schemas.Add(propertySchema);
         }
@@ -330,10 +333,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (GetSchema(name, nspace) == null)
             {
-                if (_schemas == null)
-                    _schemas = new List<IPropertySchema>();
                 result = new PropertySchema(name, nspace);
-                _schemas.Add(result);
+                Add(result);
                 SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);

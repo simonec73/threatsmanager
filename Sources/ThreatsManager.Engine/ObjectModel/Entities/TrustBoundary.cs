@@ -116,7 +116,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public IEnumerable<IGroup> Groups => null;
 
         public IGroup GetGroup(Guid id)
@@ -178,7 +178,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: NotRecorded]
         internal ITrustBoundaryTemplate _template { get; set; }
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public ITrustBoundaryTemplate Template
         {
             get

@@ -23,20 +23,35 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     public class IdentityAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
+        /// <summary>
+        /// Import for member _id from the associated Identity.
+        /// </summary>
         [ImportMember(nameof(_id))]
         public Property<Guid> _id;
 
+        /// <summary>
+        /// Import for member _name from the associated Identity.
+        /// </summary>
         [ImportMember(nameof(_name))]
         public Property<string> _name;
 
+        /// <summary>
+        /// Import for member _description from the associated Identity.
+        /// </summary>
         [ImportMember(nameof(_description))]
         public Property<string> _description;
         #endregion
 
         #region Implementation of interface IIdentity.
+        /// <summary>
+        /// Implementation of the Id getter.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public Guid Id => _id?.Get() ?? Guid.Empty;
-
+        
+        /// <summary>
+        /// Implementation of property Name.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,LinesOfCodeAvoided = 1)]
         public string Name 
         { 
@@ -44,6 +59,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             set => _name?.Set(value); 
         }
 
+        /// <summary>
+        /// Implementation of property Description.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public string Description
         {

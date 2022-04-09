@@ -228,7 +228,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _bigImage;
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public Bitmap BigImage 
         {
             get => _bigImage;
@@ -248,7 +248,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _image;
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public Bitmap Image 
         {
             get => _image;
@@ -268,7 +268,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _smallImage;
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public Bitmap SmallImage 
         {
             get => _smallImage;
@@ -290,7 +290,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: NotRecorded]
         internal IEntityTemplate _template { get; set; }
 
-        [field: NotRecorded]
+        [property: NotRecorded]
         public IEntityTemplate Template
         {
             get

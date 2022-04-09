@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -13,10 +15,11 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("threatTypes")]
-        private List<IThreatType> _threatTypes;
+        private IList<IThreatType> _threatTypes;
 
-        public IEnumerable<IThreatType> ThreatTypes => _threatTypes?.AsReadOnly();
+        public IEnumerable<IThreatType> ThreatTypes => _threatTypes?.AsEnumerable();
 
         [InitializationRequired]
         public IEnumerable<IThreatType> SearchThreatTypes(string filter)
@@ -94,7 +97,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] IThreatType threatType)
         {
             if (_threatTypes == null)
-                _threatTypes = new List<IThreatType>();
+                _threatTypes = new AdvisableCollection<IThreatType>();
 
             _threatTypes.Add(threatType);
 

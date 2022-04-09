@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities.Aspects;
@@ -16,10 +17,11 @@ namespace ThreatsManager.Engine.ObjectModel
         private static int _lastGroup = 0;
         private static int _lastTrustBoundary = 0;
 
+        [Child]
         [JsonProperty("groups")]
-        private List<IGroup> _groups;
+        private IList<IGroup> _groups;
 
-        public IEnumerable<IGroup> Groups => _groups?.AsReadOnly();
+        public IEnumerable<IGroup> Groups => _groups?.AsEnumerable();
 
         [InitializationRequired]
         public IGroup GetGroup(Guid id)
@@ -34,7 +36,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 throw new ArgumentException();
 
             if (_groups == null)
-                _groups = new List<IGroup>();
+                _groups = new AdvisableCollection<IGroup>();
 
             _groups.Add(group);
         }
@@ -53,9 +55,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (typeof(T) == typeof(ITrustBoundary))
             {
                 result = new TrustBoundary(name) as T;
-                if (_groups == null)
-                    _groups = new List<IGroup>();
-                _groups.Add(result);
+                Add(result);
                 SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
@@ -72,9 +72,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 _templateId = template?.Id ?? Guid.Empty
             };
             
-            if (_groups == null)
-                _groups = new List<IGroup>();
-            _groups.Add(result);
+            Add(result);
             RegisterEvents(result);
             SetDirty();
             ChildCreated?.Invoke(result);
@@ -88,9 +86,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (group.Model != this)
                 throw new ArgumentException();
 
-            if (_groups == null)
-                _groups = new List<IGroup>();
-            _groups.Add(group);
+            Add(group);
             SetDirty();
             RegisterEvents(group);
             ChildCreated?.Invoke(group);

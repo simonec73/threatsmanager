@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -12,8 +14,9 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
+        [Child]
         [JsonProperty("severities")]
-        private List<ISeverity> _severities;
+        private IList<ISeverity> _severities;
 
         private Action<ISeverity> _severityCreated;
         public event Action<ISeverity> SeverityCreated
@@ -85,7 +88,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void Add([NotNull] ISeverity severity)
         {
             if (_severities == null)
-                _severities = new List<ISeverity>();
+                _severities = new AdvisableCollection<ISeverity>();
 
             _severities.Add(severity);
 
