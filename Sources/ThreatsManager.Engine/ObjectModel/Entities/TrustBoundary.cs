@@ -175,7 +175,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal Guid _templateId;
 
         [Reference]
-        [field: NotRecorded]
         internal ITrustBoundaryTemplate _template { get; set; }
 
         [property: NotRecorded]
@@ -192,6 +191,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [RecordingScope("Detach from Template")]
         public void ResetTemplate()
         {
             this.ClearProperties();

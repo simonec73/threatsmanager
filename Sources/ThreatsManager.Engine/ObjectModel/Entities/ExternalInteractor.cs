@@ -117,6 +117,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return null;
         }
 
+        public void Add(IThreatEvent threatEvent)
+        {
+        }
+
         public IThreatEvent AddThreatEvent(IThreatType threatType)
         {
             return null;
@@ -214,22 +218,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return Name ?? "<undefined>";
         }
 
-        public void Add([NotNull] IThreatEvent threatEvent)
-        {
-            if (_threatEvents == null)
-                _threatEvents = new List<IThreatEvent>();
-
-            _threatEvents.Add(threatEvent);
-        }
-
         public event Action<IEntity, ImageSize> ImageChanged;
 
         [Reference]
+        [NotRecorded]
         [JsonProperty("bigImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _bigImage;
 
-        [property: NotRecorded]
         public Bitmap BigImage 
         {
             get => _bigImage;
@@ -245,11 +241,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [Reference]
+        [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _image;
 
-        [property: NotRecorded]
         public Bitmap Image 
         {
             get => _image;
@@ -265,11 +261,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [Reference]
+        [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _smallImage;
 
-        [property: NotRecorded]
         public Bitmap SmallImage 
         {
             get => _smallImage;
@@ -288,7 +284,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal Guid _templateId;
 
         [Reference]
-        [field: NotRecorded]
         internal IEntityTemplate _template { get; set; }
 
         [property: NotRecorded]
@@ -305,6 +300,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [RecordingScope("Detach from Template")]
         public void ResetTemplate()
         {
             this.BigImage = EntityType.ExternalInteractor.GetEntityImage(ImageSize.Big);

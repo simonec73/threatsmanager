@@ -63,6 +63,18 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             return null;
         }
 
+        public void Add(IEntityShape entityShape)
+        {
+        }
+
+        public void Add(IGroupShape groupShape)
+        {
+        }
+
+        public void Add(ILink link)
+        {
+        }
+
         public IEntityShape GetEntityShape(Guid entityId)
         {
             return null;
@@ -298,36 +310,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             }
 
             return result;
-        }
-
-        [InitializationRequired]
-        public void Add([NotNull] IEntityShape entityShape)
-        {
-            if (entityShape.Identity is IThreatModelChild child &&
-                child.Model != _model)
-                throw new ArgumentException();
-
-            _entities.Add(entityShape);
-        }
- 
-        [InitializationRequired]
-        public void Add([NotNull] IGroupShape groupShape)
-        {
-            if (groupShape.Identity is IThreatModelChild child &&
-                child.Model != _model)
-                throw new ArgumentException();
-
-            _groups.Add(groupShape);
-        }
- 
-        [InitializationRequired]
-        public void Add([NotNull] ILink link)
-        {
-            if (link.DataFlow is IThreatModelChild child &&
-                child.Model != _model)
-                throw new ArgumentException();
-
-            _links.Add(link);
         }
         #endregion
     }

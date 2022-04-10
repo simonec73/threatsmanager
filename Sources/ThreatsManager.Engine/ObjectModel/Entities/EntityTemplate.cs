@@ -141,11 +141,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IEntityTemplate, ImageSize> ImageChanged;
 
         [Reference]
+        [NotRecorded]
         [JsonProperty("bigImage")]
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _bigImage;
 
-        [property: NotRecorded]
         public Bitmap BigImage 
         {
             get => _bigImage;
@@ -161,11 +161,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [Reference]
+        [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _image;
 
-        [property: NotRecorded]
         public Bitmap Image 
         {
             get => _image;
@@ -181,11 +181,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [Reference]
+        [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _smallImage;
 
-        [property: NotRecorded]
         public Bitmap SmallImage 
         {
             get => _smallImage;
@@ -201,11 +201,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [InitializationRequired]
+        [RecordingScope("Create Entity from Template")]
         public IEntity CreateEntity([Required] string name)
         {
             IEntity result = null;
 
-            switch (this.EntityType)
+            switch (EntityType)
             {
                 case EntityType.ExternalInteractor:
                     result = _model.AddEntity<IExternalInteractor>(name, this);
@@ -230,6 +231,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return result;
         }
 
+        [RecordingScope("Apply Template to an existing Entity")]
         public void ApplyTo(IEntity entity)
         {
             entity.BigImage = this.GetImage(ImageSize.Big);

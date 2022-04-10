@@ -137,6 +137,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [InitializationRequired]
+        [RecordingScope("Create Flow from Template")]
         public IDataFlow CreateFlow([Required] string name, Guid sourceId, Guid targetId)
         {
             IDataFlow result = _model.AddDataFlow(name, sourceId, targetId, this);
@@ -151,6 +152,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return result;
         }
 
+        [InitializationRequired]
+        [RecordingScope("Apply Template to an existing Flow")]
         public void ApplyTo([NotNull] IDataFlow flow)
         {
             flow.FlowType = FlowType;

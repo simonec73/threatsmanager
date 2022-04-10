@@ -111,6 +111,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return null;
         }
 
+        public void Add(IThreatEvent threatEvent)
+        {
+        }
+
         public IThreatEvent AddThreatEvent(IThreatType threatType)
         {
             return null;
@@ -228,7 +232,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal Guid _templateId;
 
         [Reference]
-        [field: NotRecorded]
         internal IFlowTemplate _template { get; set; }
 
         [property: NotRecorded]
@@ -245,6 +248,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [RecordingScope("Detach from Template")]
         public void ResetTemplate()
         {
             this.ClearProperties();
@@ -279,15 +283,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
-        }
-
-        [InitializationRequired]
-        public void Add([NotNull] IThreatEvent threatEvent)
-        {
-            if (_threatEvents == null)
-                _threatEvents = new List<IThreatEvent>();
-
-            _threatEvents.Add(threatEvent);
         }
 
         public override string ToString()

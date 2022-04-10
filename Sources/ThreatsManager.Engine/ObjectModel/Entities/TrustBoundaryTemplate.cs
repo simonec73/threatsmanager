@@ -132,6 +132,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [InitializationRequired]
+        [RecordingScope("Create Trust Boundary from Template")]
         public ITrustBoundary CreateTrustBoundary([Required] string name)
         {
             ITrustBoundary result = _model.AddTrustBoundary(name, this);
@@ -145,6 +146,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return result;
         }
 
+        [InitializationRequired]
+        [RecordingScope("Apply Template to an existing Trust Boundary")]
         public void ApplyTo([NotNull] ITrustBoundary trustBoundary)
         {
             trustBoundary.ClearProperties();
