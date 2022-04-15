@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface representing the relationship between Threat Events and Mitigations.
     /// </summary>
-    public interface IThreatEventMitigation : IThreatModelChild, IThreatEventChild, IPropertiesContainer, IDirty //, ILockable
+    public interface IThreatEventMitigation : IThreatModelChild, IThreatEventChild, IPropertiesContainer //, ILockable
     {
         /// <summary>
         /// Identifier of the Mitigation.

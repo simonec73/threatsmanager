@@ -7,7 +7,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Diagrams
     /// <summary>
     /// Interface implemented by the Links.
     /// </summary>
-    public interface ILink : IPropertiesContainer, IDirty
+    public interface ILink : IPropertiesContainer
     {
         /// <summary>
         /// Identifier of the associated Data Flow.

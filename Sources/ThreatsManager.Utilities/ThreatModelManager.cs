@@ -144,10 +144,10 @@ namespace ThreatsManager.Utilities
                 {
                     try
                     {
-                        if (!binder.HasUnknownTypes)
-                            result.ResetDirty();
+                        //if (!binder.HasUnknownTypes)
+                        //    result.ResetDirty();
 
-                        result.SuspendDirty();
+                        //result.SuspendDirty();
 
                         if (_instances.Any(x => x.Id == result.Id))
                         {
@@ -177,7 +177,7 @@ namespace ThreatsManager.Utilities
                     }
                     finally
                     {
-                        result.ResumeDirty();
+                        //result.ResumeDirty();
                     }
                 }
             }

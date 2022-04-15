@@ -88,7 +88,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 result = new DataFlow(name, sourceId, targetId);
                 Add(result);
-                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -106,7 +105,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             Add(result);
             RegisterEvents(result);
-            SetDirty();
             ChildCreated?.Invoke(result);
 
             return result;
@@ -138,7 +136,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(flow);
-                    SetDirty();
                     ChildRemoved?.Invoke(flow);
                 }
             }

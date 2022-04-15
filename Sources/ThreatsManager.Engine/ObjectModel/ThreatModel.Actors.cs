@@ -39,7 +39,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _actors.Add(actor);
 
-            SetDirty();
             ChildCreated?.Invoke(actor);
         }
 
@@ -89,7 +88,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(actor);
-                    SetDirty();
                     ChildRemoved?.Invoke(actor);
                 }
             }

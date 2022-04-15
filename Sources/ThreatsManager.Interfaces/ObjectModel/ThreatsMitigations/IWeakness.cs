@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// Interface that defines a Weakness, that is the definition of a issue from which Vulnerabilities can be derived.
     /// </summary>
     public interface IWeakness : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IWeaknessMitigationsContainer, IDirty
+        IWeaknessMitigationsContainer
     {
         /// <summary>
         /// Identifier of the Severity.

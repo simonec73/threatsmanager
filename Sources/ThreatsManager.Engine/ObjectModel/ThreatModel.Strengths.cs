@@ -92,7 +92,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _strengths.Add(strength);
             
-            SetDirty();
             _strengthCreated?.Invoke(strength);
         }
 
@@ -103,7 +102,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (!(_strengths?.Any(x => x.Id == id) ?? false))
             {
-                result = new StrengthDefinition(this, id, name);
+                result = new StrengthDefinition(id, name);
                 Add(result);
             }
 
@@ -134,7 +133,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _strengths.Remove(definition);
                 if (result)
                 {
-                    SetDirty();
                     _strengthRemoved?.Invoke(definition);
                 }
             }

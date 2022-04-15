@@ -56,7 +56,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         _propertyTypes = new AdvisableCollection<IPropertyType>();
 
                     _propertyTypes.Add(result);
-                    SetDirty();
 
                     PropertyTypeAdded?.Invoke(this, result);
                 }
@@ -76,7 +75,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 result = _propertyTypes.Remove(propertyType);
                 if (result)
                 {
-                    SetDirty();
                     PropertyTypeRemoved?.Invoke(this, propertyType);
                 }
             }

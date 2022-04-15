@@ -112,8 +112,6 @@ namespace ThreatsManager.Engine.Aspects
                     Directives = directives
                 };
                 Add(result);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
             }
 
             return result;
@@ -130,8 +128,6 @@ namespace ThreatsManager.Engine.Aspects
                 result = _mitigations?.Get()?.Remove(mitigation) ?? false;
                 if (result)
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
                     if (Instance is IThreatEventMitigationsContainer container)
                         _threatEventMitigationRemoved?.Invoke(container, mitigation);
                 }

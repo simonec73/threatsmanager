@@ -23,8 +23,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [GroupElementAspect]
@@ -134,25 +132,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public bool RemoveThreatEvent(Guid id)
         {
             return false;
-        }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
         }
 
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;

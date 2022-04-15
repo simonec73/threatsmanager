@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// </summary>
     public interface IThreatEvent : IIdentity, IThreatModelChild, IPropertiesContainer, 
         IThreatEventScenariosContainer, IThreatEventMitigationsContainer, 
-        IThreatEventVulnerabilitiesContainer, IDirty
+        IThreatEventVulnerabilitiesContainer
     {
         /// <summary>
         /// Identifier of the Parent Identity.

@@ -109,8 +109,6 @@ namespace ThreatsManager.Engine.Aspects
                 result = new Link(dataFlow);
 
                 Add(result);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
             }
 
             return result;
@@ -123,8 +121,6 @@ namespace ThreatsManager.Engine.Aspects
             var result = _links?.Get()?.Remove(link) ?? false;
             if (result)
             {
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
                 if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
                     _linkRemoved?.Invoke(container, flow);
             }

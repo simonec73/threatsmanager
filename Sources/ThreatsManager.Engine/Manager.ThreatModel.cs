@@ -15,13 +15,13 @@ namespace ThreatsManager.Engine
 
             try
             {
-                _model.SuspendDirty();
+                //_model.SuspendDirty();
                 ApplyInitializers();
                 _model.RegisterEvents();
             }
             finally
             {
-                _model.ResumeDirty();
+                //_model.ResumeDirty();
             }
 
             return _model;

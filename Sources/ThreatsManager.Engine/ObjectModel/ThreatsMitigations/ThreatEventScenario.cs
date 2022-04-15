@@ -19,8 +19,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
@@ -100,25 +98,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatEvent ThreatEvent { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
@@ -149,16 +128,16 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatEventScenario;
 
+        [NotRecorded]
         [JsonProperty("severity")]
         private int _severityId;
 
         public int SeverityId => _severityId;
 
+        [NotRecorded]
         [Reference]
-        [field: NotRecorded]
         private ISeverity _severity;
 
-        [property: NotRecorded]
         [InitializationRequired]
         public ISeverity Severity
         {
@@ -180,15 +159,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [JsonProperty("actorId")]
+        [NotRecorded]
         private Guid _actorId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
         private IThreatActor _actor;
 
         public Guid ActorId => _actorId;
 
-        [property: NotRecorded]
         [InitializationRequired]
         public IThreatActor Actor
         {

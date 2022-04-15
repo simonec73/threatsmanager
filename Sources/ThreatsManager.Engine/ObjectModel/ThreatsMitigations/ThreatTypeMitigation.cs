@@ -17,8 +17,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable]
@@ -86,25 +84,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public void Apply(IPropertySchema schema)
         {
         }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Specific implementation.
@@ -153,7 +132,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 {
                     _strength = value;
                     _strengthId = value.Id;
-                    SetDirty();
                 }
             }
         }

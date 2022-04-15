@@ -81,8 +81,6 @@ namespace ThreatsManager.Engine.Aspects
                 oldParent = Parent;
                 _parentId.Set(parent?.Id ?? Guid.Empty);
                 _parent.Set(parent);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
                 if (Instance is IGroupElement groupElement)
                     _parentChanged?.Invoke(groupElement, oldParent, parent);
             }

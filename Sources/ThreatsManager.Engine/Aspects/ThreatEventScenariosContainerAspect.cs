@@ -100,8 +100,6 @@ namespace ThreatsManager.Engine.Aspects
                 }
 
                 _scenarios?.Get()?.Add(result);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
                 if (Instance is IThreatEventScenariosContainer container)
                     _threatEventScenarioAdded?.Invoke(container, result);
             }
@@ -138,8 +136,6 @@ namespace ThreatsManager.Engine.Aspects
                 result = _scenarios?.Get()?.Remove(scenario) ?? false;
                 if (result)
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
                     if (Instance is IThreatEvent threatEvent)
                         _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
                 }

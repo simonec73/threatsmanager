@@ -41,7 +41,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _mitigations.Add(mitigation);
 
-            SetDirty();
             ChildCreated?.Invoke(mitigation);
         }
 
@@ -74,7 +73,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(mitigation);
-                    SetDirty();
                     ChildRemoved?.Invoke(mitigation);
                 }
             }

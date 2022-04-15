@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface representing the relationship between Threat Types and Mitigations.
     /// </summary>
-    public interface IThreatTypeMitigation : IThreatModelChild, IPropertiesContainer, IDirty
+    public interface IThreatTypeMitigation : IThreatModelChild, IPropertiesContainer
     {
         /// <summary>
         /// Identifier of the Threat Type.

@@ -24,7 +24,6 @@ namespace ThreatsManager.Engine.ObjectModel
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
     [Serializable]
     [IdentityAspect]
     [PropertiesContainerAspect]
@@ -467,10 +466,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public ThreatModel([Required] string name) : this()
         {
-            SuspendDirty();
             _id = Guid.NewGuid();
             Name = name;
-            ResumeDirty();
         }
         #endregion
 
@@ -502,7 +499,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_contributors == null)
                     _contributors = new AdvisableCollection<string>();
                 _contributors.Add(name);
-                SetDirty();
                 result = true;
                 ContributorAdded?.Invoke(name);
             }
@@ -519,7 +515,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _contributors.Remove(name);
                 if (result)
                 {
-                    SetDirty();
                     ContributorRemoved?.Invoke(name);
                 }
             }
@@ -536,7 +531,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 // ReSharper disable once PossibleNullReferenceException
                 _contributors[index] = newName;
-                SetDirty();
                 result = true;
                 ContributorChanged?.Invoke(oldName, newName);
             }
@@ -559,7 +553,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_assumptions == null)
                     _assumptions = new AdvisableCollection<string>();
                 _assumptions.Add(text);
-                SetDirty();
                 result = true;
                 AssumptionAdded?.Invoke(text);
             }
@@ -576,7 +569,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _assumptions.Remove(text);
                 if (result)
                 {
-                    SetDirty();
                     AssumptionRemoved?.Invoke(text);
                 }
             }
@@ -593,7 +585,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 // ReSharper disable once PossibleNullReferenceException
                 _assumptions[index] = newText;
-                SetDirty();
                 result = true;
                 AssumptionChanged?.Invoke(oldText, newText);
             }
@@ -616,7 +607,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_dependencies == null)
                     _dependencies = new AdvisableCollection<string>();
                 _dependencies.Add(text);
-                SetDirty();
                 result = true;
                 DependencyAdded?.Invoke(text);
             }
@@ -633,7 +623,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _dependencies.Remove(text);
                 if (result)
                 {
-                    SetDirty();
                     DependencyRemoved?.Invoke(text);
                 }
             }
@@ -650,7 +639,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 // ReSharper disable once PossibleNullReferenceException
                 _dependencies[index] = newText;
-                SetDirty();
                 result = true;
                 DependencyChanged?.Invoke(oldText, newText);
             }
@@ -1452,7 +1440,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             try
             {
-                SuspendDirty();
+                //SuspendDirty();
                 result = new ThreatModel(name);
                 if (def.Contributors)
                     DuplicateContributors(result);
@@ -1478,7 +1466,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
             finally
             {
-                ResumeDirty();
+                //ResumeDirty();
             }
 
             return result;
@@ -2354,86 +2342,6 @@ namespace ThreatsManager.Engine.ObjectModel
                     }
                 }
             }
-        }
-        #endregion
-
-        #region Implementation of Dirty.
-        public event Action<IDirty, bool> DirtyChanged;
-
-        [AutoDirtyIgnore]
-        public bool IsDirty { get; private set; }
-
-        public void SetDirty()
-        {
-            if (!IsDirtySuspended && !IsDirty)
-            {
-                IsDirty = true;
-                DirtyChanged?.Invoke(this, IsDirty);
-            }
-        }
-
-        public void ResetDirty()
-        {
-            if (!IsDirtySuspended && IsDirty)
-            {
-                IsDirty = false;
-                DirtyChanged?.Invoke(this, IsDirty);
-
-                DataFlows?.ToList().ForEach(x => x.ResetDirty());
-                Diagrams?.ToList().ForEach(x => x.ResetDirty());
-                Entities?.ToList().ForEach(x => x.ResetDirty());
-                EntityTemplates?.ToList().ForEach(x => x.ResetDirty());
-                FlowTemplates?.ToList().ForEach(x => x.ResetDirty());
-                Groups?.ToList().ForEach(x => x.ResetDirty());
-                Mitigations?.ToList().ForEach(x => x.ResetDirty());
-                Schemas?.ToList().ForEach(x => x.ResetDirty());
-                Severities?.ToList().ForEach(x => x.ResetDirty());
-                Strengths?.ToList().ForEach(x => x.ResetDirty());
-                ThreatActors?.ToList().ForEach(x => x.ResetDirty());
-                ThreatTypes?.ToList().ForEach(x => x.ResetDirty());
-                TrustBoundaryTemplates?.ToList().ForEach(x => x.ResetDirty());
-            }
-        }
-
-        [AutoDirtyIgnore]
-        public bool IsDirtySuspended { get; private set; }
-
-        public void SuspendDirty()
-        {
-            IsDirtySuspended = true;
-
-            DataFlows?.ToList().ForEach(x => x.SuspendDirty());
-            Diagrams?.ToList().ForEach(x => x.SuspendDirty());
-            Entities?.ToList().ForEach(x => x.SuspendDirty());
-            EntityTemplates?.ToList().ForEach(x => x.SuspendDirty());
-            FlowTemplates?.ToList().ForEach(x => x.SuspendDirty());
-            Groups?.ToList().ForEach(x => x.SuspendDirty());
-            Mitigations?.ToList().ForEach(x => x.SuspendDirty());
-            Schemas?.ToList().ForEach(x => x.SuspendDirty());
-            Severities?.ToList().ForEach(x => x.SuspendDirty());
-            Strengths?.ToList().ForEach(x => x.SuspendDirty());
-            ThreatActors?.ToList().ForEach(x => x.SuspendDirty());
-            ThreatTypes?.ToList().ForEach(x => x.SuspendDirty());
-            TrustBoundaryTemplates?.ToList().ForEach(x => x.SuspendDirty());
-        }
-
-        public void ResumeDirty()
-        {
-            IsDirtySuspended = false;
-
-            DataFlows?.ToList().ForEach(x => x.ResumeDirty());
-            Diagrams?.ToList().ForEach(x => x.ResumeDirty());
-            Entities?.ToList().ForEach(x => x.ResumeDirty());
-            EntityTemplates?.ToList().ForEach(x => x.ResumeDirty());
-            FlowTemplates?.ToList().ForEach(x => x.ResumeDirty());
-            Groups?.ToList().ForEach(x => x.ResumeDirty());
-            Mitigations?.ToList().ForEach(x => x.ResumeDirty());
-            Schemas?.ToList().ForEach(x => x.ResumeDirty());
-            Severities?.ToList().ForEach(x => x.ResumeDirty());
-            Strengths?.ToList().ForEach(x => x.ResumeDirty());
-            ThreatActors?.ToList().ForEach(x => x.ResumeDirty());
-            ThreatTypes?.ToList().ForEach(x => x.ResumeDirty());
-            TrustBoundaryTemplates?.ToList().ForEach(x => x.ResumeDirty());
         }
         #endregion
 

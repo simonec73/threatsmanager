@@ -47,7 +47,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _entityTemplates.Add(entityTemplate);
  
-            SetDirty();
             ChildCreated?.Invoke(entityTemplate);
         }
 
@@ -143,7 +142,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _entityTemplates.Remove(template);
                 if (result)
                 {
-                    SetDirty();
                     ChildRemoved?.Invoke(template);
                 }
             }

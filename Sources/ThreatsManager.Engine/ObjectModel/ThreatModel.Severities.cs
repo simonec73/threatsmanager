@@ -92,7 +92,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _severities.Add(severity);
 
-            SetDirty();
             _severityCreated?.Invoke(severity);
         }
 
@@ -103,7 +102,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (!(_severities?.Any(x => x.Id == id) ?? false))
             {
-                result = new SeverityDefinition(this, id, name);
+                result = new SeverityDefinition(id, name);
                 Add(result);
                 RegisterEvents(result);
             }
@@ -136,7 +135,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(definition);
-                    SetDirty();
                     _severityRemoved?.Invoke(definition);
                 }
             }

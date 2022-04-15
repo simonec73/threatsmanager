@@ -56,7 +56,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 result = new TrustBoundary(name) as T;
                 Add(result);
-                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -74,7 +73,6 @@ namespace ThreatsManager.Engine.ObjectModel
             
             Add(result);
             RegisterEvents(result);
-            SetDirty();
             ChildCreated?.Invoke(result);
 
             return result;
@@ -87,7 +85,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 throw new ArgumentException();
 
             Add(group);
-            SetDirty();
             RegisterEvents(group);
             ChildCreated?.Invoke(group);
         }
@@ -166,7 +163,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(item);
-                    SetDirty();
                     ChildRemoved?.Invoke(item);
                 }
             }

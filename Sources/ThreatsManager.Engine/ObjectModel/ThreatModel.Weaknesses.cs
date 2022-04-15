@@ -101,7 +101,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _weaknesses.Add(weakness);
 
-            SetDirty();
             ChildCreated?.Invoke(weakness);
         }
 
@@ -135,7 +134,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(weakness);
-                    SetDirty();
                     ChildRemoved?.Invoke(weakness);
                 }
             }

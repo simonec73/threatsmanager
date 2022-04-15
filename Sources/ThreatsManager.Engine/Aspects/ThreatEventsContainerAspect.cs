@@ -119,8 +119,6 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         result = new ThreatEvent(threatType);
                         Add(result);
-                        if (Instance is IDirty dirtyObject)
-                            dirtyObject.SetDirty();
                     }
                 }
             }
@@ -139,8 +137,6 @@ namespace ThreatsManager.Engine.Aspects
                 result = _threatEvents?.Get()?.Remove(threatEvent) ?? false;
                 if (result)
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
                     if (Instance is IThreatEventsContainer container)
                         _threatEventRemoved?.Invoke(container, threatEvent);
                 }

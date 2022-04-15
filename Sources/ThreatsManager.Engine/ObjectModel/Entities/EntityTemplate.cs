@@ -21,8 +21,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
@@ -85,25 +83,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         public void Apply(IPropertySchema schema)
-        {
-        }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
         {
         }
         #endregion

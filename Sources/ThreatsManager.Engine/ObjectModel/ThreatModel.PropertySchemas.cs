@@ -335,7 +335,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 result = new PropertySchema(name, nspace);
                 Add(result);
-                SetDirty();
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -383,7 +382,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(schema);
-                    SetDirty();
                     ChildRemoved?.Invoke(schema);
                 }
             }

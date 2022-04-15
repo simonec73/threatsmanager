@@ -15,8 +15,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [PropertyAspect]
     [ThreatModelChildAspect]
     [Recordable]
@@ -46,25 +44,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.

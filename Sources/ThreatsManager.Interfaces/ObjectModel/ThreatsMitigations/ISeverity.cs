@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// Interface describing a Severity.
     /// </summary>
     /// <remarks>This is implemented as a way to represent different levels of Severity.</remarks>
-    public interface ISeverity : IPropertiesContainer, IComparable<ISeverity>, IComparable, IThreatModelChild, IDirty
+    public interface ISeverity : IPropertiesContainer, IComparable<ISeverity>, IComparable, IThreatModelChild
     {
         /// <summary>
         /// Identifier of the Severity.

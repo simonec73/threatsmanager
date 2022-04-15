@@ -21,8 +21,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable]
@@ -33,136 +31,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             
         }
 
-        public SeverityDefinition([NotNull] IThreatModel model, [Range(0, 100)] int id, [Required] string name) : this()
+        public SeverityDefinition([Range(0, 100)] int id, [Required] string name) : this()
         {
             Id = id;
             Name = name;
-            _modelId = model.Id;
-            _model = model;
             Visible = true;
         }
 
         public bool IsInitialized => Model != null;
-
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.Severity;
-
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
-        [JsonProperty("visible", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue(true)]
-        public bool Visible { get; set; }
-
-        [JsonProperty("textColor")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        private KnownColor? _textColor { get; set; }
-
-        public KnownColor TextColor
-        {
-            get
-            {
-                KnownColor result = KnownColor.Black;
-
-                if (_textColor.HasValue)
-                    result = _textColor.Value;
-                else
-                {
-                    if (Enum.TryParse<DefaultSeverity>(Id.ToString(), out var severity))
-                    {
-                        result = severity.GetEnumTextColor();
-                    }
-                }
-
-                return result;
-            }
-
-            set
-            {
-                if (!_textColor.HasValue || value != _textColor.Value)
-                {
-                    _textColor = value;
-                }
-            }
-        }
-
-        [JsonProperty("backColor")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        private KnownColor? _backColor { get; set; }
-
-        public KnownColor BackColor
-        {
-            get
-            {
-                KnownColor result = KnownColor.White;
-
-                if (_backColor.HasValue)
-                    result = _backColor.Value;
-                else
-                {
-                    if (Enum.TryParse<DefaultSeverity>(Id.ToString(), out var severity))
-                    {
-                        result = severity.GetEnumBackColor();
-                    }
-                }
-
-                return result;
-            }
-
-            set
-            {
-                if (!_backColor.HasValue || value != _backColor.Value)
-                {
-                    _backColor = value;
-                }
-            }
-        }
-
-        public ISeverity Clone(ISeveritiesContainer container)
-        {
-            SeverityDefinition result = null;
-
-            if (container is IThreatModel model)
-            {
-                result = new SeverityDefinition
-                {
-                    Id = Id, 
-                    Name = Name, 
-                    Description = Description,
-                    _model = model, 
-                    _modelId = model.Id,
-                    Visible = Visible
-                };
-                this.CloneProperties(result);
-                container.Add(result);
-            }
-
-            return result;
-        }
-
-        public int CompareTo(object obj)
-        {
-            var comparer = new SeverityComparer();
-            return comparer.Compare(this, obj as ISeverity);
-        }
-
-        public int CompareTo(ISeverity obj)
-        {
-            var comparer = new SeverityComparer();
-            return comparer.Compare(this, obj);
-        }
- 
-        public override string ToString()
-        {
-            return Name ?? "<undefined>";
-        }
-        #endregion
         
         #region Default implementation.
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
@@ -206,25 +82,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
@@ -238,6 +95,130 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: UpdateId("Id", "_modelId")]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        #endregion
+
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.Severity;
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("visible", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(true)]
+        public bool Visible { get; set; }
+
+        [JsonProperty("textColor")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        private KnownColor? _textColor { get; set; }
+
+        [property: NotRecorded]
+        public KnownColor TextColor
+        {
+            get
+            {
+                KnownColor result = KnownColor.Black;
+
+                if (_textColor.HasValue)
+                    result = _textColor.Value;
+                else
+                {
+                    if (Enum.TryParse<DefaultSeverity>(Id.ToString(), out var severity))
+                    {
+                        result = severity.GetEnumTextColor();
+                    }
+                }
+
+                return result;
+            }
+
+            set
+            {
+                if (!_textColor.HasValue || value != _textColor.Value)
+                {
+                    _textColor = value;
+                }
+            }
+        }
+
+        [JsonProperty("backColor")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        private KnownColor? _backColor { get; set; }
+
+        [property: NotRecorded]
+        public KnownColor BackColor
+        {
+            get
+            {
+                KnownColor result = KnownColor.White;
+
+                if (_backColor.HasValue)
+                    result = _backColor.Value;
+                else
+                {
+                    if (Enum.TryParse<DefaultSeverity>(Id.ToString(), out var severity))
+                    {
+                        result = severity.GetEnumBackColor();
+                    }
+                }
+
+                return result;
+            }
+
+            set
+            {
+                if (!_backColor.HasValue || value != _backColor.Value)
+                {
+                    _backColor = value;
+                }
+            }
+        }
+
+        public ISeverity Clone(ISeveritiesContainer container)
+        {
+            SeverityDefinition result = null;
+
+            if (container is IThreatModel model)
+            {
+                result = new SeverityDefinition
+                {
+                    Id = Id, 
+                    Name = Name, 
+                    Description = Description,
+                    _model = model, 
+                    _modelId = model.Id,
+                    Visible = Visible,
+                    _textColor = _textColor,
+                    _backColor = _backColor
+                };
+                this.CloneProperties(result);
+                container.Add(result);
+            }
+
+            return result;
+        }
+
+        public int CompareTo(object obj)
+        {
+            var comparer = new SeverityComparer();
+            return comparer.Compare(this, obj as ISeverity);
+        }
+
+        public int CompareTo(ISeverity obj)
+        {
+            var comparer = new SeverityComparer();
+            return comparer.Compare(this, obj);
+        }
+ 
+        public override string ToString()
+        {
+            return Name ?? "<undefined>";
+        }
         #endregion
     }
 }

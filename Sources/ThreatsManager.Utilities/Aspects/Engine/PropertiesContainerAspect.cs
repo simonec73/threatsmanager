@@ -171,8 +171,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 result.StringValue = value;
                 properties?.Add(result);
 
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
                 if (Instance is IPropertiesContainer container)
                     _propertyAdded?.Invoke(container, result);
                 result.Changed += OnPropertyChanged;
@@ -210,8 +208,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 result = _properties?.Get()?.Remove(property) ?? false;
                 if (result)
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
                     if (Instance is IPropertiesContainer container)
                         _propertyRemoved?.Invoke(container, property);
                 }
@@ -237,12 +233,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         result = true;
                     }
                 }
-
-                if (result)
-                {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                }
             }
 
             return result;
@@ -262,8 +252,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 }
 
                 _properties?.Get()?.Clear();
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
             }
         }
 

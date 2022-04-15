@@ -20,8 +20,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [ThreatModelChildAspect]
     [ThreatEventChildAspect]
     [PropertiesContainerAspect]
@@ -56,7 +54,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
@@ -95,25 +93,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatEvent ThreatEvent { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
@@ -139,12 +118,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public Scope PropertiesScope => Scope.ThreatEventMitigation;
 
         [JsonProperty("mitigationId")]
+        [NotRecorded]
         private Guid _mitigationId;
 
         public Guid MitigationId => _mitigationId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
         private IMitigation _mitigation;
 
         public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
@@ -153,15 +133,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public string Directives { get; set; }
 
         [JsonProperty("strength")]
+        [NotRecorded]
         private int _strengthId;
 
         public int StrengthId => _strengthId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
         private IStrength _strength;
 
-        [property: NotRecorded]
         [InitializationRequired]
         public IStrength Strength
         {
@@ -173,7 +153,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 {
                     _strength = value;
                     _strengthId = value.Id;
-                    SetDirty();
                 }
             }
         }

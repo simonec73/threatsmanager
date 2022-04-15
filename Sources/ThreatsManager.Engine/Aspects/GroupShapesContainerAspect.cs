@@ -121,8 +121,6 @@ namespace ThreatsManager.Engine.Aspects
                 };
 
                 Add(result);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
             }
 
             return result;
@@ -178,8 +176,6 @@ namespace ThreatsManager.Engine.Aspects
             var result = _groups?.Get()?.Remove(groupShape) ?? false;
             if (result)
             {
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
                 if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
                     _groupShapeRemoved?.Invoke(container, group);
             }

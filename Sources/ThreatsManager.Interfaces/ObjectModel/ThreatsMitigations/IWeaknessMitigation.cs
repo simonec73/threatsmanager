@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface representing the relationship between Weaknesses and Mitigations.
     /// </summary>
-    public interface IWeaknessMitigation : IThreatModelChild, IPropertiesContainer, IDirty
+    public interface IWeaknessMitigation : IThreatModelChild, IPropertiesContainer
     {
         /// <summary>
         /// Identifier of the Weakness.

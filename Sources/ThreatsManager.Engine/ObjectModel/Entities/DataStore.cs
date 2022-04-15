@@ -21,7 +21,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
     [Serializable]
     [IdentityAspect]
     [ThreatModelChildAspect]
@@ -128,25 +127,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public bool RemoveThreatEvent(Guid id)
         {
             return false;
-        }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
         }
 
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;

@@ -126,7 +126,6 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 Add(result);
                 RegisterEvents(result);
-                SetDirty();
                 ChildCreated?.Invoke(result);
             }
 
@@ -215,7 +214,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(entity);
-                    SetDirty();
                     ChildRemoved?.Invoke(entity);
                 }
             }

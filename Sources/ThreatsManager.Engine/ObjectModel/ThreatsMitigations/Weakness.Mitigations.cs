@@ -68,7 +68,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 if (_mitigations == null)
                     _mitigations = new AdvisableCollection<IWeaknessMitigation>();
                 _mitigations.Add(result);
-                SetDirty();
                 _weaknessMitigationAdded?.Invoke(this, result);
             }
 
@@ -86,7 +85,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 result = _mitigations.Remove(mitigation);
                 if (result)
                 {
-                    SetDirty();
                     _weaknessMitigationRemoved?.Invoke(this, mitigation);
                 }
             }

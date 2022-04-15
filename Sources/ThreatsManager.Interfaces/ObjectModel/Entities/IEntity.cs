@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// Interface representing an entity, that is an External Interactor, a Process or a Data Store.
     /// </summary>
     public interface IEntity : IIdentity, IThreatModelChild, IGroupElement, 
-        IPropertiesContainer, IImagesContainer, IVulnerabilitiesContainer, IThreatEventsContainer, IDirty//, ILockable
+        IPropertiesContainer, IImagesContainer, IVulnerabilitiesContainer, IThreatEventsContainer//, ILockable
     {
         /// <summary>
         /// Event raised when an Image for the Entity changes.

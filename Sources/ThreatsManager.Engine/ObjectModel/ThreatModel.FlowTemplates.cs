@@ -38,7 +38,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _flowTemplates.Add(flowTemplate);
  
-            SetDirty();
             ChildCreated?.Invoke(flowTemplate);
         }
 
@@ -68,7 +67,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _flowTemplates.Remove(template);
                 if (result)
                 {
-                    SetDirty();
                     ChildRemoved?.Invoke(template);
                 }
             }

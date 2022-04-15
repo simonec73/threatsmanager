@@ -38,7 +38,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _trustBoundaryTemplates.Add(trustBoundaryTemplate);
  
-            SetDirty();
             ChildCreated?.Invoke(trustBoundaryTemplate);
         }
 
@@ -67,7 +66,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _trustBoundaryTemplates.Remove(template);
                 if (result)
                 {
-                    SetDirty();
                     ChildRemoved?.Invoke(template);
                 }
             }

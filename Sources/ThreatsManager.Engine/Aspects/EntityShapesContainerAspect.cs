@@ -122,8 +122,6 @@ namespace ThreatsManager.Engine.Aspects
                 };
 
                 Add(result);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
             }
 
             return result;
@@ -179,8 +177,6 @@ namespace ThreatsManager.Engine.Aspects
             var result = _entities?.Get()?.Remove(entityShape) ?? false;
             if (result)
             {
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
                 if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
                     _entityShapeRemoved?.Invoke(container, entity);
             }

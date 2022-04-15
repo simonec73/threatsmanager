@@ -101,7 +101,6 @@ namespace ThreatsManager.Engine.ObjectModel
 
             _threatTypes.Add(threatType);
 
-            SetDirty();
             ChildCreated?.Invoke(threatType);
         }
 
@@ -135,7 +134,6 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (result)
                 {
                     UnregisterEvents(threatType);
-                    SetDirty();
                     ChildRemoved?.Invoke(threatType);
                 }
             }

@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Diagrams
     /// Interface implemented by the Shapes.
     /// </summary>
     /// <remarks>It should not be used directly, but only through the derived IEntityShape and IGroupShape interfaces.</remarks>
-    public interface IShape : IPropertiesContainer, IDirty
+    public interface IShape : IPropertiesContainer
     {
         /// <summary>
         /// Identifier of the associated Entity or Group.

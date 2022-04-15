@@ -23,8 +23,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
@@ -67,7 +65,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
@@ -105,7 +103,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved;
 
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IThreatEventScenario> Scenarios { get; }
         public IThreatEventScenario GetScenario(Guid id)
@@ -129,7 +127,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded;
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved;
-        [Child]
+        [Reference]
         [field: NotRecorded]
         public IEnumerable<IThreatEventMitigation> Mitigations { get; }
         public IThreatEventMitigation GetMitigation(Guid mitigationId)
@@ -150,25 +148,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public bool RemoveMitigation(Guid mitigationId)
         {
             return false;
-        }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
         }
         #endregion
 
@@ -202,6 +181,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("name")] 
         private string _name { get; set; }
 
+        [property: NotRecorded]
         public string Name
         {
             get => UseThreatTypeInfo ? ThreatType?.Name : _name;
@@ -212,6 +192,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("description")]
         private string _description { get; set; }
 
+        [property: NotRecorded]
         public string Description         
         {
             get => UseThreatTypeInfo ? ThreatType?.Description : _description;
@@ -225,6 +206,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Parent]
         [field: NotRecorded]
         [field: UpdateId("Id", "_parentId")]
+        [field: AutoApplySchemas]
         private IIdentity _parent { get; set;}
 
         public Guid ParentId => _parentId;
@@ -247,12 +229,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
         }
 
+        [NotRecorded]
         [JsonProperty("severity")]
         private int _severityId;
 
         public int SeverityId => _severityId;
 
         [Reference]
+        [NotRecorded]
         private ISeverity _severity;
 
         [InitializationRequired]
@@ -266,17 +250,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 {
                     _severity = value;
                     _severityId = value.Id;
-                    SetDirty();
                 }
             }
         }
 
+        [NotRecorded]
         [JsonProperty("threatTypeId")]
         private Guid _threatTypeId;
 
         public Guid ThreatTypeId => _threatTypeId;
 
         [Reference]
+        [NotRecorded]
         private IThreatType _threatType;
 
         [InitializationRequired]
@@ -348,6 +333,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return result;
         }
 
+        [RecordingScope("Add Property to Threat Event")]
         private void AddProperty([NotNull] IProperty property)
         {
             var shadowClass = property.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>().FirstOrDefault();
@@ -363,7 +349,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         if (_properties == null)
                             _properties = new List<IProperty>();
                         _properties.Add(shadowProperty);
-                        SetDirty();
                         PropertyAdded?.Invoke(this, shadowProperty);
                         shadowProperty.Changed += delegate(IProperty prop)
                         {
@@ -441,11 +426,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             IThreatEventVulnerability result = null;
 
             result = new ThreatEventVulnerability(this, vulnerability);
-            if (_vulnerabilities == null)
-                _vulnerabilities = new AdvisableCollection<IThreatEventVulnerability>();
-            _vulnerabilities.Add(result);
-            if (Model is IDirty dirtyObject)
-                dirtyObject.SetDirty();
+            Add(result);
             _threatEventVulnerabilityAdded?.Invoke(this, result);
 
             return result;
@@ -461,8 +442,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 result = _vulnerabilities.Remove(vulnerability);
                 if (result)
                 {
-                    if (Model is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
                     _threatEventVulnerabilityRemoved?.Invoke(this, vulnerability);
                 }
             }

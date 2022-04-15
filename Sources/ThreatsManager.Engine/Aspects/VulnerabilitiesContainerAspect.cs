@@ -119,8 +119,6 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         result = new Vulnerability(weakness);
                         Add(result);
-                        if (Instance is IDirty dirtyObject)
-                            dirtyObject.SetDirty();
                     }
                 }
             }
@@ -139,8 +137,6 @@ namespace ThreatsManager.Engine.Aspects
                 result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
                 if (result)
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
                     if (Instance is IVulnerabilitiesContainer container)
                         _vulnerabilityRemoved?.Invoke(container, vulnerability);
                 }

@@ -19,8 +19,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable]
@@ -31,16 +29,71 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             
         }
 
-        public StrengthDefinition([NotNull] IThreatModel model, [Range(0, 100)] int id, [Required] string name) : this()
+        public StrengthDefinition([Range(0, 100)] int id, [Required] string name) : this()
         {
             Id = id;
             Name = name;
-            _modelId = model.Id;
-            _model = model;
             Visible = true;
         }
 
         public bool IsInitialized => Model != null;
+
+        #region Default implementation.
+        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
+        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
+        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
+        public IEnumerable<IProperty> Properties { get; }
+        public bool HasProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+        public IProperty GetProperty(IPropertyType propertyType)
+        {
+            return null;
+        }
+
+        public IProperty AddProperty(IPropertyType propertyType, string value)
+        {
+            return null;
+        }
+
+        public bool RemoveProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+
+        public bool RemoveProperty(Guid propertyTypeId)
+        {
+            return false;
+        }
+
+        public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
+        [Reference]
+        [field: NotRecorded]
+        public IThreatModel Model { get; }
+        #endregion
+
+        #region Additional placeholders required.
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        #endregion
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Strength;
@@ -96,82 +149,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return Name ?? "<undefined>";
         }
-        #endregion
-
-        #region Default implementation.
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        [Reference]
-        [field: NotRecorded]
-        public IEnumerable<IProperty> Properties { get; }
-        public bool HasProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-        public IProperty GetProperty(IPropertyType propertyType)
-        {
-            return null;
-        }
-
-        public IProperty AddProperty(IPropertyType propertyType, string value)
-        {
-            return null;
-        }
-
-        public bool RemoveProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-
-        public bool RemoveProperty(Guid propertyTypeId)
-        {
-            return false;
-        }
-
-        public void ClearProperties()
-        {
-        }
-
-        public void Apply(IPropertySchema schema)
-        {
-        }
-
-        [Reference]
-        [field: NotRecorded]
-        public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-        #endregion
-
-        #region Additional placeholders required.
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
         #endregion
     }
 }
