@@ -122,7 +122,7 @@ namespace ThreatsManager.Utilities
                 Type type = assembly.GetType(name);
                 if (type?.IsGenericType ?? false)
                 {
-                    List<Type> typeList = new List<Type>();
+                    var typeList = new List<Type>();
                     int position = 0;
                     int startIndex = 0;
                     int last = typeName.Length - 1;

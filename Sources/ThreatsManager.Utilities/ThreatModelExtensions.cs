@@ -229,7 +229,7 @@ namespace ThreatsManager.Utilities
             var model = mitigation?.Model;
             if (model != null)
             {
-                List<IThreatEventMitigation> mitigations = new List<IThreatEventMitigation>();
+                var mitigations = new List<IThreatEventMitigation>();
 
                 GetThreatEventMitigations(mitigation, model, mitigations);
                 GetThreatEventMitigations(mitigation, model.Entities, mitigations);

@@ -12,6 +12,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -127,7 +128,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public void Add([NotNull] IPropertyType propertyType)
         {
             if (_propertyTypes == null)
-                _propertyTypes = new List<IPropertyType>();
+                _propertyTypes = new AdvisableCollection<IPropertyType>();
 
             _propertyTypes.Add(propertyType);
         }

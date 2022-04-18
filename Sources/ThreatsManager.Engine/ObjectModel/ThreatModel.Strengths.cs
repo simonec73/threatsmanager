@@ -144,7 +144,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public void InitializeStandardStrengths()
         {
             if (_strengths == null)
-                _strengths = new List<IStrength>();
+                _strengths = new AdvisableCollection<IStrength>();
 
             var values = Enum.GetValues(typeof(DefaultStrength));
             foreach (var value in values)

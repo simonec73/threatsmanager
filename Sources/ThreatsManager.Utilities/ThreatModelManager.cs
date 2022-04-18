@@ -22,7 +22,7 @@ namespace ThreatsManager.Utilities
     /// <remarks>Utility class to manage serialization and deserialization of Threat Models, instances and model locations.</remarks>
     public static class ThreatModelManager
     {
-        private static readonly List<IThreatModel> _instances = new List<IThreatModel>();
+        private static readonly var _instances = new List<IThreatModel>();
 
         private static readonly Dictionary<Guid, string> _locations = new Dictionary<Guid, string>();
 
