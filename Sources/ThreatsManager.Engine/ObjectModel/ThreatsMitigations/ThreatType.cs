@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
 using PostSharp.Patterns.Model;
@@ -35,7 +36,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             _id = Guid.NewGuid();
             Name = name;
             _severity = severity;
-            _severityId = severity.Id;
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -110,15 +110,16 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public Scope PropertiesScope => Scope.ThreatType;
 
         [JsonProperty("severity")]
+        [NotRecorded]
         private int _severityId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
+        [UpdateId("Id", "_severityId")]
         private ISeverity _severity;
 
         public int SeverityId => _severityId;
 
-        [property: NotRecorded]
         [InitializationRequired]
         public ISeverity Severity
         {
@@ -126,10 +127,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             set
             {
-                if (value != null && value.Equals(Model.GetSeverity(value.Id)))
+                if (value != null && value.Equals(Model?.GetSeverity(value.Id)))
                 {
                     _severity = value;
-                    _severityId = value.Id;
                 }
             }
         }
@@ -192,15 +192,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
 
             return result;
-        }
-
-        [InitializationRequired]
-        public void Add([NotNull] IThreatTypeMitigation mitigation)
-        {
-            if (_mitigations == null)
-                _mitigations = new List<IThreatTypeMitigation>();
-
-            _mitigations.Add(mitigation);
         }
 
         [InitializationRequired]

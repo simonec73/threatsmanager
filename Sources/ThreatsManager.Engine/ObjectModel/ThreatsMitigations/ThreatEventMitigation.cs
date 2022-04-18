@@ -34,14 +34,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public ThreatEventMitigation([NotNull] IThreatEvent threatEvent, [NotNull] IMitigation mitigation, IStrength strength) : this()
         {
             _model = threatEvent.Model;
-            _modelId = threatEvent.Model.Id;
-            _threatEventId = threatEvent.Id;
             _threatEvent = threatEvent;
-            _mitigationId = mitigation.Id;
             _mitigation = mitigation;
-            Strength = strength;
-
-            _model.AutoApplySchemas(this);
+            _strength = strength;
         }
 
         public bool IsInitialized => Model != null && _threatEventId != Guid.Empty && _mitigationId != Guid.Empty;
@@ -125,9 +120,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Reference]
         [NotRecorded]
+        [UpdateId("Id", "_mitigationId")]
         private IMitigation _mitigation;
 
-        public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
+        public IMitigation Mitigation => _mitigation ?? (_mitigation = Model?.GetMitigation(_mitigationId));
 
         [JsonProperty("directives")]
         public string Directives { get; set; }
@@ -140,6 +136,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Reference]
         [NotRecorded]
+        [UpdateId("Id", "_strengthId")]
         private IStrength _strength;
 
         [InitializationRequired]
@@ -152,7 +149,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 if (value != null && value.Equals(Model.GetStrength(value.Id)))
                 {
                     _strength = value;
-                    _strengthId = value.Id;
                 }
             }
         }

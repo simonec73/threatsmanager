@@ -58,6 +58,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [InitializationRequired]
+        public void Add([NotNull] IWeaknessMitigation mitigation)
+        {
+            if (_mitigations == null)
+                _mitigations = new AdvisableCollection<IWeaknessMitigation>();
+
+            _mitigations.Add(mitigation);
+        }
+
+        [InitializationRequired]
         public IWeaknessMitigation AddMitigation([NotNull] IMitigation mitigation, IStrength strength)
         {
             IWeaknessMitigation result = null;
@@ -65,9 +74,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             if (GetMitigation(mitigation.Id) == null)
             {
                 result = new WeaknessMitigation(Model, this, mitigation, strength);
-                if (_mitigations == null)
-                    _mitigations = new AdvisableCollection<IWeaknessMitigation>();
-                _mitigations.Add(result);
+                Add(result);
                 _weaknessMitigationAdded?.Invoke(this, result);
             }
 

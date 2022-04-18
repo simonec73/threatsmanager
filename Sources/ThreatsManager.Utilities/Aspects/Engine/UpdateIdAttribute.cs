@@ -44,10 +44,22 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
                 var targetProperty = args?.Instance?.GetType()?.GetProperty(_targetPropertyName,
                     System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-                if (sourceProperty != null && targetProperty != null &&
-                    sourceProperty.PropertyType == targetProperty.PropertyType)
+                if ((sourceProperty != null && targetProperty != null &&
+                    sourceProperty.PropertyType == targetProperty.PropertyType))
                 {
                     targetProperty.SetValue(args.Instance, sourceProperty.GetValue(args.Value));
+                } else if (sourceProperty == null && targetProperty != null)
+                {
+                    if (targetProperty.PropertyType == typeof(Guid))
+                    {
+                        targetProperty.SetValue(args.Instance, Guid.Empty);
+                    } else if (targetProperty.PropertyType == typeof(int))
+                    {
+                        targetProperty.SetValue(args.Instance, 0);
+                    } else if (!targetProperty.PropertyType.IsPrimitive)
+                    {
+                        targetProperty.SetValue(args.Instance, null);
+                    }
                 }
             }
 

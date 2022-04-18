@@ -40,7 +40,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             _id = Guid.NewGuid();
             _threatType = threatType;
-            _threatTypeId = threatType.Id;
+            _model = threatType.Model;
             Name = threatType.Name;
             Description = threatType.Description;
             Severity = threatType.Severity;
@@ -201,6 +201,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [JsonProperty("parent")]
+        [field: NotRecorded]
         private Guid _parentId;
         
         [Parent]
@@ -229,14 +230,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
         }
 
-        [NotRecorded]
         [JsonProperty("severity")]
+        [NotRecorded]
         private int _severityId;
 
         public int SeverityId => _severityId;
 
         [Reference]
         [NotRecorded]
+        [UpdateId("Id", "_severityId")]
         private ISeverity _severity;
 
         [InitializationRequired]
@@ -249,7 +251,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 if (value != null && value.Equals(Model.GetSeverity(value.Id)))
                 {
                     _severity = value;
-                    _severityId = value.Id;
                 }
             }
         }
@@ -262,10 +263,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Reference]
         [NotRecorded]
+        [UpdateId("Id", "_threatTypeId")]
         private IThreatType _threatType;
 
         [InitializationRequired]
-        public IThreatType ThreatType => _threatType ?? (_threatType = Model.GetThreatType(_threatTypeId));
+        public IThreatType ThreatType => _threatType ?? (_threatType = Model?.GetThreatType(_threatTypeId));
 
         public MitigationLevel GetMitigationLevel()
         {

@@ -31,10 +31,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             [NotNull] IMitigation mitigation, IStrength strength) : this()
         {
             _model = model;
-            _modelId = model.Id;
-            _threatTypeId = threatType.Id;
             _threatType = threatType;
-            _mitigationId = mitigation.Id;
             _mitigation = mitigation;
             Strength = strength;
         }
@@ -86,39 +83,56 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
         #endregion
 
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateId("Id", "_modelId")]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties")]
+        private IList<IProperty> _properties { get; set; }
+        #endregion
+
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatTypeMitigation;
 
         [JsonProperty("threatTypeId")]
+        [NotRecorded]
         private Guid _threatTypeId;
 
         public Guid ThreatTypeId => _threatTypeId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
         private IThreatType _threatType;
 
         [InitializationRequired]
         public IThreatType ThreatType => _threatType ?? (_threatType = Model.GetThreatType(_threatTypeId));
 
         [JsonProperty("mitigationId")]
+        [NotRecorded]
         private Guid _mitigationId;
 
         public Guid MitigationId => _mitigationId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
         private IMitigation _mitigation;
 
         public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
 
         [JsonProperty("strength")]
+        [NotRecorded]
         private int _strengthId;
 
         public int StrengthId => _strengthId;
 
         [Reference]
-        [field: NotRecorded]
+        [NotRecorded]
+        [UpdateId("Id", "_strengthId")]
         private IStrength _strength;
 
         [InitializationRequired]
@@ -128,10 +142,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             set
             {
-                if (value != null && value.Equals(Model.GetStrength(value.Id)))
+                if (value != null && value.Equals(Model?.GetStrength(value.Id)))
                 {
                     _strength = value;
-                    _strengthId = value.Id;
                 }
             }
         }
@@ -145,7 +158,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 result = new ThreatTypeMitigation()
                 {
                     _model = model,
-                    _modelId = model.Id,
                     _threatTypeId = _threatTypeId,
                     _mitigationId = _mitigationId,
                     _strengthId = _strengthId,
@@ -160,19 +172,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return Mitigation.Name;
         }
-        #endregion
-
-        #region Additional placeholders required.
-        [JsonProperty("modelId")]
-        protected Guid _modelId { get; set; }
-        [Parent]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
-        [field: AutoApplySchemas]
-        protected IThreatModel _model { get; set; }
-        [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
         #endregion
     }
 }

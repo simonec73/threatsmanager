@@ -18,7 +18,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         /// <param name="args">Arguments describing the operation.</param>
         public override void OnSetValue(LocationInterceptionArgs args)
         {
-            if (args.Value is IThreatModel model && args.Instance is IPropertiesContainer container)
+            var model = args.Value as IThreatModel ?? (args.Value as IThreatModelChild)?.Model;
+
+            if (model != null && args.Instance is IPropertiesContainer container)
             {
                 model.AutoApplySchemas(container);
             }

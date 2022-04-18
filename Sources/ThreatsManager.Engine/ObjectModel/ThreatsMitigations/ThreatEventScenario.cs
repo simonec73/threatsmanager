@@ -36,15 +36,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             _id = Guid.NewGuid();
             _model = threatEvent.Model;
-            _modelId = threatEvent.Model.Id;
             _threatEvent = threatEvent;
-            _threatEventId = threatEvent.Id;
-            _actorId = actor.Id;
             _actor = actor;
             Name = string.IsNullOrWhiteSpace(name) ? actor.Name : name;
             Description = actor.Description;
-    
-            _model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -136,6 +131,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [NotRecorded]
         [Reference]
+        [UpdateId("Id", "_severityId")]
         private ISeverity _severity;
 
         [InitializationRequired]
@@ -148,12 +144,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 if (value != null && value.Equals(Model.GetSeverity(value.Id)))
                 {
                     _severity = value;
-                    _severityId = value.Id;
                 }
                 else
                 {
                     _severity = null;
-                    _severityId = (int)DefaultSeverity.Unknown;
                 }
             }
         }
@@ -164,6 +158,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Reference]
         [NotRecorded]
+        [UpdateId("Id", "_actorId")]
         private IThreatActor _actor;
 
         public Guid ActorId => _actorId;
@@ -171,18 +166,16 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [InitializationRequired]
         public IThreatActor Actor
         {
-            get => _actor ?? (_actor = Model.GetThreatActor(_actorId));
+            get => _actor ?? (_actor = Model?.GetThreatActor(_actorId));
             set
             {
-                if (value != null && value.Equals(Model.GetThreatActor(value.Id)))
+                if (value != null && value.Equals(Model?.GetThreatActor(value.Id)))
                 {
                     _actor = value;
-                    _actorId = value.Id;
                 }
                 else
                 {
                     _actor = null;
-                    _actorId = Guid.Empty;
                 }
             }
         }
@@ -201,7 +194,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _id = _id,
                     Name = Name,
                     Description = Description,
-                    _modelId = model.Id,
                     _model = model,
                     _actorId = _actorId,
                     _severityId = _severityId,

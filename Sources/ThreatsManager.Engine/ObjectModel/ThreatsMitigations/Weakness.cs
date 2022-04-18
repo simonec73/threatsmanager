@@ -35,7 +35,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             _id = Guid.NewGuid();
             Name = name;
             _severity = severity;
-            _severityId = severity.Id;
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -110,25 +109,26 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public Scope PropertiesScope => Scope.Weakness;
 
         [JsonProperty("severity")]
+        [NotRecorded]
         private int _severityId;
 
         [Reference]
+        [NotRecorded]
+        [UpdateId("Id", "_severityId")]
         private ISeverity _severity;
 
         public int SeverityId => _severityId;
 
         [InitializationRequired]
-        [property: NotRecorded]
         public ISeverity Severity
         {
             get => _severity ?? (_severity = Model?.GetSeverity(_severityId));
 
             set
             {
-                if (value != null && value.Equals(Model.GetSeverity(value.Id)))
+                if (value != null && value.Equals(Model?.GetSeverity(value.Id)))
                 {
                     _severity = value;
-                    _severityId = value.Id;
                 }
             }
         }
@@ -168,7 +168,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     Name = Name,
                     Description = Description,
                     _model = model,
-                    _modelId = model.Id,
                     _severityId = _severityId
                 };
                 this.CloneProperties(result);
@@ -191,15 +190,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
 
             return result;
-        }
-
-        [InitializationRequired]
-        public void Add([NotNull] IWeaknessMitigation mitigation)
-        {
-            if (_mitigations == null)
-                _mitigations = new List<IWeaknessMitigation>();
-
-            _mitigations.Add(mitigation);
         }
 
         [InitializationRequired]

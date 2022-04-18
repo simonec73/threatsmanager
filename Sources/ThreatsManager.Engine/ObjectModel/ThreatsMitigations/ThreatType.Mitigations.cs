@@ -58,6 +58,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [InitializationRequired]
+        public void Add([NotNull] IThreatTypeMitigation mitigation)
+        {
+            if (_mitigations == null)
+                _mitigations = new AdvisableCollection<IThreatTypeMitigation>();
+
+            _mitigations.Add(mitigation);
+        }
+
+        [InitializationRequired]
         public IThreatTypeMitigation AddMitigation([NotNull] IMitigation mitigation, IStrength strength)
         {
             IThreatTypeMitigation result = null;
@@ -65,9 +74,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             if (GetMitigation(mitigation.Id) == null)
             {
                 result = new ThreatTypeMitigation(Model, this, mitigation, strength);
-                if (_mitigations == null)
-                    _mitigations = new AdvisableCollection<IThreatTypeMitigation>();
-                _mitigations.Add(result);
+                Add(result);
                 _threatTypeMitigationAdded?.Invoke(this, result);
             }
 
