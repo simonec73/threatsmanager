@@ -14,7 +14,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("mitigations")]
-    //private List<IThreatEventMitigation> _mitigations { get; set; }
+    //private IList<IThreatEventMitigation> _mitigations { get; set; }
     //#endregion    
 
     [PSerializable]

@@ -12,10 +12,10 @@ namespace ThreatsManager.Utilities.Aspects
     [LinesOfCodeAvoided(2)]
     public class InitializationRequired : OnMethodBoundaryAspect
     {
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+#pragma warning disable IDE0044 // Add readonly modifier
         private bool _isDefaultValueInitalized;
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private object _defaultValue;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         public InitializationRequired()
         {
