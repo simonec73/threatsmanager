@@ -22,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics.Signed" Version="4.15.0" />
+    <PackageReference Include="MathNet.Numerics.Signed" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PostSharp" Version="6.10.5" />
+    <PackageReference Include="PostSharp" Version="6.10.14" />
   </ItemGroup>
 
   <ItemGroup>

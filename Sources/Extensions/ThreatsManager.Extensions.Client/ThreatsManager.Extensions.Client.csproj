@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.10.5" />
+    <PackageReference Include="PostSharp" Version="6.10.14" />
   </ItemGroup>
 
   <ItemGroup>

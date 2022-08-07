@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.10.5" />
-    <PackageReference Include="PostSharp.Patterns.Model" Version="6.10.5" />
+    <PackageReference Include="PostSharp" Version="6.10.14" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="6.10.14" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
   </ItemGroup>
