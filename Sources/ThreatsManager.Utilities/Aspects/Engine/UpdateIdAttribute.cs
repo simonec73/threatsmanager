@@ -1,5 +1,6 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         public override void OnSetValue(LocationInterceptionArgs args)
         {
             if (!string.IsNullOrWhiteSpace(_sourcePropertyName) &&
-                !string.IsNullOrWhiteSpace(_targetPropertyName))
+                !string.IsNullOrWhiteSpace(_targetPropertyName) && !UndoRedoManager.IsUndoing)
             {
                 var sourceProperty = args?.Value?.GetType()?.GetProperty(_sourcePropertyName,
                     System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
