@@ -206,7 +206,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 result = new Diagram(name)
                 {
-                    Order = _diagrams.Any() ? _diagrams.Max(x => x.Order) + 1 : 1
+                    Order = (_diagrams?.Any() ?? false) ? _diagrams.Max(x => x.Order) + 1 : 1
                 };
                 Add(result);
                 RegisterEvents(result);
