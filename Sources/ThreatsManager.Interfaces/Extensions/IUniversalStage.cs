@@ -14,6 +14,11 @@ namespace ThreatsManager.Interfaces.Extensions
         /// Direction of the stage.
         /// </summary>
         StageDirection Direction { get; }
+
+        /// <summary>
+        /// Identifier of the Extension implementing the stage linked to the current one.
+        /// </summary>
+        string LinkedStageId { get; }
         
         /// <summary>
         /// Process the input.
