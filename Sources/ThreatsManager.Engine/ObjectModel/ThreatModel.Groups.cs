@@ -21,6 +21,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("groups")]
         private IList<IGroup> _groups;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IGroup> Groups => _groups?.AsEnumerable();
 
         [InitializationRequired]

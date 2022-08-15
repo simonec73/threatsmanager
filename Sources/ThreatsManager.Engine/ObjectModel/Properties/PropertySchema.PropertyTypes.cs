@@ -17,6 +17,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [JsonProperty("propertyTypes")]
         private IList<IPropertyType> _propertyTypes { get; set; }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IPropertyType> PropertyTypes => _propertyTypes?.OrderBy(x => x.Priority);
 
         public event Action<IPropertySchema, IPropertyType> PropertyTypeAdded;

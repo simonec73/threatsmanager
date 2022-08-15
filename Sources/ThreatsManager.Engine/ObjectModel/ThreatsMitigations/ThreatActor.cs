@@ -17,11 +17,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Threat Actor")]
     public class ThreatActor : IThreatActor, IInitializableObject
     {

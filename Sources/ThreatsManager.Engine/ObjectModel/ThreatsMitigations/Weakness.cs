@@ -18,11 +18,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Weakness")]
     public partial class Weakness : IWeakness, IInitializableObject
     {
@@ -120,6 +120,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public int SeverityId => _severityId;
 
         [InitializationRequired]
+        [SafeForDependencyAnalysis]
         public ISeverity Severity
         {
             get => _severity ?? (_severity = Model?.GetSeverity(_severityId));

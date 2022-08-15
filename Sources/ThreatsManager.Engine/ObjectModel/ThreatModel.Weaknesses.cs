@@ -19,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("weaknesses")]
         private IList<IWeakness> _weaknesses;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IWeakness> Weaknesses => _weaknesses?.AsEnumerable();
 
         [InitializationRequired]

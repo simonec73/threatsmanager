@@ -19,10 +19,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class GroupShape : IGroupShape, IThreatModelChild, IInitializableObject
     {
         public GroupShape()
@@ -109,6 +109,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Guid AssociatedId => _associatedId;
 
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IIdentity Identity => _group ?? (_group = Model?.GetGroup(_associatedId));
 
         [Child]

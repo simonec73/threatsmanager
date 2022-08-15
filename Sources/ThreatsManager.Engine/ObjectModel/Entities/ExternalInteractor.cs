@@ -20,7 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [ThreatModelChildAspect]
@@ -28,10 +28,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("External Interactor")]
     [TypeInitial("E")]
-    public class ExternalInteractor : IExternalInteractor, IInitializableObject
+    public class ExternalInteractor : IExternalInteractor, IInitializableObject, IRecordableCallback
     {
         public ExternalInteractor()
         {
@@ -266,6 +266,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal IEntityTemplate _template { get; set; }
 
         [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IEntityTemplate Template
         {
             get
@@ -315,6 +316,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
+        }
+        #endregion
+
+        #region IRecordableCallback implementation.
+        public void OnReplaying(ReplayKind kind, ReplayContext context)
+        {
+        }
+
+        public void OnReplayed(ReplayKind kind, ReplayContext context)
+        {
+            ((IForceNotify)this).Notify("Name");
+            ((IForceNotify)this).Notify("Description");
         }
         #endregion
     }

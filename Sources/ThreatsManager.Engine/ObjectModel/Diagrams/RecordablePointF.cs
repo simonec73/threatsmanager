@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class RecordablePointF
     {
         private RecordablePointF() { }

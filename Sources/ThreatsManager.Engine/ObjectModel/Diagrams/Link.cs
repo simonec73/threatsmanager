@@ -18,10 +18,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class Link : ILink, IThreatModelChild, IInitializableObject
     {
         public Link()
@@ -108,6 +108,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Guid AssociatedId => _associatedId;
 
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IDataFlow DataFlow => _dataFlow ?? (_dataFlow = _model?.GetDataFlow(_associatedId));
 
         public ILink Clone(ILinksContainer container)

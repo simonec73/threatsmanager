@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.Extensions;
 
 namespace ThreatsManager.Engine
@@ -23,6 +24,7 @@ namespace ThreatsManager.Engine
                 .Where(x => _configuration?.IsEnabled(x.Key.Id) ?? false);
         }
 
+        [Pure]
         public T GetExtension<T>([Required] string id) where T : class, IExtension
         {
             return (_configuration?.IsEnabled(id) ?? false) ?

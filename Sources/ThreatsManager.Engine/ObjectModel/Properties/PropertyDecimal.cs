@@ -14,10 +14,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
     [ThreatModelChildAspect]
     [PropertyAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyDecimal, ThreatsManager.Engine")]
     public class PropertyDecimal : IPropertyDecimal
     {

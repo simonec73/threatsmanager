@@ -18,14 +18,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [EntitiesReadOnlyContainerAspect]
     [GroupsReadOnlyContainerAspect]
     [GroupElementAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Trust Boundary")]
     [TypeInitial("T")]
     public class TrustBoundary : ITrustBoundary, IInitializableObject
@@ -157,6 +157,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal ITrustBoundaryTemplate _template { get; set; }
 
         [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public ITrustBoundaryTemplate Template
         {
             get

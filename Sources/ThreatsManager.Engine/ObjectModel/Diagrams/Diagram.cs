@@ -21,14 +21,14 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [EntityShapesContainerAspect]
     [GroupShapesContainerAspect]
     [LinksContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class Diagram : IDiagram, IInitializableObject
     {
         public Diagram()

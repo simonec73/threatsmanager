@@ -14,10 +14,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
     [PropertyAspect]
     [ThreatModelChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertySingleLineString, ThreatsManager.Engine")]
     public class PropertySingleLineString : IPropertySingleLineString
     {

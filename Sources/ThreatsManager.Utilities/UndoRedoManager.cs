@@ -3,6 +3,7 @@ using PostSharp.Patterns.Recording;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Utilities
 {
@@ -76,6 +77,24 @@ namespace ThreatsManager.Utilities
         /// </summary>
         public static IEnumerable<Operation> RedoOperations =>
             RecordingServices.DefaultRecorder.RedoOperations.OfType<Operation>();
+
+        /// <summary>
+        /// Attach the Recorder to the Model.
+        /// </summary>
+        /// <param name="model">Model that should be considered for Undo/Redo.</param>
+        public static void Attach([NotNull] IThreatModel model)
+        {
+            RecordingServices.DefaultRecorder.Attach(model);
+        }
+
+        /// <summary>
+        /// Detach the Recorder from the Model.
+        /// </summary>
+        /// <param name="model">Model that should be removed from Undo/Redo.</param>
+        public static void Detach([NotNull] IThreatModel model)
+        {
+            RecordingServices.DefaultRecorder.Detach(model);
+        }
 
         /// <summary>
         /// Clear the recorded operations.

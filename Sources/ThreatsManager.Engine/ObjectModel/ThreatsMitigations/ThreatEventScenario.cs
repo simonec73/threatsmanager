@@ -18,12 +18,12 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [ThreatEventChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Scenario")]
     public class ThreatEventScenario : IThreatEventScenario, IInitializableObject
     {
@@ -135,6 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private ISeverity _severity;
 
         [InitializationRequired]
+        [SafeForDependencyAnalysis]
         public ISeverity Severity
         {
             get => _severity ?? (_severity = Model.GetSeverity(_severityId));
@@ -164,6 +165,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public Guid ActorId => _actorId;
 
         [InitializationRequired]
+        [SafeForDependencyAnalysis]
         public IThreatActor Actor
         {
             get => _actor ?? (_actor = Model?.GetThreatActor(_actorId));

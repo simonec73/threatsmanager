@@ -19,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("flowTemplates")]
         private IList<IFlowTemplate> _flowTemplates;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IFlowTemplate> FlowTemplates => _flowTemplates?.AsEnumerable();
 
         [InitializationRequired]

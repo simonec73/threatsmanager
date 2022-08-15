@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("schemas")]
         private IList<IPropertySchema> _schemas;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IPropertySchema> Schemas => _schemas?.OrderBy(x => x.Priority);
 
         [InitializationRequired]

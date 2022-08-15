@@ -12,12 +12,12 @@ using ThreatsManager.Utilities.Aspects.Engine;
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyIdentityReference, ThreatsManager.Engine")]
     public class IdentityReferencePropertyType : IIdentityReferencePropertyType
     {

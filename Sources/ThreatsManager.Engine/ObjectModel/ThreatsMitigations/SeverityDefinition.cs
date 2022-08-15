@@ -20,10 +20,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class SeverityDefinition : ISeverity, IInitializableObject
     {
         public SeverityDefinition()
@@ -118,6 +118,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private KnownColor? _textColor { get; set; }
 
         [property: NotRecorded]
+        [SafeForDependencyAnalysis]
         public KnownColor TextColor
         {
             get
@@ -151,6 +152,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private KnownColor? _backColor { get; set; }
 
         [property: NotRecorded]
+        [SafeForDependencyAnalysis]
         public KnownColor BackColor
         {
             get

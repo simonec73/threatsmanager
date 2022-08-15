@@ -20,11 +20,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Entity Template")]
     public class EntityTemplate : IEntityTemplate, IInitializableObject
     {

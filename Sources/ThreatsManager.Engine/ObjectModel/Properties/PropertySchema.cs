@@ -18,10 +18,10 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public partial class PropertySchema : IPropertySchema
     {
         public PropertySchema()

@@ -58,6 +58,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("entities")]
         private IList<IEntity> _entities;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IEntity> Entities => _entities?.AsEnumerable();
 
         [InitializationRequired]

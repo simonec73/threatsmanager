@@ -20,7 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [ThreatModelChildAspect]
@@ -28,7 +28,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Data Store")]
     [TypeInitial("D")]
     public class DataStore : IDataStore, IInitializableObject
@@ -266,6 +266,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal IEntityTemplate _template { get; set; }
 
         [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IEntityTemplate Template
         {
             get

@@ -17,11 +17,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class BaseListPropertyType : IPropertyType
     {
         public BaseListPropertyType()
@@ -82,6 +82,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [NotRecorded]
         private IListProviderExtension _listProvider;
 
+        [IgnoreAutoChangeNotification]
         private IListProviderExtension ListProvider
         {
             get
@@ -109,6 +110,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [Reference]
         protected IEnumerable<IListItem> _cachedList;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IListItem> Values
         {
             get

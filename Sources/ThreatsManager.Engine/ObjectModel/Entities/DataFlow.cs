@@ -19,14 +19,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Flow")]
     [TypeInitial("F")]
     public class DataFlow : IDataFlow, IInitializableObject
@@ -197,10 +197,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         [property: NotRecorded]
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IEntity Source => Model.GetEntity(_sourceId);
 
         [property: NotRecorded]
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IEntity Target => Model.GetEntity(_targetId);
 
         [JsonProperty("flowType")]
@@ -214,6 +216,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal IFlowTemplate _template { get; set; }
 
         [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IFlowTemplate Template
         {
             get

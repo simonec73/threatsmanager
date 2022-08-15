@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class RecordableSizeF
     {
         private RecordableSizeF() { }

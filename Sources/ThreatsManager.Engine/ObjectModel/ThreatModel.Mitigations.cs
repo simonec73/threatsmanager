@@ -19,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("mitigations")]
         private IList<IMitigation> _mitigations;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IMitigation> Mitigations => _mitigations?.AsEnumerable();
 
         [InitializationRequired]

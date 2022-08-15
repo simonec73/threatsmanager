@@ -22,12 +22,12 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
     [ThreatEventMitigationsContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeLabel("Threat Event")]
     public class ThreatEvent : IThreatEvent, IInitializableObject
     {
@@ -182,6 +182,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private string _name { get; set; }
 
         [property: NotRecorded]
+        [SafeForDependencyAnalysis]
         public string Name
         {
             get => UseThreatTypeInfo ? ThreatType?.Name : _name;
@@ -193,6 +194,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private string _description { get; set; }
 
         [property: NotRecorded]
+        [SafeForDependencyAnalysis]
         public string Description         
         {
             get => UseThreatTypeInfo ? ThreatType?.Description : _description;
@@ -213,6 +215,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public Guid ParentId => _parentId;
 
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IIdentity Parent
         {
             get
@@ -242,6 +245,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private ISeverity _severity;
 
         [InitializationRequired]
+        [SafeForDependencyAnalysis]
         public ISeverity Severity
         {
             get => _severity ?? (_severity = Model?.GetSeverity(_severityId));
@@ -267,6 +271,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private IThreatType _threatType;
 
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IThreatType ThreatType => _threatType ?? (_threatType = Model?.GetThreatType(_threatTypeId));
 
         public MitigationLevel GetMitigationLevel()
@@ -406,6 +411,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("threatEventVulnerabilities")]
         private IList<IThreatEventVulnerability> _vulnerabilities { get; set; }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IThreatEventVulnerability> ThreatEventVulnerabilities => _vulnerabilities?.AsEnumerable();
 
         public IThreatEventVulnerability GetThreatEventVulnerability(Guid vulnerabilityId)

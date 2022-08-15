@@ -13,11 +13,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [PropertyTypeAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyTokens, ThreatsManager.Engine")]
     public class TokensPropertyType : ITokensPropertyType
     {

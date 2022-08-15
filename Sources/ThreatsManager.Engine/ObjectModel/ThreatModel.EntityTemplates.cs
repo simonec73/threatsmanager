@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("entityTemplates")]
         private IList<IEntityTemplate> _entityTemplates;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IEntityTemplate> EntityTemplates => _entityTemplates?.AsEnumerable();
 
         [InitializationRequired]

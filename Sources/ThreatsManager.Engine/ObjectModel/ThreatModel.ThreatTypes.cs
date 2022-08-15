@@ -19,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("threatTypes")]
         private IList<IThreatType> _threatTypes;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IThreatType> ThreatTypes => _threatTypes?.AsEnumerable();
 
         [InitializationRequired]

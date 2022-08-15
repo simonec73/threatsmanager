@@ -53,6 +53,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("dataFlows")]
         private IList<IDataFlow> _dataFlows;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IDataFlow> DataFlows => _dataFlows?.AsEnumerable();
 
         [InitializationRequired]

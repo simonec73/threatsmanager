@@ -52,6 +52,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<ISeverity> Severities => _severities?.OrderByDescending(x => x.Id);
 
         [InitializationRequired]

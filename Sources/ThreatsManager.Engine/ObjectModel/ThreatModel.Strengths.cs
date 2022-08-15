@@ -52,6 +52,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IStrength> Strengths => _strengths?.OrderByDescending(x => x.Id);
 
         [InitializationRequired]

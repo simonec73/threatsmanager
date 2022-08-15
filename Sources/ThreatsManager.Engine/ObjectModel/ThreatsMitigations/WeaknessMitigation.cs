@@ -16,10 +16,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public class WeaknessMitigation : IWeaknessMitigation, IInitializableObject
     {
         public WeaknessMitigation()
@@ -109,6 +109,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private IWeakness _weakness;
 
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IWeakness Weakness => _weakness ?? (_weakness = Model.GetWeakness(_weaknessId));
 
         [JsonProperty("mitigationId")]
@@ -122,6 +123,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [UpdateId("Id", "_mitigationId")]
         private IMitigation _mitigation;
 
+        [IgnoreAutoChangeNotification]
         public IMitigation Mitigation => _mitigation ?? (_mitigation = Model.GetMitigation(_mitigationId));
 
         [JsonProperty("strength")]
@@ -136,6 +138,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private IStrength _strength;
 
         [InitializationRequired]
+        [SafeForDependencyAnalysis]
         public IStrength Strength
         {
             get => _strength ?? (_strength = Model?.GetStrength(_strengthId));

@@ -152,6 +152,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("diagrams")]
         private IList<IDiagram> _diagrams;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IDiagram> Diagrams => _diagrams?.AsEnumerable();
 
         [InitializationRequired]

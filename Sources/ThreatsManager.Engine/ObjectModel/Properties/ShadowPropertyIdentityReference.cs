@@ -93,6 +93,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public override Guid ValueId
         {
             get

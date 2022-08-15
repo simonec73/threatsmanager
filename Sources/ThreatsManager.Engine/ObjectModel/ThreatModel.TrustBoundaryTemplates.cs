@@ -19,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("trustBoundaryTemplates")]
         private IList<ITrustBoundaryTemplate> _trustBoundaryTemplates;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<ITrustBoundaryTemplate> TrustBoundaryTemplates => _trustBoundaryTemplates?.AsEnumerable();
 
         [InitializationRequired]

@@ -49,6 +49,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private IList<IWeaknessMitigation> _mitigations;
 
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IWeaknessMitigation> Mitigations => _mitigations?.AsEnumerable();
 
         [InitializationRequired]

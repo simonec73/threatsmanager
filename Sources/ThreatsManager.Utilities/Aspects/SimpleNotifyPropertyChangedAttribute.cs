@@ -11,11 +11,12 @@ namespace ThreatsManager.Utilities.Aspects
 {
     [PSerializable]
     [ProvideAspectRole("Notification")]
+    [IntroduceInterface(typeof(IForceNotify), OverrideAction = InterfaceOverrideAction.Ignore)]
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Multicast)]
     [IntroduceInterface(typeof(INotifyPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore)]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Initialization")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "ChangeTracking")]
-    public class SimpleNotifyPropertyChangedAttribute : InstanceLevelAspect, INotifyPropertyChanged
+       public class SimpleNotifyPropertyChangedAttribute : InstanceLevelAspect, INotifyPropertyChanged, IForceNotify
     {
         [ImportMember("OnPropertyChanged", IsRequired = false,
             Order = ImportMemberOrder.AfterIntroductions)]
@@ -32,6 +33,11 @@ namespace ThreatsManager.Utilities.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public void Notify(string propertyName)
+        {
+            OnPropertyChangedMethod?.Invoke(propertyName);
+        }
+
         [OnLocationSetValueAdvice, MulticastPointcut(Targets = MulticastTargets.Property,
              Attributes = MulticastAttributes.Instance | MulticastAttributes.NonAbstract)]
         public void OnPropertySet(LocationInterceptionArgs args)
@@ -44,8 +50,12 @@ namespace ThreatsManager.Utilities.Aspects
             args.ProceedSetValue();
 
             OnPropertyChangedMethod?.Invoke(args.Location.Name);
-
         }
 
+    }
+
+    public interface IForceNotify
+    {
+        void Notify(string propertyName);
     }
 }

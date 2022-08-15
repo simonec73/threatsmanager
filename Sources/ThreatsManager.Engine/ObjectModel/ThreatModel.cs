@@ -23,7 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [PropertiesContainerAspect]
@@ -31,7 +31,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [VulnerabilitiesContainerAspect]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
     {
         #region Events management.
@@ -40,7 +40,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public event Action<IIdentity, string> ChildChanged;
         public event Action<IIdentity, IPropertyType, IProperty> ChildPropertyAdded;
         public event Action<IIdentity, IPropertyType, IProperty> ChildPropertyRemoved;
-        public event Action<IIdentity, IPropertyType, IProperty> ChildPropertyChanged;
+        public event Action<IIdentity, IPropertyType, IProperty> ChildPropertyValueChanged;
         public event Action<string> ContributorAdded;
         public event Action<string> ContributorRemoved;
         public event Action<string, string> ContributorChanged;
@@ -447,7 +447,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             if (container is IIdentity identity)
             {
-                ChildPropertyChanged?.Invoke(identity, property.PropertyType, property);
+                ChildPropertyValueChanged?.Invoke(identity, property.PropertyType, property);
             }
         }
         #endregion
@@ -488,6 +488,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("contributors")]
         private IList<string> _contributors;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<string> Contributors => _contributors?.AsEnumerable();
 
         public bool AddContributor([Required] string name)
@@ -542,6 +543,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("assumptions")]
         private IList<string> _assumptions;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<string> Assumptions => _assumptions?.AsEnumerable();
 
         public bool AddAssumption([Required] string text)
@@ -596,6 +598,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("dependencies")]
         private IList<string> _dependencies;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<string> ExternalDependencies => _dependencies?.AsEnumerable();
 
         public bool AddDependency([Required] string text)
@@ -784,10 +787,14 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Advanced Threats & Mitigations properties and functions.
+        [IgnoreAutoChangeNotification]
         public int AssignedThreatTypes => CountThreatTypes();
+
+        [IgnoreAutoChangeNotification]
         public int FullyMitigatedThreatTypes => _threatTypes?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int PartiallyMitigatedThreatTypes
         {
             get
@@ -809,16 +816,21 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public int NotMitigatedThreatTypes => _threatTypes?
                                                   .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int TotalThreatEvents => CountThreatEvents();
 
+        [IgnoreAutoChangeNotification]
         public int UniqueMitigations => GetUniqueMitigations()?.Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int FullyMitigatedThreatEvents => GetThreatEvents()?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int PartiallyMitigatedThreatEvents
         {
             get
@@ -840,6 +852,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public int NotMitigatedThreatEvents => GetThreatEvents()?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
 
@@ -1123,11 +1136,14 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Advanced Weaknesses & Mitigations properties and functions.
+        [IgnoreAutoChangeNotification]
         public int AssignedWeaknesses => CountWeaknesses();
 
+        [IgnoreAutoChangeNotification]
         public int FullyMitigatedWeaknesses => _weaknesses?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int PartiallyMitigatedWeaknesses
         {
             get
@@ -1149,14 +1165,18 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public int NotMitigatedWeaknesses => _weaknesses?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int TotalVulnerabilities => CountVulnerabilities();
 
+        [IgnoreAutoChangeNotification]
         public int FullyMitigatedVulnerabilities => GetVulnerabilities()?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) >= 100).Count() ?? 0;
 
+        [IgnoreAutoChangeNotification]
         public int PartiallyMitigatedVulnerabilities
         {
             get
@@ -1178,6 +1198,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public int NotMitigatedVulnerabilities => GetVulnerabilities()?
             .Where(x => (x.Mitigations?.Sum(y => y.StrengthId) ?? 0) == 0).Count() ?? 0;
 

@@ -22,14 +22,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
+    [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [GroupElementAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [TypeInitial("P")]
     public class Process : IProcess, IInitializableObject
     {
@@ -271,6 +271,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal IEntityTemplate _template { get; set; }
 
         [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IEntityTemplate Template
         {
             get

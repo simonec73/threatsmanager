@@ -17,6 +17,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [JsonProperty("actors")]
         private IList<IThreatActor> _actors;
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IThreatActor> ThreatActors => _actors?.AsEnumerable();
 
         [InitializationRequired]

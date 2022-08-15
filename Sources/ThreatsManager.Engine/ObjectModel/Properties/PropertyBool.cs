@@ -14,10 +14,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
     [ThreatModelChildAspect]
     [PropertyAspect]
-    [Recordable]
+    [Recordable(AutoRecord = false)]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyBool, ThreatsManager.Engine")]
     public class PropertyBool : IPropertyBool
     {
