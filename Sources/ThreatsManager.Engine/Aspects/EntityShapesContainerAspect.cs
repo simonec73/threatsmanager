@@ -5,6 +5,7 @@ using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -92,17 +93,21 @@ namespace ThreatsManager.Engine.Aspects
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
-            var entities = _entities?.Get();
-            if (entities == null)
-            { 
-                entities = new AdvisableCollection<IEntityShape>();
-                _entities?.Set(entities);
-            }
+            using (RecordingServices.DefaultRecorder.OpenScope("Add shape for entity"))
+            {
+                var entities = _entities?.Get();
+                if (entities == null)
+                { 
+                    entities = new AdvisableCollection<IEntityShape>();
+                    _entities?.Set(entities);
+                }
 
-            entities.Add(entityShape);
-            if (Instance is IEntityShapesContainer container)
-            { 
-                _entityShapeAdded?.Invoke(container, entityShape);
+                RecordingServices.DefaultRecorder.Attach(entityShape);
+                entities.Add(entityShape);
+                if (Instance is IEntityShapesContainer container)
+                { 
+                    _entityShapeAdded?.Invoke(container, entityShape);
+                }
             }
         }
 
@@ -174,11 +179,17 @@ namespace ThreatsManager.Engine.Aspects
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
-            var result = _entities?.Get()?.Remove(entityShape) ?? false;
-            if (result)
+            bool result;
+
+            using (RecordingServices.DefaultRecorder.OpenScope("Remove shape for entity"))
             {
-                if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
-                    _entityShapeRemoved?.Invoke(container, entity);
+                result = _entities?.Get()?.Remove(entityShape) ?? false;
+                if (result)
+                {
+                    RecordingServices.DefaultRecorder.Detach(entityShape);
+                    if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
+                        _entityShapeRemoved?.Invoke(container, entity);
+                }
             }
 
             return result;

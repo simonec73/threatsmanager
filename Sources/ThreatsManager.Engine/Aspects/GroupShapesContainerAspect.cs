@@ -5,6 +5,7 @@ using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -84,23 +85,27 @@ namespace ThreatsManager.Engine.Aspects
             return _groups?.Get()?.FirstOrDefault(x => x.AssociatedId == groupId);
         }
         
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IGroupShape groupShape)
         {
             if (groupShape == null)
                 throw new ArgumentNullException(nameof(groupShape));
 
-            var groups = _groups?.Get();
-            if (groups == null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Add shape for group"))
             {
-                groups = new AdvisableCollection<IGroupShape>();
-                _groups?.Set(groups);
-            }
+                var groups = _groups?.Get();
+                if (groups == null)
+                {
+                    groups = new AdvisableCollection<IGroupShape>();
+                    _groups?.Set(groups);
+                }
 
-            groups.Add(groupShape);
-            if (Instance is IGroupShapesContainer container)
-            {
-                _groupShapeAdded?.Invoke(container, groupShape);
+                RecordingServices.DefaultRecorder.Attach(groupShape);
+                groups.Add(groupShape);
+                if (Instance is IGroupShapesContainer container)
+                {
+                    _groupShapeAdded?.Invoke(container, groupShape);
+                }
             }
         }
 
@@ -167,17 +172,23 @@ namespace ThreatsManager.Engine.Aspects
             return RemoveGroupShape(group.Id);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveShape(IGroupShape groupShape)
         {
             if (groupShape == null)
                 throw new ArgumentNullException(nameof(groupShape));
+            
+            bool result;
 
-            var result = _groups?.Get()?.Remove(groupShape) ?? false;
-            if (result)
+            using (RecordingServices.DefaultRecorder.OpenScope("Remove shape for group"))
             {
-                if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
-                    _groupShapeRemoved?.Invoke(container, group);
+                result = _groups?.Get()?.Remove(groupShape) ?? false;
+                if (result)
+                {
+                    RecordingServices.DefaultRecorder.Detach(groupShape);
+                    if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
+                        _groupShapeRemoved?.Invoke(container, group);
+                }
             }
 
             return result;

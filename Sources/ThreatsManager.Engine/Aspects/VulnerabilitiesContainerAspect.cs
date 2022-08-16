@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -92,16 +93,20 @@ namespace ThreatsManager.Engine.Aspects
             if (vulnerability is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
-            var vulnerabilities = _vulnerabilities?.Get();
-            if (vulnerabilities == null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Add Vulnerability"))
             {
-                vulnerabilities = new AdvisableCollection<IVulnerability>();
-                _vulnerabilities?.Set(vulnerabilities);
-            }
+                var vulnerabilities = _vulnerabilities?.Get();
+                if (vulnerabilities == null)
+                {
+                    vulnerabilities = new AdvisableCollection<IVulnerability>();
+                    _vulnerabilities?.Set(vulnerabilities);
+                }
 
-            vulnerabilities.Add(vulnerability);
-            if (Instance is IVulnerabilitiesContainer container)
-                _vulnerabilityAdded?.Invoke(container, vulnerability);
+                RecordingServices.DefaultRecorder.Attach(vulnerability);
+                vulnerabilities.Add(vulnerability);
+                if (Instance is IVulnerabilitiesContainer container)
+                    _vulnerabilityAdded?.Invoke(container, vulnerability);
+            }
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -134,11 +139,15 @@ namespace ThreatsManager.Engine.Aspects
             var vulnerability = GetVulnerability(id);
             if (vulnerability != null)
             {
-                result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
-                if (result)
+                using (RecordingServices.DefaultRecorder.OpenScope("Remove Vulnerability"))
                 {
-                    if (Instance is IVulnerabilitiesContainer container)
-                        _vulnerabilityRemoved?.Invoke(container, vulnerability);
+                    result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
+                    if (result)
+                    {
+                        RecordingServices.DefaultRecorder.Detach(vulnerability);
+                        if (Instance is IVulnerabilitiesContainer container)
+                            _vulnerabilityRemoved?.Invoke(container, vulnerability);
+                    }
                 }
             }
 

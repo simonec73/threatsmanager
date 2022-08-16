@@ -4,6 +4,7 @@ using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -76,23 +77,27 @@ namespace ThreatsManager.Engine.Aspects
             return _links?.Get()?.FirstOrDefault(x => x.AssociatedId == dataFlowId);
         }
         
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(ILink link)
         {
             if (link == null)
                 throw new ArgumentNullException(nameof(link));
 
-            var links = _links?.Get();
-            if (links == null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Add link for Flow"))
             {
-                links = new AdvisableCollection<ILink>();
-                _links?.Set(links);
-            }
+                var links = _links?.Get();
+                if (links == null)
+                {
+                    links = new AdvisableCollection<ILink>();
+                    _links?.Set(links);
+                }
 
-            links.Add(link);
-            if (Instance is ILinksContainer container)
-            {
-                _linkAdded?.Invoke(container, link);
+                RecordingServices.DefaultRecorder.Attach(link);
+                links.Add(link);
+                if (Instance is ILinksContainer container)
+                {
+                    _linkAdded?.Invoke(container, link);
+                }
             }
         }
 
@@ -114,15 +119,22 @@ namespace ThreatsManager.Engine.Aspects
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 8)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public bool RemoveLink(Guid dataFlowId)
         {
+            bool result;
+
             var link = GetLink(dataFlowId);
-            var result = _links?.Get()?.Remove(link) ?? false;
-            if (result)
+
+            using (RecordingServices.DefaultRecorder.OpenScope("Remove link for Flow"))
             {
-                if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
-                    _linkRemoved?.Invoke(container, flow);
+                result = _links?.Get()?.Remove(link) ?? false;
+                if (result)
+                {
+                    RecordingServices.DefaultRecorder.Detach(link);
+                    if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
+                        _linkRemoved?.Invoke(container, flow);
+                }
             }
 
             return result;

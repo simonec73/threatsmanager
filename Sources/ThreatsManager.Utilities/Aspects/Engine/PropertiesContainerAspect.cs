@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -149,31 +150,35 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         {
             IProperty result = null;
 
-            var associatedClass = propertyType.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>()
-                .FirstOrDefault();
-            if (associatedClass != null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Add property"))
             {
-                var associatedClassType = Type.GetType(associatedClass.AssociatedType, false);
-                if (associatedClassType != null)
+                var associatedClass = propertyType.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>()
+                    .FirstOrDefault();
+                if (associatedClass != null)
                 {
-                    result = Activator.CreateInstance(associatedClassType, model, propertyType) as IProperty;
+                    var associatedClassType = Type.GetType(associatedClass.AssociatedType, false);
+                    if (associatedClassType != null)
+                    {
+                        result = Activator.CreateInstance(associatedClassType, model, propertyType) as IProperty;
+                    }
                 }
-            }
 
-            if (result != null)
-            {
-                var properties = _properties?.Get();
-                if (properties == null)
-                { 
-                    properties = new AdvisableCollection<IProperty>();
-                    _properties?.Set(properties);
+                if (result != null)
+                {
+                    var properties = _properties?.Get();
+                    if (properties == null)
+                    { 
+                        properties = new AdvisableCollection<IProperty>();
+                        _properties?.Set(properties);
+                    }
+                    result.StringValue = value;
+                    RecordingServices.DefaultRecorder.Attach(result);
+                    properties?.Add(result);
+
+                    if (Instance is IPropertiesContainer container)
+                        _propertyAdded?.Invoke(container, result);
+                    result.Changed += OnPropertyChanged;
                 }
-                result.StringValue = value;
-                properties?.Add(result);
-
-                if (Instance is IPropertiesContainer container)
-                    _propertyAdded?.Invoke(container, result);
-                result.Changed += OnPropertyChanged;
             }
 
             return result;
@@ -194,26 +199,13 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public bool RemoveProperty(IPropertyType propertyType)
         {
             if (propertyType == null)
                 throw new ArgumentNullException(nameof(propertyType));
 
-            bool result = false;
-
-            var property = GetProperty(propertyType);
-            if (property != null)
-            {
-                result = _properties?.Get()?.Remove(property) ?? false;
-                if (result)
-                {
-                    if (Instance is IPropertiesContainer container)
-                        _propertyRemoved?.Invoke(container, property);
-                }
-            }
-
-            return result;
+            return RemoveProperty(propertyType.Id);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
@@ -224,13 +216,17 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             var properties = _properties?.Get()?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
             if (properties?.Any() ?? false) 
             {
-                foreach (var property in properties)
+                using (RecordingServices.DefaultRecorder.OpenScope("Remove property"))
                 {
-                    if (_properties?.Get()?.Remove(property) ?? false)
+                    foreach (var property in properties)
                     {
-                        if (Instance is IPropertiesContainer container)
-                            _propertyRemoved?.Invoke(container, property);
-                        result = true;
+                        if (_properties?.Get()?.Remove(property) ?? false)
+                        {
+                            RecordingServices.DefaultRecorder.Detach(property);
+                            if (Instance is IPropertiesContainer container)
+                                _propertyRemoved?.Invoke(container, property);
+                            result = true;
+                        }
                     }
                 }
             }
@@ -238,20 +234,24 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 8)]
         public void ClearProperties()
         {
             var properties = _properties?.Get()?.ToArray();
 
             if (properties?.Any() ?? false)
             {
-                foreach (var property in properties)
+                using (RecordingServices.DefaultRecorder.OpenScope("Remove properties"))
                 {
-                    if (Instance is IPropertiesContainer container)
-                        _propertyRemoved?.Invoke(container, property);
-                }
+                    foreach (var property in properties)
+                    {
+                        RecordingServices.DefaultRecorder.Detach(property);
+                        if (Instance is IPropertiesContainer container)
+                            _propertyRemoved?.Invoke(container, property);
+                    }
 
-                _properties?.Get()?.Clear();
+                    _properties?.Get()?.Clear();
+                }
             }
         }
 
@@ -290,7 +290,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         #endregion
 
         #region Additional methods.
-        [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7, 
+        [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12, 
             Visibility = Visibility.Assembly)]
         [CopyCustomAttributes(typeof(OnDeserializedAttribute))]
         [OnDeserialized]

@@ -31,7 +31,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Recordable(AutoRecord = false)]
     [TypeLabel("External Interactor")]
     [TypeInitial("E")]
-    public class ExternalInteractor : IExternalInteractor, IInitializableObject, IRecordableCallback
+    public class ExternalInteractor : IExternalInteractor, IInitializableObject
     {
         public ExternalInteractor()
         {
@@ -316,18 +316,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
-        }
-        #endregion
-
-        #region IRecordableCallback implementation.
-        public void OnReplaying(ReplayKind kind, ReplayContext context)
-        {
-        }
-
-        public void OnReplayed(ReplayKind kind, ReplayContext context)
-        {
-            ((IForceNotify)this).Notify("Name");
-            ((IForceNotify)this).Notify("Description");
         }
         #endregion
     }

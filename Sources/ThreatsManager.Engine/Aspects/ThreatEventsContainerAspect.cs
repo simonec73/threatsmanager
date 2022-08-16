@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -92,16 +93,20 @@ namespace ThreatsManager.Engine.Aspects
             if (threatEvent is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
-            var threatEvents = _threatEvents?.Get();
-            if (threatEvents == null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Add Threat Event"))
             {
-                threatEvents = new AdvisableCollection<IThreatEvent>();
-                _threatEvents?.Set(threatEvents);
-            }
+                var threatEvents = _threatEvents?.Get();
+                if (threatEvents == null)
+                {
+                    threatEvents = new AdvisableCollection<IThreatEvent>();
+                    _threatEvents?.Set(threatEvents);
+                }
 
-            threatEvents.Add(threatEvent);
-            if (Instance is IThreatEventsContainer container)
-                _threatEventAdded?.Invoke(container, threatEvent);
+                RecordingServices.DefaultRecorder.Attach(threatEvent);
+                threatEvents.Add(threatEvent);
+                if (Instance is IThreatEventsContainer container)
+                    _threatEventAdded?.Invoke(container, threatEvent);
+            }
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -131,14 +136,18 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            var threatEvent = GetThreatEvent(id);
-            if (threatEvent != null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Remove shape for group"))
             {
-                result = _threatEvents?.Get()?.Remove(threatEvent) ?? false;
-                if (result)
+                var threatEvent = GetThreatEvent(id);
+                if (threatEvent != null)
                 {
-                    if (Instance is IThreatEventsContainer container)
-                        _threatEventRemoved?.Invoke(container, threatEvent);
+                    result = _threatEvents?.Get()?.Remove(threatEvent) ?? false;
+                    if (result)
+                    {
+                        RecordingServices.DefaultRecorder.Detach(threatEvent);
+                        if (Instance is IThreatEventsContainer container)
+                            _threatEventRemoved?.Invoke(container, threatEvent);
+                    }
                 }
             }
 

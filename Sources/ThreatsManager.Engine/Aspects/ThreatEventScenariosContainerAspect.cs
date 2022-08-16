@@ -4,6 +4,7 @@ using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -92,16 +93,7 @@ namespace ThreatsManager.Engine.Aspects
                     Severity = severity
                 };
 
-                var scenarios = _scenarios?.Get();
-                if (scenarios == null)
-                { 
-                    scenarios = new AdvisableCollection<IThreatEventScenario>();
-                    _scenarios?.Set(scenarios);
-                }
-
-                _scenarios?.Get()?.Add(result);
-                if (Instance is IThreatEventScenariosContainer container)
-                    _threatEventScenarioAdded?.Invoke(container, result);
+                Add(result);
             }
 
             return result;
@@ -115,14 +107,18 @@ namespace ThreatsManager.Engine.Aspects
             if (scenario.ThreatEvent is IThreatModelChild child && child.Model != (Instance as IThreatEvent)?.Model)
                 throw new ArgumentException();
 
-            var scenarios = _scenarios?.Get();
-            if (scenarios == null)
+            using (RecordingServices.DefaultRecorder.OpenScope("Add scenario to Threat Event"))
             {
-                scenarios = new AdvisableCollection<IThreatEventScenario>();
-                _scenarios?.Set(scenarios);
-            }
+                var scenarios = _scenarios?.Get();
+                if (scenarios == null)
+                {
+                    scenarios = new AdvisableCollection<IThreatEventScenario>();
+                    _scenarios?.Set(scenarios);
+                }
 
-            _scenarios?.Get()?.Add(scenario);
+                RecordingServices.DefaultRecorder.Attach(scenario);
+                _scenarios?.Get()?.Add(scenario);
+            }
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -133,11 +129,15 @@ namespace ThreatsManager.Engine.Aspects
             var scenario = GetScenario(id);
             if (scenario != null)
             {
-                result = _scenarios?.Get()?.Remove(scenario) ?? false;
-                if (result)
+                using (RecordingServices.DefaultRecorder.OpenScope("Remove scenario from Threat Event"))
                 {
-                    if (Instance is IThreatEvent threatEvent)
-                        _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
+                    result = _scenarios?.Get()?.Remove(scenario) ?? false;
+                    if (result)
+                    {
+                        RecordingServices.DefaultRecorder.Detach(scenario);
+                        if (Instance is IThreatEvent threatEvent)
+                            _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
+                    }
                 }
             }
 

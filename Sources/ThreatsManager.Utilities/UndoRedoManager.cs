@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Utilities
 {
@@ -85,6 +87,24 @@ namespace ThreatsManager.Utilities
         public static void Attach([NotNull] IThreatModel model)
         {
             RecordingServices.DefaultRecorder.Attach(model);
+
+            Attach(model.DataFlows);
+            Attach(model.Diagrams);
+            Attach(model.Entities);
+            Attach(model.EntityTemplates);
+            Attach(model.FlowTemplates);
+            Attach(model.Groups);
+            Attach(model.Mitigations);
+            Attach(model.Properties);
+            Attach(model.Schemas);
+            Attach(model.Severities);
+            Attach(model.Strengths);
+            Attach(model.ThreatActors);
+            Attach(model.ThreatEvents);
+            Attach(model.ThreatTypes);
+            Attach(model.TrustBoundaryTemplates);
+            Attach(model.Vulnerabilities);
+            Attach(model.Weaknesses);
         }
 
         /// <summary>
@@ -94,6 +114,24 @@ namespace ThreatsManager.Utilities
         public static void Detach([NotNull] IThreatModel model)
         {
             RecordingServices.DefaultRecorder.Detach(model);
+
+            Detach(model.DataFlows);
+            Detach(model.Diagrams);
+            Detach(model.Entities);
+            Detach(model.EntityTemplates);
+            Detach(model.FlowTemplates);
+            Detach(model.Groups);
+            Detach(model.Mitigations);
+            Detach(model.Properties);
+            Detach(model.Schemas);
+            Detach(model.Severities);
+            Detach(model.Strengths);
+            Detach(model.ThreatActors);
+            Detach(model.ThreatEvents);
+            Detach(model.ThreatTypes);
+            Detach(model.TrustBoundaryTemplates);
+            Detach(model.Vulnerabilities);
+            Detach(model.Weaknesses);
         }
 
         /// <summary>
@@ -220,6 +258,68 @@ namespace ThreatsManager.Utilities
             {
                 _isDirty = dirty;
                 DirtyChanged?.Invoke(dirty);
+            }
+        }
+
+        private static void Attach(IEnumerable<object> items)
+        {
+            if (items?.Any() ?? false)
+            {
+                foreach (var item in items)
+                {
+                    RecordingServices.DefaultRecorder.Attach(item);
+
+                    if (item is IPropertiesContainer pContainer)
+                    {
+                        Attach(pContainer.Properties);
+                    }
+
+                    if (item is IThreatEventsContainer teContainer)
+                    {
+                        Attach(teContainer.ThreatEvents);
+                    }
+
+                    if (item is IVulnerabilitiesContainer vContainer)
+                    {
+                        Attach(vContainer.Vulnerabilities);
+                    }
+
+                    if (item is IThreatEventMitigationsContainer temContainer)
+                    {
+                        Attach(temContainer.Mitigations);
+                    }
+                }
+            }
+        }
+
+        private static void Detach(IEnumerable<object> items)
+        {
+            if (items?.Any() ?? false)
+            {
+                foreach (var item in items)
+                {
+                    RecordingServices.DefaultRecorder.Detach(item);
+
+                    if (item is IPropertiesContainer pContainer)
+                    {
+                        Detach(pContainer.Properties);
+                    }
+
+                    if (item is IThreatEventsContainer teContainer)
+                    {
+                        Detach(teContainer.ThreatEvents);
+                    }
+
+                    if (item is IVulnerabilitiesContainer vContainer)
+                    {
+                        Detach(vContainer.Vulnerabilities);
+                    }
+
+                    if (item is IThreatEventMitigationsContainer temContainer)
+                    {
+                        Detach(temContainer.Mitigations);
+                    }
+                }
             }
         }
     }

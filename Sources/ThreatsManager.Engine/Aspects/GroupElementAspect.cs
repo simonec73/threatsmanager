@@ -2,6 +2,7 @@
 using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -78,11 +79,14 @@ namespace ThreatsManager.Engine.Aspects
             var parentId = _parentId?.Get() ?? Guid.Empty;
             if ((parent == null && parentId != Guid.Empty) || (parent != null && parentId != parent.Id))
             {
-                oldParent = Parent;
-                _parentId.Set(parent?.Id ?? Guid.Empty);
-                _parent.Set(parent);
-                if (Instance is IGroupElement groupElement)
-                    _parentChanged?.Invoke(groupElement, oldParent, parent);
+                using (RecordingServices.DefaultRecorder.OpenScope("Set parent"))
+                {
+                    oldParent = Parent;
+                    _parentId.Set(parent?.Id ?? Guid.Empty);
+                    _parent.Set(parent);
+                    if (Instance is IGroupElement groupElement)
+                        _parentChanged?.Invoke(groupElement, oldParent, parent);
+                }
             }
         }
         #endregion
