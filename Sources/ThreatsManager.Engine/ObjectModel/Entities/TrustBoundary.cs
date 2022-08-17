@@ -26,6 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [GroupsReadOnlyContainerAspect]
     [GroupElementAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Trust Boundary")]
     [TypeInitial("T")]
     public class TrustBoundary : ITrustBoundary, IInitializableObject

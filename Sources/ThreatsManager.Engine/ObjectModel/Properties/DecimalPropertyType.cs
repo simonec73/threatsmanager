@@ -18,6 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyDecimal, ThreatsManager.Engine")]
     public class DecimalPropertyType : IDecimalPropertyType
     {

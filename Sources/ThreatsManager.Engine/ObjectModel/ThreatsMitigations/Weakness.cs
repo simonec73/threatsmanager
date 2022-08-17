@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Weakness")]
     public partial class Weakness : IWeakness, IInitializableObject
     {

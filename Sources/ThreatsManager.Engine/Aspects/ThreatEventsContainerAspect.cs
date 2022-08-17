@@ -10,6 +10,7 @@ using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -93,7 +94,7 @@ namespace ThreatsManager.Engine.Aspects
             if (threatEvent is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add Threat Event"))
+            using (UndoRedoManager.OpenScope("Add Threat Event"))
             {
                 var threatEvents = _threatEvents?.Get();
                 if (threatEvents == null)
@@ -102,7 +103,7 @@ namespace ThreatsManager.Engine.Aspects
                     _threatEvents?.Set(threatEvents);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(threatEvent);
+                UndoRedoManager.Attach(threatEvent);
                 threatEvents.Add(threatEvent);
                 if (Instance is IThreatEventsContainer container)
                     _threatEventAdded?.Invoke(container, threatEvent);
@@ -136,7 +137,7 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Remove shape for group"))
+            using (UndoRedoManager.OpenScope("Remove shape for group"))
             {
                 var threatEvent = GetThreatEvent(id);
                 if (threatEvent != null)
@@ -144,7 +145,7 @@ namespace ThreatsManager.Engine.Aspects
                     result = _threatEvents?.Get()?.Remove(threatEvent) ?? false;
                     if (result)
                     {
-                        RecordingServices.DefaultRecorder.Detach(threatEvent);
+                        UndoRedoManager.Detach(threatEvent);
                         if (Instance is IThreatEventsContainer container)
                             _threatEventRemoved?.Invoke(container, threatEvent);
                     }

@@ -11,6 +11,7 @@ using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -93,7 +94,7 @@ namespace ThreatsManager.Engine.Aspects
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add shape for entity"))
+            using (UndoRedoManager.OpenScope("Add shape for entity"))
             {
                 var entities = _entities?.Get();
                 if (entities == null)
@@ -102,7 +103,7 @@ namespace ThreatsManager.Engine.Aspects
                     _entities?.Set(entities);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(entityShape);
+                UndoRedoManager.Attach(entityShape);
                 entities.Add(entityShape);
                 if (Instance is IEntityShapesContainer container)
                 { 
@@ -181,12 +182,12 @@ namespace ThreatsManager.Engine.Aspects
 
             bool result;
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Remove shape for entity"))
+            using (UndoRedoManager.OpenScope("Remove shape for entity"))
             {
                 result = _entities?.Get()?.Remove(entityShape) ?? false;
                 if (result)
                 {
-                    RecordingServices.DefaultRecorder.Detach(entityShape);
+                    UndoRedoManager.Detach(entityShape);
                     if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
                         _entityShapeRemoved?.Invoke(container, entity);
                 }

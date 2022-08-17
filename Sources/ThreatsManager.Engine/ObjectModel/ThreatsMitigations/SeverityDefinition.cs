@@ -24,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class SeverityDefinition : ISeverity, IInitializableObject
     {
         public SeverityDefinition()

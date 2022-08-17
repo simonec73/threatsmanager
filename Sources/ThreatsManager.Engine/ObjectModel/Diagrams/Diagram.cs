@@ -29,6 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [GroupShapesContainerAspect]
     [LinksContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class Diagram : IDiagram, IInitializableObject
     {
         public Diagram()

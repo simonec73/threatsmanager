@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class BaseListPropertyType : IPropertyType
     {
         public BaseListPropertyType()

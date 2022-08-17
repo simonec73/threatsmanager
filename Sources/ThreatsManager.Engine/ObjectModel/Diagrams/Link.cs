@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class Link : ILink, IThreatModelChild, IInitializableObject
     {
         public Link()

@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Threat Actor")]
     public class ThreatActor : IThreatActor, IInitializableObject
     {

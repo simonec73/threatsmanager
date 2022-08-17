@@ -25,6 +25,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Entity Template")]
     public class EntityTemplate : IEntityTemplate, IInitializableObject
     {

@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class Mitigation : IMitigation, IInitializableObject
     {
         public Mitigation()

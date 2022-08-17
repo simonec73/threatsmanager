@@ -24,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Threat Type")]
     public partial class ThreatType : IThreatType, IInitializableObject
     {

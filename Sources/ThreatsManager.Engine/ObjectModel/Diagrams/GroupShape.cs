@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class GroupShape : IGroupShape, IThreatModelChild, IInitializableObject
     {
         public GroupShape()

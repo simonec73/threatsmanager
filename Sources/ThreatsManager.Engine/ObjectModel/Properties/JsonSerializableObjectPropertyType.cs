@@ -18,6 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyJsonSerializableObject, ThreatsManager.Engine")]
     public class JsonSerializableObjectPropertyType : IJsonSerializableObjectPropertyType
     {

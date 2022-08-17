@@ -27,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Flow")]
     [TypeInitial("F")]
     public class DataFlow : IDataFlow, IInitializableObject

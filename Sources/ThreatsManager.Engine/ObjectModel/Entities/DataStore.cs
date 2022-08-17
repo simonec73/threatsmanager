@@ -29,6 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Data Store")]
     [TypeInitial("D")]
     public class DataStore : IDataStore, IInitializableObject

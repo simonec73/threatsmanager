@@ -10,6 +10,7 @@ using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -93,7 +94,7 @@ namespace ThreatsManager.Engine.Aspects
             if (vulnerability is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add Vulnerability"))
+            using (UndoRedoManager.OpenScope("Add Vulnerability"))
             {
                 var vulnerabilities = _vulnerabilities?.Get();
                 if (vulnerabilities == null)
@@ -102,7 +103,7 @@ namespace ThreatsManager.Engine.Aspects
                     _vulnerabilities?.Set(vulnerabilities);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(vulnerability);
+                UndoRedoManager.Attach(vulnerability);
                 vulnerabilities.Add(vulnerability);
                 if (Instance is IVulnerabilitiesContainer container)
                     _vulnerabilityAdded?.Invoke(container, vulnerability);
@@ -139,12 +140,12 @@ namespace ThreatsManager.Engine.Aspects
             var vulnerability = GetVulnerability(id);
             if (vulnerability != null)
             {
-                using (RecordingServices.DefaultRecorder.OpenScope("Remove Vulnerability"))
+                using (UndoRedoManager.OpenScope("Remove Vulnerability"))
                 {
                     result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
                     if (result)
                     {
-                        RecordingServices.DefaultRecorder.Detach(vulnerability);
+                        UndoRedoManager.Detach(vulnerability);
                         if (Instance is IVulnerabilitiesContainer container)
                             _vulnerabilityRemoved?.Invoke(container, vulnerability);
                     }

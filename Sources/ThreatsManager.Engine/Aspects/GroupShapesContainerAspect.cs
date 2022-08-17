@@ -11,6 +11,7 @@ using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -91,7 +92,7 @@ namespace ThreatsManager.Engine.Aspects
             if (groupShape == null)
                 throw new ArgumentNullException(nameof(groupShape));
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add shape for group"))
+            using (UndoRedoManager.OpenScope("Add shape for group"))
             {
                 var groups = _groups?.Get();
                 if (groups == null)
@@ -100,7 +101,7 @@ namespace ThreatsManager.Engine.Aspects
                     _groups?.Set(groups);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(groupShape);
+                UndoRedoManager.Attach(groupShape);
                 groups.Add(groupShape);
                 if (Instance is IGroupShapesContainer container)
                 {
@@ -180,12 +181,12 @@ namespace ThreatsManager.Engine.Aspects
             
             bool result;
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Remove shape for group"))
+            using (UndoRedoManager.OpenScope("Remove shape for group"))
             {
                 result = _groups?.Get()?.Remove(groupShape) ?? false;
                 if (result)
                 {
-                    RecordingServices.DefaultRecorder.Detach(groupShape);
+                    UndoRedoManager.Attach(groupShape);
                     if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
                         _groupShapeRemoved?.Invoke(container, group);
                 }

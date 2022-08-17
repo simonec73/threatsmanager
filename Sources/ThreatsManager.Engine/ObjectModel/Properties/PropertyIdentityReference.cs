@@ -17,6 +17,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [ThreatModelChildAspect]
     [PropertyAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyIdentityReference, ThreatsManager.Engine")]
     public class PropertyIdentityReference : IPropertyIdentityReference
     {

@@ -150,7 +150,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         {
             IProperty result = null;
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add property"))
+            using (UndoRedoManager.OpenScope("Add property"))
             {
                 var associatedClass = propertyType.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>()
                     .FirstOrDefault();
@@ -172,7 +172,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         _properties?.Set(properties);
                     }
                     result.StringValue = value;
-                    RecordingServices.DefaultRecorder.Attach(result);
+                    UndoRedoManager.Attach(result);
+                    if (result is IUndoable undoable)
+                        undoable.IsUndoEnabled = true;
+
                     properties?.Add(result);
 
                     if (Instance is IPropertiesContainer container)
@@ -216,13 +219,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             var properties = _properties?.Get()?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
             if (properties?.Any() ?? false) 
             {
-                using (RecordingServices.DefaultRecorder.OpenScope("Remove property"))
+                using (UndoRedoManager.OpenScope("Remove property"))
                 {
                     foreach (var property in properties)
                     {
                         if (_properties?.Get()?.Remove(property) ?? false)
                         {
-                            RecordingServices.DefaultRecorder.Detach(property);
+                            UndoRedoManager.Detach(property);
+                            if (property is IUndoable undoable)
+                                undoable.IsUndoEnabled = false;
                             if (Instance is IPropertiesContainer container)
                                 _propertyRemoved?.Invoke(container, property);
                             result = true;
@@ -241,11 +246,13 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
             if (properties?.Any() ?? false)
             {
-                using (RecordingServices.DefaultRecorder.OpenScope("Remove properties"))
+                using (UndoRedoManager.OpenScope("Remove properties"))
                 {
                     foreach (var property in properties)
                     {
-                        RecordingServices.DefaultRecorder.Detach(property);
+                        UndoRedoManager.Detach(property);
+                        if (property is IUndoable undoable)
+                            undoable.IsUndoEnabled = false;
                         if (Instance is IPropertiesContainer container)
                             _propertyRemoved?.Invoke(container, property);
                     }

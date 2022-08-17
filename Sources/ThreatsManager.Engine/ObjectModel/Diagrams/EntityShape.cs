@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class EntityShape : IEntityShape, IThreatModelChild, IInitializableObject
     {
         public EntityShape()

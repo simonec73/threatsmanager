@@ -9,6 +9,7 @@ using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -82,7 +83,7 @@ namespace ThreatsManager.Engine.Aspects
             if (mitigation == null)
                 throw new ArgumentNullException(nameof(mitigation));
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add a Mitigation to a Threat Event"))
+            using (UndoRedoManager.OpenScope("Add a Mitigation to a Threat Event"))
             {
                 var mitigations = _mitigations?.Get();
                 if (mitigations == null)
@@ -91,7 +92,7 @@ namespace ThreatsManager.Engine.Aspects
                     _mitigations?.Set(mitigations);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(mitigation);
+                UndoRedoManager.Attach(mitigation);
                 mitigations.Add(mitigation);
                 if (Instance is IThreatEventMitigationsContainer container)
                 {
@@ -130,12 +131,12 @@ namespace ThreatsManager.Engine.Aspects
             var mitigation = GetMitigation(mitigationId);
             if (mitigation != null)
             {
-                using (RecordingServices.DefaultRecorder.OpenScope("Remove a Mitigation from a Threat Event"))
+                using (UndoRedoManager.OpenScope("Remove a Mitigation from a Threat Event"))
                 {
                     result = _mitigations?.Get()?.Remove(mitigation) ?? false;
                     if (result)
                     {
-                        RecordingServices.DefaultRecorder.Detach(mitigation);
+                        UndoRedoManager.Detach(mitigation);
                         if (Instance is IThreatEventMitigationsContainer container)
                             _threatEventMitigationRemoved?.Invoke(container, mitigation);
                     }

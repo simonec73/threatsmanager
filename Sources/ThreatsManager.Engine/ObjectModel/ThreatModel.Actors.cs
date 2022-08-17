@@ -5,8 +5,10 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -35,12 +37,15 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatActor actor)
         {
-            if (_actors == null)
-                _actors = new AdvisableCollection<IThreatActor>();
+            using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
+            { 
+                if (_actors == null)
+                    _actors = new AdvisableCollection<IThreatActor>();
 
-            _actors.Add(actor);
-
-            ChildCreated?.Invoke(actor);
+                UndoRedoManager.Attach(actor);
+                _actors.Add(actor);
+                ChildCreated?.Invoke(actor);
+            }
         }
 
         [InitializationRequired]

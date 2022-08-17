@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class StrengthDefinition : IStrength, IInitializableObject
     {
         public StrengthDefinition()

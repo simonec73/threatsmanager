@@ -18,6 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [ThreatModelChildAspect]
     [PropertyTypeAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyBool, ThreatsManager.Engine")]
     public class BoolPropertyType : IBoolPropertyType
     {

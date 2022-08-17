@@ -81,57 +81,78 @@ namespace ThreatsManager.Utilities
             RecordingServices.DefaultRecorder.RedoOperations.OfType<Operation>();
 
         /// <summary>
-        /// Attach the Recorder to the Model.
+        /// Attach the Recorder to an object.
         /// </summary>
-        /// <param name="model">Model that should be considered for Undo/Redo.</param>
-        public static void Attach([NotNull] IThreatModel model)
+        /// <param name="item">Object that should be considered for Undo/Redo.</param>
+        public static void Attach([NotNull] object item)
         {
-            RecordingServices.DefaultRecorder.Attach(model);
+            if (item is IThreatModel model)
+            {
+                RecordingServices.DefaultRecorder.Attach(model);
+                if (item is IUndoable undoable)
+                    undoable.IsUndoEnabled = true;
 
-            Attach(model.DataFlows);
-            Attach(model.Diagrams);
-            Attach(model.Entities);
-            Attach(model.EntityTemplates);
-            Attach(model.FlowTemplates);
-            Attach(model.Groups);
-            Attach(model.Mitigations);
-            Attach(model.Properties);
-            Attach(model.Schemas);
-            Attach(model.Severities);
-            Attach(model.Strengths);
-            Attach(model.ThreatActors);
-            Attach(model.ThreatEvents);
-            Attach(model.ThreatTypes);
-            Attach(model.TrustBoundaryTemplates);
-            Attach(model.Vulnerabilities);
-            Attach(model.Weaknesses);
+                Attach(model.DataFlows);
+                Attach(model.Diagrams);
+                Attach(model.Entities);
+                Attach(model.EntityTemplates);
+                Attach(model.FlowTemplates);
+                Attach(model.Groups);
+                Attach(model.Mitigations);
+                Attach(model.Properties);
+                Attach(model.Schemas);
+                Attach(model.Severities);
+                Attach(model.Strengths);
+                Attach(model.ThreatActors);
+                Attach(model.ThreatEvents);
+                Attach(model.ThreatTypes);
+                Attach(model.TrustBoundaryTemplates);
+                Attach(model.Vulnerabilities);
+                Attach(model.Weaknesses);
+            }
+            else
+            {
+                if (item is IThreatModelChild child && child.Model is IUndoable modelUndoable && modelUndoable.IsUndoEnabled)
+                {
+                    RecordingServices.DefaultRecorder.Attach(item);
+                    if (item is IUndoable u)
+                        u.IsUndoEnabled = true;
+                }
+            }
         }
 
         /// <summary>
-        /// Detach the Recorder from the Model.
+        /// Detach the Recorder from an object.
         /// </summary>
-        /// <param name="model">Model that should be removed from Undo/Redo.</param>
-        public static void Detach([NotNull] IThreatModel model)
+        /// <param name="item">Object that should be removed from Undo/Redo.</param>
+        public static void Detach([NotNull] object item)
         {
-            RecordingServices.DefaultRecorder.Detach(model);
+            if (item is IUndoable undoable && undoable.IsUndoEnabled)
+            {
+                RecordingServices.DefaultRecorder.Detach(item);
+                undoable.IsUndoEnabled = false;
 
-            Detach(model.DataFlows);
-            Detach(model.Diagrams);
-            Detach(model.Entities);
-            Detach(model.EntityTemplates);
-            Detach(model.FlowTemplates);
-            Detach(model.Groups);
-            Detach(model.Mitigations);
-            Detach(model.Properties);
-            Detach(model.Schemas);
-            Detach(model.Severities);
-            Detach(model.Strengths);
-            Detach(model.ThreatActors);
-            Detach(model.ThreatEvents);
-            Detach(model.ThreatTypes);
-            Detach(model.TrustBoundaryTemplates);
-            Detach(model.Vulnerabilities);
-            Detach(model.Weaknesses);
+                if (item is IThreatModel model)
+                { 
+                    Detach(model.DataFlows);
+                    Detach(model.Diagrams);
+                    Detach(model.Entities);
+                    Detach(model.EntityTemplates);
+                    Detach(model.FlowTemplates);
+                    Detach(model.Groups);
+                    Detach(model.Mitigations);
+                    Detach(model.Properties);
+                    Detach(model.Schemas);
+                    Detach(model.Severities);
+                    Detach(model.Strengths);
+                    Detach(model.ThreatActors);
+                    Detach(model.ThreatEvents);
+                    Detach(model.ThreatTypes);
+                    Detach(model.TrustBoundaryTemplates);
+                    Detach(model.Vulnerabilities);
+                    Detach(model.Weaknesses);
+                }
+            }
         }
 
         /// <summary>
@@ -268,6 +289,8 @@ namespace ThreatsManager.Utilities
                 foreach (var item in items)
                 {
                     RecordingServices.DefaultRecorder.Attach(item);
+                    if (item is IUndoable undoable)
+                        undoable.IsUndoEnabled = true;
 
                     if (item is IPropertiesContainer pContainer)
                     {
@@ -299,6 +322,8 @@ namespace ThreatsManager.Utilities
                 foreach (var item in items)
                 {
                     RecordingServices.DefaultRecorder.Detach(item);
+                    if (item is IUndoable undoable)
+                        undoable.IsUndoEnabled = false;
 
                     if (item is IPropertiesContainer pContainer)
                     {

@@ -10,6 +10,7 @@ using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -83,7 +84,7 @@ namespace ThreatsManager.Engine.Aspects
             if (link == null)
                 throw new ArgumentNullException(nameof(link));
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add link for Flow"))
+            using (UndoRedoManager.OpenScope("Add link for Flow"))
             {
                 var links = _links?.Get();
                 if (links == null)
@@ -92,7 +93,9 @@ namespace ThreatsManager.Engine.Aspects
                     _links?.Set(links);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(link);
+                UndoRedoManager.Attach(link);
+                if (link is IUndoable undoable)
+                    undoable.IsUndoEnabled = true;
                 links.Add(link);
                 if (Instance is ILinksContainer container)
                 {
@@ -126,12 +129,14 @@ namespace ThreatsManager.Engine.Aspects
 
             var link = GetLink(dataFlowId);
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Remove link for Flow"))
+            using (UndoRedoManager.OpenScope("Remove link for Flow"))
             {
                 result = _links?.Get()?.Remove(link) ?? false;
                 if (result)
                 {
-                    RecordingServices.DefaultRecorder.Detach(link);
+                    UndoRedoManager.Detach(link);
+                    if (link is IUndoable undoable)
+                        undoable.IsUndoEnabled = false;
                     if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
                         _linkRemoved?.Invoke(container, flow);
                 }

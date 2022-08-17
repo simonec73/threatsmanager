@@ -29,6 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("External Interactor")]
     [TypeInitial("E")]
     public class ExternalInteractor : IExternalInteractor, IInitializableObject

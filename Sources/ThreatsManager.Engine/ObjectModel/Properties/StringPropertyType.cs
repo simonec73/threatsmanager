@@ -18,6 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [IdentityAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyString, ThreatsManager.Engine")]
     public class StringPropertyType : IStringPropertyType
     {

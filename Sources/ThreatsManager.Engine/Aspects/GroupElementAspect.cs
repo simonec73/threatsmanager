@@ -6,6 +6,7 @@ using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -79,7 +80,7 @@ namespace ThreatsManager.Engine.Aspects
             var parentId = _parentId?.Get() ?? Guid.Empty;
             if ((parent == null && parentId != Guid.Empty) || (parent != null && parentId != parent.Id))
             {
-                using (RecordingServices.DefaultRecorder.OpenScope("Set parent"))
+                using (UndoRedoManager.OpenScope("Set parent"))
                 {
                     oldParent = Parent;
                     _parentId.Set(parent?.Id ?? Guid.Empty);

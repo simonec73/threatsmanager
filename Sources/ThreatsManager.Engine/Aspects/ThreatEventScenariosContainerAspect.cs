@@ -9,6 +9,7 @@ using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -107,7 +108,7 @@ namespace ThreatsManager.Engine.Aspects
             if (scenario.ThreatEvent is IThreatModelChild child && child.Model != (Instance as IThreatEvent)?.Model)
                 throw new ArgumentException();
 
-            using (RecordingServices.DefaultRecorder.OpenScope("Add scenario to Threat Event"))
+            using (UndoRedoManager.OpenScope("Add scenario to Threat Event"))
             {
                 var scenarios = _scenarios?.Get();
                 if (scenarios == null)
@@ -116,7 +117,7 @@ namespace ThreatsManager.Engine.Aspects
                     _scenarios?.Set(scenarios);
                 }
 
-                RecordingServices.DefaultRecorder.Attach(scenario);
+                UndoRedoManager.Attach(scenario);
                 _scenarios?.Get()?.Add(scenario);
             }
         }
@@ -129,12 +130,12 @@ namespace ThreatsManager.Engine.Aspects
             var scenario = GetScenario(id);
             if (scenario != null)
             {
-                using (RecordingServices.DefaultRecorder.OpenScope("Remove scenario from Threat Event"))
+                using (UndoRedoManager.OpenScope("Remove scenario from Threat Event"))
                 {
                     result = _scenarios?.Get()?.Remove(scenario) ?? false;
                     if (result)
                     {
-                        RecordingServices.DefaultRecorder.Detach(scenario);
+                        UndoRedoManager.Detach(scenario);
                         if (Instance is IThreatEvent threatEvent)
                             _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
                     }

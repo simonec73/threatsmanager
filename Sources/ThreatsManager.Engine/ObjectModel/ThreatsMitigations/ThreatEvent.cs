@@ -28,6 +28,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatEventScenariosContainerAspect]
     [ThreatEventMitigationsContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Threat Event")]
     public class ThreatEvent : IThreatEvent, IInitializableObject
     {

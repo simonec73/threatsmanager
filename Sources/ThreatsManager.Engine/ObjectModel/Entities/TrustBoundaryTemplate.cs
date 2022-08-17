@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Trust Boundary Template")]
     public class TrustBoundaryTemplate : ITrustBoundaryTemplate, IInitializableObject
     {

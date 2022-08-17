@@ -24,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatModelChildAspect]
     [ThreatEventChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Scenario")]
     public class ThreatEventScenario : IThreatEventScenario, IInitializableObject
     {

@@ -17,6 +17,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [PropertyAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyString, ThreatsManager.Engine")]
     public class PropertyString : IPropertyString
     {

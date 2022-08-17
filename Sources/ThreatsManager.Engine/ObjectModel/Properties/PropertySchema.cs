@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [IdentityAspect]
     [ThreatModelChildAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public partial class PropertySchema : IPropertySchema
     {
         public PropertySchema()

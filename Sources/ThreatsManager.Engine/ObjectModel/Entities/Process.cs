@@ -30,6 +30,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeInitial("P")]
     public class Process : IProcess, IInitializableObject
     {
