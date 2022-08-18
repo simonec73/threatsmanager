@@ -39,26 +39,30 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (GetPropertyType(name) == null)
             {
-                var propertyTypeInterface = type.GetEnumType();
-                if (propertyTypeInterface != null)
-                {
-                    var implementation = Assembly.GetExecutingAssembly().DefinedTypes
-                        .FirstOrDefault(x => x.ImplementedInterfaces.Contains(propertyTypeInterface));
-
-                    if (implementation != null)
+                using (UndoRedoManager.OpenScope("Add Property Type"))
+                { 
+                    var propertyTypeInterface = type.GetEnumType();
+                    if (propertyTypeInterface != null)
                     {
-                        result = Activator.CreateInstance(implementation, name, this) as IPropertyType;
+                        var implementation = Assembly.GetExecutingAssembly().DefinedTypes
+                            .FirstOrDefault(x => x.ImplementedInterfaces.Contains(propertyTypeInterface));
+
+                        if (implementation != null)
+                        {
+                            result = Activator.CreateInstance(implementation, name, this) as IPropertyType;
+                        }
                     }
-                }
 
-                if (result != null)
-                {
-                    if (_propertyTypes == null)
-                        _propertyTypes = new AdvisableCollection<IPropertyType>();
+                    if (result != null)
+                    {
+                        if (_propertyTypes == null)
+                            _propertyTypes = new AdvisableCollection<IPropertyType>();
 
-                    _propertyTypes.Add(result);
+                        UndoRedoManager.Attach(result);
+                        _propertyTypes.Add(result);
 
-                    PropertyTypeAdded?.Invoke(this, result);
+                        PropertyTypeAdded?.Invoke(this, result);
+                    }
                 }
             }
 
@@ -73,10 +77,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (propertyType != null)
             {
-                result = _propertyTypes.Remove(propertyType);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Property Type"))
                 {
-                    PropertyTypeRemoved?.Invoke(this, propertyType);
+                    result = _propertyTypes.Remove(propertyType);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(propertyType);
+                        PropertyTypeRemoved?.Invoke(this, propertyType);
+                    }
                 }
             }
 

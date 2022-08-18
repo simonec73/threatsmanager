@@ -84,10 +84,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IEntity entity)
         {
-            if (_entities == null)
-                _entities = new AdvisableCollection<IEntity>();
+            using (UndoRedoManager.OpenScope("Add Entity"))
+            {
+                if (_entities == null)
+                    _entities = new AdvisableCollection<IEntity>();
 
-            _entities.Add(entity);
+                UndoRedoManager.Attach(entity);
+                _entities.Add(entity);
+            }
         }
 
         [InitializationRequired]
@@ -210,12 +214,16 @@ namespace ThreatsManager.Engine.ObjectModel
             var entity = GetEntity(id);
             if (entity != null)
             {
-                RemoveRelated(entity);
-                result = _entities?.Remove(entity) ?? false;
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Entity"))
                 {
-                    UnregisterEvents(entity);
-                    ChildRemoved?.Invoke(entity);
+                    RemoveRelated(entity);
+                    result = _entities?.Remove(entity) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(entity);
+                        UnregisterEvents(entity);
+                        ChildRemoved?.Invoke(entity);
+                    }
                 }
             }
 

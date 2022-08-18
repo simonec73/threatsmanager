@@ -1,5 +1,6 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using System;
@@ -16,6 +17,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// </summary>
     [PSerializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(AutoApplySchemasAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
     public class UpdateIdAttribute : LocationInterceptionAspect
     {
         private string _sourcePropertyName;

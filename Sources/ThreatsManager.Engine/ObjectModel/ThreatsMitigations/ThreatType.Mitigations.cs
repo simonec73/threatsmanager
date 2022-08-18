@@ -6,6 +6,7 @@ using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
@@ -64,7 +65,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             if (_mitigations == null)
                 _mitigations = new AdvisableCollection<IThreatTypeMitigation>();
 
-            _mitigations.Add(mitigation);
+            using (UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
+            {
+                UndoRedoManager.Attach(mitigation);
+                _mitigations.Add(mitigation);
+            }
         }
 
         [InitializationRequired]
@@ -90,10 +95,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             var mitigation = GetMitigation(mitigationId);
             if (mitigation != null)
             {
-                result = _mitigations.Remove(mitigation);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Mitigation from Threat Type"))
                 {
-                    _threatTypeMitigationRemoved?.Invoke(this, mitigation);
+                    result = _mitigations.Remove(mitigation);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(mitigation);
+                        _threatTypeMitigationRemoved?.Invoke(this, mitigation);
+                    }
                 }
             }
 

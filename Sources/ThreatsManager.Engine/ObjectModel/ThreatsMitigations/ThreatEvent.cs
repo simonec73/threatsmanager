@@ -413,7 +413,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private IList<IThreatEventVulnerability> _vulnerabilities { get; set; }
 
         [IgnoreAutoChangeNotification]
-        public IEnumerable<IThreatEventVulnerability> ThreatEventVulnerabilities => _vulnerabilities?.AsEnumerable();
+        public IEnumerable<IThreatEventVulnerability> Vulnerabilities => _vulnerabilities?.AsEnumerable();
 
         public IThreatEventVulnerability GetThreatEventVulnerability(Guid vulnerabilityId)
         {

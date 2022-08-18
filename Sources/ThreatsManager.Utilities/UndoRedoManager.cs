@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
@@ -117,6 +118,8 @@ namespace ThreatsManager.Utilities
                     RecordingServices.DefaultRecorder.Attach(item);
                     if (item is IUndoable u)
                         u.IsUndoEnabled = true;
+
+                    AttachContainer(item);
                 }
             }
         }
@@ -132,6 +135,8 @@ namespace ThreatsManager.Utilities
                 RecordingServices.DefaultRecorder.Detach(item);
                 undoable.IsUndoEnabled = false;
 
+                DetachContainer(item);
+
                 if (item is IThreatModel model)
                 { 
                     Detach(model.DataFlows);
@@ -141,15 +146,12 @@ namespace ThreatsManager.Utilities
                     Detach(model.FlowTemplates);
                     Detach(model.Groups);
                     Detach(model.Mitigations);
-                    Detach(model.Properties);
                     Detach(model.Schemas);
                     Detach(model.Severities);
                     Detach(model.Strengths);
                     Detach(model.ThreatActors);
-                    Detach(model.ThreatEvents);
                     Detach(model.ThreatTypes);
                     Detach(model.TrustBoundaryTemplates);
-                    Detach(model.Vulnerabilities);
                     Detach(model.Weaknesses);
                 }
             }
@@ -272,7 +274,7 @@ namespace ThreatsManager.Utilities
             return RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic);
         }
 
-        private static void DefaultRecorder_ChildPropertyChanged(object sender, PostSharp.Patterns.Model.ChildPropertyChangedEventArgs e)
+        private static void DefaultRecorder_ChildPropertyChanged(object sender, EventArgs e)
         {
             bool dirty = RecordingServices.DefaultRecorder.UndoOperations.Count > 0;
             if (_isDirty != dirty)
@@ -292,26 +294,71 @@ namespace ThreatsManager.Utilities
                     if (item is IUndoable undoable)
                         undoable.IsUndoEnabled = true;
 
-                    if (item is IPropertiesContainer pContainer)
-                    {
-                        Attach(pContainer.Properties);
-                    }
-
-                    if (item is IThreatEventsContainer teContainer)
-                    {
-                        Attach(teContainer.ThreatEvents);
-                    }
-
-                    if (item is IVulnerabilitiesContainer vContainer)
-                    {
-                        Attach(vContainer.Vulnerabilities);
-                    }
-
-                    if (item is IThreatEventMitigationsContainer temContainer)
-                    {
-                        Attach(temContainer.Mitigations);
-                    }
+                    AttachContainer(item);
                 }
+            }
+        }
+
+        private static void AttachContainer(object item)
+        {
+            if (item is IPropertyTypesContainer ptContainer)
+            {
+                Attach(ptContainer.PropertyTypes);
+            }
+
+            if (item is IPropertiesContainer pContainer)
+            {
+                Attach(pContainer.Properties);
+            }
+
+            if (item is IThreatEventsContainer teContainer)
+            {
+                Attach(teContainer.ThreatEvents);
+            }
+
+            if (item is IVulnerabilitiesContainer vContainer)
+            {
+                Attach(vContainer.Vulnerabilities);
+            }
+
+            if (item is IThreatEventMitigationsContainer temContainer)
+            {
+                Attach(temContainer.Mitigations);
+            }
+
+            if (item is IThreatTypeMitigationsContainer ttmContainer)
+            {
+                Attach(ttmContainer.Mitigations);
+            }
+
+            if (item is IThreatEventScenariosContainer tesContainer)
+            {
+                Attach(tesContainer.Scenarios);
+            }
+
+            if (item is IThreatEventVulnerabilitiesContainer tevContainer)
+            {
+                Attach(tevContainer.Vulnerabilities);
+            }
+
+            if (item is IWeaknessMitigationsContainer wmContainer)
+            {
+                Attach(wmContainer.Mitigations);
+            }
+
+            if (item is ILinksContainer lContainer)
+            {
+                Attach(lContainer.Links);
+            }
+
+            if (item is IEntityShapesContainer esContainer)
+            {
+                Attach(esContainer.Entities);
+            }
+
+            if (item is IGroupShapesContainer gsContainer)
+            {
+                Attach(gsContainer.Groups);
             }
         }
 
@@ -325,26 +372,71 @@ namespace ThreatsManager.Utilities
                     if (item is IUndoable undoable)
                         undoable.IsUndoEnabled = false;
 
-                    if (item is IPropertiesContainer pContainer)
-                    {
-                        Detach(pContainer.Properties);
-                    }
-
-                    if (item is IThreatEventsContainer teContainer)
-                    {
-                        Detach(teContainer.ThreatEvents);
-                    }
-
-                    if (item is IVulnerabilitiesContainer vContainer)
-                    {
-                        Detach(vContainer.Vulnerabilities);
-                    }
-
-                    if (item is IThreatEventMitigationsContainer temContainer)
-                    {
-                        Detach(temContainer.Mitigations);
-                    }
+                    DetachContainer(item);
                 }
+            }
+        }
+
+        private static void DetachContainer(object item)
+        {
+            if (item is IPropertyTypesContainer ptContainer)
+            {
+                Detach(ptContainer.PropertyTypes);
+            }
+
+            if (item is IPropertiesContainer pContainer)
+            {
+                Detach(pContainer.Properties);
+            }
+
+            if (item is IThreatEventsContainer teContainer)
+            {
+                Detach(teContainer.ThreatEvents);
+            }
+
+            if (item is IVulnerabilitiesContainer vContainer)
+            {
+                Detach(vContainer.Vulnerabilities);
+            }
+
+            if (item is IThreatEventMitigationsContainer temContainer)
+            {
+                Detach(temContainer.Mitigations);
+            }
+
+            if (item is IThreatTypeMitigationsContainer ttmContainer)
+            {
+                Detach(ttmContainer.Mitigations);
+            }
+
+            if (item is IThreatEventScenariosContainer tesContainer)
+            {
+                Detach(tesContainer.Scenarios);
+            }
+
+            if (item is IThreatEventVulnerabilitiesContainer tevContainer)
+            {
+                Detach(tevContainer.Vulnerabilities);
+            }
+
+            if (item is IWeaknessMitigationsContainer wmContainer)
+            {
+                Detach(wmContainer.Mitigations);
+            }
+
+            if (item is ILinksContainer lContainer)
+            {
+                Detach(lContainer.Links);
+            }
+
+            if (item is IEntityShapesContainer esContainer)
+            {
+                Detach(esContainer.Entities);
+            }
+
+            if (item is IGroupShapesContainer gsContainer)
+            {
+                Detach(gsContainer.Groups);
             }
         }
     }

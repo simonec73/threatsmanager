@@ -21,7 +21,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <summary>
         /// Enumeration of the associations.
         /// </summary>
-        IEnumerable<IThreatEventVulnerability> ThreatEventVulnerabilities { get; }
+        IEnumerable<IThreatEventVulnerability> Vulnerabilities { get; }
 
         /// <summary>
         /// Get a Threat Event Vulnerability association identified by the identifier of the Vulnerability.

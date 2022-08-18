@@ -4,7 +4,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
@@ -21,6 +23,7 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
     public class VulnerabilitiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

@@ -37,7 +37,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatActor actor)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
+            using (UndoRedoManager.OpenScope("Add Threat Actor"))
             { 
                 if (_actors == null)
                     _actors = new AdvisableCollection<IThreatActor>();
@@ -88,13 +88,17 @@ namespace ThreatsManager.Engine.ObjectModel
             var actor = GetThreatActor(id);
             if (actor != null && (force || !IsUsed(actor)))
             {
-                RemoveRelated(actor);
-
-                result = _actors.Remove(actor);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Threat Actor"))
                 {
-                    UnregisterEvents(actor);
-                    ChildRemoved?.Invoke(actor);
+                    RemoveRelated(actor);
+
+                    result = _actors.Remove(actor);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(actor);
+                        UnregisterEvents(actor);
+                        ChildRemoved?.Invoke(actor);
+                    }
                 }
             }
 
@@ -129,7 +133,10 @@ namespace ThreatsManager.Engine.ObjectModel
                             if (scenarios?.Any() ?? false)
                             {
                                 foreach (var scenario in scenarios)
-                                    threatEvent.RemoveScenario(scenario.Id);
+                                {
+                                    if (threatEvent.RemoveScenario(scenario.Id))
+                                        UndoRedoManager.Detach(scenario);
+                                }
                             }
                         }
                     }
@@ -153,7 +160,10 @@ namespace ThreatsManager.Engine.ObjectModel
                             if (scenarios?.Any() ?? false)
                             {
                                 foreach (var scenario in scenarios)
-                                    threatEvent.RemoveScenario(scenario.Id);
+                                {
+                                    if (threatEvent.RemoveScenario(scenario.Id))
+                                        UndoRedoManager.Detach(scenario);
+                                }
                             }
                         }
                     }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
@@ -21,6 +23,7 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
     public class LinksContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

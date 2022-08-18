@@ -5,8 +5,9 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
-using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -22,6 +23,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     //#endregion    
 
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
     public class PropertiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

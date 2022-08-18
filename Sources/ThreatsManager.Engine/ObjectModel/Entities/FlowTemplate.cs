@@ -22,8 +22,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [IdentityAspect]
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
-    [Undoable]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Flow Template")]
     public class FlowTemplate : IFlowTemplate, IInitializableObject
     {

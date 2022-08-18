@@ -8,6 +8,7 @@ using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -170,10 +171,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IDiagram diagram)
         {
-            if (_diagrams == null)
-                _diagrams = new AdvisableCollection<IDiagram>();
+            using (UndoRedoManager.OpenScope("Add Diagram"))
+            {
+                if (_diagrams == null)
+                    _diagrams = new AdvisableCollection<IDiagram>();
 
-            _diagrams.Add(diagram);
+                UndoRedoManager.Attach(diagram);
+                _diagrams.Add(diagram);
+            }
         }
 
         [InitializationRequired]
@@ -225,11 +230,15 @@ namespace ThreatsManager.Engine.ObjectModel
             var diagram = GetDiagram(id);
             if (diagram != null)
             {
-                result = _diagrams.Remove(diagram);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Diagram"))
                 {
-                    UnregisterEvents(diagram);
-                    ChildRemoved?.Invoke(diagram);
+                    result = _diagrams.Remove(diagram);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(diagram);
+                        UnregisterEvents(diagram);
+                        ChildRemoved?.Invoke(diagram);
+                    }
                 }
             }
 

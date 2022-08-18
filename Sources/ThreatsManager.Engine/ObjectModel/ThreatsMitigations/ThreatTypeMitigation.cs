@@ -20,6 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatModelChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [Undoable]
     public class ThreatTypeMitigation : IThreatTypeMitigation, IInitializableObject
     {
         public ThreatTypeMitigation()

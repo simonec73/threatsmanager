@@ -9,6 +9,7 @@ using ThreatsManager.Engine.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -74,10 +75,14 @@ namespace ThreatsManager.Engine.ObjectModel
             if (dataFlow is IThreatModelChild child && child.Model != this)
                 throw new ArgumentException();
 
-            if (_dataFlows == null)
-                _dataFlows = new AdvisableCollection<IDataFlow>();
+            using (UndoRedoManager.OpenScope("Add Data Flow"))
+            {
+                if (_dataFlows == null)
+                    _dataFlows = new AdvisableCollection<IDataFlow>();
 
-            _dataFlows.Add(dataFlow);
+                UndoRedoManager.Attach(dataFlow);
+                _dataFlows.Add(dataFlow);
+            }
         }
 
         [InitializationRequired]
@@ -129,15 +134,19 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (flow != null)
             {
-                RemoveRelated(flow);
-                flow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
-                flow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
-
-                result = _dataFlows.Remove(flow);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Data Flow"))
                 {
-                    UnregisterEvents(flow);
-                    ChildRemoved?.Invoke(flow);
+                    RemoveRelated(flow);
+                    flow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
+                    flow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
+
+                    result = _dataFlows.Remove(flow);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(flow);
+                        UnregisterEvents(flow);
+                        ChildRemoved?.Invoke(flow);
+                    }
                 }
             }
 
