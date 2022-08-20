@@ -1,11 +1,8 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Model;
-using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
@@ -41,7 +38,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         public override void OnSetValue(LocationInterceptionArgs args)
         {
             if (!string.IsNullOrWhiteSpace(_sourcePropertyName) &&
-                !string.IsNullOrWhiteSpace(_targetPropertyName) && !UndoRedoManager.IsUndoing)
+                !string.IsNullOrWhiteSpace(_targetPropertyName) && 
+                !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
                 var sourceProperty = args?.Value?.GetType()?.GetProperty(_sourcePropertyName,
                     System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
@@ -51,19 +49,20 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     sourceProperty.PropertyType == targetProperty.PropertyType))
                 {
                     targetProperty.SetValue(args.Instance, sourceProperty.GetValue(args.Value));
-                } else if (sourceProperty == null && targetProperty != null)
-                {
-                    if (targetProperty.PropertyType == typeof(Guid))
-                    {
-                        targetProperty.SetValue(args.Instance, Guid.Empty);
-                    } else if (targetProperty.PropertyType == typeof(int))
-                    {
-                        targetProperty.SetValue(args.Instance, 0);
-                    } else if (!targetProperty.PropertyType.IsPrimitive)
-                    {
-                        targetProperty.SetValue(args.Instance, null);
-                    }
-                }
+                } 
+                //else if (sourceProperty == null && targetProperty != null)
+                //{
+                //    if (targetProperty.PropertyType == typeof(Guid))
+                //    {
+                //        targetProperty.SetValue(args.Instance, Guid.Empty);
+                //    } else if (targetProperty.PropertyType == typeof(int))
+                //    {
+                //        targetProperty.SetValue(args.Instance, 0);
+                //    } else if (!targetProperty.PropertyType.IsPrimitive)
+                //    {
+                //        targetProperty.SetValue(args.Instance, null);
+                //    }
+                //}
             }
 
             base.OnSetValue(args);

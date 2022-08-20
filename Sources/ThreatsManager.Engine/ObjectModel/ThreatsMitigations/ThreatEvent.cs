@@ -27,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
     [ThreatEventMitigationsContainerAspect]
+    [VulnerabilitiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Threat Event")]
@@ -128,6 +129,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded;
         public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+
         [Reference]
         [field: NotRecorded]
         public IEnumerable<IThreatEventMitigation> Mitigations { get; }
@@ -150,6 +154,30 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return false;
         }
+
+        public IVulnerability GetVulnerability(Guid id)
+        {
+            return null;
+        }
+
+        public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
+        {
+            return null;
+        }
+
+        public void Add(IVulnerability vulnerability)
+        {
+        }
+
+        public IVulnerability AddVulnerability(IWeakness weakness)
+        {
+            return null;
+        }
+
+        public bool RemoveVulnerability(Guid id)
+        {
+            return false;
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -169,6 +197,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Child]
         [JsonProperty("mitigations")]
         private IList<IThreatEventMitigation> _mitigations { get; set; }
+        [Child]
+        [JsonProperty("vulnerabilities")]
+        private IList<IVulnerability> _vulnerabilities { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -275,6 +306,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [IgnoreAutoChangeNotification]
         public IThreatType ThreatType => _threatType ?? (_threatType = Model?.GetThreatType(_threatTypeId));
 
+        public IEnumerable<IVulnerability> Vulnerabilities => throw new NotImplementedException();
+
         public MitigationLevel GetMitigationLevel()
         {
             MitigationLevel result = MitigationLevel.NotMitigated;
@@ -370,148 +403,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public override string ToString()
         {
             return Name ?? "<undefined>";
-        }
-        #endregion
-
-        #region Implementation of interface IThreatEventVulnerabilitiesContainer.
-        private Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> _threatEventVulnerabilityAdded;
-        public event Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> ThreatEventVulnerabilityAdded
-        {
-            add
-            {
-                if (_threatEventVulnerabilityAdded == null || !_threatEventVulnerabilityAdded.GetInvocationList().Contains(value))
-                {
-                    _threatEventVulnerabilityAdded += value;
-                }
-            }
-            remove
-            {
-                // ReSharper disable once DelegateSubtraction
-                if (_threatEventVulnerabilityAdded != null) _threatEventVulnerabilityAdded -= value;
-            }
-        }
-
-        private Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> _threatEventVulnerabilityRemoved;
-        public event Action<IThreatEventVulnerabilitiesContainer, IThreatEventVulnerability> ThreatEventVulnerabilityRemoved
-        {
-            add
-            {
-                if (_threatEventVulnerabilityRemoved == null || !_threatEventVulnerabilityRemoved.GetInvocationList().Contains(value))
-                {
-                    _threatEventVulnerabilityRemoved += value;
-                }
-            }
-            remove
-            {
-                // ReSharper disable once DelegateSubtraction
-                if (_threatEventVulnerabilityRemoved != null) _threatEventVulnerabilityRemoved -= value;
-            }
-        }
-
-        [Child]
-        [JsonProperty("threatEventVulnerabilities")]
-        private IList<IThreatEventVulnerability> _vulnerabilities { get; set; }
-
-        [IgnoreAutoChangeNotification]
-        public IEnumerable<IThreatEventVulnerability> Vulnerabilities => _vulnerabilities?.AsEnumerable();
-
-        public IThreatEventVulnerability GetThreatEventVulnerability(Guid vulnerabilityId)
-        {
-            return _vulnerabilities?.FirstOrDefault(x => x.VulnerabilityId == vulnerabilityId);
-        }
-
-        public void Add([NotNull] IThreatEventVulnerability association)
-        {
-            if (_vulnerabilities == null)
-                _vulnerabilities = new AdvisableCollection<IThreatEventVulnerability>();
-            if (association.ThreatEvent != this || Model.FindVulnerability(association.VulnerabilityId) == null)
-                throw new ArgumentException();
-
-            _vulnerabilities.Add(association);
-        }
-
-        public IThreatEventVulnerability AddThreatEventVulnerability([NotNull] IVulnerability vulnerability)
-        {
-            IThreatEventVulnerability result = null;
-
-            result = new ThreatEventVulnerability(this, vulnerability);
-            Add(result);
-            _threatEventVulnerabilityAdded?.Invoke(this, result);
-
-            return result;
-        }
-
-        public bool RemoveThreatEventVulnerability(Guid vulnerabilityId)
-        {
-            bool result = false;
-
-            var vulnerability = GetThreatEventVulnerability(vulnerabilityId);
-            if (vulnerability != null)
-            {
-                result = _vulnerabilities.Remove(vulnerability);
-                if (result)
-                {
-                    _threatEventVulnerabilityRemoved?.Invoke(this, vulnerability);
-                }
-            }
-
-            return result;
-        }
-
-        public IEnumerable<IThreatEventMitigation> GetEffectiveMitigations()
-        {
-            IEnumerable<IThreatEventMitigation> result = null;
-
-            var list = new List<IThreatEventMitigation>();
-            if (_mitigations?.Any() ?? false)
-                list.AddRange(_mitigations);
-
-            var vulnerabilities = _vulnerabilities?.ToArray();
-            if (vulnerabilities?.Any() ?? false)
-            {
-                Dictionary<Guid, IVulnerabilityMitigation> selected = new Dictionary<Guid, IVulnerabilityMitigation>();
-
-                foreach (var vulnerability in vulnerabilities)
-                {
-                    var mitigations = vulnerability.Vulnerability?.Mitigations?.ToArray();
-                    if (mitigations?.Any() ?? false)
-                    {
-                        foreach (var mitigation in mitigations)
-                        {
-                            var current = selected.Where(x => x.Key == mitigation.MitigationId)
-                                .Select(x => x.Value).FirstOrDefault();
-
-                            if (current == null)
-                            {
-                                selected.Add(mitigation.MitigationId, mitigation);
-                            }
-                            else if ((mitigation.Strength?.Id ?? 0) > (current.Strength?.Id ?? 0))
-                            {
-                                selected[mitigation.MitigationId] = mitigation;
-                            }
-                        }
-                    }
-                }
-
-                if (selected.Any())
-                {
-                    foreach (var item in selected.Values)
-                    {
-                        if (list.All(x => x.MitigationId != item.MitigationId))
-                        {
-                            list.Add(new ThreatEventMitigation(this, item.Mitigation, item.Strength)
-                            {
-                                Directives = "Mitigation inherited from Vulnerabilities"
-                            });
-                        }
-                    }
-                }
-            }
-
-            if (list.Any())
-                result = list.AsReadOnly();
-
-            return result;
         }
         #endregion
     }

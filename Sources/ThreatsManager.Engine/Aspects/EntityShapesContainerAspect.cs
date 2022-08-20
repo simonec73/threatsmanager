@@ -106,8 +106,8 @@ namespace ThreatsManager.Engine.Aspects
                     _entities?.Set(entities);
                 }
 
-                UndoRedoManager.Attach(entityShape);
                 entities.Add(entityShape);
+                UndoRedoManager.Attach(entityShape);
                 if (Instance is IEntityShapesContainer container)
                 { 
                     _entityShapeAdded?.Invoke(container, entityShape);

@@ -58,8 +58,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         if (_propertyTypes == null)
                             _propertyTypes = new AdvisableCollection<IPropertyType>();
 
-                        UndoRedoManager.Attach(result);
                         _propertyTypes.Add(result);
+                        UndoRedoManager.Attach(result);
 
                         PropertyTypeAdded?.Invoke(this, result);
                     }

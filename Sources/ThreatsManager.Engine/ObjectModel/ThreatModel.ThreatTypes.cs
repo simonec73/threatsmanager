@@ -97,12 +97,16 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatType threatType)
         {
-            if (_threatTypes == null)
-                _threatTypes = new AdvisableCollection<IThreatType>();
+            using (UndoRedoManager.OpenScope("Add Threat Type"))
+            {
+                if (_threatTypes == null)
+                    _threatTypes = new AdvisableCollection<IThreatType>();
 
-            _threatTypes.Add(threatType);
+                _threatTypes.Add(threatType);
+                UndoRedoManager.Attach(threatType);
 
-            ChildCreated?.Invoke(threatType);
+                ChildCreated?.Invoke(threatType);
+            }
         }
 
         [InitializationRequired]
@@ -129,13 +133,17 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (threatType != null && (force || !IsUsed(threatType)))
             {
-                RemoveRelated(threatType);
-
-                result = _threatTypes.Remove(threatType);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Threat Type"))
                 {
-                    UnregisterEvents(threatType);
-                    ChildRemoved?.Invoke(threatType);
+                    RemoveRelated(threatType);
+
+                    result = _threatTypes.Remove(threatType);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(threatType);
+                        UnregisterEvents(threatType);
+                        ChildRemoved?.Invoke(threatType);
+                    }
                 }
             }
 
@@ -145,58 +153,36 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IThreatType threatType)
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.ThreatTypeId == threatType.Id) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.ThreatTypeId == threatType.Id) ?? false) ?? false) || 
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.ThreatTypeId == threatType.Id) ?? false) ?? false) || 
                    (ThreatEvents?.Any(x => x.ThreatTypeId == threatType.Id) ?? false);
         }
 
         private void RemoveRelated([NotNull] IThreatType threatType)
         {
-            RemoveRelatedForEntities(threatType);
-            RemoveRelatedForDataFlows(threatType);
-            var events = ThreatEvents?.Where(x => x.ThreatTypeId == threatType.Id).ToArray();
+            RemoveRelated(threatType, _entities);
+            RemoveRelated(threatType, _flows);
+            RemoveRelated(threatType, this);
+        }
+
+        private void RemoveRelated([NotNull] IThreatType threatType, IEnumerable<IThreatEventsContainer> containers)
+        {
+            if (containers?.Any() ?? false)
+            {
+                foreach (var container in containers)
+                {
+                    RemoveRelated(threatType, container);
+                }
+            }
+        }
+
+        private void RemoveRelated([NotNull] IThreatType threatType, IThreatEventsContainer container)
+        {
+            var events = container?.ThreatEvents?.Where(x => x.ThreatTypeId == threatType.Id).ToArray();
             if (events?.Any() ?? false)
             {
                 foreach (var threatEvent in events)
                 {
-                    RemoveThreatEvent(threatEvent.Id);
-                }
-            }
-        }
-
-        private void RemoveRelatedForEntities([NotNull] IThreatType threatType)
-        {
-            var entities = _entities?.ToArray();
-            if (entities?.Any() ?? false)
-            {
-                foreach (var entity in entities)
-                {
-                    var events = entity.ThreatEvents?.Where(x => x.ThreatTypeId == threatType.Id).ToArray();
-                    if (events?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in events)
-                        {
-                            entity.RemoveThreatEvent(threatEvent.Id);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void RemoveRelatedForDataFlows([NotNull] IThreatType threatType)
-        {
-            var dataFlows = _dataFlows?.ToArray();
-            if (dataFlows?.Any() ?? false)
-            {
-                foreach (var dataFlow in dataFlows)
-                {
-                    var events = dataFlow.ThreatEvents?.Where(x => x.ThreatTypeId == threatType.Id).ToArray();
-                    if (events?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in events)
-                        {
-                            dataFlow.RemoveThreatEvent(threatEvent.Id);
-                        }
-                    }
+                    container.RemoveThreatEvent(threatEvent.Id);
                 }
             }
         }

@@ -120,8 +120,8 @@ namespace ThreatsManager.Engine.Aspects
                     _scenarios?.Set(scenarios);
                 }
 
-                UndoRedoManager.Attach(scenario);
                 _scenarios?.Get()?.Add(scenario);
+                UndoRedoManager.Attach(scenario);
             }
         }
 

@@ -96,10 +96,8 @@ namespace ThreatsManager.Engine.Aspects
                     _links?.Set(links);
                 }
 
-                UndoRedoManager.Attach(link);
-                if (link is IUndoable undoable)
-                    undoable.IsUndoEnabled = true;
                 links.Add(link);
+                UndoRedoManager.Attach(link);
                 if (Instance is ILinksContainer container)
                 {
                     _linkAdded?.Invoke(container, link);

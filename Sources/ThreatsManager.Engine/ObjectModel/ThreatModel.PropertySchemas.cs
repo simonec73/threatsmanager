@@ -6,6 +6,7 @@ using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Properties;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -60,7 +61,7 @@ namespace ThreatsManager.Engine.ObjectModel
  
                 if (schema.AppliesTo.HasFlag(Scope.DataFlow))
                 {
-                    var list = _dataFlows?.ToArray();
+                    var list = _flows?.ToArray();
                     if (list?.Any() ?? false)
                     {
                         foreach (var current in list)
@@ -321,10 +322,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IPropertySchema propertySchema)
         {
-            if (_schemas == null)
-                _schemas = new AdvisableCollection<IPropertySchema>();
+            using (UndoRedoManager.OpenScope("Add Property Schema"))
+            {
+                if (_schemas == null)
+                    _schemas = new AdvisableCollection<IPropertySchema>();
 
-            _schemas.Add(propertySchema);
+                _schemas.Add(propertySchema);
+                UndoRedoManager.Attach(propertySchema);
+            }
         }
 
         [InitializationRequired]
@@ -377,13 +382,17 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (force || !IsUsed(schema))
             {
-                RemoveRelated(schema);
-
-                result = _schemas.Remove(schema);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Property Schema"))
                 {
-                    UnregisterEvents(schema);
-                    ChildRemoved?.Invoke(schema);
+                    RemoveRelated(schema);
+
+                    result = _schemas.Remove(schema);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(schema);
+                        UnregisterEvents(schema);
+                        ChildRemoved?.Invoke(schema);
+                    }
                 }
             }
 
@@ -397,10 +406,10 @@ namespace ThreatsManager.Engine.ObjectModel
                         .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
                    (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Properties?
                         .Any(t => (t.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Properties?
+                   (_flows?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Properties?
                         .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Properties?
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Properties?
                         .Any(t => (t.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ?? false) ||
                    (_diagrams?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (_groups?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
@@ -413,87 +422,20 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void RemoveRelated([NotNull] IPropertySchema propertySchema)
         {
-            RemoveRelatedForEntities(propertySchema);
-            RemoveRelatedForDataFlows(propertySchema);
-            RemoveRelated(propertySchema, _diagrams);
-            RemoveRelated(propertySchema, _groups);
             RemoveRelated(propertySchema, this);
+            RemoveRelated(propertySchema, _entities);
+            RemoveRelated(propertySchema, _flows);
+            RemoveRelated(propertySchema, _groups);
+            RemoveRelated(propertySchema, _diagrams);
             RemoveRelated(propertySchema, _severities);
-            RemoveRelatedForMitigations(propertySchema);
+            RemoveRelated(propertySchema, _strengths);
+            RemoveRelated(propertySchema, _mitigations);
             RemoveRelated(propertySchema, _actors);
             RemoveRelated(propertySchema, _threatTypes);
-        }
-
-        private void RemoveRelatedForEntities([NotNull] IPropertySchema propertySchema)
-        {
-            var entities = _entities?.ToArray();
-            if (entities?.Any() ?? false)
-            {
-                foreach (var entity in entities)
-                {
-                    RemoveRelated(propertySchema, entity);
-
-                    var events = entity.ThreatEvents?.ToArray();
-                    if (events?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in events)
-                        {
-                            RemoveRelated(propertySchema, threatEvent);
-
-                            var threatEventScenarios = threatEvent.Scenarios?.ToArray();
-                            if (threatEventScenarios?.Any() ?? false)
-                            {
-                                foreach (var scenario in threatEventScenarios)
-                                {
-                                    RemoveRelated(propertySchema, scenario);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void RemoveRelatedForDataFlows([NotNull] IPropertySchema propertySchema)
-        {
-            var dataFlows = _dataFlows?.ToArray();
-            if (dataFlows?.Any() ?? false)
-            {
-                foreach (var dataFlow in dataFlows)
-                {
-                    RemoveRelated(propertySchema, dataFlow);
-
-                    var events = dataFlow.ThreatEvents?.ToArray();
-                    if (events?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in events)
-                        {
-                            RemoveRelated(propertySchema, threatEvent);
-
-                            var threatEventScenarios = threatEvent.Scenarios?.ToArray();
-                            if (threatEventScenarios?.Any() ?? false)
-                            {
-                                foreach (var scenario in threatEventScenarios)
-                                {
-                                    RemoveRelated(propertySchema, scenario);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void RemoveRelatedForMitigations([NotNull] IPropertySchema propertySchema)
-        {
-            var mitigations = _mitigations?.ToArray();
-            if (mitigations?.Any() ?? false)
-            {
-                foreach (var mitigation in mitigations)
-                {
-                    RemoveRelated(propertySchema, mitigation);
-                }
-            }
+            RemoveRelated(propertySchema, _weaknesses);
+            RemoveRelated(propertySchema, _entityTemplates);
+            RemoveRelated(propertySchema, _flowTemplates);
+            RemoveRelated(propertySchema, _trustBoundaryTemplates);
         }
 
         private void RemoveRelated([NotNull] IPropertySchema schema, IEnumerable<IPropertiesContainer> containers)
@@ -519,6 +461,41 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         container.RemoveProperty(property.PropertyType);
                     }
+                }
+
+                if (container is IDiagram diagram)
+                {
+                    RemoveRelated(schema, diagram.Entities);
+                    RemoveRelated(schema, diagram.Groups);
+                    RemoveRelated(schema, diagram.Links);
+                }
+
+                if (container is IThreatEventsContainer teContainer)
+                {
+                    RemoveRelated(schema, teContainer.ThreatEvents);
+                }
+
+                if (container is IThreatEvent threatEvent)
+                {
+                    RemoveRelated(schema, threatEvent.Mitigations);
+                    RemoveRelated(schema, threatEvent.Scenarios);
+                    RemoveRelated(schema, threatEvent.Vulnerabilities);
+                }
+
+                if (container is IThreatType threatType)
+                {
+                    RemoveRelated(schema, threatType.Mitigations);
+                    RemoveRelated(schema, threatType.Weaknesses);
+                }
+
+                if (container is IVulnerability vulnerability)
+                {
+                    RemoveRelated(schema, vulnerability.Mitigations);
+                }
+
+                if (container is IWeakness weakness)
+                {
+                    RemoveRelated(schema, weakness.Mitigations);
                 }
             }
         }

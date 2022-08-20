@@ -176,8 +176,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_diagrams == null)
                     _diagrams = new AdvisableCollection<IDiagram>();
 
-                UndoRedoManager.Attach(diagram);
                 _diagrams.Add(diagram);
+                UndoRedoManager.Attach(diagram);
             }
         }
 

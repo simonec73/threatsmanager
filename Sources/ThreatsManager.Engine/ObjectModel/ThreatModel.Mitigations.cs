@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -37,12 +41,16 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IMitigation mitigation)
         {
-            if (_mitigations == null)
-                _mitigations = new AdvisableCollection<IMitigation>();
+            using (UndoRedoManager.OpenScope("Add Mitigation"))
+            {
+                if (_mitigations == null)
+                    _mitigations = new AdvisableCollection<IMitigation>();
 
-            _mitigations.Add(mitigation);
+                _mitigations.Add(mitigation);
+                UndoRedoManager.Attach(mitigation);
 
-            ChildCreated?.Invoke(mitigation);
+                ChildCreated?.Invoke(mitigation);
+            }
         }
 
         [InitializationRequired]
@@ -68,13 +76,17 @@ namespace ThreatsManager.Engine.ObjectModel
             var mitigation = _mitigations?.FirstOrDefault(x => x.Id == id);
             if (mitigation != null && (force || !IsUsed(mitigation)))
             {
-                RemoveRelated(mitigation);
-
-                result = _mitigations.Remove(mitigation);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Mitigation"))
                 {
-                    UnregisterEvents(mitigation);
-                    ChildRemoved?.Invoke(mitigation);
+                    RemoveRelated(mitigation);
+
+                    result = _mitigations.Remove(mitigation);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(mitigation);
+                        UnregisterEvents(mitigation);
+                        ChildRemoved?.Invoke(mitigation);
+                    }
                 }
             }
 
@@ -99,7 +111,7 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IMitigation mitigation)
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.MitigationId == mitigation.Id) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.MitigationId == mitigation.Id) ?? false) ?? false) ?? false);
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.MitigationId == mitigation.Id) ?? false) ?? false) ?? false);
         }
 
         private void RemoveRelated([NotNull] IMitigation mitigation)
@@ -116,47 +128,63 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var entity in entities)
                 {
-                    var events = entity.ThreatEvents?.ToArray();
-                    if (events?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in events)
-                        {
-                            threatEvent.RemoveMitigation(mitigation.Id);
-                        }
-                    }
+                    RemoveMitigation(entity, mitigation);
                 }
             }
         }
 
         private void RemoveRelatedForDataFlows([NotNull] IMitigation mitigation)
         {
-            var dataFlows = _dataFlows?.ToArray();
+            var dataFlows = _flows?.ToArray();
             if (dataFlows?.Any() ?? false)
             {
                 foreach (var dataFlow in dataFlows)
                 {
-                    var events = dataFlow.ThreatEvents?.ToArray();
-                    if (events?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in events)
-                        {
-                            threatEvent.RemoveMitigation(mitigation.Id);
-                        }
-                    }
+                    RemoveMitigation(dataFlow, mitigation);
                 }
             }
         }
         
         private void RemoveRelatedForThreatTypes([NotNull] IMitigation mitigation)
         {
-            var threatTypes = _threatTypes?.ToArray();
-            if (threatTypes?.Any() ?? false)
+            var tTypes = this.ThreatTypes?.ToArray();
+            if (tTypes?.Any() ?? false)
             {
-                foreach (var threatType in threatTypes)
+                foreach (var tType in tTypes)
                 {
-                    threatType.RemoveMitigation(mitigation.Id);
+                    tType.RemoveMitigation(mitigation.Id);
+
+                    var weaknesses = tType.Weaknesses?.ToArray();
+                    if (weaknesses?.Any() ?? false)
+                    {
+                        foreach (var weakness in weaknesses)
+                        {
+                            weakness.Weakness.RemoveMitigation(mitigation.Id);
+                        }
+                    }
                 }
             }
-        }  
+        }
+
+        private void RemoveMitigation([NotNull] IThreatEventsContainer container, [NotNull] IMitigation mitigation)
+        {
+            var events = container.ThreatEvents?.ToArray();
+            if (events?.Any() ?? false)
+            {
+                foreach (var threatEvent in events)
+                {
+                    threatEvent.RemoveMitigation(mitigation.Id);
+
+                    var vulns = threatEvent.Vulnerabilities?.ToArray();
+                    if (vulns?.Any() ?? false)
+                    {
+                        foreach (var vuln in vulns)
+                        {
+                            vuln.RemoveMitigation(mitigation.Id);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

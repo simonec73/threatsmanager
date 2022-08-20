@@ -106,8 +106,8 @@ namespace ThreatsManager.Engine.Aspects
                     _threatEvents?.Set(threatEvents);
                 }
 
-                UndoRedoManager.Attach(threatEvent);
                 threatEvents.Add(threatEvent);
+                UndoRedoManager.Attach(threatEvent);
                 if (Instance is IThreatEventsContainer container)
                     _threatEventAdded?.Invoke(container, threatEvent);
             }

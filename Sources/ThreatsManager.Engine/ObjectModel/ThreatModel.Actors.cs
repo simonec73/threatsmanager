@@ -42,8 +42,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_actors == null)
                     _actors = new AdvisableCollection<IThreatActor>();
 
-                UndoRedoManager.Attach(actor);
                 _actors.Add(actor);
+                UndoRedoManager.Attach(actor);
                 ChildCreated?.Invoke(actor);
             }
         }
@@ -108,7 +108,7 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IThreatActor actor)
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Actor == actor) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Actor == actor) ?? false) ?? false) ?? false);
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Actor == actor) ?? false) ?? false) ?? false);
         }
 
         private void RemoveRelated([NotNull] IThreatActor actor)
@@ -146,7 +146,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void RemoveRelatedForDataFlows([NotNull] IThreatActor actor)
         {
-            var dataFlows = _dataFlows?.ToArray();
+            var dataFlows = _flows?.ToArray();
             if (dataFlows?.Any() ?? false)
             {
                 foreach (var dataFlow in dataFlows)

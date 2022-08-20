@@ -106,8 +106,8 @@ namespace ThreatsManager.Engine.Aspects
                     _vulnerabilities?.Set(vulnerabilities);
                 }
 
-                UndoRedoManager.Attach(vulnerability);
                 vulnerabilities.Add(vulnerability);
+                UndoRedoManager.Attach(vulnerability);
                 if (Instance is IVulnerabilitiesContainer container)
                     _vulnerabilityAdded?.Invoke(container, vulnerability);
             }

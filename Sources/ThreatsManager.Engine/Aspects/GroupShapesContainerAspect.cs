@@ -104,8 +104,8 @@ namespace ThreatsManager.Engine.Aspects
                     _groups?.Set(groups);
                 }
 
-                UndoRedoManager.Attach(groupShape);
                 groups.Add(groupShape);
+                UndoRedoManager.Attach(groupShape);
                 if (Instance is IGroupShapesContainer container)
                 {
                     _groupShapeAdded?.Invoke(container, groupShape);
@@ -189,7 +189,7 @@ namespace ThreatsManager.Engine.Aspects
                 result = _groups?.Get()?.Remove(groupShape) ?? false;
                 if (result)
                 {
-                    UndoRedoManager.Attach(groupShape);
+                    UndoRedoManager.Detach(groupShape);
                     if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
                         _groupShapeRemoved?.Invoke(container, group);
                 }

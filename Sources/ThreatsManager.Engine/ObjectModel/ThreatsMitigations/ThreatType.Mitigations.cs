@@ -67,8 +67,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             using (UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
             {
-                UndoRedoManager.Attach(mitigation);
                 _mitigations.Add(mitigation);
+                UndoRedoManager.Attach(mitigation);
             }
         }
 

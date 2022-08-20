@@ -88,12 +88,16 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ISeverity severity)
         {
-            if (_severities == null)
-                _severities = new AdvisableCollection<ISeverity>();
+            using (UndoRedoManager.OpenScope("Add Severity"))
+            {
+                if (_severities == null)
+                    _severities = new AdvisableCollection<ISeverity>();
 
-            _severities.Add(severity);
+                _severities.Add(severity);
+                UndoRedoManager.Attach(severity);
 
-            _severityCreated?.Invoke(severity);
+                _severityCreated?.Invoke(severity);
+            }
         }
 
         [InitializationRequired]
@@ -132,11 +136,15 @@ namespace ThreatsManager.Engine.ObjectModel
             var definition = GetSeverity(id);
             if (definition != null && !IsUsed(definition))
             {
-                result = _severities.Remove(definition);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Severity"))
                 {
-                    UnregisterEvents(definition);
-                    _severityRemoved?.Invoke(definition);
+                    result = _severities.Remove(definition);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(definition);
+                        UnregisterEvents(definition);
+                        _severityRemoved?.Invoke(definition);
+                    }
                 }
             }
 
@@ -155,11 +163,20 @@ namespace ThreatsManager.Engine.ObjectModel
         
         private bool IsUsed([NotNull] ISeverity severity)
         {
-            return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+            return (_threatEvents?.Any(y => y.Severity == severity) ?? false) ||
+                   (_threatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ||
+                   (_threatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Severity == severity) ?? false) ?? false) ||
+                   (_vulnerabilities?.Any(y => y.Severity == severity) ?? false) || 
+                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
                    (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
-                   (_threatTypes?.Any(x => x.Severity == severity) ?? false);
+                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
+                   (_entities?.Any(x => x.Vulnerabilities?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.Vulnerabilities?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+                   (_threatTypes?.Any(x => x.Severity == severity) ?? false) ||
+                   (_weaknesses?.Any(x => x.Severity == severity) ?? false);
         }
     }
 }

@@ -31,15 +31,16 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
         {
-            if (trustBoundaryTemplate is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
+            using (UndoRedoManager.OpenScope("Add Trust Boundary Template"))
+            {
+                if (_trustBoundaryTemplates == null)
+                    _trustBoundaryTemplates = new AdvisableCollection<ITrustBoundaryTemplate>();
 
-            if (_trustBoundaryTemplates == null)
-                _trustBoundaryTemplates = new AdvisableCollection<ITrustBoundaryTemplate>();
+                _trustBoundaryTemplates.Add(trustBoundaryTemplate);
+                UndoRedoManager.Attach(trustBoundaryTemplate);
 
-            _trustBoundaryTemplates.Add(trustBoundaryTemplate);
- 
-            ChildCreated?.Invoke(trustBoundaryTemplate);
+                ChildCreated?.Invoke(trustBoundaryTemplate);
+            }
         }
 
         [InitializationRequired]
@@ -64,10 +65,14 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (template != null)
             {
-                result = _trustBoundaryTemplates.Remove(template);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Trust Boundary Template"))
                 {
-                    ChildRemoved?.Invoke(template);
+                    result = _trustBoundaryTemplates.Remove(template);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(template);
+                        ChildRemoved?.Invoke(template);
+                    }
                 }
             }
 

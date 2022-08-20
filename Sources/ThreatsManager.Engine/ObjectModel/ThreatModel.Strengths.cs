@@ -88,12 +88,16 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IStrength strength)
         {
-            if (_strengths == null)
-                _strengths = new AdvisableCollection<IStrength>();
+            using (UndoRedoManager.OpenScope("Add Strength"))
+            {
+                if (_strengths == null)
+                    _strengths = new AdvisableCollection<IStrength>();
 
-            _strengths.Add(strength);
-            
-            _strengthCreated?.Invoke(strength);
+                _strengths.Add(strength);
+                UndoRedoManager.Attach(strength);
+
+                _strengthCreated?.Invoke(strength);
+            }
         }
 
         [InitializationRequired]
@@ -131,10 +135,14 @@ namespace ThreatsManager.Engine.ObjectModel
             var definition = GetStrength(id);
             if (definition != null && !IsUsed(definition))
             {
-                result = _strengths.Remove(definition);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Strength"))
                 {
-                    _strengthRemoved?.Invoke(definition);
+                    result = _strengths.Remove(definition);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(definition);
+                        _strengthRemoved?.Invoke(definition);
+                    }
                 }
             }
 
@@ -157,8 +165,13 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IStrength strength)
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
-                   (_threatTypes?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false);
+                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Mitigations?.Any(t => t.StrengthId == strength.Id) ?? false) ?? false) ?? false) ?? false) || 
+                   (_entities?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Mitigations?.Any(t => t.StrengthId == strength.Id) ?? false) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_threatTypes?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
+                   (_weaknesses?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false);
         }
     }
 }

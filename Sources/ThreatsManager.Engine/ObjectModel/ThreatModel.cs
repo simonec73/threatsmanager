@@ -282,7 +282,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = _entities?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?
                     .ThreatEvents?.FirstOrDefault(x => x.Id == id);
             if (result == null)
-                result = _dataFlows?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?
+                result = _flows?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?
                     .ThreatEvents?.FirstOrDefault(x => x.Id == id);
 
             return result ?? GetThreatActor(id);
@@ -315,7 +315,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (result == null)
             {
-                var dataFlows = _dataFlows?.ToArray();
+                var dataFlows = _flows?.ToArray();
                 if (dataFlows?.Any() ?? false)
                 {
                     foreach (var dataFlow in dataFlows)
@@ -352,7 +352,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (result == null)
             {
-                var dataFlows = _dataFlows?.ToArray();
+                var dataFlows = _flows?.ToArray();
                 if (dataFlows?.Any() ?? false)
                 {
                     foreach (var dataFlow in dataFlows)
@@ -451,7 +451,7 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_entities?.Sum(x => x.ThreatEvents?
                                             .Where(y => y.Severity != null && y.SeverityId == severityId)
                                             .Count() ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.ThreatEvents?
+                   (_flows?.Sum(x => x.ThreatEvents?
                                              .Where(y => y.Severity != null && y.SeverityId == severityId)
                                              .Count() ?? 0) ?? 0);
         }
@@ -486,8 +486,8 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_vulnerabilities?.Sum(x => x.Mitigations?.Where(y => y.Status == status).Count() ?? 0) ?? 0) +
                    (_entities?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
                    (_entities?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0);
+                   (_flows?.Sum(x => x.ThreatEvents?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0) +
+                   (_flows?.Sum(x => x.Vulnerabilities?.Sum(y => y.Mitigations?.Where(z => z.Status == status).Count() ?? 0) ?? 0) ?? 0);
         }
 
         public IEnumerable<IThreatEvent> GetThreatEvents()
@@ -501,7 +501,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             GetThreatEvents(this, threatType, threatEvents);
             GetThreatEvents(_entities, threatType, threatEvents);
-            GetThreatEvents(_dataFlows, threatType, threatEvents);
+            GetThreatEvents(_flows, threatType, threatEvents);
 
             return threatEvents;
         }
@@ -514,8 +514,8 @@ namespace ThreatsManager.Engine.ObjectModel
             GetMitigations(_vulnerabilities?.Select(x => x.Mitigations), mitigations);
             GetMitigations(_entities?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
             GetMitigations(_entities?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
-            GetMitigations(_dataFlows?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
-            GetMitigations(_dataFlows?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
+            GetMitigations(_flows?.Select(x => x.ThreatEvents?.Select(y => y.Mitigations)), mitigations);
+            GetMitigations(_flows?.Select(x => x.Vulnerabilities?.Select(y => y.Mitigations)), mitigations);
 
             return mitigations;
         }
@@ -583,7 +583,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             GetMitigations(this, mitigation, result);
             GetMitigations(_entities, mitigation, result);
-            GetMitigations(_dataFlows, mitigation, result);
+            GetMitigations(_flows, mitigation, result);
 
             return result;
         }
@@ -594,7 +594,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             GetThreatTypes(_threatEvents, threatTypes);
             GetThreatTypes(_entities?.Select(x => x.ThreatEvents), threatTypes);
-            GetThreatTypes(_dataFlows?.Select(x => x.ThreatEvents), threatTypes);
+            GetThreatTypes(_flows?.Select(x => x.ThreatEvents), threatTypes);
 
             return threatTypes.Count();
         }
@@ -627,7 +627,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             return (_threatEvents?.Count() ?? 0) +
                    (_entities?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0);
+                   (_flows?.Sum(x => x.ThreatEvents?.Count() ?? 0) ?? 0);
         }
 
         private void GetThreatEvents(IEnumerable<IThreatEventsContainer> containers,
@@ -797,7 +797,7 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_entities?.Sum(x => x.Vulnerabilities?
                        .Where(y => y.Severity != null && y.SeverityId == severityId)
                        .Count() ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.Vulnerabilities?
+                   (_flows?.Sum(x => x.Vulnerabilities?
                        .Where(y => y.Severity != null && y.SeverityId == severityId)
                        .Count() ?? 0) ?? 0);
         }
@@ -837,7 +837,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             GetVulnerabilities(this, weakness, vulnerabilities);
             GetVulnerabilities(_entities, weakness, vulnerabilities);
-            GetVulnerabilities(_dataFlows, weakness, vulnerabilities);
+            GetVulnerabilities(_flows, weakness, vulnerabilities);
 
             return vulnerabilities;
         }
@@ -853,7 +853,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             GetMitigations(this, mitigation, result);
             GetMitigations(_entities, mitigation, result);
-            GetMitigations(_dataFlows, mitigation, result);
+            GetMitigations(_flows, mitigation, result);
 
             return result;
         }
@@ -864,7 +864,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             GetWeaknesses(_vulnerabilities, weaknesses);
             GetWeaknesses(_entities?.Select(x => x.Vulnerabilities), weaknesses);
-            GetWeaknesses(_dataFlows?.Select(x => x.Vulnerabilities), weaknesses);
+            GetWeaknesses(_flows?.Select(x => x.Vulnerabilities), weaknesses);
 
             return weaknesses.Count();
         }
@@ -897,7 +897,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             return (_vulnerabilities?.Count() ?? 0) +
                    (_entities?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0) +
-                   (_dataFlows?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0);
+                   (_flows?.Sum(x => x.Vulnerabilities?.Count() ?? 0) ?? 0);
         }
 
         private void GetVulnerabilities(IEnumerable<IVulnerabilitiesContainer> containers,
@@ -1360,12 +1360,12 @@ namespace ThreatsManager.Engine.ObjectModel
             }
             AddIdentities(known, def.AllEntities, def.Entities, _entities);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllDataFlows, def.DataFlows, _dataFlows))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllDataFlows, def.DataFlows, _flows))
             {
                 result = false;
                 r.Add("One or more Flows are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllDataFlows, def.DataFlows, _dataFlows);              
+            AddIdentities(known, def.AllDataFlows, def.DataFlows, _flows);              
 
             if (!Check(known, knownSeverities, knownStrengths, def.AllDiagrams, def.Diagrams, _diagrams))
             {

@@ -4,12 +4,10 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
 using PostSharp.Patterns.Model;
-using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 
@@ -20,25 +18,25 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
-    [ThreatEventChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
-    public class ThreatEventVulnerability : IThreatEventVulnerability, IInitializableObject
+    public class ThreatTypeWeakness : IThreatTypeWeakness, IInitializableObject
     {
-        public ThreatEventVulnerability()
+        public ThreatTypeWeakness()
         {
 
         }
 
-        public ThreatEventVulnerability([NotNull] IThreatEvent threatEvent, [NotNull] IVulnerability vulnerability) : this()
+        public ThreatTypeWeakness([NotNull] IThreatModel model, [NotNull] IThreatType threatType, 
+            [NotNull] IWeakness weakness) : this()
         {
-            _model = threatEvent.Model;
-            _threatEvent = threatEvent;
-            _vulnerability = vulnerability;
+            _model = model;
+            _threatType = threatType;
+            _weakness = weakness;
         }
 
-        public bool IsInitialized => Model != null && _threatEventId != Guid.Empty && _vulnerabilityId != Guid.Empty;
+        public bool IsInitialized => Model != null && _threatTypeId != Guid.Empty && _weaknessId != Guid.Empty;
 
         #region Default implementation.
         [Reference]
@@ -55,6 +53,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return false;
         }
+
         public IProperty GetProperty(IPropertyType propertyType)
         {
             return null;
@@ -82,10 +81,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public void Apply(IPropertySchema schema)
         {
         }
-
-        [Reference]
-        [field: NotRecorded]
-        public IThreatEvent ThreatEvent { get; }
         #endregion
 
         #region Additional placeholders required.
@@ -99,55 +94,50 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Child]
         [JsonProperty("properties")]
         private IList<IProperty> _properties { get; set; }
-        [JsonProperty("threatEventId")]
-        private Guid _threatEventId { get; set; }
-        [Reference]
-        [field: NotRecorded]
-        [field: UpdateId("Id", "_threatEventId")]
-        private IThreatEvent _threatEvent { get; set; }
         #endregion
 
         #region Specific implementation.
-        public Scope PropertiesScope => Scope.ThreatEventVulnerability;
+        public Scope PropertiesScope => Scope.ThreatTypeMitigation;
 
-        [JsonProperty("vulnerabilityId")]
+        [JsonProperty("threatTypeId")]
         [NotRecorded]
-        private Guid _vulnerabilityId;
+        private Guid _threatTypeId;
 
-        public Guid VulnerabilityId => _vulnerabilityId;
+        public Guid ThreatTypeId => _threatTypeId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_vulnerabilityId")]
-        private IVulnerability _vulnerability;
+        private IThreatType _threatType;
+
+        [InitializationRequired]
+        [IgnoreAutoChangeNotification]
+        public IThreatType ThreatType => _threatType ?? (_threatType = Model.GetThreatType(_threatTypeId));
+
+        [JsonProperty("weaknessId")]
+        [NotRecorded]
+        private Guid _weaknessId;
+
+        public Guid WeaknessId => _weaknessId;
+
+        [Reference]
+        [NotRecorded]
+        private IWeakness _weakness;
 
         [IgnoreAutoChangeNotification]
-        public IVulnerability Vulnerability
+        public IWeakness Weakness => _weakness ?? (_weakness = Model.GetWeakness(_weaknessId));
+
+        public IThreatTypeWeakness Clone(IThreatTypeWeaknessesContainer container)
         {
-            get
+            ThreatTypeWeakness result = null;
+
+            if (container is IThreatModelChild child && child.Model is IThreatModel model)
             {
-                if (_vulnerability == null)
+                result = new ThreatTypeWeakness()
                 {
-                    _vulnerability = Model?.FindVulnerability(_vulnerabilityId);
-                }
-
-                return _vulnerability;
-            }
-        }
-
-        public IThreatEventVulnerability Clone(IThreatEventVulnerabilitiesContainer container)
-        {
-            ThreatEventVulnerability result = null;
-
-            if (container is IThreatEvent threatEvent && threatEvent.Model is IThreatModel model)
-            {
-                result = new ThreatEventVulnerability
-                {
-                    _threatEventId = threatEvent.Id,
-                    _vulnerabilityId = VulnerabilityId,
-                    _model = model
+                    _model = model,
+                    _threatTypeId = _threatTypeId,
+                    _weaknessId = _weaknessId
                 };
-                this.CloneProperties(result);
                 container.Add(result);
             }
 
@@ -156,7 +146,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Vulnerability.Name ?? "<undefined>";
+            return Weakness?.Name;
         }
         #endregion
     }

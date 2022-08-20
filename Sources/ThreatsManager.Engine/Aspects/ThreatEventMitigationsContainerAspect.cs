@@ -95,8 +95,8 @@ namespace ThreatsManager.Engine.Aspects
                     _mitigations?.Set(mitigations);
                 }
 
-                UndoRedoManager.Attach(mitigation);
                 mitigations.Add(mitigation);
+                UndoRedoManager.Attach(mitigation);
                 if (Instance is IThreatEventMitigationsContainer container)
                 {
                     _threatEventMitigationAdded?.Invoke(container, mitigation);

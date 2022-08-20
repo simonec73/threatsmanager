@@ -43,12 +43,16 @@ namespace ThreatsManager.Engine.ObjectModel
             if (entityTemplate is IThreatModelChild child && child.Model != this)
                 throw new ArgumentException();
 
-            if (_entityTemplates == null)
-                _entityTemplates = new AdvisableCollection<IEntityTemplate>();
+            using (UndoRedoManager.OpenScope("Add Entity Template"))
+            {
+                if (_entityTemplates == null)
+                    _entityTemplates = new AdvisableCollection<IEntityTemplate>();
 
-            _entityTemplates.Add(entityTemplate);
- 
-            ChildCreated?.Invoke(entityTemplate);
+                _entityTemplates.Add(entityTemplate);
+                UndoRedoManager.Attach(entityTemplate);
+
+                ChildCreated?.Invoke(entityTemplate);
+            }
         }
 
         [InitializationRequired]
@@ -140,10 +144,14 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (template != null)
             {
-                result = _entityTemplates.Remove(template);
-                if (result)
+                using (UndoRedoManager.OpenScope("Remove Entity Template"))
                 {
-                    ChildRemoved?.Invoke(template);
+                    result = _entityTemplates.Remove(template);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(template);
+                        ChildRemoved?.Invoke(template);
+                    }
                 }
             }
 

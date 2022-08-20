@@ -174,11 +174,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         _properties?.Set(properties);
                     }
                     result.StringValue = value;
-                    UndoRedoManager.Attach(result);
-                    if (result is IUndoable undoable)
-                        undoable.IsUndoEnabled = true;
 
                     properties?.Add(result);
+                    UndoRedoManager.Attach(result);
 
                     if (Instance is IPropertiesContainer container)
                         _propertyAdded?.Invoke(container, result);

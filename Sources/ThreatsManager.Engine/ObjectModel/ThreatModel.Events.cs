@@ -44,9 +44,9 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
 
-            if (_dataFlows?.Any() ?? false)
+            if (_flows?.Any() ?? false)
             {
-                foreach (var dataFlow in _dataFlows)
+                foreach (var dataFlow in _flows)
                 {
                     RegisterEvents(dataFlow);
                 }
@@ -131,9 +131,9 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
 
-            if (_dataFlows?.Any() ?? false)
+            if (_flows?.Any() ?? false)
             {
-                foreach (var dataFlow in _dataFlows)
+                foreach (var dataFlow in _flows)
                 {
                     UnregisterEvents(dataFlow);
                 }

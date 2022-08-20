@@ -89,8 +89,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_entities == null)
                     _entities = new AdvisableCollection<IEntity>();
 
-                UndoRedoManager.Attach(entity);
                 _entities.Add(entity);
+                UndoRedoManager.Attach(entity);
             }
         }
 
@@ -241,7 +241,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
 
-            var dataFlows = _dataFlows?.Where(x => x.SourceId == entity.Id || x.TargetId == entity.Id).ToArray();
+            var dataFlows = _flows?.Where(x => x.SourceId == entity.Id || x.TargetId == entity.Id).ToArray();
             if (dataFlows?.Any() ?? false)
             {
                 foreach (var flow in dataFlows)

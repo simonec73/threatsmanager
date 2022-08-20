@@ -52,21 +52,21 @@ namespace ThreatsManager.Engine.ObjectModel
 
         [Child]
         [JsonProperty("dataFlows")]
-        private IList<IDataFlow> _dataFlows;
+        private IList<IDataFlow> _flows;
 
         [IgnoreAutoChangeNotification]
-        public IEnumerable<IDataFlow> DataFlows => _dataFlows?.AsEnumerable();
+        public IEnumerable<IDataFlow> DataFlows => _flows?.AsEnumerable();
 
         [InitializationRequired]
         public IDataFlow GetDataFlow(Guid id)
         {
-            return _dataFlows?.FirstOrDefault(x => x.Id == id);
+            return _flows?.FirstOrDefault(x => x.Id == id);
         }
 
         [InitializationRequired]
         public IDataFlow GetDataFlow(Guid sourceId, Guid targetId)
         {
-            return _dataFlows?.FirstOrDefault(x => (x.SourceId == sourceId) && (x.TargetId == targetId));
+            return _flows?.FirstOrDefault(x => (x.SourceId == sourceId) && (x.TargetId == targetId));
         }
 
         [InitializationRequired]
@@ -77,11 +77,11 @@ namespace ThreatsManager.Engine.ObjectModel
 
             using (UndoRedoManager.OpenScope("Add Data Flow"))
             {
-                if (_dataFlows == null)
-                    _dataFlows = new AdvisableCollection<IDataFlow>();
+                if (_flows == null)
+                    _flows = new AdvisableCollection<IDataFlow>();
 
+                _flows.Add(dataFlow);
                 UndoRedoManager.Attach(dataFlow);
-                _dataFlows.Add(dataFlow);
             }
         }
 
@@ -90,7 +90,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             IDataFlow result = null;
 
-            if (!(_dataFlows?.Any(x => (x.SourceId == sourceId) && (x.TargetId == targetId)) ?? false))
+            if (!(_flows?.Any(x => (x.SourceId == sourceId) && (x.TargetId == targetId)) ?? false))
             {
                 result = new DataFlow(name, sourceId, targetId);
                 Add(result);
@@ -140,7 +140,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     flow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
                     flow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
 
-                    result = _dataFlows.Remove(flow);
+                    result = _flows.Remove(flow);
                     if (result)
                     {
                         UndoRedoManager.Detach(flow);

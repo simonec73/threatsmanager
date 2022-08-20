@@ -331,14 +331,14 @@ namespace ThreatsManager.Utilities
                 Attach(ttmContainer.Mitigations);
             }
 
+            if (item is IThreatTypeWeaknessesContainer ttwContainer)
+            {
+                Attach(ttwContainer.Weaknesses);
+            }
+
             if (item is IThreatEventScenariosContainer tesContainer)
             {
                 Attach(tesContainer.Scenarios);
-            }
-
-            if (item is IThreatEventVulnerabilitiesContainer tevContainer)
-            {
-                Attach(tevContainer.Vulnerabilities);
             }
 
             if (item is IWeaknessMitigationsContainer wmContainer)
@@ -368,11 +368,20 @@ namespace ThreatsManager.Utilities
             {
                 foreach (var item in items)
                 {
-                    RecordingServices.DefaultRecorder.Detach(item);
-                    if (item is IUndoable undoable)
-                        undoable.IsUndoEnabled = false;
+                    try
+                    {
+                        if (item is IUndoable undoable && undoable.IsUndoEnabled)
+                        {
+                            RecordingServices.DefaultRecorder.Detach(item);
+                            undoable.IsUndoEnabled = false;
 
-                    DetachContainer(item);
+                            DetachContainer(item);
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Ignore this exception because it most probably is due to the fact that the object is not tracked by the Recorder.
+                    }
                 }
             }
         }
@@ -409,14 +418,14 @@ namespace ThreatsManager.Utilities
                 Detach(ttmContainer.Mitigations);
             }
 
+            if (item is IThreatTypeWeaknessesContainer ttwContainer)
+            {
+                Detach(ttwContainer.Weaknesses);
+            }
+
             if (item is IThreatEventScenariosContainer tesContainer)
             {
                 Detach(tesContainer.Scenarios);
-            }
-
-            if (item is IThreatEventVulnerabilitiesContainer tevContainer)
-            {
-                Detach(tevContainer.Vulnerabilities);
             }
 
             if (item is IWeaknessMitigationsContainer wmContainer)

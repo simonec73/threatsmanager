@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.10.1" />
-    <PackageReference Include="PostSharp" Version="6.10.14" />
+    <PackageReference Include="PostSharp" Version="6.10.15" />
   </ItemGroup>
 
   <ItemGroup>
