@@ -97,7 +97,7 @@ namespace ThreatsManager.Engine.Aspects
             if (entityShape == null)
                 throw new ArgumentNullException(nameof(entityShape));
 
-            using (UndoRedoManager.OpenScope("Add shape for entity"))
+            using (var scope = UndoRedoManager.OpenScope("Add shape for entity"))
             {
                 var entities = _entities?.Get();
                 if (entities == null)
@@ -108,6 +108,8 @@ namespace ThreatsManager.Engine.Aspects
 
                 entities.Add(entityShape);
                 UndoRedoManager.Attach(entityShape);
+                scope.Complete();
+
                 if (Instance is IEntityShapesContainer container)
                 { 
                     _entityShapeAdded?.Invoke(container, entityShape);
@@ -185,12 +187,14 @@ namespace ThreatsManager.Engine.Aspects
 
             bool result;
 
-            using (UndoRedoManager.OpenScope("Remove shape for entity"))
+            using (var scope = UndoRedoManager.OpenScope("Remove shape for entity"))
             {
                 result = _entities?.Get()?.Remove(entityShape) ?? false;
                 if (result)
                 {
                     UndoRedoManager.Detach(entityShape);
+                    scope.Complete();
+
                     if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
                         _entityShapeRemoved?.Invoke(container, entity);
                 }

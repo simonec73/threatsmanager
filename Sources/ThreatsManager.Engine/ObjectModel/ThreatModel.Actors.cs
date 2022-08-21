@@ -37,13 +37,15 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatActor actor)
         {
-            using (UndoRedoManager.OpenScope("Add Threat Actor"))
+            using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
             { 
                 if (_actors == null)
                     _actors = new AdvisableCollection<IThreatActor>();
 
                 _actors.Add(actor);
                 UndoRedoManager.Attach(actor);
+                scope.Complete();
+
                 ChildCreated?.Invoke(actor);
             }
         }
@@ -88,7 +90,7 @@ namespace ThreatsManager.Engine.ObjectModel
             var actor = GetThreatActor(id);
             if (actor != null && (force || !IsUsed(actor)))
             {
-                using (UndoRedoManager.OpenScope("Remove Threat Actor"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Threat Actor"))
                 {
                     RemoveRelated(actor);
 
@@ -96,9 +98,12 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(actor);
+
                         UnregisterEvents(actor);
                         ChildRemoved?.Invoke(actor);
                     }
+                        
+                    scope.Complete();
                 }
             }
 

@@ -37,13 +37,14 @@ namespace ThreatsManager.Engine.ObjectModel
             if (group is IThreatModelChild child && child.Model != this)
                 throw new ArgumentException();
 
-            using (UndoRedoManager.OpenScope("Add Group"))
+            using (var scope = UndoRedoManager.OpenScope("Add Group"))
             {
                 if (_groups == null)
                     _groups = new AdvisableCollection<IGroup>();
 
                 _groups.Add(group);
                 UndoRedoManager.Attach(group);
+                scope.Complete();
             }
         }
 
@@ -145,7 +146,7 @@ namespace ThreatsManager.Engine.ObjectModel
             var item = GetGroup(id);
             if (item != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Group"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Group"))
                 {
                     var newParent = (item as IGroupElement)?.Parent;
 
@@ -171,9 +172,12 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(item);
+
                         UnregisterEvents(item);
                         ChildRemoved?.Invoke(item);
                     }
+
+                    scope.Complete();
                 }
             }
 

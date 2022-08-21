@@ -88,13 +88,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ISeverity severity)
         {
-            using (UndoRedoManager.OpenScope("Add Severity"))
+            using (var scope = UndoRedoManager.OpenScope("Add Severity"))
             {
                 if (_severities == null)
                     _severities = new AdvisableCollection<ISeverity>();
 
                 _severities.Add(severity);
                 UndoRedoManager.Attach(severity);
+                scope.Complete();
 
                 _severityCreated?.Invoke(severity);
             }
@@ -136,12 +137,14 @@ namespace ThreatsManager.Engine.ObjectModel
             var definition = GetSeverity(id);
             if (definition != null && !IsUsed(definition))
             {
-                using (UndoRedoManager.OpenScope("Remove Severity"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Severity"))
                 {
                     result = _severities.Remove(definition);
                     if (result)
                     {
                         UndoRedoManager.Detach(definition);
+                        scope.Complete();
+
                         UnregisterEvents(definition);
                         _severityRemoved?.Invoke(definition);
                     }

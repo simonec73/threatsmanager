@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
     <FileVersion>1.6.0.0</FileVersion>
     <Version>1.6.0</Version>
+    <NoWarn>$(NoWarn);NU1505</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">

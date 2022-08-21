@@ -152,7 +152,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         {
             IProperty result = null;
 
-            using (UndoRedoManager.OpenScope("Add property"))
+            using (var scope = UndoRedoManager.OpenScope("Add property"))
             {
                 var associatedClass = propertyType.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>()
                     .FirstOrDefault();
@@ -177,6 +177,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
                     properties?.Add(result);
                     UndoRedoManager.Attach(result);
+                    scope.Complete();
 
                     if (Instance is IPropertiesContainer container)
                         _propertyAdded?.Invoke(container, result);
@@ -219,21 +220,22 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             var properties = _properties?.Get()?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
             if (properties?.Any() ?? false) 
             {
-                using (UndoRedoManager.OpenScope("Remove property"))
+                using (var scope = UndoRedoManager.OpenScope("Remove property"))
                 {
                     foreach (var property in properties)
                     {
                         if (_properties?.Get()?.Remove(property) ?? false)
                         {
                             UndoRedoManager.Detach(property);
-                            if (property is IUndoable undoable)
-                                undoable.IsUndoEnabled = false;
+
                             if (Instance is IPropertiesContainer container)
                                 _propertyRemoved?.Invoke(container, property);
                             result = true;
                         }
                     }
-                }
+                             
+                    scope.Complete();
+               }
             }
 
             return result;
@@ -246,19 +248,20 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
             if (properties?.Any() ?? false)
             {
-                using (UndoRedoManager.OpenScope("Remove properties"))
+                using (var scope = UndoRedoManager.OpenScope("Remove properties"))
                 {
                     foreach (var property in properties)
                     {
                         UndoRedoManager.Detach(property);
-                        if (property is IUndoable undoable)
-                            undoable.IsUndoEnabled = false;
+
                         if (Instance is IPropertiesContainer container)
                             _propertyRemoved?.Invoke(container, property);
                     }
 
                     _properties?.Get()?.Clear();
-                }
+                         
+                    scope.Complete();
+               }
             }
         }
 

@@ -95,7 +95,7 @@ namespace ThreatsManager.Engine.Aspects
             if (groupShape == null)
                 throw new ArgumentNullException(nameof(groupShape));
 
-            using (UndoRedoManager.OpenScope("Add shape for group"))
+            using (var scope = UndoRedoManager.OpenScope("Add shape for group"))
             {
                 var groups = _groups?.Get();
                 if (groups == null)
@@ -106,6 +106,8 @@ namespace ThreatsManager.Engine.Aspects
 
                 groups.Add(groupShape);
                 UndoRedoManager.Attach(groupShape);
+                scope.Complete();
+
                 if (Instance is IGroupShapesContainer container)
                 {
                     _groupShapeAdded?.Invoke(container, groupShape);
@@ -184,12 +186,14 @@ namespace ThreatsManager.Engine.Aspects
             
             bool result;
 
-            using (UndoRedoManager.OpenScope("Remove shape for group"))
+            using (var scope = UndoRedoManager.OpenScope("Remove shape for group"))
             {
                 result = _groups?.Get()?.Remove(groupShape) ?? false;
                 if (result)
                 {
                     UndoRedoManager.Detach(groupShape);
+                    scope.Complete();
+
                     if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
                         _groupShapeRemoved?.Invoke(container, group);
                 }

@@ -322,13 +322,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IPropertySchema propertySchema)
         {
-            using (UndoRedoManager.OpenScope("Add Property Schema"))
+            using (var scope = UndoRedoManager.OpenScope("Add Property Schema"))
             {
                 if (_schemas == null)
                     _schemas = new AdvisableCollection<IPropertySchema>();
 
                 _schemas.Add(propertySchema);
                 UndoRedoManager.Attach(propertySchema);
+                scope.Complete();
             }
         }
 
@@ -382,7 +383,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (force || !IsUsed(schema))
             {
-                using (UndoRedoManager.OpenScope("Remove Property Schema"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Property Schema"))
                 {
                     RemoveRelated(schema);
 
@@ -393,6 +394,8 @@ namespace ThreatsManager.Engine.ObjectModel
                         UnregisterEvents(schema);
                         ChildRemoved?.Invoke(schema);
                     }
+
+                    scope.Complete();
                 }
             }
 

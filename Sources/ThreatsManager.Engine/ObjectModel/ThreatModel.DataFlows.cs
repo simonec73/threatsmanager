@@ -75,13 +75,14 @@ namespace ThreatsManager.Engine.ObjectModel
             if (dataFlow is IThreatModelChild child && child.Model != this)
                 throw new ArgumentException();
 
-            using (UndoRedoManager.OpenScope("Add Data Flow"))
+            using (var scope = UndoRedoManager.OpenScope("Add Data Flow"))
             {
                 if (_flows == null)
                     _flows = new AdvisableCollection<IDataFlow>();
 
                 _flows.Add(dataFlow);
                 UndoRedoManager.Attach(dataFlow);
+                scope.Complete();
             }
         }
 
@@ -134,7 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (flow != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Data Flow"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Data Flow"))
                 {
                     RemoveRelated(flow);
                     flow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
@@ -144,9 +145,12 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(flow);
+
                         UnregisterEvents(flow);
                         ChildRemoved?.Invoke(flow);
                     }
+                        
+                    scope.Complete();
                 }
             }
 

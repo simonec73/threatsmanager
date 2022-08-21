@@ -41,13 +41,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IMitigation mitigation)
         {
-            using (UndoRedoManager.OpenScope("Add Mitigation"))
+            using (var scope = UndoRedoManager.OpenScope("Add Mitigation"))
             {
                 if (_mitigations == null)
                     _mitigations = new AdvisableCollection<IMitigation>();
 
                 _mitigations.Add(mitigation);
                 UndoRedoManager.Attach(mitigation);
+                scope.Complete();
 
                 ChildCreated?.Invoke(mitigation);
             }
@@ -76,7 +77,7 @@ namespace ThreatsManager.Engine.ObjectModel
             var mitigation = _mitigations?.FirstOrDefault(x => x.Id == id);
             if (mitigation != null && (force || !IsUsed(mitigation)))
             {
-                using (UndoRedoManager.OpenScope("Remove Mitigation"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Mitigation"))
                 {
                     RemoveRelated(mitigation);
 
@@ -87,6 +88,8 @@ namespace ThreatsManager.Engine.ObjectModel
                         UnregisterEvents(mitigation);
                         ChildRemoved?.Invoke(mitigation);
                     }
+
+                    scope.Complete();
                 }
             }
 

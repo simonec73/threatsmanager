@@ -171,13 +171,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IDiagram diagram)
         {
-            using (UndoRedoManager.OpenScope("Add Diagram"))
+            using (var scope = UndoRedoManager.OpenScope("Add Diagram"))
             {
                 if (_diagrams == null)
                     _diagrams = new AdvisableCollection<IDiagram>();
 
                 _diagrams.Add(diagram);
                 UndoRedoManager.Attach(diagram);
+                scope.Complete();
             }
         }
 
@@ -230,12 +231,14 @@ namespace ThreatsManager.Engine.ObjectModel
             var diagram = GetDiagram(id);
             if (diagram != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Diagram"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Diagram"))
                 {
                     result = _diagrams.Remove(diagram);
                     if (result)
                     {
                         UndoRedoManager.Detach(diagram);
+                        scope.Complete();
+
                         UnregisterEvents(diagram);
                         ChildRemoved?.Invoke(diagram);
                     }

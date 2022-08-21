@@ -97,7 +97,7 @@ namespace ThreatsManager.Engine.Aspects
             if (vulnerability is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
-            using (UndoRedoManager.OpenScope("Add Vulnerability"))
+            using (var scope = UndoRedoManager.OpenScope("Add Vulnerability"))
             {
                 var vulnerabilities = _vulnerabilities?.Get();
                 if (vulnerabilities == null)
@@ -108,6 +108,8 @@ namespace ThreatsManager.Engine.Aspects
 
                 vulnerabilities.Add(vulnerability);
                 UndoRedoManager.Attach(vulnerability);
+                scope.Complete();
+
                 if (Instance is IVulnerabilitiesContainer container)
                     _vulnerabilityAdded?.Invoke(container, vulnerability);
             }
@@ -143,12 +145,14 @@ namespace ThreatsManager.Engine.Aspects
             var vulnerability = GetVulnerability(id);
             if (vulnerability != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Vulnerability"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Vulnerability"))
                 {
                     result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
                     if (result)
                     {
                         UndoRedoManager.Detach(vulnerability);
+                        scope.Complete();
+
                         if (Instance is IVulnerabilitiesContainer container)
                             _vulnerabilityRemoved?.Invoke(container, vulnerability);
                     }

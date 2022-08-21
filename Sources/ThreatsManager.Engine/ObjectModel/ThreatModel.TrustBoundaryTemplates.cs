@@ -31,13 +31,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
         {
-            using (UndoRedoManager.OpenScope("Add Trust Boundary Template"))
+            using (var scope = UndoRedoManager.OpenScope("Add Trust Boundary Template"))
             {
                 if (_trustBoundaryTemplates == null)
                     _trustBoundaryTemplates = new AdvisableCollection<ITrustBoundaryTemplate>();
 
                 _trustBoundaryTemplates.Add(trustBoundaryTemplate);
                 UndoRedoManager.Attach(trustBoundaryTemplate);
+                scope.Complete();
 
                 ChildCreated?.Invoke(trustBoundaryTemplate);
             }
@@ -65,12 +66,14 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (template != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Trust Boundary Template"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Trust Boundary Template"))
                 {
                     result = _trustBoundaryTemplates.Remove(template);
                     if (result)
                     {
                         UndoRedoManager.Detach(template);
+                        scope.Complete();
+
                         ChildRemoved?.Invoke(template);
                     }
                 }

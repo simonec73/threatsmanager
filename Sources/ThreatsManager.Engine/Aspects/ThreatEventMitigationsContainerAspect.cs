@@ -86,7 +86,7 @@ namespace ThreatsManager.Engine.Aspects
             if (mitigation == null)
                 throw new ArgumentNullException(nameof(mitigation));
 
-            using (UndoRedoManager.OpenScope("Add a Mitigation to a Threat Event"))
+            using (var scope = UndoRedoManager.OpenScope("Add a Mitigation to a Threat Event"))
             {
                 var mitigations = _mitigations?.Get();
                 if (mitigations == null)
@@ -97,6 +97,8 @@ namespace ThreatsManager.Engine.Aspects
 
                 mitigations.Add(mitigation);
                 UndoRedoManager.Attach(mitigation);
+                scope.Complete();
+
                 if (Instance is IThreatEventMitigationsContainer container)
                 {
                     _threatEventMitigationAdded?.Invoke(container, mitigation);
@@ -134,12 +136,14 @@ namespace ThreatsManager.Engine.Aspects
             var mitigation = GetMitigation(mitigationId);
             if (mitigation != null)
             {
-                using (UndoRedoManager.OpenScope("Remove a Mitigation from a Threat Event"))
+                using (var scope = UndoRedoManager.OpenScope("Remove a Mitigation from a Threat Event"))
                 {
                     result = _mitigations?.Get()?.Remove(mitigation) ?? false;
                     if (result)
                     {
                         UndoRedoManager.Detach(mitigation);
+                        scope.Complete();
+
                         if (Instance is IThreatEventMitigationsContainer container)
                             _threatEventMitigationRemoved?.Invoke(container, mitigation);
                     }

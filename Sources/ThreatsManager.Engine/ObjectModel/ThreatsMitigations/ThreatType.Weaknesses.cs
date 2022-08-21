@@ -65,10 +65,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             if (_weaknesses == null)
                 _weaknesses = new AdvisableCollection<IThreatTypeWeakness>();
 
-            using (UndoRedoManager.OpenScope("Add Weakness to Threat Type"))
+            using (var scope = UndoRedoManager.OpenScope("Add Weakness to Threat Type"))
             {
                 _weaknesses.Add(weakness);
                 UndoRedoManager.Attach(weakness);
+                scope.Complete();
             }
         }
 
@@ -95,12 +96,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             var weakness = GetWeakness(weaknessId);
             if (weakness != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Weakness from Threat Type"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Weakness from Threat Type"))
                 {
                     result = _weaknesses.Remove(weakness);
                     if (result)
                     {
                         UndoRedoManager.Detach(weakness);
+                        scope.Complete();
+
                         _threatTypeWeaknessRemoved?.Invoke(this, weakness);
                     }
                 }

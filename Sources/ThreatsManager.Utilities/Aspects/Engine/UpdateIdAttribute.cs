@@ -48,7 +48,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 if ((sourceProperty != null && targetProperty != null &&
                     sourceProperty.PropertyType == targetProperty.PropertyType))
                 {
-                    targetProperty.SetValue(args.Instance, sourceProperty.GetValue(args.Value));
+                    var oldValue = targetProperty.GetValue(args.Instance);
+                    var newValue = sourceProperty.GetValue(args.Value);
+                    if (oldValue != newValue && (oldValue == null || !newValue.Equals(oldValue)))
+                        targetProperty.SetValue(args.Instance, newValue);
                 } 
                 //else if (sourceProperty == null && targetProperty != null)
                 //{

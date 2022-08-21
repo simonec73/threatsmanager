@@ -88,13 +88,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IStrength strength)
         {
-            using (UndoRedoManager.OpenScope("Add Strength"))
+            using (var scope = UndoRedoManager.OpenScope("Add Strength"))
             {
                 if (_strengths == null)
                     _strengths = new AdvisableCollection<IStrength>();
 
                 _strengths.Add(strength);
                 UndoRedoManager.Attach(strength);
+                scope.Complete();
 
                 _strengthCreated?.Invoke(strength);
             }
@@ -135,12 +136,14 @@ namespace ThreatsManager.Engine.ObjectModel
             var definition = GetStrength(id);
             if (definition != null && !IsUsed(definition))
             {
-                using (UndoRedoManager.OpenScope("Remove Strength"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Strength"))
                 {
                     result = _strengths.Remove(definition);
                     if (result)
                     {
                         UndoRedoManager.Detach(definition);
+                        scope.Complete();
+
                         _strengthRemoved?.Invoke(definition);
                     }
                 }

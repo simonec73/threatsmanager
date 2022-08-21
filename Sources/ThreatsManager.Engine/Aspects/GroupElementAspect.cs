@@ -83,11 +83,13 @@ namespace ThreatsManager.Engine.Aspects
             var parentId = _parentId?.Get() ?? Guid.Empty;
             if ((parent == null && parentId != Guid.Empty) || (parent != null && parentId != parent.Id))
             {
-                using (UndoRedoManager.OpenScope("Set parent"))
+                using (var scope = UndoRedoManager.OpenScope("Set parent"))
                 {
                     oldParent = Parent;
                     _parentId.Set(parent?.Id ?? Guid.Empty);
                     _parent.Set(parent);
+                    scope.Complete();
+
                     if (Instance is IGroupElement groupElement)
                         _parentChanged?.Invoke(groupElement, oldParent, parent);
                 }

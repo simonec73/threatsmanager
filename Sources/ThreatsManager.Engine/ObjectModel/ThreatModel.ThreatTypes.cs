@@ -97,13 +97,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatType threatType)
         {
-            using (UndoRedoManager.OpenScope("Add Threat Type"))
+            using (var scope = UndoRedoManager.OpenScope("Add Threat Type"))
             {
                 if (_threatTypes == null)
                     _threatTypes = new AdvisableCollection<IThreatType>();
 
                 _threatTypes.Add(threatType);
                 UndoRedoManager.Attach(threatType);
+                scope.Complete();
 
                 ChildCreated?.Invoke(threatType);
             }
@@ -133,7 +134,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (threatType != null && (force || !IsUsed(threatType)))
             {
-                using (UndoRedoManager.OpenScope("Remove Threat Type"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Threat Type"))
                 {
                     RemoveRelated(threatType);
 
@@ -144,6 +145,8 @@ namespace ThreatsManager.Engine.ObjectModel
                         UnregisterEvents(threatType);
                         ChildRemoved?.Invoke(threatType);
                     }
+
+                    scope.Complete();
                 }
             }
 

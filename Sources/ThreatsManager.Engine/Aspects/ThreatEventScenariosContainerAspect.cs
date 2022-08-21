@@ -111,7 +111,7 @@ namespace ThreatsManager.Engine.Aspects
             if (scenario.ThreatEvent is IThreatModelChild child && child.Model != (Instance as IThreatEvent)?.Model)
                 throw new ArgumentException();
 
-            using (UndoRedoManager.OpenScope("Add scenario to Threat Event"))
+            using (var scope = UndoRedoManager.OpenScope("Add scenario to Threat Event"))
             {
                 var scenarios = _scenarios?.Get();
                 if (scenarios == null)
@@ -122,6 +122,7 @@ namespace ThreatsManager.Engine.Aspects
 
                 _scenarios?.Get()?.Add(scenario);
                 UndoRedoManager.Attach(scenario);
+                scope.Complete();
             }
         }
 
@@ -133,12 +134,14 @@ namespace ThreatsManager.Engine.Aspects
             var scenario = GetScenario(id);
             if (scenario != null)
             {
-                using (UndoRedoManager.OpenScope("Remove scenario from Threat Event"))
+                using (var scope = UndoRedoManager.OpenScope("Remove scenario from Threat Event"))
                 {
                     result = _scenarios?.Get()?.Remove(scenario) ?? false;
                     if (result)
                     {
                         UndoRedoManager.Detach(scenario);
+                        scope.Complete();
+
                         if (Instance is IThreatEvent threatEvent)
                             _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
                     }

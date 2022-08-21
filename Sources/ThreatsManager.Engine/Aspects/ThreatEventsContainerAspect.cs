@@ -97,7 +97,7 @@ namespace ThreatsManager.Engine.Aspects
             if (threatEvent is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
                 throw new ArgumentException();
 
-            using (UndoRedoManager.OpenScope("Add Threat Event"))
+            using (var scope = UndoRedoManager.OpenScope("Add Threat Event"))
             {
                 var threatEvents = _threatEvents?.Get();
                 if (threatEvents == null)
@@ -108,6 +108,8 @@ namespace ThreatsManager.Engine.Aspects
 
                 threatEvents.Add(threatEvent);
                 UndoRedoManager.Attach(threatEvent);
+                scope.Complete();
+
                 if (Instance is IThreatEventsContainer container)
                     _threatEventAdded?.Invoke(container, threatEvent);
             }
@@ -140,7 +142,7 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            using (UndoRedoManager.OpenScope("Remove shape for group"))
+            using (var scope = UndoRedoManager.OpenScope("Remove shape for group"))
             {
                 var threatEvent = GetThreatEvent(id);
                 if (threatEvent != null)
@@ -149,6 +151,8 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(threatEvent);
+                        scope.Complete();
+
                         if (Instance is IThreatEventsContainer container)
                             _threatEventRemoved?.Invoke(container, threatEvent);
                     }

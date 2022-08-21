@@ -133,6 +133,7 @@ namespace ThreatsManager.Utilities
             if (item is IUndoable undoable && undoable.IsUndoEnabled)
             {
                 RecordingServices.DefaultRecorder.Detach(item);
+                undoable.TriggerUndone(true);
                 undoable.IsUndoEnabled = false;
 
                 DetachContainer(item);

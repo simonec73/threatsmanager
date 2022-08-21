@@ -97,13 +97,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IWeakness weakness)
         {
-            using (UndoRedoManager.OpenScope("Add Weakness"))
+            using (var scope = UndoRedoManager.OpenScope("Add Weakness"))
             {
                 if (_weaknesses == null)
                     _weaknesses = new AdvisableCollection<IWeakness>();
 
                 _weaknesses.Add(weakness);
                 UndoRedoManager.Attach(weakness);
+                scope.Complete();
 
                 ChildCreated?.Invoke(weakness);
             }
@@ -133,7 +134,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (weakness != null && (force || !IsUsed(weakness)))
             {
-                using (UndoRedoManager.OpenScope("Remove Weakness"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Weakness"))
                 {
                     RemoveRelated(weakness);
 
@@ -144,6 +145,8 @@ namespace ThreatsManager.Engine.ObjectModel
                         UnregisterEvents(weakness);
                         ChildRemoved?.Invoke(weakness);
                     }
+
+                    scope.Complete();
                 }
             }
 

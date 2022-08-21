@@ -87,7 +87,7 @@ namespace ThreatsManager.Engine.Aspects
             if (link == null)
                 throw new ArgumentNullException(nameof(link));
 
-            using (UndoRedoManager.OpenScope("Add link for Flow"))
+            using (var scope = UndoRedoManager.OpenScope("Add link for Flow"))
             {
                 var links = _links?.Get();
                 if (links == null)
@@ -98,6 +98,8 @@ namespace ThreatsManager.Engine.Aspects
 
                 links.Add(link);
                 UndoRedoManager.Attach(link);
+                scope.Complete();
+
                 if (Instance is ILinksContainer container)
                 {
                     _linkAdded?.Invoke(container, link);
@@ -130,14 +132,14 @@ namespace ThreatsManager.Engine.Aspects
 
             var link = GetLink(dataFlowId);
 
-            using (UndoRedoManager.OpenScope("Remove link for Flow"))
+            using (var scope = UndoRedoManager.OpenScope("Remove link for Flow"))
             {
                 result = _links?.Get()?.Remove(link) ?? false;
                 if (result)
                 {
                     UndoRedoManager.Detach(link);
-                    if (link is IUndoable undoable)
-                        undoable.IsUndoEnabled = false;
+                    scope.Complete();
+
                     if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
                         _linkRemoved?.Invoke(container, flow);
                 }

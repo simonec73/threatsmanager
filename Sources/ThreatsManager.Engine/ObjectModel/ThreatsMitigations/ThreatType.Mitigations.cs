@@ -65,10 +65,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             if (_mitigations == null)
                 _mitigations = new AdvisableCollection<IThreatTypeMitigation>();
 
-            using (UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
+            using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
             {
                 _mitigations.Add(mitigation);
                 UndoRedoManager.Attach(mitigation);
+                scope.Complete();
             }
         }
 
@@ -95,12 +96,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             var mitigation = GetMitigation(mitigationId);
             if (mitigation != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Mitigation from Threat Type"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Mitigation from Threat Type"))
                 {
                     result = _mitigations.Remove(mitigation);
                     if (result)
                     {
                         UndoRedoManager.Detach(mitigation);
+                        scope.Complete();
+
                         _threatTypeMitigationRemoved?.Invoke(this, mitigation);
                     }
                 }

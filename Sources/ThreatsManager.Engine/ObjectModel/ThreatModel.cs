@@ -277,15 +277,31 @@ namespace ThreatsManager.Engine.ObjectModel
             if (result == null)
                 result = GetThreatType(id);
             if (result == null)
+                result = GetWeakness(id);
+            if (result == null)
                 result = GetMitigation(id);
             if (result == null)
-                result = _entities?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?
-                    .ThreatEvents?.FirstOrDefault(x => x.Id == id);
+                result = GetThreatActor(id);
             if (result == null)
-                result = _flows?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?
-                    .ThreatEvents?.FirstOrDefault(x => x.Id == id);
+                result = GetEntityTemplate(id);
+            if (result == null)
+                result = GetTrustBoundaryTemplate(id);
+            if (result == null)
+                result = GetFlowTemplate(id);
+            if (result == null)
+                result = GetThreatEvent(id);
+            if (result == null)
+                result = _entities?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?.GetThreatEvent(id);
+            if (result == null)
+                result = _flows?.FirstOrDefault(x => x.ThreatEvents?.Any(y => y.Id == id) ?? false)?.GetThreatEvent(id);
+            if (result == null)
+                result = GetVulnerability(id);
+            if (result == null)
+                result = _entities?.FirstOrDefault(x => x.Vulnerabilities?.Any(y => y.Id == id) ?? false)?.GetVulnerability(id);
+            if (result == null)
+                result = _flows?.FirstOrDefault(x => x.Vulnerabilities?.Any(y => y.Id == id) ?? false)?.GetVulnerability(id);
 
-            return result ?? GetThreatActor(id);
+            return result;
         }
         
         public override string ToString()

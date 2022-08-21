@@ -84,13 +84,14 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IEntity entity)
         {
-            using (UndoRedoManager.OpenScope("Add Entity"))
+            using (var scope = UndoRedoManager.OpenScope("Add Entity"))
             {
                 if (_entities == null)
                     _entities = new AdvisableCollection<IEntity>();
 
                 _entities.Add(entity);
                 UndoRedoManager.Attach(entity);
+                scope.Complete();
             }
         }
 
@@ -214,16 +215,19 @@ namespace ThreatsManager.Engine.ObjectModel
             var entity = GetEntity(id);
             if (entity != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Entity"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Entity"))
                 {
                     RemoveRelated(entity);
                     result = _entities?.Remove(entity) ?? false;
                     if (result)
                     {
                         UndoRedoManager.Detach(entity);
+
                         UnregisterEvents(entity);
                         ChildRemoved?.Invoke(entity);
                     }
+                        
+                    scope.Complete();
                 }
             }
 

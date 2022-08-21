@@ -39,7 +39,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (GetPropertyType(name) == null)
             {
-                using (UndoRedoManager.OpenScope("Add Property Type"))
+                using (var scope = UndoRedoManager.OpenScope("Add Property Type"))
                 { 
                     var propertyTypeInterface = type.GetEnumType();
                     if (propertyTypeInterface != null)
@@ -60,6 +60,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                         _propertyTypes.Add(result);
                         UndoRedoManager.Attach(result);
+                        scope.Complete();
 
                         PropertyTypeAdded?.Invoke(this, result);
                     }
@@ -77,12 +78,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (propertyType != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Property Type"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Property Type"))
                 {
                     result = _propertyTypes.Remove(propertyType);
                     if (result)
                     {
                         UndoRedoManager.Detach(propertyType);
+                        scope.Complete();
+
                         PropertyTypeRemoved?.Invoke(this, propertyType);
                     }
                 }

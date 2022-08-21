@@ -34,13 +34,14 @@ namespace ThreatsManager.Engine.ObjectModel
             if (flowTemplate is IThreatModelChild child && child.Model != this)
                 throw new ArgumentException();
 
-            using (UndoRedoManager.OpenScope("Add Flow Tempalte"))
+            using (var scope = UndoRedoManager.OpenScope("Add Flow Tempalte"))
             {
                 if (_flowTemplates == null)
                     _flowTemplates = new AdvisableCollection<IFlowTemplate>();
 
                 _flowTemplates.Add(flowTemplate);
                 UndoRedoManager.Attach(flowTemplate);
+                scope.Complete();
 
                 ChildCreated?.Invoke(flowTemplate);
             }
@@ -69,12 +70,14 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (template != null)
             {
-                using (UndoRedoManager.OpenScope("Remove Flow Template"))
+                using (var scope = UndoRedoManager.OpenScope("Remove Flow Template"))
                 {
                     result = _flowTemplates.Remove(template);
                     if (result)
                     {
                         UndoRedoManager.Detach(template);
+                        scope.Complete();
+
                         ChildRemoved?.Invoke(template);
                     }
                 }
