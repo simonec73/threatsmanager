@@ -12,8 +12,8 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [NotifyPropertyChanged]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [Recordable(AutoRecord = false)]
     [Undoable]
     public class SeverityDefinition : ISeverity, IInitializableObject
@@ -93,7 +94,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         #endregion

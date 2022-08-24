@@ -12,7 +12,7 @@ namespace ThreatsManager.Engine.Aspects
     //private Guid _threatEventId { get; set; }
     //[Reference]
     //[field: NotRecorded]
-    //[field: UpdateId("Id", "_threatEventId")]
+    //[field: UpdateThreatEventId]
     //private IThreatEvent _threatEvent { get; set; }
     //#endregion    
 

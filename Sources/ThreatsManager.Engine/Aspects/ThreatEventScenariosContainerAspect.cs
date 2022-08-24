@@ -6,7 +6,6 @@ using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
-using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;

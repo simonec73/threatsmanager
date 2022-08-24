@@ -6,7 +6,6 @@ using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
 
@@ -15,6 +14,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertyAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -52,7 +52,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [JsonProperty("id")]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -10,9 +9,9 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using PostSharp.Patterns.Collections;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -21,6 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [Recordable(AutoRecord = false)]
     [Undoable]
     public partial class PropertySchema : IPropertySchema
@@ -61,7 +61,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
         #endregion
 

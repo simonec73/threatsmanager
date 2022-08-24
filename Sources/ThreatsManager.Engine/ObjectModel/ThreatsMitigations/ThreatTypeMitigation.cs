@@ -10,6 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -18,6 +19,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [StrengthIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -89,7 +92,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
@@ -129,13 +132,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("strength")]
         [NotRecorded]
-        private int _strengthId;
+        private int _strengthId { get; set; }
 
         public int StrengthId => _strengthId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_strengthId")]
+        [UpdateStrengthId]
         private IStrength _strength;
 
         [InitializationRequired]

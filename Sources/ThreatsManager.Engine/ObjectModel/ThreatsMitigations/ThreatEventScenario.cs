@@ -22,6 +22,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [ThreatActorIdChanger]
+    [SeverityIdChanger]
+    [ThreatEventIdChanger]
     [ThreatEventChildAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -110,14 +114,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [JsonProperty("threatEventId")]
         private Guid _threatEventId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_threatEventId")]
+        [field: UpdateThreatEventId]
         private IThreatEvent _threatEvent { get; set; }
         #endregion
 
@@ -126,13 +130,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [NotRecorded]
         [JsonProperty("severity")]
-        private int _severityId;
+        private int _severityId { get; set; }
 
         public int SeverityId => _severityId;
 
         [NotRecorded]
         [Reference]
-        [UpdateId("Id", "_severityId")]
+        [UpdateSeverityId]
         private ISeverity _severity;
 
         [InitializationRequired]
@@ -156,11 +160,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("actorId")]
         [NotRecorded]
-        private Guid _actorId;
+        private Guid _actorId { get; set; }
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_actorId")]
+        [UpdateActorId]
         private IThreatActor _actor;
 
         public Guid ActorId => _actorId;

@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Serialization;

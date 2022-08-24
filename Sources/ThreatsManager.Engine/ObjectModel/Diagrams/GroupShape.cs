@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -21,6 +22,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [AssociatedIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -34,7 +37,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public GroupShape([NotNull] IGroup group) : this()
         {
             _model = group.Model;
-            _group = group;
+            _associated = group;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -88,7 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
@@ -101,17 +104,17 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_associatedId")]
-        private IGroup _group { get; set; }
+        [field: UpdateAssociatedId]
+        private IGroup _associated { get; set; }
 
         [JsonProperty("id")]
-        private Guid _associatedId;
+        private Guid _associatedId { get; set; }
 
         public Guid AssociatedId => _associatedId;
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IIdentity Identity => _group ?? (_group = Model?.GetGroup(_associatedId));
+        public IIdentity Identity => _associated ?? (_associated = Model?.GetGroup(_associatedId));
 
         [Child]
         private RecordablePointF _recordablePosition;

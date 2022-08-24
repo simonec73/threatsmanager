@@ -12,6 +12,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -21,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -97,7 +99,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
         [Child]
         [JsonProperty("properties")]

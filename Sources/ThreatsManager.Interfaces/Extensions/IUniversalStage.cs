@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ThreatsManager.Interfaces.Extensions
+﻿namespace ThreatsManager.Interfaces.Extensions
 {
     /// <summary>
     /// A stage part of an universal pipeline to process a Threat Model.

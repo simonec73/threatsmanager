@@ -21,6 +21,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [MitigationIdChanger]
+    [StrengthIdChanger]
+    [ThreatEventIdChanger]
     [ThreatEventChildAspect]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
@@ -96,7 +100,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
@@ -106,7 +110,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private Guid _threatEventId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_threatEventId")]
+        [field: UpdateThreatEventId]
         private IThreatEvent _threatEvent { get; set; }
         #endregion
 
@@ -115,13 +119,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("mitigationId")]
         [NotRecorded]
-        private Guid _mitigationId;
+        private Guid _mitigationId { get; set; }
 
         public Guid MitigationId => _mitigationId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_mitigationId")]
+        [UpdateMitigationId]
         private IMitigation _mitigation;
 
         [IgnoreAutoChangeNotification]
@@ -132,13 +136,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("strength")]
         [NotRecorded]
-        private int _strengthId;
+        private int _strengthId { get; set; }
 
         public int StrengthId => _strengthId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_strengthId")]
+        [UpdateStrengthId]
         private IStrength _strength;
 
         [InitializationRequired]

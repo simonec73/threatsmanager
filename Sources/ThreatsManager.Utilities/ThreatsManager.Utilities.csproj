@@ -36,8 +36,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aspects\Engine\UpdateIdAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="..\ThreatsManager.Engine\PostSharp.license" Link="PostSharp.license" />
     <None Include="..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
+    <None Include="Aspects\Engine\UpdateIdAttribute.cs" />
   </ItemGroup>
 
   <ItemGroup>

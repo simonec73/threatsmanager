@@ -10,7 +10,6 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
@@ -20,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertyTypeAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -65,7 +65,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
         [JsonProperty("schema")]
         protected Guid _schemaId { get; set; }

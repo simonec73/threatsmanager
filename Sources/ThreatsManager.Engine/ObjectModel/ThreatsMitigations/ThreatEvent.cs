@@ -24,6 +24,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [ParentIdChanger]
+    [SeverityIdChanger]
+    [ThreatTypeIdChanger]
     [PropertiesContainerAspect]
     [ThreatEventScenariosContainerAspect]
     [ThreatEventMitigationsContainerAspect]
@@ -185,7 +189,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
@@ -236,11 +240,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("parent")]
         [field: NotRecorded]
-        private Guid _parentId;
-        
+        private Guid _parentId { get; set; }
+
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_parentId")]
+        [field: UpdateParentId]
         [field: AutoApplySchemas]
         private IIdentity _parent { get; set;}
 
@@ -267,13 +271,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("severity")]
         [NotRecorded]
-        private int _severityId;
+        private int _severityId { get; set; }
 
         public int SeverityId => _severityId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_severityId")]
+        [UpdateSeverityId]
         private ISeverity _severity;
 
         [InitializationRequired]
@@ -293,13 +297,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [NotRecorded]
         [JsonProperty("threatTypeId")]
-        private Guid _threatTypeId;
+        private Guid _threatTypeId { get; set; }
 
         public Guid ThreatTypeId => _threatTypeId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_threatTypeId")]
+        [UpdateThreatTypeId]
         private IThreatType _threatType;
 
         [InitializationRequired]

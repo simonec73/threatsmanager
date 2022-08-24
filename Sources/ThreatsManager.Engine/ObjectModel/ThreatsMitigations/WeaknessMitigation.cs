@@ -10,6 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -18,6 +19,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [MitigationIdChanger]
+    [StrengthIdChanger]
+    [WeaknessIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -87,7 +92,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
@@ -100,12 +105,12 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("weaknessId")]
         [NotRecorded]
-        private Guid _weaknessId;
+        private Guid _weaknessId { get; set; }
 
         public Guid WeaknessId => _weaknessId;
 
         [Reference]
-        [UpdateId("Id", "_weaknessId")]
+        [UpdateWeaknessId]
         [NotRecorded]
         private IWeakness _weakness;
 
@@ -115,13 +120,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("mitigationId")]
         [NotRecorded]
-        private Guid _mitigationId;
+        private Guid _mitigationId { get; set; }
 
         public Guid MitigationId => _mitigationId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_mitigationId")]
+        [UpdateMitigationId]
         private IMitigation _mitigation;
 
         [IgnoreAutoChangeNotification]
@@ -129,13 +134,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("strength")]
         [NotRecorded]
-        private int _strengthId;
+        private int _strengthId { get; set; }
 
         public int StrengthId => _strengthId;
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_strengthId")]
+        [UpdateStrengthId]
         private IStrength _strength;
 
         [InitializationRequired]

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -20,6 +21,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [Serializable]
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [AssociatedIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -33,7 +36,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Link([NotNull] IDataFlow dataFlow) : this()
         {
             _model = dataFlow.Model;
-            _dataFlow = dataFlow;
+            _associated = dataFlow;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -87,7 +90,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
@@ -100,17 +103,17 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_associatedId")]
-        private IDataFlow _dataFlow;
+        [field: UpdateAssociatedId]
+        private IDataFlow _associated;
 
         [JsonProperty("id")]
-        private Guid _associatedId;
+        private Guid _associatedId { get; set; }
 
         public Guid AssociatedId => _associatedId;
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IDataFlow DataFlow => _dataFlow ?? (_dataFlow = _model?.GetDataFlow(_associatedId));
+        public IDataFlow DataFlow => _associated ?? (_associated = _model?.GetDataFlow(_associatedId));
 
         public ILink Clone(ILinksContainer container)
         {

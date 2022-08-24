@@ -11,7 +11,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     //protected Guid _modelId { get; set; }
     //[Parent] or [Reference]
     //[field: NotRecorded]
-    //[field: UpdateId("Id", "_modelId")]
+    //[field: UpdateThreatModelId]
     //[field: AutoApplySchemas]
     //protected IThreatModel _model { get; set; }
     //#endregion    

@@ -14,10 +14,11 @@
     <Version>1.6.0</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+    <NoWarn>$(NoWarn);NU1505;CS3021</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
-    <NoWarn>1701;1702</NoWarn>
+    <NoWarn>$(NoWarn);1701;1702</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

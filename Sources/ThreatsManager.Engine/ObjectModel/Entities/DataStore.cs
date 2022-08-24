@@ -12,7 +12,6 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ImageConverter = ThreatsManager.Utilities.ImageConverter;
 
@@ -24,6 +23,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Serializable]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [GroupElementAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
@@ -171,7 +171,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]

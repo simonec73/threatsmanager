@@ -6,7 +6,6 @@ using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
@@ -17,6 +16,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [PropertyTypeAspect]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyString, ThreatsManager.Engine")]
@@ -62,7 +62,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected Guid _modelId { get; set; }
         [Reference]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
         [JsonProperty("schema")]
         protected Guid _schemaId { get; set; }

@@ -10,7 +10,6 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
@@ -21,6 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
     [EntitiesReadOnlyContainerAspect]
     [GroupsReadOnlyContainerAspect]
@@ -135,7 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]

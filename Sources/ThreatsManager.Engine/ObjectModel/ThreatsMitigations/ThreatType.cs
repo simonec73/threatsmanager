@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
 using PostSharp.Patterns.Model;
@@ -13,6 +12,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -23,6 +23,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [SeverityIdChanger]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Threat Type")]
@@ -102,7 +104,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         #endregion
@@ -112,11 +114,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("severity")]
         [NotRecorded]
-        private int _severityId;
+        private int _severityId { get; set; }
 
         [Reference]
         [NotRecorded]
-        [UpdateId("Id", "_severityId")]
+        [UpdateSeverityId]
         private ISeverity _severity;
 
         public int SeverityId => _severityId;

@@ -24,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [NotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
     [EntityShapesContainerAspect]
     [GroupShapesContainerAspect]
@@ -215,7 +216,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]

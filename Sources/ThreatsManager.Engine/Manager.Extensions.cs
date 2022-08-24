@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;

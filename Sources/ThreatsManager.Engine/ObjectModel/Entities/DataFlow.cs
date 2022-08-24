@@ -24,6 +24,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
     [Recordable(AutoRecord = false)]
@@ -178,7 +179,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         protected Guid _modelId { get; set; }
         [Parent]
         [field: NotRecorded]
-        [field: UpdateId("Id", "_modelId")]
+        [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         #endregion    
