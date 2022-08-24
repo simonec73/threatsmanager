@@ -71,7 +71,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
-        [Child]
+        [Reference]
         [JsonProperty("items")]
         [NotRecorded]
         private IList<string> _items;

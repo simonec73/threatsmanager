@@ -72,9 +72,6 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add(IDataFlow dataFlow)
         {
-            if (dataFlow is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
-
             using (var scope = UndoRedoManager.OpenScope("Add Data Flow"))
             {
                 if (_flows == null)

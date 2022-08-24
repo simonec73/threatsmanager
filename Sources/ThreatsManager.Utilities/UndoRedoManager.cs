@@ -1,8 +1,11 @@
 ﻿using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Recording.Operations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -21,6 +24,8 @@ namespace ThreatsManager.Utilities
 
         static UndoRedoManager()
         {
+            RecordingServices.DefaultRecorder.MaximumOperationsCount = 1000;
+            RecordingServices.OperationFormatter = new StandardOperationFormatter(RecordingServices.OperationFormatter);
             RecordingServices.DefaultRecorder.ChildPropertyChanged += DefaultRecorder_ChildPropertyChanged;
         }
 
@@ -35,9 +40,19 @@ namespace ThreatsManager.Utilities
         public static event Action<bool> DirtyChanged;
 
         /// <summary>
+        /// Event raised when an action is undone.
+        /// </summary>
+        public static event Action<string> Undone;
+
+        /// <summary>
+        /// Event raised when an action is redone.
+        /// </summary>
+        public static event Action<string> Redone;
+
+        /// <summary>
         /// Maximum number of recordable operations.
         /// </summary>
-        /// <remarks>Default is 2147483647.</remarks>
+        /// <remarks>Default is 1000.</remarks>
         public static int MaximumOperationsCount
         {
             get { return RecordingServices.DefaultRecorder.MaximumOperationsCount; }
@@ -187,32 +202,14 @@ namespace ThreatsManager.Utilities
             try
             {
                 _isUndoing = true;
-                RecordingServices.DefaultRecorder.Undo();
-                if (RecordingServices.DefaultRecorder.UndoOperations.Count == 0)
-                    ResetDirty();
-            }
-            catch (Exception exc)
-            {
-                ErrorRaised?.Invoke(exc.Message);
-            }
-            finally
-            {
-                _isUndoing = false;
-            }
-        }
-
-        /// <summary>
-        /// Undo all operations up to the one passed as argument.
-        /// </summary>
-        /// <param name="operation">Last operation to undo.</param>
-        public static void UndoTo([NotNull] Operation operation)
-        {
-            try
-            {
-                _isUndoing = true;
-                RecordingServices.DefaultRecorder.UndoTo(operation);
-                if (RecordingServices.DefaultRecorder.UndoOperations.Count == 0)
-                    ResetDirty();
+                var last = RecordingServices.DefaultRecorder.UndoOperations.LastOrDefault();
+                if (last != null)
+                {
+                    RecordingServices.DefaultRecorder.Undo();
+                    if (RecordingServices.DefaultRecorder.UndoOperations.Count == 0)
+                        ResetDirty();
+                    Undone?.Invoke(last.Name);
+                }
             }
             catch (Exception exc)
             {
@@ -232,28 +229,12 @@ namespace ThreatsManager.Utilities
             try
             {
                 _isRedoing = true;
-                RecordingServices.DefaultRecorder.Redo();
-            }
-            catch (Exception exc)
-            {
-                ErrorRaised?.Invoke(exc.Message);
-            }
-            finally
-            {
-                _isRedoing = false;
-            }
-        }
-
-        /// <summary>
-        /// Redo all operations up to the one passed as argument.
-        /// </summary>
-        /// <param name="operation"></param>
-        public static void RedoTo([NotNull] Operation operation)
-        {
-            try
-            {
-                _isRedoing = true;
-                RecordingServices.DefaultRecorder.RedoTo(operation);
+                var last = RecordingServices.DefaultRecorder.RedoOperations.LastOrDefault();
+                if (last != null)
+                {
+                    RecordingServices.DefaultRecorder.Redo();
+                    Redone?.Invoke(last.Name);
+                }
             }
             catch (Exception exc)
             {
