@@ -18,8 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyString([NotNull] IPropertyString original) : base(original.Model,
-            original.PropertyType as IStringPropertyType)
+        public ShadowPropertyString([NotNull] IPropertyString original) : base(original.PropertyType as IStringPropertyType)
         {
             _originalId = original.Id;
             _original = original;

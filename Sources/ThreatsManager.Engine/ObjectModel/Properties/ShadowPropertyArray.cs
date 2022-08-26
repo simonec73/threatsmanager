@@ -20,7 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyArray([NotNull] IPropertyArray original) : base(original.Model, original.PropertyType as IArrayPropertyType)
+        public ShadowPropertyArray([NotNull] IPropertyArray original) : base(original.PropertyType as IArrayPropertyType)
         {
             _originalId = original.Id;
             _original = original;

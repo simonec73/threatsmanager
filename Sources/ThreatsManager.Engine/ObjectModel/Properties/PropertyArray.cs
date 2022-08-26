@@ -32,11 +32,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyArray([NotNull] IThreatModel model, [NotNull] IArrayPropertyType propertyType) : this()
+        public PropertyArray([NotNull] IArrayPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

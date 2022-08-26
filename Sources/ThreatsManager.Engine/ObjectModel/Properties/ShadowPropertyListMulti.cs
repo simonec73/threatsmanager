@@ -20,7 +20,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyListMulti([NotNull] IPropertyListMulti original) : base(original.Model, original.PropertyType as IListMultiPropertyType)
+        public ShadowPropertyListMulti([NotNull] IPropertyListMulti original) : base(original.PropertyType as IListMultiPropertyType)
         {
             _originalId = original.Id;
             _original = original;

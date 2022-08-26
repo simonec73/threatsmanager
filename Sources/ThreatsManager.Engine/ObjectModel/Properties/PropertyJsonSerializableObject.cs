@@ -29,11 +29,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyJsonSerializableObject([NotNull] IThreatModel model, [NotNull] IJsonSerializableObjectPropertyType propertyType) : this()
+        public PropertyJsonSerializableObject([NotNull] IJsonSerializableObjectPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

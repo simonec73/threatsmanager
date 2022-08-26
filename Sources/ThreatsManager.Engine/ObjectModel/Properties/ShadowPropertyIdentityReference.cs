@@ -19,7 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyIdentityReference([NotNull] IPropertyIdentityReference original) : base(original.Model, original.PropertyType as IIdentityReferencePropertyType)
+        public ShadowPropertyIdentityReference([NotNull] IPropertyIdentityReference original) : base(original.PropertyType as IIdentityReferencePropertyType)
         {
             _originalId = original.Id;
             _original = original;

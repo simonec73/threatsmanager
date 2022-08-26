@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyBool([NotNull] IPropertyBool original) : base(original.Model, original.PropertyType as IBoolPropertyType)
+        public ShadowPropertyBool([NotNull] IPropertyBool original) : base(original.PropertyType as IBoolPropertyType)
         {
             _originalId = original.Id;
             _original = original;

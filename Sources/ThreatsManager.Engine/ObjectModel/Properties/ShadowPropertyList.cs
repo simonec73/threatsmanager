@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyList([NotNull] IPropertyList original) : base(original.Model, original.PropertyType as IListPropertyType)
+        public ShadowPropertyList([NotNull] IPropertyList original) : base(original.PropertyType as IListPropertyType)
         {
             _originalId = original.Id;
             _original = original;

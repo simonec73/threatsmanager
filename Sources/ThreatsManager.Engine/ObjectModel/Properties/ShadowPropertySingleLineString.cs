@@ -18,8 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertySingleLineString([NotNull] IPropertySingleLineString original) : base(original.Model,
-            original.PropertyType as ISingleLineStringPropertyType)
+        public ShadowPropertySingleLineString([NotNull] IPropertySingleLineString original) : base(original.PropertyType as ISingleLineStringPropertyType)
         {
             _originalId = original.Id;
             _original = original;

@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyInteger([NotNull] IPropertyInteger original) : base(original.Model, original.PropertyType as IIntegerPropertyType)
+        public ShadowPropertyInteger([NotNull] IPropertyInteger original) : base(original.PropertyType as IIntegerPropertyType)
         {
             _originalId = original.Id;
             _original = original;

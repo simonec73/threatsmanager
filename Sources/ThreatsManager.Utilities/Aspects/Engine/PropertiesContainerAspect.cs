@@ -161,7 +161,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     var associatedClassType = Type.GetType(associatedClass.AssociatedType, false);
                     if (associatedClassType != null)
                     {
-                        result = Activator.CreateInstance(associatedClassType, model, propertyType) as IProperty;
+                        result = Activator.CreateInstance(associatedClassType, propertyType) as IProperty;
                     }
                 }
 

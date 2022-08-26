@@ -26,11 +26,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyBool([NotNull] IThreatModel model, [NotNull] IBoolPropertyType propertyType) : this()
+        public PropertyBool([NotNull] IBoolPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

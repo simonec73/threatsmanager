@@ -26,11 +26,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyDecimal([NotNull] IThreatModel model, [NotNull] IDecimalPropertyType propertyType) : this()
+        public PropertyDecimal([NotNull] IDecimalPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

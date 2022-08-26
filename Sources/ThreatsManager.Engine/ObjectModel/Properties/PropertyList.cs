@@ -29,11 +29,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyList([NotNull] IThreatModel model, [NotNull] IListPropertyType propertyType) : this()
+        public PropertyList([NotNull] IListPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

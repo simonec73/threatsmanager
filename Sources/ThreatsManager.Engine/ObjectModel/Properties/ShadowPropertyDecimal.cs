@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyDecimal([NotNull] IPropertyDecimal original) : base(original.Model, original.PropertyType as IDecimalPropertyType)
+        public ShadowPropertyDecimal([NotNull] IPropertyDecimal original) : base(original.PropertyType as IDecimalPropertyType)
         {
             _originalId = original.Id;
             _original = original;

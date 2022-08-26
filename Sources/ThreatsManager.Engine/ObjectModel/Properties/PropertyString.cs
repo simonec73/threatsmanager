@@ -25,11 +25,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
         }
 
-        public PropertyString([NotNull] IThreatModel model, [NotNull] IStringPropertyType propertyType) : this()
+        public PropertyString([NotNull] IStringPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

@@ -26,11 +26,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyIdentityReference([NotNull] IThreatModel model, [NotNull] IIdentityReferencePropertyType propertyType) : this()
+        public PropertyIdentityReference([NotNull] IIdentityReferencePropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 

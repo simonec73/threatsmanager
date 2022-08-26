@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyJsonSerializableObject([NotNull] IPropertyJsonSerializableObject original) : base(original.Model, original.PropertyType as IJsonSerializableObjectPropertyType)
+        public ShadowPropertyJsonSerializableObject([NotNull] IPropertyJsonSerializableObject original) : base(original.PropertyType as IJsonSerializableObjectPropertyType)
         {
             _originalId = original.Id;
             _original = original;

@@ -32,11 +32,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyListMulti([NotNull] IThreatModel model, [NotNull] IListMultiPropertyType propertyType) : this()
+        public PropertyListMulti([NotNull] IListMultiPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
         }
 
