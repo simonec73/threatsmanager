@@ -34,9 +34,6 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add(IGroup group)
         {
-            if (group is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
-
             using (var scope = UndoRedoManager.OpenScope("Add Group"))
             {
                 if (_groups == null)

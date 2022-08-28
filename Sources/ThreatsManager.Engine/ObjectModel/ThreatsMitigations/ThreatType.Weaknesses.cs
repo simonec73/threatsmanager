@@ -80,7 +80,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (GetMitigation(weakness.Id) == null)
             {
-                result = new ThreatTypeWeakness(Model, this, weakness);
+                result = new ThreatTypeWeakness(this, weakness);
                 Add(result);
                 _threatTypeWeaknessAdded?.Invoke(this, result);
             }

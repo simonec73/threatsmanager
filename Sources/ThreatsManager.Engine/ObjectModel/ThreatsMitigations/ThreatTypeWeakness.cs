@@ -20,6 +20,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
+    [ThreatTypeIdChanger]
+    [WeaknessIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
@@ -30,10 +32,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         }
 
-        public ThreatTypeWeakness([NotNull] IThreatModel model, [NotNull] IThreatType threatType, 
+        public ThreatTypeWeakness([NotNull] IThreatType threatType, 
             [NotNull] IWeakness weakness) : this()
         {
-            _model = model;
+            _model = threatType.Model;
             _threatType = threatType;
             _weakness = weakness;
         }
@@ -103,12 +105,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("threatTypeId")]
         [NotRecorded]
-        private Guid _threatTypeId;
+        private Guid _threatTypeId { get; set; }
 
         public Guid ThreatTypeId => _threatTypeId;
 
         [Reference]
         [NotRecorded]
+        [UpdateThreatTypeId]
         private IThreatType _threatType;
 
         [InitializationRequired]
@@ -117,12 +120,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("weaknessId")]
         [NotRecorded]
-        private Guid _weaknessId;
+        private Guid _weaknessId { get; set; }
 
         public Guid WeaknessId => _weaknessId;
 
         [Reference]
         [NotRecorded]
+        [UpdateWeaknessId]
         private IWeakness _weakness;
 
         [IgnoreAutoChangeNotification]

@@ -98,15 +98,10 @@ namespace ThreatsManager.Interfaces
         [EnumLabel("Threat Event Mitigation")]
         ThreatEventMitigation = 1024,
         /// <summary>
-        /// Threat Event Vulnerability.
-        /// </summary>
-        [EnumLabel("Threat Event Vulnerability")]
-        ThreatEventVulnerability = 536870912,
-        /// <summary>
         /// Everything related to Threats.
         /// </summary>
         [UiHidden]
-        Threats = ThreatType | ThreatEvent | ThreatEventScenario | Weakness | Vulnerability | ThreatEventVulnerability,
+        Threats = ThreatType | ThreatEvent | ThreatEventScenario | Weakness | Vulnerability,
         /// <summary>
         /// Known Mitigation.
         /// </summary>

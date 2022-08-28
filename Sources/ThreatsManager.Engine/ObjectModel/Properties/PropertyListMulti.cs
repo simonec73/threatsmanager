@@ -36,6 +36,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             _id = Guid.NewGuid();
             PropertyTypeId = propertyType.Id;
+            _model = propertyType.Model;
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty && PropertyTypeId != Guid.Empty;

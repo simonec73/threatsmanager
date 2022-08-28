@@ -20,6 +20,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [NotifyPropertyChanged]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
+    [MitigationIdChanger]
+    [ThreatTypeIdChanger]
     [StrengthIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
@@ -31,13 +33,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         }
 
-        public ThreatTypeMitigation([NotNull] IThreatModel model, [NotNull] IThreatType threatType, 
+        public ThreatTypeMitigation([NotNull] IThreatType threatType, 
             [NotNull] IMitigation mitigation, IStrength strength) : this()
         {
-            _model = model;
+            _model = threatType.Model;
             _threatType = threatType;
             _mitigation = mitigation;
-            Strength = strength;
+            _strength = strength;
         }
 
         public bool IsInitialized => Model != null && _threatTypeId != Guid.Empty && _mitigationId != Guid.Empty;
@@ -105,12 +107,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("threatTypeId")]
         [NotRecorded]
-        private Guid _threatTypeId;
+        private Guid _threatTypeId { get; set; }
 
         public Guid ThreatTypeId => _threatTypeId;
 
         [Reference]
         [NotRecorded]
+        [UpdateThreatTypeId]
         private IThreatType _threatType;
 
         [InitializationRequired]
@@ -119,12 +122,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("mitigationId")]
         [NotRecorded]
-        private Guid _mitigationId;
+        private Guid _mitigationId { get; set; }
 
         public Guid MitigationId => _mitigationId;
 
         [Reference]
         [NotRecorded]
+        [UpdateMitigationId]
         private IMitigation _mitigation;
 
         [IgnoreAutoChangeNotification]

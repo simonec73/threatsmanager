@@ -33,6 +33,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             _id = Guid.NewGuid();
             PropertyTypeId = propertyType.Id;
+            _model = propertyType.Model;
         }
 
         #region Default implementation.

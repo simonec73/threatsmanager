@@ -8,10 +8,7 @@ using ThreatsManager.Utilities;
 namespace ThreatsManager.Engine.Aspects
 {
     /// <summary>
-    /// This attribute is assigned to a property of an object and allows to automatically assign a value to another property of the same object,
-    /// when the value of the property is changed. For example, if it is applied to a property Model receiving a IThreatModel and if it has as "Id"
-    /// sourcePropertyName, and "ParentId" as targetPropertyName, then when the property Model is changed, the aspect retrieves the value of
-    /// property Id of the new IThreatModel and assigns it to property ParentId of the object containing property Model.
+    /// Attribute assigned to a Severity property to automatically assign the corresponding ID property.
     /// </summary>
     [PSerializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
