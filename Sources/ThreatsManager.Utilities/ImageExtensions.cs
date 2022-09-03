@@ -73,7 +73,9 @@ namespace ThreatsManager.Utilities
             {
                 result = GetThreatEventImage(size);
             }
-            else if (identity is IThreatEventMitigation || identity is IMitigation)
+            else if (identity is IThreatEventMitigation || identity is IMitigation || 
+                identity is IVulnerabilityMitigation || identity is IThreatTypeMitigation ||
+                identity is IWeaknessMitigation)
             {
                 result = GetMitigationImage(size);
             }
@@ -88,6 +90,14 @@ namespace ThreatsManager.Utilities
             else if (identity is IThreatActor)
             {
                 result = GetThreatActorImage(size);
+            }
+            else if (identity is IWeakness || identity is IThreatTypeWeakness)
+            {
+                result = GetWeaknessImage(size);
+            }
+            else if (identity is IVulnerability)
+            {
+                result = GetVulnerabilityImage(size);
             }
 
             if (result == null)
@@ -466,6 +476,52 @@ namespace ThreatsManager.Utilities
                     break;
                 case ImageSize.Big:
                     result = Resources.actor_big;
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+            return result;
+        }
+
+        private static Bitmap GetWeaknessImage(ImageSize size)
+        {
+            Bitmap result;
+
+            switch (size)
+            {
+                case ImageSize.Small:
+                    result = Resources.weakness_small;
+                    break;
+                case ImageSize.Medium:
+                    result = Resources.weakness;
+                    break;
+                case ImageSize.Big:
+                    result = Resources.weakness_big;
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+            return result;
+        }
+
+        private static Bitmap GetVulnerabilityImage(ImageSize size)
+        {
+            Bitmap result;
+
+            switch (size)
+            {
+                case ImageSize.Small:
+                    result = Resources.vulnerability_small;
+                    break;
+                case ImageSize.Medium:
+                    result = Resources.vulnerability;
+                    break;
+                case ImageSize.Big:
+                    result = Resources.vulnerability_big;
                     break;
                 default:
                     result = null;
