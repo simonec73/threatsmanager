@@ -28,7 +28,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             SelectionRuleNode result;
 
             NaryRuleNode rule = null;
-            switch (context.op?.GetText())
+            switch (context.op?.GetText()?.ToLower())
             {
                 case "and":
                     rule = new AndRuleNode()
@@ -80,7 +80,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             var id = context.right?.Text?.Trim('\'');
             if (!string.IsNullOrWhiteSpace(id))
             {
-                switch (context.op?.GetText())
+                switch (context.op?.GetText()?.ToLower())
                 {
                     case "is":
                         result = GetIdComparisonRuleNode(id, Scope.Object);
@@ -165,7 +165,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                 var scope = Scope.Object;
 
                 // ReSharper disable once PossibleNullReferenceException
-                switch (left[0])
+                switch (left[0]?.ToLower())
                 {
                     case "source":
                         scope = Scope.Source;
@@ -336,7 +336,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             var schema = elementSchemas?.FirstOrDefault();
             var property = schema?.Properties?.FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0);
             string schemaName;
-            if (schema != null && schema.IsGeneric)
+            if (schema != null && schema.IsGeneric && property == null)
             {
                 switch (schema.ElementType)
                 {

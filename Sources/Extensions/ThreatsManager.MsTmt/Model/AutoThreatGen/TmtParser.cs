@@ -48,8 +48,7 @@ public partial class TmtParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, null, "'flow'", "'source'", "'target'", "'is'", "'crosses'", "'and'", 
-		"'or'", "'not'", "'('", "')'"
+		null, null, null, null, null, null, null, null, null, null, "'('", "')'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "PROPERTY", "FLOW", "SOURCE", "TARGET", "IS", "CROSSES", "AND", 

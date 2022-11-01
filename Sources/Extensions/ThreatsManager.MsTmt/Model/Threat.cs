@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.XPath;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.MsTmt.Properties;
 
@@ -99,6 +100,21 @@ namespace ThreatsManager.MsTmt.Model
         {
             get => (ThreatState)Enum.Parse(typeof(ThreatState), _stateNode.InnerText);
             private set => _stateNode.InnerText = value.ToString();
+        }
+
+        public string Priority
+        {
+            get
+            {
+                string result = null;
+
+                if (_parameters.TryGetValue("Priority", out var value))
+                {
+                    result = value.Value;
+                }
+
+                return result;
+            }
         }
 
         public IEnumerable<string> ParameterNames => _parameters.Keys;
