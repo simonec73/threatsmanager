@@ -31,9 +31,6 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IFlowTemplate flowTemplate)
         {
-            if (flowTemplate is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
-
             using (var scope = UndoRedoManager.OpenScope("Add Flow Tempalte"))
             {
                 if (_flowTemplates == null)

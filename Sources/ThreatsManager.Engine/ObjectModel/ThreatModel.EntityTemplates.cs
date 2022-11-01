@@ -40,9 +40,6 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IEntityTemplate entityTemplate)
         {
-            if (entityTemplate is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
-
             using (var scope = UndoRedoManager.OpenScope("Add Entity Template"))
             {
                 if (_entityTemplates == null)

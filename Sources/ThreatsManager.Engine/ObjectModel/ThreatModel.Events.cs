@@ -211,6 +211,8 @@ namespace ThreatsManager.Engine.ObjectModel
             entity.PropertyValueChanged += OnPropertyValueChanged;
             entity.ThreatEventAdded += OnThreatEventAddedToEntity;
             entity.ThreatEventRemoved += OnThreatEventRemovedFromEntity;
+            entity.VulnerabilityAdded += OnVulnerabilityAddedToEntity;
+            entity.VulnerabilityRemoved += OnVulnerabilityRemovedFromEntity;
         }
 
         private void UnregisterEvents([NotNull] IEntity entity)
@@ -222,6 +224,8 @@ namespace ThreatsManager.Engine.ObjectModel
             entity.PropertyValueChanged -= OnPropertyValueChanged;
             entity.ThreatEventAdded -= OnThreatEventAddedToEntity;
             entity.ThreatEventRemoved -= OnThreatEventRemovedFromEntity;
+            entity.VulnerabilityAdded -= OnVulnerabilityAddedToEntity;
+            entity.VulnerabilityRemoved -= OnVulnerabilityRemovedFromEntity;
         }
 
         private void RegisterEvents([NotNull] IGroup group)
@@ -251,6 +255,8 @@ namespace ThreatsManager.Engine.ObjectModel
             dataFlow.PropertyValueChanged += OnPropertyValueChanged;
             dataFlow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
             dataFlow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
+            dataFlow.VulnerabilityAdded += OnVulnerabilityAddedToDataFlow;
+            dataFlow.VulnerabilityRemoved += OnVulnerabilityRemovedFromDataFlow;
         }
 
         private void UnregisterEvents([NotNull] IDataFlow dataFlow)
@@ -262,6 +268,8 @@ namespace ThreatsManager.Engine.ObjectModel
             dataFlow.PropertyValueChanged -= OnPropertyValueChanged;
             dataFlow.ThreatEventAdded -= OnThreatEventAddedToDataFlow;
             dataFlow.ThreatEventRemoved -= OnThreatEventRemovedFromDataFlow;
+            dataFlow.VulnerabilityAdded -= OnVulnerabilityAddedToDataFlow;
+            dataFlow.VulnerabilityRemoved -= OnVulnerabilityRemovedFromDataFlow;
         }
 
         private void RegisterEvents([NotNull] IPropertySchema schema)

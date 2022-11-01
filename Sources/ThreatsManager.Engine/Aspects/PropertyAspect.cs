@@ -49,6 +49,20 @@ namespace ThreatsManager.Engine.Aspects
             }
         }
 
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 2)]
+        public Guid PropertyTypeId
+        {
+            get
+            {
+                return _propertyTypeId?.Get() ?? Guid.Empty;
+            }
+
+            set
+            {
+                _propertyTypeId?.Set(value);
+            }
+        }
+
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public Guid Id => _id?.Get() ?? Guid.Empty;
 

@@ -54,6 +54,40 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityAddedToEntity;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAddedToEntity
+        {
+            add
+            {
+                if (_vulnerabilityAddedToEntity == null || !_vulnerabilityAddedToEntity.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityAddedToEntity += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityAddedToEntity != null) _vulnerabilityAddedToEntity -= value;
+            }
+        }
+
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityRemovedFromEntity;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemovedFromEntity
+        {
+            add
+            {
+                if (_vulnerabilityRemovedFromEntity == null || !_vulnerabilityRemovedFromEntity.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityRemovedFromEntity += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityRemovedFromEntity != null) _vulnerabilityRemovedFromEntity -= value;
+            }
+        }
+
         [Child]
         [JsonProperty("entities")]
         private IList<IEntity> _entities;
@@ -146,6 +180,16 @@ namespace ThreatsManager.Engine.ObjectModel
         private void OnThreatEventAddedToEntity([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             _threatEventAddedToEntity?.Invoke(container, threatEvent);
+        }
+
+        private void OnVulnerabilityRemovedFromEntity([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityRemovedFromEntity?.Invoke(container, vulnerability);
+        }
+
+        private void OnVulnerabilityAddedToEntity([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityAddedToEntity?.Invoke(container, vulnerability);
         }
 
         private string GetFirstAvailableEntityName<T>() where T : IEntity

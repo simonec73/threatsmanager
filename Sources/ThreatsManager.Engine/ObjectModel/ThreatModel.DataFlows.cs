@@ -50,6 +50,40 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityAddedToDataFlow;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAddedToDataFlow
+        {
+            add
+            {
+                if (_vulnerabilityAddedToDataFlow == null || !_vulnerabilityAddedToDataFlow.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityAddedToDataFlow += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityAddedToDataFlow != null) _vulnerabilityAddedToDataFlow -= value;
+            }
+        }
+
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityRemovedFromDataFlow;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemovedFromDataFlow
+        {
+            add
+            {
+                if (_vulnerabilityRemovedFromDataFlow == null || !_vulnerabilityRemovedFromDataFlow.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityRemovedFromDataFlow += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityRemovedFromDataFlow != null) _vulnerabilityRemovedFromDataFlow -= value;
+            }
+        }
+
         [Child]
         [JsonProperty("dataFlows")]
         private IList<IDataFlow> _flows;
@@ -122,6 +156,16 @@ namespace ThreatsManager.Engine.ObjectModel
         private void OnThreatEventAddedToDataFlow([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             _threatEventAddedToDataFlow?.Invoke(container, threatEvent);
+        }
+
+        private void OnVulnerabilityRemovedFromDataFlow([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityRemovedFromDataFlow?.Invoke(container, vulnerability);
+        }
+
+        private void OnVulnerabilityAddedToDataFlow([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityAddedToDataFlow?.Invoke(container, vulnerability);
         }
 
         public bool RemoveDataFlow(Guid id)
