@@ -28,8 +28,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PostSharp" Version="6.10.15" />
-    <PackageReference Include="PostSharp.Patterns.Common" Version="6.10.15" />
+    <PackageReference Include="PostSharp" Version="6.10.16" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="6.10.16" />
     <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
   </ItemGroup>
 
