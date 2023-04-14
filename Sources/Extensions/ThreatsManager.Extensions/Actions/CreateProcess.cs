@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Actions
 {
@@ -40,17 +41,22 @@ namespace ThreatsManager.Extensions.Actions
         {
             bool result = false;
 
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if (identity is IDiagram diagram)
+            using (var scope = UndoRedoManager.OpenScope("Create Process"))
             {
-                var process = diagram.Model?.AddEntity<IProcess>();
-                IdentityAddingRequired?.Invoke(diagram, process, PointF.Empty, SizeF.Empty);
-                result = true;
-            } 
-            else if (identity is IThreatModel threatModel)
-            {
-                threatModel.AddEntity<IProcess>();
-                result = true;
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                if (identity is IDiagram diagram)
+                {
+                    var process = diagram.Model?.AddEntity<IProcess>();
+                    IdentityAddingRequired?.Invoke(diagram, process, PointF.Empty, SizeF.Empty);
+                    result = true;
+                }
+                else if (identity is IThreatModel threatModel)
+                {
+                    threatModel.AddEntity<IProcess>();
+                    result = true;
+                }
+                
+                scope.Complete();
             }
 
             return result;

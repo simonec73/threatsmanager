@@ -145,13 +145,16 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return result;
         }
 
-        [RecordingScope("Apply a different Actor Type")]
         public void Apply([NotNull] IThreatActor actor)
         {
-            _id = actor.Id;
-            Description = actor.Description;
-            _actor = actor.ActorType;
-            actor.CloneProperties(this);
+            using (var scope = UndoRedoManager.OpenScope("Apply a different Actor Type"))
+            {
+                _id = actor.Id;
+                Description = actor.Description;
+                _actor = actor.ActorType;
+                actor.CloneProperties(this);
+                scope.Complete();
+            }
         }
 
         public override string ToString()

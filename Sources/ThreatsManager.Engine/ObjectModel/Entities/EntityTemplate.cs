@@ -183,58 +183,65 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [InitializationRequired]
-        [RecordingScope("Create Entity from Template")]
         public IEntity CreateEntity([Required] string name)
         {
             IEntity result = null;
 
-            switch (EntityType)
+            using (var scope = UndoRedoManager.OpenScope("Create Entity"))
             {
-                case EntityType.ExternalInteractor:
-                    result = _model.AddEntity<IExternalInteractor>(name, this);
-                    break;
-                case EntityType.Process:
-                    result = _model.AddEntity<IProcess>(name, this);
-                    break;
-                case EntityType.DataStore:
-                    result = _model.AddEntity<IDataStore>(name, this);
-                    break;
-            }
+                switch (EntityType)
+                {
+                    case EntityType.ExternalInteractor:
+                        result = _model.AddEntity<IExternalInteractor>(name, this);
+                        break;
+                    case EntityType.Process:
+                        result = _model.AddEntity<IProcess>(name, this);
+                        break;
+                    case EntityType.DataStore:
+                        result = _model.AddEntity<IDataStore>(name, this);
+                        break;
+                }
 
-            if (result != null)
-            {
-                result.Description = Description;
-                result.BigImage = this.GetImage(ImageSize.Big);
-                result.Image = this.GetImage(ImageSize.Medium);
-                result.SmallImage = this.GetImage(ImageSize.Small);
-                this.CloneProperties(result);
+                if (result != null)
+                {
+                    result.Description = Description;
+                    result.BigImage = this.GetImage(ImageSize.Big);
+                    result.Image = this.GetImage(ImageSize.Medium);
+                    result.SmallImage = this.GetImage(ImageSize.Small);
+                    this.CloneProperties(result);
+                    scope.Complete();
+                }
             }
 
             return result;
         }
 
-        [RecordingScope("Apply Template to an existing Entity")]
         public void ApplyTo(IEntity entity)
         {
-            entity.BigImage = this.GetImage(ImageSize.Big);
-            entity.Image = this.GetImage(ImageSize.Medium);
-            entity.SmallImage = this.GetImage(ImageSize.Small);
-            entity.ClearProperties();
-            this.CloneProperties(entity);
-            switch (entity)
+            using (var scope = UndoRedoManager.OpenScope("Apply Template to an existing Entity"))
             {
-                case ExternalInteractor externalInteractor:
-                    externalInteractor._templateId = Id;
-                    externalInteractor._template = this;
-                    break;
-                case Process process:
-                    process._templateId = Id;
-                    process._template = this;
-                    break;
-                case DataStore dataStore:
-                    dataStore._templateId = Id;
-                    dataStore._template = this;
-                    break;
+                entity.BigImage = this.GetImage(ImageSize.Big);
+                entity.Image = this.GetImage(ImageSize.Medium);
+                entity.SmallImage = this.GetImage(ImageSize.Small);
+                entity.ClearProperties();
+                this.CloneProperties(entity);
+                switch (entity)
+                {
+                    case ExternalInteractor externalInteractor:
+                        externalInteractor._templateId = Id;
+                        externalInteractor._template = this;
+                        break;
+                    case Process process:
+                        process._templateId = Id;
+                        process._template = this;
+                        break;
+                    case DataStore dataStore:
+                        dataStore._templateId = Id;
+                        dataStore._template = this;
+                        break;
+                }
+
+                scope.Complete();
             }
         }
 

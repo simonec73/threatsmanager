@@ -16,9 +16,13 @@ namespace ThreatsManager.Extensions.Initializers
             var values = EnumExtensions.GetUIVisible<DefaultActor>()?.ToArray();
             if (values?.Any() ?? false)
             {
-                foreach (var value in values)
+                using (var scope = UndoRedoManager.OpenScope("Initialize Actors"))
                 {
-                    model.AddThreatActor(value);
+                    foreach (var value in values)
+                    {
+                        model.AddThreatActor(value);
+                    }
+                    scope.Complete();
                 }
             }
         }

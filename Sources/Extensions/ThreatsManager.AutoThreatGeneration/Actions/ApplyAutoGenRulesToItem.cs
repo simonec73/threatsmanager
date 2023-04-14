@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
@@ -64,23 +65,32 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         {
             if (answer == AnswerType.Yes || answer == AnswerType.Ok || answer == AnswerType.No)
             {
-                if (context is IEntity entity)
+                using (var scope = UndoRedoManager.OpenScope("Apply Auto Gen Rules to Item"))
                 {
-                    if (entity.GenerateThreatEvents(answer == AnswerType.No))
-                        ShowMessage?.Invoke(Resources.SuccessGeneration);
-                    else
+                    if (context is IEntity entity)
                     {
-                        ShowWarning?.Invoke(Resources.WarningNothingGenerated);
-                    }
+                        if (entity.GenerateThreatEvents(answer == AnswerType.No))
+                        {
+                            scope.Complete();
+                            ShowMessage?.Invoke(Resources.SuccessGeneration);
+                        }
+                        else
+                        {
+                            ShowWarning?.Invoke(Resources.WarningNothingGenerated);
+                        }
 
-                }
-                else if (context is IDataFlow flow)
-                {
-                    if (flow.GenerateThreatEvents(answer == AnswerType.No))
-                        ShowMessage?.Invoke(Resources.SuccessGeneration);
-                    else
+                    }
+                    else if (context is IDataFlow flow)
                     {
-                        ShowWarning?.Invoke(Resources.WarningNothingGenerated);
+                        if (flow.GenerateThreatEvents(answer == AnswerType.No))
+                        {
+                            scope.Complete();
+                            ShowMessage?.Invoke(Resources.SuccessGeneration);
+                        }
+                        else
+                        {
+                            ShowWarning?.Invoke(Resources.WarningNothingGenerated);
+                        }
                     }
                 }
             }

@@ -3,6 +3,7 @@ using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Initializers
 {
@@ -11,31 +12,36 @@ namespace ThreatsManager.Extensions.Initializers
     {
         public void Initialize([NotNull] IThreatModel model)
         {
-            var schemaManager = new ModelConfigPropertySchemaManager(model);
-            var schema = schemaManager.GetSchema();
+            using (var scope = UndoRedoManager.OpenScope("Initialize Model Configuration"))
+            {
+                var schemaManager = new ModelConfigPropertySchemaManager(model);
+                var schema = schemaManager.GetSchema();
 
-            var horizontalPT = schema.GetPropertyType("Diagram Layout Horizontal Spacing");
-            var horizontal = model.GetProperty(horizontalPT);
-            if (horizontal == null)
-            {
-                model.AddProperty(horizontalPT, "200");
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(horizontal.StringValue))
-                    horizontal.StringValue = "200";
-            }
+                var horizontalPT = schema.GetPropertyType("Diagram Layout Horizontal Spacing");
+                var horizontal = model.GetProperty(horizontalPT);
+                if (horizontal == null)
+                {
+                    model.AddProperty(horizontalPT, "200");
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(horizontal.StringValue))
+                        horizontal.StringValue = "200";
+                }
 
-            var verticalPT = schema.GetPropertyType("Diagram Layout Vertical Spacing");
-            var vertical = model.GetProperty(verticalPT);
-            if (vertical == null)
-            {
-                model.AddProperty(verticalPT, "100");
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(vertical.StringValue))
-                    vertical.StringValue = "100";
+                var verticalPT = schema.GetPropertyType("Diagram Layout Vertical Spacing");
+                var vertical = model.GetProperty(verticalPT);
+                if (vertical == null)
+                {
+                    model.AddProperty(verticalPT, "100");
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(vertical.StringValue))
+                        vertical.StringValue = "100";
+                }
+
+                scope.Complete();
             }
         }
     }

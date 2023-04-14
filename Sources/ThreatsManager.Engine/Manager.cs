@@ -417,30 +417,48 @@ namespace ThreatsManager.Engine
 
         private void RemoveIdentityFromModel([NotNull] IIdentity identity)
         {
-            if (identity is IEntity entity)
+            using (var scope = UndoRedoManager.OpenScope("Remove Identity from Model"))
             {
-                if (entity.Model.RemoveEntity(entity.Id))
-                    _showMessage?.Invoke("Entity removed successfully.");
-                else
-                    _showWarning?.Invoke("It is not possible to remove the selected Entity.");
-            } else if (identity is IDataFlow dataFlow)
-            {
-                if (dataFlow.Model.RemoveDataFlow(dataFlow.Id))
-                    _showMessage?.Invoke("Flow removed successfully.");
-                else
-                    _showWarning?.Invoke("It is not possible to remove the selected Flow.");
-            } else if (identity is ITrustBoundary trustBoundary)
-            {
-                if (trustBoundary.Model.RemoveGroup(trustBoundary.Id))
-                    _showMessage?.Invoke("Trust Boundary removed successfully.");
-                else
-                    _showWarning?.Invoke("It is not possible to remove the selected Trust Boundary.");
-            } else if (identity is IGroup group)
-            {
-                if (group.Model.RemoveGroup(group.Id))
-                    _showMessage?.Invoke("Group removed successfully.");
-                else
-                    _showWarning?.Invoke("It is not possible to remove the selected Group.");
+                if (identity is IEntity entity)
+                {
+                    if (entity.Model.RemoveEntity(entity.Id))
+                    {
+                        scope.Complete();
+                        _showMessage?.Invoke("Entity removed successfully.");
+                    }
+                    else
+                        _showWarning?.Invoke("It is not possible to remove the selected Entity.");
+                }
+                else if (identity is IDataFlow dataFlow)
+                {
+                    if (dataFlow.Model.RemoveDataFlow(dataFlow.Id))
+                    {
+                        scope.Complete();
+                        _showMessage?.Invoke("Flow removed successfully.");
+                    }
+                    else
+                        _showWarning?.Invoke("It is not possible to remove the selected Flow.");
+                }
+                else if (identity is ITrustBoundary trustBoundary)
+                {
+                    if (trustBoundary.Model.RemoveGroup(trustBoundary.Id))
+                    {
+                        scope.Complete();
+                        _showMessage?.Invoke("Trust Boundary removed successfully.");
+                    }
+                    else
+                        _showWarning?.Invoke("It is not possible to remove the selected Trust Boundary.");
+                }
+                else if (identity is IGroup group)
+                {
+                    if (group.Model.RemoveGroup(group.Id))
+                    {
+                        scope.Complete();
+                        _showMessage?.Invoke("Group removed successfully.");
+                    }
+                    else
+                        _showWarning?.Invoke("It is not possible to remove the selected Group.");
+                }
             }
         }
 

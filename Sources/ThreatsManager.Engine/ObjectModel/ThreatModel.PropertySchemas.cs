@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
@@ -43,190 +44,195 @@ namespace ThreatsManager.Engine.ObjectModel
             var schema = GetSchema(schemaId);
             if (schema != null)
             {
-                if (schema.AppliesTo.HasFlag(Scope.ExternalInteractor))
+                using (var scope = UndoRedoManager.OpenScope("Apply Schema"))
                 {
-                    ApplySchema<IExternalInteractor>(schema);
-                }
+                    if (schema.AppliesTo.HasFlag(Scope.ExternalInteractor))
+                    {
+                        ApplySchema<IExternalInteractor>(schema);
+                    }
 
-                if (schema.AppliesTo.HasFlag(Scope.Process))
-                {
-                    ApplySchema<IProcess>(schema);
-                }
+                    if (schema.AppliesTo.HasFlag(Scope.Process))
+                    {
+                        ApplySchema<IProcess>(schema);
+                    }
 
-                if (schema.AppliesTo.HasFlag(Scope.DataStore))
-                {
-                    ApplySchema<IDataStore>(schema);
-                }
- 
-                if (schema.AppliesTo.HasFlag(Scope.DataFlow))
-                {
-                    var list = _flows?.ToArray();
-                    if (list?.Any() ?? false)
+                    if (schema.AppliesTo.HasFlag(Scope.DataStore))
                     {
-                        foreach (var current in list)
-                        {
-                            current?.Apply(schema);
-                        }
+                        ApplySchema<IDataStore>(schema);
                     }
-                }
- 
-                if (schema.AppliesTo.HasFlag(Scope.TrustBoundary))
-                {
-                    var list = _groups?.OfType<ITrustBoundary>().ToArray();
-                    if (list?.Any() ?? false)
+
+                    if (schema.AppliesTo.HasFlag(Scope.DataFlow))
                     {
-                        foreach (var current in list)
+                        var list = _flows?.ToArray();
+                        if (list?.Any() ?? false)
                         {
-                            current?.Apply(schema);
-                        }
-                    }
-                }
- 
-                if (schema.AppliesTo.HasFlag(Scope.ThreatType))
-                {
-                    var list = _threatTypes?.ToArray();
-                    if (list?.Any() ?? false)
-                    {
-                        foreach (var current in list)
-                        {
-                            current?.Apply(schema);
-                        }
-                    }
-                }
- 
-                if (schema.AppliesTo.HasFlag(Scope.ThreatEvent))
-                {
-                    var threatEvents = GetThreatEvents();
-                    if (threatEvents?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in threatEvents)
-                        {
-                            threatEvent.Apply(schema);
-                        }
-                    }
-                }
-  
-                if (schema.AppliesTo.HasFlag(Scope.ThreatEventScenario))
-                {
-                    var threatEvents = GetThreatEvents();
-                    if (threatEvents?.Any() ?? false)
-                    {
-                        foreach (var threatEvent in threatEvents)
-                        {
-                            var ets = threatEvent.Scenarios?.ToArray();
-                            if (ets?.Any() ?? false)
+                            foreach (var current in list)
                             {
-                                foreach (var currEts in ets)
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.TrustBoundary))
+                    {
+                        var list = _groups?.OfType<ITrustBoundary>().ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatType))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEvent))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                threatEvent.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEventScenario))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                var ets = threatEvent.Scenarios?.ToArray();
+                                if (ets?.Any() ?? false)
                                 {
-                                    currEts?.Apply(schema);
+                                    foreach (var currEts in ets)
+                                    {
+                                        currEts?.Apply(schema);
+                                    }
                                 }
                             }
                         }
                     }
-                }
- 
-                if (schema.AppliesTo.HasFlag(Scope.Mitigation))
-                {
-                    var list = _mitigations?.ToArray();
-                    if (list?.Any() ?? false)
-                    {
-                        foreach (var current in list)
-                        {
-                            current?.Apply(schema);
-                        }
-                    }
-                }
 
-                if (schema.AppliesTo.HasFlag(Scope.Diagram))
-                {
-                    var list = _diagrams?.ToArray();
-                    if (list?.Any() ?? false)
+                    if (schema.AppliesTo.HasFlag(Scope.Mitigation))
                     {
-                        foreach (var current in list)
+                        var list = _mitigations?.ToArray();
+                        if (list?.Any() ?? false)
                         {
-                            current?.Apply(schema);
-                        }
-                    }
-                }
-
-                if (schema.AppliesTo.HasFlag(Scope.ThreatModel))
-                {
-                    this.Apply(schema);
-                }
-
-                if (schema.AppliesTo.HasFlag(Scope.ThreatActor))
-                {
-                    var list = _actors?.ToArray();
-                    if (list?.Any() ?? false)
-                    {
-                        foreach (var current in list)
-                        {
-                            current?.Apply(schema);
-                        }
-                    }
-                }
-
-                if (schema.AppliesTo.HasFlag(Scope.EntityTemplate))
-                {
-                    var list = _entityTemplates?.ToArray();
-                    if (list?.Any() ?? false)
-                    {
-                        foreach (var current in list)
-                        {
-                            current?.Apply(schema);
-                        }
-                    }
-                }
- 
-                if (schema.AppliesTo.HasFlag(Scope.LogicalGroup))
-                {
-                    // TODO: Expand when the concept of Logical Group will be introduced.
-                }
-
-                if (schema.AppliesTo.HasFlag(Scope.ThreatTypeMitigation))
-                {
-                    var list = _threatTypes?.ToArray();
-                    if (list?.Any() ?? false)
-                    {
-                        foreach (var current in list)
-                        {
-                            var mitigations = current.Mitigations?.ToArray();
-                            if (mitigations?.Any() ?? false)
+                            foreach (var current in list)
                             {
-                                foreach (var mitigation in mitigations)
-                                    mitigation?.Apply(schema);
+                                current?.Apply(schema);
                             }
                         }
                     }
-                }
 
-                if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
-                {
-                    var threatEvents = GetThreatEvents();
-                    if (threatEvents?.Any() ?? false)
+                    if (schema.AppliesTo.HasFlag(Scope.Diagram))
                     {
-                        foreach (var threatEvent in threatEvents)
+                        var list = _diagrams?.ToArray();
+                        if (list?.Any() ?? false)
                         {
-                            var tms = threatEvent.Mitigations?.ToArray();
-                            if (tms?.Any() ?? false)
+                            foreach (var current in list)
                             {
-                                foreach (var tm in tms)
-                                    tm?.Apply(schema);
+                                current?.Apply(schema);
                             }
                         }
                     }
-                }
 
-                if (schema.AppliesTo.HasFlag(Scope.Severity))
-                {
-                    var list = _severities?.ToArray();
-                    if (list?.Any() ?? false)
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatModel))
                     {
-                        foreach (var current in list)
+                        this.Apply(schema);
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatActor))
+                    {
+                        var list = _actors?.ToArray();
+                        if (list?.Any() ?? false)
                         {
-                            current?.Apply(schema);
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
                         }
                     }
+
+                    if (schema.AppliesTo.HasFlag(Scope.EntityTemplate))
+                    {
+                        var list = _entityTemplates?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.LogicalGroup))
+                    {
+                        // TODO: Expand when the concept of Logical Group will be introduced.
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatTypeMitigation))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var mitigations = current.Mitigations?.ToArray();
+                                if (mitigations?.Any() ?? false)
+                                {
+                                    foreach (var mitigation in mitigations)
+                                        mitigation?.Apply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                var tms = threatEvent.Mitigations?.ToArray();
+                                if (tms?.Any() ?? false)
+                                {
+                                    foreach (var tm in tms)
+                                        tm?.Apply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Severity))
+                    {
+                        var list = _severities?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    scope.Complete();
                 }
             }
         }
@@ -302,16 +308,20 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (scope != Scope.Undefined)
             {
-                var schemas = _schemas?.Where(x => x.AutoApply && x.AppliesTo.HasFlag(scope)).OrderBy(x => x.Priority).ToArray();
-
-                if (schemas?.Any() ?? false)
+                using (var s = UndoRedoManager.OpenScope("Auto Apply Schemas"))
                 {
-                    foreach (var schema in schemas)
-                    {
-                        container?.Apply(schema);
-                    }
+                    var schemas = _schemas?.Where(x => x.AutoApply && x.AppliesTo.HasFlag(scope)).OrderBy(x => x.Priority).ToArray();
 
-                    result = true;
+                    if (schemas?.Any() ?? false)
+                    {
+                        foreach (var schema in schemas)
+                        {
+                            container?.Apply(schema);
+                        }
+
+                        s.Complete();
+                        result = true;
+                    }
                 }
             }
 
@@ -337,12 +347,16 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             IPropertySchema result = null;
 
-            if (GetSchema(name, nspace) == null)
+            using (var scope = UndoRedoManager.OpenScope("Add Schema"))
             {
-                result = new PropertySchema(name, nspace);
-                Add(result);
-                RegisterEvents(result);
-                ChildCreated?.Invoke(result);
+                if (GetSchema(name, nspace) == null)
+                {
+                    result = new PropertySchema(name, nspace);
+                    Add(result);
+                    RegisterEvents(result);
+                    scope.Complete();
+                    ChildCreated?.Invoke(result);
+                }
             }
 
             return result;
@@ -404,22 +418,51 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IPropertySchema propertySchema)
         {
             return (_entities?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
-                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Properties?
-                        .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
-                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Properties?
-                        .Any(t => (t.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ?? false) ||
+                   (_entities?.Any(x => IsUsedForTEC(propertySchema, x)) ?? false) ||
+                   (_entities?.Any(x => IsUsedForVC(propertySchema, x)) ?? false) ||
                    (_flows?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
-                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Properties?
-                        .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
-                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Properties?
-                        .Any(t => (t.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => IsUsedForTEC(propertySchema, x)) ?? false) ||
+                   (_flows?.Any(x => IsUsedForVC(propertySchema, x)) ?? false) ||
                    (_diagrams?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (_diagrams?.Any(x => x.Entities?.Any(y => y.Properties?
+                        .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
+                   (_diagrams?.Any(x => x.Groups?.Any(y => y.Properties?
+                        .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
+                   (_diagrams?.Any(x => x.Links?.Any(y => y.Properties?
+                        .Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
                    (_groups?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ||
+                   IsUsedForTEC(propertySchema, this) ||
+                   IsUsedForVC(propertySchema, this) ||
                    (_severities?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (_strengths?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (_mitigations?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (_actors?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
-                   (_threatTypes?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false);
+                   (_entityTemplates?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (_trustBoundaryTemplates?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (_flowTemplates?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (_threatTypes?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   IsUsedForWC(propertySchema, this);
+        }
+
+        private bool IsUsedForTEC([NotNull] IPropertySchema propertySchema, IThreatEventsContainer container)
+        {
+            return (container.ThreatEvents?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (container.ThreatEvents?.Any(x => x.Scenarios?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
+                   (container.ThreatEvents?.Any(x => x.Mitigations?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
+                   (container.ThreatEvents?.Any(x => IsUsedForVC(propertySchema, x)) ?? false);
+        }
+
+        private bool IsUsedForVC([NotNull] IPropertySchema propertySchema, IVulnerabilitiesContainer container)
+        {
+            return (container.Vulnerabilities?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (container.Vulnerabilities?.Any(x => x.Mitigations?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false);
+        }
+
+        private bool IsUsedForWC([NotNull] IPropertySchema propertySchema, IWeaknessesContainer container)
+        {
+            return (container.Weaknesses?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (container.Weaknesses?.Any(x => x.Mitigations?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false);
         }
 
         private void RemoveRelated([NotNull] IPropertySchema propertySchema)
@@ -498,6 +541,11 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (container is IWeakness weakness)
                 {
                     RemoveRelated(schema, weakness.Mitigations);
+                }
+
+                if (container is IWeaknessesContainer wContainer)
+                {
+                    RemoveRelated(schema, wContainer.Weaknesses);
                 }
             }
         }

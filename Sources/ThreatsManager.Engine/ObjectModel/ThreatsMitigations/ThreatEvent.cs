@@ -378,7 +378,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return result;
         }
 
-        [RecordingScope("Add Property to Threat Event")]
         private void AddProperty([NotNull] IProperty property)
         {
             var shadowClass = property.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>().FirstOrDefault();
@@ -387,18 +386,23 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 var shadowClassType = Type.GetType(shadowClass.AssociatedType, false);
                 if (shadowClassType != null)
                 {
-                    var shadowProperty = Activator.CreateInstance(shadowClassType, property) as IProperty;
-
-                    if (shadowProperty != null)
+                    using (var scope = UndoRedoManager.OpenScope("Add Property to Threat Event"))
                     {
-                        if (_properties == null)
-                            _properties = new AdvisableCollection<IProperty>();
-                        _properties.Add(shadowProperty);
-                        PropertyAdded?.Invoke(this, shadowProperty);
-                        shadowProperty.Changed += delegate(IProperty prop)
+                        var shadowProperty = Activator.CreateInstance(shadowClassType, property) as IProperty;
+
+                        if (shadowProperty != null)
                         {
-                            PropertyValueChanged?.Invoke(this, prop);
-                        };
+                            if (_properties == null)
+                                _properties = new AdvisableCollection<IProperty>();
+                            _properties.Add(shadowProperty);
+                            PropertyAdded?.Invoke(this, shadowProperty);
+                            shadowProperty.Changed += delegate (IProperty prop)
+                            {
+                                PropertyValueChanged?.Invoke(this, prop);
+                            };
+
+                            scope.Complete();
+                        }
                     }
                 }
             }

@@ -6,6 +6,7 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -50,20 +51,25 @@ namespace ThreatsManager.Extensions.Actions
             var shapesArray = shapes?.ToArray();
             var linksArray = links?.ToArray();
 
-            if (linksArray?.Any() ?? false)
+            using (var scope = UndoRedoManager.OpenScope("Remove from Diagram"))
             {
-                foreach (var link in linksArray)
+                if (linksArray?.Any() ?? false)
                 {
-                    DataFlowRemovingRequired?.Invoke(link);
+                    foreach (var link in linksArray)
+                    {
+                        DataFlowRemovingRequired?.Invoke(link);
+                    }
                 }
-            }
 
-            if (shapesArray?.Any() ?? false)
-            {
-                foreach (var shape in shapesArray)
+                if (shapesArray?.Any() ?? false)
                 {
-                    EntityGroupRemovingRequired?.Invoke(shape);
+                    foreach (var shape in shapesArray)
+                    {
+                        EntityGroupRemovingRequired?.Invoke(shape);
+                    }
                 }
+
+                scope.Complete();
             }
 
             return true;

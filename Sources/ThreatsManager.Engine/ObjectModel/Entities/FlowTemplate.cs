@@ -119,32 +119,40 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [InitializationRequired]
-        [RecordingScope("Create Flow from Template")]
         public IDataFlow CreateFlow([Required] string name, Guid sourceId, Guid targetId)
         {
-            IDataFlow result = _model.AddDataFlow(name, sourceId, targetId, this);
+            IDataFlow result;
 
-            if (result != null)
+            using (var scope = UndoRedoManager.OpenScope("Create Flow from Template"))
             {
-                result.Description = Description;
-                result.FlowType = FlowType;
-                this.CloneProperties(result);
+                result = _model.AddDataFlow(name, sourceId, targetId, this);
+
+                if (result != null)
+                {
+                    result.Description = Description;
+                    result.FlowType = FlowType;
+                    this.CloneProperties(result);
+                    scope.Complete();
+                }
             }
 
             return result;
         }
 
         [InitializationRequired]
-        [RecordingScope("Apply Template to an existing Flow")]
         public void ApplyTo([NotNull] IDataFlow flow)
         {
-            flow.FlowType = FlowType;
-            flow.ClearProperties();
-            this.CloneProperties(flow);
-            if (flow is DataFlow internalFlow)
+            using (var scope = UndoRedoManager.OpenScope("Apply Template to an existing Flow"))
             {
-                internalFlow._templateId = Id;
-                internalFlow._template = this;
+                flow.FlowType = FlowType;
+                flow.ClearProperties();
+                this.CloneProperties(flow);
+                if (flow is DataFlow internalFlow)
+                {
+                    internalFlow._templateId = Id;
+                    internalFlow._template = this;
+                }
+                scope.Complete();
             }
         }
 

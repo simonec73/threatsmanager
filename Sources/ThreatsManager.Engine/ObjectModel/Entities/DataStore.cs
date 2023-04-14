@@ -281,17 +281,21 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
-        [RecordingScope("Detach from Template")]
         public void ResetTemplate()
         {
-            BigImage = EntityType.DataStore.GetEntityImage(ImageSize.Big);
-            Image = EntityType.DataStore.GetEntityImage(ImageSize.Medium);
-            SmallImage = EntityType.DataStore.GetEntityImage(ImageSize.Small);
-            ClearProperties();
-            _model.AutoApplySchemas(this);
+            using (var scope = UndoRedoManager.OpenScope("Detach from Template"))
+            {
+                BigImage = EntityType.DataStore.GetEntityImage(ImageSize.Big);
+                Image = EntityType.DataStore.GetEntityImage(ImageSize.Medium);
+                SmallImage = EntityType.DataStore.GetEntityImage(ImageSize.Small);
+                ClearProperties();
+                _model.AutoApplySchemas(this);
 
-            _templateId = Guid.Empty;
-            _template = null;
+                _templateId = Guid.Empty;
+                _template = null;
+
+                scope.Complete();
+            }
         }
 
         public IEntity Clone([NotNull] IEntitiesContainer container)

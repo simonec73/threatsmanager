@@ -114,30 +114,38 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [InitializationRequired]
-        [RecordingScope("Create Trust Boundary from Template")]
         public ITrustBoundary CreateTrustBoundary([Required] string name)
         {
-            ITrustBoundary result = _model.AddTrustBoundary(name, this);
+            ITrustBoundary result;
 
-            if (result != null)
+            using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary from Template"))
             {
-                result.Description = Description;
-                this.CloneProperties(result);
+                result = _model.AddTrustBoundary(name, this);
+
+                if (result != null)
+                {
+                    result.Description = Description;
+                    this.CloneProperties(result);
+                    scope.Complete();
+                }
             }
 
             return result;
         }
 
         [InitializationRequired]
-        [RecordingScope("Apply Template to an existing Trust Boundary")]
         public void ApplyTo([NotNull] ITrustBoundary trustBoundary)
         {
-            trustBoundary.ClearProperties();
-            this.CloneProperties(trustBoundary);
-            if (trustBoundary is TrustBoundary internalTb)
+            using (var scope = UndoRedoManager.OpenScope("Apply Template to an existing Trust Boundary"))
             {
-                internalTb._templateId = Id;
-                internalTb._template = this;
+                trustBoundary.ClearProperties();
+                this.CloneProperties(trustBoundary);
+                if (trustBoundary is TrustBoundary internalTb)
+                {
+                    internalTb._templateId = Id;
+                    internalTb._template = this;
+                }
+                scope.Complete();
             }
         }
 

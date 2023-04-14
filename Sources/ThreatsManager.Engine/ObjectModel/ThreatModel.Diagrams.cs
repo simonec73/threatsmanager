@@ -237,10 +237,10 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(diagram);
-                        scope.Complete();
 
                         UnregisterEvents(diagram);
                         ChildRemoved?.Invoke(diagram);
+                        scope.Complete();
                     }
                 }
             }

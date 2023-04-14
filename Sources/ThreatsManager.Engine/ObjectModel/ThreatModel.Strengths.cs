@@ -155,13 +155,18 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void InitializeStandardStrengths()
         {
-            if (_strengths == null)
-                _strengths = new AdvisableCollection<IStrength>();
-
-            var values = Enum.GetValues(typeof(DefaultStrength));
-            foreach (var value in values)
+            using (var scope = UndoRedoManager.OpenScope("Initialize Standard Strengths"))
             {
-                AddStrength((DefaultStrength) value);
+                if (_strengths == null)
+                    _strengths = new AdvisableCollection<IStrength>();
+
+                var values = Enum.GetValues(typeof(DefaultStrength));
+                foreach (var value in values)
+                {
+                    AddStrength((DefaultStrength)value);
+                }
+
+                scope.Complete();
             }
         }
         
@@ -173,6 +178,9 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
                    (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Mitigations?.Any(t => t.StrengthId == strength.Id) ?? false) ?? false) ?? false) ?? false) ||
                    (_flows?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_threatEvents?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
+                   (_threatEvents?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_vulnerabilities?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
                    (_threatTypes?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
                    (_weaknesses?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false);
         }
