@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics.Signed" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="PostSharp" Version="6.10.16" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PostSharp" Version="2023.0.4" />
   </ItemGroup>
 
   <ItemGroup>
