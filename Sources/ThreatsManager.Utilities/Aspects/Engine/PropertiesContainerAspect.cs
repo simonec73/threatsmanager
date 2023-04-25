@@ -224,7 +224,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var property in properties)
                     {
-                        if (_properties?.Get()?.Remove(property) ?? false)
+                        if (property != null && _properties?.Get()?.Remove(property) ?? false)
                         {
                             UndoRedoManager.Detach(property);
 
@@ -252,10 +252,13 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var property in properties)
                     {
-                        UndoRedoManager.Detach(property);
+                        if (property != null)
+                        {
+                            UndoRedoManager.Detach(property);
 
-                        if (Instance is IPropertiesContainer container)
-                            _propertyRemoved?.Invoke(container, property);
+                            if (Instance is IPropertiesContainer container)
+                                _propertyRemoved?.Invoke(container, property);
+                        }
                     }
 
                     _properties?.Get()?.Clear();
@@ -284,7 +287,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var item in missing)
                     {
-                        container.AddProperty(item, null);
+                        if (item != null)
+                            container.AddProperty(item, null);
                     }
                 }
 
@@ -292,7 +296,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var item in inExcess)
                     {
-                        container.RemoveProperty(item);
+                        if (item != null)
+                            container.RemoveProperty(item);
                     }
                 }
             }
@@ -319,9 +324,12 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var schemaId in schemas)
                     {
-                        var schema = model.GetSchema(schemaId);
-                        schema.PropertyTypeAdded += OnPropertyTypeAdded;
-                        schema.PropertyTypeRemoved += OnPropertyTypeRemoved;
+                        if (schemaId != null)
+                        {
+                            var schema = model.GetSchema(schemaId);
+                            schema?.PropertyTypeAdded += OnPropertyTypeAdded;
+                            schema?.PropertyTypeRemoved += OnPropertyTypeRemoved;
+                        }
                     }
                 }
             }
@@ -331,7 +339,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             {
                 foreach (var property in properties)
                 {
-                    property.Changed += OnPropertyChanged;
+                    property?.Changed += OnPropertyChanged;
                 }
             }
         }
