@@ -224,7 +224,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var property in properties)
                     {
-                        if (property != null && _properties?.Get()?.Remove(property) ?? false)
+                        if (property != null && (_properties?.Get()?.Remove(property) ?? false))
                         {
                             UndoRedoManager.Detach(property);
 
@@ -327,8 +327,11 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         if (schemaId != null)
                         {
                             var schema = model.GetSchema(schemaId);
-                            schema?.PropertyTypeAdded += OnPropertyTypeAdded;
-                            schema?.PropertyTypeRemoved += OnPropertyTypeRemoved;
+                            if (schema != null)
+                            {
+                                schema.PropertyTypeAdded += OnPropertyTypeAdded;
+                                schema.PropertyTypeRemoved += OnPropertyTypeRemoved;
+                            }
                         }
                     }
                 }
@@ -339,7 +342,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             {
                 foreach (var property in properties)
                 {
-                    property?.Changed += OnPropertyChanged;
+                    if (property != null)
+                        property.Changed += OnPropertyChanged;
                 }
             }
         }
