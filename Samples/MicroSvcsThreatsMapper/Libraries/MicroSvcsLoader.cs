@@ -3,9 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace MicroSvcsThreatsMapper.RibbonExtensions
+namespace MicroSvcsThreatsMapper.Libraries
 {
-    class MicroSvcsLoader
+    internal class MicroSvcsLoader
     {
         public class MSvcProject
         {
