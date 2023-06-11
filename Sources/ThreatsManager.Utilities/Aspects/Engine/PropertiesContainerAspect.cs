@@ -22,14 +22,25 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     //private IList<IProperty> _properties { get; set; }
     //#endregion    
 
+    /// <summary>
+    /// Aspect adding the standard implementation for Property Containers.
+    /// </summary>
     [PSerializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
     public class PropertiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
+        /// <summary>
+        /// Importer for local property _properties.
+        /// </summary>
         [ImportMember(nameof(_properties))]
         public Property<IList<IProperty>> _properties;
 
+        /// <summary>
+        /// Implementation of method OnPropertyChanged.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
             LinesOfCodeAvoided = 2, Visibility = Visibility.Private)]
         public void OnPropertyChanged(IProperty property)
@@ -45,6 +56,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         #region Implementation of interface IPropertiesContainer.
         private Action<IPropertiesContainer, IProperty> _propertyAdded;
 
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
         [OnEventAddHandlerAdvice]
         [MulticastPointcut(MemberName = "PropertyAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
         public void OnPropertyAddedAdd(EventInterceptionArgs args)
@@ -56,6 +71,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             }
         }
 
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
         [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyAddedAdd))]
         public void OnPropertyAddedRemove(EventInterceptionArgs args)
         {
@@ -65,6 +84,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
         private Action<IPropertiesContainer, IProperty> _propertyRemoved;
 
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
         [OnEventAddHandlerAdvice]
         [MulticastPointcut(MemberName = "PropertyRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
         public void OnPropertyRemovedAdd(EventInterceptionArgs args)
@@ -76,6 +99,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             }
         }
 
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
         [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyRemovedAdd))]
         public void OnPropertyRemovedRemove(EventInterceptionArgs args)
         {
@@ -85,6 +112,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
         private Action<IPropertiesContainer, IProperty> _propertyValueChanged;
 
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
         [OnEventAddHandlerAdvice]
         [MulticastPointcut(MemberName = "PropertyValueChanged", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
         public void OnPropertyValueChangedAdd(EventInterceptionArgs args)
@@ -96,6 +127,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             }
         }
 
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
         [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyValueChangedAdd))]
         public void OnPropertyValueChangedRemove(EventInterceptionArgs args)
         {
@@ -103,9 +138,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             args.ProceedRemoveHandler();
         }
 
+        /// <summary>
+        /// Implementation of Properties getter.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IEnumerable<IProperty> Properties => _properties?.Get()?.AsEnumerable();
 
+        /// <summary>
+        /// Implementation of method HasProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -115,6 +156,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return _properties?.Get()?.Any(x => x.PropertyTypeId == propertyType.Id) ?? false;
         }
 
+        /// <summary>
+        /// Implementation of method GetProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public IProperty GetProperty(IPropertyType propertyType)
         {
@@ -124,6 +168,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return _properties?.Get()?.FirstOrDefault(x => x.PropertyTypeId == propertyType.Id);
         }
 
+        /// <summary>
+        /// Implementation of method AddProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 20)]
         public IProperty AddProperty(IPropertyType propertyType, string value)
         {
@@ -203,6 +250,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             }
         }
 
+        /// <summary>
+        /// Implementation of method RemoveProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public bool RemoveProperty(IPropertyType propertyType)
         {
@@ -212,6 +262,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return RemoveProperty(propertyType.Id);
         }
 
+        /// <summary>
+        /// Implementation of method RemoveProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public bool RemoveProperty(Guid propertyTypeId)
         {
@@ -241,6 +294,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return result;
         }
 
+        /// <summary>
+        /// Implementation of method ClearProperties.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 8)]
         public void ClearProperties()
         {
@@ -268,6 +324,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             }
         }
 
+        /// <summary>
+        /// Implementation of method Apply.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Apply(IPropertySchema schema)
         {
@@ -305,6 +364,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         #endregion
 
         #region Additional methods.
+        /// <summary>
+        /// Activities to be executed after the deserialization of the object. 
+        /// </summary>
+        /// <param name="context">Serialization context</param>
         [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12, 
             Visibility = Visibility.Assembly)]
         [CopyCustomAttributes(typeof(OnDeserializedAttribute))]
