@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFrameworks>net481</TargetFrameworks>
     <Description>Library to manage the solution files at a low level.</Description>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
@@ -28,9 +28,9 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="PostSharp" Version="2023.0.4" />
-    <PackageReference Include="PostSharp.Patterns.Common" Version="2023.0.4" />
-    <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
+    <PackageReference Include="PostSharp" Version="2023.0.5" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="2023.0.5" />
+    <PackageReference Include="System.IO.Packaging" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

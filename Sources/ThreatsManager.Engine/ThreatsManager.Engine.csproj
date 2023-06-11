@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFrameworks>net481</TargetFrameworks>
     <Description>Threats Manager Platform Engine.</Description>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
@@ -15,7 +15,9 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ThreatsManager.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <NoWarn>$(NoWarn);NU1505</NoWarn>
+    <NoWarn>$(NoWarn);NU1505;CS0649</NoWarn>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <DocumentationFile>.\bin\Debug\net481\ThreatsManager.Engine.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,10 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="2023.0.4" />
-    <PackageReference Include="PostSharp.Patterns.Model" Version="2023.0.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
+    <PackageReference Include="PostSharp" Version="2023.0.5" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="2023.0.5" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,12 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'net472' ">
-      <HintPath>..\Resources\net472\ThreatsManager.Icons.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-      <HintPath>..\Resources\netcoreapp3.1\ThreatsManager.Icons.dll</HintPath>
+    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'net481' ">
+      <HintPath>..\Resources\net481\ThreatsManager.Icons.dll</HintPath>
       <Private>true</Private>
     </Reference>
   </ItemGroup>
