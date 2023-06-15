@@ -7,6 +7,7 @@ using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Exceptions;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -16,6 +17,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ThreatsManager.Engine.ObjectModel
 {
@@ -31,7 +33,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [Undoable]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
-    public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
+    public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable, IPostDeserialization
     {
         #region Constructors.
         public ThreatModel()
@@ -62,25 +64,30 @@ namespace ThreatsManager.Engine.ObjectModel
         #region General properties and methods.
         public Scope PropertiesScope => Scope.ThreatModel;
 
-        [JsonProperty("owner")]
+        [JsonProperty("owner", Order = 4)]
         public string Owner { get; set; }
 
-        [Child]
+        #region Contributors.
+        [Reference]
         [JsonProperty("contributors")]
-        private IList<string> _contributors;
+        private List<string> _legacyContributors;
+
+        [Child]
+        [JsonProperty("contrib", Order = 5)]
+        private AdvisableCollection<RecordableString> _contributors;
 
         [IgnoreAutoChangeNotification]
-        public IEnumerable<string> Contributors => _contributors?.AsEnumerable();
+        public IEnumerable<string> Contributors => _contributors?.Select(x => x.Value).AsEnumerable();
 
         public bool AddContributor([Required] string name)
         {
             bool result = false;
 
-            if (!(_contributors?.Any(name.IsEqual) ?? false))
+            if (!(_contributors?.Any(x => string.CompareOrdinal(name, x.Value) == 0) ?? false))
             {
                 if (_contributors == null)
-                    _contributors = new AdvisableCollection<string>();
-                _contributors.Add(name);
+                    _contributors = new AdvisableCollection<RecordableString>();
+                _contributors.Add(new RecordableString(name));
                 result = true;
                 ContributorAdded?.Invoke(name);
             }
@@ -92,9 +99,10 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            if (_contributors?.Any(name.IsEqual) ?? false)
+            var contributor = _contributors?.FirstOrDefault(x => string.CompareOrdinal(name, x.Value) == 0);
+            if (contributor != null)
             {
-                result = _contributors.Remove(name);
+                result = _contributors.Remove(contributor);
                 if (result)
                 {
                     ContributorRemoved?.Invoke(name);
@@ -108,34 +116,40 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            int index = _contributors?.IndexOf(oldName) ?? -1;
-            if (index >= 0)
+            var contributor = _contributors?.FirstOrDefault(x => string.CompareOrdinal(oldName, x.Value) == 0);
+            if (contributor != null)
             {
                 // ReSharper disable once PossibleNullReferenceException
-                _contributors[index] = newName;
+                contributor.Value = newName;
                 result = true;
                 ContributorChanged?.Invoke(oldName, newName);
             }
 
             return result;
         }
+        #endregion
+
+        #region Assumptions.
+        [Reference]
+        [JsonProperty("assumptions")]
+        private List<string> _legacyAssumptions;
 
         [Child]
-        [JsonProperty("assumptions")]
-        private IList<string> _assumptions;
+        [JsonProperty("assump", Order = 6)]
+        private AdvisableCollection<RecordableString> _assumptions;
 
         [IgnoreAutoChangeNotification]
-        public IEnumerable<string> Assumptions => _assumptions?.AsEnumerable();
+        public IEnumerable<string> Assumptions => _assumptions?.Select(x => x.Value).AsEnumerable();
 
         public bool AddAssumption([Required] string text)
         {
             bool result = false;
 
-            if (!(_assumptions?.Any(text.IsEqual) ?? false))
+            if (!(_assumptions?.Any(x => string.CompareOrdinal(text, x.Value) == 0) ?? false))
             {
                 if (_assumptions == null)
-                    _assumptions = new AdvisableCollection<string>();
-                _assumptions.Add(text);
+                    _assumptions = new AdvisableCollection<RecordableString>();
+                _assumptions.Add(new RecordableString(text));
                 result = true;
                 AssumptionAdded?.Invoke(text);
             }
@@ -147,9 +161,10 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            if (_assumptions?.Any(text.IsEqual) ?? false)
+            var assumption = _assumptions?.FirstOrDefault(x => string.CompareOrdinal(text, x.Value) == 0);
+            if (assumption != null)
             {
-                result = _assumptions.Remove(text);
+                result = _assumptions.Remove(assumption);
                 if (result)
                 {
                     AssumptionRemoved?.Invoke(text);
@@ -163,34 +178,39 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            int index = _assumptions?.IndexOf(oldText) ?? -1;
-            if (index >= 0)
+            var assumption = _assumptions?.FirstOrDefault(x => string.CompareOrdinal(oldText, x.Value) == 0);
+            if (assumption != null)
             {
-                // ReSharper disable once PossibleNullReferenceException
-                _assumptions[index] = newText;
+                assumption.Value = newText;
                 result = true;
                 AssumptionChanged?.Invoke(oldText, newText);
             }
 
             return result;
         }
+        #endregion
+
+        #region Dependencies.
+        [Reference]
+        [JsonProperty("dependencies")]
+        private List<string> _legacyDependencies;
 
         [Child]
-        [JsonProperty("dependencies")]
-        private IList<string> _dependencies;
+        [JsonProperty("depend", Order = 7)]
+        private AdvisableCollection<RecordableString> _dependencies;
 
         [IgnoreAutoChangeNotification]
-        public IEnumerable<string> ExternalDependencies => _dependencies?.AsEnumerable();
+        public IEnumerable<string> ExternalDependencies => _dependencies?.Select(x => x.Value).AsEnumerable();
 
         public bool AddDependency([Required] string text)
         {
             bool result = false;
 
-            if (!(_dependencies?.Any(text.IsEqual) ?? false))
+            if (!(_dependencies?.Any(x => string.CompareOrdinal(x.Value, text) == 0) ?? false))
             {
                 if (_dependencies == null)
-                    _dependencies = new AdvisableCollection<string>();
-                _dependencies.Add(text);
+                    _dependencies = new AdvisableCollection<RecordableString>();
+                _dependencies.Add(new RecordableString(text));
                 result = true;
                 DependencyAdded?.Invoke(text);
             }
@@ -202,9 +222,10 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            if (_dependencies?.Any(text.IsEqual) ?? false)
+            var dependency = _dependencies?.FirstOrDefault(x => string.CompareOrdinal(text, x.Value) == 0);
+            if (dependency != null)
             {
-                result = _dependencies.Remove(text);
+                result = _dependencies.Remove(dependency);
                 if (result)
                 {
                     DependencyRemoved?.Invoke(text);
@@ -218,16 +239,58 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            int index = _dependencies?.IndexOf(oldText) ?? -1;
-            if (index >= 0)
+            var dependency = _dependencies?.FirstOrDefault(x => string.CompareOrdinal(oldText, x.Value) == 0);
+            if (dependency != null)
             {
-                // ReSharper disable once PossibleNullReferenceException
-                _dependencies[index] = newText;
+                dependency.Value = newText;
                 result = true;
                 DependencyChanged?.Invoke(oldText, newText);
             }
 
             return result;
+        }
+        #endregion
+
+        public void ExecutePostDeserialization()
+        {
+            if (_legacyContributors?.Any() ?? false)
+            {
+                if (_contributors == null)
+                    _contributors = new AdvisableCollection<RecordableString>();
+
+                foreach (var contrib in _legacyContributors)
+                {
+                    _contributors.Add(new RecordableString(contrib));
+                }
+
+                _legacyContributors.Clear();
+            }
+
+            if (_legacyAssumptions?.Any() ?? false)
+            {
+                if (_assumptions == null)
+                    _assumptions = new AdvisableCollection<RecordableString>();
+
+                foreach (var assump in _legacyAssumptions)
+                {
+                    _assumptions.Add(new RecordableString(assump));
+                }
+
+                _legacyAssumptions.Clear();
+            }
+
+            if (_legacyDependencies?.Any() ?? false)
+            {
+                if (_dependencies == null)
+                    _dependencies = new AdvisableCollection<RecordableString>();
+
+                foreach (var depend in _legacyDependencies)
+                {
+                    _dependencies.Add(new RecordableString(depend));
+                }
+
+                _legacyDependencies.Clear();
+            }
         }
 
         public string GetIdentityTypeName([NotNull] IIdentity identity)
@@ -2061,21 +2124,21 @@ namespace ThreatsManager.Engine.ObjectModel
         #endregion
 
         #region Additional placeholders required.
-        [JsonProperty("id")]
+        [JsonProperty("id", Order = 1)]
         protected Guid _id { get; set; }
-        [JsonProperty("name")]
+        [JsonProperty("name", Order = 2)]
         protected string _name { get; set; }
-        [JsonProperty("description")]
+        [JsonProperty("description", Order = 3)]
         protected string _description { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 10)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [Child]
-        [JsonProperty("threatEvents")]
-        private IList<IThreatEvent> _threatEvents { get; set; }
+        [JsonProperty("threatEvents", Order = 11)]
+        private AdvisableCollection<ThreatEvent> _threatEvents { get; set; }
         [Child]
-        [JsonProperty("vulnerabilities")]
-        private IList<IVulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("vulnerabilities", Order = 12)]
+        private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
         #endregion
     }
 }

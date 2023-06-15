@@ -123,22 +123,8 @@ namespace ThreatsManager.Utilities
                     }
                 }
 
-                var binder = new KnownTypesBinder();
-
-                using (var textReader = new StringReader(jsonText))
-                using (var reader = new JsonTextReader(textReader))
-                {
-                    var serializer = new JsonSerializer
-                    {
-                        TypeNameHandling = TypeNameHandling.All,
-                        SerializationBinder = binder,
-                        MaxDepth = 128,
-                        MissingMemberHandling = ignoreMissingMembers
-                            ? MissingMemberHandling.Ignore
-                            : MissingMemberHandling.Error
-                    };
-                    result = serializer.Deserialize<IThreatModel>(reader);
-                }
+                var type = Type.GetType("ThreatsManager.Engine.Manager, ThreatsManager.Engine", false);
+                result = type.GetMethod("Deserialize").Invoke(null, new object[] { jsonText, ignoreMissingMembers }) as IThreatModel;
 
                 if (result != null)
                 {
@@ -197,7 +183,9 @@ namespace ThreatsManager.Utilities
 
             using(JsonWriter writer = new JsonTextWriter(sw))
             {
-                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, MaxDepth = 128, Formatting = Formatting.Indented};
+                var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.None, 
+                    DefaultValueHandling = DefaultValueHandling.Ignore, 
+                    MaxDepth = 128, Formatting = Formatting.Indented};
                 serializer.Serialize(writer, model);
             }
 

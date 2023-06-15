@@ -17,7 +17,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("links")]
-    //private IList<ILink> _links { get; set; }
+    //private AdvisableCollection<Link> _links { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -26,7 +26,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_links))]
-        public Property<IList<ILink>> _links;
+        public Property<AdvisableCollection<Link>> _links;
         #endregion
 
         #region Implementation of interface ILinksContainer.
@@ -82,27 +82,29 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(ILink link)
         {
-            if (link == null)
-                throw new ArgumentNullException(nameof(link));
-
-            using (var scope = UndoRedoManager.OpenScope("Add link for Flow"))
+            if (link is Link l)
             {
-                var links = _links?.Get();
-                if (links == null)
+                using (var scope = UndoRedoManager.OpenScope("Add link for Flow"))
                 {
-                    links = new AdvisableCollection<ILink>();
-                    _links?.Set(links);
-                }
+                    var links = _links?.Get();
+                    if (links == null)
+                    {
+                        links = new AdvisableCollection<Link>();
+                        _links?.Set(links);
+                    }
 
-                links.Add(link);
-                UndoRedoManager.Attach(link);
-                scope.Complete();
+                    links.Add(l);
+                    UndoRedoManager.Attach(l);
+                    scope.Complete();
 
-                if (Instance is ILinksContainer container)
-                {
-                    _linkAdded?.Invoke(container, link);
+                    if (Instance is ILinksContainer container)
+                    {
+                        _linkAdded?.Invoke(container, l);
+                    }
                 }
             }
+            else
+                throw new ArgumentNullException(nameof(link));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
@@ -126,20 +128,23 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public bool RemoveLink(Guid dataFlowId)
         {
-            bool result;
+            bool result = false;
 
-            var link = GetLink(dataFlowId);
+            var link = GetLink(dataFlowId) as Link;
 
-            using (var scope = UndoRedoManager.OpenScope("Remove link for Flow"))
+            if (link != null)
             {
-                result = _links?.Get()?.Remove(link) ?? false;
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove link for Flow"))
                 {
-                    UndoRedoManager.Detach(link);
-                    scope.Complete();
+                    result = _links?.Get()?.Remove(link) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(link);
+                        scope.Complete();
 
-                    if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
-                        _linkRemoved?.Invoke(container, flow);
+                        if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
+                            _linkRemoved?.Invoke(container, flow);
+                    }
                 }
             }
 

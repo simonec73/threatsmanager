@@ -20,8 +20,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("schemas")]
-        private IList<IPropertySchema> _schemas;
+        [JsonProperty("schemas", Order = 30)]
+        private AdvisableCollection<PropertySchema> _schemas { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IPropertySchema> Schemas => _schemas?.OrderBy(x => x.Priority);
@@ -331,15 +331,20 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IPropertySchema propertySchema)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Property Schema"))
+            if (propertySchema is PropertySchema ps)
             {
-                if (_schemas == null)
-                    _schemas = new AdvisableCollection<IPropertySchema>();
+                using (var scope = UndoRedoManager.OpenScope("Add Property Schema"))
+                {
+                    if (_schemas == null)
+                        _schemas = new AdvisableCollection<PropertySchema>();
 
-                _schemas.Add(propertySchema);
-                UndoRedoManager.Attach(propertySchema);
-                scope.Complete();
+                    _schemas.Add(ps);
+                    UndoRedoManager.Attach(ps);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentException(nameof(propertySchema));
         }
 
         [InitializationRequired]
@@ -394,18 +399,18 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            if (force || !IsUsed(schema))
+            if (schema is PropertySchema s && (force || !IsUsed(s)))
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Property Schema"))
                 {
-                    RemoveRelated(schema);
+                    RemoveRelated(s);
 
-                    result = _schemas.Remove(schema);
+                    result = _schemas.Remove(s);
                     if (result)
                     {
-                        UndoRedoManager.Detach(schema);
-                        UnregisterEvents(schema);
-                        ChildRemoved?.Invoke(schema);
+                        UndoRedoManager.Detach(s);
+                        UnregisterEvents(s);
+                        ChildRemoved?.Invoke(s);
                     }
 
                     scope.Complete();

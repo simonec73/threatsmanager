@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -77,7 +78,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         /// </summary>
         [JsonProperty("listProvider")]
         [NotRecorded]
-        protected string _listProviderId;
+        protected string _listProviderId { get; set; }
 
         [Reference]
         [NotRecorded]
@@ -109,7 +110,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [JsonProperty("cachedList")]
         [NotRecorded]
         [Reference]
-        protected IEnumerable<IListItem> _cachedList;
+        protected List<IListItem> _cachedList { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IListItem> Values
@@ -123,7 +124,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (listProvider != null)
                 {
                     result = listProvider.GetAvailableItems(Context);
-                    _cachedList = result?.ToArray();
+                    _cachedList = result?.ToList();
                 }
                 else
                 {

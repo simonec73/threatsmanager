@@ -16,8 +16,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("weaknesses")]
-        private IList<IWeakness> _weaknesses;
+        [JsonProperty("weaknesses", Order = 41)]
+        private AdvisableCollection<Weakness> _weaknesses { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IWeakness> Weaknesses => _weaknesses?.AsEnumerable();
@@ -97,17 +97,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IWeakness weakness)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Weakness"))
+            if (weakness is Weakness w)
             {
-                if (_weaknesses == null)
-                    _weaknesses = new AdvisableCollection<IWeakness>();
+                using (var scope = UndoRedoManager.OpenScope("Add Weakness"))
+                {
+                    if (_weaknesses == null)
+                        _weaknesses = new AdvisableCollection<Weakness>();
 
-                _weaknesses.Add(weakness);
-                UndoRedoManager.Attach(weakness);
-                scope.Complete();
+                    _weaknesses.Add(w);
+                    UndoRedoManager.Attach(w);
+                    scope.Complete();
 
-                ChildCreated?.Invoke(weakness);
+                    ChildCreated?.Invoke(w);
+                }
             }
+            else
+                throw new ArgumentException(nameof(weakness));
         }
 
         [InitializationRequired]
@@ -130,7 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var weakness = GetWeakness(id);
+            var weakness = GetWeakness(id) as Weakness;
 
             if (weakness != null && (force || !IsUsed(weakness)))
             {

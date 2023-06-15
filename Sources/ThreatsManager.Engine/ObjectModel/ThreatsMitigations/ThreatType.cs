@@ -13,6 +13,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -98,8 +99,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("description")]
         protected string _description { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
         [Parent]
@@ -113,31 +114,37 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public Scope PropertiesScope => Scope.ThreatType;
 
         [JsonProperty("severity")]
-        [NotRecorded]
         private int _severityId { get; set; }
+
+        public int SeverityId => _severityId;
 
         [Reference]
         [NotRecorded]
         [UpdateSeverityId]
         private ISeverity _severity;
 
-        public int SeverityId => _severityId;
-
         [InitializationRequired]
         [SafeForDependencyAnalysis]
+        [property: NotRecorded]
         public ISeverity Severity
         {
-            get => _severity ?? (_severity = Model?.GetSeverity(_severityId));
+            get
+            {
+                if ((_severity?.Id ?? -1) != _severityId)
+                    _severity = Model?.GetSeverity(_severityId);
+
+                return _severity;
+            }
 
             set
             {
-                if (value != null && value.Equals(Model?.GetSeverity(value.Id)))
+                if (value != null && value.Equals(Model.GetSeverity(value.Id)))
                 {
                     _severity = value;
                 }
             }
         }
-        
+
         public MitigationLevel GetMitigationLevel()
         {
             MitigationLevel result = MitigationLevel.NotMitigated;

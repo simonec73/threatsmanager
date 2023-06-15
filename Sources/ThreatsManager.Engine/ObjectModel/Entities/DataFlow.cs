@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -167,14 +169,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("description")]
         protected string _description { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [Child]
         [JsonProperty("threatEvents")]
-        private IList<IThreatEvent> _threatEvents { get; set; }
+        private AdvisableCollection<ThreatEvent> _threatEvents { get; set; }
         [Child]
         [JsonProperty("vulnerabilities")]
-        private IList<IVulnerability> _vulnerabilities { get; set; }
+        private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
         [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
         [Parent]
@@ -188,12 +190,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Scope PropertiesScope => Scope.DataFlow;
 
         [JsonProperty("source")]
-        private Guid _sourceId;
+        private Guid _sourceId { get; set; }
 
         public Guid SourceId => _sourceId;
 
         [JsonProperty("target")]
-        private Guid _targetId;
+        private Guid _targetId { get; set; }
 
         public Guid TargetId => _targetId;
 
@@ -212,7 +214,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public FlowType FlowType { get; set; }
 
         [JsonProperty("template")]
-        internal Guid _templateId;
+        internal Guid _templateId { get; set; }
 
         [Reference]
         internal IFlowTemplate _template { get; set; }

@@ -21,6 +21,7 @@ namespace ThreatsManager.Utilities
         private static bool _isDirty = RecordingServices.DefaultRecorder.UndoOperations.Count > 0;
         private static bool _isUndoing = false;
         private static bool _isRedoing = false;
+        private static Operation _lastOperation;
 
         static UndoRedoManager()
         {
@@ -202,13 +203,13 @@ namespace ThreatsManager.Utilities
             try
             {
                 _isUndoing = true;
-                var last = RecordingServices.DefaultRecorder.UndoOperations.LastOrDefault();
-                if (last != null)
+                _lastOperation = RecordingServices.DefaultRecorder.UndoOperations.LastOrDefault();
+                if (_lastOperation != null)
                 {
                     RecordingServices.DefaultRecorder.Undo();
                     if (RecordingServices.DefaultRecorder.UndoOperations.Count == 0)
                         ResetDirty();
-                    Undone?.Invoke(last.Name);
+                    Undone?.Invoke(_lastOperation.Name);
                 }
             }
             catch (Exception exc)
@@ -229,11 +230,11 @@ namespace ThreatsManager.Utilities
             try
             {
                 _isRedoing = true;
-                var last = RecordingServices.DefaultRecorder.RedoOperations.LastOrDefault();
-                if (last != null)
+                _lastOperation = RecordingServices.DefaultRecorder.RedoOperations.LastOrDefault();
+                if (_lastOperation != null)
                 {
                     RecordingServices.DefaultRecorder.Redo();
-                    Redone?.Invoke(last.Name);
+                    Redone?.Invoke(_lastOperation.Name);
                 }
             }
             catch (Exception exc)
@@ -256,6 +257,12 @@ namespace ThreatsManager.Utilities
             return RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic);
         }
 
+        /// <summary>
+        /// Get the details of the last Undo or Redo operation.
+        /// </summary>
+        public static Operation LastOperation => _lastOperation;
+
+        #region Private member functions.
         private static void DefaultRecorder_ChildPropertyChanged(object sender, EventArgs e)
         {
             bool dirty = RecordingServices.DefaultRecorder.UndoOperations.Count > 0;
@@ -430,5 +437,6 @@ namespace ThreatsManager.Utilities
                 Detach(gsContainer.Groups);
             }
         }
+        #endregion
     }
 }

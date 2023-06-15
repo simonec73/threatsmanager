@@ -19,7 +19,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("entities")]
-    //private IList<IEntityShape> _entities { get; set; }
+    //private AdvisableCollection<EntityShape> _entities { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -28,7 +28,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_entities))]
-        public Property<IList<IEntityShape>> _entities;
+        public Property<AdvisableCollection<EntityShape>> _entities;
         #endregion
 
         #region Implementation of interface IEntityShapesContainer.
@@ -93,27 +93,29 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public void Add(IEntityShape entityShape)
         {
-            if (entityShape == null)
-                throw new ArgumentNullException(nameof(entityShape));
-
-            using (var scope = UndoRedoManager.OpenScope("Add shape for entity"))
+            if (entityShape is EntityShape es)
             {
-                var entities = _entities?.Get();
-                if (entities == null)
-                { 
-                    entities = new AdvisableCollection<IEntityShape>();
-                    _entities?.Set(entities);
-                }
+                using (var scope = UndoRedoManager.OpenScope("Add shape for entity"))
+                {
+                    var entities = _entities?.Get();
+                    if (entities == null)
+                    {
+                        entities = new AdvisableCollection<EntityShape>();
+                        _entities?.Set(entities);
+                    }
 
-                entities.Add(entityShape);
-                UndoRedoManager.Attach(entityShape);
-                scope.Complete();
+                    entities.Add(es);
+                    UndoRedoManager.Attach(es);
+                    scope.Complete();
 
-                if (Instance is IEntityShapesContainer container)
-                { 
-                    _entityShapeAdded?.Invoke(container, entityShape);
+                    if (Instance is IEntityShapesContainer container)
+                    {
+                        _entityShapeAdded?.Invoke(container, es);
+                    }
                 }
             }
+            else
+                throw new ArgumentNullException(nameof(entityShape));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -181,23 +183,25 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public bool RemoveShape(IEntityShape entityShape)
         {
-            if (entityShape == null)
-                throw new ArgumentNullException(nameof(entityShape));
+            bool result = false;
 
-            bool result;
-
-            using (var scope = UndoRedoManager.OpenScope("Remove shape for entity"))
+            if (entityShape is EntityShape es)
             {
-                result = _entities?.Get()?.Remove(entityShape) ?? false;
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove shape for entity"))
                 {
-                    UndoRedoManager.Detach(entityShape);
-                    scope.Complete();
+                    result = _entities?.Get()?.Remove(es) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(es);
+                        scope.Complete();
 
-                    if (entityShape.Identity is IEntity entity && Instance is IEntityShapesContainer container)
-                        _entityShapeRemoved?.Invoke(container, entity);
+                        if (es.Identity is IEntity entity && Instance is IEntityShapesContainer container)
+                            _entityShapeRemoved?.Invoke(container, entity);
+                    }
                 }
             }
+            else
+                throw new ArgumentNullException(nameof(entityShape));
 
             return result;
         }

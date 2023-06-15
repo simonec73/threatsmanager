@@ -85,7 +85,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         [JsonProperty("value")]
         [NotRecorded]
-        private decimal _value;
+        private decimal _value { get; set; }
 
         public virtual decimal Value
         {

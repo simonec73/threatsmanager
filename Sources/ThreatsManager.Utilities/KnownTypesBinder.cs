@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 

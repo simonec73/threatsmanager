@@ -9,8 +9,17 @@ using ThreatsManager.Interfaces;
 
 namespace ThreatsManager.Utilities
 {
+    /// <summary>
+    /// Extensions for enumerations.
+    /// </summary>
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Get the label assigned to an enumeration value.
+        /// </summary>
+        /// <param name="value">Reference enumeration value.</param>
+        /// <returns>Label associated to the enumeration passed as argument.</returns>
+        /// <remarks>Enum labels are specified using EnumLabelAttribute on the enumeration value.</remarks>
         public static string GetEnumLabel(this Enum value)
         {
             Type type = value.GetType();
@@ -19,6 +28,12 @@ namespace ThreatsManager.Utilities
             return GetEnumLabel(name, type.GetField(name));
         }
 
+        /// <summary>
+        /// Get the description assigned to an enumeration value.
+        /// </summary>
+        /// <param name="value">Reference enumeration value.</param>
+        /// <returns>Description associated to the enumeration passed as argument.</returns>
+        /// <remarks>Enum labels are specified using EnumDescriptionAttribute on the enumeration value.</remarks>
         public static string GetEnumDescription(this Enum value)
         {
             Type type = value.GetType();
@@ -27,6 +42,11 @@ namespace ThreatsManager.Utilities
             return GetEnumDescription(name, type.GetField(name));
         }
 
+        /// <summary>
+        /// Get the type of an enumeration value.
+        /// </summary>
+        /// <param name="value">Reference enumeration value.</param>
+        /// <returns>Type of the enumeration value.</returns>
         public static Type GetEnumType(this Enum value)
         {
             Type type = value.GetType();
@@ -69,6 +89,28 @@ namespace ThreatsManager.Utilities
         public static T GetEnumValue<T>([Required] this string text)
         {
             T result = default(T);
+
+            Type type = typeof(T);
+
+            var fields = type.GetFields();
+            foreach (var field in fields)
+            {
+                var attribs = field.GetCustomAttributes<EnumLabelAttribute>().ToArray();
+
+                if (attribs.Any(x => string.CompareOrdinal(x.Label, text) == 0) ||
+                    string.CompareOrdinal(text, field.Name) == 0)
+                {
+                    result = (T)field.GetValue(type);
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        public static T GetEnumValue<T>([Required] this string text, T defaultValue)
+        {
+            T result = defaultValue;
 
             Type type = typeof(T);
 

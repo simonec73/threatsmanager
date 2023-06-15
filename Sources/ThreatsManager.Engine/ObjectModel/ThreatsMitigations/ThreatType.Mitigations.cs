@@ -47,7 +47,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Child]
         [JsonProperty("mitigations")]
-        private IList<IThreatTypeMitigation> _mitigations;
+        private AdvisableCollection<ThreatTypeMitigation> _mitigations { get; set; }
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
@@ -62,15 +62,20 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [InitializationRequired]
         public void Add([NotNull] IThreatTypeMitigation mitigation)
         {
-            if (_mitigations == null)
-                _mitigations = new AdvisableCollection<IThreatTypeMitigation>();
-
-            using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
+            if (mitigation is ThreatTypeMitigation ttm)
             {
-                _mitigations.Add(mitigation);
-                UndoRedoManager.Attach(mitigation);
-                scope.Complete();
+                using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
+                {
+                    if (_mitigations == null)
+                        _mitigations = new AdvisableCollection<ThreatTypeMitigation>();
+
+                    _mitigations.Add(ttm);
+                    UndoRedoManager.Attach(ttm);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentException(nameof(mitigation));
         }
 
         [InitializationRequired]
@@ -93,7 +98,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             bool result = false;
 
-            var mitigation = GetMitigation(mitigationId);
+            var mitigation = GetMitigation(mitigationId) as ThreatTypeMitigation;
             if (mitigation != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Mitigation from Threat Type"))

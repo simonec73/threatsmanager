@@ -17,8 +17,8 @@ namespace ThreatsManager.Engine.ObjectModel
         private static int _lastMitigation;
 
         [Child]
-        [JsonProperty("mitigations")]
-        private IList<IMitigation> _mitigations;
+        [JsonProperty("mitigations", Order = 42)]
+        private AdvisableCollection<Mitigation> _mitigations { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IMitigation> Mitigations => _mitigations?.AsEnumerable();
@@ -38,17 +38,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IMitigation mitigation)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Mitigation"))
+            if (mitigation is Mitigation m)
             {
-                if (_mitigations == null)
-                    _mitigations = new AdvisableCollection<IMitigation>();
+                using (var scope = UndoRedoManager.OpenScope("Add Mitigation"))
+                {
+                    if (_mitigations == null)
+                        _mitigations = new AdvisableCollection<Mitigation>();
 
-                _mitigations.Add(mitigation);
-                UndoRedoManager.Attach(mitigation);
-                scope.Complete();
+                    _mitigations.Add(m);
+                    UndoRedoManager.Attach(m);
+                    scope.Complete();
 
-                ChildCreated?.Invoke(mitigation);
+                    ChildCreated?.Invoke(m);
+                }
             }
+            else
+                throw new ArgumentException(nameof(mitigation));
         }
 
         [InitializationRequired]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
@@ -97,8 +98,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -123,7 +124,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [NotRecorded]
         [JsonProperty("pos")]
-        private PointF _position;
+        private PointF _position { get; set; }
 
         [property: NotRecorded]
         public PointF Position

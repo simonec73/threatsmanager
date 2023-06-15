@@ -193,17 +193,17 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [Child]
         [JsonProperty("scenarios")]
-        private IList<IThreatEventScenario> _scenarios { get; set; }
+        private AdvisableCollection<ThreatEventScenario> _scenarios { get; set; }
         [Child]
         [JsonProperty("mitigations")]
-        private IList<IThreatEventMitigation> _mitigations { get; set; }
+        private AdvisableCollection<ThreatEventMitigation> _mitigations { get; set; }
         [Child]
         [JsonProperty("vulnerabilities")]
-        private IList<IVulnerability> _vulnerabilities { get; set; }
+        private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -270,7 +270,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [JsonProperty("severity")]
-        [NotRecorded]
         private int _severityId { get; set; }
 
         public int SeverityId => _severityId;
@@ -282,9 +281,16 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [InitializationRequired]
         [SafeForDependencyAnalysis]
+        [property: NotRecorded]
         public ISeverity Severity
         {
-            get => _severity ?? (_severity = Model?.GetSeverity(_severityId));
+            get 
+            {
+                if ((_severity?.Id ?? -1) != _severityId)
+                    _severity = Model?.GetSeverity(_severityId);
+
+                return _severity;
+            }
 
             set
             {

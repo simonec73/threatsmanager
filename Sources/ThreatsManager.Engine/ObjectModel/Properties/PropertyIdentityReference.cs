@@ -77,7 +77,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         [JsonProperty("value")]
         [NotRecorded]
-        private Guid _value;
+        private Guid _value { get; set; }
 
         public virtual Guid ValueId => _value;
 

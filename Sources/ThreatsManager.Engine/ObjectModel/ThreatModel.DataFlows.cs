@@ -6,7 +6,6 @@ using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -85,8 +84,8 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         [Child]
-        [JsonProperty("dataFlows")]
-        private IList<IDataFlow> _flows;
+        [JsonProperty("dataFlows", Order = 21)]
+        private AdvisableCollection<DataFlow> _flows { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IDataFlow> DataFlows => _flows?.AsEnumerable();
@@ -106,15 +105,20 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add(IDataFlow dataFlow)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Data Flow"))
+            if (dataFlow is DataFlow df)
             {
-                if (_flows == null)
-                    _flows = new AdvisableCollection<IDataFlow>();
+                using (var scope = UndoRedoManager.OpenScope("Add Data Flow"))
+                {
+                    if (_flows == null)
+                        _flows = new AdvisableCollection<DataFlow>();
 
-                _flows.Add(dataFlow);
-                UndoRedoManager.Attach(dataFlow);
-                scope.Complete();
+                    _flows.Add(df);
+                    UndoRedoManager.Attach(df);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentException(nameof(dataFlow));
         }
 
         [InitializationRequired]
@@ -172,7 +176,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var flow = GetDataFlow(id);
+            var flow = GetDataFlow(id) as DataFlow;
 
             if (flow != null)
             {

@@ -150,8 +150,8 @@ namespace ThreatsManager.Engine.ObjectModel
         private static int _lastDiagram;
 
         [Child]
-        [JsonProperty("diagrams")]
-        private IList<IDiagram> _diagrams;
+        [JsonProperty("diagrams", Order = 25)]
+        private AdvisableCollection<Diagram> _diagrams { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IDiagram> Diagrams => _diagrams?.AsEnumerable();
@@ -171,15 +171,20 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IDiagram diagram)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Diagram"))
+            if (diagram is Diagram d)
             {
-                if (_diagrams == null)
-                    _diagrams = new AdvisableCollection<IDiagram>();
+                using (var scope = UndoRedoManager.OpenScope("Add Diagram"))
+                {
+                    if (_diagrams == null)
+                        _diagrams = new AdvisableCollection<Diagram>();
 
-                _diagrams.Add(diagram);
-                UndoRedoManager.Attach(diagram);
-                scope.Complete();
+                    _diagrams.Add(d);
+                    UndoRedoManager.Attach(d);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentException(nameof(diagram));
         }
 
         [InitializationRequired]
@@ -228,7 +233,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var diagram = GetDiagram(id);
+            var diagram = GetDiagram(id) as Diagram;
             if (diagram != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Diagram"))

@@ -9,9 +9,11 @@ using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
 using PostSharp.Patterns.Collections;
+using ThreatsManager.Interfaces;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -23,7 +25,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyTokens, ThreatsManager.Engine")]
-    public class PropertyTokens : IPropertyTokens
+    public class PropertyTokens : IPropertyTokens, IInitializableObject
     {
         public PropertyTokens()
         {
@@ -36,6 +38,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             PropertyTypeId = propertyType.Id;
             _model = propertyType.Model;
         }
+
+        public bool IsInitialized => Model != null && _id != Guid.Empty && PropertyTypeId != Guid.Empty;
 
         #region Default implementation.
         public Guid Id { get; }
@@ -67,6 +71,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         #region Specific implementation.
         [property: NotRecorded]
+        [InitializationRequired]
         public string StringValue
         {
             get => Value?.TagConcat();
@@ -82,11 +87,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [Child]
         [JsonProperty("values")]
         [NotRecorded]
-        private IList<string> _values;
+        private AdvisableCollection<RecordableString> _values { get; set; }
 
+        [InitializationRequired]
         public virtual IEnumerable<string> Value
         {
-            get => _values?.AsEnumerable();
+            get => _values?.Select(x => x.Value).ToArray();
             set
             {
                 if (ReadOnly)
@@ -95,11 +101,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (value?.Any() ?? false)
                 {
                     if (_values == null)
-                        _values = new AdvisableCollection<string>();
+                        _values = new AdvisableCollection<RecordableString>();
                     else
                         _values.Clear();
                     foreach (var item in value)
-                        _values.Add(item);
+                        _values.Add(new RecordableString(item));
                 }
                 else
                 {
@@ -111,7 +117,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         public override string ToString()
         {
-            return StringValue;
+            return StringValue ?? string.Empty;
         }
 
         protected void InvokeChanged()

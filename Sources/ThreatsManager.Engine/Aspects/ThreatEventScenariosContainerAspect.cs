@@ -17,7 +17,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("scenarios")]
-    //private IList<IThreatEventScenario> _scenarios { get; set; }
+    //private AdvisableCollection<ThreatEventScenario> _scenarios { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -26,7 +26,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_scenarios))]
-        public Property<IList<IThreatEventScenario>> _scenarios;
+        public Property<AdvisableCollection<ThreatEventScenario>> _scenarios;
         #endregion
 
         #region Implementation of interface IThreatEventScenariosContainer.
@@ -105,24 +105,27 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
         public void Add(IThreatEventScenario scenario)
         {
-            if (scenario == null)
-                throw new ArgumentNullException(nameof(scenario));
-            if (scenario.ThreatEvent is IThreatModelChild child && child.Model != (Instance as IThreatEvent)?.Model)
-                throw new ArgumentException();
-
-            using (var scope = UndoRedoManager.OpenScope("Add scenario to Threat Event"))
+            if (scenario is ThreatEventScenario tes)
             {
-                var scenarios = _scenarios?.Get();
-                if (scenarios == null)
-                {
-                    scenarios = new AdvisableCollection<IThreatEventScenario>();
-                    _scenarios?.Set(scenarios);
-                }
+                if (tes.ThreatEvent is IThreatModelChild child && child.Model != (Instance as IThreatEvent)?.Model)
+                    throw new ArgumentException();
 
-                _scenarios?.Get()?.Add(scenario);
-                UndoRedoManager.Attach(scenario);
-                scope.Complete();
+                using (var scope = UndoRedoManager.OpenScope("Add scenario to Threat Event"))
+                {
+                    var scenarios = _scenarios?.Get();
+                    if (scenarios == null)
+                    {
+                        scenarios = new AdvisableCollection<ThreatEventScenario>();
+                        _scenarios?.Set(scenarios);
+                    }
+
+                    _scenarios?.Get()?.Add(tes);
+                    UndoRedoManager.Attach(tes);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentNullException(nameof(scenario));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -130,7 +133,7 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            var scenario = GetScenario(id);
+            var scenario = GetScenario(id) as ThreatEventScenario;
             if (scenario != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove scenario from Threat Event"))

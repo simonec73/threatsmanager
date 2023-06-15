@@ -19,8 +19,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("entityTemplates")]
-        private IList<IEntityTemplate> _entityTemplates;
+        [JsonProperty("entityTemplates", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 45)]
+        private AdvisableCollection<IEntityTemplate> _entityTemplates { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IEntityTemplate> EntityTemplates => _entityTemplates?.AsEnumerable();

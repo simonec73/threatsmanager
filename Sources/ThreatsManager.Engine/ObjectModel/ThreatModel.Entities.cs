@@ -89,8 +89,8 @@ namespace ThreatsManager.Engine.ObjectModel
         }
 
         [Child]
-        [JsonProperty("entities")]
-        private IList<IEntity> _entities;
+        [JsonProperty("entities", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 20)]
+        private AdvisableCollection<IEntity> _entities { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IEntity> Entities => _entities?.AsEnumerable();

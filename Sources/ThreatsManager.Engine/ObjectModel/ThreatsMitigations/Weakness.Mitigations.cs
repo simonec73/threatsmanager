@@ -47,7 +47,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Child]
         [JsonProperty("mitigations")]
-        private IList<IWeaknessMitigation> _mitigations;
+        private AdvisableCollection<WeaknessMitigation> _mitigations { get; set; }
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
@@ -62,15 +62,20 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [InitializationRequired]
         public void Add([NotNull] IWeaknessMitigation mitigation)
         {
-            if (_mitigations == null)
-                _mitigations = new AdvisableCollection<IWeaknessMitigation>();
-
-            using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Weakness"))
+            if (mitigation is WeaknessMitigation wm)
             {
-                _mitigations.Add(mitigation);
-                UndoRedoManager.Attach(mitigation);
-                scope.Complete();
+                using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Weakness"))
+                {
+                    if (_mitigations == null)
+                        _mitigations = new AdvisableCollection<WeaknessMitigation>();
+
+                    _mitigations.Add(wm);
+                    UndoRedoManager.Attach(wm);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentException(nameof(mitigation));
         }
 
         [InitializationRequired]
@@ -93,7 +98,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             bool result = false;
 
-            var mitigation = GetMitigation(mitigationId);
+            var mitigation = GetMitigation(mitigationId) as WeaknessMitigation;
             if (mitigation != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Mitigation from Weakness"))

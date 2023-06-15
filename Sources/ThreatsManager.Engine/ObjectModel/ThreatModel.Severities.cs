@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
@@ -15,8 +16,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("severities")]
-        private IList<ISeverity> _severities;
+        [JsonProperty("severities", Order = 51)]
+        private AdvisableCollection<SeverityDefinition> _severities { get; set; }
 
         private Action<ISeverity> _severityCreated;
         public event Action<ISeverity> SeverityCreated
@@ -88,17 +89,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ISeverity severity)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Severity"))
+            if (severity is SeverityDefinition sd)
             {
-                if (_severities == null)
-                    _severities = new AdvisableCollection<ISeverity>();
+                using (var scope = UndoRedoManager.OpenScope("Add Severity"))
+                {
+                    if (_severities == null)
+                        _severities = new AdvisableCollection<SeverityDefinition>();
 
-                _severities.Add(severity);
-                UndoRedoManager.Attach(severity);
-                scope.Complete();
+                    _severities.Add(sd);
+                    UndoRedoManager.Attach(sd);
+                    scope.Complete();
 
-                _severityCreated?.Invoke(severity);
+                    _severityCreated?.Invoke(sd);
+                }
             }
+            else
+                throw new ArgumentException(nameof(severity));
         }
 
         [InitializationRequired]
@@ -134,7 +140,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var definition = GetSeverity(id);
+            var definition = GetSeverity(id) as SeverityDefinition;
             if (definition != null && !IsUsed(definition))
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Severity"))

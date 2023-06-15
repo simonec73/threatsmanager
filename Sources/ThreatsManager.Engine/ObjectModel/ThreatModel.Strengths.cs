@@ -15,8 +15,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("strengths")]
-        private IList<IStrength> _strengths;
+        [JsonProperty("strengths", Order = 52)]
+        private AdvisableCollection<StrengthDefinition> _strengths { get; set; }
 
         private Action<IStrength> _strengthCreated;
         public event Action<IStrength> StrengthCreated
@@ -88,17 +88,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IStrength strength)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Strength"))
+            if (strength is StrengthDefinition sd)
             {
-                if (_strengths == null)
-                    _strengths = new AdvisableCollection<IStrength>();
+                using (var scope = UndoRedoManager.OpenScope("Add Strength"))
+                {
+                    if (_strengths == null)
+                        _strengths = new AdvisableCollection<StrengthDefinition>();
 
-                _strengths.Add(strength);
-                UndoRedoManager.Attach(strength);
-                scope.Complete();
+                    _strengths.Add(sd);
+                    UndoRedoManager.Attach(sd);
+                    scope.Complete();
 
-                _strengthCreated?.Invoke(strength);
+                    _strengthCreated?.Invoke(sd);
+                }
             }
+            else
+                throw new ArgumentException(nameof(strength));
         }
 
         [InitializationRequired]
@@ -133,7 +138,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var definition = GetStrength(id);
+            var definition = GetStrength(id) as StrengthDefinition;
             if (definition != null && !IsUsed(definition))
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Strength"))
@@ -158,7 +163,7 @@ namespace ThreatsManager.Engine.ObjectModel
             using (var scope = UndoRedoManager.OpenScope("Initialize Standard Strengths"))
             {
                 if (_strengths == null)
-                    _strengths = new AdvisableCollection<IStrength>();
+                    _strengths = new AdvisableCollection<StrengthDefinition>();
 
                 var values = Enum.GetValues(typeof(DefaultStrength));
                 foreach (var value in values)

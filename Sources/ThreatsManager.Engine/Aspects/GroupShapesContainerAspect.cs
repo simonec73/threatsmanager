@@ -19,7 +19,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("groups")]
-    //private IList<IGroupShape> _groups { get; set; }
+    //private AdvisableCollection<GroupShape> _groups { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -28,7 +28,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_groups))]
-        public Property<IList<IGroupShape>> _groups;
+        public Property<AdvisableCollection<GroupShape>> _groups;
         #endregion
 
         #region Implementation of interface IGroupShapesContainerAspect.
@@ -91,27 +91,29 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IGroupShape groupShape)
         {
-            if (groupShape == null)
-                throw new ArgumentNullException(nameof(groupShape));
-
-            using (var scope = UndoRedoManager.OpenScope("Add shape for group"))
+            if (groupShape is GroupShape gs)
             {
-                var groups = _groups?.Get();
-                if (groups == null)
+                using (var scope = UndoRedoManager.OpenScope("Add shape for group"))
                 {
-                    groups = new AdvisableCollection<IGroupShape>();
-                    _groups?.Set(groups);
-                }
+                    var groups = _groups?.Get();
+                    if (groups == null)
+                    {
+                        groups = new AdvisableCollection<GroupShape>();
+                        _groups?.Set(groups);
+                    }
 
-                groups.Add(groupShape);
-                UndoRedoManager.Attach(groupShape);
-                scope.Complete();
+                    groups.Add(gs);
+                    UndoRedoManager.Attach(gs);
+                    scope.Complete();
 
-                if (Instance is IGroupShapesContainer container)
-                {
-                    _groupShapeAdded?.Invoke(container, groupShape);
+                    if (Instance is IGroupShapesContainer container)
+                    {
+                        _groupShapeAdded?.Invoke(container, gs);
+                    }
                 }
             }
+            else
+                throw new ArgumentNullException(nameof(groupShape));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 15)]
@@ -180,23 +182,25 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public bool RemoveShape(IGroupShape groupShape)
         {
-            if (groupShape == null)
-                throw new ArgumentNullException(nameof(groupShape));
-            
-            bool result;
+            bool result = false;
 
-            using (var scope = UndoRedoManager.OpenScope("Remove shape for group"))
+            if (groupShape is GroupShape gs)
             {
-                result = _groups?.Get()?.Remove(groupShape) ?? false;
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove shape for group"))
                 {
-                    UndoRedoManager.Detach(groupShape);
-                    scope.Complete();
+                    result = _groups?.Get()?.Remove(gs) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(gs);
+                        scope.Complete();
 
-                    if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
-                        _groupShapeRemoved?.Invoke(container, group);
+                        if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
+                            _groupShapeRemoved?.Invoke(container, group);
+                    }
                 }
             }
+            else
+                throw new ArgumentNullException(nameof(groupShape));
 
             return result;
         }

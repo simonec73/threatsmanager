@@ -14,8 +14,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     public partial class PropertySchema
     {
         [Child]
-        [JsonProperty("propertyTypes")]
-        private IList<IPropertyType> _propertyTypes { get; set; }
+        [JsonProperty("propertyTypes", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IPropertyType> _propertyTypes { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IPropertyType> PropertyTypes => _propertyTypes?.OrderBy(x => x.Priority);

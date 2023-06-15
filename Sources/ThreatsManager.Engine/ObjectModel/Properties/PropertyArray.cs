@@ -14,6 +14,7 @@ using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
 using PostSharp.Patterns.Collections;
+using Newtonsoft.Json.Linq;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -70,13 +71,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
-        [Reference]
+        [Child]
         [JsonProperty("items")]
         [NotRecorded]
-        private IList<string> _items;
+        private AdvisableCollection<RecordableString> _items { get; set; }
 
         [InitializationRequired]
-        [property: NotRecorded]
         public string StringValue
         {
             get => Value?.TagConcat();
@@ -90,16 +90,29 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         [InitializationRequired]
+        [property:NotRecorded]
         public virtual IEnumerable<string> Value
         {
-            get => _items?.AsEnumerable();
+            get => _items?.Select(x => x.Value).AsEnumerable();
             set
             {
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                _items = (value?.Any() ?? false) ? new AdvisableCollection<string>(value) : null;
-                InvokeChanged();
+                if (value?.Any() ?? false)
+                {
+                    if (_items == null)
+                        _items = new AdvisableCollection<RecordableString>();
+                    else
+                        _items.Clear();
+                    foreach (var item in value)
+                        _items.Add(new RecordableString(item));
+                }
+                else
+                {
+                    _items = null;
+                }
+                Changed?.Invoke(this);
             }
         }
 

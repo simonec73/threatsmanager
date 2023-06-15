@@ -64,7 +64,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #region Specific implementation.
         [JsonProperty("value")]
         [NotRecorded]
-        private string _value;
+        private string _value { get; set; }
 
         public virtual string StringValue
         {

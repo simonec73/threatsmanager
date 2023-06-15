@@ -14,6 +14,8 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ImageConverter = ThreatsManager.Utilities.ImageConverter;
+using PostSharp.Patterns.Collections;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -175,14 +177,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [Child]
         [JsonProperty("threatEvents")]
-        private IList<IThreatEvent> _threatEvents { get; set; }
+        private AdvisableCollection<ThreatEvent> _threatEvents { get; set; }
         [Child]
         [JsonProperty("vulnerabilities")]
-        private IList<IVulnerability> _vulnerabilities { get; set; }
+        private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
         [JsonProperty("parentId")]
         private Guid _parentId { get; set; }
         [Reference]
@@ -204,7 +206,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [NotRecorded]
         [JsonProperty("bigImage")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _bigImage;
+        private Bitmap _bigImage { get; set; }
 
         public Bitmap BigImage 
         {
@@ -224,7 +226,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _image;
+        private Bitmap _image { get; set; }
 
         public Bitmap Image 
         {
@@ -244,7 +246,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _smallImage;
+        private Bitmap _smallImage { get; set; }
 
         public Bitmap SmallImage 
         {
@@ -261,7 +263,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [JsonProperty("template")]
-        internal Guid _templateId;
+        internal Guid _templateId { get; set; }
 
         [Reference]
         internal IEntityTemplate _template { get; set; }

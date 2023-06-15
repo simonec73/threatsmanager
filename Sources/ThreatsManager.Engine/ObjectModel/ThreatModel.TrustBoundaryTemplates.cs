@@ -15,8 +15,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("trustBoundaryTemplates")]
-        private IList<ITrustBoundaryTemplate> _trustBoundaryTemplates;
+        [JsonProperty("trustBoundaryTemplates", Order = 47)]
+        private AdvisableCollection<TrustBoundaryTemplate> _trustBoundaryTemplates { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<ITrustBoundaryTemplate> TrustBoundaryTemplates => _trustBoundaryTemplates?.AsEnumerable();
@@ -30,17 +30,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Trust Boundary Template"))
+            if (trustBoundaryTemplate is TrustBoundaryTemplate tbt)
             {
-                if (_trustBoundaryTemplates == null)
-                    _trustBoundaryTemplates = new AdvisableCollection<ITrustBoundaryTemplate>();
+                using (var scope = UndoRedoManager.OpenScope("Add Trust Boundary Template"))
+                {
+                    if (_trustBoundaryTemplates == null)
+                        _trustBoundaryTemplates = new AdvisableCollection<TrustBoundaryTemplate>();
 
-                _trustBoundaryTemplates.Add(trustBoundaryTemplate);
-                UndoRedoManager.Attach(trustBoundaryTemplate);
-                scope.Complete();
+                    _trustBoundaryTemplates.Add(tbt);
+                    UndoRedoManager.Attach(tbt);
+                    scope.Complete();
 
-                ChildCreated?.Invoke(trustBoundaryTemplate);
+                    ChildCreated?.Invoke(trustBoundaryTemplate);
+                }
             }
+            else
+                throw new ArgumentException(nameof(trustBoundaryTemplate));
         }
 
         [InitializationRequired]
@@ -61,7 +66,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var template = GetTrustBoundaryTemplate(id);
+            var template = GetTrustBoundaryTemplate(id) as TrustBoundaryTemplate;
 
             if (template != null)
             {

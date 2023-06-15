@@ -16,8 +16,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("flowTemplates")]
-        private IList<IFlowTemplate> _flowTemplates;
+        [JsonProperty("flowTemplates", Order = 46)]
+        private AdvisableCollection<FlowTemplate> _flowTemplates { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IFlowTemplate> FlowTemplates => _flowTemplates?.AsEnumerable();
@@ -31,17 +31,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IFlowTemplate flowTemplate)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Flow Tempalte"))
+            if (flowTemplate is FlowTemplate ft)
             {
-                if (_flowTemplates == null)
-                    _flowTemplates = new AdvisableCollection<IFlowTemplate>();
+                using (var scope = UndoRedoManager.OpenScope("Add Flow Tempalte"))
+                {
+                    if (_flowTemplates == null)
+                        _flowTemplates = new AdvisableCollection<FlowTemplate>();
 
-                _flowTemplates.Add(flowTemplate);
-                UndoRedoManager.Attach(flowTemplate);
-                scope.Complete();
+                    _flowTemplates.Add(ft);
+                    UndoRedoManager.Attach(ft);
+                    scope.Complete();
 
-                ChildCreated?.Invoke(flowTemplate);
+                    ChildCreated?.Invoke(ft);
+                }
             }
+            else
+                throw new ArgumentException(nameof(flowTemplate));
         }
 
         [InitializationRequired]
@@ -63,7 +68,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var template = GetFlowTemplate(id);
+            var template = GetFlowTemplate(id) as FlowTemplate;
 
             if (template != null)
             {

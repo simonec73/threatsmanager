@@ -73,7 +73,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #region Specific implementation.
         [Child]
         [JsonProperty("items")]
-        private IList<string> _items;
+        [NotRecorded]
+        private AdvisableCollection<RecordableString> _items;
 
         [Reference]
         [NotRecorded]
@@ -82,7 +83,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [InitializationRequired]
         public string StringValue
         {
-            get => _items.TagConcat();
+            get => _items?.Select(x => x.Value).TagConcat();
             set
             {
                 if (ReadOnly)
@@ -114,14 +115,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 {
                     foreach (var item in value)
                     {
-                        if (propertyType.Values.Any(x => x.Equals(item)))
+                        if (propertyType.Values.Any(x => string.CompareOrdinal(x.Id, item.Id) == 0))
                         {
                             if (_items == null)
-                                _items = new AdvisableCollection<string>();
+                                _items = new AdvisableCollection<RecordableString>();
                             if (_values == null)
                                 _values = new List<IListItem>();
 
-                            _items.Add(item.Id);
+                            _items.Add(new RecordableString(item.Id));
                             _values.Add(item);
                         }
                     }

@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("threatEvents")]
-    //private IList<IThreatEvent> _threatEvents { get; set; }
+    //private AdvisableCollection<ThreatEvent> _threatEvents { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -27,7 +27,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_threatEvents))]
-        public Property<IList<IThreatEvent>> _threatEvents;
+        public Property<AdvisableCollection<ThreatEvent>> _threatEvents;
         #endregion
 
         #region Implementation of interface IThreatEventsContainer.
@@ -91,27 +91,32 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IThreatEvent threatEvent)
         {
-            if (threatEvent == null)
-                throw new ArgumentNullException(nameof(threatEvent));
-            if (threatEvent is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
-                throw new ArgumentException();
-
-            using (var scope = UndoRedoManager.OpenScope("Add Threat Event"))
+            if (threatEvent is ThreatEvent te)
             {
-                var threatEvents = _threatEvents?.Get();
-                if (threatEvents == null)
+                if (te is IThreatModelChild child &&
+                    child.Model != (Instance as IThreatModelChild)?.Model &&
+                    child.Model != Instance)
+                    throw new ArgumentException();
+
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Event"))
                 {
-                    threatEvents = new AdvisableCollection<IThreatEvent>();
-                    _threatEvents?.Set(threatEvents);
+                    var threatEvents = _threatEvents?.Get();
+                    if (threatEvents == null)
+                    {
+                        threatEvents = new AdvisableCollection<ThreatEvent>();
+                        _threatEvents?.Set(threatEvents);
+                    }
+
+                    threatEvents.Add(te);
+                    UndoRedoManager.Attach(te);
+                    scope.Complete();
+
+                    if (Instance is IThreatEventsContainer container)
+                        _threatEventAdded?.Invoke(container, te);
                 }
-
-                threatEvents.Add(threatEvent);
-                UndoRedoManager.Attach(threatEvent);
-                scope.Complete();
-
-                if (Instance is IThreatEventsContainer container)
-                    _threatEventAdded?.Invoke(container, threatEvent);
             }
+            else
+                throw new ArgumentNullException(nameof(threatEvent));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -141,10 +146,10 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            using (var scope = UndoRedoManager.OpenScope("Remove shape for group"))
+            var threatEvent = GetThreatEvent(id) as ThreatEvent;
+            if (threatEvent != null)
             {
-                var threatEvent = GetThreatEvent(id);
-                if (threatEvent != null)
+                using (var scope = UndoRedoManager.OpenScope("Remove Threat Event"))
                 {
                     result = _threatEvents?.Get()?.Remove(threatEvent) ?? false;
                     if (result)

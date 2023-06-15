@@ -16,8 +16,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("threatTypes")]
-        private IList<IThreatType> _threatTypes;
+        [JsonProperty("threatTypes", Order = 40)]
+        private AdvisableCollection<ThreatType> _threatTypes { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IThreatType> ThreatTypes => _threatTypes?.AsEnumerable();
@@ -97,17 +97,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatType threatType)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Threat Type"))
+            if (threatType is ThreatType tt)
             {
-                if (_threatTypes == null)
-                    _threatTypes = new AdvisableCollection<IThreatType>();
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Type"))
+                {
+                    if (_threatTypes == null)
+                        _threatTypes = new AdvisableCollection<ThreatType>();
 
-                _threatTypes.Add(threatType);
-                UndoRedoManager.Attach(threatType);
-                scope.Complete();
+                    _threatTypes.Add(tt);
+                    UndoRedoManager.Attach(tt);
+                    scope.Complete();
 
-                ChildCreated?.Invoke(threatType);
+                    ChildCreated?.Invoke(tt);
+                }
             }
+            else
+                throw new ArgumentException(nameof(threatType));
         }
 
         [InitializationRequired]
@@ -130,7 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var threatType = GetThreatType(id);
+            var threatType = GetThreatType(id) as ThreatType;
 
             if (threatType != null && (force || !IsUsed(threatType)))
             {

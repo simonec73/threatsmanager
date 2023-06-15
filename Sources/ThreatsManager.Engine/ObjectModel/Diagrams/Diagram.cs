@@ -15,6 +15,7 @@ using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using PostSharp.Patterns.Recording;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
@@ -221,16 +222,16 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         protected IThreatModel _model { get; set; }
         [Child]
         [JsonProperty("entities")]
-        private IList<IEntityShape> _entities { get; set; }
+        private AdvisableCollection<EntityShape> _entities { get; set; }
         [Child]
         [JsonProperty("groups")]
-        private IList<IGroupShape> _groups { get; set; }
+        private AdvisableCollection<GroupShape> _groups { get; set; }
         [Child]
         [JsonProperty("links")]
-        private IList<ILink> _links { get; set; }
+        private AdvisableCollection<Link> _links { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.

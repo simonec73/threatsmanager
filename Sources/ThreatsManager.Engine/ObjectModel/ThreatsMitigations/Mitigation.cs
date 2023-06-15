@@ -12,6 +12,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -95,8 +96,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [JsonProperty("description")]
         protected string _description { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
         [Parent]

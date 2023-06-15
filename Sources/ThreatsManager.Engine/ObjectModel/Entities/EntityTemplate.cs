@@ -15,6 +15,7 @@ using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ImageConverter = ThreatsManager.Utilities.ImageConverter;
 using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -104,8 +105,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -126,7 +127,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [NotRecorded]
         [JsonProperty("bigImage")]
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _bigImage;
+        private Bitmap _bigImage { get; set; }
 
         public Bitmap BigImage 
         {
@@ -146,7 +147,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _image;
+        private Bitmap _image { get; set; }
 
         public Bitmap Image 
         {
@@ -166,7 +167,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _smallImage;
+        private Bitmap _smallImage { get; set; }
 
         public Bitmap SmallImage 
         {

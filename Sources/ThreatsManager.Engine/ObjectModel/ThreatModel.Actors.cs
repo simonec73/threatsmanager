@@ -15,8 +15,8 @@ namespace ThreatsManager.Engine.ObjectModel
     public partial class ThreatModel
     {
         [Child]
-        [JsonProperty("actors")]
-        private IList<IThreatActor> _actors;
+        [JsonProperty("actors", Order = 50)]
+        private AdvisableCollection<ThreatActor> _actors { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IThreatActor> ThreatActors => _actors?.AsEnumerable();
@@ -36,17 +36,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatActor actor)
         {
-            using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
-            { 
-                if (_actors == null)
-                    _actors = new AdvisableCollection<IThreatActor>();
+            if (actor is ThreatActor a)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
+                {
+                    if (_actors == null)
+                        _actors = new AdvisableCollection<ThreatActor>();
 
-                _actors.Add(actor);
-                UndoRedoManager.Attach(actor);
-                scope.Complete();
+                    _actors.Add(a);
+                    UndoRedoManager.Attach(a);
+                    scope.Complete();
 
-                ChildCreated?.Invoke(actor);
+                    ChildCreated?.Invoke(a);
+                }
             }
+            else
+                throw new ArgumentException(nameof(actor));
         }
 
         [InitializationRequired]
@@ -86,7 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var actor = GetThreatActor(id);
+            var actor = GetThreatActor(id) as ThreatActor;
             if (actor != null && (force || !IsUsed(actor)))
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Threat Actor"))

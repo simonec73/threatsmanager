@@ -19,8 +19,8 @@ namespace ThreatsManager.Engine.ObjectModel
         private static int _lastTrustBoundary = 0;
 
         [Child]
-        [JsonProperty("groups")]
-        private IList<IGroup> _groups;
+        [JsonProperty("groups", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 22)]
+        private AdvisableCollection<IGroup> _groups { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<IGroup> Groups => _groups?.AsEnumerable();

@@ -47,7 +47,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Child]
         [JsonProperty("weaknesses")]
-        private IList<IThreatTypeWeakness> _weaknesses;
+        private AdvisableCollection<ThreatTypeWeakness> _weaknesses { get; set; }
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
@@ -62,15 +62,20 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [InitializationRequired]
         public void Add([NotNull] IThreatTypeWeakness weakness)
         {
-            if (_weaknesses == null)
-                _weaknesses = new AdvisableCollection<IThreatTypeWeakness>();
+            if (weakness is ThreatTypeWeakness ttw)
+            { 
+                using (var scope = UndoRedoManager.OpenScope("Add Weakness to Threat Type"))
+                {
+                    if (_weaknesses == null)
+                        _weaknesses = new AdvisableCollection<ThreatTypeWeakness>();
 
-            using (var scope = UndoRedoManager.OpenScope("Add Weakness to Threat Type"))
-            {
-                _weaknesses.Add(weakness);
-                UndoRedoManager.Attach(weakness);
-                scope.Complete();
+                    _weaknesses.Add(ttw);
+                    UndoRedoManager.Attach(ttw);
+                    scope.Complete();
+                }
             }
+            else
+                throw new ArgumentException(nameof(weakness));
         }
 
         [InitializationRequired]
@@ -93,7 +98,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             bool result = false;
 
-            var weakness = GetWeakness(weaknessId);
+            var weakness = GetWeakness(weaknessId) as ThreatTypeWeakness;
             if (weakness != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Weakness from Threat Type"))

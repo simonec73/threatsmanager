@@ -70,7 +70,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #region Specific implementation.
         [JsonProperty("item")]
         [NotRecorded]
-        private string _item;
+        private string _item { get; set; }
 
         [Reference]
         private IListItem _value;

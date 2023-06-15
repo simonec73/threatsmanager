@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -139,8 +140,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         [JsonProperty("parentId")]
         private Guid _parentId { get; set; }
         [Reference]
@@ -152,7 +153,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Scope PropertiesScope => Scope.TrustBoundary;
 
         [JsonProperty("template")]
-        internal Guid _templateId;
+        internal Guid _templateId { get; set; }
 
         [Reference]
         internal ITrustBoundaryTemplate _template { get; set; }

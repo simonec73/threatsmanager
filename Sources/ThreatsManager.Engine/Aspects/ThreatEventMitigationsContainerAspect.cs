@@ -16,7 +16,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("mitigations")]
-    //private IList<IThreatEventMitigation> _mitigations { get; set; }
+    //private AdvisableCollection<ThreatEventMitigation> _mitigations { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -25,7 +25,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_mitigations))]
-        public Property<IList<IThreatEventMitigation>> _mitigations;
+        public Property<AdvisableCollection<ThreatEventMitigation>> _mitigations;
         #endregion
 
         #region Implementation of interface IThreatEventMitigationsContainer.
@@ -81,27 +81,29 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IThreatEventMitigation mitigation)
         {
-            if (mitigation == null)
-                throw new ArgumentNullException(nameof(mitigation));
-
-            using (var scope = UndoRedoManager.OpenScope("Add a Mitigation to a Threat Event"))
+            if (mitigation is ThreatEventMitigation tem)
             {
-                var mitigations = _mitigations?.Get();
-                if (mitigations == null)
+                using (var scope = UndoRedoManager.OpenScope("Add a Mitigation to a Threat Event"))
                 {
-                    mitigations = new AdvisableCollection<IThreatEventMitigation>();
-                    _mitigations?.Set(mitigations);
-                }
+                    var mitigations = _mitigations?.Get();
+                    if (mitigations == null)
+                    {
+                        mitigations = new AdvisableCollection<ThreatEventMitigation>();
+                        _mitigations?.Set(mitigations);
+                    }
 
-                mitigations.Add(mitigation);
-                UndoRedoManager.Attach(mitigation);
-                scope.Complete();
+                    mitigations.Add(tem);
+                    UndoRedoManager.Attach(tem);
+                    scope.Complete();
 
-                if (Instance is IThreatEventMitigationsContainer container)
-                {
-                    _threatEventMitigationAdded?.Invoke(container, mitigation);
+                    if (Instance is IThreatEventMitigationsContainer container)
+                    {
+                        _threatEventMitigationAdded?.Invoke(container, tem);
+                    }
                 }
             }
+            else
+                throw new ArgumentNullException(nameof(mitigation));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -131,7 +133,7 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            var mitigation = GetMitigation(mitigationId);
+            var mitigation = GetMitigation(mitigationId) as ThreatEventMitigation;
             if (mitigation != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove a Mitigation from a Threat Event"))

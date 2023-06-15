@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -96,8 +97,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         [Child]
-        [JsonProperty("properties")]
-        private IList<IProperty> _properties { get; set; }
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.

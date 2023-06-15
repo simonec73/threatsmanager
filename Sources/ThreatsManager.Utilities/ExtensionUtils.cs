@@ -377,6 +377,7 @@ namespace ThreatsManager.Utilities
                                 var serializer = new JsonSerializer
                                 {
                                     TypeNameHandling = TypeNameHandling.All,
+                                    DefaultValueHandling = DefaultValueHandling.Ignore,
                                     SerializationBinder = new KnownTypesBinder(),
                                     MissingMemberHandling = MissingMemberHandling.Ignore
                                 };
@@ -411,7 +412,9 @@ namespace ThreatsManager.Utilities
 
                     using(JsonWriter jtw = new JsonTextWriter(sw))
                     {
-                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All,
+                            DefaultValueHandling = DefaultValueHandling.Ignore,
+                            Formatting = Formatting.Indented};
                         serializer.Serialize(jtw, config);
                     }
 

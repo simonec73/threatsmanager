@@ -18,8 +18,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
     //[Child]
-    //[JsonProperty("properties")]
-    //private IList<IProperty> _properties { get; set; }
+    //[JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+    //private AdvisableCollection<IProperty> _properties { get; set; }
     //#endregion    
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         /// Importer for local property _properties.
         /// </summary>
         [ImportMember(nameof(_properties))]
-        public Property<IList<IProperty>> _properties;
+        public Property<AdvisableCollection<IProperty>> _properties;
 
         /// <summary>
         /// Implementation of method OnPropertyChanged.
@@ -368,7 +368,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         /// Activities to be executed after the deserialization of the object. 
         /// </summary>
         /// <param name="context">Serialization context</param>
-        [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12, 
+        [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 17, 
             Visibility = Visibility.Assembly)]
         [CopyCustomAttributes(typeof(OnDeserializedAttribute))]
         [OnDeserialized]
@@ -409,6 +409,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         property.Changed += OnPropertyChanged;
                 }
             }
+
+            if (Instance is IPostDeserialization postDeserialization)
+                postDeserialization.ExecutePostDeserialization();
         }
 
         private IThreatModel GetModel()

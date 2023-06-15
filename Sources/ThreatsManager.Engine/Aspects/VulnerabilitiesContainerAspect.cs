@@ -18,7 +18,7 @@ namespace ThreatsManager.Engine.Aspects
     //#region Additional placeholders required.
     //[Child]
     //[JsonProperty("vulnerabilities")]
-    //private IList<IVulnerability> _vulnerabilities { get; set; }
+    //private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
     //#endregion    
 
     [PSerializable]
@@ -27,7 +27,7 @@ namespace ThreatsManager.Engine.Aspects
     {
         #region Extra elements to be added.
         [ImportMember(nameof(_vulnerabilities))]
-        public Property<IList<IVulnerability>> _vulnerabilities;
+        public Property<AdvisableCollection<Vulnerability>> _vulnerabilities;
         #endregion
 
         #region Implementation of interface IVulnerabilitiesContainer.
@@ -91,27 +91,32 @@ namespace ThreatsManager.Engine.Aspects
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IVulnerability vulnerability)
         {
-            if (vulnerability == null)
-                throw new ArgumentNullException(nameof(vulnerability));
-            if (vulnerability is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
-                throw new ArgumentException();
-
-            using (var scope = UndoRedoManager.OpenScope("Add Vulnerability"))
+            if (vulnerability is Vulnerability v)
             {
-                var vulnerabilities = _vulnerabilities?.Get();
-                if (vulnerabilities == null)
+                if (v is IThreatModelChild child &&
+                    child.Model != (Instance as IThreatModelChild)?.Model &&
+                    child.Model != Instance)
+                    throw new ArgumentException();
+
+                using (var scope = UndoRedoManager.OpenScope("Add Vulnerability"))
                 {
-                    vulnerabilities = new AdvisableCollection<IVulnerability>();
-                    _vulnerabilities?.Set(vulnerabilities);
+                    var vulnerabilities = _vulnerabilities?.Get();
+                    if (vulnerabilities == null)
+                    {
+                        vulnerabilities = new AdvisableCollection<Vulnerability>();
+                        _vulnerabilities?.Set(vulnerabilities);
+                    }
+
+                    vulnerabilities.Add(v);
+                    UndoRedoManager.Attach(v);
+                    scope.Complete();
+
+                    if (Instance is IVulnerabilitiesContainer container)
+                        _vulnerabilityAdded?.Invoke(container, v);
                 }
-
-                vulnerabilities.Add(vulnerability);
-                UndoRedoManager.Attach(vulnerability);
-                scope.Complete();
-
-                if (Instance is IVulnerabilitiesContainer container)
-                    _vulnerabilityAdded?.Invoke(container, vulnerability);
             }
+            else
+                throw new ArgumentNullException(nameof(vulnerability));
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
@@ -141,7 +146,7 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            var vulnerability = GetVulnerability(id);
+            var vulnerability = GetVulnerability(id) as Vulnerability;
             if (vulnerability != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Vulnerability"))
