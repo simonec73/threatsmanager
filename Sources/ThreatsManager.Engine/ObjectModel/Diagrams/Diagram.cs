@@ -240,6 +240,9 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         [JsonProperty("order")]
         public int Order { get; set; }
 
+        [JsonProperty("dpi")]
+        public int? Dpi { get; set; }
+
         public override string ToString()
         {
             return Name;
@@ -258,7 +261,9 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                     Name = Name, 
                     Description = Description,
                     _model = model, 
-                    _modelId = model.Id
+                    _modelId = model.Id,
+                    Order = Order,
+                    Dpi = Dpi
                 };
                 this.CloneProperties(result);
                 container.Add(result);
