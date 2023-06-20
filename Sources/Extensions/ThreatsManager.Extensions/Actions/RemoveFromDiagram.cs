@@ -57,6 +57,7 @@ namespace ThreatsManager.Extensions.Actions
                 {
                     foreach (var link in linksArray)
                     {
+                        EventsDispatcher.RaiseEvent("DeletingItem", link);
                         DataFlowRemovingRequired?.Invoke(link);
                     }
                 }
@@ -65,6 +66,7 @@ namespace ThreatsManager.Extensions.Actions
                 {
                     foreach (var shape in shapesArray)
                     {
+                        EventsDispatcher.RaiseEvent("DeletingItem", shape);
                         EntityGroupRemovingRequired?.Invoke(shape);
                     }
                 }

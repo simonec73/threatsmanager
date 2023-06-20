@@ -376,7 +376,7 @@ namespace ThreatsManager.Utilities
                             {
                                 var serializer = new JsonSerializer
                                 {
-                                    TypeNameHandling = TypeNameHandling.All,
+                                    TypeNameHandling = TypeNameHandling.Auto,
                                     DefaultValueHandling = DefaultValueHandling.Ignore,
                                     SerializationBinder = new KnownTypesBinder(),
                                     MissingMemberHandling = MissingMemberHandling.Ignore
@@ -412,7 +412,7 @@ namespace ThreatsManager.Utilities
 
                     using(JsonWriter jtw = new JsonTextWriter(sw))
                     {
-                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All,
+                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto,
                             DefaultValueHandling = DefaultValueHandling.Ignore,
                             Formatting = Formatting.Indented};
                         serializer.Serialize(jtw, config);
