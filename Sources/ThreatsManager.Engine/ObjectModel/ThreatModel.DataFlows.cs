@@ -114,7 +114,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _flows.Add(df);
                     UndoRedoManager.Attach(df);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
             else
@@ -195,7 +195,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(flow);
                     }
                         
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

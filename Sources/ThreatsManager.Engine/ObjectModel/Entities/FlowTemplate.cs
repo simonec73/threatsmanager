@@ -133,7 +133,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     result.Description = Description;
                     result.FlowType = FlowType;
                     this.CloneProperties(result);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 
@@ -153,7 +153,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     internalFlow._templateId = Id;
                     internalFlow._template = this;
                 }
-                scope.Complete();
+                scope?.Complete();
             }
         }
 

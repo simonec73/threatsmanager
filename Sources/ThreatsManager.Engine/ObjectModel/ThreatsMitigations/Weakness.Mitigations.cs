@@ -71,7 +71,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
                     _mitigations.Add(wm);
                     UndoRedoManager.Attach(wm);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
             else
@@ -107,7 +107,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     if (result)
                     {
                         UndoRedoManager.Detach(mitigation);
-                        scope.Complete();
+                        scope?.Complete();
 
                         _weaknessMitigationRemoved?.Invoke(this, mitigation);
                     }

@@ -224,7 +224,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
                     properties?.Add(result);
                     UndoRedoManager.Attach(result);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IPropertiesContainer container)
                         _propertyAdded?.Invoke(container, result);
@@ -287,7 +287,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         }
                     }
                              
-                    scope.Complete();
+                    scope?.Complete();
                }
             }
 
@@ -319,7 +319,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
                     _properties?.Get()?.Clear();
                          
-                    scope.Complete();
+                    scope?.Complete();
                }
             }
         }
@@ -332,32 +332,37 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         {
             if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
             {
-                var existingProp = container.Properties?.ToArray();
-                var schemaProp = schema.PropertyTypes?.ToArray();
-                var missing = existingProp == null
-                    ? schemaProp
-                    : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
-                var inExcess = existingProp?.Where(x => x.PropertyType != null &&
-                                                        x.PropertyType.SchemaId == schema.Id &&
-                                                        !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
-                    .Select(x => x.PropertyType).ToArray();
-
-                if (missing?.Any() ?? false)
+                using (var scope = UndoRedoManager.OpenScope("Apply Property Schema"))
                 {
-                    foreach (var item in missing)
-                    {
-                        if (item != null)
-                            container.AddProperty(item, null);
-                    }
-                }
+                    var existingProp = container.Properties?.ToArray();
+                    var schemaProp = schema.PropertyTypes?.ToArray();
+                    var missing = existingProp == null
+                        ? schemaProp
+                        : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
+                    var inExcess = existingProp?.Where(x => x.PropertyType != null &&
+                                                            x.PropertyType.SchemaId == schema.Id &&
+                                                            !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
+                        .Select(x => x.PropertyType).ToArray();
 
-                if (inExcess?.Any() ?? false)
-                {
-                    foreach (var item in inExcess)
+                    if (missing?.Any() ?? false)
                     {
-                        if (item != null)
-                            container.RemoveProperty(item);
+                        foreach (var item in missing)
+                        {
+                            if (item != null)
+                                container.AddProperty(item, null);
+                        }
                     }
+
+                    if (inExcess?.Any() ?? false)
+                    {
+                        foreach (var item in inExcess)
+                        {
+                            if (item != null)
+                                container.RemoveProperty(item);
+                        }
+                    }
+
+                    scope?.Complete();
                 }
             }
         }

@@ -94,7 +94,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     mitigations.Add(tem);
                     UndoRedoManager.Attach(tem);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IThreatEventMitigationsContainer container)
                     {
@@ -142,7 +142,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(mitigation);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (Instance is IThreatEventMitigationsContainer container)
                             _threatEventMitigationRemoved?.Invoke(container, mitigation);

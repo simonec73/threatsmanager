@@ -73,7 +73,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                     {
                         if (threatEvent.ApplyMitigations(answer == AnswerType.No))
                         {
-                            scope.Complete();
+                            scope?.Complete();
                             ShowMessage?.Invoke(Resources.SuccessAssociation);
                         }
                         else

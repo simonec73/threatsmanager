@@ -41,7 +41,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 _groups.Add(group);
                 UndoRedoManager.Attach(group);
-                scope.Complete();
+                scope?.Complete();
             }
         }
 
@@ -174,7 +174,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(item);
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

@@ -87,7 +87,7 @@ namespace ThreatsManager.Engine.Aspects
                     oldParent = Parent;
                     _parentId.Set(parent?.Id ?? Guid.Empty);
                     _parent.Set(parent);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IGroupElement groupElement)
                         _parentChanged?.Invoke(groupElement, oldParent, parent);

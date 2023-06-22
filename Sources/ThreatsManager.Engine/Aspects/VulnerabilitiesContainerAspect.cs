@@ -109,7 +109,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     vulnerabilities.Add(v);
                     UndoRedoManager.Attach(v);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IVulnerabilitiesContainer container)
                         _vulnerabilityAdded?.Invoke(container, v);
@@ -155,7 +155,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(vulnerability);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (Instance is IVulnerabilitiesContainer container)
                             _vulnerabilityRemoved?.Invoke(container, vulnerability);

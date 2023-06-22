@@ -40,7 +40,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _flowTemplates.Add(ft);
                     UndoRedoManager.Attach(ft);
-                    scope.Complete();
+                    scope?.Complete();
 
                     ChildCreated?.Invoke(ft);
                 }
@@ -78,7 +78,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(template);
-                        scope.Complete();
+                        scope?.Complete();
 
                         ChildRemoved?.Invoke(template);
                     }

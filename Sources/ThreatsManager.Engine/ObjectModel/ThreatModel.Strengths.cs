@@ -97,7 +97,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _strengths.Add(sd);
                     UndoRedoManager.Attach(sd);
-                    scope.Complete();
+                    scope?.Complete();
 
                     _strengthCreated?.Invoke(sd);
                 }
@@ -147,7 +147,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(definition);
-                        scope.Complete();
+                        scope?.Complete();
 
                         _strengthRemoved?.Invoke(definition);
                     }
@@ -171,7 +171,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     AddStrength((DefaultStrength)value);
                 }
 
-                scope.Complete();
+                scope?.Complete();
             }
         }
         

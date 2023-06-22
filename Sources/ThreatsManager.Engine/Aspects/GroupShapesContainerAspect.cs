@@ -104,7 +104,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     groups.Add(gs);
                     UndoRedoManager.Attach(gs);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IGroupShapesContainer container)
                     {
@@ -192,7 +192,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(gs);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
                             _groupShapeRemoved?.Invoke(container, group);

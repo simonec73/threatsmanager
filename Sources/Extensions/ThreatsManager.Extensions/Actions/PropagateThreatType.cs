@@ -69,7 +69,7 @@ namespace ThreatsManager.Extensions.Actions
                             t.Description = threatType.Description;
                         }
 
-                        scope.Complete();
+                        scope?.Complete();
                     }
                 }
             }

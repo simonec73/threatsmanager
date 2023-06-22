@@ -56,7 +56,7 @@ namespace ThreatsManager.Extensions.Actions
                     result = true;
                 }
                 
-                scope.Complete();
+                scope?.Complete();
             }
 
             return result;

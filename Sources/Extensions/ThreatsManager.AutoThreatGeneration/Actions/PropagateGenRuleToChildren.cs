@@ -90,7 +90,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                         {
                             container.SetRule(c.Rule);
                         }
-                        scope.Complete();
+                        scope?.Complete();
                     }
                     ShowMessage?.Invoke("Auto Gen Rule copied successfully.");
                 }

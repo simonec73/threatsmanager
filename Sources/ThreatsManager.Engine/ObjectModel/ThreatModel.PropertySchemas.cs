@@ -232,7 +232,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         }
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
         }
@@ -319,7 +319,7 @@ namespace ThreatsManager.Engine.ObjectModel
                             container?.Apply(schema);
                         }
 
-                        s.Complete();
+                        s?.Complete();
                         result = true;
                     }
                 }
@@ -340,7 +340,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _schemas.Add(ps);
                     UndoRedoManager.Attach(ps);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
             else
@@ -359,7 +359,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     result = new PropertySchema(name, nspace);
                     Add(result);
                     RegisterEvents(result);
-                    scope.Complete();
+                    scope?.Complete();
                     ChildCreated?.Invoke(result);
                 }
             }
@@ -413,7 +413,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(s);
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

@@ -98,7 +98,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _severities.Add(sd);
                     UndoRedoManager.Attach(sd);
-                    scope.Complete();
+                    scope?.Complete();
 
                     _severityCreated?.Invoke(sd);
                 }
@@ -149,7 +149,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (result)
                     {
                         UndoRedoManager.Detach(definition);
-                        scope.Complete();
+                        scope?.Complete();
 
                         UnregisterEvents(definition);
                         _severityRemoved?.Invoke(definition);
@@ -172,7 +172,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     AddSeverity((DefaultSeverity)value);
                 }
 
-                scope.Complete();
+                scope?.Complete();
             }
         }
         

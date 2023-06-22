@@ -106,7 +106,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     entities.Add(es);
                     UndoRedoManager.Attach(es);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IEntityShapesContainer container)
                     {
@@ -193,7 +193,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(es);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (es.Identity is IEntity entity && Instance is IEntityShapesContainer container)
                             _entityShapeRemoved?.Invoke(container, entity);

@@ -77,7 +77,7 @@ namespace ThreatsManager.Extensions.Actions
                                 }
                             }
 
-                            scope.Complete();
+                            scope?.Complete();
                         }
                     }
                 }

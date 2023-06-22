@@ -20,8 +20,6 @@ namespace ThreatsManager.Engine.Aspects
         /// <param name="args">Arguments describing the operation.</param>
         public override void OnSetValue(LocationInterceptionArgs args)
         {
-            base.OnSetValue(args);
-
             if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing &&
                 args.Value is ISeverity severity &&
                 args.Instance is ISeverityIdChanger target)
@@ -31,6 +29,8 @@ namespace ThreatsManager.Engine.Aspects
                 if (oldValue != newValue)
                     target.SetSeverityId(newValue);
             }
+
+            base.OnSetValue(args);
         }
     }
 }

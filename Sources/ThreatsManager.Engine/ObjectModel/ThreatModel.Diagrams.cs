@@ -180,7 +180,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _diagrams.Add(d);
                     UndoRedoManager.Attach(d);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
             else
@@ -245,7 +245,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                         UnregisterEvents(diagram);
                         ChildRemoved?.Invoke(diagram);
-                        scope.Complete();
+                        scope?.Complete();
                     }
                 }
             }

@@ -407,7 +407,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                                 PropertyValueChanged?.Invoke(this, prop);
                             };
 
-                            scope.Complete();
+                            scope?.Complete();
                         }
                     }
                 }

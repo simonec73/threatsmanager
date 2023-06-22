@@ -23,8 +23,6 @@ namespace ThreatsManager.Engine.Aspects
         /// <param name="args">Arguments describing the operation.</param>
         public override void OnSetValue(LocationInterceptionArgs args)
         {
-            base.OnSetValue(args);
-
             if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing && 
                 args.Value is IIdentity identity && 
                 args.Instance is IThreatModelIdChanger target)
@@ -34,6 +32,8 @@ namespace ThreatsManager.Engine.Aspects
                 if (oldValue != newValue)
                     target.SetThreatModelId(newValue);
             }
+
+            base.OnSetValue(args);
         }
     }
 }

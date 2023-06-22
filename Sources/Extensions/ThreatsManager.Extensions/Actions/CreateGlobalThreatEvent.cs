@@ -50,7 +50,7 @@ namespace ThreatsManager.Extensions.Actions
                     threatType.Model?.AddThreatEvent(threatType);
                     ShowMessage?.Invoke("Add Global Threat Event has been executed successfully.");
                     result = true;
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

@@ -423,7 +423,7 @@ namespace ThreatsManager.Engine
                 {
                     if (entity.Model.RemoveEntity(entity.Id))
                     {
-                        scope.Complete();
+                        scope?.Complete();
                         _showMessage?.Invoke("Entity removed successfully.");
                     }
                     else
@@ -433,7 +433,7 @@ namespace ThreatsManager.Engine
                 {
                     if (dataFlow.Model.RemoveDataFlow(dataFlow.Id))
                     {
-                        scope.Complete();
+                        scope?.Complete();
                         _showMessage?.Invoke("Flow removed successfully.");
                     }
                     else
@@ -443,7 +443,7 @@ namespace ThreatsManager.Engine
                 {
                     if (trustBoundary.Model.RemoveGroup(trustBoundary.Id))
                     {
-                        scope.Complete();
+                        scope?.Complete();
                         _showMessage?.Invoke("Trust Boundary removed successfully.");
                     }
                     else
@@ -453,7 +453,7 @@ namespace ThreatsManager.Engine
                 {
                     if (group.Model.RemoveGroup(group.Id))
                     {
-                        scope.Complete();
+                        scope?.Complete();
                         _showMessage?.Invoke("Group removed successfully.");
                     }
                     else

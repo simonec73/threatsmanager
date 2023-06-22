@@ -254,7 +254,10 @@ namespace ThreatsManager.Utilities
         /// <returns>Scope for the recording.</returns>
         public static RecordingScope OpenScope([Required] string name)
         {
-            return RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic);
+            if (IsUndoing || IsRedoing)
+                return null;
+            else
+                return RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic);
         }
 
         /// <summary>

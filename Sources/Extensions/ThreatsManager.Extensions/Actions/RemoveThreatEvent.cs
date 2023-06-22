@@ -65,7 +65,7 @@ namespace ThreatsManager.Extensions.Actions
                     var result = container.RemoveThreatEvent(threatEvent.Id);
                     if (result)
                     {
-                        scope.Complete();
+                        scope?.Complete();
                         ShowMessage?.Invoke("Remove Threat Event has been executed successfully.");
                     }
                     else

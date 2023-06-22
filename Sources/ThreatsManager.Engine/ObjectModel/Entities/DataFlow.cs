@@ -244,7 +244,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 _templateId = Guid.Empty;
                 _template = null;
 
-                scope.Complete();
+                scope?.Complete();
             }
         }
 

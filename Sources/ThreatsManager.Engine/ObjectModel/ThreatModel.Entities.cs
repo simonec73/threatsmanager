@@ -125,7 +125,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 _entities.Add(entity);
                 UndoRedoManager.Attach(entity);
-                scope.Complete();
+                scope?.Complete();
             }
         }
 
@@ -271,7 +271,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(entity);
                     }
                         
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

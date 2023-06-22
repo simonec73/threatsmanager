@@ -180,7 +180,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     Name = Name,
                     Description = Description,
                     _model = model,
-                    _modelId = model.Id,
                     _severityId = _severityId
                 };
                 this.CloneProperties(result);

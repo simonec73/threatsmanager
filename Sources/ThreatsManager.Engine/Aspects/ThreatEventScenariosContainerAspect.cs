@@ -121,7 +121,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     _scenarios?.Get()?.Add(tes);
                     UndoRedoManager.Attach(tes);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
             else
@@ -142,7 +142,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(scenario);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (Instance is IThreatEvent threatEvent)
                             _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);

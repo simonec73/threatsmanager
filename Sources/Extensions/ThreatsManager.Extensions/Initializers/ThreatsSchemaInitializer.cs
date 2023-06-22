@@ -17,7 +17,7 @@ namespace ThreatsManager.Extensions.Initializers
                 var schemaManager = new ThreatsPropertySchemaManager(model);
                 schemaManager.GetSchema();
 
-                scope.Complete();
+                scope?.Complete();
             }
         }
     }

@@ -106,7 +106,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _threatTypes.Add(tt);
                     UndoRedoManager.Attach(tt);
-                    scope.Complete();
+                    scope?.Complete();
 
                     ChildCreated?.Invoke(tt);
                 }
@@ -151,7 +151,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(threatType);
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

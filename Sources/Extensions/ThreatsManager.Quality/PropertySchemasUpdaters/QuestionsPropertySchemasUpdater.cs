@@ -67,7 +67,7 @@ namespace ThreatsManager.Quality.PropertySchemasUpdaters
                         result |= rule?.Root?.UpdateSchema(oldName, oldNamespace, newName, newNamespace) ?? false;
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 
@@ -91,7 +91,7 @@ namespace ThreatsManager.Quality.PropertySchemasUpdaters
                         result |= rule?.Root?.UpdateSchema(schemaName, schemaNamespace, oldPropertyTypeName, newPropertyTypeName) ?? false;
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

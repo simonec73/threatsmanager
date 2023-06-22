@@ -22,7 +22,7 @@ namespace ThreatsManager.Extensions.Initializers
                     {
                         model.AddThreatActor(value);
                     }
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
         }

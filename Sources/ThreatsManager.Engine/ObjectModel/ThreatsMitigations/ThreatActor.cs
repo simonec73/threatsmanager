@@ -156,7 +156,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 Description = actor.Description;
                 _actor = actor.ActorType;
                 actor.CloneProperties(this);
-                scope.Complete();
+                scope?.Complete();
             }
         }
 

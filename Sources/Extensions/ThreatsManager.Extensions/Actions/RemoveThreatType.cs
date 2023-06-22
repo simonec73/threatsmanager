@@ -62,7 +62,7 @@ namespace ThreatsManager.Extensions.Actions
                     var result = model.RemoveThreatType(threatType.Id);
                     if (result)
                     {
-                        scope.Complete();
+                        scope?.Complete();
                         ShowMessage?.Invoke("Remove Threat Type has been executed successfully.");
                     }
                     else

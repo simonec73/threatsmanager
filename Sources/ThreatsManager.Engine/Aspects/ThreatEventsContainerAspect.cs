@@ -109,7 +109,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     threatEvents.Add(te);
                     UndoRedoManager.Attach(te);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is IThreatEventsContainer container)
                         _threatEventAdded?.Invoke(container, te);
@@ -155,7 +155,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(threatEvent);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (Instance is IThreatEventsContainer container)
                             _threatEventRemoved?.Invoke(container, threatEvent);

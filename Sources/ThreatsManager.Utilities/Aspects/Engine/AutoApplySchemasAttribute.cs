@@ -22,7 +22,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         {
             var model = args.Value as IThreatModel ?? (args.Value as IThreatModelChild)?.Model;
 
-            if (model != null && args.Instance is IPropertiesContainer container)
+            if (model != null && args.Instance is IPropertiesContainer container && !UndoRedoManager.IsRedoing && !UndoRedoManager.IsUndoing)
             {
                 model.AutoApplySchemas(container);
             }

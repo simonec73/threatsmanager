@@ -95,7 +95,7 @@ namespace ThreatsManager.Engine.Aspects
 
                     links.Add(l);
                     UndoRedoManager.Attach(l);
-                    scope.Complete();
+                    scope?.Complete();
 
                     if (Instance is ILinksContainer container)
                     {
@@ -140,7 +140,7 @@ namespace ThreatsManager.Engine.Aspects
                     if (result)
                     {
                         UndoRedoManager.Detach(link);
-                        scope.Complete();
+                        scope?.Complete();
 
                         if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
                             _linkRemoved?.Invoke(container, flow);

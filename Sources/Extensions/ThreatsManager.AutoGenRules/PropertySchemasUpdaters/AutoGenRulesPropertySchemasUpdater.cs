@@ -84,7 +84,7 @@ namespace ThreatsManager.AutoGenRules.PropertySchemasUpdaters
                          UpdateTrustBoundaryTemplates(model, oldName, oldNamespace, null, newName, newNamespace, null, propertyType);
 
                 if (result)
-                    scope.Complete();
+                    scope?.Complete();
             }
 
             return result;
@@ -112,7 +112,7 @@ namespace ThreatsManager.AutoGenRules.PropertySchemasUpdaters
                        UpdateTrustBoundaryTemplates(model, schemaName, schemaNamespace, oldPropertyTypeName, schemaName, schemaNamespace, newPropertyTypeName, propertyType);
 
                 if (result)
-                    scope.Complete();
+                    scope?.Complete();
             }
 
             return result;

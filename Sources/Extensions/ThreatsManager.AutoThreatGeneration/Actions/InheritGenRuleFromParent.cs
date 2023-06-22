@@ -122,7 +122,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 using (var scope = UndoRedoManager.OpenScope("Inherit Gen Rule from Parent"))
                 {
                     c.Container?.SetRule(c.Rule);
-                    scope.Complete();
+                    scope?.Complete();
                     ShowMessage?.Invoke("Auto Gen Rule copied successfully.");
                 }
             }

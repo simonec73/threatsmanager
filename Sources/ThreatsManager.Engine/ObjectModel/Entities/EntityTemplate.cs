@@ -210,7 +210,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     result.Image = this.GetImage(ImageSize.Medium);
                     result.SmallImage = this.GetImage(ImageSize.Small);
                     this.CloneProperties(result);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 
@@ -242,7 +242,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                         break;
                 }
 
-                scope.Complete();
+                scope?.Complete();
             }
         }
 

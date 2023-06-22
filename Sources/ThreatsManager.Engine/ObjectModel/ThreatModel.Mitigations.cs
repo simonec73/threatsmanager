@@ -47,7 +47,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _mitigations.Add(m);
                     UndoRedoManager.Attach(m);
-                    scope.Complete();
+                    scope?.Complete();
 
                     ChildCreated?.Invoke(m);
                 }
@@ -91,7 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(mitigation);
                     }
 
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

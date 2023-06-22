@@ -45,7 +45,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
                     _actors.Add(a);
                     UndoRedoManager.Attach(a);
-                    scope.Complete();
+                    scope?.Complete();
 
                     ChildCreated?.Invoke(a);
                 }
@@ -107,7 +107,7 @@ namespace ThreatsManager.Engine.ObjectModel
                         ChildRemoved?.Invoke(actor);
                     }
                         
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 

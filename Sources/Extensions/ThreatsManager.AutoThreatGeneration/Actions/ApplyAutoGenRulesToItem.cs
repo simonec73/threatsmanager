@@ -71,7 +71,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                     {
                         if (entity.GenerateThreatEvents(answer == AnswerType.No))
                         {
-                            scope.Complete();
+                            scope?.Complete();
                             ShowMessage?.Invoke(Resources.SuccessGeneration);
                         }
                         else
@@ -84,7 +84,7 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                     {
                         if (flow.GenerateThreatEvents(answer == AnswerType.No))
                         {
-                            scope.Complete();
+                            scope?.Complete();
                             ShowMessage?.Invoke(Resources.SuccessGeneration);
                         }
                         else

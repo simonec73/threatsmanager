@@ -41,8 +41,6 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     if (id != Guid.Empty)
                     { 
                         result = ThreatModelManager.Get(id);
-                        if (result != null)
-                            _model.Set(result);
                     }
                 }
 

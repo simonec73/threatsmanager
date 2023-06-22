@@ -127,7 +127,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 {
                     result.Description = Description;
                     this.CloneProperties(result);
-                    scope.Complete();
+                    scope?.Complete();
                 }
             }
 
@@ -146,7 +146,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     internalTb._templateId = Id;
                     internalTb._template = this;
                 }
-                scope.Complete();
+                scope?.Complete();
             }
         }
 
