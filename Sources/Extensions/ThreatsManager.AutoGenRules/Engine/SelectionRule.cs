@@ -8,7 +8,7 @@ namespace ThreatsManager.AutoGenRules.Engine
     [JsonObject(MemberSerialization.OptIn)]
     public class SelectionRule : IMergeable<SelectionRule>
     {
-        [JsonProperty("node")]
+        [JsonProperty("node", TypeNameHandling = TypeNameHandling.Objects)]
         public SelectionRuleNode Root { get; set; }
 
         public void Merge([NotNull] SelectionRule toBeMerged)

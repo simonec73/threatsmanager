@@ -8,6 +8,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
 {
@@ -40,26 +41,30 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
             if (threatTypesWithRules?.Any() ?? false)
             {
-                ApplyThreatTypes(model, threatTypesWithRules, schemaManager);
-
-                var entities = model.Entities?.ToArray();
-                if (entities?.Any() ?? false)
+                using (var scope = UndoRedoManager.OpenScope("Generate Threat Events for Threat Model"))
                 {
-                    foreach (var entity in entities)
-                    {
-                        ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
-                    }
-                }
-                var dataFlows = model.DataFlows?.ToArray();
-                if (dataFlows?.Any() ?? false)
-                {
-                    foreach (var dataFlow in dataFlows)
-                    {
-                        ApplyThreatTypes(dataFlow, threatTypesWithRules, schemaManager);
-                    }
-                }
+                    ApplyThreatTypes(model, threatTypesWithRules, schemaManager);
 
-                result = true;
+                    var entities = model.Entities?.ToArray();
+                    if (entities?.Any() ?? false)
+                    {
+                        foreach (var entity in entities)
+                        {
+                            ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
+                        }
+                    }
+                    var dataFlows = model.DataFlows?.ToArray();
+                    if (dataFlows?.Any() ?? false)
+                    {
+                        foreach (var dataFlow in dataFlows)
+                        {
+                            ApplyThreatTypes(dataFlow, threatTypesWithRules, schemaManager);
+                        }
+                    }
+
+                    scope.Complete();
+                    result = true;
+                }
             }
 
             return result;
@@ -76,8 +81,13 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
                 if (threatTypesWithRules?.Any() ?? false)
                 {
-                    ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
-                    result = true;
+                    using (var scope = UndoRedoManager.OpenScope("Generate Threat Events for Entity"))
+                    {
+                        ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
+
+                        scope.Complete();
+                        result = true;
+                    }
                 }
             }
 
@@ -95,8 +105,13 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
                 if (threatTypesWithRules?.Any() ?? false)
                 {
-                    ApplyThreatTypes(flow, threatTypesWithRules, schemaManager);
-                    result = true;
+                    using (var scope = UndoRedoManager.OpenScope("Generate Threat Events for Flow"))
+                    {
+                        ApplyThreatTypes(flow, threatTypesWithRules, schemaManager);
+
+                        scope.Complete();
+                        result = true;
+                    }
                 }
             }
 
@@ -119,42 +134,47 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                     .ToArray();
                 if (mitigations?.Any() ?? false)
                 {
-                    ISeverity maximumSeverity = null;
-
-                    foreach (var mitigation in mitigations)
+                    using (var scope = UndoRedoManager.OpenScope("Apply Mitigations to Threat Event"))
                     {
-                        var rule = GetRule(mitigation);
-                        if (rule?.Evaluate(identity) ?? false)
+                        ISeverity maximumSeverity = null;
+
+                        foreach (var mitigation in mitigations)
                         {
-                            var strength = mitigation.Strength;
-
-                            if (rule is MitigationSelectionRule mitigationRule)
+                            var rule = GetRule(mitigation);
+                            if (rule?.Evaluate(identity) ?? false)
                             {
-                                if (mitigationRule.StrengthId.HasValue &&
-                                    model.GetStrength(mitigationRule.StrengthId.Value) is IStrength strengthOverride)
-                                    strength = strengthOverride;
+                                var strength = mitigation.Strength;
 
-                                var status = mitigationRule.Status ?? MitigationStatus.Undefined;
-                                var generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength, status) != null);
-                                result |= generated;
-
-                                if (generated && mitigationRule.SeverityId.HasValue &&
-                                    model.GetSeverity(mitigationRule.SeverityId.Value) is ISeverity severity &&
-                                    (maximumSeverity == null || maximumSeverity.Id > severity.Id))
+                                if (rule is MitigationSelectionRule mitigationRule)
                                 {
-                                    maximumSeverity = severity;
+                                    if (mitigationRule.StrengthId.HasValue &&
+                                        model.GetStrength(mitigationRule.StrengthId.Value) is IStrength strengthOverride)
+                                        strength = strengthOverride;
+
+                                    var status = mitigationRule.Status ?? MitigationStatus.Undefined;
+                                    var generated = (threatEvent.AddMitigation(mitigation.Mitigation, strength, status) != null);
+                                    result |= generated;
+
+                                    if (generated && mitigationRule.SeverityId.HasValue &&
+                                        model.GetSeverity(mitigationRule.SeverityId.Value) is ISeverity severity &&
+                                        (maximumSeverity == null || maximumSeverity.Id > severity.Id))
+                                    {
+                                        maximumSeverity = severity;
+                                    }
+                                }
+                                else
+                                {
+                                    result |= (threatEvent.AddMitigation(mitigation.Mitigation, strength, MitigationStatus.Undefined) != null);
                                 }
                             }
-                            else
-                            {
-                                result |= (threatEvent.AddMitigation(mitigation.Mitigation, strength, MitigationStatus.Undefined) != null);
-                            }
                         }
-                    }
 
-                    if (maximumSeverity != null && maximumSeverity.Id < threatEvent.SeverityId)
-                    {
-                        threatEvent.Severity = maximumSeverity;
+                        if (maximumSeverity != null && maximumSeverity.Id < threatEvent.SeverityId)
+                        {
+                            threatEvent.Severity = maximumSeverity;
+                        }
+
+                        scope.Complete();
                     }
                 }
             }
@@ -229,10 +249,15 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             {
                 var schemaManager = new AutoGenRulesPropertySchemaManager(model);
                 var propertyType = schemaManager.GetPropertyType();
-                var property = container.GetProperty(propertyType) ?? container.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+
+                using (var scope = UndoRedoManager.OpenScope("Set generation rule"))
                 {
-                    jsonSerializableObject.Value = rule;
+                    var property = container.GetProperty(propertyType) ?? container.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    {
+                        jsonSerializableObject.Value = rule;
+                        scope.Complete();
+                    }
                 }
             }
         }
@@ -299,7 +324,11 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 if (schemaManager == null)
                     schemaManager = new AutoGenRulesPropertySchemaManager(child.Model);
 
-                schemaManager.SetTop(container, top);
+                using (var scope = UndoRedoManager.OpenScope("Set Top flag for generation rule"))
+                {
+                    schemaManager.SetTop(container, top);
+                    scope.Complete();
+                }
             }
         }
         #endregion

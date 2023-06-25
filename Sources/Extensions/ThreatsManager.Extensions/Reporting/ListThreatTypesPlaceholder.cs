@@ -111,8 +111,10 @@ namespace ThreatsManager.Extensions.Reporting
                     {
                         var items = new List<ItemRow>();
 
-                        items.Add(new TextRow("Severity", threatType.Severity.Name,
-                            threatType.Severity.TextColor, threatType.Severity.BackColor, true, true, 75));
+                        var severity = threatEvents.Select(x => x.Severity)
+                            .OrderByDescending(x => x, new SeverityComparer()).FirstOrDefault();
+                        items.Add(new TextRow("Severity", severity.Name,
+                            severity.TextColor, severity.BackColor, true, true, 75));
                         items.Add(new TextRow("Description", threatType.Description));
                         items.Add(new ListRow("Affected Objects", 
                             threatEvents.Select(x => 
