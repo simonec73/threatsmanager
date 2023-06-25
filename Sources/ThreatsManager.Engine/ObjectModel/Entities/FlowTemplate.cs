@@ -126,7 +126,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             using (var scope = UndoRedoManager.OpenScope("Create Flow from Template"))
             {
-                result = _model.AddDataFlow(name, sourceId, targetId, this);
+                result = Model?.AddDataFlow(name, sourceId, targetId, this);
 
                 if (result != null)
                 {

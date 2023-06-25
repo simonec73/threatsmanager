@@ -11,7 +11,6 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
-using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -107,7 +106,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [JsonProperty("context")]
         public string Context { get; set; }
 
-        [JsonProperty("cachedList")]
+        [JsonProperty("cachedList", ItemTypeNameHandling = TypeNameHandling.Objects)]
         [NotRecorded]
         [Reference]
         protected List<IListItem> _cachedList { get; set; }

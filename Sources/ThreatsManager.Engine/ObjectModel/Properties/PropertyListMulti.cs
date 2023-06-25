@@ -25,7 +25,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyListMulti, ThreatsManager.Engine")]
-    public class PropertyListMulti : IPropertyListMulti, IInitializableObject
+    public class PropertyListMulti : IPropertyListMulti, IInitializableObject, IPostDeserialization
     {
         public PropertyListMulti()
         {
@@ -71,10 +71,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
-        [Child]
+        [Reference]
         [JsonProperty("items")]
         [NotRecorded]
-        private AdvisableCollection<RecordableString> _items;
+        private List<string> _legacyItems { get; set; }
+
+        [Child]
+        [JsonProperty("rows")]
+        [NotRecorded]
+        private AdvisableCollection<RecordableString> _items { get; set; }
+
+        public void ExecutePostDeserialization()
+        {
+            if (_legacyItems?.Any() ?? false)
+            {
+                if (_items == null)
+                    _items = new AdvisableCollection<RecordableString>();
+
+                foreach (var item in _legacyItems)
+                {
+                    _items.Add(new RecordableString(item));
+                }
+
+                _legacyItems.Clear();
+            }
+        }
 
         [Reference]
         [NotRecorded]

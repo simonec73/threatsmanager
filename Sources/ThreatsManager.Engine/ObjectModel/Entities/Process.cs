@@ -281,7 +281,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             {
                 if (_template == null && _templateId != Guid.Empty)
                 {
-                    _template = _model?.GetEntityTemplate(_templateId);
+                    _template = Model?.GetEntityTemplate(_templateId);
                 }
 
                 return _template;
@@ -296,7 +296,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 this.Image = EntityType.Process.GetEntityImage(ImageSize.Medium);
                 this.SmallImage = EntityType.Process.GetEntityImage(ImageSize.Small);
                 this.ClearProperties();
-                _model.AutoApplySchemas(this);
+                Model?.AutoApplySchemas(this);
 
                 _templateId = Guid.Empty;
                 _template = null;

@@ -121,7 +121,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary from Template"))
             {
-                result = _model.AddTrustBoundary(name, this);
+                result = Model?.AddTrustBoundary(name, this);
 
                 if (result != null)
                 {

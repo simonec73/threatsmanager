@@ -25,7 +25,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyTokens, ThreatsManager.Engine")]
-    public class PropertyTokens : IPropertyTokens, IInitializableObject
+    public class PropertyTokens : IPropertyTokens, IInitializableObject, IPostDeserialization
     {
         public PropertyTokens()
         {
@@ -84,10 +84,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             }
         }
 
-        [Child]
+        [Reference]
         [JsonProperty("values")]
         [NotRecorded]
+        private List<string> _legacyValues { get; set; }
+
+        [Child]
+        [JsonProperty("tokens")]
+        [NotRecorded]
         private AdvisableCollection<RecordableString> _values { get; set; }
+
+        public void ExecutePostDeserialization()
+        {
+            if (_legacyValues?.Any() ?? false)
+            {
+                if (_values == null)
+                    _values = new AdvisableCollection<RecordableString>();
+
+                foreach (var value in _legacyValues)
+                {
+                    _values.Add(new RecordableString(value));
+                }
+
+                _legacyValues.Clear();
+            }
+        }
 
         [InitializationRequired]
         public virtual IEnumerable<string> Value

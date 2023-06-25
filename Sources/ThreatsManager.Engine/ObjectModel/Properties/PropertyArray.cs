@@ -26,7 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyArray, ThreatsManager.Engine")]
-    public class PropertyArray : IPropertyArray, IInitializableObject
+    public class PropertyArray : IPropertyArray, IInitializableObject, IPostDeserialization
     {
         public PropertyArray()
         {
@@ -71,10 +71,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
-        [Child]
+        [Reference]
         [JsonProperty("items")]
         [NotRecorded]
+        private List<string> _legacyItems { get; set; }
+
+        [Child]
+        [JsonProperty("rows")]
+        [NotRecorded]
         private AdvisableCollection<RecordableString> _items { get; set; }
+
+        public void ExecutePostDeserialization()
+        {
+            if (_legacyItems?.Any() ?? false)
+            {
+                if (_items == null)
+                    _items = new AdvisableCollection<RecordableString>();
+
+                foreach (var item in _legacyItems)
+                {
+                    _items.Add(new RecordableString(item));
+                }
+
+                _legacyItems.Clear();
+            }
+        }
 
         [InitializationRequired]
         public string StringValue

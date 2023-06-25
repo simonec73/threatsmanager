@@ -193,13 +193,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 switch (EntityType)
                 {
                     case EntityType.ExternalInteractor:
-                        result = _model.AddEntity<IExternalInteractor>(name, this);
+                        result = Model?.AddEntity<IExternalInteractor>(name, this);
                         break;
                     case EntityType.Process:
-                        result = _model.AddEntity<IProcess>(name, this);
+                        result = Model?.AddEntity<IProcess>(name, this);
                         break;
                     case EntityType.DataStore:
-                        result = _model.AddEntity<IDataStore>(name, this);
+                        result = Model?.AddEntity<IDataStore>(name, this);
                         break;
                 }
 

@@ -114,7 +114,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IDataFlow DataFlow => _associated ?? (_associated = _model?.GetDataFlow(_associatedId));
+        public IDataFlow DataFlow => _associated ?? (_associated = Model?.GetDataFlow(_associatedId));
 
         public ILink Clone(ILinksContainer container)
         {

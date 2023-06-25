@@ -227,7 +227,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             {
                 if (_template == null && _templateId != Guid.Empty)
                 {
-                    _template = _model?.GetFlowTemplate(_templateId);
+                    _template = Model?.GetFlowTemplate(_templateId);
                 }
 
                 return _template;
@@ -239,7 +239,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             using (var scope = UndoRedoManager.OpenScope("Detach from Template"))
             {
                 this.ClearProperties();
-                _model.AutoApplySchemas(this);
+                Model?.AutoApplySchemas(this);
 
                 _templateId = Guid.Empty;
                 _template = null;
