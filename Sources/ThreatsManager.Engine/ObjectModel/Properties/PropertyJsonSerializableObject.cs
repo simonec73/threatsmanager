@@ -115,7 +115,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         [Reference]
-        [JsonProperty("value", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        [JsonProperty("value", TypeNameHandling = TypeNameHandling.Objects)]
         [NotRecorded]
         private object _value { get; set; }
 
