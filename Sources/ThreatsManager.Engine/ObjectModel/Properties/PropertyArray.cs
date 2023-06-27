@@ -73,12 +73,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #region Specific implementation.
         [Reference]
         [JsonProperty("items")]
-        [NotRecorded]
+        [field:NotRecorded]
         private List<string> _legacyItems { get; set; }
 
         [Child]
         [JsonProperty("rows")]
-        [NotRecorded]
+        [field:NotRecorded]
         private AdvisableCollection<RecordableString> _items { get; set; }
 
         public void ExecutePostDeserialization()
@@ -90,7 +90,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 foreach (var item in _legacyItems)
                 {
-                    _items.Add(new RecordableString(item));
+                    var r = new RecordableString(item);
+                    _items.Add(r);
+                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyItems.Clear();
@@ -125,9 +127,23 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     if (_items == null)
                         _items = new AdvisableCollection<RecordableString>();
                     else
+                    {
+                        if (_items.Any())
+                        {
+                            foreach (var item in _items)
+                            {
+                                UndoRedoManager.Detach(item);
+                            }
+                        }
                         _items.Clear();
+                    }
+
                     foreach (var item in value)
-                        _items.Add(new RecordableString(item));
+                    {
+                        var r = new RecordableString(item);
+                        _items.Add(r);
+                        UndoRedoManager.Attach(r);
+                    }
                 }
                 else
                 {

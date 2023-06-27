@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Quality.Annotations
 {
-    public class TopicToBeClarified : Annotation
+    [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
+    public class TopicToBeClarified : Annotation, IPostDeserialization
     {
         public TopicToBeClarified()
         {
@@ -15,6 +22,7 @@ namespace ThreatsManager.Quality.Annotations
         [JsonProperty("askedOn")]
         private DateTime _askedOn { get; set; }
 
+        [property:NotRecorded]
         public DateTime AskedOn
         {
             get => _askedOn;
@@ -29,6 +37,7 @@ namespace ThreatsManager.Quality.Annotations
         [JsonProperty("askedBy")]
         private string _askedBy { get; set; }
 
+        [property:NotRecorded]
         public string AskedBy
         {
             get => _askedBy;
@@ -46,6 +55,7 @@ namespace ThreatsManager.Quality.Annotations
         [JsonProperty("answered")]
         private bool _answered { get; set; }
 
+        [property:NotRecorded]
         public bool Answered
         {
             get => _answered;
@@ -58,17 +68,25 @@ namespace ThreatsManager.Quality.Annotations
         }
 
         [JsonProperty("answers")]
-        private List<AnnotationAnswer> _answers { get; set; }
+        [Reference]
+        [field:NotRecorded]
+        private List<AnnotationAnswer> _legacyAnswers { get; set; }
 
-        public IEnumerable<AnnotationAnswer> Answers => _answers?.AsReadOnly();
+        [JsonProperty("items")]
+        [Child]
+        private AdvisableCollection<AnnotationAnswer> _answers { get; set; }
+
+        [property:NotRecorded]
+        public IEnumerable<AnnotationAnswer> Answers => _answers?.AsEnumerable();
 
         public AnnotationAnswer AddAnswer()
         {
             if (_answers == null)
-                _answers = new List<AnnotationAnswer>();
+                _answers = new AdvisableCollection<AnnotationAnswer>();
 
             var result = new AnnotationAnswer();
             _answers.Add(result);
+            UndoRedoManager.Attach(result);
 
             return result;
         }
@@ -76,7 +94,27 @@ namespace ThreatsManager.Quality.Annotations
         public void RemoveAnswer(AnnotationAnswer answer)
         {
             if (_answers?.Contains(answer) ?? false)
+            {
+                UndoRedoManager.Detach(answer);
                 _answers.Remove(answer);
+            }
+        }
+
+        public void ExecutePostDeserialization()
+        {
+            if (_legacyAnswers?.Any() ?? false)
+            {
+                if (_answers == null)
+                    _answers = new AdvisableCollection<AnnotationAnswer>();
+
+                foreach (var answer in _legacyAnswers)
+                {
+                    _answers.Add(answer);
+                    UndoRedoManager.Attach(answer);
+                }
+
+                _legacyAnswers.Clear();
+            }
         }
     }
 }

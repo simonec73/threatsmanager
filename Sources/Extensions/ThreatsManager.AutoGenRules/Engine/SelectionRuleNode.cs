@@ -3,13 +3,17 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.AutoGenRules.Properties;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public abstract class SelectionRuleNode
     {
         [JsonProperty("name")]

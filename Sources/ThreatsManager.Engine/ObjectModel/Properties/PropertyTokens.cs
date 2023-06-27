@@ -86,12 +86,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         [Reference]
         [JsonProperty("values")]
-        [NotRecorded]
+        [field: NotRecorded]
         private List<string> _legacyValues { get; set; }
 
         [Child]
         [JsonProperty("tokens")]
-        [NotRecorded]
+        [field: NotRecorded]
         private AdvisableCollection<RecordableString> _values { get; set; }
 
         public void ExecutePostDeserialization()
@@ -103,7 +103,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 foreach (var value in _legacyValues)
                 {
-                    _values.Add(new RecordableString(value));
+                    var r = new RecordableString(value);
+                    _values.Add(r);
+                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyValues.Clear();
@@ -124,9 +126,23 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     if (_values == null)
                         _values = new AdvisableCollection<RecordableString>();
                     else
+                    {
+                        if (_values.Any())
+                        {
+                            foreach (var item in _values)
+                            {
+                                UndoRedoManager.Detach(item);
+                            }
+                        }
                         _values.Clear();
+                    }
+
                     foreach (var item in value)
-                        _values.Add(new RecordableString(item));
+                    {
+                        var r = new RecordableString(item);
+                        _values.Add(r);
+                        UndoRedoManager.Attach(r);
+                    }
                 }
                 else
                 {

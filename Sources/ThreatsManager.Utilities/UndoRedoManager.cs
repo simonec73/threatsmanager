@@ -1,11 +1,8 @@
 ﻿using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
-using PostSharp.Patterns.Recording.Operations;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -129,13 +126,20 @@ namespace ThreatsManager.Utilities
             }
             else
             {
-                if (item is IThreatModelChild child && child.Model is IUndoable modelUndoable && modelUndoable.IsUndoEnabled)
+                if (item is IThreatModelChild child)
+                {
+                    if (child.Model is IUndoable modelUndoable && modelUndoable.IsUndoEnabled)
+                    {
+                        RecordingServices.DefaultRecorder.Attach(item);
+                        if (item is IUndoable u)
+                            u.IsUndoEnabled = true;
+
+                        AttachContainer(item);
+                    }
+                }
+                else
                 {
                     RecordingServices.DefaultRecorder.Attach(item);
-                    if (item is IUndoable u)
-                        u.IsUndoEnabled = true;
-
-                    AttachContainer(item);
                 }
             }
         }
@@ -211,6 +215,13 @@ namespace ThreatsManager.Utilities
                         ResetDirty();
                     Undone?.Invoke(_lastOperation.Name);
                 }
+            }
+            catch (InvalidOperationException)
+            {
+                // TODO: This error should not happen. It is due to a double detach.
+                if (RecordingServices.DefaultRecorder.UndoOperations.Count == 0)
+                    ResetDirty();
+                Undone?.Invoke(_lastOperation.Name);
             }
             catch (Exception exc)
             {

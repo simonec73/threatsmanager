@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PostSharp.Patterns.Recording;
 
-namespace ThreatsManager.Engine
+namespace ThreatsManager.Utilities
 {
     /// <summary>
     /// String wrapper to support Undo/Redo of lists of strings.

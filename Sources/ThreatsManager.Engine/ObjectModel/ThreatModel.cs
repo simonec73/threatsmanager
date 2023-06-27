@@ -70,11 +70,12 @@ namespace ThreatsManager.Engine.ObjectModel
         #region Contributors.
         [Reference]
         [JsonProperty("contributors")]
-        private List<string> _legacyContributors;
+        [field: NotRecorded]
+        private List<string> _legacyContributors { get; set; }
 
         [Child]
         [JsonProperty("contrib", Order = 5)]
-        private AdvisableCollection<RecordableString> _contributors;
+        private AdvisableCollection<RecordableString> _contributors { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<string> Contributors => _contributors?.Select(x => x.Value).AsEnumerable();
@@ -132,11 +133,13 @@ namespace ThreatsManager.Engine.ObjectModel
         #region Assumptions.
         [Reference]
         [JsonProperty("assumptions")]
-        private List<string> _legacyAssumptions;
+        [field:NotRecorded]
+        private List<string> _legacyAssumptions { get; set; }
 
         [Child]
         [JsonProperty("assump", Order = 6)]
-        private AdvisableCollection<RecordableString> _assumptions;
+        [field:NotRecorded]
+        private AdvisableCollection<RecordableString> _assumptions { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<string> Assumptions => _assumptions?.Select(x => x.Value).AsEnumerable();
@@ -193,11 +196,13 @@ namespace ThreatsManager.Engine.ObjectModel
         #region Dependencies.
         [Reference]
         [JsonProperty("dependencies")]
-        private List<string> _legacyDependencies;
+        [field:NotRecorded]
+        private List<string> _legacyDependencies { get; set; }
 
         [Child]
         [JsonProperty("depend", Order = 7)]
-        private AdvisableCollection<RecordableString> _dependencies;
+        [field:NotRecorded]
+        private AdvisableCollection<RecordableString> _dependencies { get; set; }
 
         [IgnoreAutoChangeNotification]
         public IEnumerable<string> ExternalDependencies => _dependencies?.Select(x => x.Value).AsEnumerable();
@@ -260,7 +265,9 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 foreach (var contrib in _legacyContributors)
                 {
-                    _contributors.Add(new RecordableString(contrib));
+                    var r = new RecordableString(contrib);
+                    _contributors.Add(r);
+                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyContributors.Clear();
@@ -273,7 +280,9 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 foreach (var assump in _legacyAssumptions)
                 {
-                    _assumptions.Add(new RecordableString(assump));
+                    var r = new RecordableString(assump);
+                    _assumptions.Add(r);
+                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyAssumptions.Clear();
@@ -286,7 +295,9 @@ namespace ThreatsManager.Engine.ObjectModel
 
                 foreach (var depend in _legacyDependencies)
                 {
-                    _dependencies.Add(new RecordableString(depend));
+                    var r = new RecordableString(depend);
+                    _dependencies.Add(r);
+                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyDependencies.Clear();

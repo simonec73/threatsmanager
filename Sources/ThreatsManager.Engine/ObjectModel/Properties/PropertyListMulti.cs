@@ -73,12 +73,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #region Specific implementation.
         [Reference]
         [JsonProperty("items")]
-        [NotRecorded]
+        [field: NotRecorded]
         private List<string> _legacyItems { get; set; }
 
         [Child]
         [JsonProperty("rows")]
-        [NotRecorded]
+        [field:NotRecorded]
         private AdvisableCollection<RecordableString> _items { get; set; }
 
         public void ExecutePostDeserialization()
@@ -90,7 +90,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 foreach (var item in _legacyItems)
                 {
-                    _items.Add(new RecordableString(item));
+                    var r = new RecordableString(item);
+                    _items.Add(r);
+                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyItems.Clear();
@@ -98,8 +100,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         [Reference]
-        [NotRecorded]
-        private List<IListItem> _values;
+        [field:NotRecorded]
+        private List<IListItem> _values { get; set; }
 
         [InitializationRequired]
         public string StringValue
@@ -129,7 +131,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                _items?.Clear();
+                if (_items?.Any() ?? false)
+                {
+                    foreach (var item in _items)
+                    {
+                        UndoRedoManager.Detach(item);
+                    }
+                    _items.Clear();
+                }
                 _values?.Clear();
 
                 if ((value?.Any() ?? false) && PropertyType is IListMultiPropertyType propertyType)
@@ -143,7 +152,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                             if (_values == null)
                                 _values = new List<IListItem>();
 
-                            _items.Add(new RecordableString(item.Id));
+                            var newItem = new RecordableString(item.Id);
+                            _items.Add(newItem);
+                            UndoRedoManager.Attach(newItem);
                             _values.Add(item);
                         }
                     }
