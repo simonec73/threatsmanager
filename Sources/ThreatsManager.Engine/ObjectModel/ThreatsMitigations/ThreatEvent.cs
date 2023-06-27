@@ -55,7 +55,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             {
                 foreach (var property in threatTypeProperties)
                 {
-                    AddProperty(property);
+                    if (HasProperty(property.PropertyType))
+                    {
+                        var existingProperty = GetProperty(property.PropertyType);
+                        existingProperty.StringValue = property.StringValue;
+                    }
+                    else
+                    {
+                        AddProperty(property);
+                    }
                 }
             }
         }
