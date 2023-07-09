@@ -1079,7 +1079,8 @@ namespace ThreatsManager.MsTmt
 
                 rule = new SelectionRule()
                 {
-                    Root = andNode
+                    Root = andNode,
+                    ModelId = target.Id
                 };
 
                 var schemaManager = new AutoGenRulesPropertySchemaManager(target.Model);

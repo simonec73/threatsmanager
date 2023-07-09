@@ -6,6 +6,7 @@ using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
@@ -17,7 +18,7 @@ namespace ThreatsManager.Quality.Annotations
     [JsonObject(MemberSerialization.OptIn)]
     [Recordable(AutoRecord = false)]
     [Undoable]
-    public class Annotations : IPostDeserialization
+    public class Annotations : IPostDeserialization, IThreatModelAware
     {
         /// <summary>
         /// Enumeration of the Annotations.
@@ -31,9 +32,23 @@ namespace ThreatsManager.Quality.Annotations
         [Child]
         private AdvisableCollection<Annotation> _annotations { get; set; }
 
+        [JsonProperty("modelId")]
+        private Guid _modelId { get; set; }
+
         public event Action<Annotation> AnnotationAdded;
 
         public event Action<Annotation> AnnotationRemoved;
+
+        public Guid ModelId
+        {
+            get => _modelId;
+
+            set
+            {
+                if (_modelId != value)
+                    _modelId = value;
+            }
+        }
 
         [property:NotRecorded]
         public IEnumerable<Annotation> Items => _annotations?.AsEnumerable();
@@ -46,7 +61,7 @@ namespace ThreatsManager.Quality.Annotations
             if (!_annotations.Contains(annotation))
             {
                 _annotations.Add(annotation);
-                UndoRedoManager.Attach(annotation);
+                UndoRedoManager.Attach(annotation, ThreatModelManager.Get(_modelId));
                 AnnotationAdded?.Invoke(annotation);
             }
         }
@@ -83,10 +98,11 @@ namespace ThreatsManager.Quality.Annotations
                 if (_annotations == null)
                     _annotations = new AdvisableCollection<Annotation>();
 
+                var model = ThreatModelManager.Get(_modelId);
                 foreach (var ann in _legacyAnnotations)
                 {
+                    UndoRedoManager.Attach(ann, model);
                     _annotations.Add(ann);
-                    UndoRedoManager.Attach(ann);
                 }
 
                 _legacyAnnotations.Clear();

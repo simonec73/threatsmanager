@@ -91,8 +91,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 foreach (var item in _legacyItems)
                 {
                     var r = new RecordableString(item);
+                    UndoRedoManager.Attach(r, Model);
                     _items.Add(r);
-                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyItems.Clear();
@@ -149,12 +149,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         {
                             if (_items == null)
                                 _items = new AdvisableCollection<RecordableString>();
+
                             if (_values == null)
                                 _values = new List<IListItem>();
 
                             var newItem = new RecordableString(item.Id);
+                            UndoRedoManager.Attach(newItem, Model);
                             _items.Add(newItem);
-                            UndoRedoManager.Attach(newItem);
                             _values.Add(item);
                         }
                     }

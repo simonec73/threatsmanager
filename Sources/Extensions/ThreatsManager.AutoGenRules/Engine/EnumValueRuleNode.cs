@@ -70,8 +70,8 @@ namespace ThreatsManager.AutoGenRules.Engine
                     foreach (var v in value)
                     {
                         var r = new RecordableString(v);
+                        UndoRedoManager.Attach(r, Model);
                         _values.Add(r);
-                        UndoRedoManager.Attach(r);
                     }
                 }
             }
@@ -207,8 +207,8 @@ namespace ThreatsManager.AutoGenRules.Engine
                 foreach (var item in _legacyValues)
                 {
                     var r = new RecordableString(item);
+                    UndoRedoManager.Attach(r, Model);
                     _values.Add(r);
-                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyValues.Clear();

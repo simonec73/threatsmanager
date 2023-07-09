@@ -102,8 +102,8 @@ namespace ThreatsManager.Engine.Aspects
                         _groups?.Set(groups);
                     }
 
+                    UndoRedoManager.Attach(gs, gs.Model);
                     groups.Add(gs);
-                    UndoRedoManager.Attach(gs);
                     scope?.Complete();
 
                     if (Instance is IGroupShapesContainer container)

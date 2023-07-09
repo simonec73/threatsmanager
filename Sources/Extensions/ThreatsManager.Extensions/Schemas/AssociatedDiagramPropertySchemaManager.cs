@@ -21,7 +21,7 @@ namespace ThreatsManager.Extensions.Schemas
         {
             var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
             result.AppliesTo = Scope.Entity;
-            result.AutoApply = true;
+            result.AutoApply = false;
             result.Priority = 10;
             result.Visible = true;
             result.System = true;

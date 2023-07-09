@@ -69,8 +69,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     if (_weaknesses == null)
                         _weaknesses = new AdvisableCollection<ThreatTypeWeakness>();
 
+                    UndoRedoManager.Attach(ttw, Model);
                     _weaknesses.Add(ttw);
-                    UndoRedoManager.Attach(ttw);
                     scope?.Complete();
                 }
             }

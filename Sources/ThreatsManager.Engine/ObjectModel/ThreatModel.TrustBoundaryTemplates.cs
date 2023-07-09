@@ -37,8 +37,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_trustBoundaryTemplates == null)
                         _trustBoundaryTemplates = new AdvisableCollection<TrustBoundaryTemplate>();
 
+                    UndoRedoManager.Attach(tbt, this);
                     _trustBoundaryTemplates.Add(tbt);
-                    UndoRedoManager.Attach(tbt);
                     scope?.Complete();
 
                     ChildCreated?.Invoke(trustBoundaryTemplate);

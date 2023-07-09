@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -123,8 +124,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_entities == null)
                     _entities = new AdvisableCollection<IEntity>();
 
+                UndoRedoManager.Attach(entity, this);
                 _entities.Add(entity);
-                UndoRedoManager.Attach(entity);
                 scope?.Complete();
             }
         }

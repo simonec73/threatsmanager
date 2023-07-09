@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -45,8 +46,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 if (_entityTemplates == null)
                     _entityTemplates = new AdvisableCollection<IEntityTemplate>();
 
+                UndoRedoManager.Attach(entityTemplate, this);
                 _entityTemplates.Add(entityTemplate);
-                UndoRedoManager.Attach(entityTemplate);
                 scope?.Complete();
 
                 ChildCreated?.Invoke(entityTemplate);

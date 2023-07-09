@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -7,6 +8,7 @@ using PostSharp.Patterns.Recording;
 using ThreatsManager.AutoGenRules.Properties;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
@@ -16,12 +18,28 @@ namespace ThreatsManager.AutoGenRules.Engine
     [Undoable]
     public abstract class SelectionRuleNode
     {
+        [JsonProperty("modelId")]
+        private Guid _modelId { get; set; }
+
         [JsonProperty("name")]
         public string Name { get; set; }
 
         [JsonProperty("scope")]
         [JsonConverter(typeof(StringEnumConverter))]
         public Scope Scope { get; set; }
+
+        public virtual Guid ModelId
+        {
+            get => _modelId;
+
+            set
+            {
+                if (_modelId != value)
+                    _modelId = value;
+            }
+        }
+
+        protected IThreatModel Model => ModelId != Guid.Empty ? ThreatModelManager.Get(ModelId) : null;
 
         public override string ToString()
         {

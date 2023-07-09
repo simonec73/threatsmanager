@@ -408,6 +408,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         {
                             if (_properties == null)
                                 _properties = new AdvisableCollection<IProperty>();
+
+                            UndoRedoManager.Attach(shadowProperty, Model);
                             _properties.Add(shadowProperty);
                             PropertyAdded?.Invoke(this, shadowProperty);
                             shadowProperty.Changed += delegate (IProperty prop)

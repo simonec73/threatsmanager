@@ -98,7 +98,9 @@ namespace ThreatsManager.Utilities
         /// Attach the Recorder to an object.
         /// </summary>
         /// <param name="item">Object that should be considered for Undo/Redo.</param>
-        public static void Attach([NotNull] object item)
+        /// <param name="referenceThreatModel">Reference Threat Model for the item. 
+        /// If the item is a Threat Model, it is ignored.</param>
+        public static void Attach([NotNull] object item, IThreatModel referenceThreatModel)
         {
             if (item is IThreatModel model)
             {
@@ -126,20 +128,13 @@ namespace ThreatsManager.Utilities
             }
             else
             {
-                if (item is IThreatModelChild child)
-                {
-                    if (child.Model is IUndoable modelUndoable && modelUndoable.IsUndoEnabled)
-                    {
-                        RecordingServices.DefaultRecorder.Attach(item);
-                        if (item is IUndoable u)
-                            u.IsUndoEnabled = true;
-
-                        AttachContainer(item);
-                    }
-                }
-                else
+                if (referenceThreatModel is IUndoable modelUndoable && modelUndoable.IsUndoEnabled)
                 {
                     RecordingServices.DefaultRecorder.Attach(item);
+                    if (item is IUndoable u)
+                        u.IsUndoEnabled = true;
+
+                    AttachContainer(item);
                 }
             }
         }
@@ -296,6 +291,10 @@ namespace ThreatsManager.Utilities
                     RecordingServices.DefaultRecorder.Attach(item);
                     if (item is IUndoable undoable)
                         undoable.IsUndoEnabled = true;
+                    if (item is IPropertyJsonSerializableObject jsonProperty && jsonProperty.Value is IRecordable recordable)
+                    {
+                        RecordingServices.DefaultRecorder.Attach(recordable);
+                    }
 
                     AttachContainer(item);
                 }

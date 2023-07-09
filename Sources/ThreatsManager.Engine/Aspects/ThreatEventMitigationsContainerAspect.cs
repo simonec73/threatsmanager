@@ -92,8 +92,8 @@ namespace ThreatsManager.Engine.Aspects
                         _mitigations?.Set(mitigations);
                     }
 
+                    UndoRedoManager.Attach(tem, tem.Model);
                     mitigations.Add(tem);
-                    UndoRedoManager.Attach(tem);
                     scope?.Complete();
 
                     if (Instance is IThreatEventMitigationsContainer container)

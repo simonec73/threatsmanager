@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -41,10 +42,12 @@ namespace ThreatsManager.Engine.ObjectModel
                 using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
                 {
                     if (_actors == null)
+                    { 
                         _actors = new AdvisableCollection<ThreatActor>();
+                    }
 
+                    UndoRedoManager.Attach(a, this);
                     _actors.Add(a);
-                    UndoRedoManager.Attach(a);
                     scope?.Complete();
 
                     ChildCreated?.Invoke(a);

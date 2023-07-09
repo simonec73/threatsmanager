@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
@@ -12,15 +13,29 @@ namespace ThreatsManager.Quality.Annotations
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Recordable(AutoRecord = false)]
-    public class TopicToBeClarified : Annotation, IPostDeserialization
+    public class TopicToBeClarified : Annotation, IPostDeserialization, IThreatModelAware
     {
         public TopicToBeClarified()
         {
             Printable = false;
         }
 
+        [JsonProperty("modelId")]
+        private Guid _modelId { get; set; }
+
         [JsonProperty("askedOn")]
         private DateTime _askedOn { get; set; }
+
+        public Guid ModelId
+        {
+            get => _modelId;
+
+            set
+            {
+                if (_modelId != value)
+                    _modelId = value;
+            }
+        }
 
         [property:NotRecorded]
         public DateTime AskedOn
@@ -86,7 +101,7 @@ namespace ThreatsManager.Quality.Annotations
 
             var result = new AnnotationAnswer();
             _answers.Add(result);
-            UndoRedoManager.Attach(result);
+            UndoRedoManager.Attach(result, ThreatModelManager.Get(_modelId));
 
             return result;
         }
@@ -107,10 +122,11 @@ namespace ThreatsManager.Quality.Annotations
                 if (_answers == null)
                     _answers = new AdvisableCollection<AnnotationAnswer>();
 
+                var model = ThreatModelManager.Get(_modelId);
                 foreach (var answer in _legacyAnswers)
                 {
+                    UndoRedoManager.Attach(answer, model);
                     _answers.Add(answer);
-                    UndoRedoManager.Attach(answer);
                 }
 
                 _legacyAnswers.Clear();

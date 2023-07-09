@@ -69,8 +69,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     if (_mitigations == null)
                         _mitigations = new AdvisableCollection<WeaknessMitigation>();
 
+                    UndoRedoManager.Attach(wm, Model);
                     _mitigations.Add(wm);
-                    UndoRedoManager.Attach(wm);
                     scope?.Complete();
                 }
             }

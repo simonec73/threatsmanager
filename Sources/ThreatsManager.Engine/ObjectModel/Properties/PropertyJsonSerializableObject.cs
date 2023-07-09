@@ -130,6 +130,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (value != _value)
                 {
                     _value = value;
+
+                    if (value is IThreatModelAware aware)
+                    {
+                        aware.ModelId = _modelId;
+                    }
+
                     InvokeChanged();
                 }
             }

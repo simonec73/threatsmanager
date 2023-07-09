@@ -179,7 +179,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             IProperty result = null;
             if (model != null)
             {
-                result = InternalAddProperty(model, propertyType, value);
+                result = InternalAddProperty(propertyType, value);
 
                 if (result != null)
                 {
@@ -195,7 +195,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return result;
         }
 
-        private IProperty InternalAddProperty(IThreatModel model, IPropertyType propertyType, string value)
+        private IProperty InternalAddProperty(IPropertyType propertyType, string value)
         {
             IProperty result = null;
 
@@ -214,6 +214,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
                 if (result != null)
                 {
+                    var model = GetModel();
+
                     var properties = _properties?.Get();
                     if (properties == null)
                     { 
@@ -222,8 +224,8 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     }
                     result.StringValue = value;
 
+                    UndoRedoManager.Attach(result, model);
                     properties?.Add(result);
-                    UndoRedoManager.Attach(result);
                     scope?.Complete();
 
                     if (Instance is IPropertiesContainer container)
@@ -242,11 +244,10 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
         private void OnPropertyTypeAdded(IPropertySchema schema, IPropertyType propertyType)
         {
-            var model = GetModel();
-            if (model != null && schema != null && propertyType != null && !HasProperty(propertyType))
+            if (schema != null && propertyType != null && !HasProperty(propertyType))
             {
                 if (_properties?.Get()?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
-                    InternalAddProperty(model, propertyType, null);
+                    InternalAddProperty(propertyType, null);
             }
         }
 

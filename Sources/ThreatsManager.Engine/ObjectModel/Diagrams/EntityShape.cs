@@ -106,9 +106,9 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Scope PropertiesScope => Scope.EntityShape;
 
         [Reference]
-        [NotRecorded]
+        [field: NotRecorded]
         [field: UpdateAssociatedId]
-        private IEntity _associated;
+        private IEntity _associated { get; set; }
 
         [JsonProperty("id")]
         private Guid _associatedId { get; set; }

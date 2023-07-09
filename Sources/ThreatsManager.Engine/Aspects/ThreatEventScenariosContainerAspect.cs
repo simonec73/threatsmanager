@@ -119,8 +119,8 @@ namespace ThreatsManager.Engine.Aspects
                         _scenarios?.Set(scenarios);
                     }
 
+                    UndoRedoManager.Attach(tes, tes.Model);                    
                     _scenarios?.Get()?.Add(tes);
-                    UndoRedoManager.Attach(tes);
                     scope?.Complete();
                 }
             }

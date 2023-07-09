@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -112,8 +113,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_flows == null)
                         _flows = new AdvisableCollection<DataFlow>();
 
+                    UndoRedoManager.Attach(df, this);
                     _flows.Add(df);
-                    UndoRedoManager.Attach(df);
                     scope?.Complete();
                 }
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -178,8 +179,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_diagrams == null)
                         _diagrams = new AdvisableCollection<Diagram>();
 
+                    UndoRedoManager.Attach(d, this);
                     _diagrams.Add(d);
-                    UndoRedoManager.Attach(d);
                     scope?.Complete();
                 }
             }

@@ -104,8 +104,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_weaknesses == null)
                         _weaknesses = new AdvisableCollection<Weakness>();
 
+                    UndoRedoManager.Attach(w, this);
                     _weaknesses.Add(w);
-                    UndoRedoManager.Attach(w);
                     scope?.Complete();
 
                     ChildCreated?.Invoke(w);

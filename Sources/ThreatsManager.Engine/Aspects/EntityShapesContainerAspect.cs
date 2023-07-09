@@ -104,14 +104,14 @@ namespace ThreatsManager.Engine.Aspects
                         _entities?.Set(entities);
                     }
 
+                    UndoRedoManager.Attach(es, es.Model);
                     entities.Add(es);
-                    UndoRedoManager.Attach(es);
                     scope?.Complete();
+                }
 
-                    if (Instance is IEntityShapesContainer container)
-                    {
-                        _entityShapeAdded?.Invoke(container, es);
-                    }
+                if (Instance is IEntityShapesContainer container)
+                {
+                    _entityShapeAdded?.Invoke(container, es);
                 }
             }
             else

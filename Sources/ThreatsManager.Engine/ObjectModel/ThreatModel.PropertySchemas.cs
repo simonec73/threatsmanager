@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -338,8 +339,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_schemas == null)
                         _schemas = new AdvisableCollection<PropertySchema>();
 
+                    UndoRedoManager.Attach(ps, this);
                     _schemas.Add(ps);
-                    UndoRedoManager.Attach(ps);
                     scope?.Complete();
                 }
             }

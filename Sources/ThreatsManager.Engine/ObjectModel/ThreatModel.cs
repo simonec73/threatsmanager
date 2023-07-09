@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -88,6 +89,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 if (_contributors == null)
                     _contributors = new AdvisableCollection<RecordableString>();
+
                 _contributors.Add(new RecordableString(name));
                 result = true;
                 ContributorAdded?.Invoke(name);
@@ -152,6 +154,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 if (_assumptions == null)
                     _assumptions = new AdvisableCollection<RecordableString>();
+
                 _assumptions.Add(new RecordableString(text));
                 result = true;
                 AssumptionAdded?.Invoke(text);
@@ -215,6 +218,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 if (_dependencies == null)
                     _dependencies = new AdvisableCollection<RecordableString>();
+
                 _dependencies.Add(new RecordableString(text));
                 result = true;
                 DependencyAdded?.Invoke(text);
@@ -266,8 +270,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var contrib in _legacyContributors)
                 {
                     var r = new RecordableString(contrib);
+                    UndoRedoManager.Attach(r, this);
                     _contributors.Add(r);
-                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyContributors.Clear();
@@ -281,8 +285,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var assump in _legacyAssumptions)
                 {
                     var r = new RecordableString(assump);
+                    UndoRedoManager.Attach(r, this);
                     _assumptions.Add(r);
-                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyAssumptions.Clear();
@@ -296,8 +300,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var depend in _legacyDependencies)
                 {
                     var r = new RecordableString(depend);
+                    UndoRedoManager.Attach(r, this);
                     _dependencies.Add(r);
-                    UndoRedoManager.Attach(r);
                 }
 
                 _legacyDependencies.Clear();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -96,8 +97,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_severities == null)
                         _severities = new AdvisableCollection<SeverityDefinition>();
 
+                    UndoRedoManager.Attach(sd, this);
                     _severities.Add(sd);
-                    UndoRedoManager.Attach(sd);
                     scope?.Complete();
 
                     _severityCreated?.Invoke(sd);

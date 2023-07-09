@@ -93,8 +93,8 @@ namespace ThreatsManager.Engine.Aspects
                         _links?.Set(links);
                     }
 
+                    UndoRedoManager.Attach(l, l.Model);
                     links.Add(l);
-                    UndoRedoManager.Attach(l);
                     scope?.Complete();
 
                     if (Instance is ILinksContainer container)

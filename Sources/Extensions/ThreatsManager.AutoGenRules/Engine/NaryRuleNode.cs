@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
@@ -22,6 +22,24 @@ namespace ThreatsManager.AutoGenRules.Engine
             _children.CollectionChanged += _children_CollectionChanged;
         }
 
+        public IList<SelectionRuleNode> Children => _children;
+
+        public override Guid ModelId
+        {
+            get => base.ModelId;
+            set
+            {
+                base.ModelId = value;
+                if (_children?.Any() ?? false)
+                {
+                    foreach (var child in _children)
+                    {
+                        child.ModelId = value;
+                    }
+                }
+            }
+        }
+
         private void _children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             IEnumerable<SelectionRuleNode> items;
@@ -34,7 +52,8 @@ namespace ThreatsManager.AutoGenRules.Engine
                     {
                         foreach (var item in items)
                         {
-                            UndoRedoManager.Attach(item);
+                            item.ModelId = ModelId;
+                            UndoRedoManager.Attach(item, Model);
                         }
                     }
                     break;
@@ -63,7 +82,8 @@ namespace ThreatsManager.AutoGenRules.Engine
                     {
                         foreach (var item in items)
                         {
-                            UndoRedoManager.Attach(item);
+                            item.ModelId = ModelId;
+                            UndoRedoManager.Attach(item, Model);
                         }
                     }
                     break;
@@ -79,8 +99,6 @@ namespace ThreatsManager.AutoGenRules.Engine
                     break;
             }
         }
-
-        public IList<SelectionRuleNode> Children => _children;
 
         public override string ToString()
         {

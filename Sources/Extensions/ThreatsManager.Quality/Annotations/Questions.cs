@@ -6,6 +6,7 @@ using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
@@ -17,7 +18,7 @@ namespace ThreatsManager.Quality.Annotations
     [JsonObject(MemberSerialization.OptIn)]
     [Recordable(AutoRecord = false)]
     [Undoable]
-    public class Questions : IPostDeserialization
+    public class Questions : IPostDeserialization, IThreatModelAware
     {
         /// <summary>
         /// Enumeration of the Questions.
@@ -31,11 +32,33 @@ namespace ThreatsManager.Quality.Annotations
         [Child]
         private AdvisableCollection<Question> _questions { get; set; }
 
+        [JsonProperty("modelId")]
+        private Guid _modelId { get; set; }
+
         public event Action<Question> QuestionAdded;
 
         public event Action<Question> QuestionRemoved;
             
         public IEnumerable<Question> Items => _questions?.AsEnumerable();
+
+        public Guid ModelId
+        {
+            get => _modelId;
+
+            set
+            {
+                if (_modelId != value)
+                    _modelId = value;
+                if (_questions?.Any() ?? false)
+                {
+                    foreach (var question in _questions)
+                    {
+                        if (question.Rule != null)
+                            question.Rule.ModelId = value;
+                    }
+                }
+            }
+        }
 
         public void Add([NotNull] Question question)
         {
@@ -45,7 +68,7 @@ namespace ThreatsManager.Quality.Annotations
             if (!_questions.Contains(question))
             {
                 _questions.Add(question);
-                UndoRedoManager.Attach(question);
+                UndoRedoManager.Attach(question, ThreatModelManager.Get(_modelId));
                 QuestionAdded?.Invoke(question);
             }
         }
@@ -67,10 +90,11 @@ namespace ThreatsManager.Quality.Annotations
                 if (_questions == null)
                     _questions = new AdvisableCollection<Question>();
 
+                var model = ThreatModelManager.Get(_modelId);
                 foreach (var question in _legacyQuestions)
                 {
+                    UndoRedoManager.Attach(question, model);
                     _questions.Add(question);
-                    UndoRedoManager.Detach(question);
                 }
 
                 _legacyQuestions.Clear();

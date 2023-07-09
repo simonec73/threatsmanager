@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -95,8 +96,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_strengths == null)
                         _strengths = new AdvisableCollection<StrengthDefinition>();
 
+                    UndoRedoManager.Attach(sd, this);
                     _strengths.Add(sd);
-                    UndoRedoManager.Attach(sd);
                     scope?.Complete();
 
                     _strengthCreated?.Invoke(sd);

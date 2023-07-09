@@ -104,8 +104,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_threatTypes == null)
                         _threatTypes = new AdvisableCollection<ThreatType>();
 
+                    UndoRedoManager.Attach(tt, this);
                     _threatTypes.Add(tt);
-                    UndoRedoManager.Attach(tt);
                     scope?.Complete();
 
                     ChildCreated?.Invoke(tt);

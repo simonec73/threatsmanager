@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -38,8 +39,8 @@ namespace ThreatsManager.Engine.ObjectModel
                     if (_flowTemplates == null)
                         _flowTemplates = new AdvisableCollection<FlowTemplate>();
 
+                    UndoRedoManager.Attach(ft, this);
                     _flowTemplates.Add(ft);
-                    UndoRedoManager.Attach(ft);
                     scope?.Complete();
 
                     ChildCreated?.Invoke(ft);
