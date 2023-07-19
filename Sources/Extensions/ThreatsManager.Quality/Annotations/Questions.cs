@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
@@ -18,7 +19,7 @@ namespace ThreatsManager.Quality.Annotations
     [JsonObject(MemberSerialization.OptIn)]
     [Recordable(AutoRecord = false)]
     [Undoable]
-    public class Questions : IPostDeserialization, IThreatModelAware
+    public class Questions : IThreatModelAware
     {
         /// <summary>
         /// Enumeration of the Questions.
@@ -83,7 +84,8 @@ namespace ThreatsManager.Quality.Annotations
             }
         }
 
-        public void ExecutePostDeserialization()
+        [OnDeserialized]
+        public void PostDeserialization(StreamingContext context)
         {
             if (_legacyQuestions?.Any() ?? false)
             {

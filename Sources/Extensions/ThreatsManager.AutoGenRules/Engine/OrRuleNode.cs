@@ -11,7 +11,10 @@ namespace ThreatsManager.AutoGenRules.Engine
     [Recordable(AutoRecord = false)]
     public class OrRuleNode : NaryRuleNode
     {
-        public OrRuleNode() : base() { }
+        public OrRuleNode() : base()
+        {
+            Name = "OR";
+        }
 
         public override bool Evaluate([NotNull] object context)
         {

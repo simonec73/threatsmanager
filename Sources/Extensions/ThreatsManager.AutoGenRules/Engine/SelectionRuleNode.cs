@@ -89,6 +89,44 @@ namespace ThreatsManager.AutoGenRules.Engine
             return result;
         }
 
+        protected IEnumerable<ITrustBoundary> GetEnteringTrustBoundaries([NotNull] IIdentity identity)
+        {
+            IEnumerable<ITrustBoundary> result = null;
+
+            if (identity is IDataFlow dataFlow)
+            {
+                var source = dataFlow.Source;
+                var target = dataFlow.Target;
+                if (source != null && target != null)
+                {
+                    var sourceParents = GetParents(source).ToArray();
+                    var targetParents = GetParents(target).ToArray();
+                    result = targetParents.Except(sourceParents);
+                }
+            }
+
+            return result;
+        }
+
+        protected IEnumerable<ITrustBoundary> GetExitingTrustBoundaries([NotNull] IIdentity identity)
+        {
+            IEnumerable<ITrustBoundary> result = null;
+
+            if (identity is IDataFlow dataFlow)
+            {
+                var source = dataFlow.Source;
+                var target = dataFlow.Target;
+                if (source != null && target != null)
+                {
+                    var sourceParents = GetParents(source).ToArray();
+                    var targetParents = GetParents(target).ToArray();
+                    result = sourceParents.Except(targetParents);
+                }
+            }
+
+            return result;
+        }
+
         private IEnumerable<ITrustBoundary> GetParents([NotNull] IEntity entity)
         {
             List<ITrustBoundary> result = new List<ITrustBoundary>();

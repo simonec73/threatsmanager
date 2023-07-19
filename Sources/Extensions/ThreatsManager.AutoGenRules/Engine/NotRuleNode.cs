@@ -9,6 +9,11 @@ namespace ThreatsManager.AutoGenRules.Engine
     [Recordable(AutoRecord = false)]
     public class NotRuleNode : UnaryRuleNode
     {
+        public NotRuleNode() : base()
+        {
+            Name = "NOT";
+        }
+
         public override bool Evaluate([NotNull] object context)
         {
             return !(Child?.Evaluate(context) ?? false);

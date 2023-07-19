@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
@@ -13,7 +16,11 @@ namespace ThreatsManager.AutoGenRules.Engine
     [Recordable(AutoRecord = false)]
     public abstract class NaryRuleNode : SelectionRuleNode
     {
-        [JsonProperty("children", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        [JsonProperty("children", ItemTypeNameHandling = TypeNameHandling.Objects, TypeNameHandling = TypeNameHandling.None)]
+        [Reference]
+        private List<SelectionRuleNode> _oldChildren { get; set; }
+
+        [JsonProperty("nodes", ItemTypeNameHandling = TypeNameHandling.Objects, TypeNameHandling = TypeNameHandling.None)]
         [Child]
         private readonly AdvisableCollection<SelectionRuleNode> _children = new AdvisableCollection<SelectionRuleNode>();
 
@@ -103,6 +110,21 @@ namespace ThreatsManager.AutoGenRules.Engine
         public override string ToString()
         {
             return Name;
+        }
+
+        [OnDeserialized]
+        public void PostDeserialization(StreamingContext context)
+        {
+            if (_oldChildren?.Any() ?? false)
+            {
+                foreach (var item in _oldChildren)
+                {
+                    UndoRedoManager.Attach(item, Model);
+                    _children.Add(item);
+                }
+
+                _oldChildren.Clear();
+            }
         }
     }
 }

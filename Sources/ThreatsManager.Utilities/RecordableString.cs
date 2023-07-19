@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Utilities
 {
@@ -8,6 +9,7 @@ namespace ThreatsManager.Utilities
     /// </summary>
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     [Recordable]
+    [Undoable]
     public class RecordableString
     {
         /// <summary>

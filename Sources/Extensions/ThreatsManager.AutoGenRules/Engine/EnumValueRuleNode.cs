@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
@@ -11,13 +12,12 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Recordable(AutoRecord = false)]
-    public class EnumValueRuleNode : SelectionRuleNode, IPostDeserialization
+    public class EnumValueRuleNode : SelectionRuleNode
     {
         public EnumValueRuleNode()
         {
@@ -45,7 +45,7 @@ namespace ThreatsManager.AutoGenRules.Engine
         [field:NotRecorded]
         private List<string> _legacyValues { get; set; }
 
-        [JsonProperty("items")]
+        [JsonProperty("items", ItemTypeNameHandling = TypeNameHandling.None, TypeNameHandling = TypeNameHandling.None)]
         [Child]
         private AdvisableCollection<RecordableString> _values { get; set; }
 
@@ -197,7 +197,8 @@ namespace ThreatsManager.AutoGenRules.Engine
             return $"{Scope.ToString()}:{Schema}.{Name} = '{Value}'";
         }
 
-        public void ExecutePostDeserialization()
+        [OnDeserialized]
+        public void PostDeserialization(StreamingContext context)
         {
             if (_legacyValues?.Any() ?? false)
             {

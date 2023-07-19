@@ -11,7 +11,10 @@ namespace ThreatsManager.AutoGenRules.Engine
     [Recordable(AutoRecord = false)]
     public class AndRuleNode : NaryRuleNode
     {
-        public AndRuleNode() : base() { }
+        public AndRuleNode() : base() 
+        {
+            Name = "AND";
+        }
 
         public override bool Evaluate([NotNull] object context)
         {

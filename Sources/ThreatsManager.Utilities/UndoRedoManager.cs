@@ -145,7 +145,7 @@ namespace ThreatsManager.Utilities
         /// <param name="item">Object that should be removed from Undo/Redo.</param>
         public static void Detach([NotNull] object item)
         {
-            if (item is IUndoable undoable && undoable.IsUndoEnabled)
+            if (item is IUndoable undoable && undoable.IsUndoEnabled && undoable.IsAttached)
             {
                 RecordingServices.DefaultRecorder.Detach(item);
                 undoable.TriggerUndone(true);

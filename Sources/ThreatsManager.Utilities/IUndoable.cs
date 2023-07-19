@@ -19,6 +19,11 @@ namespace ThreatsManager.Utilities
         bool IsUndoEnabled { get; set; }
 
         /// <summary>
+        /// True if the object is attached to a Recorder.
+        /// </summary>
+        bool IsAttached { get; }
+
+        /// <summary>
         /// Trigger the Undone event.
         /// </summary>
         /// <param name="removed">Flag indicating if the object has been removed as a result of undoing it.</param>

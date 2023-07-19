@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ThreatsManager.Utilities.Aspects.Engine
+﻿namespace ThreatsManager.Utilities.Aspects.Engine
 {
     /// <summary>
     /// Interface used to identify classes that contain a post-deserialization activity.

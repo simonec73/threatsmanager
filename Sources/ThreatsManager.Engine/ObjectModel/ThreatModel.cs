@@ -18,7 +18,6 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ThreatsManager.Engine.ObjectModel
 {
@@ -34,7 +33,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [Undoable]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
-    public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable, IPostDeserialization
+    public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
     {
         #region Constructors.
         public ThreatModel()

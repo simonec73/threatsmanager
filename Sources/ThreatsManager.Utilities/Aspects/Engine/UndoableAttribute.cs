@@ -21,6 +21,11 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         public bool IsUndoEnabled { get; set; }
 
         /// <summary>
+        /// True if the object is attached to a Recorder.
+        /// </summary>
+        public bool IsAttached => (this as IRecordable)?.Recorder != null;
+
+        /// <summary>
         /// Event raised when some change on the object has been undone or redone.
         /// </summary>
         /// <remarks>The first argument is the object that has been interested by the undoing/redoing.

@@ -14,6 +14,7 @@ using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
 using PostSharp.Patterns.Collections;
+using System.Runtime.Serialization;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -25,7 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyListMulti, ThreatsManager.Engine")]
-    public class PropertyListMulti : IPropertyListMulti, IInitializableObject, IPostDeserialization
+    public class PropertyListMulti : IPropertyListMulti, IInitializableObject
     {
         public PropertyListMulti()
         {
@@ -80,24 +81,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [JsonProperty("rows")]
         [field:NotRecorded]
         private AdvisableCollection<RecordableString> _items { get; set; }
-
-        public void ExecutePostDeserialization()
-        {
-            if (_legacyItems?.Any() ?? false)
-            {
-                if (_items == null)
-                    _items = new AdvisableCollection<RecordableString>();
-
-                foreach (var item in _legacyItems)
-                {
-                    var r = new RecordableString(item);
-                    UndoRedoManager.Attach(r, Model);
-                    _items.Add(r);
-                }
-
-                _legacyItems.Clear();
-            }
-        }
 
         [Reference]
         [field:NotRecorded]
@@ -173,6 +156,29 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected void InvokeChanged()
         {
             Changed?.Invoke(this);
+        }
+        #endregion
+
+        #region On Deserialization.
+        [OnDeserialized]
+        public void PostDeserialization(StreamingContext context)
+        {
+            {
+                if (_legacyItems?.Any() ?? false)
+                {
+                    if (_items == null)
+                        _items = new AdvisableCollection<RecordableString>();
+
+                    foreach (var item in _legacyItems)
+                    {
+                        var r = new RecordableString(item);
+                        UndoRedoManager.Attach(r, Model);
+                        _items.Add(r);
+                    }
+
+                    _legacyItems.Clear();
+                }
+            }
         }
         #endregion
     }
