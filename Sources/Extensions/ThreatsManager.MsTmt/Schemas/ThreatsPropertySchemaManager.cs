@@ -3,6 +3,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.MsTmt.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.MsTmt.Schemas
 {
@@ -19,13 +20,19 @@ namespace ThreatsManager.MsTmt.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
-            result.AppliesTo = Scope.ThreatType | Scope.ThreatEvent;
-            result.Priority = 30;
-            result.Visible = true;
-            result.System = false;
-            result.AutoApply = false;
-            result.Description = Resources.ThreatsPropertySchemaDescription;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
+            {
+                result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+                result.AppliesTo = Scope.ThreatType | Scope.ThreatEvent;
+                result.Priority = 30;
+                result.Visible = true;
+                result.System = false;
+                result.AutoApply = false;
+                result.Description = Resources.ThreatsPropertySchemaDescription;
+                scope?.Complete();
+            }
 
             return result;
         }

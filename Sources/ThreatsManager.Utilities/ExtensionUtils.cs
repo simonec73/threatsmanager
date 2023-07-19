@@ -291,10 +291,14 @@ namespace ThreatsManager.Utilities
         {
             var data = configuration?.Data?.ToArray();
 
-            var property = GetExtensionConfigurationProperty(model, extensionId);
-            if (property != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Extension Configuration"))
             {
-                property.Value = GetConfigurationObject(data?.Where(x => !x.Global));
+                var property = GetExtensionConfigurationProperty(model, extensionId);
+                if (property != null)
+                {
+                    property.Value = GetConfigurationObject(data?.Where(x => !x.Global));
+                    scope?.Complete();
+                }
             }
 
             SaveGlobalConfiguration(extensionId, ExtensionConfigurationFolder, GetConfigurationObject(data?.Where(x => x.Global)));
@@ -302,21 +306,29 @@ namespace ThreatsManager.Utilities
 
         private static IPropertyJsonSerializableObject GetExtensionConfigurationProperty([NotNull] IThreatModel model, [Required] string extensionId)
         {
-            var propertySchema =
-                model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager") ?? model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
-            propertySchema.AppliesTo = Scope.ThreatModel;
-            propertySchema.AutoApply = false;
-            propertySchema.NotExportable = true;
-            propertySchema.Priority = 100;
-            propertySchema.RequiredExecutionMode = ExecutionMode.Business;
-            propertySchema.System = true;
-            propertySchema.Visible = false;
+            IPropertyJsonSerializableObject result;
 
-            var propertyType = propertySchema.GetPropertyType(extensionId) ?? propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
-            propertyType.Visible = false;
-            propertyType.DoNotPrint = true;
+            using (var scope = UndoRedoManager.OpenScope("Get Extension Configuration property"))
+            {
+                var propertySchema =
+                    model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager") ?? model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
+                propertySchema.AppliesTo = Scope.ThreatModel;
+                propertySchema.AutoApply = false;
+                propertySchema.NotExportable = true;
+                propertySchema.Priority = 100;
+                propertySchema.RequiredExecutionMode = ExecutionMode.Business;
+                propertySchema.System = true;
+                propertySchema.Visible = false;
 
-            return (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
+                var propertyType = propertySchema.GetPropertyType(extensionId) ?? propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
+                propertyType.Visible = false;
+                propertyType.DoNotPrint = true;
+
+                result = (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
+                scope?.Complete();
+            }
+
+            return result;
         }
 
         private static ExtensionConfigurationData GetConfigurationObject(IEnumerable<ConfigurationData> configuration)

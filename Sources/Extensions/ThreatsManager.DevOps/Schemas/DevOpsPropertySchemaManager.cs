@@ -21,15 +21,21 @@ namespace ThreatsManager.DevOps.Schemas
 
         public IPropertySchema GetPropertySchema()
         {
-            IPropertySchema result = _model.GetSchema(Properties.Resources.DevOpsPropertySchema,
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{Properties.Resources.DevOpsPropertySchema}' schema"))
+            {
+                result = _model.GetSchema(Properties.Resources.DevOpsPropertySchema,
                 Properties.Resources.DefaultNamespace) ?? _model.AddSchema(Properties.Resources.DevOpsPropertySchema,
                 Properties.Resources.DefaultNamespace);
-            result.Description = Properties.Resources.DevOpsPropertySchemaDescription;
-            result.Visible = false;
-            result.AppliesTo = Scope.Mitigation;
-            result.System = true;
-            result.AutoApply = false;
-            result.NotExportable = true;
+                result.Description = Properties.Resources.DevOpsPropertySchemaDescription;
+                result.Visible = false;
+                result.AppliesTo = Scope.Mitigation;
+                result.System = true;
+                result.AutoApply = false;
+                result.NotExportable = true;
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -39,13 +45,17 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get DevOpsInfo property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.DevOpsInfo) ?? schema.AddPropertyType(Properties.Resources.DevOpsInfo, PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Properties.Resources.DevOpsInfoDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.DevOpsInfo) ?? schema.AddPropertyType(Properties.Resources.DevOpsInfo, PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.DevOpsInfoDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -66,24 +76,45 @@ namespace ThreatsManager.DevOps.Schemas
 
         public void RemoveDevOpsInfos([NotNull] IMitigation mitigation)
         {
-            var propertyType = GetDevOpsInfoPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Remove DevOpsInfos"))
             {
-                mitigation.RemoveProperty(propertyType);
+                var propertyType = GetDevOpsInfoPropertyType();
+                if (propertyType != null)
+                {
+                    mitigation.RemoveProperty(propertyType);
+                    scope?.Complete();
+                }
             }
         }
 
-        public void SetDevOpsStatus([NotNull] IMitigation mitigation, 
-            [NotNull] IDevOpsConnector connector, int id, string itemUrl, string assignedTo, WorkItemStatus status)
+        public void SetDevOpsStatus([NotNull] IMitigation mitigation,
+            [NotNull] IDevOpsConnector connector, int id, string itemUrl, WorkItemStatus status, string assignedTo = null)
         {
-            var info = GetInfo(mitigation);
-            if (info != null)
+            using (var scope = UndoRedoManager.OpenScope("Set DevOpsStatus"))
             {
-                var connectionInfo = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
-                if (connectionInfo != null)
+                var info = GetInfo(mitigation);
+                if (info != null)
                 {
-                    connectionInfo.Status = status;
-                    connectionInfo.AssignedTo = assignedTo;
+                    var connectionInfo = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
+                    if (connectionInfo != null)
+                    {
+                        connectionInfo.Status = status;
+                        if (!string.IsNullOrWhiteSpace(assignedTo))
+                            connectionInfo.AssignedTo = assignedTo;
+                    }
+                    else
+                    {
+                        SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
+                        {
+                            Id = id,
+                            ConnectorId = connector.FactoryId,
+                            Url = connector.Url,
+                            AssignedTo = !string.IsNullOrWhiteSpace(assignedTo) ? assignedTo : null,
+                            Project = connector.Project,
+                            Status = status,
+                            ItemUrl = itemUrl
+                        });
+                    }
                 }
                 else
                 {
@@ -92,63 +123,14 @@ namespace ThreatsManager.DevOps.Schemas
                         Id = id,
                         ConnectorId = connector.FactoryId,
                         Url = connector.Url,
-                        AssignedTo = assignedTo,
+                        AssignedTo = !string.IsNullOrWhiteSpace(assignedTo) ? assignedTo : null,
                         Project = connector.Project,
                         Status = status,
                         ItemUrl = itemUrl
                     });
                 }
-            }
-            else
-            {
-                SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
-                {
-                    Id = id,
-                    ConnectorId = connector.FactoryId,
-                    Url = connector.Url,
-                    AssignedTo = assignedTo,
-                    Project = connector.Project,
-                    Status = status,
-                    ItemUrl = itemUrl
-                });
-            }
-        }
 
-        public void SetDevOpsStatus([NotNull] IMitigation mitigation, 
-            [NotNull] IDevOpsConnector connector, int id, string itemUrl, WorkItemStatus status)
-        {
-            var info = GetInfo(mitigation);
-            if (info != null)
-            {
-                var connectionInfo = GetConnectionInfo<DevOpsWorkItemConnectionInfo>(info, connector);
-                if (connectionInfo != null)
-                {
-                    connectionInfo.Status = status;
-                }
-                else
-                {
-                    SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
-                    {
-                        Id = id,
-                        ConnectorId = connector.FactoryId,
-                        Url = connector.Url,
-                        Project = connector.Project,
-                        Status = status,
-                        ItemUrl = itemUrl
-                    });
-                }
-            }
-            else
-            {
-                SetInfo(mitigation, new DevOpsWorkItemConnectionInfo()
-                {
-                    Id = id,
-                    ConnectorId = connector.FactoryId,
-                    Url = connector.Url,
-                    Project = connector.Project,
-                    Status = status,
-                    ItemUrl = itemUrl
-                });
+                scope?.Complete();
             }
         }
 
@@ -212,14 +194,18 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Review property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.Review) ?? schema.AddPropertyType(Properties.Resources.Review, PropertyValueType.JsonSerializableObject);
-                result.Visible = true;
-                result.DoNotPrint = true;
-                result.CustomPropertyViewer = "Backlog Review Property Viewer";
-                result.Description = Properties.Resources.ReviewDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.Review) ?? schema.AddPropertyType(Properties.Resources.Review, PropertyValueType.JsonSerializableObject);
+                    result.Visible = true;
+                    result.DoNotPrint = true;
+                    result.CustomPropertyViewer = "Backlog Review Property Viewer";
+                    result.Description = Properties.Resources.ReviewDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -232,7 +218,7 @@ namespace ThreatsManager.DevOps.Schemas
             var propertyType = GetReviewPropertyType();
             if (propertyType != null)
             {
-                var property = mitigation.GetProperty(propertyType) ?? mitigation.AddProperty(propertyType, null);
+                var property = mitigation.GetProperty(propertyType);
                 if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
                     jsonSerializableObject.Value is ReviewInfo reviewInfo)
                 {
@@ -245,15 +231,17 @@ namespace ThreatsManager.DevOps.Schemas
 
         public void SetReview([NotNull] IMitigation mitigation, [NotNull] ReviewInfo info)
         {
-            ReviewInfo result = null;
-
-            var propertyType = GetReviewPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Review"))
             {
-                var property = mitigation.GetProperty(propertyType) ?? mitigation.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                var propertyType = GetReviewPropertyType();
+                if (propertyType != null)
                 {
-                    jsonSerializableObject.Value = info;
+                    var property = mitigation.GetProperty(propertyType) ?? mitigation.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    {
+                        jsonSerializableObject.Value = info;
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -264,13 +252,17 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get IterationFirstSeen property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.IterationFirstSeen) ?? schema.AddPropertyType(Properties.Resources.IterationFirstSeen, PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Properties.Resources.IterationFirstSeenDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.IterationFirstSeen) ?? schema.AddPropertyType(Properties.Resources.IterationFirstSeen, PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.IterationFirstSeenDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -280,13 +272,17 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get MitigationExposure property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.IterationMitigationExposure) ?? schema.AddPropertyType(Properties.Resources.IterationMitigationExposure, PropertyValueType.SingleLineString);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Properties.Resources.IterationMitigationExposureDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.IterationMitigationExposure) ?? schema.AddPropertyType(Properties.Resources.IterationMitigationExposure, PropertyValueType.SingleLineString);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.IterationMitigationExposureDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -312,24 +308,28 @@ namespace ThreatsManager.DevOps.Schemas
 
         public void SetFirstSeenOn([NotNull] IMitigation mitigation, Iteration info)
         {
-            var iterationFirstSeenPropertyType = GetIterationFirstSeenPropertyType();
-            var mitigationExposurePropertyType = GetMitigationExposurePropertyType();
-            if (iterationFirstSeenPropertyType != null && mitigationExposurePropertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set FirstSeenOn"))
             {
-                var propertyFirstSeen = mitigation.GetProperty(iterationFirstSeenPropertyType) ?? mitigation.AddProperty(iterationFirstSeenPropertyType, null);
-                var propertyMitigationExposure = mitigation.GetProperty(mitigationExposurePropertyType) ?? mitigation.AddProperty(mitigationExposurePropertyType, null);
-                if (propertyFirstSeen is IPropertyJsonSerializableObject firstSeen &&
-                    propertyMitigationExposure is IPropertySingleLineString mitigationExposure)
+                var iterationFirstSeenPropertyType = GetIterationFirstSeenPropertyType();
+                var mitigationExposurePropertyType = GetMitigationExposurePropertyType();
+                if (iterationFirstSeenPropertyType != null && mitigationExposurePropertyType != null)
                 {
-                    if (info == null)
+                    var propertyFirstSeen = mitigation.GetProperty(iterationFirstSeenPropertyType) ?? mitigation.AddProperty(iterationFirstSeenPropertyType, null);
+                    var propertyMitigationExposure = mitigation.GetProperty(mitigationExposurePropertyType) ?? mitigation.AddProperty(mitigationExposurePropertyType, null);
+                    if (propertyFirstSeen is IPropertyJsonSerializableObject firstSeen &&
+                        propertyMitigationExposure is IPropertySingleLineString mitigationExposure)
                     {
-                        firstSeen.StringValue = null;
-                        mitigationExposure.StringValue = null;
-                    }
-                    else
-                    {
-                        firstSeen.Value = new IterationInfo(info);
-                        mitigationExposure.StringValue = GetMitigationExposure(mitigation);
+                        if (info == null)
+                        {
+                            firstSeen.StringValue = null;
+                            mitigationExposure.StringValue = null;
+                        }
+                        else
+                        {
+                            firstSeen.Value = new IterationInfo(info);
+                            mitigationExposure.StringValue = GetMitigationExposure(mitigation);
+                        }
+                        scope?.Complete();
                     }
                 }
             }

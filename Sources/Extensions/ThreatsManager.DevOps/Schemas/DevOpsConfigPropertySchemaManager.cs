@@ -20,15 +20,21 @@ namespace ThreatsManager.DevOps.Schemas
 
         public IPropertySchema GetPropertySchema()
         {
-            IPropertySchema result = _model.GetSchema(Properties.Resources.DevOpsConfigPropertySchema,
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{Properties.Resources.DevOpsConfigPropertySchema}' schema"))
+            {
+                result = _model.GetSchema(Properties.Resources.DevOpsConfigPropertySchema,
                 Properties.Resources.DefaultNamespace) ?? _model.AddSchema(Properties.Resources.DevOpsConfigPropertySchema,
                 Properties.Resources.DefaultNamespace);
-            result.Description = Properties.Resources.DevOpsConfigPropertySchemaDescription;
-            result.Visible = false;
-            result.AppliesTo = Scope.ThreatModel;
-            result.System = true;
-            result.AutoApply = false;
-            result.NotExportable = true;
+                result.Description = Properties.Resources.DevOpsConfigPropertySchemaDescription;
+                result.Visible = false;
+                result.AppliesTo = Scope.ThreatModel;
+                result.System = true;
+                result.AutoApply = false;
+                result.NotExportable = true;
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -38,13 +44,17 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get DevOpsConnector property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.DevOpsConfig) ?? schema.AddPropertyType(Properties.Resources.DevOpsConfig, PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Properties.Resources.DevOpsConfigDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.DevOpsConfig) ?? schema.AddPropertyType(Properties.Resources.DevOpsConfig, PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.DevOpsConfigDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -100,28 +110,36 @@ namespace ThreatsManager.DevOps.Schemas
 
         public void RegisterConnection([NotNull] IDevOpsConnector connector)
         {
-            var propertyType = GetPropertyTypeDevOpsConnector();
-
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Register Connection"))
             {
-                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                var propertyType = GetPropertyTypeDevOpsConnector();
 
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                if (propertyType != null)
                 {
-                    jsonSerializableObject.Value = new DevOpsConnection(connector);
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    {
+                        jsonSerializableObject.Value = new DevOpsConnection(connector);
+                        scope?.Complete();
+                    }
                 }
             }
         }
 
         public void UnregisterConnection()
         {
-            var propertyType = GetPropertyTypeDevOpsConnector();
-
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Unregister Connection"))
             {
-                if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject property)
+                var propertyType = GetPropertyTypeDevOpsConnector();
+
+                if (propertyType != null)
                 {
-                    property.Value = null;
+                    if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject property)
+                    {
+                        property.Value = null;
+                        scope.Complete();
+                    }
                 }
             }
         }
@@ -154,14 +172,18 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Iterations property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.DevOpsIterations) ?? 
-                         schema.AddPropertyType(Properties.Resources.DevOpsIterations, PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Properties.Resources.DevOpsIterationsDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.DevOpsIterations) ??
+                             schema.AddPropertyType(Properties.Resources.DevOpsIterations, PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.DevOpsIterationsDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -187,19 +209,23 @@ namespace ThreatsManager.DevOps.Schemas
 
         public void SetIterations(IEnumerable<Iteration> iterations)
         {
-            var propertyType = GetPropertyTypeIterations();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Iterations"))
             {
-                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                var propertyType = GetPropertyTypeIterations();
+                if (propertyType != null)
                 {
-                    Iterations container;
-                    if (iterations?.Any() ?? false)
-                        container = new Iterations(iterations);
-                    else
-                        container = null;
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    {
+                        Iterations container;
+                        if (iterations?.Any() ?? false)
+                            container = new Iterations(iterations);
+                        else
+                            container = null;
 
-                    jsonSerializableObject.Value = container;
+                        jsonSerializableObject.Value = container;
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -298,14 +324,18 @@ namespace ThreatsManager.DevOps.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetPropertySchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Iterations Risk property type"))
             {
-                result = schema.GetPropertyType(Properties.Resources.DevOpsIterationRisks) ?? 
-                         schema.AddPropertyType(Properties.Resources.DevOpsIterationRisks, PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Properties.Resources.DevOpsIterationRisksDescription;
+                var schema = GetPropertySchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.DevOpsIterationRisks) ??
+                             schema.AddPropertyType(Properties.Resources.DevOpsIterationRisks, PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.DevOpsIterationRisksDescription;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -333,27 +363,31 @@ namespace ThreatsManager.DevOps.Schemas
 
         public void SetIterationRisk([NotNull] Iteration iteration, float risk)
         {
-            var propertyType = GetPropertyTypeIterationsRisk();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Iteration Risk"))
             {
-                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
-                    jsonSerializableObject.Value is IterationRisks iterationRisks)
+                var propertyType = GetPropertyTypeIterationsRisk();
+                if (propertyType != null)
                 {
-                    var iterationRisk =
-                        iterationRisks.Items?.FirstOrDefault(x =>
-                            string.CompareOrdinal(iteration.Id, x.IterationId) == 0);
-                    if (iterationRisk != null)
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is IterationRisks iterationRisks)
                     {
-                        iterationRisk.Risk = risk;
-                    }
-                    else
-                    {
-                        if (iterationRisks.Items == null)
-                            iterationRisks.Items = new List<IterationRisk>();
+                        var iterationRisk =
+                            iterationRisks.Items?.FirstOrDefault(x =>
+                                string.CompareOrdinal(iteration.Id, x.IterationId) == 0);
+                        if (iterationRisk != null)
+                        {
+                            iterationRisk.Risk = risk;
+                        }
+                        else
+                        {
+                            if (iterationRisks.Items == null)
+                                iterationRisks.Items = new List<IterationRisk>();
 
-                        iterationRisk = new IterationRisk(iteration, risk);
-                        iterationRisks.Items.Add(iterationRisk);
+                            iterationRisk = new IterationRisk(iteration, risk);
+                            iterationRisks.Items.Add(iterationRisk);
+                        }
+                        scope?.Complete();
                     }
                 }
             }

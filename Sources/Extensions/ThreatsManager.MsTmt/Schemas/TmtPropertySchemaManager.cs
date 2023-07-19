@@ -24,13 +24,20 @@ namespace ThreatsManager.MsTmt.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(_schemaName, Resources.DefaultNamespace) ?? _model.AddSchema(_schemaName, Resources.DefaultNamespace);
-            result.AppliesTo = _scope;
-            result.Priority = 100;
-            result.Visible = true;
-            result.System = false;
-            result.AutoApply = false;
-            result.Description = Resources.TmtPropertySchemaDescription;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{_schemaName}' schema"))
+            {
+                result = _model.GetSchema(_schemaName, Resources.DefaultNamespace) ?? _model.AddSchema(_schemaName, Resources.DefaultNamespace);
+                result.AppliesTo = _scope;
+                result.Priority = 100;
+                result.Visible = true;
+                result.System = false;
+                result.AutoApply = false;
+                result.Description = Resources.TmtPropertySchemaDescription;
+
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -50,30 +57,35 @@ namespace ThreatsManager.MsTmt.Schemas
         public void SetProperty([NotNull] IPropertiesContainer container, [Required] string propertyName,
             [NotNull] IEnumerable<string> values, [Required] string value)
         {
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope($"Set {propertyName} property"))
             {
-                var propertyType = schema.GetPropertyType(propertyName);
-
-                if (propertyType == null)
+                var schema = GetSchema();
+                if (schema != null)
                 {
-                    propertyType = schema.AddPropertyType(propertyName, PropertyValueType.List);
-                    if (propertyType is IListPropertyType listPropertyType)
+                    var propertyType = schema.GetPropertyType(propertyName);
+
+                    if (propertyType == null)
                     {
-                        listPropertyType.SetListProvider(new ListProvider());
-                        listPropertyType.Context = values?.TagConcat();
+                        propertyType = schema.AddPropertyType(propertyName, PropertyValueType.List);
+                        if (propertyType is IListPropertyType listPropertyType)
+                        {
+                            listPropertyType.SetListProvider(new ListProvider());
+                            listPropertyType.Context = values?.TagConcat();
+                        }
                     }
-                }
 
-                var property = container.GetProperty(propertyType);
+                    var property = container.GetProperty(propertyType);
 
-                if (property == null)
-                {
-                    container.AddProperty(propertyType, value);
-                }
-                else
-                {
-                    property.StringValue = value;
+                    if (property == null)
+                    {
+                        container.AddProperty(propertyType, value);
+                    }
+                    else
+                    {
+                        property.StringValue = value;
+                    }
+
+                    scope?.Complete();
                 }
             }
         }

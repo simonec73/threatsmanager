@@ -211,7 +211,7 @@ namespace ThreatsManager.DevOps
                             if (pair.Value.Status != info.Status || 
                                 string.CompareOrdinal(pair.Value.AssignedTo, info.AssignedTo) != 0)
                             {
-                                schemaManager.SetDevOpsStatus(pair.Key, connector, info.Id, info.Url, info.AssignedTo, info.Status);
+                                schemaManager.SetDevOpsStatus(pair.Key, connector, info.Id, info.Url, info.Status, info.AssignedTo);
                                 result++;
                             }
 
