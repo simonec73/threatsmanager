@@ -1,5 +1,6 @@
 ﻿using PostSharp.Patterns.Recording;
 using System.Drawing;
+using System.Windows;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
@@ -16,5 +17,14 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public float Height { get; set; }
         public float Width { get; set; }
+        public SizeF Size 
+        {
+            get => new SizeF(Width, Height);
+            set
+            {
+                Height = value.Height;
+                Width = value.Width;
+            }
+        }
     }
 }

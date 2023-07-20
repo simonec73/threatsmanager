@@ -120,65 +120,46 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         [Child]
         private RecordablePointF _recordablePosition;
 
-        [NotRecorded]
-        [JsonProperty("pos")]
-        private PointF _position { get; set; }
-
         [property: NotRecorded]
+        [JsonProperty("pos")]
         public PointF Position
         {
             get
             {
-                return _position;
+                return _recordablePosition.Position;
             }
 
             set
             {
-                if (!value.IsEmpty)
-                {
-                    if (_recordablePosition == null)
-                        _recordablePosition = new RecordablePointF(value);
-                    else
-                    {
-                        _recordablePosition.X = value.X;
-                        _recordablePosition.Y = value.Y;
-                    }
-                    _position = new PointF(value.X, value.Y);
-                }
+                if (_recordablePosition == null)
+                    _recordablePosition = new RecordablePointF(value);
                 else
-                    _position = PointF.Empty;
+                {
+                    _recordablePosition.Position = value;
+                }
             }
         }
 
         [Child]
         private RecordableSizeF _recordableSize;
 
-        [NotRecorded]
+        [property: NotRecorded]
         [JsonProperty("size")]
-        private SizeF _size { get; set; }
-
         public SizeF Size
         {
             get
             {
-                return _size;
+                return _recordableSize.Size;
             }
 
             set
             {
-                if (!value.IsEmpty)
-                {
-                    if (_recordableSize == null)
-                        _recordableSize = new RecordableSizeF(value);
-                    else
-                    {
-                        _recordableSize.Height = value.Height;
-                        _recordableSize.Width = value.Width;
-                    }
-                    _size = new SizeF(value.Width, value.Height);
-                }
+                if (_recordableSize == null)
+                    _recordableSize = new RecordableSizeF(value);
                 else
-                    _size = SizeF.Empty;
+                {
+                    _recordableSize.Size = value;
+                }
             }
         }
 

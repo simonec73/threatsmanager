@@ -1,4 +1,5 @@
-﻿using PostSharp.Patterns.Recording;
+﻿using Newtonsoft.Json;
+using PostSharp.Patterns.Recording;
 using System.Drawing;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
@@ -10,11 +11,20 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public RecordablePointF(PointF point)
         {
-            X = point.X;
-            Y = point.Y;
+            Position = point;
         }
 
         public float X { get; set; }
         public float Y { get; set; }
+
+        public PointF Position
+        {
+            get => new PointF(X, Y);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
     }
 }

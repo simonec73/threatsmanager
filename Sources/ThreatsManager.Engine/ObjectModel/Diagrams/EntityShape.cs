@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
@@ -120,35 +121,25 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public IIdentity Identity => _associated ?? (_associated = Model.GetEntity(_associatedId));
 
         [Child]
-        private RecordablePointF _recordablePosition;
-
-        [NotRecorded]
-        [JsonProperty("pos")]
-        private PointF _position { get; set; }
+        private RecordablePointF _recordablePosition { get; set; }
 
         [property: NotRecorded]
+        [JsonProperty("pos")]
         public PointF Position
         {
             get
             {
-                return _position;
+                return _recordablePosition.Position;
             }
 
             set
             {
-                if (!value.IsEmpty)
-                {
-                    if (_recordablePosition == null)
-                        _recordablePosition = new RecordablePointF(value);
-                    else
-                    {
-                        _recordablePosition.X = value.X;
-                        _recordablePosition.Y = value.Y;
-                    }
-                    _position = new PointF(value.X, value.Y);
-                }
+                if (_recordablePosition == null)
+                    _recordablePosition = new RecordablePointF(value);
                 else
-                    _position = PointF.Empty;
+                {
+                    _recordablePosition.Position = value;
+                }
             }
         }
 
