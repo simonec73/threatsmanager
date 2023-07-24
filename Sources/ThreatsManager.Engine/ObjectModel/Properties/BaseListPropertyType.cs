@@ -16,7 +16,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [NotifyPropertyChanged]
+    [SimpleNotifyPropertyChanged]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]

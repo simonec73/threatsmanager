@@ -26,7 +26,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// Aspect adding the standard implementation for Property Containers.
     /// </summary>
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class PropertiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

@@ -13,11 +13,6 @@ namespace ThreatsManager.Extensions
     public interface IResidualRiskEstimator : IExtension
     {
         /// <summary>
-        /// Default value to represent unlimited/infinite.
-        /// </summary>
-        float DefaultInfinite { get; }
-
-        /// <summary>
         /// Calculate the estimated risk for the Threat Model, starting from the assumption that the listed mitigations are implemented.
         /// </summary>
         /// <param name="model">Threat Model for which the Residual Risk must be estimated.</param>
@@ -55,7 +50,6 @@ namespace ThreatsManager.Extensions
         /// </summary>
         /// <param name="model">Model to be analyzed.</param>
         /// <param name="parameters">Parameters of the calculation.</param>
-        /// <param name="infinite">Value to be used to represent infinite/unlimited.</param>
         /// <param name="normalizationReference">Normalization Reference.<para/>
         /// The Normalization Reference indicates the number of objects for which the Acceptable Risk is defined.<para/>
         /// For example, if the Normalization Reference is 40 and you have only 8 Entities and 12 Flows, then the Acceptable Risk level is halved.<para/>
@@ -63,7 +57,7 @@ namespace ThreatsManager.Extensions
         /// If it is 0, then no normalization is applied.</param>
         /// <returns>Evaluation of the Acceptable Risk.</returns>
         /// <remarks>The value of the parameters can be negative, to express an unlimited value.</remarks>
-        float GetAcceptableRisk(IThreatModel model, IDictionary<string, float> parameters, float infinite, int normalizationReference);
+        float GetAcceptableRisk(IThreatModel model, IDictionary<string, float> parameters, int normalizationReference);
 
         /// <summary>
         /// Get a normalized evaluation of the current risk represented by the solution. 

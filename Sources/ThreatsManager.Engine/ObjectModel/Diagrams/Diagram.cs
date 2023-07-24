@@ -22,7 +22,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [NotifyPropertyChanged]
+    [SimpleNotifyPropertyChanged]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]

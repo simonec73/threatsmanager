@@ -261,7 +261,8 @@ namespace ThreatsManager.Utilities
             {
                 foreach (var te in tes)
                 {
-                    var m = te.Mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.Id);
+                    var mitigations = te.Mitigations?.ToArray();
+                    var m = mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.Id);
                     if (m != null)
                         list.Add(m);
                 }

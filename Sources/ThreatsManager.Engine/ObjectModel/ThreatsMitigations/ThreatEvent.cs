@@ -22,7 +22,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [NotifyPropertyChanged]
+    [SimpleNotifyPropertyChanged]
+    [IntroduceNotifyPropertyChanged]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
     [ParentIdChanger]
@@ -146,6 +147,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [Reference]
         [field: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IThreatEventMitigation> Mitigations { get; }
         public IThreatEventMitigation GetMitigation(Guid mitigationId)
         {

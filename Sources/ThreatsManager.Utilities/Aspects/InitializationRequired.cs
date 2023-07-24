@@ -1,15 +1,15 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
-using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Utilities.Aspects
 {
     [PSerializable]
     [ProvideAspectRole("Initialization")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, StandardRoles.Validation)]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "ChangeTracking")]
     [LinesOfCodeAvoided(2)]
     public class InitializationRequired : OnMethodBoundaryAspect

@@ -14,7 +14,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// </summary>
     [PSerializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(AutoApplySchemasAttribute))]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class UpdateIdAttribute : LocationInterceptionAspect
     {
         private string _sourcePropertyName;

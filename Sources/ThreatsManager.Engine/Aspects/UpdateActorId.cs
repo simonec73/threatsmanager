@@ -1,9 +1,9 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
-using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -11,7 +11,7 @@ namespace ThreatsManager.Engine.Aspects
     /// Attribute assigned to an Actor property to automatically assign the corresponding ID property.
     /// </summary>
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class UpdateActorIdAttribute : LocationInterceptionAspect
     {
         /// <summary>

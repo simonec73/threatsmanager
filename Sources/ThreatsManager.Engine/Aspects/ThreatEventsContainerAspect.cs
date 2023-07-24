@@ -12,6 +12,7 @@ using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -22,7 +23,7 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class ThreatEventsContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

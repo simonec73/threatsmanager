@@ -11,6 +11,7 @@ using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -21,7 +22,7 @@ namespace ThreatsManager.Engine.Aspects
     //#endregion    
 
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class LinksContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.

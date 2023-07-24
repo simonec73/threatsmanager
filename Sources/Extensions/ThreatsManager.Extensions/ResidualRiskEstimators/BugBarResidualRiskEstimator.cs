@@ -26,8 +26,6 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
             public int Effectiveness { get; set; }
         }
 
-        public float DefaultInfinite => 10f;
-
         public float Estimate([NotNull] IThreatModel model, IEnumerable<Guid> mitigations, out float min, out float max)
         {
             float result = 0f;
@@ -176,7 +174,7 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
         }
 
         public float GetAcceptableRisk([NotNull] IThreatModel model,
-            IDictionary<string, float> parameters, float infinite, int normalizationReference)
+            IDictionary<string, float> parameters, int normalizationReference)
         {
             float result = 0f;
 
@@ -193,8 +191,7 @@ namespace ThreatsManager.Extensions.ResidualRiskEstimators
                         var severity = severities.FirstOrDefault(x => string.CompareOrdinal(x.Name, severityName) == 0);
                         if (severity != null)
                         {
-                            result += severity.Id *
-                                      (parameter.Value < 0 ? infinite : Math.Min(parameter.Value, infinite));
+                            result += severity.Id * (parameter.Value < 0 ? 0 : parameter.Value);
                         }
                     }
                 }

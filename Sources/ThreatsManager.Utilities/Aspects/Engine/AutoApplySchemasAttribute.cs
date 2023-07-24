@@ -1,6 +1,5 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
-using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -11,7 +10,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// Attribute that configures automatically AutoApplySchemas for the current object, when the property containing the IThreatModel is set.
     /// </summary>
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class AutoApplySchemasAttribute : LocationInterceptionAspect
     {
         /// <summary>

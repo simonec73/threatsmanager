@@ -5,6 +5,7 @@ using PostSharp.Serialization;
 using System;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
@@ -12,7 +13,7 @@ namespace ThreatsManager.Engine.Aspects
     /// Attribute assigned to a Weakness property to automatically assign the corresponding ID property.
     /// </summary>
     [PSerializable]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class UpdateWeaknessIdAttribute : LocationInterceptionAspect
     {
         /// <summary>

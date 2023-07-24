@@ -22,7 +22,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [NotifyPropertyChanged]
+    [SimpleNotifyPropertyChanged]
+    [IntroduceNotifyPropertyChanged]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
     [AssociatedIdChanger]
@@ -125,11 +126,12 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [property: NotRecorded]
         [JsonProperty("pos")]
+        [SafeForDependencyAnalysis]
         public PointF Position
         {
             get
             {
-                return _recordablePosition.Position;
+                return _recordablePosition?.Position ?? PointF.Empty;
             }
 
             set
