@@ -130,7 +130,8 @@ namespace ThreatsManager.Utilities
             {
                 if (referenceThreatModel is IUndoable modelUndoable && modelUndoable.IsUndoEnabled)
                 {
-                    RecordingServices.DefaultRecorder.Attach(item);
+                    if (item is IRecordable recordable && !recordable.HasRecorder(false))
+                        RecordingServices.DefaultRecorder.Attach(item);
                     if (item is IUndoable u)
                         u.IsUndoEnabled = true;
 

@@ -129,6 +129,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (value != _value)
                 {
+                    UndoRedoManager.Attach(value, _model);
                     _value = value;
 
                     if (value is IThreatModelAware aware)

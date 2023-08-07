@@ -22,10 +22,11 @@ namespace ThreatsManager.AutoGenRules.Engine
 
         [JsonProperty("nodes", ItemTypeNameHandling = TypeNameHandling.Objects, TypeNameHandling = TypeNameHandling.None)]
         [Child]
-        private readonly AdvisableCollection<SelectionRuleNode> _children = new AdvisableCollection<SelectionRuleNode>();
+        private AdvisableCollection<SelectionRuleNode> _children { get; set; }
 
         protected NaryRuleNode() 
         {
+            _children = new AdvisableCollection<SelectionRuleNode>();
             _children.CollectionChanged += _children_CollectionChanged;
         }
 

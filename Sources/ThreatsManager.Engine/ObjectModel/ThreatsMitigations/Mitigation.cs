@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
@@ -13,6 +14,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Engine.Aspects;
 using PostSharp.Patterns.Collections;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -106,7 +108,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        #endregion    
+        #endregion
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Mitigation;
@@ -141,6 +143,89 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return Name ?? "<undefined>";
         }
+
+        #region Specialized Mitigations.
+        [JsonProperty("specialized")]
+        [Child]
+        private AdvisableCollection<SpecializedMitigation> _specialized { get; set; }
+
+        public IEnumerable<ISpecializedMitigation> Specialized => _specialized.AsEnumerable();
+
+        public void AddSpecializedMitigation([NotNull] IItemTemplate template, string name, string description)
+        {
+            if (!(_specialized?.Any(x => x.TargetId == template.Id) ?? false))
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Specialized Mitigation"))
+                {
+                    if (_specialized == null)
+                        _specialized = new AdvisableCollection<SpecializedMitigation>();
+
+                    _specialized.Add(new SpecializedMitigation(template, name, description));
+                    scope?.Complete();
+                }
+            }
+        }
+
+        public void RemoveSpecializedMitigation(IItemTemplate template)
+        {
+            RemoveSpecializedMitigation(template.Id);
+        }
+
+        public void RemoveSpecializedMitigation(Guid templateId)
+        {
+            var item = _specialized?.FirstOrDefault(x => x.TargetId == templateId);
+            if (item != null)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Remove Specialized Mitigation"))
+                {
+                    _specialized.Remove(item);
+                    scope?.Complete();
+                }
+            }
+        }
+
+        public ISpecializedMitigation GetSpecializedMitigation(IItemTemplate template)
+        {
+            return GetSpecializedMitigation(template.Id);
+        }
+
+        public ISpecializedMitigation GetSpecializedMitigation(Guid templateId)
+        {
+            return _specialized?.FirstOrDefault(x => x.TargetId == templateId);
+        }
+
+        public string GetName(IIdentity identity)
+        {
+            string result = _name;
+
+            if (identity is IEntity entity && entity.Template is IItemTemplate template)
+            {
+                var specialized = GetSpecializedMitigation(template);
+                if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Name))
+                {
+                    result = specialized.Name;
+                }
+            }
+
+            return result;
+        }
+
+        public string GetDescription(IIdentity identity)
+        {
+            string result = _description;
+
+            if (identity is IEntity entity && entity.Template is IItemTemplate template)
+            {
+                var specialized = GetSpecializedMitigation(template);
+                if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Description))
+                {
+                    result = specialized.Description;
+                }
+            }
+
+            return result;
+        }
+        #endregion
         #endregion
     }
 }

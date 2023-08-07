@@ -79,25 +79,6 @@ namespace ThreatsManager.Extensions.Schemas
             return result;
         }
 
-        public IPropertyType GetInfinitePropertyType()
-        {
-            IPropertyType result = null;
-
-            using (var scope = UndoRedoManager.OpenScope("Get Infinite property type"))
-            {
-                var schema = GetSchema();
-                if (schema != null)
-                {
-                    result = schema.GetPropertyType("Infinite Cap") ?? schema.AddPropertyType("Infinite Cap", PropertyValueType.Decimal);
-                    result.Visible = false;
-                    result.Description = "Infinite Cap for the selected Residual Risk Estimator";
-                    scope?.Complete();
-                }
-            }
-
-            return result;
-        }
-
         public IResidualRiskEstimator SelectedEstimator
         {
             get
@@ -194,41 +175,6 @@ namespace ThreatsManager.Extensions.Schemas
                                     scope?.Complete();
                                 }
                             }
-                        }
-                    }
-                }
-            }
-        }
-
-        public float Infinite
-        {
-            get
-            {
-                float result = -1f;
-
-                var propertyType = GetInfinitePropertyType();
-                if (propertyType != null)
-                {
-                    var property = _model.GetProperty(propertyType);
-                    if (property is IPropertyDecimal decimalProperty)
-                        result = (float) decimalProperty.Value;
-                }
-
-                return result;
-            }
-
-            set
-            {
-                using (var scope = UndoRedoManager.OpenScope("Set Infinite"))
-                {
-                    var propertyType = GetInfinitePropertyType();
-                    if (propertyType != null)
-                    {
-                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                        if (property is IPropertyDecimal decimalProperty)
-                        {
-                            decimalProperty.Value = (decimal)value;
-                            scope?.Complete();
                         }
                     }
                 }
