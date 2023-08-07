@@ -1,20 +1,20 @@
 ﻿using PostSharp.Patterns.Contracts;
-using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
+using ThreatsManager.Interfaces;
 
-namespace ThreatsManager.SampleWinFormExtensions.Schemas
+namespace ThreatsManager.SampleWinFormExtensions.Assets
 {
-    public class DefinitionsPropertySchemaManager
+    internal class AssetPropertySchemaManager
     {
-        private const string Name = "Definitions";
-        private const string SchemaName = "Definitions";
+        private const string Name = "Assets";
+        private const string SchemaName = "Assets";
         private const string Namespace = "http://example.com/";
 
         private readonly IThreatModel _model;
 
-        public DefinitionsPropertySchemaManager([NotNull] IThreatModel model)
+        public AssetPropertySchemaManager([NotNull] IThreatModel model)
         {
             _model = model;
         }
@@ -24,10 +24,10 @@ namespace ThreatsManager.SampleWinFormExtensions.Schemas
             var result = _model.GetSchema(SchemaName, Namespace);
             if (result == null)
             {
-                using (var scope = UndoRedoManager.OpenScope("Add Definitions schema"))
+                using (var scope = UndoRedoManager.OpenScope("Add Assets schema"))
                 {
                     result = _model.AddSchema(SchemaName, Namespace);
-                    result.AppliesTo = Scope.ThreatModel;
+                    result.AppliesTo = Scope.ThreatModel | Scope.ExternalInteractor | Scope.Process | Scope.DataStore;
                     result.AutoApply = false;
                     result.Priority = 10;
                     result.Visible = false;
@@ -40,7 +40,7 @@ namespace ThreatsManager.SampleWinFormExtensions.Schemas
             return result;
         }
 
-        public IPropertyType DefinitionsPropertyType
+        public IPropertyType AssetPropertyType
         {
             get
             {
@@ -48,7 +48,7 @@ namespace ThreatsManager.SampleWinFormExtensions.Schemas
                 var result = schema?.GetPropertyType(Name);
                 if (result == null)
                 {
-                    using (var scope = UndoRedoManager.OpenScope("Add Definitions Property Type"))
+                    using (var scope = UndoRedoManager.OpenScope("Add Assets Property Type"))
                     {
                         result = schema.AddPropertyType(Name, PropertyValueType.JsonSerializableObject);
                         result.Visible = false;

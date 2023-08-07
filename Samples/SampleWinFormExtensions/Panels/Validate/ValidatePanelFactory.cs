@@ -5,7 +5,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 
-namespace SampleWinFormExtensions.Panels.Validate
+namespace ThreatsManager.SampleWinFormExtensions.Panels.Validate
 {
     [Extension("A53B0FCF-A888-4737-8BE0-5F38CB769A51",
         "Threat Model Validation", 1000, ExecutionMode.Management)]

@@ -1,36 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System;
+using System.Windows.Forms;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
+using ThreatsManager.SampleWinFormExtensions.Assets;
 
-namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
+namespace ThreatsManager.Extensions.Actions
 {
-    public partial class AzureDevOpsPanelFactory
+    [Extension("19F18199-9B6F-4A34-A4BE-EDB8EA00FA75", "Create Asset Context Aware Action", 500, ExecutionMode.Simplified)]
+    public class CreateAsset : IMainRibbonExtension
     {
-        
+        public event Action<IMainRibbonExtension> IteratePanels;
+        public event Action<IMainRibbonExtension> RefreshPanels;
         public event Action<IMainRibbonExtension, string, bool> ChangeRibbonActionStatus;
         public event Action<IPanelFactory> ClosePanels;
 
-        public event Action<IPanelFactory, IIdentity> PanelCreationRequired;
-        
-        public event Action<IPanelFactory, IPanel> PanelDeletionRequired;
-        
-        public event Action<IPanelFactory, IPanel> PanelShowRequired;
-        
-        public event Action<IMainRibbonExtension> IteratePanels;
-        
-        public event Action<IMainRibbonExtension> RefreshPanels;
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.Analyze;
-        public string Bar => "Tasks";
+        public Ribbon Ribbon => Ribbon.Home;
+        public string Bar => "Assets";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {
-            new ActionDefinition(Id, "CreatePanel", "AzureDevOps", Properties.Resources.devops_big,
-                Properties.Resources.devops)
+            new ActionDefinition(Id, "CreateAsset", "Create Asset", Icons.Resources.undefined_big,
+                Icons.Resources.undefined)
         };
 
         public string PanelsListRibbonAction => null;
@@ -44,8 +40,10 @@ namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
         {
             switch (action.Name)
             {
-                case "CreatePanel":
-                    PanelCreationRequired?.Invoke(this, action.Tag as IIdentity);
+                case "CreateAsset":
+                    var dialog = new CreateAssetDialog(threatModel);
+                    dialog.Show(Form.ActiveForm);
+
                     break;
             }
         }

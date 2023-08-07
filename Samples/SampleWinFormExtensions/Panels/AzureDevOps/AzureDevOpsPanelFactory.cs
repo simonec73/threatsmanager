@@ -5,7 +5,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 
-namespace SampleWinFormExtensions.Panels.AzureDevOps
+namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
 {
     [Extension("9A97643C-278A-4F39-BCCE-6D447203C12A",
         "Simulated Azure DevOps Integration", 1000, ExecutionMode.Management)]

@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.Composition;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 
-namespace SampleWinFormExtensions.Panels.Definitions
+namespace ThreatsManager.SampleWinFormExtensions.Panels.Definitions
 {
     [Extension("2ED5A24F-1666-4171-B4AB-07FF00AAD2D6",
         "Definitions Editor Panel", 1000, ExecutionMode.Business)]

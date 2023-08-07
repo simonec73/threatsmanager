@@ -1,4 +1,4 @@
-﻿namespace SampleWinFormExtensions.Panels.Validate
+﻿namespace ThreatsManager.SampleWinFormExtensions.Panels.Validate
 {
     partial class ValidatePanel
     {

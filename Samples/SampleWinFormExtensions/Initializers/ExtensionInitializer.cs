@@ -1,8 +1,9 @@
 ﻿using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.SampleWinFormExtensions.Assets;
 using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Initializers
+namespace ThreatsManager.SampleWinFormExtensions.Initializers
 {
     /// <summary>
     /// Initializer of the Extensions.
@@ -15,7 +16,12 @@ namespace SampleWinFormExtensions.Initializers
     {
         public void Initialize()
         {
+            // Note: there is no need to create a scope for the Undo/Redo, for Extension Initializers
+            //  because only Threat Models and the data they contain can be undone. 
+
             KnownTypesBinder.AddKnownType(typeof(DefinitionContainer));
+            KnownTypesBinder.AddKnownType(typeof(Assets.Assets));
+            KnownTypesBinder.AddKnownType(typeof(Asset));
         }
     }
 }

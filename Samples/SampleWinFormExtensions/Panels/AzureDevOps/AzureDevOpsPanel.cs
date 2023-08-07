@@ -8,7 +8,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Panels.AzureDevOps
+namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
 {
     public partial class AzureDevOpsPanel : UserControl, IShowThreatModelPanel<Form>
     {

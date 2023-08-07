@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleExtensions", "SampleExtensions\SampleExtensions.csproj", "{0FD96BBA-7200-4E4D-8E13-9CBE55BD6FF3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02557E72-71EE-493B-9A7B-21BC743BAF22} = {02557E72-71EE-493B-9A7B-21BC743BAF22}
+		{404D1232-CE3C-4BAA-B8F8-929D1F08BC84} = {404D1232-CE3C-4BAA-B8F8-929D1F08BC84}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWinFormExtensions", "SampleWinFormExtensions\SampleWinFormExtensions.csproj", "{404D1232-CE3C-4BAA-B8F8-929D1F08BC84}"
 EndProject
