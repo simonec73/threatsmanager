@@ -9,11 +9,12 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Diagrams
 {
-    public class ThreatEventsMarker : IMarkerProvider
+    public class ThreatEventsMarkerProvider : IMarkerProvider
     {
         private readonly IThreatEventsContainer _container;
+        private List<ThreatEventPanelItem> _items;
 
-        public ThreatEventsMarker([NotNull] IThreatEventsContainer container) 
+        public ThreatEventsMarkerProvider([NotNull] IThreatEventsContainer container) 
         {
             _container = container;
             _container.ThreatEventAdded += ThreatAdded;
@@ -82,6 +83,17 @@ namespace ThreatsManager.Extensions.Diagrams
                     }
                 }
             }
+
+            if (_items?.Any() ?? false)
+            {
+                foreach (var item in _items)
+                {
+                    item.Updated -= Item_Updated;
+                    item.Removed -= Item_Removed;
+                }
+
+                _items.Clear();
+            }
         }
 
         public Image GetIcon(int size)
@@ -143,8 +155,37 @@ namespace ThreatsManager.Extensions.Diagrams
 
         public IEnumerable<PanelItem> GetPanelItems()
         {
-            return _container?.ThreatEvents?.OrderBy(x => x.Name)
-                .Select(x => new ThreatEventPanelItem(x));
+            if (!(_items?.Any() ?? false))
+            {
+                _items = _container?.ThreatEvents?.OrderBy(x => x.Name)
+                .Select(x => new ThreatEventPanelItem(x))?.ToList();
+                if (_items?.Any() ?? false)
+                {
+                    foreach (var item in _items)
+                    {
+                        item.Updated += Item_Updated;
+                        item.Removed += Item_Removed;
+                    }
+                }
+            }
+
+            return _items;
+        }
+
+        private void Item_Removed(PanelItem item)
+        {
+            if (item is ThreatEventPanelItem threatEventPanelItem)
+            {
+                _items?.Remove(threatEventPanelItem);
+                threatEventPanelItem.Updated -= Item_Updated;
+                threatEventPanelItem.Removed -= Item_Removed;
+                StatusUpdated?.Invoke(this);
+            }
+        }
+
+        private void Item_Updated(PanelItem item)
+        {
+            StatusUpdated?.Invoke(this);
         }
 
         #region Private members to manage received events.

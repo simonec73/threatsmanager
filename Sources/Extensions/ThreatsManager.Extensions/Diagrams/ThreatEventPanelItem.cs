@@ -36,5 +36,7 @@ namespace ThreatsManager.Extensions.Diagrams
                 return result;
             }
         }
+
+        public override ClickAction ActionOnClick => ClickAction.ShowObject;
     }
 }

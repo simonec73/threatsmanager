@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Panels;
 
 namespace ThreatsManager.Extensions.Diagrams
