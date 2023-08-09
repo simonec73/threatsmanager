@@ -73,16 +73,16 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="ThreatsManager.Icons, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.0.1\lib\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.2.0.2\lib\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Interfaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Interfaces.2.0.1\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Interfaces.2.0.2\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Packaging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.0.1\lib\net481\ThreatsManager.Packaging.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.2.0.2\lib\net481\ThreatsManager.Packaging.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Utilities, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.0.1\lib\net481\ThreatsManager.Utilities.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.2.0.2\lib\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

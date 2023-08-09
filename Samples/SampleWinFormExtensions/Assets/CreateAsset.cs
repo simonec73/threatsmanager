@@ -7,6 +7,8 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 using ThreatsManager.SampleWinFormExtensions.Assets;
+using System.Drawing;
+using ThreatsManager.Interfaces.Extensions.Actions;
 
 namespace ThreatsManager.Extensions.Actions
 {
@@ -22,6 +24,20 @@ namespace ThreatsManager.Extensions.Actions
         public Guid Id => _id;
         public Ribbon Ribbon => Ribbon.Home;
         public string Bar => "Assets";
+
+        public event Action<string> ShowMessage;
+        public event Action<string> ShowWarning;
+
+        public ICommandsBarDefinition CommandsBar => new CommandsBarDefinition("Add", "Add", new IActionDefinition[]
+        {
+            new ActionDefinition(new Guid(this.GetExtensionId()), "CreateAsset", "Create Asset", 
+                Icons.Resources.undefined_big, Icons.Resources.undefined)
+            {
+                Tag = this
+            }
+        });
+
+        public string VisibilityContext => "Diagram";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {
