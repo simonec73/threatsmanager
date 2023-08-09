@@ -10,7 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.WeaknessList
 {
-    //[Extension("18F44A57-EDE7-4627-9B0A-CC85AAE558E0", "Weakness List", 10, ExecutionMode.Pioneer)]
+    [Extension("18F44A57-EDE7-4627-9B0A-CC85AAE558E0", "Weakness List", 12, ExecutionMode.Pioneer)]
     public partial class WeaknessListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IContextAwareExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.

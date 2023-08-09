@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
@@ -66,22 +67,27 @@ namespace ThreatsManager.Extensions.Actions
                         };
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            using (var merge = new MergeDialog())
+                            using (var scope = UndoRedoManager.OpenScope("Merge"))
                             {
-                                merge.SetExecutionMode(_executionMode);
-                                if (merge.Initialize(threatModel, dialog.FileName))
+                                using (var merge = new MergeDialog())
                                 {
-                                    if (merge.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                                    merge.SetExecutionMode(_executionMode);
+                                    if (merge.Initialize(threatModel, dialog.FileName))
                                     {
-                                        RefreshPanels?.Invoke(this);
-                                        var factory = ExtensionUtils.GetExtensionByLabel<IPanelFactory>("Diagram");
-                                        if (factory != null)
+                                        if (merge.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                                         {
-                                            ClosePanels?.Invoke(factory);
-                                            UpdateStatusInfoProviders?.Invoke();
-                                        }
+                                            scope?.Complete();
 
-                                        ShowMessage?.Invoke("Merge succeeded.");
+                                            RefreshPanels?.Invoke(this);
+                                            var factory = ExtensionUtils.GetExtensionByLabel<IPanelFactory>("Diagram");
+                                            if (factory != null)
+                                            {
+                                                ClosePanels?.Invoke(factory);
+                                                UpdateStatusInfoProviders?.Invoke();
+                                            }
+
+                                            ShowMessage?.Invoke("Merge succeeded.");
+                                        }
                                     }
                                 }
                             }

@@ -9,7 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.PropertySchemaList
 {
-    [Extension("17D7852D-F011-4119-8554-E6031BF1F87D", "Property Schema List", 20, ExecutionMode.Expert)]
+    [Extension("17D7852D-F011-4119-8554-E6031BF1F87D", "Property Schema List", 25, ExecutionMode.Expert)]
     public partial class PropertySchemaListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IContextAwareExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.

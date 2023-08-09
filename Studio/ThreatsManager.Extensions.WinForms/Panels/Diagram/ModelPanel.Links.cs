@@ -1,23 +1,19 @@
-﻿using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using Northwoods.Go;
+﻿using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
     public partial class ModelPanel
     {
-        private void AddLink([NotNull] ILink link)
+        private void AddLink([NotNull] ILink link, float dpiFactor = 1.0f)
         {
             var from = GetEntity(link.DataFlow.Source);
             var to = GetEntity(link.DataFlow.Target);
             if (from != null && to != null)
             {
-                var newLink = new GraphLink(link, _dpiState)
+                var newLink = new GraphLink(link, dpiFactor, _markerSize)
                 {
                     Loading = true,
                     FromPort = from.Port,
@@ -30,40 +26,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 newLink.SelectedLink += OnSelectedLink;
                 newLink.SelectedThreatEvent += OnSelectedThreatEvent;
        
-                var schemaManager = new DiagramPropertySchemaManager(link.DataFlow.Model);
-                var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
-                var property = link.GetProperty(pointsPropertyType);
-                if (property is IPropertyArray propertyArray)
-                {
-                    var array = propertyArray.Value?.ToArray();
-                    var count = array?.Length ?? 0;
-                    if (count > 0)
-                    {
-                        newLink.RealLink.ClearPoints();
-                        for (int i = 0; i < count / 2; i++)
-                        {
-                            float x;
-                            float y;
-                            switch (_dpiState)
-                            {
-                                case DpiState.TooSmall:
-                                    x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo) * 2;
-                                    y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo) * 2;
-                                    break;
-                                case DpiState.TooBig:
-                                    x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo) / 2;
-                                    y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo) / 2;
-                                    break;
-                                default:
-                                    x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo);
-                                    y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo);
-                                    break;
-                            }
-                            newLink.RealLink.AddPoint(new PointF(x, y));
-                        }
-                    }
-                }
-
                 newLink.Loading = false;
                 newLink.UpdateRoute();
             }
@@ -78,32 +40,36 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 else
                     _properties.Item = _diagram;
             }
-
         }
 
         private void _graph_LinkCreated(object sender, GoSelectionEventArgs e)
         {
             if (e.GoObject is GraphLink glink)
             {
-                glink.DpiState = _dpiState;
-                if (glink.Parent is GraphGroup group)
-                    group.Remove(glink);
-                _graph.Doc.LinksLayer.Add(glink);
-
-                if (glink.FromPort.Node is GraphEntity from && glink.ToPort.Node is GraphEntity to)
+                using (var scope = UndoRedoManager.OpenScope("Create Link"))
                 {
-                    var link = CreateLink(glink, from, to);
-                    if (link != null)
-                    {
-                        glink.Link = link;
-                        _links[link.AssociatedId] = glink;
-                    }
-                }
-                if (_actions != null)
-                    glink.SetContextAwareActions(_actions);
+                    if (glink.Parent is GraphGroup group)
+                        group.Remove(glink);
+                    _graph.Doc.LinksLayer.Add(glink);
 
-                glink.SelectedLink += OnSelectedLink;
-                glink.SelectedThreatEvent += OnSelectedThreatEvent;
+                    if (glink.FromPort.Node is GraphEntity from && glink.ToPort.Node is GraphEntity to)
+                    {
+                        var link = CreateLink(glink, from, to);
+                        if (link != null)
+                        {
+                            glink.UpdateParameters(_markerSize);
+                            glink.Link = link;
+                            _links[link.AssociatedId] = glink;
+                        }
+                    }
+                    if (_actions != null)
+                        glink.SetContextAwareActions(_actions);
+
+                    scope?.Complete();
+
+                    glink.SelectedLink += OnSelectedLink;
+                    glink.SelectedThreatEvent += OnSelectedThreatEvent;
+                }
             }
         }
 

@@ -137,9 +137,15 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             if (_createNew.Checked && !string.IsNullOrWhiteSpace(_name.Text) &&
                 _severity.SelectedItem is ISeverity severity)
             {
-                _threatType = _model.AddThreatType(_name.Text, severity);
-                if (_threatType != null)
-                    _threatType.Description = _description.Text;
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Type"))
+                {
+                    _threatType = _model.AddThreatType(_name.Text, severity);
+                    if (_threatType != null)
+                    {
+                        _threatType.Description = _description.Text;
+                        scope?.Complete();
+                    }
+                }
             }
         }
 

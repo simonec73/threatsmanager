@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -33,6 +34,8 @@ namespace ThreatsManager.DevOps.Actions
             }
         });
 
+        public string VisibilityContext => "Roadmap";
+
         public bool Execute(object item)
         {
             bool result = false;
@@ -54,32 +57,36 @@ namespace ThreatsManager.DevOps.Actions
 
             if (identity is IThreatModel model)
             {
-                var schemaManager = new DevOpsPropertySchemaManager(model);
-                var mitigations = model.Mitigations?
-                    .Where(x => schemaManager.GetFirstSeenOn(x) != null)
-                    .ToArray();
-
-                if (mitigations?.Any() ?? false)
+                using (var scope = UndoRedoManager.OpenScope("Unassign all Mitigations from all Iterations"))
                 {
-                    var configSchemaManager = new DevOpsConfigPropertySchemaManager(model);
-                    if (MessageBox.Show(
-                        $"You are about to unassign {mitigations.Length} mitigations from the assigned iterations." +
-                        $"\nDo you confirm?", "Bulk unassignment from Iterations", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    var schemaManager = new DevOpsPropertySchemaManager(model);
+                    var mitigations = model.Mitigations?
+                        .Where(x => schemaManager.GetFirstSeenOn(x) != null)
+                        .ToArray();
+
+                    if (mitigations?.Any() ?? false)
                     {
-                        foreach (var mitigation in mitigations)
+                        var configSchemaManager = new DevOpsConfigPropertySchemaManager(model);
+                        if (MessageBox.Show(
+                            $"You are about to unassign {mitigations.Length} mitigations from the assigned iterations." +
+                            $"\nDo you confirm?", "Bulk unassignment from Iterations", MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
-                            schemaManager.SetFirstSeenOn(mitigation, null);
-                        }
+                            foreach (var mitigation in mitigations)
+                            {
+                                schemaManager.SetFirstSeenOn(mitigation, null);
+                            }
 
-                        result = true;
-                        ShowMessage?.Invoke("Unassignment from Iterations succeeded.");
+                            scope?.Complete();
+                            result = true;
+                            ShowMessage?.Invoke("Unassignment from Iterations succeeded.");
+                        }
                     }
-                }
-                else
-                {
-                    ShowMessage?.Invoke(
-                        "Nothing to do, because no Mitigation has already been assigned to an Iteration.");
+                    else
+                    {
+                        ShowMessage?.Invoke(
+                            "Nothing to do, because no Mitigation has already been assigned to an Iteration.");
+                    } 
                 }
             }
 

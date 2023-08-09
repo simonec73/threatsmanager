@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
@@ -42,19 +44,23 @@ namespace ThreatsManager.Extensions.Actions
                 {
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        var bigImage = dialog.BigImage;
-                        if (bigImage != null)
+                        using (var scope = UndoRedoManager.OpenScope("Change Entity Icon"))
                         {
-                            entity.BigImage = bigImage;
+                            var bigImage = dialog.BigImage;
+                            if (bigImage != null)
+                            {
+                                entity.BigImage = bigImage;
+                            }
+
+                            var image = dialog.Image;
+                            if (image != null)
+                                entity.Image = image;
+                            var smallImage = dialog.SmallImage;
+                            if (smallImage != null)
+                                entity.SmallImage = smallImage;
+
+                            scope?.Complete();
                         }
-
-                        var image = dialog.Image;
-                        if (image != null)
-                            entity.Image = image;
-                        var smallImage = dialog.SmallImage;
-                        if (smallImage != null)
-                            entity.SmallImage = smallImage;
-
                     }
                 }
             }

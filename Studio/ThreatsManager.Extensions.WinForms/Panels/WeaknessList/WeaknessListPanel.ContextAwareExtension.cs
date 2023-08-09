@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
@@ -16,28 +13,28 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         private ContextMenuStrip _weaknessMenu;
         private ContextMenuStrip _weaknessMitigationMenu;
 
-        public Scope SupportedScopes => Scope.ThreatType | Scope.ThreatTypeMitigation;
+        public Scope SupportedScopes => Scope.Weakness | Scope.WeaknessMitigation;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menuThreatTypes = new MenuDefinition(actions, Scope.ThreatType);
-            _weaknessMenu = menuThreatTypes.CreateMenu();
-            menuThreatTypes.MenuClicked += OnThreatTypeMenuClicked;
+            var menuWeakness = new MenuDefinition(actions, Scope.Weakness);
+            _weaknessMenu = menuWeakness.CreateMenu();
+            menuWeakness.MenuClicked += OnWeaknessMenuClicked;
 
-            var menuThreatTypeMitigation = new MenuDefinition(actions, Scope.ThreatTypeMitigation);
-            _weaknessMitigationMenu = menuThreatTypeMitigation.CreateMenu();
-            menuThreatTypeMitigation.MenuClicked += OnThreatTypeMitigationMenuClicked;
+            var menuWeaknessMitigation = new MenuDefinition(actions, Scope.WeaknessMitigation);
+            _weaknessMitigationMenu = menuWeaknessMitigation.CreateMenu();
+            menuWeaknessMitigation.MenuClicked += OnWeaknessMitigationMenuClicked;
         }
 
-        private void OnThreatTypeMenuClicked(IContextAwareAction action, object context)
+        private void OnWeaknessMenuClicked(IContextAwareAction action, object context)
         {
-            if (context is IThreatType threatType)
-                action.Execute(threatType);
+            if (context is IWeakness weakness)
+                action.Execute(weakness);
         }
 
-        private void OnThreatTypeMitigationMenuClicked(IContextAwareAction action, object context)
+        private void OnWeaknessMitigationMenuClicked(IContextAwareAction action, object context)
         {
-            if (context is IThreatTypeMitigation mitigation)
+            if (context is IWeaknessMitigation mitigation)
                 action.Execute(mitigation);
         }
     }

@@ -425,4 +425,64 @@ and this is even more true for constructive criticism.</value>
   <data name="ResourcesGuard_ThresholdReached" xml:space="preserve">
     <value>Threats Manager Studio is reaching the maximum amount of available system resources.\nTo avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.\nThis message will not be repeated.</value>
   </data>
+  <data name="redo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_sel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_sel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_sel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_sel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_sel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_sel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_sel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo_sel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_sel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_sel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_sel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_sel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_sel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_sel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_sel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo_sel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="control_panel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\control_panel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="control_panel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\control_panel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="control_panel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\control_panel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="control_panel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\control_panel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

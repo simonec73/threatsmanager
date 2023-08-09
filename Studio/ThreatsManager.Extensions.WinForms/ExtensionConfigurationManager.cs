@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Diagrams;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -42,11 +44,11 @@ namespace ThreatsManager.Extensions
 
         public bool EnableEffort
         {
-            get => _configuration?.LocalGet<bool>("effort") ?? false;
+            get => _configuration?.GlobalGet<bool>("effort") ?? _configuration?.LocalGet<bool>("effort") ?? false;
 
             set
             {
-                _configuration?.LocalSet<bool>("effort", value);
+                _configuration?.GlobalSet<bool>("effort", value);
                 _dirty = true;
             }
         }
@@ -58,6 +60,185 @@ namespace ThreatsManager.Extensions
             set
             {
                 _configuration?.GlobalSet<int>("normalization", value);
+                _dirty = true;
+            }
+        }
+
+        public int DiagramIconSize
+        {
+            get
+            {
+                int result;
+
+                var size = _configuration?.GlobalGet<int>("iconSize");
+                if ((size ?? 0) == 0)
+                {
+                    if (Dpi.Factor.Height >= 8)
+                    {
+                        result = 256;
+                    }
+                    else if (Dpi.Factor.Height >= 4)
+                    {
+                        result = 128;
+                    }
+                    else if (Dpi.Factor.Height >= 3)
+                    {
+                        result = 96;
+                    }
+                    else if (Dpi.Factor.Height >= 2)
+                    {
+                        result = 64;
+                    }
+                    else
+                    {
+                        result = 32;
+                    }
+                }
+                else
+                    result = size.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("iconSize", value);
+                _dirty = true;
+            }
+        }
+
+        public int DiagramIconCenterSize
+        {
+            get
+            {
+                int result;
+
+                var size = _configuration?.GlobalGet<int>("iconCenterSize");
+                if ((size ?? 0) == 0)
+                    result = DiagramIconSize / 2;
+                else
+                    result = size.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("iconCenterSize", value);
+                _dirty = true;
+            }
+        }
+
+        public int DiagramMarkerSize
+        {
+            get
+            {
+                int result;
+
+                var size = _configuration?.GlobalGet<int>("markerSize");
+                if ((size ?? 0) == 0)
+                    result = DiagramIconSize / 2;
+                else
+                    result = size.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("markerSize", value);
+                _dirty = true;
+            }
+        }
+
+        public int DiagramZoomFactor
+        {
+            get
+            {
+                int result;
+
+                var zoom = _configuration?.GlobalGet<int>("zoomFactor");
+                if ((zoom ?? 0) == 0)
+                    result = 100;
+                else
+                    result = zoom.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("zoomFactor", value);
+                _dirty = true;
+            }
+        }
+
+        public int DiagramHorizontalSpacing
+        {
+            get
+            {
+                int result;
+
+                var value = _configuration?.GlobalGet<int>("hSpacing");
+                if ((value ?? 0) == 0)
+                    result = 50;
+                else
+                    result = value.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("hSpacing", value);
+                _dirty = true;
+            }
+        }
+
+        public int DiagramVerticalSpacing
+        {
+            get
+            {
+                int result;
+
+                var value = _configuration?.GlobalGet<int>("vSpacing");
+                if ((value ?? 0) == 0)
+                    result = 50;
+                else
+                    result = value.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("vSpacing", value);
+                _dirty = true;
+            }
+        }
+
+        public string MarkerExtension
+        {
+            get
+            {
+                string result;
+
+                var value = _configuration?.GlobalGet<string>("marker");
+                if (value != null && ExtensionUtils.GetExtension<IMarkerProviderFactory>(value) != null)
+                {
+                    result = value;
+                }
+                else
+                {
+                    result = ExtensionUtils.GetExtensions<IMarkerProviderFactory>()?.FirstOrDefault()?.GetExtensionId();
+                }
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<string>("marker", value);
                 _dirty = true;
             }
         }

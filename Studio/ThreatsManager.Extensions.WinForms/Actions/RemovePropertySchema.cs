@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -8,6 +9,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -108,12 +110,16 @@ namespace ThreatsManager.Extensions.Actions
 
                         if (properties?.Any() ?? false)
                         {
-                            foreach (var property in properties)
+                            using (var scope = UndoRedoManager.OpenScope("Remove Property Schemas"))
                             {
-                                container.RemoveProperty(property.PropertyTypeId);
-                            }
+                                foreach (var property in properties)
+                                {
+                                    container.RemoveProperty(property.PropertyTypeId);
+                                }
 
-                            result = true;
+                                scope?.Complete();
+                                result = true;
+                            }
                         }
                     }
                 }

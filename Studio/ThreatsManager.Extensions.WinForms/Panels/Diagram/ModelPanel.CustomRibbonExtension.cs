@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Dialogs;
+using ThreatsManager.Extensions.Panels.Configuration;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -264,39 +265,58 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            var schemaManager = new ModelConfigPropertySchemaManager(_diagram.Model);
-            var schema = schemaManager.GetSchema();
-            var hpt = schema.GetPropertyType("Diagram Layout Horizontal Spacing");
-            var vpt = schema.GetPropertyType("Diagram Layout Vertical Spacing");
-            var h = _diagram.Model.GetProperty(hpt) as IPropertyInteger;
-            var v = _diagram.Model.GetProperty(vpt) as IPropertyInteger;
-            var hFloat = (float) (h?.Value ?? 150f);
-            var vFloat = (float) (h?.Value ?? 100f);
+            var configuration = new ExtensionConfigurationManager(_diagram.Model, (new ConfigurationPanelFactory()).GetExtensionId());
+            var hFloat = (float) configuration.DiagramHorizontalSpacing;
+            var vFloat = (float) configuration.DiagramVerticalSpacing;
 
             switch (action.Name)
             {
                 case "CreateExtInteractor":
-                    var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
-                    var p1 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(100, 100), hFloat, vFloat);
-                    AddShape(_diagram.AddShape(interactor, p1));
+                    var p1 = GetFreePoint(new PointF(50 + _iconSize, vFloat), new SizeF(250, _iconSize + 20), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create External Interactor"))
+                    {
+                        var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
+                        AddShape(_diagram.AddShape(interactor, p1));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateProcess":
-                    var process = _diagram.Model?.AddEntity<IProcess>();
-                    var p2 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(100, 100), hFloat, vFloat);
-                    AddShape(_diagram.AddShape(process, p2));
+                    var p2 = GetFreePoint(new PointF(50 + _iconSize, vFloat), new SizeF(250, _iconSize + 20), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create Process"))
+                    {
+                        var process = _diagram.Model?.AddEntity<IProcess>();
+                        AddShape(_diagram.AddShape(process, p2));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateDataStore":
-                    var dataStore = _diagram.Model?.AddEntity<IDataStore>();
-                    var p3 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(100, 100), hFloat, vFloat);
-                    AddShape(_diagram.AddShape(dataStore, p3));
+                    var p3 = GetFreePoint(new PointF(50 + _iconSize, vFloat), new SizeF(250, _iconSize + 20), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create Data Store"))
+                    {
+                        var dataStore = _diagram.Model?.AddEntity<IDataStore>();
+                        AddShape(_diagram.AddShape(dataStore, p3));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateTrustBoundary":
-                    var trustBoundary = _diagram.Model?.AddGroup<ITrustBoundary>();
-                    var p4 = GetFreePoint(new PointF(350, 200), new SizeF(600, 300), hFloat, 200 + vFloat);
-                    AddShape(_diagram.AddShape(trustBoundary, p4, new SizeF(600, 300)));
+                    var p4 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(600, 300), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
+                    {
+                        var trustBoundary = _diagram.Model?.AddGroup<ITrustBoundary>();
+                        AddShape(_diagram.AddShape(trustBoundary, p4, new SizeF(600, 300)));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateThreatType":
@@ -311,6 +331,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             "Delete Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
+                        _properties.Item = null;
                         if (_factory.Delete(this))
                         {
                             ShowMessage("Diagram removed successfully.");
@@ -322,19 +343,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     }
                     break;
                 case "FixDiagram":
-                    var fixDiagram = new FixDiagram();
-                    if (fixDiagram.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-                    {
-                        switch (fixDiagram.Issue)
-                        {
-                            case DiagramIssue.TooSmall:
-                                HandleTooSmall();
-                                break;
-                            case DiagramIssue.TooLarge:
-                                HandleTooLarge();
-                                break;
-                        }
-                    }
+                    var fixDiagram = new FixDiagram(_diagram);
+                    fixDiagram.ShowDialog(Form.ActiveForm);
                     break;
                 case "AlignH":
                     _graph.AlignHorizontally();
@@ -358,7 +368,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     if (MessageBox.Show("Are you sure you want to automatically layout the Diagram?",
                         "Automatic Layout confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                        _graph.DoLayout(h?.Value ?? 200, v?.Value ?? 100);
+                        _graph.DoLayout(configuration.DiagramHorizontalSpacing, configuration.DiagramVerticalSpacing);
                     break;
                 case "MarkerToggle":
                     switch (MarkerStatusTrigger.CurrentStatus)
@@ -424,38 +434,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             shapesAction.Execute(shapes, links);
                     }
                     break;
-            }
-        }
-
-        private void HandleTooSmall()
-        {
-            var schemaManager = new DiagramPropertySchemaManager(_diagram.Model);
-            var propertyType = schemaManager.GetDpiFactorPropertyType();
-            if (propertyType != null)
-            {
-                if ((_diagram.GetProperty(propertyType) ?? 
-                     _diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
-                {
-                    property.Value /= 2;
-                    MessageBox.Show(this,
-                        "The Diagram will now be closed.\nPlease open it again and apply the minor fixes which may eventually be required",
-                        "Diagram fix", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ParentForm?.Close();
-                }
-            }
-        }
-
-        private void HandleTooLarge()
-        {
-            var schemaManager = new DiagramPropertySchemaManager(_diagram.Model);
-            var propertyType = schemaManager.GetDpiFactorPropertyType();
-            if (propertyType != null)
-            {
-                if ((_diagram.GetProperty(propertyType) ?? 
-                     _diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
-                {
-                    property.Value *= 2;
-                }
             }
         }
 

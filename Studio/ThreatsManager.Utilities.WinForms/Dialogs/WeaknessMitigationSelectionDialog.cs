@@ -104,23 +104,28 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
 
         private void _ok_Click(object sender, EventArgs e)
         {
-            if (_associateExisting.Checked)
+            using (var scope = UndoRedoManager.OpenScope("Add Mitigation"))
             {
-                if (_existingMitigation.SelectedItem is IMitigation mitigation &&
-                    _strengthExisting.SelectedItem != null)
+                if (_associateExisting.Checked)
                 {
-                    _mitigation = _weakness.AddMitigation(mitigation, _strengthExisting.SelectedItem as IStrength);
+                    if (_existingMitigation.SelectedItem is IMitigation mitigation &&
+                        _strengthExisting.SelectedItem != null)
+                    {
+                        _mitigation = _weakness.AddMitigation(mitigation, _strengthExisting.SelectedItem as IStrength);
+                        scope?.Complete();
+                    }
                 }
-            }
-            else if (_createNew.Checked)
-            {
-                if (Enum.TryParse<SecurityControlType>((string)_controlType.SelectedItem, out var controlType) &&
-                    _strength.SelectedItem != null)
+                else if (_createNew.Checked)
                 {
-                    var newMitigation = _weakness.Model.AddMitigation(_name.Text);
-                    newMitigation.Description = _description.Text;
-                    newMitigation.ControlType = controlType;
-                    _mitigation = _weakness.AddMitigation(newMitigation, _strength.SelectedItem as IStrength);
+                    if (Enum.TryParse<SecurityControlType>((string)_controlType.SelectedItem, out var controlType) &&
+                        _strength.SelectedItem != null)
+                    {
+                        var newMitigation = _weakness.Model.AddMitigation(_name.Text);
+                        newMitigation.Description = _description.Text;
+                        newMitigation.ControlType = controlType;
+                        _mitigation = _weakness.AddMitigation(newMitigation, _strength.SelectedItem as IStrength);
+                        scope?.Complete();
+                    }
                 }
             }
         }

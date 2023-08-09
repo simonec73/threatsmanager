@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
@@ -6,6 +7,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
@@ -44,18 +46,22 @@ namespace ThreatsManager.DevOps.Actions
 
             if (identity is IThreatType threatType)
             {
-                var dialog = new SelectSeverityDialog(threatType);
-                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
-                if (result && threatType.Model is IThreatModel model)
+                using (var scope = UndoRedoManager.OpenScope("Apply Severity to Threat Events"))
                 {
-                    var threatEvents = model.GetThreatEvents(threatType)?.ToArray();
-                    if (threatEvents?.Any() ?? false)
+                    var dialog = new SelectSeverityDialog(threatType);
+                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                    if (result && threatType.Model is IThreatModel model)
                     {
-                        foreach (var threatEvent in threatEvents)
+                        var threatEvents = model.GetThreatEvents(threatType)?.ToArray();
+                        if (threatEvents?.Any() ?? false)
                         {
-                            threatEvent.Severity = dialog.Severity;
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                threatEvent.Severity = dialog.Severity;
+                            }
+                            scope?.Complete();
                         }
-                    }
+                    } 
                 }
             }
 

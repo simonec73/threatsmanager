@@ -73,7 +73,13 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             if (e.KeyCode == Keys.Escape)
             {
                 this.Close();
-            }
+            } else if (e.Control && e.KeyCode == Keys.Z)
+            {
+                UndoRedoManager.Undo();
+            } else if (e.Control && e.KeyCode == Keys.Y)
+            {
+                UndoRedoManager.Redo();
+            }    
         }
 
         private void ItemEditorDialog_Resize(object sender, EventArgs e)

@@ -1341,4 +1341,10 @@ Are you sure you want still to get full access rights? </value>
   <data name="Azure_DevOps_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Azure DevOps_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="diagram_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\diagram_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="diagram_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\diagram_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

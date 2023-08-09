@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -8,12 +9,13 @@ using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Quality.Schemas;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Quality.Actions
 {
     [Extension("CB6702CF-1717-419F-A2D0-EE6CA395B036", "Enable Annotations Context Aware Action", 100, ExecutionMode.Management)]
     public class EnableAnnotations : IShapeContextAwareAction, ILinkContextAwareAction, IIdentityContextAwareAction, 
-        IThreatEventMitigationContextAwareAction, IThreatTypeMitigationContextAwareAction
+        IThreatEventMitigationContextAwareAction, IThreatTypeMitigationContextAwareAction, IWeaknessMitigationContextAwareAction
     {
         public Scope Scope => Scope.All;
         public string Label => "Enable Annotations";
@@ -77,6 +79,18 @@ namespace ThreatsManager.Quality.Actions
             return result;
         }
 
+        public bool Execute(IWeaknessMitigation identity)
+        {
+            bool result = false;
+
+            if (identity is IPropertiesContainer container)
+            {
+                result = Execute(container);
+            }
+
+            return result;
+        }
+
         public bool Execute(IIdentity identity)
         {
             bool result = false;
@@ -118,8 +132,12 @@ namespace ThreatsManager.Quality.Actions
 
             if (container is IThreatModelChild child)
             {
-                var schemaManager = new AnnotationsPropertySchemaManager(child.Model);
-                result = schemaManager.EnableAnnotations(container);
+                using (var scope = UndoRedoManager.OpenScope("Enable Annotations"))
+                {
+                    var schemaManager = new AnnotationsPropertySchemaManager(child.Model);
+                    result = schemaManager.EnableAnnotations(container);
+                    scope?.Complete();
+                }
             }
 
             return result;

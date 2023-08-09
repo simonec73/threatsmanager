@@ -21,6 +21,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         {
             _properties.Item = null;
 
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
             if (ddc != null)
             {

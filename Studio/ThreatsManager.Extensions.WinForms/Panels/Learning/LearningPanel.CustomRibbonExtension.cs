@@ -15,6 +15,7 @@ using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
+#if !PORTABLE
 #pragma warning disable CS0067
     public partial class LearningPanel
     {
@@ -134,4 +135,5 @@ namespace ThreatsManager.Extensions.Panels.Learning
             }
         }
     }
+#endif
 }

@@ -39,6 +39,9 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
 
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<MitigationListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -58,6 +61,11 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             LoadModel();
         }
         #endregion
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
 
         public bool IsInitialized => _model != null;
         

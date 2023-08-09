@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -9,6 +10,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -95,20 +97,24 @@ namespace ThreatsManager.Extensions.Actions
 
             if (container is IThreatModelChild child)
             {
-                var propertyType = new AutoGenRulesPropertySchemaManager(child.Model).GetPropertyType();
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Paste Auto Gen Rule"))
                 {
-                    var property = container.GetProperty(propertyType);
-                    if (property != null)
+                    var propertyType = new AutoGenRulesPropertySchemaManager(child.Model).GetPropertyType();
+                    if (propertyType != null)
                     {
-                        property.StringValue = value;
-                    }
-                    else
-                    {
-                        container.AddProperty(propertyType, value);
-                    }
+                        var property = container.GetProperty(propertyType);
+                        if (property != null)
+                        {
+                            property.StringValue = value;
+                        }
+                        else
+                        {
+                            container.AddProperty(propertyType, value);
+                        }
 
-                    result = true;
+                        scope?.Complete();
+                        result = true;
+                    }
                 }
             }
 

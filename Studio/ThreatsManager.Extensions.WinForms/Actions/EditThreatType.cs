@@ -2,12 +2,14 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
@@ -54,9 +56,13 @@ namespace ThreatsManager.Extensions.Actions
             {
                 using (var dialog = new ItemEditorDialog())
                 {
-                    dialog.SetExecutionMode(_executionMode);
-                    dialog.Item = threatEvent.ThreatType;
-                    dialog.ShowDialog(Form.ActiveForm);
+                    using (var scope = UndoRedoManager.OpenScope("Edit Threat Type"))
+                    {
+                        dialog.SetExecutionMode(_executionMode);
+                        dialog.Item = threatEvent.ThreatType;
+                        dialog.ShowDialog(Form.ActiveForm);
+                        scope?.Complete();
+                    }
                 }
                 result = true;
             }

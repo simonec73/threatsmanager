@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.DevOps.Schemas;
-using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -20,22 +16,26 @@ namespace ThreatsManager.DevOps.BeforeSave
     {
         public void Execute([NotNull] IThreatModel model)
         {
-            var schemaManager = new DevOpsConfigPropertySchemaManager(model);
-            var iteration = schemaManager.CurrentIteration ?? schemaManager.PreviousIteration;
-            if (iteration != null)
+            using (var scope = UndoRedoManager.OpenScope("Update Iteration Risk"))
             {
-                var extensionId = ExtensionUtils.GetExtensionByLabel<IConfigurationPanelFactory<Form>>(
-                    "Extensions Configuration Panel")?.GetExtensionId();
-
-                if (extensionId != null)
+                var schemaManager = new DevOpsConfigPropertySchemaManager(model);
+                var iteration = schemaManager.CurrentIteration ?? schemaManager.PreviousIteration;
+                if (iteration != null)
                 {
-                    var normalizationReference = model.GetExtensionConfiguration(extensionId)?
-                        .GlobalGet<int>("normalization") ?? 0;
+                    var extensionId = ExtensionUtils.GetExtensionByLabel<IConfigurationPanelFactory<Form>>(
+                        "Extensions Configuration Panel")?.GetExtensionId();
 
-                    var risk = model.EvaluateRisk(normalizationReference);
-                    if (risk > 0f)
+                    if (extensionId != null)
                     {
-                        schemaManager.SetIterationRisk(iteration, risk);
+                        var normalizationReference = model.GetExtensionConfiguration(extensionId)?
+                            .GlobalGet<int>("normalization") ?? 0;
+
+                        var risk = model.EvaluateRisk(normalizationReference);
+                        if (risk > 0f)
+                        {
+                            schemaManager.SetIterationRisk(iteration, risk);
+                            scope?.Complete();
+                        }
                     }
                 }
             }

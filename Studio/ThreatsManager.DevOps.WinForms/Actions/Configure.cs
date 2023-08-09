@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.DevOps.Dialogs;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -52,11 +53,15 @@ namespace ThreatsManager.DevOps.Actions
                 switch (action.Name)
                 {
                     case "Configure":
-                        var dialog = new DevOpsConfigurationDialog();
-                        await dialog.Initialize(threatModel);
-                        dialog.ShowDialog(Form.ActiveForm);
-                        var connector = DevOpsManager.GetConnector(threatModel);
-                        Connect.ChangeDisconnectButtonStatus(connector, true);
+                        using (var scope = UndoRedoManager.OpenScope("Configure DevOps"))
+                        {
+                            var dialog = new DevOpsConfigurationDialog();
+                            await dialog.Initialize(threatModel);
+                            dialog.ShowDialog(Form.ActiveForm);
+                            var connector = DevOpsManager.GetConnector(threatModel);
+                            scope?.Complete();
+                            Connect.ChangeDisconnectButtonStatus(connector, true); 
+                        }
                         break;
                 }
             }

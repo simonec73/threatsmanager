@@ -31,6 +31,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
 
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<ThreatTypeListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -79,6 +82,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         #endregion
 
         public bool IsInitialized => _model != null;
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
 
         #region Threat Type level.
         private void InitializeGrid()

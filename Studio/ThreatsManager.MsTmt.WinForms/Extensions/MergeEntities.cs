@@ -59,28 +59,32 @@ namespace ThreatsManager.MsTmt.Extensions
                     dialog.Initialize(entities);
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        var target = dialog.Target;
-                        var sources = dialog.Sources?.ToArray();
-                        var strategy = dialog.Strategy;
-
-                        if (target != null && target.Model is IThreatModel model &&
-                            (sources?.Any() ?? false) && Validate(target, sources, model, strategy))
+                        using (var scope = UndoRedoManager.OpenScope("Merge Entities"))
                         {
-                            var targetShape = shapes.FirstOrDefault(x => x.AssociatedId == target.Id);
+                            var target = dialog.Target;
+                            var sources = dialog.Sources?.ToArray();
+                            var strategy = dialog.Strategy;
 
-                            var diagram =
-                                model.Diagrams?.FirstOrDefault(x => x.GetEntityShape(target.Id) == targetShape);
-
-                            // Merge is about moving the Data Flows, nothing else.
-                            HandleIncoming(target, sources, model, diagram, strategy);
-                            HandleOutgoing(target, sources, model, diagram, strategy);
-
-                            foreach (var source in sources)
+                            if (target != null && target.Model is IThreatModel model &&
+                                (sources?.Any() ?? false) && Validate(target, sources, model, strategy))
                             {
-                                model.RemoveEntity(source.Id);
-                            }
+                                var targetShape = shapes.FirstOrDefault(x => x.AssociatedId == target.Id);
 
-                            result = true;
+                                var diagram =
+                                    model.Diagrams?.FirstOrDefault(x => x.GetEntityShape(target.Id) == targetShape);
+
+                                // Merge is about moving the Data Flows, nothing else.
+                                HandleIncoming(target, sources, model, diagram, strategy);
+                                HandleOutgoing(target, sources, model, diagram, strategy);
+
+                                foreach (var source in sources)
+                                {
+                                    model.RemoveEntity(source.Id);
+                                }
+
+                                scope?.Complete();
+                                result = true;
+                            }
                         }
                     }
                 }
@@ -89,7 +93,6 @@ namespace ThreatsManager.MsTmt.Extensions
             return result;
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private bool Validate([NotNull] IEntity target, [NotNull] IEnumerable<IEntity> sources, 
             [NotNull] IThreatModel model, ReplacementStrategy strategy)
         {
@@ -301,5 +304,7 @@ namespace ThreatsManager.MsTmt.Extensions
                 Tag = this
             }
         });
+
+        public string VisibilityContext => "Diagram";
     }
 }

@@ -42,12 +42,17 @@ namespace ThreatsManager.Extensions.Dialogs
                     PropertySchemas = list
                 };
 
-                if (_model.Merge(_template, def) && _applySchemas.Checked)
+                using (var scope = UndoRedoManager.OpenScope("Import Schema"))
                 {
-                    foreach (var id in list)
+                    if (_model.Merge(_template, def) && _applySchemas.Checked)
                     {
-                        _model.ApplySchema(id);
+                        foreach (var id in list)
+                        {
+                            _model.ApplySchema(id);
+                        }
                     }
+
+                    scope?.Complete();
                 }
             }
         }

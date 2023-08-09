@@ -7,6 +7,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
@@ -16,6 +17,17 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         IContextAwareExtension, IPanelFactoryActionsRequestor, IExecutionModeSupport
     {
         private ExecutionMode _executionMode = ExecutionMode.Expert;
+
+        public ModelPanelFactory()
+        {
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            RefreshPanels?.Invoke(this);
+
+        }
 
         #region IPanelFactory implementation.
         /// <summary>

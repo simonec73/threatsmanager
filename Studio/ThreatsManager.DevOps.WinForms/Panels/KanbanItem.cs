@@ -200,7 +200,7 @@ namespace ThreatsManager.DevOps.Panels
         {
             if (view is GoOverview) return null;
             var result = new GoContextMenu(view);
-            result.MenuItems.Add(new MenuItem("Associate to DevOps object", AssociateToDevOps));
+            result.Items.Add(new ToolStripMenuItem("Associate to DevOps object", null, AssociateToDevOps));
 
             return result;
         }

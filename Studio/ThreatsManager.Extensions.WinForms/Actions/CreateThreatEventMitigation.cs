@@ -1,10 +1,9 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -47,9 +46,14 @@ namespace ThreatsManager.Extensions.Actions
 
             if (identity is IThreatEvent threatEvent)
             {
-                using (var dialog = new ThreatEventMitigationSelectionDialog(threatEvent))
+                using (var scope = UndoRedoManager.OpenScope("Create Threat Event Mitigation"))
                 {
-                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                    using (var dialog = new ThreatEventMitigationSelectionDialog(threatEvent))
+                    {
+                        result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                    }
+
+                    if (result) scope?.Complete();
                 }
             }
 

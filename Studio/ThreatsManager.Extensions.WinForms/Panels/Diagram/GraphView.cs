@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using Northwoods.Go;
 using Northwoods.Go.Layout;
 using PostSharp.Patterns.Contracts;
-using Syncfusion.XlsIO.Parser.Biff_Records;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
     public sealed class GraphView : GoView, IInitializableObject
     {
-        private DpiState _dpiState = DpiState.Ok;
         private IDiagram _diagram;
-        private bool _originalScale = true;
-        private PointF _originalDocPosition = new PointF();
-        private float _originalDocScale = 1.0f;
-        private List<string> _buckets;
-        private Dictionary<string, List<IContextAwareAction>> _actions;
 
         public GraphView()
         {
@@ -34,18 +28,43 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             // user created links will be instances of GraphLink
             NewLinkClass = typeof(GraphLink);
 
-            //GridSnapDrag = GoViewSnapStyle.Jump;
+            GridSnapDrag = GoViewSnapStyle.None;
             //GridCellSize = new SizeF(10,10);
             GridStyle = GoViewGridStyle.None;
 
-            // replace both standard linking tools with custom ones
-            //ReplaceMouseTool(typeof(GoToolLinkingNew), new GraphViewLinkingNewTool(this));
-            //ReplaceMouseTool(typeof(GoToolRelinking), new GraphViewRelinkingTool(this));
+            ObjectResized += GraphView_ObjectResized;
         }
 
-        public event Action<string> SetStatusMessage;
-        
-        public event Action<float> SetStatusZoom;
+        private void GraphView_ObjectResized(object sender, GoSelectionEventArgs e)
+        {
+            if (e.GoObject is GraphGroup group)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Resize Group"))
+                {
+                    var shape = group.GroupShape;
+                    var border = group.Border;
+
+                    if (shape.Size.Width != border.Size.Width ||
+                        shape.Size.Height != border.Size.Height)
+                        shape.Size = new SizeF(border.Size.Width, border.Size.Height);
+
+                    var location = group.Location;
+                    float centerX = location.X; 
+                    float centerY = location.Y + group.Label.Height / 2f; 
+
+                    if (centerX != shape.Position.X || centerY != shape.Position.Y)
+                    {
+                        shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
+                    }
+
+                    scope?.Complete();
+                }
+            }
+            else
+            {
+
+            }
+        }
 
         public event Action<PointF, GraphGroup> CreateExternalInteractor;
         
@@ -57,9 +76,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         
         public event Action<Guid, PointF, GraphGroup> CreateIdentity;
 
-        public void Initialize([NotNull] IDiagram diagram, DpiState dpiState)
+        public void Initialize([NotNull] IDiagram diagram)
         {
-            _dpiState = dpiState;
             _diagram = diagram;
             Document = CreateDocument();
         }
@@ -68,9 +86,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public override GoDocument CreateDocument()
         {
-            GoDocument doc = new GraphDoc();
-            //doc.UndoManager = new GoUndoManager();
-            return doc;
+            return new GraphDoc();
         }
 
         public GraphDoc Doc
@@ -78,119 +94,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             get { return Document as GraphDoc; }
         }
 
-        //public String StatusMessage
-        //{
-        //    get { return myMessage; }
-        //    set
-        //    {
-        //        myMessage = value;
-        //        SetStatusMessage?.Invoke(myMessage);
-        //    }
-        //}
-
-        /// <summary>
-        /// This method is responsible for updating all of the view's visible
-        /// state outside of the GoView itself--the title bar, status bar, and properties grid.
-        /// </summary>
-        public void UpdateFormInfo()
-        {
-            UpdateTitle();
-            SetStatusMessage?.Invoke(Doc.Location);
-            SetStatusZoom?.Invoke(DocScale);
-        }
-
-        /// <summary>
-        /// Update the title bar with the view's document's Name, and an indication
-        /// of whether the document is read-only and whether it has been modified.
-        /// </summary>
-        public void UpdateTitle()
-        {
-            if (Parent is Form win)
-            {
-                String title = Document.Name;
-                if (Doc.IsReadOnly)
-                    title += " [Read Only]";
-                if (Doc.IsModified)
-                    title += "*";
-                win.Text = title;
-            }
-        }
-
-        /// <summary>
-        /// Add page numbers to printed pages, in case someone drops the pages and needs to resort them.
-        /// </summary>
-        /// <param name="g"></param>
-        /// <param name="e"></param>
-        /// <param name="hpnum"></param>
-        /// <param name="hpmax"></param>
-        /// <param name="vpnum"></param>
-        /// <param name="vpmax"></param>
-        protected override void PrintDecoration(Graphics g, PrintPageEventArgs e, int hpnum, int hpmax, int vpnum, int vpmax)
-        {
-            String msg = hpnum.ToString() + "," + vpnum.ToString();
-            Font font = new Font("Verdana", 10);
-            SizeF size = g.MeasureString(msg, font);
-            PointF pt = new PointF(e.MarginBounds.X + e.MarginBounds.Width / 2 - size.Width / 2,
-                e.MarginBounds.Y + e.MarginBounds.Height);
-            g.DrawString(msg, font, Brushes.Blue, pt);
-            base.PrintDecoration(g, e, hpnum, hpmax, vpnum, vpmax);
-        }
-
-        /// <summary>
-        /// If the document's name changes, update the title;
-        /// if the document's location changes, update the status bar
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="evt"></param>
-        protected override void OnDocumentChanged(Object sender, GoChangedEventArgs evt)
-        {
-            base.OnDocumentChanged(sender, evt);
-            if (evt.Object is IGoLink &&
-                (evt.SubHint == GoLink.ChangedFromPort || evt.SubHint == GoLink.ChangedToPort))
-            {
-                SetStatusMessage?.Invoke("Changed a link's port");
-            }
-            else if (evt.Hint == GoLayer.InsertedObject)
-            {
-                if (evt.Object is IGoLink)
-                {
-                    SetStatusMessage?.Invoke("Inserted a link");
-                }
-            }
-            else if (evt.Hint == GoLayer.RemovedObject)
-            {
-                if (evt.Object is IGoLink)
-                {
-                    SetStatusMessage?.Invoke("Removed a link");
-                }
-            }
-            else if (evt.Hint == GoDocument.ChangedName ||
-                     evt.Hint == GoDocument.RepaintAll || evt.Hint == GoDocument.FinishedUndo ||
-                     evt.Hint == GoDocument.FinishedRedo)
-            {
-                UpdateFormInfo();
-            }
-            else if (evt.Hint == GraphDoc.ChangedLocation)
-            {
-                SetStatusMessage?.Invoke(Doc.Location);
-            }
-        }
-
-        /// <summary>
-        /// If the view's document is replaced, update the title;
-        /// if the view's scale changes, update the status bar
-        /// </summary>
-        /// <param name="evt"></param>
-        protected override void OnPropertyChanged(PropertyChangedEventArgs evt)
-        {
-            base.OnPropertyChanged(evt);
-            if (evt.PropertyName == "Document")
-                UpdateFormInfo();
-            else if (evt.PropertyName == "DocScale")
-                SetStatusZoom?.Invoke(DocScale);
-        }
-
         #region Context Menu.
+        private List<string> _buckets;
+        private Dictionary<string, List<IContextAwareAction>> _actions;
+
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
             var effective = actions.Where(x => (x.Scope & Scope.Diagram) != 0).ToArray();
@@ -240,11 +147,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         separator = true;
 
-                        if (menu.MenuItems.Count > 0)
-                            menu.MenuItems.Add(new MenuItem("-"));
+                        if (menu.Items.Count > 0)
+                            menu.Items.Add(new ToolStripSeparator());
                     }
 
-                    menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                    menu.Items.Add(new ToolStripMenuItem(action.Label, action.SmallIcon, DoAction)
                     {
                         Tag = action
                     });
@@ -254,7 +161,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void DoAction(object sender, EventArgs e)
         {
-            if (sender is MenuItem menuItem &&
+            if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IContextAwareAction action)
             {
                 action.Execute(_diagram);
@@ -282,36 +189,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         }
         #endregion
 
-        /// <summary>
-        /// Handle a drop from the tree view.
-        /// </summary>
-        /// <param name="evt"></param>
-        //protected override IGoCollection DoExternalDrop(DragEventArgs evt)
-        //{
-        //    IDataObject data = evt.Data;
-        //    Object treenodeobj = data.GetData(typeof(TreeNode));
-        //    if (treenodeobj is TreeNode treenode)
-        //    {
-        //        Point screenPnt = new Point(evt.X, evt.Y);
-        //        Point viewPnt = PointToClient(screenPnt);
-        //        PointF docPnt = ConvertViewToDoc(viewPnt);
-        //        StartTransaction();
-        //        Selection.Clear();
-        //        Selection.HotSpot = new SizeF(0, 0);
-        //        if (treenode.Tag is GoObject tag)
-        //        {
-        //            var newobj = Document.AddCopy(tag, docPnt);
-        //            Selection.Add(newobj);
-        //        }
-        //        FinishTransaction("Insert from TreeView");
-        //        return Selection;
-        //    }
-        //    else
-        //    {
-        //        return base.DoExternalDrop(evt);
-        //    }
-        //}
-
+        #region Drag & Drop.
         protected override void OnBackgroundSelectionDropped(GoInputEventArgs evt)
         {
             bool wasinbox = false;
@@ -332,19 +210,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         protected override void OnExternalObjectsDropped(GoInputEventArgs evt)
         {
-            PointF point;
-            switch (_dpiState)
-            {
-                case DpiState.TooSmall:
-                    point = new PointF(evt.DocPoint.X / 2, evt.DocPoint.Y / 2);
-                    break;
-                case DpiState.TooBig:
-                    point = new PointF(evt.DocPoint.X * 2, evt.DocPoint.Y * 2);
-                    break;
-                default:
-                    point = evt.DocPoint;
-                    break;
-            }
+            PointF point = evt.DocPoint;
 
             if (Selection.Primary is GoSimpleNode simpleNode)
             {
@@ -372,10 +238,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         break;
                 }
             } 
-            else if (Selection.Primary is GraphThreatTypeNode threatTypeNode)
+            else if (Selection.Primary is GraphPaletteItemNode paletteItemNode)
             {
-                var threatType = threatTypeNode.ThreatType;
-                threatTypeNode.Remove();
+                var item = paletteItemNode.Item;
+                paletteItemNode.Remove();
 
                 var nodes = Document.PickObjects(point, false, null, 100);
                 foreach (var node in nodes)
@@ -386,7 +252,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         var entity = _diagram.Model?.GetEntity(gnode.EntityShape.AssociatedId);
                         if (entity != null)
                         {
-                            entity.AddThreatEvent(threatType);
+                            item.Apply(entity);
                             gnode.ShowThreats(this);
                         }
                     }
@@ -395,11 +261,48 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         var dataFlow = _diagram.Model?.GetDataFlow(glink.Link.AssociatedId);
                         if (dataFlow != null)
                         {
-                            dataFlow.AddThreatEvent(threatType);
+                            item.Apply(dataFlow);
+
                             glink.ShowThreats(this, point);
                         }
                     }
+                    else if (parent is GraphGroup ggroup)
+                    {
+                        var group = _diagram.Model?.GetGroup(ggroup.GroupShape.AssociatedId);
+                        if (group != null)
+                        {
+                            item.Apply(group);
+                            //ggroup.ShowThreats(this);
+                        }
+                    }
                 }
+            }
+        }
+
+        private RecordingScope _moveScope;
+
+        protected override void DoInternalDrag(DragEventArgs evt)
+        {
+            if (_moveScope == null)
+                _moveScope = UndoRedoManager.OpenScope("Moving objects");
+
+            base.DoInternalDrag(evt);
+        }
+
+        protected override void DoInternalDrop(DragEventArgs evt)
+        {
+            base.DoInternalDrop(evt);
+
+            _moveScope?.Complete();
+            _moveScope = null;
+        }
+
+        protected override void OnQueryContinueDrag(QueryContinueDragEventArgs evt)
+        {
+            if (_moveScope != null && evt.Action == DragAction.Cancel)
+            {
+                _moveScope.Dispose();
+                _moveScope = null;
             }
         }
 
@@ -423,6 +326,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             return result;
         }
+        #endregion
 
         #region Layout functions.
         public void AlignLeftSides()
@@ -430,19 +334,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject obj = GetPrimaryNode();
             if (obj != null && !(obj is IGoLink))
             {
-                StartTransaction();
-                float X = obj.SelectionObject.Left;
-                foreach (GoObject temp in Selection)
+                using (var scope = UndoRedoManager.OpenScope("Diagram Layout - Align left sides"))
                 {
-                    GoObject t = temp.SelectionObject;
-                    if (t.Parent is GraphEntity ge)
+                    StartTransaction();
+                    float X = obj.SelectionObject.Left;
+                    foreach (GoObject temp in Selection)
                     {
-                        ge.Left = X;
-                        if (ge.Parent is GraphGroup group)
-                            group.RefreshBorder();
+                        GoObject t = temp.SelectionObject;
+                        if (t.Parent is GraphEntity ge)
+                        {
+                            ge.Left = X;
+                            if (ge.Parent is GraphGroup group)
+                                group.RefreshBorder();
+                        }
                     }
+                    FinishTransaction("Align Left Sides");
+                    scope?.Complete();
                 }
-                FinishTransaction("Align Left Sides");
             }
             else
             {
@@ -455,19 +363,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject obj = GetPrimaryNode();
             if (obj != null && !(obj is IGoLink))
             {
-                StartTransaction();
-                float Y = obj.SelectionObject.Center.Y;
-                foreach (GoObject temp in Selection)
+                using (var scope = UndoRedoManager.OpenScope("Diagram Layout - Align horizontally"))
                 {
-                    GoObject t = temp.SelectionObject;
-                    if (t.Parent is GraphEntity ge)
+                    StartTransaction();
+                    float Y = obj.SelectionObject.Center.Y;
+                    foreach (GoObject temp in Selection)
                     {
-                        ge.Center = new PointF(t.Center.X, Y);
-                        if (ge.Parent is GraphGroup group)
-                            group.RefreshBorder();
+                        GoObject t = temp.SelectionObject;
+                        if (t.Parent is GraphEntity ge)
+                        {
+                            ge.Center = new PointF(t.Center.X, Y);
+                            if (ge.Parent is GraphGroup group)
+                                group.RefreshBorder();
+                        }
                     }
+                    FinishTransaction("Align Vertical Centers");
+                    scope?.Complete();
                 }
-                FinishTransaction("Align Vertical Centers");
             }
             else
             {
@@ -480,19 +392,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject obj = GetPrimaryNode();
             if (obj != null && !(obj is IGoLink))
             {
-                StartTransaction();
-                float X = obj.SelectionObject.Right;
-                foreach (GoObject temp in Selection)
+                using (var scope = UndoRedoManager.OpenScope("Diagram Layout - Align right sides"))
                 {
-                    GoObject t = temp.SelectionObject;
-                    if (t.Parent is GraphEntity ge)
+                    StartTransaction();
+                    float X = obj.SelectionObject.Right;
+                    foreach (GoObject temp in Selection)
                     {
-                        ge.Right = X;
-                        if (ge.Parent is GraphGroup group)
-                            group.RefreshBorder();
+                        GoObject t = temp.SelectionObject;
+                        if (t.Parent is GraphEntity ge)
+                        {
+                            ge.Right = X;
+                            if (ge.Parent is GraphGroup group)
+                                group.RefreshBorder();
+                        }
                     }
+                    FinishTransaction("Align Right Sides");
+                    scope?.Complete();
                 }
-                FinishTransaction("Align Right Sides");
             }
             else
             {
@@ -505,19 +421,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject obj = GetPrimaryNode();
             if (obj != null && !(obj is IGoLink))
             {
-                StartTransaction();
-                float Y = obj.SelectionObject.Top;
-                foreach (GoObject temp in Selection)
+                using (var scope = UndoRedoManager.OpenScope("Diagram Layout - Align tops"))
                 {
-                    GoObject t = temp.SelectionObject;
-                    if (t.Parent is GraphEntity ge)
+                    StartTransaction();
+                    float Y = obj.SelectionObject.Top;
+                    foreach (GoObject temp in Selection)
                     {
-                        ge.Top = Y;
-                        if (ge.Parent is GraphGroup group)
-                            group.RefreshBorder();
+                        GoObject t = temp.SelectionObject;
+                        if (t.Parent is GraphEntity ge)
+                        {
+                            ge.Top = Y;
+                            if (ge.Parent is GraphGroup group)
+                                group.RefreshBorder();
+                        }
                     }
+                    FinishTransaction("Align Tops");
+                    scope?.Complete();
                 }
-                FinishTransaction("Align Tops");
             }
             else
             {
@@ -530,19 +450,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject obj = GetPrimaryNode();
             if (obj != null && !(obj is IGoLink))
             {
-                StartTransaction();
-                float X = obj.SelectionObject.Center.X;
-                foreach (GoObject temp in Selection)
+                using (var scope = UndoRedoManager.OpenScope("Diagram Layout - Align vertically"))
                 {
-                    GoObject t = temp.SelectionObject;
-                    if (t.Parent is GraphEntity ge)
+                    StartTransaction();
+                    float X = obj.SelectionObject.Center.X;
+                    foreach (GoObject temp in Selection)
                     {
-                        ge.Center = new PointF(X, t.Center.Y);
-                        if (ge.Parent is GraphGroup group)
-                            group.RefreshBorder();
+                        GoObject t = temp.SelectionObject;
+                        if (t.Parent is GraphEntity ge)
+                        {
+                            ge.Center = new PointF(X, t.Center.Y);
+                            if (ge.Parent is GraphGroup group)
+                                group.RefreshBorder();
+                        }
                     }
+                    FinishTransaction("Align Horizontal Centers");
+                    scope?.Complete();
                 }
-                FinishTransaction("Align Horizontal Centers");
             }
             else
             {
@@ -555,19 +479,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject obj = GetPrimaryNode();
             if (obj != null && !(obj is IGoLink))
             {
-                StartTransaction();
-                float Y = obj.SelectionObject.Bottom;
-                foreach (GoObject temp in Selection)
+                using (var scope = UndoRedoManager.OpenScope("Diagram Layout - Align bottoms"))
                 {
-                    GoObject t = temp.SelectionObject;
-                    if (t.Parent is GraphEntity ge)
+                    StartTransaction();
+                    float Y = obj.SelectionObject.Bottom;
+                    foreach (GoObject temp in Selection)
                     {
-                        ge.Bottom = Y;
-                        if (ge.Parent is GraphGroup group)
-                            group.RefreshBorder();
+                        GoObject t = temp.SelectionObject;
+                        if (t.Parent is GraphEntity ge)
+                        {
+                            ge.Bottom = Y;
+                            if (ge.Parent is GraphGroup group)
+                                group.RefreshBorder();
+                        }
                     }
+                    FinishTransaction("Align Bottoms");
+                    scope?.Complete();
                 }
-                FinishTransaction("Align Bottoms");
             }
             else
             {
@@ -577,50 +505,58 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public void DoLayout([NotNull] GraphGroup group, int spacingHorizontal, int spacingVertical)
         {
-            var layout = new GoLayoutLayeredDigraph()
+            using (var scope = UndoRedoManager.OpenScope("Diagram Layout"))
             {
-                Document = Doc, 
-                DirectionOption = GoLayoutDirection.Right,
-                LayerSpacing = spacingHorizontal,
-                ColumnSpacing = spacingVertical,
-                Iterations = 5,
-                Network = new GoLayoutLayeredDigraphNetwork(),
-            };
-            layout.Network.AddNodesAndLinksFromCollection(group, true);
-            layout.PerformLayout();
+                var layout = new GoLayoutLayeredDigraph()
+                {
+                    Document = Doc,
+                    DirectionOption = GoLayoutDirection.Right,
+                    LayerSpacing = spacingHorizontal,
+                    ColumnSpacing = spacingVertical,
+                    Iterations = 5,
+                    Network = new GoLayoutLayeredDigraphNetwork(),
+                };
+                layout.Network.AddNodesAndLinksFromCollection(group, true);
+                layout.PerformLayout();
+                scope?.Complete();
+            }
         }
 
         public void DoLayout(int spacingHorizontal, int spacingVertical)
         {
-            var layout = new GoLayoutLayeredDigraph()
+            using (var scope = UndoRedoManager.OpenScope("Diagram Layout"))
             {
-                Document = Doc, 
-                DirectionOption = GoLayoutDirection.Right,
-                LayerSpacing = spacingHorizontal,
-                ColumnSpacing = spacingVertical,
-                Iterations = 5
-            };
+                var layout = new GoLayoutLayeredDigraph()
+                {
+                    Document = Doc,
+                    DirectionOption = GoLayoutDirection.Right,
+                    LayerSpacing = spacingHorizontal,
+                    ColumnSpacing = spacingVertical,
+                    Iterations = 5
+                };
 
-            // NOTE: this piece of code does not perform the right layout inside the group.
-            //if (Selection.Count == 1 && Selection.Primary is GraphGroup group)
-            //{
-            //    layout.Network = new GoLayoutLayeredDigraphNetwork();
-            //    layout.Network.AddNodesAndLinksFromCollection(group, true);
-            //    layout.PerformLayout();
-            //    group.RefreshBorder();
+                // NOTE: this piece of code does not perform the right layout inside the group.
+                //if (Selection.Count == 1 && Selection.Primary is GraphGroup group)
+                //{
+                //    layout.Network = new GoLayoutLayeredDigraphNetwork();
+                //    layout.Network.AddNodesAndLinksFromCollection(group, true);
+                //    layout.PerformLayout();
+                //    group.RefreshBorder();
 
-            //    var globalLayout = new GoLayoutLayeredDigraph()
-            //    {
-            //        Document = Doc, 
-            //        DirectionOption = GoLayoutDirection.Right,
-            //        LayerSpacing = spacingHorizontal,
-            //        ColumnSpacing = spacingVertical,
-            //        Iterations = 5
-            //    };
-            //    globalLayout.PerformLayout();
-            //}
-            //else
+                //    var globalLayout = new GoLayoutLayeredDigraph()
+                //    {
+                //        Document = Doc, 
+                //        DirectionOption = GoLayoutDirection.Right,
+                //        LayerSpacing = spacingHorizontal,
+                //        ColumnSpacing = spacingVertical,
+                //        Iterations = 5
+                //    };
+                //    globalLayout.PerformLayout();
+                //}
+                //else
                 layout.PerformLayout();
+                scope?.Complete();
+            }
         }
 
         private GoObject GetPrimaryNode()
@@ -661,6 +597,16 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         #endregion
 
         #region Zooming.
+        private bool _originalScale = true;
+        private PointF _originalDocPosition = new PointF();
+        private float _originalDocScale = 1.0f;
+
+        public void Zoom(float zoomFactor)
+        {
+            _originalScale = true;
+            DocScale = zoomFactor;
+        }
+
         public void ZoomIn()
         {
             _originalScale = true;

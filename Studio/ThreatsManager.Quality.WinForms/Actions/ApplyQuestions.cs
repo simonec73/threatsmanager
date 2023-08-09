@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -10,7 +11,6 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Annotations;
-using ThreatsManager.Quality.Panels.Annotations;
 using ThreatsManager.Quality.Properties;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
@@ -29,7 +29,7 @@ namespace ThreatsManager.Quality.Actions
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.View;
+        public Ribbon Ribbon => Ribbon.KnowledgeBase;
         public string Bar => "Questions";
 
         public event Action<string> ShowMessage;
@@ -87,47 +87,51 @@ namespace ThreatsManager.Quality.Actions
             var questions = schemaManager.GetQuestions()?.ToArray();
             if (questions?.Any() ?? false)
             {
-                var asm = new AnnotationsPropertySchemaManager(model);
-                var pt = asm.GetAnnotationsPropertyType();
-
-                var ei = model.Entities?.OfType<IExternalInteractor>().OrderBy(x => x.Name);
-                var p = model.Entities?.OfType<IProcess>().OrderBy(x => x.Name);
-                var ds = model.Entities?.OfType<IDataStore>().OrderBy(x => x.Name);
-                var f = model.DataFlows?.OrderBy(x => x.Name);
-                var tb = model.Groups?.OfType<ITrustBoundary>().OrderBy(x => x.Name);
-                var te = model.GetThreatEvents()?.OrderBy(x => x.Name);
-                var tem = model.GetThreatEventMitigations()?
-                    .OrderBy(x => x.Mitigation.Name)
-                    .ThenBy(x => x.ThreatEvent.Name)
-                    .ThenBy(x => x.ThreatEvent.Parent.Name);
-                var tt = model.ThreatTypes?.OrderBy(x => x.Name);
-                var km = model.Mitigations?.OrderBy(x => x.Name);
-                var sm = model.GetThreatTypeMitigations()?
-                    .OrderBy(x => x.Mitigation.Name)
-                    .ThenBy(x => x.ThreatType.Name);
-                var et = model.EntityTemplates?.OrderBy(x => x.Name);
-                var ft = model.FlowTemplates?.OrderBy(x => x.Name);
-                var tbt = model.TrustBoundaryTemplates?.OrderBy(x => x.Name);
-
-                foreach (var question in questions)
+                using (var scope = UndoRedoManager.OpenScope("Apply Questions"))
                 {
-                    Generate(question, ei, asm);
-                    Generate(question, p, asm);
-                    Generate(question, ds, asm);
-                    Generate(question, f, asm);
-                    Generate(question, tb, asm);
-                    Generate(question, te, asm);
-                    Generate(question, tem, asm);
-                    Generate(question, tt, asm);
-                    Generate(question, km, asm);
-                    Generate(question, sm, asm);
-                    Generate(question, et, asm);
-                    Generate(question, ft, asm);
-                    Generate(question, tbt, asm);
-                    Generate(question, model, asm);
-                }
+                    var asm = new AnnotationsPropertySchemaManager(model);
+                    var pt = asm.GetAnnotationsPropertyType();
 
-                result = true;
+                    var ei = model.Entities?.OfType<IExternalInteractor>().OrderBy(x => x.Name);
+                    var p = model.Entities?.OfType<IProcess>().OrderBy(x => x.Name);
+                    var ds = model.Entities?.OfType<IDataStore>().OrderBy(x => x.Name);
+                    var f = model.DataFlows?.OrderBy(x => x.Name);
+                    var tb = model.Groups?.OfType<ITrustBoundary>().OrderBy(x => x.Name);
+                    var te = model.GetThreatEvents()?.OrderBy(x => x.Name);
+                    var tem = model.GetThreatEventMitigations()?
+                        .OrderBy(x => x.Mitigation.Name)
+                        .ThenBy(x => x.ThreatEvent.Name)
+                        .ThenBy(x => x.ThreatEvent.Parent.Name);
+                    var tt = model.ThreatTypes?.OrderBy(x => x.Name);
+                    var km = model.Mitigations?.OrderBy(x => x.Name);
+                    var sm = model.GetThreatTypeMitigations()?
+                        .OrderBy(x => x.Mitigation.Name)
+                        .ThenBy(x => x.ThreatType.Name);
+                    var et = model.EntityTemplates?.OrderBy(x => x.Name);
+                    var ft = model.FlowTemplates?.OrderBy(x => x.Name);
+                    var tbt = model.TrustBoundaryTemplates?.OrderBy(x => x.Name);
+
+                    foreach (var question in questions)
+                    {
+                        Generate(question, ei, asm);
+                        Generate(question, p, asm);
+                        Generate(question, ds, asm);
+                        Generate(question, f, asm);
+                        Generate(question, tb, asm);
+                        Generate(question, te, asm);
+                        Generate(question, tem, asm);
+                        Generate(question, tt, asm);
+                        Generate(question, km, asm);
+                        Generate(question, sm, asm);
+                        Generate(question, et, asm);
+                        Generate(question, ft, asm);
+                        Generate(question, tbt, asm);
+                        Generate(question, model, asm);
+                    }
+
+                    scope?.Complete();
+                    result = true;
+                }
             }
 
             return result;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.Extensions;
@@ -11,6 +6,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Dialogs;
 using ThreatsManager.Quality.Schemas;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Quality.Annotations
 {
@@ -38,9 +34,14 @@ namespace ThreatsManager.Quality.Annotations
             var dialog = new AnnotationDialog(_model, _container, new Annotation());
             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
             {
-                var schemaManager = new AnnotationsPropertySchemaManager(_model);
-                schemaManager.AddAnnotation(_container, dialog.Annotation);
-                result = true;
+                using (var scope = UndoRedoManager.OpenScope("Add Notes"))
+                {
+                    var schemaManager = new AnnotationsPropertySchemaManager(_model);
+                    schemaManager.AddAnnotation(_container, dialog.Annotation);
+
+                    scope?.Complete();
+                    result = true;
+                }
             }
 
             return result;

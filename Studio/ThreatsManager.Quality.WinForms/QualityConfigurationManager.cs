@@ -41,11 +41,12 @@ namespace ThreatsManager.Quality
 
         public bool EnableCalculatedSeverity
         {
-            get => _configuration?.LocalGet<bool>("calculatedSeverity") ?? false;
+            get => _configuration?.GlobalGet<bool>("calculatedSeverity") ??
+                _configuration?.LocalGet<bool>("calculatedSeverity") ?? false;
 
             set
             {
-                _configuration?.LocalSet<bool>("calculatedSeverity", value);
+                _configuration?.GlobalSet<bool>("calculatedSeverity", value);
                 _dirty = true;
             }
         }

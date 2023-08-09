@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using DevComponents.DotNetBar;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Properties;
@@ -14,20 +13,19 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
     [Serializable]
     public sealed class GraphEntity : GoIconicNode, IDisposable
     {
-        private DpiState _dpiState = DpiState.Ok;
         private readonly IEntityShape _shape;
-        private List<string> _buckets;
-        private Dictionary<string, List<IContextAwareAction>> _actions;
-        private readonly AssociatedThreatsMarker _threatsMarker;
+        private ImageSize _sourceSize;
+
+        private readonly AssociatedPanelItemMarker _panelItemMarker;
         private readonly AssociatedDiagramMarker _diagramMarker;
         private readonly WarningMarker _warningMarker;
-        private static readonly ImageSize _imageSize;
 
         public event Action<IEntityShape> SelectedShape;
         public event Action<IThreatEvent> SelectedThreatEvent;
@@ -38,11 +36,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public bool Deactivated { get; set; }
 
-        static GraphEntity()
-        {
-            _imageSize = Dpi.Factor.Height >= 1.5 ? ImageSize.Big : ImageSize.Medium;
-        }
-
         public void Dispose()
         {
             if (_shape?.Identity is IEntity entity)
@@ -52,35 +45,26 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 _diagramMarker.DiagramClicked -= OnDiagramClicked;
                 _diagramMarker.Dispose();
 
-                _threatsMarker.ThreatEventClicked -= OnThreatEventClicked;
-                _threatsMarker.Dispose();
+                _panelItemMarker.PanelItemClicked -= OnPanelItemClicked;
+                _panelItemMarker.Dispose();
 
                 ((INotifyPropertyChanged)entity).PropertyChanged -= OnPropertyChanged;
             }
 
+            UndoRedoManager.Undone -= UndoRedoManager_UndoneRedone;
+            UndoRedoManager.Redone -= UndoRedoManager_UndoneRedone;
         }
 
         #region Initialization.
-        public GraphEntity([NotNull] IEntityShape shape, DpiState dpiState) : base()
+        public GraphEntity([NotNull] IEntityShape shape,
+            [StrictlyPositive] float dpiFactor, [Range(32, 256)] int iconSize,
+            [Range(8, 248)] int iconCenterSize, ImageSize sourceSize, [Range(8, 128)] int markerSize) : base()
         {
             _shape = shape;
-            _dpiState = dpiState;
             var identity = shape.Identity;
             if (identity is IEntity entity)
             {
                 Initialize(Icons.Resources.ResourceManager, GetIconName(entity), entity.Name);
-                if (_imageSize == ImageSize.Big)
-                {
-                    if (entity.BigImage != null && Icon is GoImage icon)
-                        icon.Image = entity.BigImage;
-                    Icon.Size = new SizeF(64.0f, 64.0f);
-                } 
-                else
-                {
-                    if (entity.Image != null && Icon is GoImage icon)
-                        icon.Image = entity.Image;
-                    Icon.Size = new SizeF(32.0f, 32.0f);
-                }
                 entity.ImageChanged += OnEntityImageChanged;
 
                 //InPort.ToSpot = GoObject.NoSpot;
@@ -90,44 +74,22 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 //OutPort.IsValidSelfNode = false;
                 //OutPort.IsValidDuplicateLinks = false;
 
-                Port.Size = new SizeF(15f,15f);
-
                 Icon.Resizable = false;
                 Reshapable = false;
+                Copyable = false;
 
-                _threatsMarker = new AssociatedThreatsMarker(entity)
-                {
-                    Position = new PointF(Icon.Size.Width / 2.0f, Icon.Size.Height / 2.0f),
-                };
-                _threatsMarker.ThreatEventClicked += OnThreatEventClicked;
-                Add(_threatsMarker);
+                _panelItemMarker = new AssociatedPanelItemMarker(entity);
+                _panelItemMarker.PanelItemClicked += OnPanelItemClicked;
+                Add(_panelItemMarker);
 
-                _diagramMarker = new AssociatedDiagramMarker(entity)
-                {
-                    Position = new PointF(16.0f * Dpi.Factor.Width, 0),
-                };
+                _diagramMarker = new AssociatedDiagramMarker(entity);
                 _diagramMarker.DiagramClicked += OnDiagramClicked;
                 Add(_diagramMarker);
 
-                _warningMarker = new WarningMarker()
-                {
-                    Position = new PointF(0.0f, 16.0f * Dpi.Factor.Height),
-                };
+                _warningMarker = new WarningMarker();
                 Add(_warningMarker);
 
-                switch (_dpiState)
-                {
-                    case DpiState.TooSmall:
-                        Location = new PointF(_shape.Position.X * 2, _shape.Position.Y * 2);
-                        break;
-                    case DpiState.TooBig:
-                        Location = new PointF(_shape.Position.X / 2, _shape.Position.Y / 2);
-                        break;
-                    default:
-                        Location = _shape.Position;
-                        break;
-                }
-                Copyable = false;
+                UpdateParameters(iconSize, iconCenterSize, sourceSize, markerSize, dpiFactor);
 
                 AddObserver(this);
 
@@ -136,11 +98,85 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
             else
                 throw new ArgumentException(Properties.Resources.ShapeNotEntityError);
+
+            UndoRedoManager.Undone += UndoRedoManager_UndoneRedone;
+            UndoRedoManager.Redone += UndoRedoManager_UndoneRedone;
         }
 
-        private void OnThreatEventClicked(IThreatEvent threatEvent)
+        private void UndoRedoManager_UndoneRedone(string obj)
         {
-            SelectedThreatEvent?.Invoke(threatEvent);
+            var shape = _shape;
+            var location = Location;
+        }
+
+        public void UpdateParameters([Range(32, 256)] int iconSize, [Range(8, 248)] int iconCenterSize,
+            ImageSize sourceSize, [Range(8, 128)] int markerSize, [StrictlyPositive] float dpiFactor = 1.0f)
+        {
+            using (var scope = UndoRedoManager.OpenScope("Update parameters"))
+            {
+                _sourceSize = sourceSize;
+                ApplySourceSize();
+
+                Icon.Size = new SizeF(iconSize, iconSize);
+                Port.Size = new SizeF(iconCenterSize, iconCenterSize);
+                _panelItemMarker.Position = new PointF(iconSize - markerSize, iconSize - markerSize);
+                _panelItemMarker.Size = new SizeF(markerSize, markerSize);
+                _diagramMarker.Position = new PointF(iconSize - markerSize, 0f);
+                _diagramMarker.Size = new SizeF(markerSize, markerSize);
+                _warningMarker.Position = new PointF(0f, iconSize - markerSize);
+                _warningMarker.Size = new SizeF(markerSize, markerSize);
+                if (dpiFactor != 1.0f)
+                    _shape.Position = new PointF(_shape.Position.X * dpiFactor, _shape.Position.Y * dpiFactor);
+                Location = new PointF(_shape.Position.X, _shape.Position.Y);
+
+                scope?.Complete();
+            }
+        }
+
+        private void ApplySourceSize()
+        {
+            var identity = _shape.Identity;
+            if (identity is IEntity entity)
+            {
+                if (Icon is GoImage icon)
+                {
+                    switch (_sourceSize)
+                    {
+                        case ImageSize.Small:
+                            if (entity.SmallImage != null)
+                                icon.Image = entity.SmallImage;
+                            else if (entity.Image != null)
+                                icon.Image = entity.Image;
+                            else if (entity.BigImage != null)
+                                icon.Image = entity.BigImage;
+                            break;
+                        case ImageSize.Medium:
+                            if (entity.Image != null)
+                                icon.Image = entity.Image;
+                            else if (entity.BigImage != null)
+                                icon.Image = entity.BigImage;
+                            else if (entity.SmallImage != null)
+                                icon.Image = entity.SmallImage;
+                            break;
+                        case ImageSize.Big:
+                            if (entity.BigImage != null)
+                                icon.Image = entity.BigImage;
+                            else if (entity.Image != null)
+                                icon.Image = entity.Image;
+                            else if (entity.SmallImage != null)
+                                icon.Image = entity.SmallImage;
+                            break;
+                    }
+                }
+            }
+            else
+                throw new ArgumentException(Properties.Resources.ShapeNotEntityError);
+        }
+
+        private void OnPanelItemClicked(object item)
+        {
+            if (item is IThreatEvent threatEvent)
+                SelectedThreatEvent?.Invoke(threatEvent);
         }
 
         private void OnDiagramClicked(IDiagram diagram)
@@ -173,6 +209,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     Text = name,
                     Selectable = false,
+                    Movable = false,
                     Alignment = MiddleTop,
                     Editable = true
                 };
@@ -198,13 +235,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public bool ThreatsMarker
         {
-            get => _threatsMarker.Visible;
-            set => _threatsMarker.Visible = value;
+            get => _panelItemMarker.Visible;
+            set => _panelItemMarker.Visible = value;
         }
 
         public void ShowThreats(GoView view)
         {
-            _threatsMarker.ShowThreatsDialog(view, Location);
+            _panelItemMarker.ShowPanelItemListForm(view, Location);
         }
 
         #region Status change.
@@ -222,21 +259,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             if (Icon is GoImage icon)
             {
-                if (Dpi.Factor.Height >= 1.5)
+                if (_sourceSize == imageSize)
                 {
-                    if (imageSize == ImageSize.Big)
-                    {
-                        icon.Image = entity.BigImage;
-                        icon.Size = new SizeF(64.0f, 64.0f);
-                    }
-                } else
-                {
-                    if (imageSize == ImageSize.Medium)
-                    {
-                        icon.Image = entity.Image;
-                        icon.Size = new SizeF(32.0f, 32.0f);
-                    }
-                }  
+                    ApplySourceSize();
+                }
             }
         }
 
@@ -244,20 +270,28 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             object newVal, RectangleF newRect)
         {
             base.OnObservedChanged(observed, subhint, oldI, oldVal, oldRect, newI, newVal, newRect);
-
-            if (observed.Equals(Label) && subhint == 1501)
+            
+            if (observed.Equals(Label) &&  subhint == GoText.ChangedText)
             {
-                _shape.Identity.Name = Text;
+                using (var scope = UndoRedoManager.OpenScope("Update Identity name"))
+                {
+                    _shape.Identity.Name = Text;
+                    scope?.Complete();
+                }
             }
 
-            if (observed.Equals(this) && subhint == 1001)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing && observed.Equals(this) && subhint == ChangedBounds)
             {
                 float centerX = newRect.X + (newRect.Width / 2f);
                 float centerY = newRect.Y + (newRect.Height / 2f);
 
                 if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
                 {
-                    _shape.Position = new PointF(centerX, centerY);
+                    using (var scope = UndoRedoManager.OpenScope("Reposition Entity"))
+                    {
+                        _shape.Position = new PointF(centerX, centerY);
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -298,7 +332,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 if (Parent is GraphGroup graphGroup)
                 {
-                    valid = graphGroup.GroupShape?.Identity == entity.Parent;
+                    using (var scope = UndoRedoManager.OpenScope("Update Identity name"))
+                    {
+                        valid = graphGroup.GroupShape?.Identity == entity.Parent;
+                        scope?.Complete();
+                    }
                 }
                 else
                 {
@@ -314,6 +352,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         #endregion
 
         #region Context menu.
+        private List<string> _buckets;
+        private Dictionary<string, List<IContextAwareAction>> _actions;
+
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
             Scope scope = Scope.EntityShape;
@@ -376,11 +417,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         separator = true;
 
-                        if (menu.MenuItems.Count > 0)
-                            menu.MenuItems.Add(new MenuItem("-"));
+                        if (menu.Items.Count > 0)
+                            menu.Items.Add(new ToolStripSeparator());
                     }
 
-                    menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                    menu.Items.Add(new ToolStripMenuItem(action.Label, action.SmallIcon, DoAction)
                     {
                         Tag = action
                     });
@@ -390,7 +431,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void DoAction(object sender, EventArgs e)
         {
-            if (sender is MenuItem menuItem &&
+            if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IContextAwareAction action)
             {
                 if (action is IIdentityContextAwareAction identityContextAwareAction)

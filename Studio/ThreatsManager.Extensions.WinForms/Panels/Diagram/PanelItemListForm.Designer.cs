@@ -1,6 +1,6 @@
 ﻿namespace ThreatsManager.Extensions.Panels.Diagram
 {
-    partial class ThreatEventListForm
+    partial class PanelItemListForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this._panel = new DevComponents.DotNetBar.Metro.MetroTilePanel();
+            this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
             this.SuspendLayout();
             // 
             // _panel
@@ -53,7 +54,17 @@
             this._panel.Text = "metroTilePanel1";
             this._panel.Leave += new System.EventHandler(this._panel_Leave);
             // 
-            // ThreatEventListForm
+            // _superTooltip
+            // 
+            this._superTooltip.CheckTooltipPosition = false;
+            this._superTooltip.DefaultTooltipSettings = new DevComponents.DotNetBar.SuperTooltipInfo("", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray);
+            this._superTooltip.DelayTooltipHideDuration = 500;
+            this._superTooltip.Enabled = false;
+            this._superTooltip.PositionBelowControl = false;
+            this._superTooltip.ShowTooltipForFocusedControl = false;
+            this._superTooltip.MarkupLinkClick += new DevComponents.DotNetBar.MarkupLinkClickEventHandler(this._superTooltip_MarkupLinkClick);
+            // 
+            // PanelItemListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -64,7 +75,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "ThreatEventListForm";
+            this.Name = "PanelItemListForm";
             this.Opacity = 0.85D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
@@ -78,5 +89,6 @@
         #endregion
 
         private DevComponents.DotNetBar.Metro.MetroTilePanel _panel;
+        private DevComponents.DotNetBar.SuperTooltip _superTooltip;
     }
 }

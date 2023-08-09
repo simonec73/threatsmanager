@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Annotations;
 using ThreatsManager.Quality.Schemas;
@@ -37,8 +35,8 @@ namespace ThreatsManager.Extensions.StatusInfoProviders
             _model.PropertyRemoved += PropertyUpdated;
             _model.PropertyValueChanged += PropertyUpdated;
             _model.ChildPropertyAdded += ChildPropertyUpdated;
-            _model.ChildPropertyChanged += ChildPropertyUpdated;
-            _model.ChildPropertyChanged += ChildPropertyUpdated;
+            _model.ChildPropertyRemoved += ChildPropertyUpdated;
+            _model.ChildPropertyValueChanged += ChildPropertyUpdated;
         }
 
         private void PropertyUpdated(IPropertiesContainer container, IProperty property)
@@ -111,8 +109,8 @@ namespace ThreatsManager.Extensions.StatusInfoProviders
             _model.PropertyRemoved -= PropertyUpdated;
             _model.PropertyValueChanged -= PropertyUpdated;
             _model.ChildPropertyAdded -= ChildPropertyUpdated;
-            _model.ChildPropertyChanged -= ChildPropertyUpdated;
-            _model.ChildPropertyChanged -= ChildPropertyUpdated;
+            _model.ChildPropertyRemoved -= ChildPropertyUpdated;
+            _model.ChildPropertyValueChanged -= ChildPropertyUpdated;
             _schemaManager = null;
             _propertyType = null;
             _model = null;

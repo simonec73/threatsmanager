@@ -18,6 +18,9 @@ namespace ThreatsManager.Extensions.Panels.StrengthList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellClick -= _grid_CellClick;
             _grid.RowClick -= _grid_RowClick;
             _grid.MouseClick -= _grid_MouseClick;

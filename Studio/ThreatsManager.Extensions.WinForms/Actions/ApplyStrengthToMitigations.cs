@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
@@ -6,6 +7,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
@@ -48,12 +50,16 @@ namespace ThreatsManager.DevOps.Actions
                 result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
                 if (result && mitigation.Model is IThreatModel model)
                 {
-                    var mitigations = model.GetThreatEventMitigations(mitigation)?.ToArray();
-                    if (mitigations?.Any() ?? false)
+                    using (var scope = UndoRedoManager.OpenScope("Apply Strength to Mitigations"))
                     {
-                        foreach (var m in mitigations)
+                        var mitigations = model.GetThreatEventMitigations(mitigation)?.ToArray();
+                        if (mitigations?.Any() ?? false)
                         {
-                            m.Strength = dialog.Strength;
+                            foreach (var m in mitigations)
+                            {
+                                m.Strength = dialog.Strength;
+                            }
+                            scope?.Complete();
                         }
                     }
                 }

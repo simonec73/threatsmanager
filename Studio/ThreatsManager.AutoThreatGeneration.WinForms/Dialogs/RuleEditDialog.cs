@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Engine;
-using ThreatsManager.AutoThreatGeneration.Engine;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;

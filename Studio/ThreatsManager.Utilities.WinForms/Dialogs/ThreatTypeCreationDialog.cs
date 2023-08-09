@@ -61,9 +61,13 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
         {
             if (IsValid())
             {
-                _threatType = _model.AddThreatType(_name.Text, _severity.SelectedItem as ISeverity);
-                if (!string.IsNullOrWhiteSpace(_description.Text))
-                    _threatType.Description = _description.Text;
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Type"))
+                {
+                    _threatType = _model.AddThreatType(_name.Text, _severity.SelectedItem as ISeverity);
+                    if (!string.IsNullOrWhiteSpace(_description.Text))
+                        _threatType.Description = _description.Text;
+                    scope?.Complete();
+                }
             }
         }
 

@@ -35,8 +35,8 @@ namespace ThreatsManager.Extensions.StatusInfoProviders
             _model.PropertyRemoved += PropertyUpdated;
             _model.PropertyValueChanged += PropertyUpdated;
             _model.ChildPropertyAdded += ChildPropertyUpdated;
-            _model.ChildPropertyChanged += ChildPropertyUpdated;
-            _model.ChildPropertyChanged += ChildPropertyUpdated;
+            _model.ChildPropertyRemoved += ChildPropertyUpdated;
+            _model.ChildPropertyValueChanged += ChildPropertyUpdated;
         }
 
         private void PropertyUpdated(IPropertiesContainer container, IProperty property)
@@ -110,8 +110,8 @@ namespace ThreatsManager.Extensions.StatusInfoProviders
             _model.PropertyRemoved -= PropertyUpdated;
             _model.PropertyValueChanged -= PropertyUpdated;
             _model.ChildPropertyAdded -= ChildPropertyUpdated;
-            _model.ChildPropertyChanged -= ChildPropertyUpdated;
-            _model.ChildPropertyChanged -= ChildPropertyUpdated;
+            _model.ChildPropertyRemoved -= ChildPropertyUpdated;
+            _model.ChildPropertyValueChanged -= ChildPropertyUpdated;
             _schemaManager = null;
             _propertyType = null;
             _model = null;

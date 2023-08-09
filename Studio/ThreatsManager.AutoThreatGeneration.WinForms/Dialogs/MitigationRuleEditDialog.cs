@@ -111,7 +111,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
                         }
                     }
 
-                    _statusOverride.SelectedItem = rule.Status.GetEnumLabel();
+                    _statusOverride.SelectedItem = (rule.Status ?? MitigationStatus.Undefined).GetEnumLabel();
 
                     _severityOverride.SelectedIndex = 0;
                     int severitiesCount = _severityOverride.Items.Count;

@@ -119,9 +119,15 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             if (_createNew.Checked && !string.IsNullOrWhiteSpace(_name.Text) &&
                 _severity.SelectedItem is ISeverity severity)
             {
-                _weakness = _model.AddWeakness(_name.Text, severity);
-                if (_weakness != null)
-                    _weakness.Description = _description.Text;
+                using (var scope = UndoRedoManager.OpenScope("Add Weakness"))
+                {
+                    _weakness = _model.AddWeakness(_name.Text, severity);
+                    if (_weakness != null)
+                    {
+                        _weakness.Description = _description.Text;
+                        scope?.Complete();
+                    }
+                }
             }
         }
 

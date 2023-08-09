@@ -19,18 +19,29 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            _properties.OpenDiagram -= OpenDiagram;
-            _model.ChildCreated -= ModelChildCreated;
-            _model.ChildRemoved -= ModelChildRemoved;
-            _model.LinkAdded -= LinkAdded;
-            _model.LinkRemoved -= LinkRemoved;
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
 
-            _grid.CellActivated -= _grid_CellActivated;
-            _grid.CellMouseDown -= _grid_CellMouseDown;
-            _grid.CellMouseLeave -= _grid_CellMouseLeave;
-            _grid.CellMouseMove -= _grid_CellMouseMove;
-            _grid.RowActivated -= _grid_RowActivated;
-            _grid.MouseClick -= _grid_MouseClick;
+            _properties.OpenDiagram -= OpenDiagram;
+            if (_model != null)
+            {
+                _model.ChildCreated -= ModelChildCreated;
+                _model.ChildRemoved -= ModelChildRemoved;
+                _model.LinkAdded -= LinkAdded;
+                _model.LinkRemoved -= LinkRemoved;
+
+                _grid.CellActivated -= _grid_CellActivated;
+                _grid.CellMouseDown -= _grid_CellMouseDown;
+                _grid.CellMouseLeave -= _grid_CellMouseLeave;
+                _grid.CellMouseMove -= _grid_CellMouseMove;
+                _grid.RowActivated -= _grid_RowActivated;
+                _grid.MouseClick -= _grid_MouseClick;
+
+                if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+                {
+                    undoable.Undone -= ModelUndone;
+                }
+            }
 
             _properties.Item = null;
 

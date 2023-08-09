@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -59,13 +60,18 @@ namespace ThreatsManager.Extensions.Actions
 
                     if (deserialized?.ThreatEvents?.Any() ?? false)
                     {
-                        foreach (var threatEvent in deserialized.ThreatEvents)
+                        using (var scope = UndoRedoManager.OpenScope("Paste Threat Events"))
                         {
-                            if (!(destContainer.ThreatEvents?.Any(x => x.ThreatTypeId == threatEvent.ThreatTypeId) ?? false))
+                            foreach (var threatEvent in deserialized.ThreatEvents)
                             {
-                                AddThreatEvent(threatEvent, destContainer);
-                                result = true;
+                                if (!(destContainer.ThreatEvents?.Any(x => x.ThreatTypeId == threatEvent.ThreatTypeId) ?? false))
+                                {
+                                    AddThreatEvent(threatEvent, destContainer);
+                                    result = true;
+                                }
                             }
+
+                            if (result) scope?.Complete();
                         }
                     }
                 }

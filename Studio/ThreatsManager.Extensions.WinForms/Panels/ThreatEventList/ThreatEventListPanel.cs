@@ -40,6 +40,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
  
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<ThreatEventListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -63,6 +66,15 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             _model.ThreatEventRemovedFromEntity += OnThreatEventRemoved;
             _model.ThreatEventAddedToDataFlow += OnThreatEventAdded;
             _model.ThreatEventRemovedFromDataFlow += OnThreatEventRemoved;
+            _model.VulnerabilityAdded += OnVulnerabilityAdded;
+            _model.VulnerabilityRemoved += OnVulnerabilityRemoved;
+            _model.VulnerabilityAddedToEntity += OnVulnerabilityAdded;
+            _model.VulnerabilityRemovedFromEntity += OnVulnerabilityRemoved;
+
+            if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+            {
+                undoable.Undone += ModelUndone;
+            }
 
             InitializeGrid();
             LoadModel();
@@ -74,7 +86,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             var row = GetRow(threatEvent);
             if (row != null)
             {
-                RemoveEventSubscriptions(row);
+                RemoveEventSubscriptions(threatEvent, row);
 
                 var panel = row.GridPanel;
                 panel.Rows.Remove(row);
@@ -102,13 +114,85 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 var row = GetRow(threatType);
                 if (row != null)
                 {
-                    RemoveEventSubscriptions(row);
+                    RemoveEventSubscriptions(threatType, row);
                     var panel = row.GridPanel;
                     panel.Rows.Remove(row);
 
                     if (panel.Rows.Count == 0)
                     {
                         _grid.PrimaryGrid.Rows.Remove(panel.Parent);
+                    }
+                }
+            }
+        }
+
+        [Dispatched]
+        private void ModelUndone(object item, bool removed)
+        {
+            if (removed)
+            {
+                this.ParentForm?.Close();
+            }
+            else
+            {
+                if (item is IThreatModel model)
+                {
+                    var filter = _filter.Text;
+                    var filterSpecial = EnumExtensions.GetEnumValue<ThreatEventListFilter>((string)_specialFilter.SelectedItem);
+                    var threatEvents = GetThreatEvents(filter, filterSpecial);
+                    var list = new List<IThreatEvent>();
+                    if (threatEvents?.Any() ?? false)
+                    {
+                        list.AddRange(threatEvents);
+                    }
+
+                    var grid = _grid.PrimaryGrid;
+                    var threatTypeRows = grid.Rows.OfType<GridRow>().ToArray();
+                    if (threatTypeRows.Any())
+                    {
+                        foreach (var ttRow in threatTypeRows)
+                        {
+                            if (ttRow.Tag is IThreatType threatType)
+                            {
+                                var panel = ttRow.Rows.OfType<GridPanel>()
+                                    .FirstOrDefault(x => string.CompareOrdinal(x.Name, "ThreatEvents") == 0);
+                                var threatEventRows = panel?.Rows.OfType<GridRow>().ToArray();
+                                if (threatEventRows?.Any() ?? false)
+                                {
+                                    foreach (var teRow in threatEventRows)
+                                    {
+                                        if (teRow.Tag is IThreatEvent threatEvent)
+                                        {
+                                            if (list.Contains(threatEvent))
+                                            {
+                                                list.Remove(threatEvent);
+                                            }
+                                            else
+                                            {
+                                                RemoveEventSubscriptions(threatEvent, teRow);
+                                                panel.Rows.Remove(teRow);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (list.Any())
+                    {
+                        foreach (var i in list)
+                        {
+                            var ttRow = GetRow(i.ThreatType);
+                            if (ttRow == null)
+                            {
+                                ttRow = AddGridRow(i.ThreatType, new[] { i }, grid);
+                            }
+                            var panel = ttRow.Rows.OfType<GridPanel>()
+                                .FirstOrDefault(x => string.CompareOrdinal(x.Name, "ThreatEvents") == 0);
+                            if (panel != null)
+                                AddGridRow(i, panel);
+                        }
                     }
                 }
             }
@@ -181,25 +265,13 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
 
                 var filter = _filter.Text;
                 var filterSpecial = EnumExtensions.GetEnumValue<ThreatEventListFilter>((string)_specialFilter.SelectedItem);
-
-                List<IThreatEvent> threatEvents = new List<IThreatEvent>();
-                AddThreatEvents(threatEvents, 
-                    _model.Entities?.Select(x => x.ThreatEvents).ToArray(),
-                    filter, filterSpecial);
-                AddThreatEvents(threatEvents, _model.DataFlows?.Select(x => x.ThreatEvents).ToArray(),
-                    filter, filterSpecial);
-                var modelThreats = _model.ThreatEvents?
-                    .Where(x => IsSelected(x, filter, filterSpecial)).ToArray();
-                if (modelThreats?.Any() ?? false)
-                    threatEvents.AddRange(modelThreats);
-
-                var threatTypes = threatEvents
+                var threatEvents = GetThreatEvents(filter, filterSpecial);
+                var threatTypes = threatEvents?
                     .Select(x => x.ThreatType)
                     .Distinct(new ThreatTypeComparer())
                     .OrderBy(x => x.Name);
 
-
-                if (threatTypes != null)
+                if (threatTypes?.Any() ?? false)
                 {
                     foreach (var item in threatTypes)
                     {
@@ -222,6 +294,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 _loading = false;
                 _grid.ResumeLayout(true);
             }
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
         }
 
         private void AddThreatEvents([NotNull] List<IThreatEvent> threatEvents, 
@@ -263,94 +340,6 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 row.Rows.Add(subPanel);
 
             return row;
-        }
-
-        private void RemoveEventSubscriptions()
-        {
-            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
-            foreach (var row in rows)
-                RemoveEventSubscriptions(row);
-        }
-
-        private void RemoveEventSubscriptions(GridRow row)
-        {
-            if (row?.Tag is IThreatType threatType)
-            {
-                ((INotifyPropertyChanged) threatType).PropertyChanged -= OnThreatTypePropertyChanged;
-                for (int i = 0; i < row.Cells.Count; i++)
-                    row.Cells[i].PropertyChanged -= OnThreatTypeCellChanged;
-
-                var ddc = row.Rows.OfType<GridPanel>().FirstOrDefault()?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
-                if (ddc != null)
-                {
-                    ddc.ButtonClearClick -= DdcButtonClearClick;
-                }
-
-                RemoveEventSubscriptionsFromChildren(row);
-            }
-            else if (row?.Tag is IThreatEvent threatEvent)
-            {
-                if (threatEvent.Parent != null)
-                {
-                    ((INotifyPropertyChanged) threatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
-                    if (threatEvent.Parent is IEntity entity)
-                        entity.ImageChanged -= OnImageChanged;
-                }
-                for (int i = 0; i < row.Cells.Count; i++)
-                    row.Cells[i].PropertyChanged -= OnThreatEventCellChanged;
-                ((INotifyPropertyChanged) threatEvent).PropertyChanged -= OnThreatEventPropertyChanged;
-
-                threatEvent.ScenarioAdded -= OnScenarioAdded;
-                threatEvent.ScenarioRemoved -= OnScenarioRemoved;
-                threatEvent.ThreatEventMitigationAdded -= OnThreatEventMitigationAdded;
-                threatEvent.ThreatEventMitigationRemoved -= OnThreatEventMitigationRemoved;
-
-                var panel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Scenarios") == 0);
-                var ddc = panel?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
-                if (ddc != null)
-                {
-                    ddc.ButtonClearClick -= DdcButtonClearClick;
-                }
-                ddc = panel?.Columns["Motivation"].EditControl as GridTextBoxDropDownEditControl;
-                if (ddc != null)
-                {
-                    ddc.ButtonClearClick -= DdcButtonClearClick;
-                }
-
-                RemoveSuperTooltipProvider(row.Cells["Parent"]);
-
-                RemoveEventSubscriptionsFromChildren(row);
-            }
-            else if (row?.Tag is IThreatEventScenario scenario)
-            {
-                for (int i = 0; i < row.Cells.Count; i++)
-                    row.Cells[i].PropertyChanged -= OnScenarioCellChanged;
-                ((INotifyPropertyChanged) scenario).PropertyChanged -= OnScenarioPropertyChanged;
-            }
-            else if (row?.Tag is IThreatEventMitigation mitigation)
-            {
-                for (int i = 0; i < row.Cells.Count; i++)
-                    row.Cells[i].PropertyChanged -= OnMitigationCellChanged;
-                ((INotifyPropertyChanged) mitigation).PropertyChanged -= OnThreatEventMitigationPropertyChanged;
-                ((INotifyPropertyChanged) mitigation.Mitigation).PropertyChanged -= OnMitigationPropertyChanged;
-            }
-        }
-
-        private void RemoveEventSubscriptionsFromChildren(GridRow row)
-        {
-            var panels = row?.Rows.OfType<GridPanel>().ToArray();
-            if (panels?.Any() ?? false)
-            {
-                foreach (var panel in panels)
-                {
-                    var children = panel.Rows.OfType<GridRow>().ToArray();
-                    if (children.Any())
-                    {
-                        foreach (var child in children)
-                            RemoveEventSubscriptions(child);
-                    }
-                }
-            }
         }
 
         private void OnThreatTypeCellChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -488,6 +477,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             threatEvent.ScenarioRemoved += OnScenarioRemoved;
             threatEvent.ThreatEventMitigationAdded += OnThreatEventMitigationAdded;
             threatEvent.ThreatEventMitigationRemoved += OnThreatEventMitigationRemoved;
+            threatEvent.VulnerabilityAdded += OnVulnerabilityAdded;
+            threatEvent.VulnerabilityRemoved += OnVulnerabilityRemoved;
  
             var subPanel = CreateThreatEventScenariosPanel(threatEvent);
             if (subPanel != null)
@@ -496,6 +487,10 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             var subPanel2 = CreateThreatEventMitigationsPanel(threatEvent);
             if (subPanel2 != null)
                 row.Rows.Add(subPanel2);
+
+            var subPanel3 = CreateVulnerabilitiesPanel(threatEvent);
+            if (subPanel3 != null)
+                row.Rows.Add(subPanel3);
 
             UpdateThreatTypeSeverity(row);
 
@@ -685,6 +680,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                         (x.Tag is IThreatEventScenario eventScenario) && eventScenario.Id == scenario.Id);
                 if (scenarioRow != null)
                 {
+                    RemoveEventSubscriptions(scenario, scenarioRow);
                     panel.Rows.Remove(scenarioRow);
 
                     if (panel.Rows.Count == 0)
@@ -762,8 +758,91 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                         (x.Tag is IThreatEventMitigation eventMitigation) && eventMitigation.MitigationId == mitigation.MitigationId);
                 if (mitigationRow != null)
                 {
+                    RemoveEventSubscriptions(mitigation, mitigationRow);
+
                     panel.Rows.Remove(mitigationRow);
   
+                    if (panel.Rows.Count == 0)
+                        row.Rows.Remove(panel);
+                }
+
+                UpdateMitigationLevel(threatEvent, row);
+            }
+        }
+
+        [Dispatched]
+        private void OnVulnerabilityAdded(IVulnerabilitiesContainer container, IVulnerability vulnerability)
+        {
+            if (container is IThreatEvent threatEvent)
+            {
+                var filterSpecial = EnumExtensions.GetEnumValue<ThreatEventListFilter>((string)_specialFilter.SelectedItem);
+                if (IsSelected(threatEvent, _filter.Text, filterSpecial))
+                {
+                    var row = GetRow(threatEvent);
+                    if (row == null)
+                    {
+                        var typeRow = GetRow(threatEvent.ThreatType);
+                        if (typeRow == null)
+                            typeRow = AddGridRow(threatEvent.ThreatType, new IThreatEvent[] { threatEvent }, _grid.PrimaryGrid);
+
+                        var panel = typeRow.Rows.OfType<GridPanel>()
+                                .FirstOrDefault(x => string.CompareOrdinal(x.Name, "Mitigations") == 0);
+                        if (panel != null)
+                        {
+                            row = AddGridRow(threatEvent, panel);
+                        }
+                        else
+                        {
+                            // We should not come here.
+                            panel = CreateThreatEventsPanel(threatEvent.ThreatType,
+                                new IThreatEvent[] { threatEvent });
+                            if (panel != null)
+                            {
+                                typeRow.Rows.Add(panel);
+                                row = panel.Rows.OfType<GridRow>().FirstOrDefault();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var vulnerabilitiesPanel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Vulnerabilities") == 0);
+                        if (vulnerabilitiesPanel != null)
+                        {
+                            AddGridRow(vulnerability, vulnerabilitiesPanel);
+                        }
+                        else
+                        {
+                            vulnerabilitiesPanel = CreateVulnerabilitiesPanel(threatEvent);
+                            if (vulnerabilitiesPanel != null)
+                                row.Rows.Add(vulnerabilitiesPanel);
+                        }
+                    }
+
+                    if (row != null)
+                    {
+                        UpdateMitigationLevel(threatEvent, row);
+                    }
+                }
+            }
+        }
+
+        [Dispatched]
+        private void OnVulnerabilityRemoved(IVulnerabilitiesContainer container, IVulnerability vulnerability)
+        {
+            if (container is IThreatEvent threatEvent)
+            {
+                var row = GetRow(threatEvent);
+
+                var panel = row?.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Vulnerabilities") == 0);
+                var vulnerabilityRow = panel?.Rows.OfType<GridRow>()
+                    .FirstOrDefault(x =>
+                        (x.Tag is IVulnerability eventVulnerability) && eventVulnerability.Id == vulnerability.Id);
+                if (vulnerabilityRow != null)
+                {
+                    RemoveEventSubscriptions(vulnerability, vulnerabilityRow);
+
+                    panel.Rows.Remove(vulnerabilityRow);
+
                     if (panel.Rows.Count == 0)
                         row.Rows.Remove(panel);
                 }
@@ -1162,8 +1241,582 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         }
         #endregion
 
+        #region Vulnerabilities Level.
+        private GridPanel CreateVulnerabilitiesPanel([NotNull] IThreatEvent threatEvent)
+        {
+            GridPanel result = null;
+
+            var vulnerabilities = threatEvent.Vulnerabilities?
+                .OrderBy(x => x.Name)
+                .ToArray();
+            if (!string.IsNullOrWhiteSpace(threatEvent.Name) && (vulnerabilities?.Any() ?? false))
+            {
+                result = new GridPanel
+                {
+                    Name = "Vulnerabilities",
+                    AllowRowDelete = false,
+                    AllowRowInsert = false,
+                    AllowRowResize = true,
+                    ShowRowDirtyMarker = false,
+                    ShowRowHeaders = false,
+                    InitialSelection = RelativeSelection.None,
+                    ReadOnly = _executionMode == ExecutionMode.Management
+                };
+                result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
+
+                result.Columns.Add(new GridColumn("Name")
+                {
+                    HeaderText = "Vulnerability Name",
+                    AutoSizeMode = ColumnAutoSizeMode.Fill,
+                    DataType = typeof(string),
+                    AllowEdit = false
+                });
+                GridTextBoxDropDownEditControl ddc = result.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClear.Visible = true;
+                    ddc.ButtonClearClick += DdcButtonClearClick;
+                }
+
+                result.Columns.Add(new GridColumn("Severity")
+                {
+                    HeaderText = "Severity",
+                    DataType = typeof(ISeverity),
+                    EditorType = typeof(SeverityComboBox),
+                    EditorParams = new object[] { _model.Severities?.Where(x => x.Visible) },
+                    AllowEdit = true,
+                    Width = 75
+                });
+
+                foreach (var vulnerability in vulnerabilities)
+                {
+                    AddGridRow(vulnerability, result);
+                }
+            }
+
+            return result;
+        }
+
+        private void AddGridRow([NotNull] IVulnerability vulnerability, [NotNull] GridPanel panel)
+        {
+            GridRow row = new GridRow(
+                vulnerability.Name,
+                vulnerability.Severity)
+            {
+                Tag = vulnerability
+            };
+            UpdateMitigationLevel(vulnerability, row);
+            for (int i = 0; i < row.Cells.Count; i++)
+                row.Cells[i].PropertyChanged += OnVulnerabilityCellChanged;
+            panel.Rows.Add(row);
+            ((INotifyPropertyChanged)vulnerability).PropertyChanged += OnVulnerabilityPropertyChanged;
+
+            vulnerability.VulnerabilityMitigationAdded += OnVulnerabilityMitigationAdded;
+            vulnerability.VulnerabilityMitigationRemoved += OnVulnerabilityMitigationRemoved;
+
+            var subPanel = CreateVulnerabilityMitigationsPanel(vulnerability);
+            if (subPanel != null)
+                row.Rows.Add(subPanel);
+        }
+
+        private static void UpdateMitigationLevel([NotNull] IVulnerability vulnerability, [NotNull] GridRow row)
+        {
+            try
+            {
+                switch (vulnerability.GetMitigationLevel())
+                {
+                    case MitigationLevel.NotMitigated:
+                        row.Cells[0].CellStyles.Default.Image = Resources.weakness_circle_red_small;
+                        break;
+                    case MitigationLevel.Partial:
+                        row.Cells[0].CellStyles.Default.Image = Resources.weakness_circle_orange_small;
+                        break;
+                    case MitigationLevel.Complete:
+                        row.Cells[0].CellStyles.Default.Image = Resources.weakness_circle_green_small;
+                        break;
+                }
+            }
+            catch
+            {
+                // Ignore
+            }
+        }
+
+        [Dispatched]
+        private void OnVulnerabilityPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is IVulnerability vulnerability)
+            {
+                var row = GetRow(vulnerability);
+                if (row != null)
+                {
+                    switch (e.PropertyName)
+                    {
+                        case "Severity":
+                            row["Severity"].Value = vulnerability.Severity;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void OnVulnerabilityCellChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            var cell = sender as GridCell;
+            var propertyName = propertyChangedEventArgs.PropertyName;
+
+            if (!_loading && cell != null)
+            {
+                try
+                {
+                    _loading = true;
+                    var row = cell.GridRow;
+                    var vulnerability = row.Tag as IVulnerability;
+                    if (vulnerability != null)
+                    {
+                        switch (cell.GridColumn.Name)
+                        {
+                            case "Severity":
+                                if (cell.Value is ISeverity severity)
+                                    vulnerability.Severity = severity;
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+        
+        [Dispatched]
+        private void OnVulnerabilityMitigationAdded(IVulnerabilityMitigationsContainer container, IVulnerabilityMitigation mitigation)
+        {
+            if (container is IVulnerability vulnerability && vulnerability.Parent is IThreatEvent threatEvent)
+            {
+                var filterSpecial = EnumExtensions.GetEnumValue<ThreatEventListFilter>((string)_specialFilter.SelectedItem);
+                if (IsSelected(threatEvent, _filter.Text, filterSpecial))
+                {
+                    var row = GetRow(vulnerability);
+                    if (row == null)
+                    {
+                        OnVulnerabilityAdded(threatEvent, vulnerability);
+                        row = GetRow(vulnerability);
+                    }
+
+                    if (row != null)
+                    {
+                        var mitigationPanel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Mitigations") == 0);
+                        if (mitigationPanel != null)
+                        {
+                            AddGridRow(mitigation, mitigationPanel);
+                        }
+                        else
+                        {
+                            mitigationPanel = CreateVulnerabilityMitigationsPanel(vulnerability);
+                            if (mitigationPanel != null)
+                                row.Rows.Add(mitigationPanel);
+                        }
+                    }
+
+                    if (row != null)
+                    {
+                        UpdateMitigationLevel(vulnerability, row);
+                    }
+                }
+            }
+        }
+
+        [Dispatched]
+        private void OnVulnerabilityMitigationRemoved(IVulnerabilityMitigationsContainer container, IVulnerabilityMitigation mitigation)
+        {
+            if (container is IVulnerability vulnerability)
+            {
+                var row = GetRow(vulnerability);
+
+                var panel = row?.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Mitigations") == 0);
+                var mitigationRow = panel?.Rows.OfType<GridRow>()
+                    .FirstOrDefault(x =>
+                        (x.Tag is IVulnerabilityMitigation vulnMitigation) && vulnMitigation.MitigationId == mitigation.MitigationId);
+                if (mitigationRow != null)
+                {
+                    RemoveEventSubscriptions(mitigation, mitigationRow);
+
+                    panel.Rows.Remove(mitigationRow);
+
+                    if (panel.Rows.Count == 0)
+                        row.Rows.Remove(panel);
+                }
+
+                UpdateMitigationLevel(vulnerability, row);
+            }
+        }
+        #endregion
+
+        #region Vulnerability Mitigation Level.
+        private GridPanel CreateVulnerabilityMitigationsPanel([NotNull] IVulnerability vulnerability)
+        {
+            GridPanel result = null;
+
+            var mitigations = vulnerability.Mitigations?
+                .OrderBy(x => x.Mitigation.Name)
+                .ToArray();
+            if (!string.IsNullOrWhiteSpace(vulnerability.Name) && (mitigations?.Any() ?? false))
+            {
+                result = new GridPanel
+                {
+                    Name = "Mitigations",
+                    AllowRowDelete = false,
+                    AllowRowInsert = false,
+                    AllowRowResize = true,
+                    ShowRowDirtyMarker = false,
+                    ShowRowHeaders = false,
+                    InitialSelection = RelativeSelection.None,
+                    ReadOnly = _executionMode == ExecutionMode.Management
+                };
+                result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
+
+                result.Columns.Add(new GridColumn("Name")
+                {
+                    HeaderText = "Mitigation Name",
+                    AutoSizeMode = ColumnAutoSizeMode.Fill,
+                    DataType = typeof(string),
+                    AllowEdit = false
+                });
+
+                result.Columns.Add(new GridColumn("ControlType")
+                {
+                    HeaderText = "Control Type",
+                    DataType = typeof(string),
+                    EditorType = typeof(EnumComboBox),
+                    EditorParams = new object[] { EnumExtensions.GetEnumLabels<SecurityControlType>() },
+                    AllowEdit = false,
+                    Width = 75
+                });
+
+                result.Columns.Add(new GridColumn("Strength")
+                {
+                    HeaderText = "Strength",
+                    DataType = typeof(IStrength),
+                    EditorType = typeof(StrengthComboBox),
+                    EditorParams = new object[] { _model.Strengths?.Where(x => x.Visible) },
+                    AllowEdit = true,
+                    Width = 75
+                });
+
+                result.Columns.Add(new GridColumn("Status")
+                {
+                    HeaderText = "Status",
+                    DataType = typeof(string),
+                    EditorType = typeof(EnumComboBox),
+                    EditorParams = new object[] { EnumExtensions.GetEnumLabels<MitigationStatus>() },
+                    AllowEdit = true,
+                    Width = 75
+                });
+
+                foreach (var mitigation in mitigations)
+                {
+                    AddGridRow(mitigation, result);
+                }
+            }
+
+            return result;
+        }
+
+        private void AddGridRow([NotNull] IVulnerabilityMitigation mitigation, [NotNull] GridPanel panel)
+        {
+            GridRow row = new GridRow(
+                mitigation.Mitigation.Name,
+                mitigation.Mitigation.ControlType.ToString(),
+                mitigation.Strength,
+                mitigation.Status.ToString())
+            {
+                Tag = mitigation
+            };
+            row.Cells[0].CellStyles.Default.Image = mitigation.Mitigation.GetImage(ImageSize.Small);
+            for (int i = 0; i < row.Cells.Count; i++)
+                row.Cells[i].PropertyChanged += OnVulnerabilityMitigationCellChanged;
+            panel.Rows.Add(row);
+            ((INotifyPropertyChanged)mitigation).PropertyChanged += OnVulnerabilityMitigationPropertyChanged;
+            ((INotifyPropertyChanged)mitigation.Mitigation).PropertyChanged += OnMitigationPropertyChanged;
+        }
+
+        [Dispatched]
+        private void OnVulnerabilityMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is IVulnerabilityMitigation mitigation)
+            {
+                var row = GetRow(mitigation);
+                if (row != null)
+                {
+                    switch (e.PropertyName)
+                    {
+                        case "Strength":
+                            row["Strength"].Value = mitigation.Strength;
+                            if (mitigation.Vulnerability is IVulnerability vulnerability)
+                            {
+                                var vulnRow = GetRow(vulnerability);
+                                UpdateMitigationLevel(vulnerability, vulnRow);
+                            }
+                            break;
+                        case "Status":
+                            row["Status"].Value = mitigation.Status.ToString();
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void OnVulnerabilityMitigationCellChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            var cell = sender as GridCell;
+            var propertyName = propertyChangedEventArgs.PropertyName;
+
+            if (!_loading && cell != null)
+            {
+                try
+                {
+                    _loading = true;
+                    var row = cell.GridRow;
+                    var scenario = row.Tag as IVulnerabilityMitigation;
+                    if (scenario != null)
+                    {
+                        switch (cell.GridColumn.Name)
+                        {
+                            case "Strength":
+                                if (cell.Value is IStrength strength)
+                                    scenario.Strength = strength;
+                                break;
+                            case "Status":
+                                scenario.Status = ((string)cell.Value).GetEnumValue<MitigationStatus>();
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+        #endregion
+
+        #region Remove events.
+        private void RemoveEventSubscriptions()
+        {
+            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
+            foreach (var row in rows)
+                RemoveEventSubscriptions(row);
+
+            var ddc = _grid.PrimaryGrid.Rows.OfType<GridPanel>().FirstOrDefault()?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
+        }
+
+        private void RemoveEventSubscriptions(GridRow row)
+        {
+            if (row?.Tag is IThreatType threatType)
+            {
+                RemoveEventSubscriptions(threatType, row);
+            }
+            else if (row?.Tag is IThreatEvent threatEvent)
+            {
+                RemoveEventSubscriptions(threatEvent, row);
+            }
+            else if (row?.Tag is IThreatEventScenario scenario)
+            {
+                RemoveEventSubscriptions(scenario, row);
+            }
+            else if (row?.Tag is IThreatEventMitigation mitigation)
+            {
+                RemoveEventSubscriptions(mitigation, row);
+            }
+            else if (row?.Tag is IVulnerability vulnerability)
+            {
+                RemoveEventSubscriptions(vulnerability, row);
+            }
+            else if (row?.Tag is IVulnerabilityMitigation vulnMitigation)
+            {
+                RemoveEventSubscriptions(vulnMitigation, row);
+            }
+        }
+
+        private void RemoveEventSubscriptions([NotNull] IThreatType threatType, [NotNull] GridRow row)
+        {
+            if (row == null)
+                row = GetRow(threatType);
+
+            if (row != null)
+            {
+                ((INotifyPropertyChanged)threatType).PropertyChanged -= OnThreatTypePropertyChanged;
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnThreatTypeCellChanged;
+
+                var panel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "ThreatEvents") == 0);
+                var ddc = panel?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
+
+                RemoveEventSubscriptionsFromChildren(row);
+            }
+        }
+
+        private void RemoveEventSubscriptions([NotNull] IThreatEvent threatEvent, [NotNull] GridRow row)
+        {
+            if (row == null)
+                row = GetRow(threatEvent);
+
+            if (row != null)
+            {
+                if (threatEvent.Parent != null)
+                {
+                    ((INotifyPropertyChanged)threatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
+                    if (threatEvent.Parent is IEntity entity)
+                        entity.ImageChanged -= OnImageChanged;
+                }
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnThreatEventCellChanged;
+                ((INotifyPropertyChanged)threatEvent).PropertyChanged -= OnThreatEventPropertyChanged;
+
+                threatEvent.ScenarioAdded -= OnScenarioAdded;
+                threatEvent.ScenarioRemoved -= OnScenarioRemoved;
+                threatEvent.ThreatEventMitigationAdded -= OnThreatEventMitigationAdded;
+                threatEvent.ThreatEventMitigationRemoved -= OnThreatEventMitigationRemoved;
+                threatEvent.VulnerabilityAdded -= OnVulnerabilityAdded;
+                threatEvent.VulnerabilityRemoved -= OnVulnerabilityRemoved;
+
+                var panel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Scenarios") == 0);
+                var ddc = panel?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
+                ddc = panel?.Columns["Motivation"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
+
+                panel = row.Rows.OfType<GridPanel>().FirstOrDefault(x => string.CompareOrdinal(x.Name, "Vulnerabilities") == 0);
+                ddc = panel?.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClearClick -= DdcButtonClearClick;
+                }
+
+                RemoveSuperTooltipProvider(row.Cells["Parent"]);
+
+                RemoveEventSubscriptionsFromChildren(row);
+            }
+        }
+
+        private void RemoveEventSubscriptions([NotNull] IThreatEventScenario scenario, [NotNull] GridRow row)
+        {
+            if (row == null)
+                row = GetRow(scenario);
+
+            if (row != null)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnScenarioCellChanged;
+                ((INotifyPropertyChanged)scenario).PropertyChanged -= OnScenarioPropertyChanged;
+            }
+        }
+
+        private void RemoveEventSubscriptions([NotNull] IThreatEventMitigation mitigation, [NotNull] GridRow row)
+        {
+            if (row == null)
+                row = GetRow(mitigation);
+
+            if (row != null)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnMitigationCellChanged;
+                ((INotifyPropertyChanged)mitigation).PropertyChanged -= OnThreatEventMitigationPropertyChanged;
+                ((INotifyPropertyChanged)mitigation.Mitigation).PropertyChanged -= OnMitigationPropertyChanged;
+            }
+
+        }
+
+        private void RemoveEventSubscriptions([NotNull] IVulnerability vulnerability, [NotNull] GridRow row)
+        {
+            if (row == null)
+                row = GetRow(vulnerability);
+
+            if (row != null)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnVulnerabilityCellChanged;
+                ((INotifyPropertyChanged)vulnerability).PropertyChanged -= OnVulnerabilityPropertyChanged;
+
+                vulnerability.VulnerabilityMitigationAdded -= OnVulnerabilityMitigationAdded;
+                vulnerability.VulnerabilityMitigationRemoved -= OnVulnerabilityMitigationRemoved;
+
+                RemoveEventSubscriptionsFromChildren(row);
+            }
+
+        }
+
+        private void RemoveEventSubscriptions([NotNull] IVulnerabilityMitigation vulnMitigation, [NotNull] GridRow row)
+        {
+            if (row == null)
+                row = GetRow(vulnMitigation);
+
+            if (row != null)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnVulnerabilityMitigationCellChanged;
+                ((INotifyPropertyChanged)vulnMitigation).PropertyChanged -= OnVulnerabilityMitigationPropertyChanged;
+                ((INotifyPropertyChanged)vulnMitigation.Mitigation).PropertyChanged -= OnVulnerabilityMitigationPropertyChanged;
+            }
+        }
+
+        private void RemoveEventSubscriptionsFromChildren(GridRow row)
+        {
+            var panels = row?.Rows.OfType<GridPanel>().ToArray();
+            if (panels?.Any() ?? false)
+            {
+                foreach (var panel in panels)
+                {
+                    var children = panel.Rows.OfType<GridRow>().ToArray();
+                    if (children.Any())
+                    {
+                        foreach (var child in children)
+                            RemoveEventSubscriptions(child);
+                    }
+                }
+            }
+        }
+        #endregion
+
         #region Auxiliary private members.
-        void DdcButtonClearClick(object sender, CancelEventArgs e)
+        private IEnumerable<IThreatEvent> GetThreatEvents(string filter, ThreatEventListFilter filterSpecial)
+        {
+            IEnumerable<IThreatEvent> result = null;
+
+            List<IThreatEvent> threatEvents = new List<IThreatEvent>();
+            AddThreatEvents(threatEvents,
+                _model.Entities?.Select(x => x.ThreatEvents).ToArray(),
+                filter, filterSpecial);
+            AddThreatEvents(threatEvents, _model.DataFlows?.Select(x => x.ThreatEvents).ToArray(),
+                filter, filterSpecial);
+            var modelThreats = _model.ThreatEvents?
+                .Where(x => IsSelected(x, filter, filterSpecial)).ToArray();
+            if (modelThreats?.Any() ?? false)
+                threatEvents.AddRange(modelThreats);
+
+            if (threatEvents.Any())
+                result = threatEvents.AsEnumerable();
+
+            return result;
+        }
+
+        private void DdcButtonClearClick(object sender, CancelEventArgs e)
         {
             GridTextBoxDropDownEditControl ddc =
                 sender as GridTextBoxDropDownEditControl;
@@ -1309,6 +1962,53 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
             return result;
         }
 
+        private GridRow GetRow([NotNull] IVulnerability vulnerability)
+        {
+            GridRow result = null;
+
+            if (vulnerability.Parent is IThreatEvent threatEvent)
+            {
+                var parentRow = GetRow(threatEvent);
+                if (parentRow != null)
+                {
+                    var panels = parentRow.Rows.OfType<GridPanel>().ToArray();
+                    if (panels.Any())
+                    {
+                        foreach (var panel in panels)
+                        {
+                            result = panel.Rows.OfType<GridRow>().FirstOrDefault(x => x.Tag == vulnerability);
+                            if (result != null)
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private GridRow GetRow([NotNull] IVulnerabilityMitigation mitigation)
+        {
+            GridRow result = null;
+
+            var parentRow = GetRow(mitigation.Vulnerability);
+            if (parentRow != null)
+            {
+                var panels = parentRow.Rows.OfType<GridPanel>().ToArray();
+                if (panels.Any())
+                {
+                    foreach (var panel in panels)
+                    {
+                        result = panel.Rows.OfType<GridRow>().FirstOrDefault(x => x.Tag == mitigation);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private IEnumerable<GridRow> GetRows([NotNull] IMitigation mitigation)
         {
             List<GridRow> result = null;
@@ -1328,7 +2028,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             var leaves = subPanel.Rows.OfType<GridRow>().ToArray();
                             foreach (var leaf in leaves)
                             {
-                                if (leaf.Tag is IThreatEventMitigation tem && tem.MitigationId == mitigation.Id)
+                                if ((leaf.Tag is IThreatEventMitigation tem && tem.MitigationId == mitigation.Id) ||
+                                    (leaf.Tag is IVulnerabilityMitigation vm && vm.MitigationId == mitigation.Id))
                                 {
                                     if (result == null)
                                         result = new List<GridRow>();
@@ -1436,6 +2137,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         }
         #endregion
 
+        #region Other Form Events.
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char) Keys.Enter)
@@ -1469,7 +2171,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 }
             }
         }
-        
+        #endregion
+
         #region Tooltip Management.
         private void AddSuperTooltipProvider([NotNull] IIdentity identity, [NotNull] GridCell cell)
         {
@@ -1539,6 +2242,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         }
         #endregion
 
+        #region Execution Mode.
         public void SetExecutionMode(ExecutionMode mode)
         {
             _executionMode = mode;
@@ -1549,5 +2253,6 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 _properties.ReadOnly = true;
             }
         }
+        #endregion
     }
 }

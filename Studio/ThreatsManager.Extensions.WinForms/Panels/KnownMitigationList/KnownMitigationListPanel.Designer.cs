@@ -19,6 +19,9 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellActivated -= _grid_CellActivated;
             _grid.RowActivated -= _grid_RowActivated;
             _grid.MouseClick -= _grid_MouseClick;
@@ -42,6 +45,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             {
                 _model.ChildCreated -= ModelChildCreated;
                 _model.ChildRemoved -= ModelChildRemoved;
+
+                if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+                {
+                    undoable.Undone -= ModelUndone;
+                }
 
                 var threatTypes = _model.ThreatTypes?.ToArray();
                 if (threatTypes?.Any() ?? false)

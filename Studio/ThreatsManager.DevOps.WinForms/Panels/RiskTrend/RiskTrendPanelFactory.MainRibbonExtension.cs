@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.DevOps.Panels.MitigationsKanban;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;

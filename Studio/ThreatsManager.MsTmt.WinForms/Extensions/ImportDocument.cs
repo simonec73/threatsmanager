@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Xml;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -67,33 +68,37 @@ namespace ThreatsManager.MsTmt.Extensions
                         };
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            var importer = new Importer();
-                            importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
-                                out var diagrams, out var externalInteractors, out var processes, out var dataStores,
-                                out var flows, out var trustBoundaries, out var entityTypes, out var threatTypes, out var customThreatTypes, 
-                                out var threats, out var missingThreats);
-                            RefreshPanels?.Invoke(this);
-                            ShowMessage?.Invoke("TMT7 file imported successfully.");
+                            using (var scope = UndoRedoManager.OpenScope("Import TMT Document"))
+                            {
+                                var importer = new Importer();
+                                importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
+                                    out var diagrams, out var externalInteractors, out var processes, out var dataStores,
+                                    out var flows, out var trustBoundaries, out var entityTypes, out var threatTypes, out var customThreatTypes,
+                                    out var threats, out var missingThreats);
+                                scope?.Complete();
+                                RefreshPanels?.Invoke(this);
+                                ShowMessage?.Invoke("TMT7 file imported successfully.");
 
-                            using (var resultDialog = new ImportResultDialog()
-                            {
-                                Properties = new ImportStatus()
+                                using (var resultDialog = new ImportResultDialog()
                                 {
-                                    Diagrams = diagrams,
-                                    ExternalInteractors = externalInteractors,
-                                    Processes = processes,
-                                    DataStores = dataStores,
-                                    DataFlows = flows,
-                                    TrustBoundaries = trustBoundaries,
-                                    EntityTypes = entityTypes,
-                                    ThreatTypes = threatTypes,
-                                    CustomThreatTypes = customThreatTypes,
-                                    Threats = threats,
-                                    MissingThreats = missingThreats
+                                    Properties = new ImportStatus()
+                                    {
+                                        Diagrams = diagrams,
+                                        ExternalInteractors = externalInteractors,
+                                        Processes = processes,
+                                        DataStores = dataStores,
+                                        DataFlows = flows,
+                                        TrustBoundaries = trustBoundaries,
+                                        EntityTypes = entityTypes,
+                                        ThreatTypes = threatTypes,
+                                        CustomThreatTypes = customThreatTypes,
+                                        Threats = threats,
+                                        MissingThreats = missingThreats
+                                    }
+                                })
+                                {
+                                    resultDialog.ShowDialog(Form.ActiveForm);
                                 }
-                            })
-                            {
-                                resultDialog.ShowDialog(Form.ActiveForm);
                             }
                         }
                         break;

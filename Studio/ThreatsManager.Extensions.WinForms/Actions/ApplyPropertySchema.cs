@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Interfaces;
@@ -6,6 +7,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -88,20 +90,24 @@ namespace ThreatsManager.Extensions.Actions
 
         public bool Execute(IPropertiesContainer container)
         {
-            bool result = false;
+            var result = false;
 
             if (container != null)
             {
-                var dialog = new ApplySchemaDialog();
-                dialog.Initialize(container);
-                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                using (var scope = UndoRedoManager.OpenScope("Apply Property Schema"))
                 {
-                    var schema = dialog.SelectedSchema;
-                    if (schema != null)
+                    var dialog = new ApplySchemaDialog();
+                    dialog.Initialize(container);
+                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        container.Apply(schema);
-                        result = true;
-                    }
+                        var schema = dialog.SelectedSchema;
+                        if (schema != null)
+                        {
+                            container.Apply(schema);
+                            scope?.Complete();
+                            result = true;
+                        }
+                    } 
                 }
             }
 

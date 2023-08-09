@@ -3,29 +3,40 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Metro;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Icons;
+using ThreatsManager.Extensions.Diagrams;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
-    public partial class ThreatEventListForm : Form
+    public partial class PanelItemListForm : Form
     {
-        private static List<ThreatEventListForm> _instances = new List<ThreatEventListForm>();
-        private static Graphics _graphics = (new System.Windows.Forms.Label()).CreateGraphics();
+        private static List<PanelItemListForm> _instances = new List<PanelItemListForm>();
+        private static Graphics _graphics = (new Label()).CreateGraphics();
         private static List<string> _buckets;
         private static Dictionary<string, List<IContextAwareAction>> _actions;
+        private readonly object _referenceObject;
+        private PanelItem _currentPanelItem;
 
-        public ThreatEventListForm()
+        private const string cEdit = "<a href=\"Edit\">Edit the item.</a>";
+        private const string cRemove = "<a href=\"Remove\">Remove the item.</a>";
+
+        public PanelItemListForm(object referenceObject)
         {
             InitializeComponent();
             _instances.Add(this);
-        }
 
+            _referenceObject = referenceObject;
+        }
         
-        public event Action<IThreatEvent> ThreatEventClicked;
+        /// <summary>
+        /// Event raised when a panel item is clicked.
+        /// </summary>
+        /// <remarks>The returned object is the Tag associated with the Panel Item.</remarks>
+        public event Action<object> PanelItemClicked;
 
         public static void SetActions(IEnumerable<IContextAwareAction> actions)
         {
@@ -49,29 +60,64 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
         }
 
-        public void ShowThreatEvents([NotNull] IEnumerable<IThreatEvent> threatEvents)
+        public void ShowPanelItems([NotNull] IEnumerable<PanelItem> panelItems)
         {
-            var sorted = threatEvents.OrderBy(x => x.Name).ToArray();
+            var sorted = panelItems.OrderBy(x => x.Name).ToArray();
 
-            foreach (var threatEvent in sorted)
+            foreach (var panelItem in sorted)
             {
-                var text = Trim(threatEvent.Name, _panel.Font, Width - 50);
+                var text = Trim(panelItem.Name, _panel.Font, Width - 50);
 
                 var item = new MetroTileItem()
                 {
                     Text = text,
-                    Tag = threatEvent,
+                    Tag = panelItem,
                     TileColor = eMetroTileColor.RedOrange,
                     TileSize = new Size(100, 20),
-                    Image = GetMitigationImage(threatEvent)
+                    Image = panelItem.Icon
                 };
                 item.Click += ItemClicked;
                 item.CheckedChanged += ItemContextMenu;
                 _panel.Items.Add(item);
+                if (panelItem.ActionOnClick == ClickAction.ShowTooltip)
+                {
+                    var footer = GetTooltipFooter(panelItem);
+                    _superTooltip.SetSuperTooltip(item, new SuperTooltipInfo()
+                    {
+                        HeaderText = panelItem.Name,
+                        HeaderVisible = true,
+                        BodyText = panelItem.TooltipText,
+                        FooterText = footer,
+                        FooterVisible = !string.IsNullOrWhiteSpace(footer)
+                    });
+                }
             }
         }
 
-        private string Trim(string text, System.Drawing.Font font, int maxSizeInPixels)
+        private string GetTooltipFooter(PanelItem panelItem)
+        {
+            string result = null;
+
+            if (panelItem.TooltipAction != TooltipAction.None)
+            {
+                if (panelItem.TooltipAction == TooltipAction.Edit)
+                {
+                    result = cEdit;
+                } 
+                else if (panelItem.TooltipAction == TooltipAction.Remove)
+                {
+                    result = cRemove;
+                }
+                else
+                {
+                    result = $"{cEdit} - {cRemove}";
+                }
+            }
+
+            return result;
+        }
+
+        private string Trim(string text, Font font, int maxSizeInPixels)
         {
             var trimmedText = text;
             var currentSize = Convert.ToInt32(_graphics.MeasureString(trimmedText, font).Width);
@@ -93,26 +139,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 }
             }
             return trimmedText;
-        }
-
-        private static Image GetMitigationImage([NotNull] IThreatEvent threatEvent)
-        {
-            Image result = null;
-
-            switch (threatEvent.GetMitigationLevel())
-            {
-                case MitigationLevel.Partial:
-                    result = Resources.threat_circle_orange_small;
-                    break;
-                case MitigationLevel.Complete:
-                    result = Resources.threat_circle_green_small;
-                    break;
-                default:
-                    result = Resources.threat_circle_small;
-                    break;
-            }
-
-            return result;
         }
 
         public static void CloseAll()
@@ -163,9 +189,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void ItemClicked(object sender, EventArgs e)
         {
-            if (sender is MetroTileItem item && item.Tag is IThreatEvent threatEvent)
+            _currentPanelItem = null;
+
+            if (sender is MetroTileItem item && item.Tag is PanelItem panelItem)
             {
-                ThreatEventClicked?.Invoke(threatEvent);
+                switch (panelItem.ActionOnClick)
+                {
+                    case ClickAction.ShowObject:
+                        PanelItemClicked?.Invoke(panelItem.Tag);
+                        break;
+                    case ClickAction.ShowTooltip:
+                        _currentPanelItem = panelItem;
+                        _superTooltip.ShowTooltip(item);
+                        break;
+                    case ClickAction.CallMethod:
+                        panelItem.ExecuteAction(_referenceObject);
+                        break;
+                }
             }
         }
 
@@ -190,8 +230,29 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 menuItem.Tag is IContextAwareAction action &&
                 menuItem.Owner.Tag is IThreatEvent threatEvent)
             {
-                this.Close();
+                Close();
                 action.Execute(threatEvent);
+            }
+        }
+
+        private void _superTooltip_MarkupLinkClick(object sender, MarkupLinkClickEventArgs e)
+        {
+            if (_currentPanelItem != null)
+            {
+                if (string.CompareOrdinal(e.HRef, "Edit") == 0)
+                {
+                    _currentPanelItem.EditAction(_referenceObject);
+                }
+                else if (string.CompareOrdinal(e.HRef, "Remove") == 0)
+                {
+                    if (MessageBox.Show(Application.OpenForms.OfType<IWin32Window>().FirstOrDefault(),
+                        $"Do you confirm removal of item '{_currentPanelItem.Name}'?",
+                        "Item removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        Close();
+                        _currentPanelItem.RemoveAction(_referenceObject);
+                    }
+                }
             }
         }
     }

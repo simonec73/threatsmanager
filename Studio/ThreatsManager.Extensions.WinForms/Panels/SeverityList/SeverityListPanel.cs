@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.SeverityList
@@ -29,6 +30,9 @@ namespace ThreatsManager.Extensions.Panels.SeverityList
             InitializeComponent();
 
             InitializeGrid();
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -191,6 +195,11 @@ namespace ThreatsManager.Extensions.Panels.SeverityList
                 _loading = false;
                 _grid.ResumeLayout(true);
             }
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
         }
 
         private void AddGridRow([NotNull] ISeverity severity, [NotNull] GridPanel panel)

@@ -19,6 +19,9 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellActivated -= _grid_CellActivated;
             _grid.CellMouseDown -= _grid_CellMouseDown;
             _grid.CellMouseLeave -= _grid_CellMouseLeave;

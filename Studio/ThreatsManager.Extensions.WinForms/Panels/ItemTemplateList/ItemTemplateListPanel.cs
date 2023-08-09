@@ -29,6 +29,9 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             InitializeComponent();
 
             InitializeGrid();
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -46,7 +49,93 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             _model.ChildCreated += ModelChildCreated;
             _model.ChildRemoved += ModelChildRemoved;
 
+            if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+            {
+                undoable.Undone += ModelUndone;
+            }
+
             LoadModel();
+        }
+
+        private void ModelUndone(object item, bool removed)
+        {
+            if (removed)
+            {
+                this.ParentForm?.Close();
+            }
+            else
+            {
+                if (item is IThreatModel model)
+                {
+                    var list = new List<IItemTemplate>();
+                    var entities = model.EntityTemplates?.ToArray();
+                    if (entities?.Any() ?? false)
+                    {
+                        list.AddRange(entities);
+                    }
+                    var flows = model.FlowTemplates?.ToArray();
+                    if (flows?.Any() ?? false)
+                    {
+                        list.AddRange(flows);
+                    }
+                    var trustBoundaries = model.TrustBoundaryTemplates?.ToArray();
+                    if (trustBoundaries?.Any() ?? false)
+                    {
+                        list.AddRange(trustBoundaries);
+                    }
+
+                    var grid = _grid.PrimaryGrid;
+                    var rows = grid.Rows.OfType<GridRow>().ToArray();
+                    if (rows.Any())
+                    {
+                        foreach (var row in rows)
+                        {
+                            if (row.Tag is IEntityTemplate entity)
+                            {
+                                if (model.GetEntityTemplate(entity.Id) == null)
+                                {
+                                    RemoveEventSubscriptions(row);
+                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                }
+                                else
+                                {
+                                    list.Remove(entity);
+                                }
+                            } else if (row.Tag is IFlowTemplate flow)
+                            {
+                                if (model.GetFlowTemplate(flow.Id) == null)
+                                {
+                                    RemoveEventSubscriptions(row);
+                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                }
+                                else
+                                {
+                                    list.Remove(flow);
+                                }
+                            } else if (row.Tag is ITrustBoundaryTemplate trustBoundary)
+                            {
+                                if (model.GetEntityTemplate(trustBoundary.Id) == null)
+                                {
+                                    RemoveEventSubscriptions(row);
+                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                }
+                                else
+                                {
+                                    list.Remove(trustBoundary);
+                                }
+                            }
+                        }
+                    }
+
+                    if (list.Any())
+                    {
+                        foreach (var i in list)
+                        {
+                            AddGridRow(i, grid);
+                        }
+                    }
+                }
+            }
         }
 
         private void ModelChildRemoved(IIdentity identity)
@@ -149,6 +238,11 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             }
         }
 
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
+
         private void AddGridRows(IEnumerable<IItemTemplate> items)
         {
             var templates = items?.ToArray();
@@ -185,6 +279,39 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             for (int i = 0; i < row.Cells.Count; i++)
                 row.Cells[i].PropertyChanged += OnPropertyChanged;
             panel.Rows.Add(row);
+
+            if (template is IUndoable undoable && undoable.IsUndoEnabled)
+                undoable.Undone += TemplateUndone;
+        }
+
+        private void TemplateUndone(object item, bool removed)
+        {
+            if (item is IItemTemplate itemTemplate)
+            {
+                var row = GetRow(itemTemplate);
+                if (row != null)
+                {
+                    if (removed)
+                    {
+                        RemoveEventSubscriptions(row);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _loading = true;
+                            row.Cells["Name"].Value = itemTemplate.Name;
+                            if (itemTemplate is IEntityTemplate entityTemplate)
+                                row.Cells[0].CellStyles.Default.Image = entityTemplate.GetImage(ImageSize.Small);
+                        }
+                        finally
+                        {
+                            _loading = false;
+                        }
+                    }
+                }
+            }
         }
 
         private void RemoveEventSubscriptions(GridRow row)
@@ -194,6 +321,8 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                 ((INotifyPropertyChanged) template).PropertyChanged -= OnTemplatePropertyChanged;
                 if (template is IEntityTemplate entityTemplate)
                     entityTemplate.ImageChanged -= OnImageChanged;
+                if (template is IUndoable undoable && undoable.IsUndoEnabled)
+                    undoable.Undone -= TemplateUndone;
                 for (int i = 0; i < row.Cells.Count; i++)
                     row.Cells[i].PropertyChanged -= OnPropertyChanged;
             }

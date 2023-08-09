@@ -2036,37 +2036,32 @@ namespace ThreatsManager.Extensions.Dialogs
             if (MessageBox.Show("The selected merge actions are about to be performed.\nPlease confirm.",
                 "Merge", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
             {
-                bool dirty = false;
-
                 if (_tabPropertySchemas.Visible)
-                    dirty |= MergeGrid(_gridPropertySchemas);
+                    MergeGrid(_gridPropertySchemas);
                 if (_tabSeverities.Visible)
-                    dirty |= MergeGrid(_gridSeverities);
+                    MergeGrid(_gridSeverities);
                 if (_tabStrengths.Visible)
-                    dirty |= MergeGrid(_gridStrengths);
+                    MergeGrid(_gridStrengths);
                 if (_tabThreatActors.Visible)
-                    dirty |= MergeGrid(_gridThreatActors);
+                    MergeGrid(_gridThreatActors);
                 if (_tabMitigations.Visible)
-                    dirty |= MergeGrid(_gridMitigations);
+                    MergeGrid(_gridMitigations);
                 if (_tabThreatTypes.Visible)
-                    dirty |= MergeGrid(_gridThreatTypes);
+                    MergeGrid(_gridThreatTypes);
                 if (_tabItemTemplates.Visible)
-                    dirty |= MergeGrid(_gridItemTemplates);
+                    MergeGrid(_gridItemTemplates);
                 if (_tabTrustBoundaries.Visible)
-                    dirty |= MergeGrid(_gridTrustBoundaries);
+                    MergeGrid(_gridTrustBoundaries);
                 if (_tabExternalInteractors.Visible)
-                    dirty |= MergeGrid(_gridExternalInteractors);
+                    MergeGrid(_gridExternalInteractors);
                 if (_tabProcesses.Visible)
-                    dirty |= MergeGrid(_gridProcesses);
+                    MergeGrid(_gridProcesses);
                 if (_tabDataStores.Visible)
-                    dirty |= MergeGrid(_gridDataStores);
+                    MergeGrid(_gridDataStores);
                 if (_tabFlows.Visible)
-                    dirty |= MergeGrid(_gridFlows);
+                    MergeGrid(_gridFlows);
                 if (_tabDiagrams.Visible)
-                    dirty |= MergeGrid(_gridDiagrams);
-
-                if (dirty)
-                    _model.SetDirty();
+                    MergeGrid(_gridDiagrams);
             }
             else
             {

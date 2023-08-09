@@ -69,5 +69,7 @@ namespace ThreatsManager.Extensions.Actions
                 Tag = this
             }
         });
+
+        public string VisibilityContext => "Diagram";
     }
 }

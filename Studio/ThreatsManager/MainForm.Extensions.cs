@@ -196,7 +196,7 @@ namespace ThreatsManager
             _ribbonPanelAnalyze.SuspendLayout();
             _ribbonPanelExport.SuspendLayout();
             _ribbonPanelImport.SuspendLayout();
-            _ribbonPanelInsert.SuspendLayout();
+            _ribbonPanelKnowledgeBase.SuspendLayout();
             _ribbonPanelIntegrate.SuspendLayout();
             _ribbonPanelReview.SuspendLayout();
             _ribbonPanelView.SuspendLayout();
@@ -224,9 +224,9 @@ namespace ThreatsManager
             foreach (var pair in _ribbonBars)
             {
                 var ribbon = GetRibbon(pair.Key);
-                var width = ribbon.Panel.Controls.OfType<Control>().Sum(x => x.Width);
                 if (ribbon != null)
                 {
+                    var width = ribbon.Panel.Controls.OfType<Control>().Sum(x => x.Width);
                     foreach (var bar in pair.Value)
                     {
                         bar.Left = width;
@@ -241,7 +241,7 @@ namespace ThreatsManager
             _ribbonPanelExport.ResumeLayout();
             _ribbonPanelImport.ResumeLayout();
             _ribbonPanelIntegrate.ResumeLayout();
-            _ribbonPanelInsert.ResumeLayout();
+            _ribbonPanelKnowledgeBase.ResumeLayout();
             _ribbonPanelReview.ResumeLayout();
             _ribbonPanelView.ResumeLayout();
             _ribbonPanelConfigure.ResumeLayout();
@@ -429,22 +429,27 @@ namespace ThreatsManager
         {
             if (factory is IPanelFactory<Form> formFactory)
             {
-                switch (factory.Behavior)
-                {
-                    case InstanceMode.Multiple:
-                        AddPanel(formFactory, identity);
-                        break;
-                    default:
-                        if (AddInstance(formFactory, identity))
-                        {
+                using (var scope = UndoRedoManager.OpenScope(factory.GetExtensionLabel()))
+                { 
+                    switch (factory.Behavior)
+                    {
+                        case InstanceMode.Multiple:
                             AddPanel(formFactory, identity);
-                        }
-                        else
-                        {
-                            DisplayForm(GetFormId(formFactory, identity));
-                        }
+                            break;
+                        default:
+                            if (AddInstance(formFactory, identity))
+                            {
+                                AddPanel(formFactory, identity);
+                            }
+                            else
+                            {
+                                DisplayForm(GetFormId(formFactory, identity));
+                            }
 
-                        break;
+                            break;
+                    }
+
+                    scope?.Complete();
                 }
             }
         }
@@ -682,7 +687,7 @@ namespace ThreatsManager
 
         private RibbonTabItem GetRibbon(Ribbon ribbon)
         {
-            return _ribbon.Items.OfType<RibbonTabItem>().FirstOrDefault(x => Enum.TryParse<Ribbon>(x.Text, out var ribbonButton) && ribbonButton == ribbon);
+            return _ribbon.Items.OfType<RibbonTabItem>().FirstOrDefault(x => EnumExtensions.GetEnumValue<Ribbon>(x.Text) == ribbon);
         }
 
         private RibbonBar GetRibbonBar([NotNull] RibbonPanel ribbon, [Required] string bar)
@@ -712,37 +717,42 @@ namespace ThreatsManager
             {
                 if (button.Tag is IActionDefinition actionDefinition)
                 {
-                    if (_mainRibbonExtensions.TryGetValue(actionDefinition.Id, out var extension))
-                    {
-                        ExceptionlessClient.Default.CreateFeatureUsage(extension.GetExtensionLabel()).Submit();
-                        try
+                    using (var scope = UndoRedoManager.OpenScope(actionDefinition.Label))
+                    { 
+                        if (_mainRibbonExtensions.TryGetValue(actionDefinition.Id, out var extension))
                         {
-                            extension.ExecuteRibbonAction(_model, actionDefinition);
-                        }
-                        catch (Exception exc)
-                        {
-                            exc.ToExceptionless().Submit();
-                        }
-                    }
-                    else
-                    {
-                        var form = FindForm(actionDefinition);
-                        if (form == null)
-                        {
-                            var parentId = _childParentActions[actionDefinition.Id];
-                            if (_mainRibbonExtensions.TryGetValue(parentId, out var parentExtension) &&
-                                parentExtension is IPanelFactory<Form> factory)
+                            ExceptionlessClient.Default.CreateFeatureUsage(extension.GetExtensionLabel()).Submit();
+                            try
                             {
-                                ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
-                                var panel = factory.Create(actionDefinition);
-                                if (actionDefinition.Tag is IIdentity identity)
-                                    CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity), identity);
+                                extension.ExecuteRibbonAction(_model, actionDefinition);
+                            }
+                            catch (Exception exc)
+                            {
+                                exc.ToExceptionless().Submit();
                             }
                         }
                         else
                         {
-                            form.Activate();
+                            var form = FindForm(actionDefinition);
+                            if (form == null)
+                            {
+                                var parentId = _childParentActions[actionDefinition.Id];
+                                if (_mainRibbonExtensions.TryGetValue(parentId, out var parentExtension) &&
+                                    parentExtension is IPanelFactory<Form> factory)
+                                {
+                                    ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
+                                    var panel = factory.Create(actionDefinition);
+                                    if (actionDefinition.Tag is IIdentity identity)
+                                        CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity), identity);
+                                }
+                            }
+                            else
+                            {
+                                form.Activate();
+                            }
                         }
+
+                        scope?.Complete();
                     }
                 }                   
             }
@@ -756,8 +766,23 @@ namespace ThreatsManager
                 .FirstOrDefault(x => string.CompareOrdinal(x.Name, actionDefinition.Id.ToString("N")) == 0);
         }
 
+        [Dispatched]
         private void AppendFormsList([NotNull] IMainRibbonExtension extension, [NotNull] ButtonItem button)
         {
+            button.SubItems.Clear();
+
+            if (button.Tag is IActionDefinition def)
+            {
+                var actions = _childParentActions.Where(x => x.Value == def.Id).Select(x => x.Key).ToArray();
+                if (actions.Any())
+                {
+                    foreach (var action in actions)
+                    {
+                        _childParentActions.Remove(action);
+                    }
+                }
+            }
+
             var list = extension.GetStartPanelsList(_model)?.ToArray();
             if (list?.Any() ?? false)
             {
@@ -766,6 +791,8 @@ namespace ThreatsManager
                     AddDiagramToFormList(button, item);
                 }
             }
+            else
+                button.Enabled = false;
         }
 
         private void AddDiagramToFormList([NotNull] ButtonItem button, [NotNull] IActionDefinition item)

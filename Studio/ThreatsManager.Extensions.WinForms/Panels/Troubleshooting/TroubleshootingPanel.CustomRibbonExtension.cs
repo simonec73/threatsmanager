@@ -10,6 +10,7 @@ using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Extensions.Panels.Troubleshooting
 {
+#if !PORTABLE
 #pragma warning disable CS0067
     public partial class TroubleshootingPanel
     {
@@ -60,4 +61,5 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
             }
         }
     }
+#endif
 }

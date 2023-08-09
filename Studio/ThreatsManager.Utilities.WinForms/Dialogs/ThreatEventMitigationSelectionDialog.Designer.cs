@@ -163,10 +163,10 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             // 
             this._strength.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._strength.FormattingEnabled = true;
-            this._strength.Location = new System.Drawing.Point(533, 75);
+            this._strength.Location = new System.Drawing.Point(680, 75);
             this._strength.Margin = new System.Windows.Forms.Padding(0);
             this._strength.Name = "_strength";
-            this._strength.Size = new System.Drawing.Size(327, 21);
+            this._strength.Size = new System.Drawing.Size(180, 21);
             this._strength.TabIndex = 14;
             this._strength.SelectedIndexChanged += new System.EventHandler(this._strength_SelectedIndexChanged);
             // 
@@ -210,7 +210,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._associateToStandard.Checked = true;
             this._associateToStandard.CheckState = System.Windows.Forms.CheckState.Checked;
             this._associateToStandard.Enabled = false;
-            this._associateToStandard.Location = new System.Drawing.Point(314, 129);
+            this._associateToStandard.Location = new System.Drawing.Point(461, 129);
             this._associateToStandard.Margin = new System.Windows.Forms.Padding(0);
             this._associateToStandard.Name = "_associateToStandard";
             this._associateToStandard.Size = new System.Drawing.Size(112, 17);
@@ -225,7 +225,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._nonStandardMitigation.Location = new System.Drawing.Point(167, 154);
             this._nonStandardMitigation.Margin = new System.Windows.Forms.Padding(0);
             this._nonStandardMitigation.Name = "_nonStandardMitigation";
-            this._nonStandardMitigation.Size = new System.Drawing.Size(259, 21);
+            this._nonStandardMitigation.Size = new System.Drawing.Size(406, 21);
             this._nonStandardMitigation.TabIndex = 7;
             this._nonStandardMitigation.SelectedIndexChanged += new System.EventHandler(this._nonStandardMitigation_SelectedIndexChanged);
             this._nonStandardMitigation.TextUpdate += new System.EventHandler(this.OnComboBoxTextUpdate);
@@ -237,7 +237,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._standardMitigation.Location = new System.Drawing.Point(167, 100);
             this._standardMitigation.Margin = new System.Windows.Forms.Padding(0);
             this._standardMitigation.Name = "_standardMitigation";
-            this._standardMitigation.Size = new System.Drawing.Size(259, 21);
+            this._standardMitigation.Size = new System.Drawing.Size(406, 21);
             this._standardMitigation.TabIndex = 4;
             this._standardMitigation.SelectedIndexChanged += new System.EventHandler(this._standardMitigation_SelectedIndexChanged);
             this._standardMitigation.TextUpdate += new System.EventHandler(this.OnComboBoxTextUpdate);
@@ -249,7 +249,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._createNew.Location = new System.Drawing.Point(8, 183);
             this._createNew.Margin = new System.Windows.Forms.Padding(0);
             this._createNew.Name = "_createNew";
-            this._createNew.Size = new System.Drawing.Size(298, 17);
+            this._createNew.Size = new System.Drawing.Size(445, 17);
             this._createNew.TabIndex = 8;
             this._createNew.Text = "Associate a New Mitigation";
             this._createNew.UseVisualStyleBackColor = true;
@@ -261,7 +261,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._associateNonstandard.Location = new System.Drawing.Point(8, 129);
             this._associateNonstandard.Margin = new System.Windows.Forms.Padding(0);
             this._associateNonstandard.Name = "_associateNonstandard";
-            this._associateNonstandard.Size = new System.Drawing.Size(298, 17);
+            this._associateNonstandard.Size = new System.Drawing.Size(445, 17);
             this._associateNonstandard.TabIndex = 5;
             this._associateNonstandard.Text = "Associate a non-Standard Mitigation";
             this._associateNonstandard.UseVisualStyleBackColor = true;
@@ -274,7 +274,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._associateStandard.Location = new System.Drawing.Point(8, 75);
             this._associateStandard.Margin = new System.Windows.Forms.Padding(0);
             this._associateStandard.Name = "_associateStandard";
-            this._associateStandard.Size = new System.Drawing.Size(418, 17);
+            this._associateStandard.Size = new System.Drawing.Size(565, 17);
             this._associateStandard.TabIndex = 3;
             this._associateStandard.TabStop = true;
             this._associateStandard.Text = "Associate a Standard Mitigation";
@@ -289,7 +289,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._controlType.Location = new System.Drawing.Point(167, 316);
             this._controlType.Margin = new System.Windows.Forms.Padding(0);
             this._controlType.Name = "_controlType";
-            this._controlType.Size = new System.Drawing.Size(259, 21);
+            this._controlType.Size = new System.Drawing.Size(406, 21);
             this._controlType.TabIndex = 12;
             this._controlType.SelectedIndexChanged += new System.EventHandler(this._controlType_SelectedIndexChanged);
             // 
@@ -301,7 +301,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._description.Location = new System.Drawing.Point(167, 236);
             this._description.Margin = new System.Windows.Forms.Padding(0);
             this._description.Name = "_description";
-            this._description.Size = new System.Drawing.Size(259, 72);
+            this._description.Size = new System.Drawing.Size(406, 72);
             this._description.TabIndex = 11;
             this._description.Text = "";
             // 
@@ -311,7 +311,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._name.Location = new System.Drawing.Point(167, 208);
             this._name.Margin = new System.Windows.Forms.Padding(0);
             this._name.Name = "_name";
-            this._name.Size = new System.Drawing.Size(259, 20);
+            this._name.Size = new System.Drawing.Size(406, 20);
             this._name.TabIndex = 10;
             this._name.TextChanged += new System.EventHandler(this._name_TextChanged);
             // 
@@ -321,7 +321,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._newToStandard.Checked = true;
             this._newToStandard.CheckState = System.Windows.Forms.CheckState.Checked;
             this._newToStandard.Enabled = false;
-            this._newToStandard.Location = new System.Drawing.Point(314, 183);
+            this._newToStandard.Location = new System.Drawing.Point(461, 183);
             this._newToStandard.Margin = new System.Windows.Forms.Padding(0);
             this._newToStandard.Name = "_newToStandard";
             this._newToStandard.Size = new System.Drawing.Size(112, 17);
@@ -333,10 +333,10 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             // 
             this._directives.AcceptsTab = true;
             this._directives.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this._directives.Location = new System.Drawing.Point(533, 133);
+            this._directives.Location = new System.Drawing.Point(680, 133);
             this._directives.Margin = new System.Windows.Forms.Padding(0);
             this._directives.Name = "_directives";
-            this._directives.Size = new System.Drawing.Size(327, 205);
+            this._directives.Size = new System.Drawing.Size(180, 205);
             this._directives.TabIndex = 16;
             this._directives.Text = "";
             // 
@@ -344,10 +344,10 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             // 
             this._status.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._status.FormattingEnabled = true;
-            this._status.Location = new System.Drawing.Point(533, 104);
+            this._status.Location = new System.Drawing.Point(680, 104);
             this._status.Margin = new System.Windows.Forms.Padding(0);
             this._status.Name = "_status";
-            this._status.Size = new System.Drawing.Size(327, 21);
+            this._status.Size = new System.Drawing.Size(180, 21);
             this._status.TabIndex = 15;
             // 
             // layoutControlItem11
@@ -398,7 +398,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._sxGroup.MinSize = new System.Drawing.Size(120, 32);
             this._sxGroup.Name = "_sxGroup";
             this._sxGroup.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
-            this._sxGroup.Width = 50;
+            this._sxGroup.Width = 67;
             this._sxGroup.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem4
@@ -512,7 +512,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             this._dxGroup.MinSize = new System.Drawing.Size(120, 32);
             this._dxGroup.Name = "_dxGroup";
             this._dxGroup.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
-            this._dxGroup.Width = 50;
+            this._dxGroup.Width = 33;
             this._dxGroup.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem14

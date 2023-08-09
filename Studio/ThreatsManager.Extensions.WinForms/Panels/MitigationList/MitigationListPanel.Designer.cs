@@ -22,6 +22,9 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             List<IThreatEvent> threatEvents = new List<IThreatEvent>();
             AddThreatEvents(threatEvents, _model.Entities?.Select(x => x.ThreatEvents).ToArray());
             AddThreatEvents(threatEvents, _model.DataFlows?.Select(x => x.ThreatEvents).ToArray());

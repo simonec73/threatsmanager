@@ -1,12 +1,13 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
@@ -45,9 +46,14 @@ namespace ThreatsManager.Extensions.Actions
 
             if (identity is IThreatEvent threatEvent)
             {
-                using (var dialog = new ThreatEventScenarioCreationDialog(threatEvent))
+                using (var scope = UndoRedoManager.OpenScope("Create Threat Event Scenario"))
                 {
-                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                    using (var dialog = new ThreatEventScenarioCreationDialog(threatEvent))
+                    {
+                        result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                    }
+
+                    if (result) scope?.Complete();
                 }
             }
 

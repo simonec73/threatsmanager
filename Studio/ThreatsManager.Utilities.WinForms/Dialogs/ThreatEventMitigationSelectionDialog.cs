@@ -7,6 +7,7 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Utilities.WinForms.Dialogs
 {
@@ -147,42 +148,48 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             if (_strength.SelectedItem is IStrength strength &&
                 Enum.TryParse<MitigationStatus>(_status.SelectedItem.ToString(), out var status))
             {
-                if (_associateStandard.Checked)
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Event Mitigation"))
                 {
-                    if (_standardMitigation.SelectedItem is IThreatTypeMitigation threatTypeMitigation)
+                    if (_associateStandard.Checked)
                     {
-                        _mitigation = _threatEvent.AddMitigation(threatTypeMitigation.Mitigation,
-                            strength, status, _directives.Text);
-                    }
-                }
-                else if (_associateNonstandard.Checked)
-                {
-                    if (_nonStandardMitigation.SelectedItem is IMitigation mitigation)
-                    {
-                        if (_associateToStandard.Checked)
+                        if (_standardMitigation.SelectedItem is IThreatTypeMitigation threatTypeMitigation)
                         {
-                            _threatEvent.ThreatType.AddMitigation(mitigation, strength);
+                            _mitigation = _threatEvent.AddMitigation(threatTypeMitigation.Mitigation,
+                                strength, status, _directives.Text);
+                            scope?.Complete();
                         }
-
-                        _mitigation = _threatEvent.AddMitigation(mitigation, strength,
-                            status, _directives.Text);
                     }
-                }
-                else if (_createNew.Checked)
-                {
-                    if (Enum.TryParse<SecurityControlType>((string) _controlType.SelectedItem, out var controlType))
+                    else if (_associateNonstandard.Checked)
                     {
-                        var newMitigation = _threatEvent.Model.AddMitigation(_name.Text);
-                        newMitigation.Description = _description.Text;
-                        newMitigation.ControlType = controlType;
-
-                        if (_newToStandard.Checked)
+                        if (_nonStandardMitigation.SelectedItem is IMitigation mitigation)
                         {
-                            _threatEvent.ThreatType.AddMitigation(newMitigation, strength);
-                        }
+                            if (_associateToStandard.Checked)
+                            {
+                                _threatEvent.ThreatType.AddMitigation(mitigation, strength);
+                            }
 
-                        _mitigation = _threatEvent.AddMitigation(newMitigation, strength,
-                            status, _directives.Text);
+                            _mitigation = _threatEvent.AddMitigation(mitigation, strength,
+                                status, _directives.Text);
+                            scope?.Complete();
+                        }
+                    }
+                    else if (_createNew.Checked)
+                    {
+                        if (Enum.TryParse<SecurityControlType>((string)_controlType.SelectedItem, out var controlType))
+                        {
+                            var newMitigation = _threatEvent.Model.AddMitigation(_name.Text);
+                            newMitigation.Description = _description.Text;
+                            newMitigation.ControlType = controlType;
+
+                            if (_newToStandard.Checked)
+                            {
+                                _threatEvent.ThreatType.AddMitigation(newMitigation, strength);
+                            }
+
+                            _mitigation = _threatEvent.AddMitigation(newMitigation, strength,
+                                status, _directives.Text);
+                            scope?.Complete();
+                        }
                     }
                 }
             }

@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using DevComponents.DotNetBar;
 using Northwoods.Go;
 
 namespace ThreatsManager.Extensions.Panels.Roadmap

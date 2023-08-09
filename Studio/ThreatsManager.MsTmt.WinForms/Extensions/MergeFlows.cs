@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -59,18 +60,23 @@ namespace ThreatsManager.MsTmt.Extensions
                     {
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            var merges = dialog.Merges?.ToArray();
-                            if (merges?.Any() ?? false)
+                            using (var scope = UndoRedoManager.OpenScope("Merge Flows"))
                             {
-                                foreach (var merge in merges)
+                                var merges = dialog.Merges?.ToArray();
+                                if (merges?.Any() ?? false)
                                 {
-                                    foreach (var sourceFlow in merge.Slaves)
+                                    foreach (var merge in merges)
                                     {
-                                        CopyFlowDetails(sourceFlow, merge.Master);
-                                        merge.Master.Model?.RemoveDataFlow(sourceFlow.Id);
+                                        foreach (var sourceFlow in merge.Slaves)
+                                        {
+                                            CopyFlowDetails(sourceFlow, merge.Master);
+                                            merge.Master.Model?.RemoveDataFlow(sourceFlow.Id);
+                                        }
+
+                                        merge.Master.Name = merge.Name;
                                     }
 
-                                    merge.Master.Name = merge.Name;
+                                    scope?.Complete();
                                 }
                             }
                         }
@@ -156,5 +162,7 @@ namespace ThreatsManager.MsTmt.Extensions
                 Tag = this
             }
         });
+
+        public string VisibilityContext => "Diagram";
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -12,7 +13,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 {
     public partial class ModelPanel
     {
-        private IEnumerable<IShape> AddShapes([NotNull] IEnumerable<IShape> shapes)
+        private IEnumerable<IShape> AddShapes([NotNull] IEnumerable<IShape> shapes, float dpiFactor = 1.0f)
         {
             IEnumerable<IShape> result = null;
 
@@ -26,7 +27,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     if (child.Parent == null || _groups.ContainsKey(child.ParentId))
                     {
-                        AddShape(shape);
+                        AddShape(shape, dpiFactor);
                     }
                     else
                     {
@@ -35,19 +36,19 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 }
                 else
                 {
-                    AddShape(shape);
+                    AddShape(shape, dpiFactor);
                 }
             }
 
             if (cannotProcess.Count > 0 && cannotProcess.Count != shapesList.Count())
-                result = AddShapes(cannotProcess);
+                result = AddShapes(cannotProcess, dpiFactor);
             else
                 result = cannotProcess;
 
             return result;
         }
 
-        private GoNode AddShape([NotNull] IShape shape)
+        private GoNode AddShape([NotNull] IShape shape, float dpiFactor = 1.0f)
         {
             GoNode result = null;
 
@@ -60,7 +61,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (shape is IEntityShape entityShape)
             {
-                var node = new GraphEntity(entityShape, _dpiState);
+                var node = new GraphEntity(entityShape, dpiFactor, _iconSize, _iconCenterSize, _imageSize, _markerSize);
                 if (_actions != null)
                     node.SetContextAwareActions(_actions);
                 node.SelectedShape += OnSelectedShape;
@@ -78,7 +79,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
             else if (shape is IGroupShape groupShape)
             {
-                var group = new GraphGroup(groupShape, _dpiState);
+                var group = new GraphGroup(groupShape, dpiFactor, _markerSize);
                 if (_actions != null)
                     group.SetContextAwareActions(_actions);
                 group.SelectedShape += OnSelectedShape;
@@ -116,7 +117,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 var node = GetEntity(entity);
                 if (node != null)
+                {
+                    //node.UpdateParameters(_iconSize, _iconCenterSize, _imageSize, _markerSize);
                     node.ThreatsMarker = entity.ThreatEvents?.Any() ?? false;
+                }
             }
         }
 
@@ -126,7 +130,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 var node = GetEntity(entity);
                 if (node != null)
+                {
+                    //node.UpdateParameters(_iconSize, _iconCenterSize, _imageSize, _markerSize);
                     node.ThreatsMarker = entity.ThreatEvents?.Any() ?? false;
+                }
             }
         }
 

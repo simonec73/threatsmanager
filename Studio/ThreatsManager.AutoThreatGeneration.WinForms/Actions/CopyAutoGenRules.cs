@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.AutoGenRules.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -84,5 +85,5 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 
             return result;
         }
-}
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Drawing;
 using ThreatsManager.AutoThreatGeneration.Dialogs;
 using ThreatsManager.AutoThreatGeneration.Properties;
@@ -6,6 +7,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
@@ -48,7 +50,11 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             using (var dialog = new MitigationRuleEditDialog())
             {
                 if (dialog.Initialize(mitigation))
-                    result = mitigation.SetRule(dialog);
+                    using (var scope = UndoRedoManager.OpenScope("Edit Automatic Mitigation Association Rule"))
+                    {
+                        result = mitigation.SetRule(dialog);
+                        scope?.Complete();
+                    }
                 else
                 {
                     ShowWarning?.Invoke("Threat Event Generation Rule for the related Threat Type has not been set.");

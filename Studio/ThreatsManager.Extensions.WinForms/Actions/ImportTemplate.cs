@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
@@ -18,6 +19,9 @@ namespace ThreatsManager.Extensions.Actions
         public event Action<IMainRibbonExtension> RefreshPanels;
         public event Action<IMainRibbonExtension, string, bool> ChangeRibbonActionStatus;
         public event Action<IPanelFactory> ClosePanels;
+
+        public event Action<string> ShowMessage;
+        public event Action<string> ShowWarning;
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
@@ -46,8 +50,14 @@ namespace ThreatsManager.Extensions.Actions
                     case "ImportTemplate":
                         using (var dialog = new ImportTemplateDialog(threatModel))
                         {
-                            if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-                                ShowMessage?.Invoke("Import Template succeeded.");
+                            using (var scope = UndoRedoManager.OpenScope("Import Template"))
+                            {
+                                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                                {
+                                    scope?.Complete();
+                                    ShowMessage?.Invoke("Import Template succeeded.");
+                                }
+                            }
                         }
 
                         break;
@@ -59,8 +69,5 @@ namespace ThreatsManager.Extensions.Actions
                 throw;
             }
         }
-
-        public event Action<string> ShowMessage;
-        public event Action<string> ShowWarning;
     }
 }

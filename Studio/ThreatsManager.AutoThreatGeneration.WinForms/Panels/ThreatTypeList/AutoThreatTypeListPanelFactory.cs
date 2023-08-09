@@ -8,7 +8,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
 {
-    [Extension("0101866E-8DDE-4CD3-89A9-0637B6280305", "Auto Gen Rules List", 40, ExecutionMode.Expert)]
+    [Extension("0101866E-8DDE-4CD3-89A9-0637B6280305", "Auto Gen Rules List", 16, ExecutionMode.Expert)]
     public partial class AutoThreatTypeListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IContextAwareExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.

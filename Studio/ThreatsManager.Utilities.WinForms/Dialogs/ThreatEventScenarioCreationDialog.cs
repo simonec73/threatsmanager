@@ -63,11 +63,15 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             if (IsValid() && _actor.SelectedItem is IThreatActor actor &&
                 _severity.SelectedItem is ISeverity severity)
             {
-                _scenario = _event.AddScenario(actor, severity, _name.Text);
-                if (_scenario != null)
+                using (var scope = UndoRedoManager.OpenScope("Add Scenario"))
                 {
-                    _scenario.Description = _description.Text;
-                    _scenario.Motivation = _motivation.Text;
+                    _scenario = _event.AddScenario(actor, severity, _name.Text);
+                    if (_scenario != null)
+                    {
+                        _scenario.Description = _description.Text;
+                        _scenario.Motivation = _motivation.Text;
+                        scope?.Complete();
+                    }
                 }
             }
         }

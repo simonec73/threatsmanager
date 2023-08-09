@@ -38,6 +38,9 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
  
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<TrustBoundaryListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -217,6 +220,11 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                 _loading = false;
                 _grid.ResumeLayout(true);
             }
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
         }
 
         private void AddGridRow([NotNull] ITrustBoundary tb, [NotNull] GridPanel panel)

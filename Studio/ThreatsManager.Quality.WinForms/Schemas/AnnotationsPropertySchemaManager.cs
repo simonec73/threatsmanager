@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Annotations;
 using ThreatsManager.Quality.Properties;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Quality.Schemas
@@ -25,16 +26,22 @@ namespace ThreatsManager.Quality.Schemas
         [InitializationRequired]
         public IPropertySchema GetSchema()
         {
-            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace) ?? _model.AddSchema(Annotations, Resources.DefaultNamespace);
-            schema.Description = Resources.AnnotationsPropertySchemaDescription;
-            schema.Visible = true;
-            schema.AppliesTo = Scope.All;
-            schema.System = true;
-            schema.AutoApply = false;
-            schema.NotExportable = true;
-            schema.Priority = 1000;
+            IPropertySchema result;
 
-            return schema;
+            using (var scope = UndoRedoManager.OpenScope($"Get '{Annotations}' schema"))
+            {
+                result = _model.GetSchema(Annotations, Resources.DefaultNamespace) ?? _model.AddSchema(Annotations, Resources.DefaultNamespace);
+                result.Description = Resources.AnnotationsPropertySchemaDescription;
+                result.Visible = true;
+                result.AppliesTo = Scope.All;
+                result.System = true;
+                result.AutoApply = false;
+                result.NotExportable = true;
+                result.Priority = 1000;
+                scope?.Complete();
+            }
+
+            return result;
         }
 
         #region Annotations.
@@ -43,14 +50,19 @@ namespace ThreatsManager.Quality.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Annotations property type"))
             {
-                result = schema.GetPropertyType(Annotations) ?? schema.AddPropertyType(Annotations, PropertyValueType.JsonSerializableObject);
-                result.DoNotPrint = false;
-                result.Visible = true;
-                result.CustomPropertyViewer = "Annotations Property Viewer";
-                result.Description = Resources.AnnotationsDescription;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Annotations) ?? schema.AddPropertyType(Annotations, PropertyValueType.JsonSerializableObject);
+                    result.DoNotPrint = false;
+                    result.Visible = true;
+                    result.CustomPropertyViewer = "Annotations Property Viewer";
+                    result.Description = Resources.AnnotationsDescription;
+
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -73,13 +85,17 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Enable Annotations"))
             {
-                var property = container.GetProperty(propertyType);
-                if (property == null)
+                var propertyType = GetAnnotationsPropertyType();
+                if (propertyType != null)
                 {
-                    result = container.AddProperty(propertyType, null) != null;
+                    var property = container.GetProperty(propertyType);
+                    if (property == null)
+                    {
+                        result = container.AddProperty(propertyType, null) != null;
+                        scope?.Complete();
+                    }
                 }
             }
 
@@ -90,13 +106,17 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Disable Annotations"))
             {
-                var property = container.GetProperty(propertyType);
-                if (property != null)
+                var propertyType = GetAnnotationsPropertyType();
+                if (propertyType != null)
                 {
-                    result = container.RemoveProperty(propertyType);
+                    var property = container.GetProperty(propertyType);
+                    if (property != null)
+                    {
+                        result = container.RemoveProperty(propertyType);
+                        scope?.Complete();
+                    }
                 }
             }
 
@@ -123,55 +143,69 @@ namespace ThreatsManager.Quality.Schemas
 
         public void AddAnnotation([NotNull] IPropertiesContainer container, [NotNull] Annotation annotation)
         {
-            var propertyType = GetAnnotationsPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Add Annotation"))
             {
-                var property = container.GetProperty(propertyType);
-                if (property == null)
+                var propertyType = GetAnnotationsPropertyType();
+                if (propertyType != null)
                 {
-                    property = container.AddProperty(propertyType, null);
-                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    var property = container.GetProperty(propertyType);
+                    if (property == null)
                     {
-                        var annotations = new Annotations.Annotations();
+                        property = container.AddProperty(propertyType, null);
+                        if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                        {
+                            var annotations = new Annotations.Annotations();
+                            annotations.Add(annotation);
+                            jsonSerializableObject.Value = annotations;
+                            scope?.Complete();
+                        }
+                    }
+                    else if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                    {
+                        if (!(jsonSerializableObject.Value is Annotations.Annotations annotations))
+                        {
+                            annotations = new Annotations.Annotations();
+                            jsonSerializableObject.Value = annotations;
+                        }
                         annotations.Add(annotation);
-                        jsonSerializableObject.Value = annotations;
+                        scope?.Complete();
                     }
-                } else if (property is IPropertyJsonSerializableObject jsonSerializableObject)
-                {
-                    if (!(jsonSerializableObject.Value is Annotations.Annotations annotations))
-                    {
-                        annotations = new Annotations.Annotations();
-                        jsonSerializableObject.Value = annotations;
-                    }
-                    annotations.Add(annotation);
                 }
             }
         }
 
         public void RemoveAnnotation([NotNull] IPropertiesContainer container, [NotNull] Annotation annotation)
         {
-            var propertyType = GetAnnotationsPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Remove Annotation"))
             {
-                var property = container.GetProperty(propertyType);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
-                    jsonSerializableObject.Value is Annotations.Annotations annotations)
+                var propertyType = GetAnnotationsPropertyType();
+                if (propertyType != null)
                 {
-                    annotations.Remove(annotation);
+                    var property = container.GetProperty(propertyType);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        annotations.Remove(annotation);
+                        scope?.Complete();
+                    }
                 }
             }
         }
 
         public void RemoveAnnotations([NotNull] IPropertiesContainer container)
         {
-            var propertyType = GetAnnotationsPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Remove Annotations"))
             {
-                var property = container.GetProperty(propertyType);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
-                    jsonSerializableObject.Value is Annotations.Annotations annotations)
+                var propertyType = GetAnnotationsPropertyType();
+                if (propertyType != null)
                 {
-                    annotations.Clear();
+                    var property = container.GetProperty(propertyType);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        annotations.Clear();
+                        scope?.Complete();
+                    }
                 }
             }
         }

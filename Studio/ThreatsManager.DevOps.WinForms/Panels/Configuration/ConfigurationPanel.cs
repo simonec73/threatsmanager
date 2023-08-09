@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.DevOps.Initializers;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;

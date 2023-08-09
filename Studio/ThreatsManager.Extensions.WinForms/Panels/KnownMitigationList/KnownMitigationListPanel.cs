@@ -25,6 +25,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         private IThreatModel _model;
         private GridRow _currentRow;
         private bool _loading;
+        private ExecutionMode _executionMode = ExecutionMode.Pioneer;
 
         public KnownMitigationListPanel()
         {
@@ -32,6 +33,9 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
  
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<MitigationListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -60,8 +64,62 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             _model.ChildCreated += ModelChildCreated;
             _model.ChildRemoved += ModelChildRemoved;
 
+            if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+            {
+                undoable.Undone += ModelUndone;
+            }
+
             InitializeGrid();
             LoadModel();
+        }
+
+        private void ModelUndone(object item, bool removed)
+        {
+            if (removed)
+            {
+                this.ParentForm?.Close();
+            }
+            else
+            {
+                if (item is IThreatModel model)
+                {
+                    var mitigations = model.Mitigations?.ToArray();
+                    var list = new List<IMitigation>();
+                    if (mitigations?.Any() ?? false)
+                    {
+                        list.AddRange(mitigations);
+                    }
+
+                    var grid = _grid.PrimaryGrid;
+                    var rows = grid.Rows.OfType<GridRow>().ToArray();
+                    if (rows.Any())
+                    {
+                        foreach (var row in rows)
+                        {
+                            if (row.Tag is IMitigation mitigation)
+                            {
+                                if (model.GetEntity(mitigation.Id) == null)
+                                {
+                                    RemoveEventSubscriptions(row);
+                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                }
+                                else
+                                {
+                                    list.Remove(mitigation);
+                                }
+                            }
+                        }
+                    }
+
+                    if (list.Any())
+                    {
+                        foreach (var i in list)
+                        {
+                            AddGridRow(i, grid);
+                        }
+                    }
+                }
+            }
         }
 
         [Dispatched]
@@ -128,6 +186,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             }
         }
         #endregion
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
 
         public bool IsInitialized => _model != null;
 
@@ -233,8 +296,94 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             var subPanel = CreateThreatTypesPanel(mitigation);
             if (subPanel != null)
                 row.Rows.Add(subPanel);
+
+            if (_executionMode == ExecutionMode.Pioneer)
+            {
+                var subPanel2 = CreateWeaknessesPanel(mitigation);
+                if (subPanel2 != null)
+                    row.Rows.Add(subPanel2);
+            }
+
+            if (mitigation is IUndoable undoable && undoable.IsUndoEnabled)
+                undoable.Undone += MitigationUndone;
         }
-        
+
+        private void MitigationUndone(object item, bool removed)
+        {
+            if (item is IMitigation mitigation)
+            {
+                var row = GetRow(mitigation);
+                if (row != null)
+                {
+                    if (removed)
+                    {
+                        RemoveEventSubscriptions(row);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _loading = true;
+                            row.Cells["Name"].Value = mitigation.Name;
+                            row.Cells["ControlType"].Value = mitigation.ControlType;
+
+                            var grid = row.Rows.OfType<GridPanel>().FirstOrDefault();
+                            if (grid != null)
+                            {
+                                var list = new List<IThreatTypeMitigation>();
+
+                                var threatTypes = _model.ThreatTypes?
+                                    .Where(x => x.Mitigations?.Any(y => y.MitigationId == mitigation.Id) ?? false)
+                                    .Select(x => x.Mitigations.First(y => y.MitigationId == mitigation.Id))
+                                    .OrderBy(x => x.ThreatType.Name)
+                                    .ToArray();
+                                if (threatTypes?.Any() ?? false)
+                                {
+                                    list.AddRange(threatTypes);
+                                }
+                                var rows = grid.Rows.OfType<GridRow>().ToArray();
+                                if (rows.Any())
+                                {
+                                    foreach (var r in rows)
+                                    {
+                                        if (r.Tag is IThreatTypeMitigation ttm)
+                                        {
+                                            if (!threatTypes.Contains(ttm))
+                                            {
+                                                RemoveEventSubscriptions(row);
+                                                _grid.PrimaryGrid.Rows.Remove(row);
+                                            }
+                                            else
+                                            {
+                                                list.Remove(ttm);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (list.Any())
+                                {
+                                    foreach (var i in list)
+                                    {
+                                        AddGridRow(i, grid);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                CreateThreatTypesPanel(mitigation);
+                            }
+                        }
+                        finally
+                        {
+                            _loading = false;
+                        }
+                    }
+                }
+            }
+        }
+
         private void RemoveEventSubscriptions(GridRow row)
         {
             if (row?.Tag is IMitigation mitigation)
@@ -242,6 +391,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 ((INotifyPropertyChanged) mitigation).PropertyChanged -= OnEntityPropertyChanged;
                 for (int i = 0; i < row.Cells.Count; i++)
                     row.Cells[i].PropertyChanged -= OnPropertyChanged;
+                if (mitigation is IUndoable undoable && undoable.IsUndoEnabled)
+                    undoable.Undone -= MitigationUndone;
 
                 var panel = row.Rows.OfType<GridPanel>().FirstOrDefault();
                 var children = panel?.Rows.OfType<GridRow>().ToArray();
@@ -256,6 +407,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                     row.Cells[i].PropertyChanged -= OnThreatTypeCellChanged;
                 ((INotifyPropertyChanged) ttm).PropertyChanged -= OnThreatTypeMitigationPropertyChanged;
                 ((INotifyPropertyChanged) ttm.ThreatType).PropertyChanged -= OnThreatTypePropertyChanged;
+                if (ttm is IUndoable undoable && undoable.IsUndoEnabled)
+                    undoable.Undone -= ThreatTypeMitigationUndone;
             }
         }
 
@@ -349,8 +502,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         private void AddGridRow([NotNull] IThreatTypeMitigation ttm, [NotNull] GridPanel panel)
         {
             GridRow row = new GridRow(
-                ttm.ThreatType.Name,
-                ttm.ThreatType.Severity,
+                ttm.ThreatType?.Name,
+                ttm.ThreatType?.Severity,
                 ttm.Strength)
             {
                 Tag = ttm
@@ -360,8 +513,41 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 row.Cells[i].PropertyChanged += OnThreatTypeCellChanged;
             panel.Rows.Add(row);
 
+            if (ttm is IUndoable undoable && undoable.IsUndoEnabled)
+                undoable.Undone += ThreatTypeMitigationUndone;
+
             ((INotifyPropertyChanged) ttm).PropertyChanged += OnThreatTypeMitigationPropertyChanged;
             ((INotifyPropertyChanged) ttm.ThreatType).PropertyChanged += OnThreatTypePropertyChanged;
+        }
+
+        private void ThreatTypeMitigationUndone(object item, bool removed)
+        {
+            if (item is IThreatTypeMitigation ttm)
+            {
+                var row = GetRow(ttm);
+                if (row != null)
+                {
+                    if (removed)
+                    {
+                        RemoveEventSubscriptions(row);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _loading = true;
+                            row.Cells["Name"].Value = ttm.ThreatType?.Name;
+                            row.Cells["Severity"].Value = ttm.ThreatType?.Severity;
+                            row.Cells["Strength"].Value = ttm.Strength;
+                        }
+                        finally
+                        {
+                            _loading = false;
+                        }
+                    }
+                }
+            }
         }
 
         private void OnThreatTypePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -469,6 +655,238 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                     .FirstOrDefault(x => string.CompareOrdinal("ThreatTypes", x.Name) == 0);
                 var current = panel?.Rows.OfType<GridRow>().FirstOrDefault(x =>
                     (x.Tag is IThreatTypeMitigation ttm) && (ttm == threatTypeMitigation));
+                if (current != null)
+                {
+                    result = current;
+                    break;
+                }
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Weakness level.
+        private GridPanel CreateWeaknessesPanel([NotNull] IMitigation mitigation)
+        {
+            GridPanel result = null;
+
+            if (!string.IsNullOrWhiteSpace(mitigation.Name))
+            {
+                result = new GridPanel
+                {
+                    Name = "Weaknesses",
+                    AllowRowDelete = false,
+                    AllowRowInsert = false,
+                    AllowRowResize = true,
+                    ShowRowDirtyMarker = false,
+                    ShowTreeButtons = false,
+                    ShowTreeLines = false,
+                    ShowRowHeaders = false,
+                    InitialSelection = RelativeSelection.None
+                };
+
+                result.Columns.Add(new GridColumn("Name")
+                {
+                    HeaderText = "Weakness Name",
+                    AutoSizeMode = ColumnAutoSizeMode.Fill,
+                    DataType = typeof(string),
+                    AllowEdit = false
+                });
+
+                result.Columns.Add(new GridColumn("Severity")
+                {
+                    HeaderText = "Severity",
+                    DataType = typeof(ISeverity),
+                    EditorType = typeof(SeverityComboBox),
+                    EditorParams = new object[] { _model.Severities?.Where(x => x.Visible) },
+                    AllowEdit = true,
+                    Width = 75
+                });
+
+                result.Columns.Add(new GridColumn("Strength")
+                {
+                    HeaderText = "Strength",
+                    DataType = typeof(IStrength),
+                    EditorType = typeof(StrengthComboBox),
+                    EditorParams = new object[] { _model.Strengths?.Where(x => x.Visible) },
+                    AllowEdit = true,
+                    Width = 75
+                });
+
+                var weaknesses = _model.Weaknesses?
+                    .Where(x => x.Mitigations?.Any(y => y.MitigationId == mitigation.Id) ?? false)
+                    .Select(x => x.Mitigations.First(y => y.MitigationId == mitigation.Id))
+                    .OrderBy(x => x.Weakness.Name)
+                    .ToArray();
+                if (weaknesses?.Any() ?? false)
+                {
+                    foreach (var weakness in weaknesses)
+                    {
+                        AddGridRow(weakness, result);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void AddGridRow([NotNull] IWeaknessMitigation wm, [NotNull] GridPanel panel)
+        {
+            GridRow row = new GridRow(
+                wm.Weakness?.Name,
+                wm.Weakness?.Severity,
+                wm.Strength)
+            {
+                Tag = wm
+            };
+            UpdateMitigationLevel(wm.Weakness, row);
+            for (int i = 0; i < row.Cells.Count; i++)
+                row.Cells[i].PropertyChanged += OnWeaknessCellChanged;
+            panel.Rows.Add(row);
+
+            if (wm is IUndoable undoable && undoable.IsUndoEnabled)
+                undoable.Undone += WeaknessMitigationUndone;
+
+            ((INotifyPropertyChanged)wm).PropertyChanged += OnWeaknessMitigationPropertyChanged;
+            ((INotifyPropertyChanged)wm.Weakness).PropertyChanged += OnWeaknessPropertyChanged;
+        }
+
+        private void WeaknessMitigationUndone(object item, bool removed)
+        {
+            if (item is IWeaknessMitigation wm)
+            {
+                var row = GetRow(wm);
+                if (row != null)
+                {
+                    if (removed)
+                    {
+                        RemoveEventSubscriptions(row);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _loading = true;
+                            row.Cells["Name"].Value = wm.Weakness?.Name;
+                            row.Cells["Severity"].Value = wm.Weakness?.Severity;
+                            row.Cells["Strength"].Value = wm.Strength;
+                        }
+                        finally
+                        {
+                            _loading = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnWeaknessPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is IWeakness weakness)
+            {
+                var rows = GetRows(weakness)?.ToArray();
+                if (rows?.Any() ?? false)
+                {
+                    foreach (var row in rows)
+                    {
+                        switch (e.PropertyName)
+                        {
+                            case "Name":
+                                row["Name"].Value = weakness.Name;
+                                break;
+                            case "Severity":
+                                row["Severity"].Value = weakness.Severity;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnWeaknessMitigationPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is IWeaknessMitigation weaknessMitigation)
+            {
+                var row = GetRow(weaknessMitigation);
+                if (row != null)
+                {
+                    switch (e.PropertyName)
+                    {
+                        case "Strength":
+                            row["Strength"].Value = weaknessMitigation.Strength;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void OnWeaknessCellChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (!_loading && sender is GridCell cell)
+            {
+                try
+                {
+                    _loading = true;
+                    if (cell.GridRow.Tag is IWeaknessMitigation weaknessMitigation)
+                    {
+                        switch (cell.GridColumn.Name)
+                        {
+                            case "Severity":
+                                if (cell.Value is ISeverity severity)
+                                    weaknessMitigation.Weakness.Severity = severity;
+                                break;
+                            case "Strength":
+                                if (cell.Value is IStrength strength)
+                                {
+                                    weaknessMitigation.Strength = strength;
+                                    UpdateMitigationLevel(weaknessMitigation.Weakness, cell.GridRow);
+                                }
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+
+        private IEnumerable<GridRow> GetRows([NotNull] IWeakness weakness)
+        {
+            List<GridRow> result = null;
+
+            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
+            foreach (var row in rows)
+            {
+                var panel = row.Rows.OfType<GridPanel>()
+                    .FirstOrDefault(x => string.CompareOrdinal("Weaknesses", x.Name) == 0);
+                var current = panel?.Rows.OfType<GridRow>().FirstOrDefault(x =>
+                    (x.Tag is IWeaknessMitigation wm) && (wm.WeaknessId == weakness.Id));
+                if (current != null)
+                {
+                    if (result == null)
+                        result = new List<GridRow>();
+                    result.Add(current);
+                }
+            }
+
+            return result;
+        }
+
+        private GridRow GetRow([NotNull] IWeaknessMitigation weaknessMitigation)
+        {
+            GridRow result = null;
+
+            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
+            foreach (var row in rows)
+            {
+                var panel = row.Rows.OfType<GridPanel>()
+                    .FirstOrDefault(x => string.CompareOrdinal("Weaknesses", x.Name) == 0);
+                var current = panel?.Rows.OfType<GridRow>().FirstOrDefault(x =>
+                    (x.Tag is IWeaknessMitigation wm) && (wm == weaknessMitigation));
                 if (current != null)
                 {
                     result = current;
@@ -662,6 +1080,31 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 // Ignore
             }
         }
+
+        private static void UpdateMitigationLevel([NotNull] IWeakness weakness, [NotNull] GridRow row)
+        {
+            try
+            {
+                switch (weakness.GetMitigationLevel())
+                {
+                    case MitigationLevel.NotMitigated:
+                        row.Cells[0].CellStyles.Default.Image = Resources.weakness_circle_red_small;
+                        break;
+                    case MitigationLevel.Partial:
+                        row.Cells[0].CellStyles.Default.Image = Resources.weakness_circle_orange_small;
+                        break;
+                    case MitigationLevel.Complete:
+                        row.Cells[0].CellStyles.Default.Image = Resources.weakness_circle_green_small;
+                        break;
+                }
+
+            }
+            catch
+            {
+
+                // Ignore
+            }
+        }
         #endregion
 
         private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
@@ -688,6 +1131,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         public void SetExecutionMode(ExecutionMode mode)
         {
             _properties.SetExecutionMode(mode);
+            _executionMode = mode;
         }
     }
 }

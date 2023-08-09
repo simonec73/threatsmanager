@@ -28,6 +28,7 @@ using DevComponents.DotNetBar.Metro.ColorTables;
 using Exceptionless.Logging;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Utilities.WinForms;
+using PostSharp.Patterns.Recording;
 
 namespace ThreatsManager
 {
@@ -41,6 +42,7 @@ namespace ThreatsManager
         //private SecureString _password;
         private bool _closing;
         private ExecutionMode _executionMode;
+        private string _oldCaption;
 
         private bool _errorsOnLoading;
         private List<string> _missingTypes = new List<string>();
@@ -97,7 +99,63 @@ namespace ThreatsManager
         {
             Text = Resources.Title;
 
-            #region Telemetry
+            InitializeTelemetry();
+            InitializeConfiguration();
+
+            #region Resource Guard.
+            var resourceGuard = new ResourcesGuard();
+            resourceGuard.StartChecking();
+            #endregion
+            
+            _ribbonTabView.Visible = true;
+
+            LoadExtensions();
+            _mergeIndex = _ribbon.Items.IndexOf(_title);
+
+            await OpenInitialFile();
+
+            LoadStatusInfoProviders();
+
+            // TODO: chiudere la notifica di caricamento delle estensioni.
+
+            LoadKnownDocuments();
+
+            CheckUpdateAvailability();
+
+            ConfigureTimer();
+
+            KnownTypesBinder.TypeNotFound += OnTypeNotFound;
+
+            UndoRedoManager.DirtyChanged += UndoRedoManager_DirtyChanged;
+            UndoRedoManager.ErrorRaised += UndoRedoManager_ErrorRaised;
+            UndoRedoManager.Undone += UndoRedoManager_Undone;
+            UndoRedoManager.Redone += UndoRedoManager_Redone;
+        }
+
+        private void UndoRedoManager_Redone(string message)
+        {
+            UpdateFormsList();
+            ShowDesktopAlert($"{message} redone.");
+        }
+
+        private void UndoRedoManager_Undone(string message)
+        {
+            UpdateFormsList();
+            ShowDesktopAlert($"{message} undone.");
+        }
+
+        private void UndoRedoManager_ErrorRaised(string message)
+        {
+            ShowDesktopAlert(message, true);
+        }
+
+        private void UndoRedoManager_DirtyChanged(bool obj)
+        {
+            RefreshCaption();
+        }
+
+        private void InitializeTelemetry()
+        {
             bool disableTelemetry = true;
             var consentString = Application.UserAppDataRegistry?.GetValue("Consent") as string;
             if (consentString == null)
@@ -118,7 +176,6 @@ namespace ThreatsManager
             {
                 disableTelemetry = !consent;
             }
-            
 
             if (disableTelemetry)
             {
@@ -140,13 +197,18 @@ namespace ThreatsManager
                 ExceptionlessClient.Default.SubmittingEvent += OnSubmittingEvent;
                 ExceptionlessClient.Default.Configuration.Settings.Changed += OnExceptionlessSettingsChanged;
             }
-            #endregion
+        }
 
-            #region Initial Configuration.
+        private void InitializeConfiguration()
+        {
+#if PORTABLE
+            ExtensionsConfigurationManager.SetConfigurationUserLevel(System.Configuration.ConfigurationUserLevel.None);
+#endif
+
             var config = ExtensionsConfigurationManager.GetConfigurationSection();
 
             if (!config.Setup && !config.SmartSave &&
-                !(config.Prefixes?.OfType<PrefixConfig>().Any() ?? false) && 
+                !(config.Prefixes?.OfType<PrefixConfig>().Any() ?? false) &&
                 !(config.Certificates?.OfType<CertificateConfig>().Any() ?? false) &&
                 !(config.Folders?.OfType<FolderConfig>().Any() ?? false))
             {
@@ -205,12 +267,6 @@ namespace ThreatsManager
                 config.Setup = true;
                 config.CurrentConfiguration.Save();
             }
-            #endregion
-
-            #region Resource Guard.
-            var resourceGuard = new ResourcesGuard();
-            resourceGuard.StartChecking();
-            #endregion
 
             #region User dictionary configuration.
             if (!string.IsNullOrWhiteSpace(config.UserDictionary) && !File.Exists(config.UserDictionary))
@@ -240,102 +296,79 @@ namespace ThreatsManager
             InitializeExtensionsManagement();
             #endregion
 
-            try
+            SpellCheckConfig.UserDictionary = config.UserDictionary;
+        }
+
+        private async Task OpenInitialFile()
+        {
+            var commandLineArgs = Environment.GetCommandLineArgs();
+            if (commandLineArgs.Length == 2)
             {
-                var commandLineArgs = Environment.GetCommandLineArgs();
-                if (commandLineArgs.Length == 2)
+                var fileName = commandLineArgs[1];
+                if (File.Exists(fileName))
                 {
-                    var fileName = commandLineArgs[1];
-                    if (File.Exists(fileName))
+                    OpenOutcome outcome = OpenOutcome.KO;
+
+                    if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tm") == 0) ||
+                        string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmj") == 0)
                     {
-                        OpenOutcome outcome = OpenOutcome.KO;
-
-                        if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tm") == 0) ||
-                            string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmj") == 0)
+                        var packageManager = Manager.Instance.GetExtensions<IPackageManager>()?
+                            .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
+                        if (packageManager != null)
                         {
-                            var packageManager = Manager.Instance.GetExtensions<IPackageManager>()?
-                                .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
-                            if (packageManager != null)
-                            {
-                                outcome = await OpenAsync(packageManager, LocationType.FileSystem, fileName);
-                            }
-                            else
-                            {
-                                ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
-                            }
-
-                            if (outcome == OpenOutcome.OK && _model != null)
-                            {
-                                _model.SuspendDirty();
-                                ShowDesktopAlert("Document successfully opened.");
-                            }
+                            outcome = await OpenAsync(packageManager, LocationType.FileSystem, fileName);
                         }
-                        else if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmt") == 0) ||
-                                 string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmk") == 0)
+                        else
                         {
-                            InitializeStatus(null);
-                            _model?.SuspendDirty();
-                            IThreatModel template = null;
-
-                            try
-                            {
-                                template = TemplateManager.OpenTemplate(fileName);
-                                _model?.Merge(template, new DuplicationDefinition()
-                                {
-                                    AllEntityTemplates = true,
-                                    AllThreatTypes = true,
-                                    AllMitigations = true,
-                                    AllPropertySchemas = true,
-                                    AllSeverities = true,
-                                    AllStrengths = true
-                                });
-                                ShowDesktopAlert($"Template '{template.Name}' has been applied successfully.");
-                                outcome = OpenOutcome.OK;
-                            }
-                            finally
-                            {
-                                if (template != null)
-                                    TemplateManager.CloseTemplate(template.Id);
-                            }
+                            ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
                         }
 
-                        if (outcome != OpenOutcome.OK || _model == null)
+                        if (outcome == OpenOutcome.OK && _model != null)
                         {
-                            InitializeStatus(null);
-                            _model.SuspendDirty();
+                            ShowDesktopAlert("Document successfully opened.");
                         }
                     }
-                    else
+                    else if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmt") == 0) ||
+                                string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmk") == 0)
                     {
                         InitializeStatus(null);
-                        _model.SuspendDirty();
+                        IThreatModel template = null;
+
+                        try
+                        {
+                            template = TemplateManager.OpenTemplate(fileName);
+                            _model?.Merge(template, new DuplicationDefinition()
+                            {
+                                AllEntityTemplates = true,
+                                AllThreatTypes = true,
+                                AllMitigations = true,
+                                AllPropertySchemas = true,
+                                AllSeverities = true,
+                                AllStrengths = true
+                            });
+                            ShowDesktopAlert($"Template '{template.Name}' has been applied successfully.");
+                            outcome = OpenOutcome.OK;
+                        }
+                        finally
+                        {
+                            if (template != null)
+                                TemplateManager.CloseTemplate(template.Id);
+                        }
+                    }
+
+                    if (outcome != OpenOutcome.OK || _model == null)
+                    {
+                        InitializeStatus(null);
                     }
                 }
                 else
                 {
                     InitializeStatus(null);
-                    _model.SuspendDirty();
                 }
-
-                LoadExtensions();
-                _mergeIndex = _ribbon.Items.IndexOf(_title);
-
-                LoadStatusInfoProviders();
-
-                // TODO: chiudere la notifica di caricamento delle estensioni.
-
-                LoadKnownDocuments();
-
-                CheckUpdateAvailability();
-
-                ConfigureTimer();
-
-                SpellCheckConfig.UserDictionary = config.UserDictionary;
-                KnownTypesBinder.TypeNotFound += OnTypeNotFound;
             }
-            finally
+            else
             {
-                _model?.ResumeDirty();
+                InitializeStatus(null);
             }
         }
 
@@ -363,14 +396,9 @@ namespace ThreatsManager
             }
         }
 
-        private void OnDirtyChanged(IDirty dirtyObject, bool dirty)
-        {
-            RefreshCaption();
-        }
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_model?.IsDirty ?? false)
+            if (UndoRedoManager.IsDirty)
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it before exiting?\n\nPlease press Yes to save and close.\nPress No to close without saving.\nPress Cancel to abort.",
@@ -585,7 +613,7 @@ namespace ThreatsManager
         private void _new_Click(object sender, EventArgs e)
         {
             bool abort = false;
-            if (_model?.IsDirty ?? false)
+            if (UndoRedoManager.IsDirty)
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
@@ -613,7 +641,7 @@ namespace ThreatsManager
         {
             bool abort = false;
 
-            if (_model?.IsDirty ?? false)
+            if (UndoRedoManager.IsDirty)
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
@@ -743,7 +771,7 @@ namespace ThreatsManager
         {
             bool abort = false;
 
-            if (_model?.IsDirty ?? false)
+            if (UndoRedoManager.IsDirty)
             {
                 var dialogResult = MessageBox.Show(this,
                     "The document has changed. Do you want to Save it?\n\nPlease press Yes to save and then close it.\nPress No to close without saving.\nPress Cancel to abort.",
@@ -848,30 +876,28 @@ namespace ThreatsManager
         {
             if (_model != null)
             {
-                _model.DirtyChanged -= OnDirtyChanged;
+                UndoRedoManager.Detach(_model);
                 ThreatModelManager.Remove(_model.Id);
             }
 
             if (model == null)
             {
                 _model = ThreatModelManager.GetDefaultInstance();
-                _model.SuspendDirty();
                 _model.Owner = UserName.GetDisplayName();
-                _model.ResumeDirty();
             }
             else
             {
                 _model = model;
             }
-            _model.DirtyChanged += OnDirtyChanged;
 
             //ThreatModelManager.Model.ChildCreated += ModelChildCreated;
             //ThreatModelManager.Model.ChildRemoved += ModelChildRemoved;
 
             CloseAllForms();
             UpdateStatusInfoProviders();
+            UndoRedoManager.Attach(_model, _model);
+            UndoRedoManager.Clear();
             RefreshCaption();
-            _model.ResetDirty();
 
             ((INotifyPropertyChanged) _model).PropertyChanged += OnThreatModelPropertyChanged;
         }
@@ -898,13 +924,18 @@ namespace ThreatsManager
             var modelName = _model?.Name;
             if ((modelName?.Length ?? 0) > 200)
                 modelName = modelName.Substring(0, 200) + "…";
-            var text = $@"{((_model?.IsDirty ?? false) ? "*" : "")}{modelName}";
-            Text = $@"{((_model?.IsDirty ?? false) ? "*" : "")}{Resources.Title} - {_model?.Name}";
-
+            var text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{modelName}";
             var currentChild = ActiveMdiChild?.Text.Replace("\n", " ");
-            _title.Text = string.IsNullOrWhiteSpace(currentChild) ? text : $"{text} - [{currentChild}]";
-            _title.Width = TextRenderer.MeasureText(_title.Text, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight;
-            _ribbon.Refresh();
+            var titleText = string.IsNullOrWhiteSpace(currentChild) ? text : $"{text} - [{currentChild}]";
+
+            if (string.CompareOrdinal(titleText, _oldCaption) != 0)
+            {
+                _oldCaption = titleText;
+                Text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{Resources.Title} - {_model?.Name}";
+                _title.Text = titleText;
+                _title.Width = TextRenderer.MeasureText(titleText, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight;
+                _ribbon.Refresh();
+            }
         }
 
         private void OnThreatModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1199,7 +1230,7 @@ namespace ThreatsManager
 
             if (result)
             {
-                _model?.ResetDirty();
+                UndoRedoManager.ResetDirty();
             }
 
             return result;
@@ -1261,7 +1292,7 @@ namespace ThreatsManager
                 {
                     bool abort = false;
 
-                    if (_model?.IsDirty ?? false)
+                    if (UndoRedoManager.IsDirty)
                     {
                         var dialogResult = MessageBox.Show(this,
                             "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
@@ -1485,7 +1516,7 @@ namespace ThreatsManager
 
         private void _autosaveTimer_Tick(object sender, EventArgs e)
         {
-            if (_model?.IsDirty ?? false)
+            if (UndoRedoManager.IsDirty)
             {
                 if (_currentPackageManager != null && !string.IsNullOrWhiteSpace(_currentLocation))
                 {
@@ -1579,6 +1610,37 @@ namespace ThreatsManager
             }
 
             _jumpListManager.Refresh();
+        }
+
+        private void _undo_Click(object sender, EventArgs e)
+        {
+            UndoRedoManager.Undo();
+
+            object found = _model.Entities?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+            if (found == null)
+                found = _model.DataFlows?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+            if (found == null)
+            {
+                var diagrams = _model.Diagrams?.ToArray();
+                if (diagrams?.Any() ?? false)
+                {
+                    found = diagrams?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+                    if (found == null)
+                    {
+                        foreach (var diagram in diagrams)
+                        {
+                            found = diagram.Entities?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+                            if (found == null)
+                                found = diagram.Links?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void _redo_Click(object sender, EventArgs e)
+        {
+            UndoRedoManager.Redo();
         }
     }
 }

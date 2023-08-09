@@ -7,6 +7,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Dialogs;
 using ThreatsManager.Quality.Schemas;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Quality.Annotations
@@ -56,36 +57,44 @@ namespace ThreatsManager.Quality.Annotations
         {
             var result = false;
 
-            if (_annotation is TopicToBeClarified topicToBeClarified)
+            using (var scope = UndoRedoManager.OpenScope("Remove Annotation"))
             {
-                var dialog = new AnnotationDialog(_model, _container, topicToBeClarified, true);
-                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
+                if (_annotation is TopicToBeClarified topicToBeClarified)
                 {
-                    var schemaManager = new AnnotationsPropertySchemaManager(_model);
-                    schemaManager.RemoveAnnotation(_container, topicToBeClarified);
-                }
+                    var dialog = new AnnotationDialog(_model, _container, topicToBeClarified, true);
+                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
+                    {
+                        var schemaManager = new AnnotationsPropertySchemaManager(_model);
+                        schemaManager.RemoveAnnotation(_container, topicToBeClarified);
+                        scope?.Complete();
+                    }
 
-                result = true;
-            } else if (_annotation is Highlight highlight)
-            {
-                var dialog = new AnnotationDialog(_model, _container, highlight, true);
-                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
+                    result = true;
+                }
+                else if (_annotation is Highlight highlight)
                 {
-                    var schemaManager = new AnnotationsPropertySchemaManager(_model);
-                    schemaManager.RemoveAnnotation(_container, highlight);
-                }
+                    var dialog = new AnnotationDialog(_model, _container, highlight, true);
+                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
+                    {
+                        var schemaManager = new AnnotationsPropertySchemaManager(_model);
+                        schemaManager.RemoveAnnotation(_container, highlight);
+                        scope?.Complete();
+                    }
 
-                result = true;
-            } else if (_annotation is ReviewNote reviewNote)
-            {
-                var dialog = new AnnotationDialog(_model, _container, reviewNote, true);
-                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
+                    result = true;
+                }
+                else if (_annotation is ReviewNote reviewNote)
                 {
-                    var schemaManager = new AnnotationsPropertySchemaManager(_model);
-                    schemaManager.RemoveAnnotation(_container, reviewNote);
-                }
+                    var dialog = new AnnotationDialog(_model, _container, reviewNote, true);
+                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
+                    {
+                        var schemaManager = new AnnotationsPropertySchemaManager(_model);
+                        schemaManager.RemoveAnnotation(_container, reviewNote);
+                        scope?.Complete();
+                    }
 
-                result = true;
+                    result = true;
+                }
             }
 
             return result;

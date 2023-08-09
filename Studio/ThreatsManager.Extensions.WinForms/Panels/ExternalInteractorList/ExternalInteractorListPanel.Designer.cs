@@ -19,6 +19,9 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellActivated -= this._grid_CellActivated;
             _grid.CellMouseDown -= this._grid_CellMouseDown;
             _grid.CellMouseLeave -= this._grid_CellMouseLeave;
@@ -40,6 +43,11 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
                 _model.ChildRemoved -= ModelChildRemoved;
                 _model.EntityShapeAdded -= EntityShapeAdded;
                 _model.EntityShapeRemoved -= EntityShapeRemoved;
+
+                if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+                {
+                    undoable.Undone -= ModelUndone;
+                }
             }
 
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();

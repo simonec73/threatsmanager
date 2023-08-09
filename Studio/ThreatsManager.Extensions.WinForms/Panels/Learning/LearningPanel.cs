@@ -7,6 +7,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
+#if !PORTABLE
     public partial class LearningPanel : UserControl, IStaticPanel<Form>, ICustomRibbonExtension, IDesktopAlertAwareExtension
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -40,4 +41,5 @@ namespace ThreatsManager.Extensions.Panels.Learning
         }
         #endregion
     }
+#endif
 }

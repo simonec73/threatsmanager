@@ -75,15 +75,11 @@ namespace ThreatsManager.Extensions.Reporting
                     var parameters = schemaManager.Parameters?.ToArray();
                     if (parameters?.Any() ?? false)
                     {
-                        var infinite = schemaManager.Infinite;
-                        if (infinite < 0)
-                            infinite = estimator.DefaultInfinite;
-
                         var normalizationReference = 
                             (new ExtensionConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId())).NormalizationReference;
 
                         var p = parameters.ToDictionary(x => x.Name, x => x.Value);
-                        acceptableRisk = estimator.GetAcceptableRisk(model, p, infinite, normalizationReference) * 100f / currentRisk;
+                        acceptableRisk = estimator.GetAcceptableRisk(model, p, normalizationReference) * 100f / currentRisk;
                     }
                     else
                     {

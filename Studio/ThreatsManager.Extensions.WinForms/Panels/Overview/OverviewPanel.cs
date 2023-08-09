@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Schemas;
-using ThreatsManager.Extensions.Panels.Roadmap;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -24,6 +23,9 @@ namespace ThreatsManager.Extensions.Panels.Overview
         public OverviewPanel()
         {
             InitializeComponent();
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         #region Implementation of interface IShowThreatModelPanel.
@@ -53,7 +55,7 @@ namespace ThreatsManager.Extensions.Panels.Overview
                 _mitigationsByStatus.RefreshChart(_model);
                 _roadmap.RefreshChart(_model);
 
-                var assignedThreatTypes = _model.AssignedThreatTypes;
+                //var assignedThreatTypes = _model.AssignedThreatTypes;
                 //var rowCount = assignedThreatTypes > 20 ? 10 : Math.Min(5, assignedThreatTypes / 2);
                 LoadTopRisks(5);
                 LoadLowestRisks(5);
@@ -71,6 +73,11 @@ namespace ThreatsManager.Extensions.Panels.Overview
             }
         }
         #endregion
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
 
         private void LoadTopRisks(int rowCount)
         {

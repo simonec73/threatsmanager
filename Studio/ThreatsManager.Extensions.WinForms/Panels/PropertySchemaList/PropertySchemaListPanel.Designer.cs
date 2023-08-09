@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DevComponents.DotNetBar.SuperGrid;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.PropertySchemaList
 {
@@ -16,6 +17,9 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
             if (ddc != null)
             {

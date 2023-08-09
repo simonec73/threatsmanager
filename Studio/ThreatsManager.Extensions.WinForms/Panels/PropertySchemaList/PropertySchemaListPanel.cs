@@ -53,6 +53,9 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                     _requiredExecutionMode.Items.Add(executionMode.GetEnumLabel());
                 }
             }
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         private void EditTextBoxOnKeyPress(object sender, KeyPressEventArgs e)
@@ -214,6 +217,11 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                 _loading = false;
                 _grid.ResumeLayout(true);
             }
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
         }
 
         private void Reset()

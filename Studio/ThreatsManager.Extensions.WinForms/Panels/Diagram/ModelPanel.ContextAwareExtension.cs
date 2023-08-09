@@ -5,6 +5,9 @@ using System.Linq;
 using System.Windows.Forms;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
+using Syncfusion.CompoundFile.DocIO.Native;
+using ThreatsManager.Extensions.Diagrams;
+using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -12,6 +15,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
@@ -29,7 +33,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             _actions = actions.ToArray();
             _graph.SetContextAwareActions(_actions);
-            ThreatEventListForm.SetActions(actions.Where(x => x.Scope.HasFlag(Scope.ThreatEvent)));
 
             foreach (var action in _actions)
             {
@@ -50,7 +53,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 if (action is IDataFlowRemovingRequiredAction dataFlowRemovingRequiredAction)
                     dataFlowRemovingRequiredAction.DataFlowRemovingRequired += RemoveDataFlow;
 
-                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction)
+                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction &&
+                    (string.IsNullOrWhiteSpace(commandsBarContextAwareAction.VisibilityContext) ||
+                    string.CompareOrdinal(commandsBarContextAwareAction.VisibilityContext, "Diagram") == 0))
                 {
                     var commandsBar = commandsBarContextAwareAction.CommandsBar;
                     if (commandsBar != null)
@@ -170,9 +175,15 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             if (diagram == _diagram && !_graph.IsDisposed)
             {
-                var link = _diagram.AddLink(dataFlow);
-                if (link != null)
-                    AddLink(link);
+                using (var scope = UndoRedoManager.OpenScope("Adding a Data Flow"))
+                {
+                    var link = _diagram.AddLink(dataFlow);
+                    if (link != null)
+                    {
+                        AddLink(link);
+                        scope?.Complete();
+                    }
+                }
             }
         }
 

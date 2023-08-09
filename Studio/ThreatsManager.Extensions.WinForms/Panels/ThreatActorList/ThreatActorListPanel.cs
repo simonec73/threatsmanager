@@ -28,8 +28,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
             InitializeComponent();
 
             InitializeGrid();
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
-        
+
         public event Action<string> ShowMessage;
         
         public event Action<string> ShowWarning;
@@ -146,6 +149,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
                 _loading = false;
                 _grid.ResumeLayout(true);
             }
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
         }
 
         private void AddGridRow([NotNull] IThreatActor actor, [NotNull] GridPanel panel)

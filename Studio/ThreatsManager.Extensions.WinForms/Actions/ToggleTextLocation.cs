@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -6,6 +7,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Actions
 {
@@ -45,10 +47,14 @@ namespace ThreatsManager.Extensions.Actions
                 var propertyType = schemaManager.GetTextLocationPropertyType();
                 if (propertyType != null)
                 {
-                    if ((link.GetProperty(propertyType) ?? link.AddProperty(propertyType, null)) is IPropertyBool
-                        propertyBool)
+                    using (var scope = UndoRedoManager.OpenScope("Toggle Text Location"))
                     {
-                        propertyBool.Value = !propertyBool.Value;
+                        if ((link.GetProperty(propertyType) ?? link.AddProperty(propertyType, null)) is IPropertyBool
+                        propertyBool)
+                        {
+                            propertyBool.Value = !propertyBool.Value;
+                            scope?.Complete();
+                        }
                     }
                 }
             }

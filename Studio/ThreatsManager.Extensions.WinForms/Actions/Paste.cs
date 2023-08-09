@@ -5,12 +5,14 @@ using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -72,47 +74,52 @@ namespace ThreatsManager.Extensions.Actions
                         .ToArray();
                     if (shapes?.Any() ?? false)
                     {
-                        float x = shapes.Min(t => t.Position.X);
-                        float y = shapes.Min(t => t.Position.Y);
-
-                        var groups = new List<IGroup>();
-
-                        foreach (var shape in shapes)
+                        using (var scope = UndoRedoManager.OpenScope("Paste"))
                         {
-                            if (shape is IEntityShape && shape.Identity is IEntity entity &&
-                                diagram.GetShape(entity) == null)
+                            float x = shapes.Min(t => t.Position.X);
+                            float y = shapes.Min(t => t.Position.Y);
+
+                            var groups = new List<IGroup>();
+
+                            foreach (var shape in shapes)
                             {
-                                result = true;
-                                
-                                IdentityAddingRequired?.Invoke(diagram, entity, 
-                                    new PointF(shape.Position.X - x, shape.Position.Y - y), SizeF.Empty);
+                                if (shape is IEntityShape && shape.Identity is IEntity entity &&
+                                    diagram.GetShape(entity) == null)
+                                {
+                                    result = true;
 
-                                RecursivelyAddParents(entity, groups);
+                                    IdentityAddingRequired?.Invoke(diagram, entity,
+                                        new PointF(shape.Position.X - x, shape.Position.Y - y), SizeF.Empty);
+
+                                    RecursivelyAddParents(entity, groups);
+                                }
                             }
-                        }
 
-                        foreach (var shape in shapes)
-                        {
-                            if (shape is IGroupShape groupShape && shape.Identity is IGroup group &&
-                                !groups.Contains(group))
+                            foreach (var shape in shapes)
                             {
-                                result = true;
+                                if (shape is IGroupShape groupShape && shape.Identity is IGroup group &&
+                                    !groups.Contains(group))
+                                {
+                                    result = true;
 
-                                IdentityAddingRequired?.Invoke(diagram, group,
-                                    new PointF(shape.Position.X - x, shape.Position.Y - y), groupShape.Size);
+                                    IdentityAddingRequired?.Invoke(diagram, group,
+                                        new PointF(shape.Position.X - x, shape.Position.Y - y), groupShape.Size);
+                                }
                             }
-                        }
 
-                        var links = deserialized?.Links?
-                            .Where(l => l.DataFlow?.Model == diagram.Model)
-                            .ToArray();
-                        if (links?.Any() ?? false)
-                        {
-                            foreach (var link in links)
+                            var links = deserialized?.Links?
+                                .Where(l => l.DataFlow?.Model == diagram.Model)
+                                .ToArray();
+                            if (links?.Any() ?? false)
                             {
-                                result = true;
-                                DataFlowAddingRequired?.Invoke(diagram, link.DataFlow);
+                                foreach (var link in links)
+                                {
+                                    result = true;
+                                    DataFlowAddingRequired?.Invoke(diagram, link.DataFlow);
+                                }
                             }
+
+                            scope?.Complete();
                         }
                     }
                     else

@@ -32,21 +32,16 @@
             this._cancel = new System.Windows.Forms.Button();
             this._ok = new System.Windows.Forms.Button();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
-            this._cap = new DevComponents.Editors.DoubleInput();
-            this.label1 = new System.Windows.Forms.Label();
+            this._labelNormalization = new System.Windows.Forms.Label();
             this._parameters = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
             this.gridColumn1 = new DevComponents.DotNetBar.SuperGrid.GridColumn();
             this.gridColumn2 = new DevComponents.DotNetBar.SuperGrid.GridColumn();
             this._estimators = new System.Windows.Forms.ComboBox();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._labelNormalization = new System.Windows.Forms.Label();
             this._labelNormalizationContainer = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this.layoutControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._cap)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -84,8 +79,6 @@
             // layoutControl1
             // 
             this.layoutControl1.Controls.Add(this._labelNormalization);
-            this.layoutControl1.Controls.Add(this._cap);
-            this.layoutControl1.Controls.Add(this.label1);
             this.layoutControl1.Controls.Add(this._parameters);
             this.layoutControl1.Controls.Add(this._estimators);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -97,37 +90,19 @@
             this.layoutControl1.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem1,
             this.layoutControlItem2,
-            this.layoutControlItem3,
-            this.layoutControlItem4,
             this._labelNormalizationContainer});
             this.layoutControl1.Size = new System.Drawing.Size(534, 290);
             this.layoutControl1.TabIndex = 1;
             // 
-            // _cap
+            // _labelNormalization
             // 
-            // 
-            // 
-            // 
-            this._cap.BackgroundStyle.Class = "DateTimeInputBackground";
-            this._cap.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._cap.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this._cap.Increment = 1D;
-            this._cap.Location = new System.Drawing.Point(474, 245);
-            this._cap.Margin = new System.Windows.Forms.Padding(0);
-            this._cap.Name = "_cap";
-            this._cap.ShowUpDown = true;
-            this._cap.Size = new System.Drawing.Size(56, 20);
-            this._cap.TabIndex = 3;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 245);
-            this.label1.Margin = new System.Windows.Forms.Padding(0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(376, 20);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Negative numbers are replaced with the maximum value\r\n.";
+            this._labelNormalization.AutoSize = true;
+            this._labelNormalization.Location = new System.Drawing.Point(4, 273);
+            this._labelNormalization.Margin = new System.Windows.Forms.Padding(0);
+            this._labelNormalization.Name = "_labelNormalization";
+            this._labelNormalization.Size = new System.Drawing.Size(526, 13);
+            this._labelNormalization.TabIndex = 2;
+            this._labelNormalization.Text = "Normalization";
             // 
             // _parameters
             // 
@@ -144,7 +119,7 @@
             this._parameters.PrimaryGrid.ShowRowDirtyMarker = false;
             this._parameters.PrimaryGrid.ShowRowHeaders = false;
             this._parameters.PrimaryGrid.ShowTreeButton = false;
-            this._parameters.Size = new System.Drawing.Size(526, 187);
+            this._parameters.Size = new System.Drawing.Size(526, 215);
             this._parameters.TabIndex = 1;
             this._parameters.Text = "superGridControl1";
             // 
@@ -166,10 +141,10 @@
             // 
             this._estimators.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._estimators.FormattingEnabled = true;
-            this._estimators.Location = new System.Drawing.Point(90, 4);
+            this._estimators.Location = new System.Drawing.Point(70, 4);
             this._estimators.Margin = new System.Windows.Forms.Padding(0);
             this._estimators.Name = "_estimators";
-            this._estimators.Size = new System.Drawing.Size(440, 21);
+            this._estimators.Size = new System.Drawing.Size(460, 21);
             this._estimators.TabIndex = 0;
             this._estimators.SelectedIndexChanged += new System.EventHandler(this._estimator_SelectedIndexChanged);
             // 
@@ -194,36 +169,6 @@
             this.layoutControlItem2.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
             this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // layoutControlItem3
-            // 
-            this.layoutControlItem3.Control = this.label1;
-            this.layoutControlItem3.Height = 21;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(64, 18);
-            this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Text = "Label:";
-            this.layoutControlItem3.TextVisible = false;
-            this.layoutControlItem3.Width = 99;
-            this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // layoutControlItem4
-            // 
-            this.layoutControlItem4.Control = this._cap;
-            this.layoutControlItem4.Height = 28;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
-            this.layoutControlItem4.Name = "layoutControlItem4";
-            this.layoutControlItem4.Text = "Maximum value";
-            this.layoutControlItem4.Width = 150;
-            // 
-            // _labelNormalization
-            // 
-            this._labelNormalization.AutoSize = true;
-            this._labelNormalization.Location = new System.Drawing.Point(4, 273);
-            this._labelNormalization.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._labelNormalization.Name = "_labelNormalization";
-            this._labelNormalization.Size = new System.Drawing.Size(526, 13);
-            this._labelNormalization.TabIndex = 4;
-            this._labelNormalization.Text = "Normalization";
             // 
             // _labelNormalizationContainer
             // 
@@ -254,7 +199,6 @@
             this.panel1.ResumeLayout(false);
             this.layoutControl1.ResumeLayout(false);
             this.layoutControl1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._cap)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -271,10 +215,6 @@
         private System.Windows.Forms.ComboBox _estimators;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem1;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem2;
-        private System.Windows.Forms.Label label1;
-        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem3;
-        private DevComponents.Editors.DoubleInput _cap;
-        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem4;
         private System.Windows.Forms.Label _labelNormalization;
         private DevComponents.DotNetBar.Layout.LayoutControlItem _labelNormalizationContainer;
     }

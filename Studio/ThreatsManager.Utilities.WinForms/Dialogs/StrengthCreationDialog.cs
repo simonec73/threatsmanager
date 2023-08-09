@@ -57,8 +57,12 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 id = GetFreeIdDown(_id.Value);
             if (id > 0)
             {
-                _strength = _threatModel.AddStrength(id, _name.Text);
-                _strength.Description = _description.Text;
+                using (var scope = UndoRedoManager.OpenScope("Add Strength"))
+                {
+                    _strength = _threatModel.AddStrength(id, _name.Text);
+                    _strength.Description = _description.Text;
+                    scope?.Complete();
+                }
             }
         }
 

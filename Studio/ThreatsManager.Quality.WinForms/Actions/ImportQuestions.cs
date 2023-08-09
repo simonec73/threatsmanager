@@ -5,16 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
-using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Quality.Annotations;
-using ThreatsManager.Quality.Panels.Annotations;
-using ThreatsManager.Quality.Properties;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
 
@@ -31,7 +27,7 @@ namespace ThreatsManager.Quality.Actions
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.View;
+        public Ribbon Ribbon => Ribbon.KnowledgeBase;
         public string Bar => "Questions";
 
         public event Action<string> ShowMessage;
@@ -68,45 +64,49 @@ namespace ThreatsManager.Quality.Actions
                         {
                             using (var file = File.OpenRead(openFileDialog.FileName))
                             {
-                                using (var ms = new MemoryStream())
+                                using (var scope = UndoRedoManager.OpenScope("Import Questions"))
                                 {
-                                    file.CopyTo(ms);
-
-                                    var json = ms.ToArray();
-                                    if (json.Length > 0)
+                                    using (var ms = new MemoryStream())
                                     {
-                                        string jsonText;
-                                        if (json[0] == 0xFF)
-                                            jsonText = Encoding.Unicode.GetString(json, 2, json.Length - 2);
-                                        else
-                                            jsonText = Encoding.Unicode.GetString(json);
+                                        file.CopyTo(ms);
 
-                                        IEnumerable<Question> questions;
-                                        using (var textReader = new StringReader(jsonText))
-                                        using (var reader = new JsonTextReader(textReader))
+                                        var json = ms.ToArray();
+                                        if (json.Length > 0)
                                         {
-                                            var serializer = new JsonSerializer
+                                            string jsonText;
+                                            if (json[0] == 0xFF)
+                                                jsonText = Encoding.Unicode.GetString(json, 2, json.Length - 2);
+                                            else
+                                                jsonText = Encoding.Unicode.GetString(json);
+
+                                            IEnumerable<Question> questions;
+                                            using (var textReader = new StringReader(jsonText))
+                                            using (var reader = new JsonTextReader(textReader))
                                             {
-                                                TypeNameHandling = TypeNameHandling.All,
-                                                SerializationBinder = new KnownTypesBinder(),
-                                                MissingMemberHandling = MissingMemberHandling.Ignore
-                                            };
-                                            questions = serializer.Deserialize<ICollection<Question>>(reader)?.ToArray();
-                                        }
-
-
-                                        if (questions?.Any() ?? false)
-                                        {
-                                            var schemaManager = new QuestionsPropertySchemaManager(threatModel);
-                                            var existing = schemaManager.GetQuestions()?.ToArray();
-
-                                            foreach (var question in questions)
-                                            {
-                                                if (!(existing?.Any(x =>
-                                                    string.CompareOrdinal(x.Text, question.Text) == 0) ?? false))
+                                                var serializer = new JsonSerializer
                                                 {
-                                                    schemaManager.AddQuestion(question);
+                                                    TypeNameHandling = TypeNameHandling.All,
+                                                    SerializationBinder = new KnownTypesBinder(),
+                                                    MissingMemberHandling = MissingMemberHandling.Ignore
+                                                };
+                                                questions = serializer.Deserialize<ICollection<Question>>(reader)?.ToArray();
+                                            }
+
+                                            if (questions?.Any() ?? false)
+                                            {
+                                                var schemaManager = new QuestionsPropertySchemaManager(threatModel);
+                                                var existing = schemaManager.GetQuestions()?.ToArray();
+
+                                                foreach (var question in questions)
+                                                {
+                                                    if (!(existing?.Any(x =>
+                                                        string.CompareOrdinal(x.Text, question.Text) == 0) ?? false))
+                                                    {
+                                                        schemaManager.AddQuestion(question);
+                                                    }
                                                 }
+
+                                                scope?.Complete();
                                             }
                                         }
                                     }

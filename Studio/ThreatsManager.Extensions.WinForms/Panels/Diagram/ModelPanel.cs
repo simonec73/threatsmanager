@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
-using Syncfusion.XlsIO.Parser.Biff_Records;
+using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -33,14 +31,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private readonly Dictionary<Guid, GraphEntity> _entities = new Dictionary<Guid, GraphEntity>();
         private readonly Dictionary<Guid, GraphGroup> _groups = new Dictionary<Guid, GraphGroup>();
         private readonly Dictionary<Guid, GraphLink> _links = new Dictionary<Guid, GraphLink>();
-        private static readonly ImageSize _imageSize;
         private ExecutionMode _executionMode;
         #endregion
-
-        static ModelPanel()
-        {
-            _imageSize = Dpi.Factor.Height >= 1.5 ? ImageSize.Big : ImageSize.Medium;
-        }
 
         public ModelPanel()
         {
@@ -80,12 +72,58 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 _templateTrustBoundary.Image = Resources.trust_boundary_small;
             }
 
-            LoadStandardPalette();
+            InitializeStandardPalette();
             InitializeTemplatesPalette();
             InitializeExistingPalette();
 
             GraphEntity.ParentChanged += GraphEntityParentChanged;
             GraphGroup.ParentChanged += GraphGroupParentChanged;
+
+            EventsDispatcher.Register("AdjustDpiFactor", AdjustDpiFactor);
+            EventsDispatcher.Register("ResetFlows", ResetFlows);
+            EventsDispatcher.Deregister("RefreshDiagram", RefreshDiagram);
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            var diagram = _diagram.Model?.Diagrams?.FirstOrDefault(x => x.Id == _diagram.Id);
+            if (diagram == null)
+                this.ParentForm?.Close();
+            else
+                SetDiagram(1.0f);
+        }
+
+        private void AdjustDpiFactor(object obj)
+        {
+            if (obj is AdjustFactorParams parameters && parameters.DiagramId == _diagram.Id)
+            {
+                var factor = ((float)parameters.Factor) / 100f;
+
+                SetDiagram(factor);
+            }
+        }
+
+        private void ResetFlows(object obj)
+        {
+            if ((((Guid) obj) == _diagram.Id) && _links.Any())
+            {
+                foreach (var link in _links.Values)
+                {
+                    link.RealLink.ClearPoints();
+                    link.RealLink.CalculateStroke();
+                }
+            }
+        }
+
+        private void RefreshDiagram(object obj)
+        {
+            if (obj == null || (((Guid)obj) == _diagram.Id))
+            {
+                SetDiagram(1.0f);
+            }
         }
 
         public ModelPanel([NotNull] ModelPanelFactory factory) : this()
@@ -392,37 +430,19 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             OnObjectSelected(_graph.Selection.Count > 0);
         }
 
-        private void _threatsFilter_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char) Keys.Enter)
-            {
-                e.Handled = true;
-                RefreshThreatsPalette(_threatsFilter.Text);
-            } else if (e.KeyChar == (char) Keys.Escape)
-            {
-                e.Handled = true;
-                _threatsFilter.Text = string.Empty;
-            }
-        }
-
         private void _standardPalette_MouseEnter(object sender, EventArgs e)
         {
-            ThreatEventListForm.CloseAll();
+            PanelItemListForm.CloseAll();
         }
 
         private void _existingPalette_MouseEnter(object sender, EventArgs e)
         {
-            ThreatEventListForm.CloseAll();
-        }
-
-        private void _threatsPalette_MouseEnter(object sender, EventArgs e)
-        {
-            ThreatEventListForm.CloseAll();
+            PanelItemListForm.CloseAll();
         }
 
         private void _properties_MouseEnter(object sender, EventArgs e)
         {
-            ThreatEventListForm.CloseAll();
+            PanelItemListForm.CloseAll();
         }
 
         public void SetExecutionMode(ExecutionMode mode)

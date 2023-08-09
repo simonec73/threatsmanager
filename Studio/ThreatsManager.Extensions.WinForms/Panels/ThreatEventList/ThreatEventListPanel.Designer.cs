@@ -19,6 +19,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellActivated -= _grid_CellActivated;
             _grid.CellMouseDown -= _grid_CellMouseDown;
             _grid.CellMouseLeave -= _grid_CellMouseLeave;
@@ -44,6 +47,10 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 _model.ThreatEventRemovedFromEntity -= OnThreatEventRemoved;
                 _model.ThreatEventAddedToDataFlow -= OnThreatEventAdded;
                 _model.ThreatEventRemovedFromDataFlow -= OnThreatEventRemoved;
+                _model.VulnerabilityAdded -= OnVulnerabilityAdded;
+                _model.VulnerabilityRemoved -= OnVulnerabilityRemoved;
+                _model.VulnerabilityAddedToEntity -= OnVulnerabilityAdded;
+                _model.VulnerabilityRemovedFromEntity -= OnVulnerabilityRemoved;
             }
 
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();

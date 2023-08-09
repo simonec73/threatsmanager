@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -33,6 +34,8 @@ namespace ThreatsManager.DevOps.Actions
             }
         });
 
+        public string VisibilityContext => "Roadmap";
+
         public bool Execute(object item)
         {
             bool result = false;
@@ -54,40 +57,44 @@ namespace ThreatsManager.DevOps.Actions
 
             if (identity is IThreatModel model)
             {
-                var schemaManager = new DevOpsPropertySchemaManager(model);
-                var mitigations = model.Mitigations?
-                    .Where(x => schemaManager.GetFirstSeenOn(x) == null)
-                    .ToArray();
-
-                if (mitigations?.Any() ?? false)
+                using (var scope = UndoRedoManager.OpenScope("Assign new Mitigations to the previous Iteration"))
                 {
-                    var configSchemaManager = new DevOpsConfigPropertySchemaManager(model);
-                    var iteration = configSchemaManager.PreviousIteration;
-                    if (iteration != null)
-                    {
-                        if (MessageBox.Show(
-                            $"You are about to assign {mitigations.Length} mitigations to the previous iteration ('{iteration.Name}')." +
-                            $"\nDo you confirm?", "Bulk assignment to Iteration", MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                        {
-                            foreach (var mitigation in mitigations)
-                            {
-                                schemaManager.SetFirstSeenOn(mitigation, iteration);
-                            }
+                    var schemaManager = new DevOpsPropertySchemaManager(model);
+                    var mitigations = model.Mitigations?
+                        .Where(x => schemaManager.GetFirstSeenOn(x) == null)
+                        .ToArray();
 
-                            result = true;
-                            ShowMessage?.Invoke("Assignment to Iteration succeeded.");
+                    if (mitigations?.Any() ?? false)
+                    {
+                        var configSchemaManager = new DevOpsConfigPropertySchemaManager(model);
+                        var iteration = configSchemaManager.PreviousIteration;
+                        if (iteration != null)
+                        {
+                            if (MessageBox.Show(
+                                $"You are about to assign {mitigations.Length} mitigations to the previous iteration ('{iteration.Name}')." +
+                                $"\nDo you confirm?", "Bulk assignment to Iteration", MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                            {
+                                foreach (var mitigation in mitigations)
+                                {
+                                    schemaManager.SetFirstSeenOn(mitigation, iteration);
+                                }
+
+                                scope?.Complete();
+                                result = true;
+                                ShowMessage?.Invoke("Assignment to Iteration succeeded.");
+                            }
+                        }
+                        else
+                        {
+                            ShowWarning?.Invoke("No previous Iteration is defined.");
                         }
                     }
                     else
                     {
-                        ShowWarning?.Invoke("No previous Iteration is defined.");
-                    }
-                }
-                else
-                {
-                    ShowMessage?.Invoke(
-                        "Nothing to do, because all Mitigations have already been assigned to an Iteration.");
+                        ShowMessage?.Invoke(
+                            "Nothing to do, because all Mitigations have already been assigned to an Iteration.");
+                    } 
                 }
             }
 

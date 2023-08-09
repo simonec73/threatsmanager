@@ -8,6 +8,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
@@ -16,7 +17,7 @@ namespace ThreatsManager.Extensions.Actions
     [Extension("74921A99-9F27-4873-97AD-0D279A89B04F", "Associate Mitigation Context Aware Action", 40, ExecutionMode.Simplified)]
     public class AssociateMitigation : IIdentityContextAwareAction, IDesktopAlertAwareExtension
     {
-        public Scope Scope => Scope.ThreatEvent | Scope.ThreatType;
+        public Scope Scope => Scope.ThreatEvent | Scope.ThreatType | Scope.Weakness | Scope.Vulnerability;
         public string Label => "Associate a Mitigation";
         public string Group => "Associate";
         public Bitmap Icon => Resources.standard_mitigations_big;
@@ -47,28 +48,54 @@ namespace ThreatsManager.Extensions.Actions
         {
             bool result = false;
 
-            if (identity is IThreatEvent threatEvent)
+            using (var scope = UndoRedoManager.OpenScope("Associate Mitigation"))
             {
-                using (var dialog = new ThreatEventMitigationSelectionDialog(threatEvent))
+                if (identity is IThreatEvent threatEvent)
                 {
-                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    using (var dialog = new ThreatEventMitigationSelectionDialog(threatEvent))
                     {
-                        result = true;
-                        ShowMessage?.Invoke("Mitigation added successfully.");
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            result = true;
+                        }
                     }
                 }
-            }
-            else if (identity is IThreatType threatType)
-            {
-                using (var dialog = new ThreatTypeMitigationSelectionDialog(threatType))
+                else if (identity is IThreatType threatType)
                 {
-                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    using (var dialog = new ThreatTypeMitigationSelectionDialog(threatType))
                     {
-                        result = true;
-                        ShowMessage?.Invoke("Mitigation added successfully.");
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            result = true;
+                        }
+                    }
+                }
+                else if (identity is IWeakness weakness)
+                {
+                    using (var dialog = new WeaknessMitigationSelectionDialog(weakness))
+                    {
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            result = true;
+                        }
+                    }
+                }
+                else if (identity is IVulnerability vulnerability)
+                {
+                    using (var dialog = new VulnerabilityMitigationSelectionDialog(vulnerability))
+                    {
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            result = true;
+                        }
                     }
                 }
 
+                if (result)
+                {
+                    scope?.Complete();
+                    ShowMessage?.Invoke("Mitigation added successfully.");
+                }
             }
 
             return result;
