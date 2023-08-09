@@ -433,6 +433,17 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (shapes.Any())
                             shapesAction.Execute(shapes, links);
                     }
+                    else if (action.Tag is IIdentityContextAwareAction identityAction)
+                    {
+                        if (identityAction.Scope.HasFlag(Scope.Diagram))
+                        {
+                            identityAction.Execute(_diagram);
+                        }
+                        else if (identityAction.Scope.HasFlag(Scope.ThreatModel))
+                        {
+                            identityAction.Execute(_diagram.Model);
+                        }
+                    }
                     break;
             }
         }
