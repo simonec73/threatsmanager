@@ -1,6 +1,7 @@
 ﻿using PostSharp.Patterns.Contracts;
 using System.Drawing;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Diagrams
 {
@@ -8,6 +9,8 @@ namespace ThreatsManager.Extensions.Diagrams
     {
         public ThreatEventPanelItem([NotNull] IThreatEvent threatEvent) : base(threatEvent.Name)
         {
+            BackColor = ThreatModelManager.ThreatsColor;
+            TextColor = Color.White;
             Tag = threatEvent;
         }
 

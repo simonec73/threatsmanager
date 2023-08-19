@@ -2,12 +2,17 @@
 using ThreatsManager.Extensions.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using System.Drawing;
 
 namespace ThreatsManager.SampleWinFormExtensions.Assets
 {
     internal class AssetPaletteItem : PaletteItem
     {
-        public AssetPaletteItem(string name) : base(name) { }
+        public AssetPaletteItem(string name) : base(name) 
+        {
+            TextColor = Color.DarkBlue;
+            BackColor = Color.White;
+        }
 
         public override void Apply(object target)
         {

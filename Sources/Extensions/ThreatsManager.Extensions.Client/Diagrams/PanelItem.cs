@@ -9,6 +9,9 @@ namespace ThreatsManager.Extensions.Diagrams
     /// </summary>
     public abstract class PanelItem
     {
+        private Color _backColor = Color.White;
+        private Color _textColor = Color.Black;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -36,6 +39,40 @@ namespace ThreatsManager.Extensions.Diagrams
         /// </summary>
         /// <remarks>The returned icon is 16x16 bits.</remarks>
         public virtual Image Icon { get; }
+
+        /// <summary>
+        /// Background color.
+        /// </summary>
+        /// <remarks>Lime green is reserved for transparency. If selected, it will be overridden with the default color, which is white.</remarks>
+        public Color BackColor
+        {
+            get => _backColor;
+
+            set
+            {
+                if (value == null || value == Color.LimeGreen)
+                    _backColor = Color.White;
+                else
+                    _backColor = value;
+            }
+        }
+
+        /// <summary>
+        /// Text color.
+        /// </summary>
+        /// <remarks>Lime green is reserved for transparency. If selected, it will be overridden with the default color, which is white.</remarks>
+        public Color TextColor
+        {
+            get => _textColor;
+
+            set
+            {
+                if (value == null || value == Color.LimeGreen)
+                    _textColor = Color.Black;
+                else
+                    _textColor = value;
+            }
+        }
 
         /// <summary>
         /// Action to be performed when the used clicks the panel item.

@@ -1,11 +1,16 @@
 ﻿using ThreatsManager.Utilities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using System.Drawing;
 
 namespace ThreatsManager.Extensions.Diagrams
 {
     public class ThreatTypePaletteItem : PaletteItem
     {
-        public ThreatTypePaletteItem(string name) : base(name) { }
+        public ThreatTypePaletteItem(string name) : base(name) 
+        {
+            BackColor = ThreatModelManager.ThreatsColor;
+            TextColor = Color.White;
+        }
 
         public override void Apply(object target)
         {
