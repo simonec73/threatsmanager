@@ -1152,6 +1152,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 DuplicateThreatActors(result, def.AllThreatActors ? ThreatActors?.Select(x => x.Id) : def.ThreatActors);
                 DuplicateMitigations(result, def.AllMitigations ? Mitigations?.Select(x => x.Id) : def.Mitigations);
                 DuplicateThreatTypes(result, def.AllThreatTypes ? ThreatTypes?.Select(x => x.Id) : def.ThreatTypes);
+                DuplicateWeaknesses(result, def.AllWeaknesses ? Weaknesses?.Select(x => x.Id) : def.Weaknesses);
                 DuplicateGroups(result, def.AllGroups ? Groups?.Select(x => x.Id) : def.Groups);
                 DuplicateEntityTemplates(result, def.AllEntityTemplates ? EntityTemplates?.Select(x => x.Id) : def.EntityTemplates);
                 DuplicateFlowTemplates(result, def.AllFlowTemplates ? FlowTemplates?.Select(x => x.Id) : def.FlowTemplates);
@@ -1290,6 +1291,18 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        private void DuplicateWeaknesses([NotNull] ThreatModel dest, IEnumerable<Guid> list)
+        {
+            var weaknesses = Weaknesses?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
+            if (weaknesses?.Any() ?? false)
+            {
+                foreach (var weakness in weaknesses)
+                {
+                    weakness.Clone(dest);
+                }
+            }
+        }
+
         private void DuplicateGroups([NotNull] ThreatModel dest, IEnumerable<Guid> list)
         {
             var groups = Groups?.Where(x => list?.Contains(x.Id) ?? false).ToArray();
@@ -1415,7 +1428,14 @@ namespace ThreatsManager.Engine.ObjectModel
                 result = false;
                 r.Add("One or more Threat Types are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllThreatTypes, def.ThreatTypes, _threatTypes);              
+            AddIdentities(known, def.AllThreatTypes, def.ThreatTypes, _threatTypes);
+
+            if (!Check(known, knownSeverities, knownStrengths, def.AllWeaknesses, def.Weaknesses, _weaknesses))
+            {
+                result = false;
+                r.Add("One or more Weaknesses are associated to an object which has not been selected.");
+            }
+            AddIdentities(known, def.AllWeaknesses, def.Weaknesses, _weaknesses);
 
             if (!Check(known, knownSeverities, knownStrengths, def.AllGroups, def.Groups, _groups))
             {
@@ -1522,8 +1542,22 @@ namespace ThreatsManager.Engine.ObjectModel
                         break;
                     }
 
+                    if (item is IVulnerabilitiesContainer tvContainer &&
+                        !Check(known, knownStrengths, tvContainer.Vulnerabilities))
+                    {
+                        result = false;
+                        break;
+                    }
+
                     if (item is IThreatEventMitigationsContainer tteContainer &&
                         !Check(known, knownStrengths, tteContainer.Mitigations))
+                    {
+                        result = false;
+                        break;
+                    }
+
+                    if (item is IVulnerabilityMitigationsContainer tveContainer &&
+                        !Check(known, knownStrengths, tveContainer.Mitigations))
                     {
                         result = false;
                         break;
@@ -1563,6 +1597,29 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var item in list)
                 {
                     if (!known.Contains(item.MitigationId) || 
+                        (item.Strength is IStrength strength &&
+                          !(knownStrengths?.Contains(strength.Id) ?? false)))
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
+            IEnumerable<IWeaknessMitigation> mitigations)
+        {
+            bool result = true;
+
+            var list = mitigations?.ToArray();
+            if (list?.Any() ?? false)
+            {
+                foreach (var item in list)
+                {
+                    if (!known.Contains(item.MitigationId) ||
                         (item.Strength is IStrength strength &&
                           !(knownStrengths?.Contains(strength.Id) ?? false)))
                     {
@@ -1641,8 +1698,53 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
+        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownSeverities,
+            IEnumerable<IVulnerability> vulnerabilities)
+        {
+            bool result = true;
+
+            var list = vulnerabilities?.ToArray();
+            if (list?.Any() ?? false)
+            {
+                foreach (var item in list)
+                {
+                    if (!known.Contains(item.WeaknessId) ||
+                        (item.Severity is ISeverity severity &&
+                          !(knownSeverities?.Contains(severity.Id) ?? false)))
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
             IEnumerable<IThreatEventMitigation> mitigations)
+        {
+            bool result = true;
+
+            var list = mitigations?.ToArray();
+            if (list?.Any() ?? false)
+            {
+                foreach (var item in list)
+                {
+                    if (!known.Contains(item.MitigationId) ||
+                          !(knownStrengths?.Contains(item.StrengthId) ?? false))
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool Check([NotNull] List<Guid> known, IEnumerable<int> knownStrengths,
+            IEnumerable<IVulnerabilityMitigation> mitigations)
         {
             bool result = true;
 
@@ -1785,6 +1887,7 @@ namespace ThreatsManager.Engine.ObjectModel
                     MergeThreatActors(source, def.AllThreatActors, def.ThreatActors);
                     MergeMitigations(source, def.AllMitigations, def.Mitigations);
                     MergeThreatTypes(source, def.AllThreatTypes, def.ThreatTypes);
+                    MergeWeaknesses(source, def.AllWeaknesses, def.Weaknesses);
                 }
             }
 
@@ -2031,6 +2134,49 @@ namespace ThreatsManager.Engine.ObjectModel
                         if (m != null && s != null)
                         {
                             var em = existing.Mitigations?.FirstOrDefault(x => x.MitigationId == m.Id) ?? 
+                                     existing.AddMitigation(m, s);
+                            em.MergeProperties(mitigation);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MergeWeaknesses([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
+        {
+            var selected = source.Weaknesses?.Where(x => all || (ids?.Contains(x.Id) ?? false)).ToArray();
+            if (selected?.Any() ?? false)
+            {
+                foreach (var weakness in selected)
+                {
+                    MergeWeakness(weakness);
+                }
+            }
+        }
+
+        private void MergeWeakness([NotNull] IWeakness weakness)
+        {
+            var existing = Weaknesses?.FirstOrDefault(x => string.CompareOrdinal(x.Name, weakness.Name) == 0);
+            if (existing == null)
+            {
+                weakness.Clone(this);
+            }
+            else
+            {
+                existing.MergeProperties(weakness);
+
+                var mitigations = weakness.Mitigations?.ToArray();
+                if (mitigations?.Any() ?? false)
+                {
+                    foreach (var mitigation in mitigations)
+                    {
+                        var m = GetMitigation(mitigation.MitigationId) ??
+                                Mitigations?.FirstOrDefault(x =>
+                                    string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
+                        var s = GetStrength(mitigation.StrengthId);
+                        if (m != null && s != null)
+                        {
+                            var em = existing.Mitigations?.FirstOrDefault(x => x.MitigationId == m.Id) ??
                                      existing.AddMitigation(m, s);
                             em.MergeProperties(mitigation);
                         }
