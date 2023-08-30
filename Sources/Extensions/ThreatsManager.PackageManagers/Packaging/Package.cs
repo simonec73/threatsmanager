@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Packaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Utilities.Exceptions;
 
-namespace ThreatsManager.Packaging
+namespace ThreatsManager.PackageManagers.Packaging
 {
     public class Package
     {
@@ -20,7 +23,6 @@ namespace ThreatsManager.Packaging
         #endregion
 
         #region Private constants.
-        private const int Iterations = 10000;
         private const string EncryptedFile = "encrypted.json";
         private readonly byte[] _encryptedPrefix = new byte[] {(byte)'E', (byte)'N', (byte)'C', 0};
         #endregion
@@ -51,7 +53,8 @@ namespace ThreatsManager.Packaging
             return new Package(fullpath);
         }
 
-        public static Package Create([Required] string fullpath, [Required] string algorithm, [Required] string hashAlgo, [NotNull] byte[] salt)
+        public static Package Create([Required] string fullpath, [Required] string algorithm, 
+            [Required] string hmacAlgo, [NotNull] byte[] salt, [StrictlyPositive] int iterations)
         {
             var result = Create(fullpath);
 
@@ -60,8 +63,9 @@ namespace ThreatsManager.Packaging
                 result._encryptionDetails = new EncryptionDetails()
                 {
                     Algorithm = algorithm,
-                    HashAlgorithm = hashAlgo,
-                    Salt = salt
+                    HMAC = hmacAlgo,
+                    Salt = salt,
+                    Iterations = iterations
                 };
 
                 var part = package.CreatePart(GetUri(EncryptedFile), "application/json", CompressionOption.Maximum);
@@ -183,13 +187,7 @@ namespace ThreatsManager.Packaging
         }
         #endregion
 
-        #region Funzioni membro private: funzioni ausiliarie generiche.
-        /// <summary>
-        /// Ottiene l'uri di una risorsa a partire dal suo nome.
-        /// </summary>
-        /// <param name="name">Nome della risorsa.</param>
-        /// <returns>Uri della risorsa.</returns>
-        /// <remarks>Si noti che l'uri deve necessariamente iniziare con "/" e deve essere di tipo relativo.</remarks>
+        #region Provate mamber functions.
         private static Uri GetUri(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -214,11 +212,6 @@ namespace ThreatsManager.Packaging
             }
         }
 
-        /// <summary>
-        /// Copia del contenuto di uno stream presso un altro stream.
-        /// </summary>
-        /// <param name="input">Stream in ingresso.</param>
-        /// <param name="output">Stream in uscita.</param>
         private static void CopyStream(Stream input, Stream output)
         {
             const int bufSize = 0x1000;
@@ -235,26 +228,79 @@ namespace ThreatsManager.Packaging
             if (_encryptionDetails == null)
                 throw new InvalidOperationException(Properties.Resources.EncryptionNotWellDefined);
 
-            var result = SymmetricAlgorithm.Create(_encryptionDetails.Algorithm);
-#pragma warning disable SCS0011 // CBC mode is weak
-            result.Mode = CipherMode.CBC;
-#pragma warning restore SCS0011 // CBC mode is weak
-            result.Padding = PaddingMode.PKCS7;
-
-            IntPtr unmanagedBytes = Marshal.SecureStringToGlobalAllocUnicode(passphrase);
-            byte[] bValue = new byte[passphrase.Length * 2];
-            try
+            SymmetricAlgorithm result = null;
+            switch (_encryptionDetails.Algorithm)
             {
-                Marshal.Copy(unmanagedBytes, bValue, 0, passphrase.Length * 2);
-            }
-            finally
-            {
-                // This will completely remove the data from memory
-                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedBytes);
+                default:
+                    result = new AesManaged();
+                    result.KeySize = 256;
+                    result.Mode = CipherMode.CBC;
+                    result.Padding = PaddingMode.PKCS7;
+                    break;
             }
 
-            var derive = new Rfc2898DeriveBytes(bValue, _encryptionDetails.Salt, Iterations);
+            //IntPtr bstr = Marshal.SecureStringToBSTR(passphrase);
+            //var length = Marshal.ReadInt32(bstr, -4);
+            //byte[] bValue = new byte[length * 2];
+            //try
+            //{
+            //    Marshal.Copy(bstr, bValue, 0, passphrase.Length * 2);
+            //}
+            //finally
+            //{
+            //    // This will completely remove the data from memory
+            //    Marshal.ZeroFreeGlobalAllocUnicode(bstr);
+            //}
+
+            //var derive = new Rfc2898DeriveBytes(bValue, _encryptionDetails.Salt, _encryptionDetails.Iterations);
+
+            var derive = passphrase.Process(DeriveKey);
             result.Key = derive.GetBytes(result.KeySize / 8);
+
+            return result;
+        }
+
+        private Rfc2898DeriveBytes DeriveKey(byte[] password)
+        {
+            return new Rfc2898DeriveBytes(password, _encryptionDetails.Salt, _encryptionDetails.Iterations);
+        }
+
+        private HMAC GetHMAC(SecureString passphrase)
+        {
+            HMAC result = null;
+            switch (_encryptionDetails.HMAC)
+            {
+                case "HMACMD5":
+                    result = new HMACMD5();
+                    break;
+                case "HMACSHA384":
+                    result = new HMACSHA384();
+                    break;
+                case "HMACSHA512":
+                    result = new HMACSHA512();
+                    break;
+                default:
+                    result = new HMACSHA256();
+                    break;
+            }
+
+
+            //IntPtr unmanagedBytes = Marshal.SecureStringToGlobalAllocUnicode(passphrase);
+            //byte[] bValue = new byte[passphrase.Length * 2];
+            //try
+            //{
+            //    Marshal.Copy(unmanagedBytes, bValue, 0, passphrase.Length * 2);
+            //}
+            //finally
+            //{
+            //    // This will completely remove the data from memory
+            //    Marshal.ZeroFreeGlobalAllocUnicode(unmanagedBytes);
+            //}
+
+            //var derive = new Rfc2898DeriveBytes(bValue, _encryptionDetails.Salt, _encryptionDetails.Iterations);
+
+            var derive = passphrase.Process(DeriveKey);
+            result.Key = derive.GetBytes(result.HashSize);
 
             return result;
         }
@@ -331,18 +377,6 @@ namespace ThreatsManager.Packaging
 
         private byte[] Encrypt([NotNull] byte[] input, [NotNull] SecureString passphrase)
         {
-            IntPtr unmanagedBytes = Marshal.SecureStringToGlobalAllocUnicode(passphrase);
-            byte[] bValue = new byte[passphrase.Length * 2];
-            try
-            {
-                Marshal.Copy(unmanagedBytes, bValue, 0, passphrase.Length * 2);
-            }
-            finally
-            {
-                // This will completely remove the data from memory
-                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedBytes);
-            }
-
             using (var algorithm = GetAlgorithm(passphrase))
             {
                 algorithm.GenerateIV();
@@ -363,12 +397,22 @@ namespace ThreatsManager.Packaging
                 }
 
                 // The result is obtained by concatenating the IV and the ciphertext.
-                var result = new byte[_encryptedPrefix.Length + sizeof(int) + iv.Length + sizeof(int) + encrypted.Length];
-                Array.Copy(_encryptedPrefix, 0, result, 0, _encryptedPrefix.Length);
-                Array.Copy(Convert(iv.Length), 0, result, _encryptedPrefix.Length, sizeof(int));
-                Array.Copy(iv, 0, result, _encryptedPrefix.Length + sizeof(int), iv.Length);
-                Array.Copy(Convert(encrypted.Length), 0, result, _encryptedPrefix.Length + sizeof(int) + iv.Length, sizeof(int));
-                Array.Copy(encrypted, 0, result, _encryptedPrefix.Length + sizeof(int) + iv.Length + sizeof(int), encrypted.Length);
+                var payload = new byte[_encryptedPrefix.Length + sizeof(int) + iv.Length + sizeof(int) + encrypted.Length];
+                Array.Copy(_encryptedPrefix, 0, payload, 0, _encryptedPrefix.Length);
+                Array.Copy(Convert(iv.Length), 0, payload, _encryptedPrefix.Length, sizeof(int));
+                Array.Copy(iv, 0, payload, _encryptedPrefix.Length + sizeof(int), iv.Length);
+                Array.Copy(Convert(encrypted.Length), 0, payload, _encryptedPrefix.Length + sizeof(int) + iv.Length, sizeof(int));
+                Array.Copy(encrypted, 0, payload, _encryptedPrefix.Length + sizeof(int) + iv.Length + sizeof(int), encrypted.Length);
+
+                byte[] result;
+                using (var hmac = GetHMAC(passphrase))
+                {
+                    var hash = hmac.ComputeHash(payload);
+                    result = new byte[payload.Length + hash.Length + sizeof(int)];
+                    Array.Copy(payload, result, payload.Length);
+                    Array.Copy(Convert(hash.Length), 0, result, payload.Length, sizeof(int));
+                    Array.Copy(hash, 0, result, payload.Length + sizeof(int), hash.Length);
+                }
 
                 return result;
             }
@@ -391,7 +435,7 @@ namespace ThreatsManager.Packaging
             pos += _encryptedPrefix.Length;
             if (Equal(header, _encryptedPrefix))
             {
-                int ivLen = GetInt(input, _encryptedPrefix.Length);
+                int ivLen = GetInt(input, pos);
                 pos += sizeof(int);
                 var iv = new byte[ivLen];
                 Array.Copy(input, pos, iv, 0, ivLen);
@@ -401,6 +445,23 @@ namespace ThreatsManager.Packaging
                 pos += sizeof(int);
                 var encrypted = new byte[encryptedLen];
                 Array.Copy(input, pos, encrypted, 0, encryptedLen);
+                pos += encryptedLen;
+
+                var payloadLen = pos;
+                var payload = new byte[payloadLen];
+                Array.Copy(input, payload, payloadLen);
+
+                int hashLen = GetInt(input, pos);
+                pos += sizeof(int);
+                var hash = new byte[hashLen];
+                Array.Copy(input, pos, hash, 0, hashLen);
+
+                using (var hmac = GetHMAC(passphrase))
+                {
+                    byte[] calculatedHash = hmac.ComputeHash(payload);
+                    if (!hash.SequenceEqual(calculatedHash))
+                        throw new InvalidHMACException(_path);
+                }
 
                 using (var algorithm = GetAlgorithm(passphrase))
                 {
@@ -422,6 +483,7 @@ namespace ThreatsManager.Packaging
 
             return result;
         }
+
         #endregion
     }
 }

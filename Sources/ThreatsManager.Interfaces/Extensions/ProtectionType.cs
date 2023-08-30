@@ -21,6 +21,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <summary>
         /// Encryption with certificates is required.
         /// </summary>
+        /// <remarks>Ecryption using the certificates is not supported, yet!</remarks>
         Certificates = 2
     }
 }

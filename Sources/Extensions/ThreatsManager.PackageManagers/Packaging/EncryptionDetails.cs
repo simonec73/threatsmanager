@@ -1,39 +1,39 @@
-﻿using System.Security;
+﻿using Newtonsoft.Json;
 
-namespace ThreatsManager.Interfaces.Extensions
+namespace ThreatsManager.PackageManagers.Packaging
 {
     /// <summary>
-    /// Interface to represent the Protection Data to be used to encrypt or decrypt the data with a Password.
+    /// Algorithms used for the encryption.
     /// </summary>
-    public interface IPasswordProtectionData : IProtectionData
+    [JsonObject]
+    public class EncryptionDetails
     {
-        /// <summary>
-        /// Password to be used to encrypt the data.
-        /// </summary>
-        SecureString Password { get; }
-
         /// <summary>
         /// Algorithm used for encryption.
         /// </summary>
         /// <remarks>If not defined, the default AES256 is used.</remarks>
-        string Algorithm { get; }
+        [JsonProperty("algo")]
+        public string Algorithm { get; set; }
 
         /// <summary>
         /// HMAC to use for checking the integrity.
         /// </summary>
         /// <remarks>If not defined, the default HMACSHA256 is used.</remarks>
-        string HMAC { get; }
+        [JsonProperty("hmac")]
+        public string HMAC { get; set; }
 
         /// <summary>
         /// Salt to use for deriving the encryption key.
         /// </summary>
         /// <remarks>If not defined, a random salt is generated.</remarks>
-        byte[] Salt { get; }
+        [JsonProperty("salt")]
+        public byte[] Salt { get; set; }
 
         /// <summary>
         /// Iterations used for deriving the encryption key.
         /// </summary>
         /// <remarks>If not defined, 20000 iterations will be applied.</remarks>
-        int Iterations { get; }
+        [JsonProperty("iterations")]
+        public int Iterations { get; set; }
     }
 }

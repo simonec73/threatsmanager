@@ -120,4 +120,7 @@
   <data name="EncryptionNotWellDefined" xml:space="preserve">
     <value>Encryption is not well defined.</value>
   </data>
+  <data name="ThreatModelTemplateFile" xml:space="preserve">
+    <value>threatmodeltemplate.json</value>
+  </data>
 </root>

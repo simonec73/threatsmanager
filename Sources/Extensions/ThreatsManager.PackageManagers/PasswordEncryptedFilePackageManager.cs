@@ -1,25 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Exceptions;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
-using ThreatsManager.Interfaces.Exceptions;
+using System.Linq;
+using Newtonsoft.Json;
+using PostSharp.Patterns.Contracts;
+using System.Text;
+using ThreatsManager.Utilities.Aspects;
+using System.Security.Cryptography;
 using ThreatsManager.PackageManagers.Packaging;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Extension("84252804-27F2-46C0-91A7-8EB7BF57EE58", "File Package Manager", 10, ExecutionMode.Business)]
-    public class PlainFilePackageManager : BaseFilePackageManager, IPackageManager
+    [Extension("C3E6420A-296D-4859-99BD-6045D45A20E3", "Password Encrypted File Package Manager", 11, ExecutionMode.Business)]
+    public class PasswordEncryptedFilePackageManager : BaseFilePackageManager, ISecurePackageManager, IInitializableObject
     {
-        public PlainFilePackageManager() 
-        { 
-            Extension = ".tm";
+        private IPasswordProtectionData _protectionData;
+
+        public PasswordEncryptedFilePackageManager() 
+        {
+            Extension = ".tme";
             PackageType = "Threat Model";
         }
 
@@ -45,9 +49,25 @@ namespace ThreatsManager.PackageManagers
             return BaseGetLatest(locationType, location, out dateTime);
         }
 
-        public IThreatModel Load(LocationType locationType, [Required] string location, 
-            IEnumerable<IExtensionMetadata> extensions, bool strict = true,
-            Guid? newThreatModelId = null)
+        public ProtectionType RequiredProtection => ProtectionType.Password;
+
+        public bool IsInitialized => _protectionData != null;
+
+        public void SetProtectionData([NotNull] IProtectionData protectionData)
+        {
+            if (protectionData is IPasswordProtectionData passwordProtectionData)
+            {
+                _protectionData = passwordProtectionData;
+            }
+            else
+            {
+                throw new UnsupportedEncryptionException();
+            }
+        }
+
+        [InitializationRequired]
+        public IThreatModel Load(LocationType locationType, [Required] string location,
+            IEnumerable<IExtensionMetadata> extensions, bool strict = true, Guid? newThreatModelId = null)
         {
             IThreatModel result = null;
 
@@ -55,13 +75,9 @@ namespace ThreatsManager.PackageManagers
             {
                 if (Package.IsEncrypted(location))
                 {
-                    throw new FileEncryptedException(location);
-                }
-                else
-                {
                     var package = new Package(location);
 
-                    var threatModelContent = package.Read(ThreatModelFile);
+                    var threatModelContent = package.Read(ThreatModelFile, _protectionData.Password);
                     if (threatModelContent != null)
                     {
                         try
@@ -75,6 +91,10 @@ namespace ThreatsManager.PackageManagers
                         }
                     }
                 }
+                else
+                {
+                    throw new FileNotEncryptedException(location);
+                }
             }
             else
             {
@@ -84,6 +104,7 @@ namespace ThreatsManager.PackageManagers
             return result;
         }
 
+        [InitializationRequired]
         public bool Save([NotNull] IThreatModel model, LocationType locationType, 
             [Required] string location, bool autoAddDateTime, IEnumerable<IExtensionMetadata> extensions, 
             out string newLocation)
@@ -95,13 +116,28 @@ namespace ThreatsManager.PackageManagers
             {
                 var tmSerialized = ThreatModelManager.Serialize(tm);
 
+                var alg = _protectionData.Algorithm ?? "AES256";
+                var hmac = _protectionData.HMAC ?? "HMACSHA256";
+                byte[] salt = _protectionData.Salt;
+                if (!(salt?.Any() ?? false))
+                {
+                    salt = new byte[128 / 8];
+                    using (var rng = RandomNumberGenerator.Create())
+                    {
+                        rng.GetBytes(salt);
+                    }
+                }
+                int iterations = 20000;
+                if (_protectionData.Iterations > 0)
+                    iterations = _protectionData.Iterations;
+
                 newLocation = autoAddDateTime
                     ? Path.Combine(Path.GetDirectoryName(location),
                         $"{StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location))}_{DateTime.Now.ToString("yyyyMMddHHmmss")}{Path.GetExtension(location)}")
                     : location;
 
-                var package = Package.Create(newLocation);
-                package.Add(ThreatModelFile, tmSerialized);
+                var package = Package.Create(newLocation, alg, hmac, salt, iterations);
+                package.Add(ThreatModelFile, tmSerialized, _protectionData.Password);
 
                 if (extensions?.Any() ?? false)
                 {

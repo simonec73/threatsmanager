@@ -28,11 +28,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension, then the method returns null.</remarks>
         public static string GetExtensionId(this object value)
         {
+            return value?.GetType()?.GetExtensionId();
+        }
+
+        /// <summary>
+        /// Get the Extension Identifier.
+        /// </summary>
+        /// <param name="type">Extension Type whose identifier is to be returned.</param>
+        /// <returns>Identifier of the Extension.</returns>
+        /// <remarks>If the Type is not related to an Extension, then the method returns null.</remarks>
+        public static string GetExtensionId(this Type type)
+        {
             string result = null;
 
-            Type type = value.GetType();
-
-            var attribs = type.GetCustomAttributes(
+            var attribs = type?.GetCustomAttributes(
                 typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
 
             var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Id") == 0);
@@ -59,11 +68,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension, then the method returns null.</remarks>
         public static string GetExtensionLabel(this object value)
         {
+            return value?.GetType()?.GetExtensionLabel();
+        }
+
+        /// <summary>
+        /// Get the Extension Label.
+        /// </summary>
+        /// <param name="type">Extension Type whose Label is to be returned.</param>
+        /// <returns>Label of the Extension.</returns>
+        /// <remarks>If the Type is not an Extension, then the method returns null.</remarks>
+        public static string GetExtensionLabel(this Type type)
+        {
             string result = null;
 
-            Type type = value.GetType();
-
-            ExportMetadataAttribute[] attribs = type.GetCustomAttributes(
+            ExportMetadataAttribute[] attribs = type?.GetCustomAttributes(
                 typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
 
             var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Label") == 0);
@@ -90,7 +108,18 @@ namespace ThreatsManager.Utilities
         /// <remarks>This method can be used for all classes, not only for Extensions.</remarks>
         public static string GetExtensionAssemblyTitle(this object value)
         {
-            return value.GetType().Assembly
+            return value?.GetType()?.GetExtensionAssemblyTitle();
+        }
+
+        /// <summary>
+        /// Get the Title of the Assembly containing the Extension.
+        /// </summary>
+        /// <param name="type">Reference extension Type.</param>
+        /// <returns>Title of the containing Assembly.</returns>
+        /// <remarks>This method can be used for all classes, not only for Extensions.</remarks>
+        public static string GetExtensionAssemblyTitle(this Type type)
+        {
+            return type?.Assembly
                 .GetCustomAttributes(typeof(AssemblyTitleAttribute), false)
                 .OfType<AssemblyTitleAttribute>()
                 .Select(x => x.Title)
@@ -105,11 +134,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension, then the method returns 0.</remarks>
         public static int GetExtensionPriority(this object value)
         {
+            return value?.GetType()?.GetExtensionPriority() ?? 0;
+        }
+
+        /// <summary>
+        /// Get the Extension priority.
+        /// </summary>
+        /// <param name="type">Extension Type whose priority is to be returned.</param>
+        /// <returns>Priority of the Extension.</returns>
+        /// <remarks>If the Type is not an Extension, then the method returns 0.</remarks>
+        public static int GetExtensionPriority(this Type type)
+        {
             int result = 0;
 
-            Type type = value.GetType();
-
-            var attribs = type.GetCustomAttributes(
+            var attribs = type?.GetCustomAttributes(
                 typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
 
             var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Priority") == 0);
@@ -136,11 +174,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension or if the Universal Identifier has not been defined, then the method returns null.</remarks>
         public static string GetExtensionUniversalId(this object value)
         {
+            return value?.GetType()?.GetExtensionUniversalId();
+        }
+
+        /// <summary>
+        /// Get the Universal Identifier of the Extension.
+        /// </summary>
+        /// <param name="type">Extension Type whose Universal Identifier is to be returned.</param>
+        /// <returns>Universal Identifier of the Extension Type.</returns>
+        /// <remarks>If the Type is not an Extension or if the Universal Identifier has not been defined, then the method returns null.</remarks>
+        public static string GetExtensionUniversalId(this Type type)
+        {
             string result = null;
 
-            Type type = value.GetType();
-
-            var attrib = type.GetCustomAttributes(
+            var attrib = type?.GetCustomAttributes(
                 typeof(UniversalIdentifierAttribute), false)?.FirstOrDefault() as UniversalIdentifierAttribute;
 
             if (attrib != null)

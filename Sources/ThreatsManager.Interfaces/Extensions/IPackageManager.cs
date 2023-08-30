@@ -49,10 +49,16 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <para>It is used to provide more meaningful errors when the operation fails due to a missing extension.</para></param>
         /// <param name="strict">If true, the Threat Model is opened requiring that content is completely understood.
         /// <para>If false, opening a Threat Model with unknown objects will succeed, but the unknown parts will not be imported.</para></param>
+        /// <param name="newThreatModelId">Optional identifier to be used for the Threat Model replacing its configured one.</param>
         /// <returns>Threat Model loaded from the specified location.</returns>
-        /// <exception cref="Exceptions.EncryptionRequiredException">The Package Manager requires encryption: see property RequiredProtection for details.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">The file specified in the location cannot be found.</exception>
+        /// <exception cref="Exceptions.ThreatModelOpeningFailureException">The Threat Model cannot be opened for some reason. It is most typically due to a deserialization issues.</exception>
+        /// <exception cref="Exceptions.EncryptionRequiredException">The Package Manager requires encryption, which has not been configured: see property RequiredProtection for details.</exception>
+        /// <exception cref="Exceptions.FileEncryptedException">The file cannot be opened because it is encrypted.</exception>
+        /// <exception cref="Exceptions.FileNotEncryptedException">The file cannot be opened because it is not encrypted while it should, or it lacks the embedded configuration file necessary to unencrypt it.</exception>
         IThreatModel Load(LocationType locationType, string location, 
-            IEnumerable<IExtensionMetadata> extensions, bool strict = true);
+            IEnumerable<IExtensionMetadata> extensions, bool strict = true,
+            Guid? newThreatModelId = null);
 
         /// <summary>
         /// Save the model to the specified location.
