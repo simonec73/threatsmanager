@@ -25,8 +25,6 @@ namespace ThreatsManager.Extensions.Diagrams
                     .OrderBy(x => x.Name)
                     .Select(x => new ThreatTypePaletteItem(x.Name)
                     {
-                        BackColor = ThreatModelManager.ThreatsColor,
-                        TextColor = Color.White,
                         Tag = x
                     });
             }
@@ -35,8 +33,6 @@ namespace ThreatsManager.Extensions.Diagrams
                 result = model?.SearchThreatTypes(filter)
                     .Select(x => new ThreatTypePaletteItem(x.Name)
                     {
-                        BackColor = ThreatModelManager.ThreatsColor,
-                        TextColor = Color.White,
                         Tag = x
                     });
             }
