@@ -28,8 +28,8 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.0" />
-    <PackageReference Include="PostSharp" Version="2023.0.6" />
-    <PackageReference Include="PostSharp.Patterns.Common" Version="2023.0.6" />
+    <PackageReference Include="PostSharp" Version="2023.0.7" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="2023.0.7" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 

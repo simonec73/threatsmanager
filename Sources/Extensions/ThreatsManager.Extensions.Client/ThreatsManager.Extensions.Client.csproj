@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="2023.0.6" />
+    <PackageReference Include="PostSharp" Version="2023.0.7" />
   </ItemGroup>
 
   <ItemGroup>
