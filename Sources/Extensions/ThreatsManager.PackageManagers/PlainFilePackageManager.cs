@@ -15,7 +15,7 @@ using ThreatsManager.PackageManagers.Packaging;
 namespace ThreatsManager.PackageManagers
 {
     [Extension("84252804-27F2-46C0-91A7-8EB7BF57EE58", "File Package Manager", 10, ExecutionMode.Business)]
-    public class PlainFilePackageManager : BaseFilePackageManager, IPackageManager
+    public class PlainFilePackageManager : BaseFilePackageManager
     {
         public PlainFilePackageManager() 
         { 
@@ -23,29 +23,7 @@ namespace ThreatsManager.PackageManagers
             PackageType = "Threat Model";
         }
 
-        public LocationType SupportedLocations => BaseSupportedLocations;
-
-        public void AutoCleanup(LocationType locationType, string location, int maxInstances)
-        {
-            BaseAutoCleanup(locationType, location, maxInstances);
-        }
-
-        public bool CanHandle(LocationType locationType, string location)
-        {
-            return BaseCanHandle(locationType, location);
-        }
-
-        public string GetFilter(LocationType locationType)
-        {
-            return BaseGetFilter(locationType);
-        }
-
-        public string GetLatest(LocationType locationType, string location, out DateTime dateTime)
-        {
-            return BaseGetLatest(locationType, location, out dateTime);
-        }
-
-        public IThreatModel Load(LocationType locationType, [Required] string location, 
+        public override IThreatModel Load(LocationType locationType, [Required] string location, 
             IEnumerable<IExtensionMetadata> extensions, bool strict = true,
             Guid? newThreatModelId = null)
         {
@@ -84,7 +62,7 @@ namespace ThreatsManager.PackageManagers
             return result;
         }
 
-        public bool Save([NotNull] IThreatModel model, LocationType locationType, 
+        public override bool Save([NotNull] IThreatModel model, LocationType locationType, 
             [Required] string location, bool autoAddDateTime, IEnumerable<IExtensionMetadata> extensions, 
             out string newLocation)
         {

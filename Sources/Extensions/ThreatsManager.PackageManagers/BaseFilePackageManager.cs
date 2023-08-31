@@ -8,27 +8,28 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.Exceptions;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.PackageManagers.Packaging;
 
 namespace ThreatsManager.PackageManagers
 {
-    public abstract class BaseFilePackageManager
+    public abstract class BaseFilePackageManager : IPackageManager
     {
-        protected const string ThreatModelFile = "threatmodel.json";
         protected const string ExtensionsFile = "extensions.json";
+        protected string ThreatModelFile = "threatmodel.json";
         protected string Extension = ".undefined";
         protected string PackageType = "Undefined";
 
-        public LocationType BaseSupportedLocations => LocationType.FileSystem;
+        public LocationType SupportedLocations => LocationType.FileSystem;
 
-        public bool BaseCanHandle(LocationType locationType, [Required] string location)
+        public bool CanHandle(LocationType locationType, [Required] string location)
         {
-            return BaseSupportedLocations.HasFlag(locationType) &&
+            return SupportedLocations.HasFlag(locationType) &&
                    !location.StartsWith(@"\\") &&
                    string.Compare(Path.GetExtension(location), Extension, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public string BaseGetFilter(LocationType locationType)
+        public string GetFilter(LocationType locationType)
         {
             string result = null;
 
@@ -38,12 +39,12 @@ namespace ThreatsManager.PackageManagers
             return result;
         }
 
-        public string BaseGetLatest(LocationType locationType, [Required] string location, out DateTime dateTime)
+        public string GetLatest(LocationType locationType, [Required] string location, out DateTime dateTime)
         {
             string result = null;
             dateTime = DateTime.MinValue;
 
-            if (BaseCanHandle(locationType, location))
+            if (CanHandle(locationType, location))
             {
                 var directory = Path.GetDirectoryName(location);
                 var filter = string.Concat(Path.GetFileNameWithoutExtension(location), "_??????????????", Extension);
@@ -63,9 +64,9 @@ namespace ThreatsManager.PackageManagers
             return result;
         }
 
-        public void BaseAutoCleanup(LocationType locationType, [Required] string location, [StrictlyPositive] int maxInstances)
+        public void AutoCleanup(LocationType locationType, [Required] string location, [StrictlyPositive] int maxInstances)
         {
-            if (BaseCanHandle(locationType, location))
+            if (CanHandle(locationType, location))
             {
                 var directory = Path.GetDirectoryName(location);
                 var filter = string.Concat(StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location)), "_??????????????", Extension);
@@ -82,6 +83,12 @@ namespace ThreatsManager.PackageManagers
                 }
             }
         }
+
+        public abstract IThreatModel Load(LocationType locationType, string location, 
+            IEnumerable<IExtensionMetadata> extensions, bool strict = true, Guid? newThreatModelId = null);
+
+        public abstract bool Save(IThreatModel model, LocationType locationType, string location, 
+            bool autoAddDateTime, IEnumerable<IExtensionMetadata> extensions, out string newLocation);
 
         #region Protected member functions.
         protected string StripDateTimeSuffix([Required] string text)

@@ -18,19 +18,7 @@ namespace ThreatsManager.PackageManagers
             PackageType = "Json Knowledge Base";
         }
 
-        public LocationType SupportedLocations => BaseSupportedLocations;
-
-        public string GetFilter(LocationType locationType)
-        {
-            return BaseGetFilter(locationType);
-        }
-
-        public bool CanHandle(LocationType locationType, string location)
-        {
-            return BaseCanHandle(locationType, location);
-        }
-
-        public IThreatModel Load(LocationType locationType, string location, bool strict = true, Guid? newThreatModelId = null)
+        public override IThreatModel Load(LocationType locationType, string location, bool strict = true, Guid? newThreatModelId = null)
         {
             IThreatModel result = null;
 
@@ -63,37 +51,7 @@ namespace ThreatsManager.PackageManagers
             return result;
         }
 
-        public bool Import(IThreatModel target, DuplicationDefinition definition,
-            LocationType locationType, string location, bool strict = true,
-            Guid? newThreatModelId = null)
-        {
-            var result = false;
-
-            IThreatModel kb = null;
-
-            try
-            {
-                kb = Load(locationType, location, strict, newThreatModelId);
-                if (kb != null)
-                {
-                    result = target.Merge(kb, definition);
-                }
-            }
-            catch
-            {
-            }
-            finally
-            {
-                if (kb != null)
-                {
-                    ThreatModelManager.Remove(kb.Id);
-                }
-            }
-
-            return result;
-        }
-
-        public bool Export([NotNull] IThreatModel model, [NotNull] DuplicationDefinition definition,
+        public override bool Export([NotNull] IThreatModel model, [NotNull] DuplicationDefinition definition,
             string name, string description, LocationType locationType, [Required] string location)
         {
             var result = false;

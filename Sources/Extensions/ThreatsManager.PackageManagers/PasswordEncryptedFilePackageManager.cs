@@ -23,30 +23,9 @@ namespace ThreatsManager.PackageManagers
 
         public PasswordEncryptedFilePackageManager() 
         {
+            ThreatModelFile = "threatmodel.bin";
             Extension = ".tme";
             PackageType = "Threat Model";
-        }
-
-        public LocationType SupportedLocations => BaseSupportedLocations;
-
-        public void AutoCleanup(LocationType locationType, string location, int maxInstances)
-        {
-            BaseAutoCleanup(locationType, location, maxInstances);
-        }
-
-        public bool CanHandle(LocationType locationType, string location)
-        {
-            return BaseCanHandle(locationType, location);
-        }
-
-        public string GetFilter(LocationType locationType)
-        {
-            return BaseGetFilter(locationType);
-        }
-
-        public string GetLatest(LocationType locationType, string location, out DateTime dateTime)
-        {
-            return BaseGetLatest(locationType, location, out dateTime);
         }
 
         public ProtectionType RequiredProtection => ProtectionType.Password;
@@ -66,7 +45,7 @@ namespace ThreatsManager.PackageManagers
         }
 
         [InitializationRequired]
-        public IThreatModel Load(LocationType locationType, [Required] string location,
+        public override IThreatModel Load(LocationType locationType, [Required] string location,
             IEnumerable<IExtensionMetadata> extensions, bool strict = true, Guid? newThreatModelId = null)
         {
             IThreatModel result = null;
@@ -105,7 +84,7 @@ namespace ThreatsManager.PackageManagers
         }
 
         [InitializationRequired]
-        public bool Save([NotNull] IThreatModel model, LocationType locationType, 
+        public override bool Save([NotNull] IThreatModel model, LocationType locationType, 
             [Required] string location, bool autoAddDateTime, IEnumerable<IExtensionMetadata> extensions, 
             out string newLocation)
         {
