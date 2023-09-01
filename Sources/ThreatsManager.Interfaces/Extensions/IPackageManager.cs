@@ -9,28 +9,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// </summary>
     /// <remarks>Package Manager extensions implement ways to save and load Threat Models.</remarks>
     [ExtensionDescription("Package Manager")]
-    public interface IPackageManager : IExtension
+    public interface IPackageManager : IFileManager, IExtension
     {
-        /// <summary>
-        /// Supported locations.
-        /// </summary>
-        LocationType SupportedLocations { get; }
-
-        /// <summary>
-        /// Get the Filter for the specified location type.
-        /// </summary>
-        /// <param name="locationType">Location Type.</param>
-        /// <returns>Filter to be used for getting the location.</returns>
-        string GetFilter(LocationType locationType);
-
-        /// <summary>
-        /// Verifies if the Package Manager can handle the location identified with the arguments.
-        /// </summary>
-        /// <param name="locationType">Type of location.</param>
-        /// <param name="location">Location where the Threat Model is to be found.</param>
-        /// <returns>True if the location can be handled by the Package Manager, false otherwise.</returns>
-        bool CanHandle(LocationType locationType, string location);
-
         /// <summary>
         /// Get the location of the latest version available for a given Threat Model.
         /// </summary>

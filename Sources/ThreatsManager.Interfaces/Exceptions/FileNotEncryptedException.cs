@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace ThreatsManager.Interfaces.Exceptions
 {
@@ -12,7 +13,7 @@ namespace ThreatsManager.Interfaces.Exceptions
         /// Constructor.
         /// </summary>
         /// <param name="location">Location of the file.</param>
-        public FileNotEncryptedException(string location) : base($"File '{location}' is supposed to be encrypted, but it is not")
+        public FileNotEncryptedException(string location) : base($"File '{Path.GetFileName(location)}' is supposed to be encrypted, but it is not")
         {
         }
     }

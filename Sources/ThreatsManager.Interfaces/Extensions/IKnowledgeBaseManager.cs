@@ -9,28 +9,8 @@ namespace ThreatsManager.Interfaces.Extensions
     /// </summary>
     /// <remarks>Knowledge Base Manager extensions implement ways to save and load Knowledge Bases.</remarks>
     [ExtensionDescription("Knowledge Base Manager")]
-    public interface IKnowledgeBaseManager : IExtension
+    public interface IKnowledgeBaseManager : IFileManager, IExtension
     {
-        /// <summary>
-        /// Supported locations.
-        /// </summary>
-        LocationType SupportedLocations { get; }
-        
-        /// <summary>
-        /// Get the Filter for the specified location type.
-        /// </summary>
-        /// <param name="locationType">Location Type.</param>
-        /// <returns>Filter to be used for getting the location.</returns>
-        string GetFilter(LocationType locationType);
-
-        /// <summary>
-        /// Verifies if the Knowledge Base Manager can handle the location identified with the arguments.
-        /// </summary>
-        /// <param name="locationType">Type of location.</param>
-        /// <param name="location">Location where the Knowledge Base is to be found.</param>
-        /// <returns>True if the location can be handled by the Knowledge Base Manager, false otherwise.</returns>
-        bool CanHandle(LocationType locationType, string location);
-
         /// <summary>
         /// Load the Knowledge Base from the specified location.
         /// </summary>

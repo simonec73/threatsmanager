@@ -16,7 +16,7 @@ using ThreatsManager.PackageManagers.Packaging;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Extension("C3E6420A-296D-4859-99BD-6045D45A20E3", "Password Encrypted File Package Manager", 11, ExecutionMode.Business)]
+    [Extension("C3E6420A-296D-4859-99BD-6045D45A20E3", "Password Encrypted File Package Manager", 15, ExecutionMode.Business)]
     public class PasswordEncryptedFilePackageManager : BaseFilePackageManager, ISecurePackageManager, IInitializableObject
     {
         private IPasswordProtectionData _protectionData;
@@ -25,7 +25,7 @@ namespace ThreatsManager.PackageManagers
         {
             ThreatModelFile = "threatmodel.bin";
             Extension = ".tme";
-            PackageType = "Threat Model";
+            PackageType = "Encrypted Threat Model";
         }
 
         public ProtectionType RequiredProtection => ProtectionType.Password;

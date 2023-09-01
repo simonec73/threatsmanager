@@ -24,15 +24,9 @@ namespace ThreatsManager.PackageManagers
                    string.Compare(Path.GetExtension(location), Extension, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public string GetFilter(LocationType locationType)
-        {
-            string result = null;
+        public string PackageName => PackageType;
 
-            if (locationType == LocationType.FileSystem)
-                result = $"{PackageType} ({Extension})|{Extension}";
-
-            return result;
-        }
+        public IEnumerable<string> Extensions => new[] { Extension };
 
         public abstract IThreatModel Load(LocationType locationType, string location, 
             bool strict = true, Guid? newThreatModelId = null);

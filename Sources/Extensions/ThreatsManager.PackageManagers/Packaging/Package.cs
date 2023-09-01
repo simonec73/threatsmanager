@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Utilities.Exceptions;
+using ThreatsManager.Interfaces.Exceptions;
 
 namespace ThreatsManager.PackageManagers.Packaging
 {
@@ -187,7 +185,7 @@ namespace ThreatsManager.PackageManagers.Packaging
         }
         #endregion
 
-        #region Provate mamber functions.
+        #region Private member functions.
         private static Uri GetUri(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

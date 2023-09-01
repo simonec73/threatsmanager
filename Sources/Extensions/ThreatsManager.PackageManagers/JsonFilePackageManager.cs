@@ -11,7 +11,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.PackageManagers
 {
-    [Extension("FA6F6023-8369-4D2F-97C1-1EB5ED83DA21", "Json File Package Manager", 15, ExecutionMode.Business)]
+    [Extension("FA6F6023-8369-4D2F-97C1-1EB5ED83DA21", "Json File Package Manager", 20, ExecutionMode.Business)]
     public class JsonFilePackageManager : BaseFilePackageManager
     { 
         public JsonFilePackageManager() 

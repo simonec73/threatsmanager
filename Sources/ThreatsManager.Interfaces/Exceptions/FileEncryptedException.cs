@@ -1,5 +1,5 @@
 ﻿using System;
-using ThreatsManager.Interfaces.ObjectModel;
+using System.IO;
 
 namespace ThreatsManager.Interfaces.Exceptions
 {
@@ -13,7 +13,7 @@ namespace ThreatsManager.Interfaces.Exceptions
         /// Constructor.
         /// </summary>
         /// <param name="location">Location of the file that cannot be opened.</param>
-        public FileEncryptedException(string location) : base($"File '{location}' cannot be open because it is encrypted")
+        public FileEncryptedException(string location) : base($"File '{Path.GetFileName(location)}' cannot be opened because it is encrypted")
         {
         }
     }
