@@ -42,13 +42,13 @@ namespace ThreatsManager.Utilities
                 // We have another method.
 
                 var attributes = (DisplayNameAttribute[])
-                   descriptor.Method.GetCustomAttributes(typeof(DisplayNameAttribute), false);
+                   descriptor.Method?.GetCustomAttributes(typeof(DisplayNameAttribute), false);
 
-                if (attributes.Length > 0)
+                if (attributes?.Length > 0)
                     return attributes[0].DisplayName;
             }
 
-            return null;
+            return "Unknown";
         }
     }
 }
