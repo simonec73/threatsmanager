@@ -76,17 +76,26 @@ namespace ThreatsManager.SampleWinFormExtensions.Assets
 
         public IEnumerable<PanelItem> GetPanelItems()
         {
-            if (!(_items?.Any() ?? false))
+            var oldItems = _items?.ToArray();
+            if (oldItems?.Any() ?? false)
             {
-                _items = GetAssets()?.OrderBy(x => x.Name)
-                    .Select(x => new AssetPanelItem(x))?.ToList();
-                if (_items?.Any() ?? false)
+                foreach (var item in oldItems)
                 {
-                    foreach (var item in _items)
-                    {
-                        item.Updated += Item_Updated;
-                        item.Removed += Item_Removed;
-                    }
+                    item.Updated -= Item_Updated;
+                    item.Removed -= Item_Removed;
+                }
+
+                _items = null;
+            }
+
+            _items = GetAssets()?.OrderBy(x => x.Name)
+                .Select(x => new AssetPanelItem(x))?.ToList();
+            if (_items?.Any() ?? false)
+            {
+                foreach (var item in _items)
+                {
+                    item.Updated += Item_Updated;
+                    item.Removed += Item_Removed;
                 }
             }
 
