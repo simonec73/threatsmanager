@@ -2,6 +2,7 @@
 using System;
 using System.Security;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 
 namespace ThreatsManager.Dialogs
 {
@@ -18,12 +19,11 @@ namespace ThreatsManager.Dialogs
             
             set
             {
-                _repeatPassword.Visible = value;
-                _quality.Visible = value;
-                _labelRepeat.Visible = value;
+                _layoutRepeatPassword.Visible = value;
+                _layoutQuality.Visible = value;
                 _passwordRepeatValidator.Enabled = value;
 
-                Height = value ? 220 : 150;
+                Height = (int) ((value ? 220 : 140) * Dpi.Factor.Height);
             }
         }
 

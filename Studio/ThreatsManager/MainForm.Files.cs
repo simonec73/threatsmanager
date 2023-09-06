@@ -164,12 +164,16 @@ namespace ThreatsManager
                 {
                     if (securePM.RequiredProtection.HasFlag(ProtectionType.Password))
                     {
-                        var password = GetPassword();
-                        if (password != null)
+                        if (GetPassword(out var password))
                         {
-                            _protectionData = new PasswordProtectionData(password);
-                            securePM.SetProtectionData(_protectionData);
+                            if (password != null)
+                            {
+                                _protectionData = new PasswordProtectionData(password);
+                                securePM.SetProtectionData(_protectionData);
+                            }
                         }
+                        else
+                            return OpenOutcome.KO;
                     }
                 }
 
@@ -391,11 +395,15 @@ namespace ThreatsManager
             {
                 if (securePM.RequiredProtection.HasFlag(ProtectionType.Password))
                 {
-                    var password = GetPassword(true);
-                    if (password != null)
+                    if (GetPassword(out var password, true))
                     {
-                        _protectionData = new PasswordProtectionData(password);
+                        if (password != null)
+                        {
+                            _protectionData = new PasswordProtectionData(password);
+                        }
                     }
+                    else
+                        return false;
                 }
             }
 
@@ -627,15 +635,18 @@ namespace ThreatsManager
         }
 
         [Dispatched]
-        private SecureString GetPassword(bool newPassword = false)
+        private bool GetPassword(out SecureString secureString, bool newPassword = false)
         {
-            SecureString result = null;
+            var result = false;
+
+            secureString = null;
 
             var dialog = new PasswordDialog();
             dialog.VerificationRequired = newPassword;
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                result = dialog.Password;
+                secureString = dialog.Password;
+                result = true;
             }
 
             return result;

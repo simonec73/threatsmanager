@@ -30,9 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasswordDialog));
-            this.label1 = new System.Windows.Forms.Label();
             this._password = new ThreatsManager.Controls.SecureTextBox();
-            this._labelRepeat = new System.Windows.Forms.Label();
             this._repeatPassword = new ThreatsManager.Controls.SecureTextBox();
             this._ok = new System.Windows.Forms.Button();
             this._cancel = new System.Windows.Forms.Button();
@@ -49,56 +47,46 @@
             this._strong = new DevComponents.DotNetBar.StepItem();
             this._veryStrong = new DevComponents.DotNetBar.StepItem();
             this._styleManager = new DevComponents.DotNetBar.StyleManager(this.components);
+            this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._layoutPassword = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._layoutQuality = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._layoutRepeatPassword = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
+            this.layoutControl1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(165, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Please insert the password to use";
             // 
             // _password
             // 
             this._password.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._password.Location = new System.Drawing.Point(15, 25);
+            this._password.Location = new System.Drawing.Point(4, 21);
+            this._password.Margin = new System.Windows.Forms.Padding(0);
             this._password.Name = "_password";
             this._password.PasswordChar = '●';
-            this._password.Size = new System.Drawing.Size(411, 20);
-            this._password.TabIndex = 1;
+            this._password.Size = new System.Drawing.Size(439, 23);
+            this._password.TabIndex = 0;
             this._validator.SetValidator1(this._password, this._passwordDefinedValidator);
             this._password.SecureTextChanged += new System.Action<ThreatsManager.Controls.SecureTextBox>(this._password_SecureTextChanged);
-            // 
-            // _labelRepeat
-            // 
-            this._labelRepeat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._labelRepeat.AutoSize = true;
-            this._labelRepeat.Location = new System.Drawing.Point(12, 95);
-            this._labelRepeat.Name = "_labelRepeat";
-            this._labelRepeat.Size = new System.Drawing.Size(138, 13);
-            this._labelRepeat.TabIndex = 2;
-            this._labelRepeat.Text = "Please repeat the password";
             // 
             // _repeatPassword
             // 
             this._repeatPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._repeatPassword.Location = new System.Drawing.Point(15, 111);
+            this._repeatPassword.Location = new System.Drawing.Point(4, 102);
+            this._repeatPassword.Margin = new System.Windows.Forms.Padding(0);
             this._repeatPassword.Name = "_repeatPassword";
             this._repeatPassword.PasswordChar = '●';
-            this._repeatPassword.Size = new System.Drawing.Size(411, 20);
-            this._repeatPassword.TabIndex = 3;
+            this._repeatPassword.Size = new System.Drawing.Size(439, 23);
+            this._repeatPassword.TabIndex = 2;
             this._validator.SetValidator1(this._repeatPassword, this._passwordRepeatValidator);
             // 
             // _ok
             // 
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this._ok.Location = new System.Drawing.Point(155, 146);
+            this._ok.Location = new System.Drawing.Point(155, 14);
             this._ok.Name = "_ok";
             this._ok.Size = new System.Drawing.Size(75, 23);
             this._ok.TabIndex = 4;
@@ -110,7 +98,7 @@
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(236, 146);
+            this._cancel.Location = new System.Drawing.Point(236, 14);
             this._cancel.Name = "_cancel";
             this._cancel.Size = new System.Drawing.Size(75, 23);
             this._cancel.TabIndex = 5;
@@ -166,10 +154,11 @@
             this._strong,
             this._veryStrong});
             this._quality.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._quality.Location = new System.Drawing.Point(15, 51);
+            this._quality.Location = new System.Drawing.Point(4, 52);
+            this._quality.Margin = new System.Windows.Forms.Padding(0);
             this._quality.Name = "_quality";
-            this._quality.Size = new System.Drawing.Size(440, 25);
-            this._quality.TabIndex = 6;
+            this._quality.Size = new System.Drawing.Size(459, 25);
+            this._quality.TabIndex = 1;
             // 
             // _negligible
             // 
@@ -236,21 +225,81 @@
             this._styleManager.ManagerStyle = DevComponents.DotNetBar.eStyle.Office2016;
             this._styleManager.MetroColorParameters = new DevComponents.DotNetBar.Metro.ColorTables.MetroColorGeneratorParameters(System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255))))), System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199))))));
             // 
+            // layoutControl1
+            // 
+            this.layoutControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.layoutControl1.Controls.Add(this._password);
+            this.layoutControl1.Controls.Add(this._quality);
+            this.layoutControl1.Controls.Add(this._repeatPassword);
+            this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
+            this.layoutControl1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControl1.Name = "layoutControl1";
+            // 
+            // 
+            // 
+            this.layoutControl1.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
+            this._layoutPassword,
+            this._layoutQuality,
+            this._layoutRepeatPassword});
+            this.layoutControl1.Size = new System.Drawing.Size(467, 140);
+            this.layoutControl1.TabIndex = 7;
+            // 
+            // _layoutPassword
+            // 
+            this._layoutPassword.Control = this._password;
+            this._layoutPassword.Height = 48;
+            this._layoutPassword.MinSize = new System.Drawing.Size(64, 18);
+            this._layoutPassword.Name = "_layoutPassword";
+            this._layoutPassword.Padding = new System.Windows.Forms.Padding(4, 4, 24, 4);
+            this._layoutPassword.Text = "Please insert the password to use";
+            this._layoutPassword.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
+            this._layoutPassword.Width = 100;
+            this._layoutPassword.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _layoutQuality
+            // 
+            this._layoutQuality.Control = this._quality;
+            this._layoutQuality.Height = 33;
+            this._layoutQuality.MinSize = new System.Drawing.Size(64, 18);
+            this._layoutQuality.Name = "_layoutQuality";
+            this._layoutQuality.Text = "Label:";
+            this._layoutQuality.TextVisible = false;
+            this._layoutQuality.Width = 100;
+            this._layoutQuality.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _layoutRepeatPassword
+            // 
+            this._layoutRepeatPassword.Control = this._repeatPassword;
+            this._layoutRepeatPassword.Height = 48;
+            this._layoutRepeatPassword.MinSize = new System.Drawing.Size(64, 18);
+            this._layoutRepeatPassword.Name = "_layoutRepeatPassword";
+            this._layoutRepeatPassword.Padding = new System.Windows.Forms.Padding(4, 4, 24, 4);
+            this._layoutRepeatPassword.Text = "Please repeat the password";
+            this._layoutRepeatPassword.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
+            this._layoutRepeatPassword.Width = 100;
+            this._layoutRepeatPassword.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this._cancel);
+            this.panel1.Controls.Add(this._ok);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 140);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(467, 49);
+            this.panel1.TabIndex = 8;
+            // 
             // PasswordDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(467, 181);
+            this.ClientSize = new System.Drawing.Size(467, 189);
             this.ControlBox = false;
-            this.Controls.Add(this._quality);
-            this.Controls.Add(this._cancel);
-            this.Controls.Add(this._ok);
-            this.Controls.Add(this._repeatPassword);
-            this.Controls.Add(this._labelRepeat);
-            this.Controls.Add(this._password);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.layoutControl1);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MinimumSize = new System.Drawing.Size(461, 100);
             this.Name = "PasswordDialog";
@@ -260,16 +309,15 @@
             this.Text = "Select password";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
+            this.layoutControl1.ResumeLayout(false);
+            this.layoutControl1.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private Controls.SecureTextBox _password;
-        private System.Windows.Forms.Label _labelRepeat;
         private Controls.SecureTextBox _repeatPassword;
         private System.Windows.Forms.Button _ok;
         private System.Windows.Forms.Button _cancel;
@@ -286,5 +334,10 @@
         private DevComponents.DotNetBar.StyleManager _styleManager;
         private DevComponents.DotNetBar.Validator.CustomValidator _passwordRepeatValidator;
         private DevComponents.DotNetBar.Validator.CustomValidator _passwordDefinedValidator;
+        private System.Windows.Forms.Panel panel1;
+        private DevComponents.DotNetBar.Layout.LayoutControl layoutControl1;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutPassword;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutQuality;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutRepeatPassword;
     }
 }
