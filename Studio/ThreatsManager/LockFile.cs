@@ -117,35 +117,38 @@ namespace ThreatsManager
             LockFile result = null;
             bool error = false;
 
-            if (!string.IsNullOrWhiteSpace(fileName) && File.Exists(fileName))
+            if (!string.IsNullOrWhiteSpace(fileName))
             {
-                try
+                if (File.Exists(fileName))
                 {
-                    using (var fileStream = new FileStream(fileName, FileMode.Open))
+                    try
                     {
-                        var serializer = new JsonSerializer();
-                        using (var stringReader = new StreamReader(fileStream))
-                        using (var reader = new JsonTextReader(stringReader))
+                        using (var fileStream = new FileStream(fileName, FileMode.Open))
                         {
-                            result = serializer.Deserialize<LockFile>(reader);
-                            if (result != null)
-                                result._fileName = fileName;
+                            var serializer = new JsonSerializer();
+                            using (var stringReader = new StreamReader(fileStream))
+                            using (var reader = new JsonTextReader(stringReader))
+                            {
+                                result = serializer.Deserialize<LockFile>(reader);
+                                if (result != null)
+                                    result._fileName = fileName;
+                            }
                         }
+
+                        if (result != null)
+                            await result.MoveNextAsync();
                     }
-
-                    if (result != null) 
-                        await result.MoveNextAsync();
-                }
-                catch (FileNotFoundException)
-                {
-                }
-                catch (IOException)
-                {
-                    // There is an error. The file does exist and cannot be opened. It may be owned by another process.
-                    error = true;
+                    catch (FileNotFoundException)
+                    {
+                    }
+                    catch (IOException)
+                    {
+                        // There is an error. The file does exist and cannot be opened. It may be owned by another process.
+                        error = true;
+                    }
                 }
 
-                if (!error && result == null && !string.IsNullOrWhiteSpace(fileName))
+                if (!error && result == null)
                 {
                     result = new LockFile(fileName);
                     result.AutoLoad();
