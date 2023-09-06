@@ -167,8 +167,8 @@ namespace ThreatsManager.Extensions.Diagrams
                 _items = null;
             }
 
-            _items = GetAssets()?.OrderBy(x => x.Name)
-                .Select(x => new AssetPanelItem(x))?.ToList();
+            _items = _container?.ThreatEvents?.OrderBy(x => x.Name)
+                .Select(x => new ThreatEventPanelItem(x))?.ToList();
             if (_items?.Any() ?? false)
             {
                 foreach (var item in _items)
