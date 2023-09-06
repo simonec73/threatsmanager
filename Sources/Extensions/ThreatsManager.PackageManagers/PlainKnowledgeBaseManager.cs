@@ -53,7 +53,7 @@ namespace ThreatsManager.PackageManagers
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    name = model.Name;
+                    name = model.Name ?? "Not defined";
                 }
 
                 if (string.IsNullOrEmpty(description))

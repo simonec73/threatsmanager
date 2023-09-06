@@ -392,8 +392,8 @@ namespace ThreatsManager.MsTmt
 
                         if (schema != null)
                         {
-                            InitializeBaseSchema(entityTemplate, schema);
-                            AddProperties(target, element.Name, scope, schema, entityTemplate, properties);
+                            InitializeBaseSchema(trustBoundaryTemplate, schema);
+                            AddProperties(target, element.Name, scope, schema, trustBoundaryTemplate, properties);
                         }
                     }
                 }

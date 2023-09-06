@@ -65,7 +65,7 @@ namespace ThreatsManager.PackageManagers
                 var directory = Path.GetDirectoryName(location);
                 var filter = string.Concat(StripDateTimeSuffix(Path.GetFileNameWithoutExtension(location)), "_??????????????", Extension);
 
-                if (!string.IsNullOrWhiteSpace(directory))
+                if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
                 {
                     var files = Directory.GetFiles(directory, filter, SearchOption.TopDirectoryOnly);
                     var orderedFiles = files.OrderByDescending(x => x).Skip(maxInstances);

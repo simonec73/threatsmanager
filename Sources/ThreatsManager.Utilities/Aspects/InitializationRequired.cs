@@ -6,6 +6,9 @@ using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Utilities.Aspects
 {
+    /// <summary>
+    /// Interface implemented to prevent entering a method if the object is not initialized.
+    /// </summary>
     [PSerializable]
     [ProvideAspectRole("Initialization")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, StandardRoles.Validation)]
@@ -19,18 +22,29 @@ namespace ThreatsManager.Utilities.Aspects
         private object _defaultValue;
 #pragma warning restore IDE0044 // Add readonly modifier
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public InitializationRequired()
         {
             _isDefaultValueInitalized = false;
             _defaultValue = null;
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="defaultValue">Default value to use as return value of the method, if the object is not initialized.</param>
         public InitializationRequired(object defaultValue)
         {
             _isDefaultValueInitalized = true;
             _defaultValue = defaultValue;
         }
 
+        /// <summary>
+        /// Method called entering the method.
+        /// </summary>
+        /// <param name="args">Method execution arguments.</param>
         public sealed override void OnEntry(MethodExecutionArgs args)
         {
             if (args.Instance is IInitializableObject initializableObject && !initializableObject.IsInitialized)
