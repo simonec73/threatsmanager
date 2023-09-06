@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Dialogs
             _model = model;
 
             var normalizationReference =
-                (new ExtensionConfigurationManager(_model, (new ConfigurationPanelFactory()).GetExtensionId())).NormalizationReference;
+                (new ExtensionConfigurationManager(_model)).NormalizationReference;
             if (normalizationReference == 0)
                 _labelNormalizationContainer.Visible = false;
             else

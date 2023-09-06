@@ -51,7 +51,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 DiagramAssociationHelper.DiagramAssociated -= OnDiagramAssociated;
                 DiagramAssociationHelper.DiagramDisassociated -= OnDiagramDisassociated;
-                _entity.Model.ChildRemoved -= OnModelChildRemoved;
+                if (_entity.Model != null)
+                    _entity.Model.ChildRemoved -= OnModelChildRemoved;
 
                 if (_entity is IUndoable undoable)
                     undoable.Undone -= HandleOperationUndone;

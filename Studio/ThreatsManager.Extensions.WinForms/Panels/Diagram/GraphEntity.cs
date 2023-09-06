@@ -112,24 +112,27 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         public void UpdateParameters([Range(32, 256)] int iconSize, [Range(8, 248)] int iconCenterSize,
             ImageSize sourceSize, [Range(8, 128)] int markerSize, [StrictlyPositive] float dpiFactor = 1.0f)
         {
-            using (var scope = UndoRedoManager.OpenScope("Update parameters"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                _sourceSize = sourceSize;
-                ApplySourceSize();
+                using (var scope = UndoRedoManager.OpenScope("Update parameters"))
+                {
+                    _sourceSize = sourceSize;
+                    ApplySourceSize();
 
-                Icon.Size = new SizeF(iconSize, iconSize);
-                Port.Size = new SizeF(iconCenterSize, iconCenterSize);
-                _panelItemMarker.Position = new PointF(iconSize - markerSize, iconSize - markerSize);
-                _panelItemMarker.Size = new SizeF(markerSize, markerSize);
-                _diagramMarker.Position = new PointF(iconSize - markerSize, 0f);
-                _diagramMarker.Size = new SizeF(markerSize, markerSize);
-                _warningMarker.Position = new PointF(0f, iconSize - markerSize);
-                _warningMarker.Size = new SizeF(markerSize, markerSize);
-                if (dpiFactor != 1.0f)
-                    _shape.Position = new PointF(_shape.Position.X * dpiFactor, _shape.Position.Y * dpiFactor);
-                Location = new PointF(_shape.Position.X, _shape.Position.Y);
+                    Icon.Size = new SizeF(iconSize, iconSize);
+                    Port.Size = new SizeF(iconCenterSize, iconCenterSize);
+                    _panelItemMarker.Position = new PointF(iconSize - markerSize, iconSize - markerSize);
+                    _panelItemMarker.Size = new SizeF(markerSize, markerSize);
+                    _diagramMarker.Position = new PointF(iconSize - markerSize, 0f);
+                    _diagramMarker.Size = new SizeF(markerSize, markerSize);
+                    _warningMarker.Position = new PointF(0f, iconSize - markerSize);
+                    _warningMarker.Size = new SizeF(markerSize, markerSize);
+                    if (dpiFactor != 1.0f)
+                        _shape.Position = new PointF(_shape.Position.X * dpiFactor, _shape.Position.Y * dpiFactor);
+                    Location = new PointF(_shape.Position.X, _shape.Position.Y);
 
-                scope?.Complete();
+                    scope?.Complete();
+                }
             }
         }
 
@@ -270,27 +273,30 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             object newVal, RectangleF newRect)
         {
             base.OnObservedChanged(observed, subhint, oldI, oldVal, oldRect, newI, newVal, newRect);
-            
-            if (observed.Equals(Label) &&  subhint == GoText.ChangedText)
-            {
-                using (var scope = UndoRedoManager.OpenScope("Update Identity name"))
-                {
-                    _shape.Identity.Name = Text;
-                    scope?.Complete();
-                }
-            }
 
-            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing && observed.Equals(this) && subhint == ChangedBounds)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                float centerX = newRect.X + (newRect.Width / 2f);
-                float centerY = newRect.Y + (newRect.Height / 2f);
-
-                if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
+                if (observed.Equals(Label) && subhint == GoText.ChangedText)
                 {
-                    using (var scope = UndoRedoManager.OpenScope("Reposition Entity"))
+                    using (var scope = UndoRedoManager.OpenScope("Update Identity name"))
                     {
-                        _shape.Position = new PointF(centerX, centerY);
+                        _shape.Identity.Name = Text;
                         scope?.Complete();
+                    }
+                }
+
+                if (observed.Equals(this) && subhint == ChangedBounds)
+                {
+                    float centerX = newRect.X + (newRect.Width / 2f);
+                    float centerY = newRect.Y + (newRect.Height / 2f);
+
+                    if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
+                    {
+                        using (var scope = UndoRedoManager.OpenScope("Reposition Entity"))
+                        {
+                            _shape.Position = new PointF(centerX, centerY);
+                            scope?.Complete();
+                        }
                     }
                 }
             }
@@ -332,10 +338,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 if (Parent is GraphGroup graphGroup)
                 {
-                    using (var scope = UndoRedoManager.OpenScope("Update Identity name"))
+                    if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
                     {
-                        valid = graphGroup.GroupShape?.Identity == entity.Parent;
-                        scope?.Complete();
+                        using (var scope = UndoRedoManager.OpenScope("Update Identity name"))
+                        {
+                            valid = graphGroup.GroupShape?.Identity == entity.Parent;
+                            scope?.Complete();
+                        }
                     }
                 }
                 else

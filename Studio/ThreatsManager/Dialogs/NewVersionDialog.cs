@@ -8,11 +8,7 @@ namespace ThreatsManager.Dialogs
 {
     public partial class NewVersionDialog : Form
     { 
-        #if MICROSOFT_EDITION
-        private const string UrlDownload = "https://aka.ms/tmplatform";
-        #else
         private const string UrlDownload = "https://threatsmanager.com/downloads/";
-        #endif
 
         public NewVersionDialog()
         {

@@ -44,7 +44,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void _graph_LinkCreated(object sender, GoSelectionEventArgs e)
         {
-            if (e.GoObject is GraphLink glink)
+            if (e.GoObject is GraphLink glink && !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
                 using (var scope = UndoRedoManager.OpenScope("Create Link"))
                 {

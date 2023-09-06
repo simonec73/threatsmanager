@@ -90,15 +90,18 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             IEntityShape shape = null;
 
-            using (var scope = UndoRedoManager.OpenScope("Create External Interactor"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
-                if (interactor != null)
+                using (var scope = UndoRedoManager.OpenScope("Create External Interactor"))
                 {
-                    if (graphGroup?.GroupShape?.Identity is IGroup group)
-                        interactor.SetParent(group);
-                    shape = _diagram.AddShape(interactor, point);
-                    scope?.Complete();
+                    var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
+                    if (interactor != null)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            interactor.SetParent(group);
+                        shape = _diagram.AddShape(interactor, point);
+                        scope?.Complete();
+                    }
                 }
             }
 
@@ -112,52 +115,61 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void GraphOnCreateProcess(PointF point, GraphGroup graphGroup)
         {
-            using (var scope = UndoRedoManager.OpenScope("Create Process"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var process = _diagram.Model?.AddEntity<IProcess>();
-                if (process != null)
+                using (var scope = UndoRedoManager.OpenScope("Create Process"))
                 {
-                    if (graphGroup?.GroupShape?.Identity is IGroup group)
-                        process.SetParent(group);
-                    var node = AddShape(_diagram.AddShape(process, point));
-                    _graph.Selection.Clear();
-                    _graph.Selection.Add(node);
-                    scope?.Complete();
-                } 
+                    var process = _diagram.Model?.AddEntity<IProcess>();
+                    if (process != null)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            process.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(process, point));
+                        _graph.Selection.Clear();
+                        _graph.Selection.Add(node);
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
         private void GraphOnCreateDataStore(PointF point, GraphGroup graphGroup)
         {
-            using (var scope = UndoRedoManager.OpenScope("Create Data Store"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var dataStore = _diagram.Model?.AddEntity<IDataStore>();
-                if (dataStore != null)
+                using (var scope = UndoRedoManager.OpenScope("Create Data Store"))
                 {
-                    if (graphGroup?.GroupShape?.Identity is IGroup group)
-                        dataStore.SetParent(group);
-                    var node = AddShape(_diagram.AddShape(dataStore, point));
-                    _graph.Selection.Clear();
-                    _graph.Selection.Add(node);
-                    scope?.Complete();
-                } 
+                    var dataStore = _diagram.Model?.AddEntity<IDataStore>();
+                    if (dataStore != null)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            dataStore.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(dataStore, point));
+                        _graph.Selection.Clear();
+                        _graph.Selection.Add(node);
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
         private void GraphOnCreateTrustBoundary(PointF point, GraphGroup graphGroup)
         {
-            using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var newGroup = _diagram.Model?.AddGroup<ITrustBoundary>();
-                if (newGroup is ITrustBoundary trustBoundary)
+                using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
                 {
-                    if (graphGroup?.GroupShape?.Identity is IGroup group)
-                        trustBoundary.SetParent(group);
-                    var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
-                    _graph.Selection.Clear();
-                    _graph.Selection.Add(node);
-                    scope?.Complete();
-                } 
+                    var newGroup = _diagram.Model?.AddGroup<ITrustBoundary>();
+                    if (newGroup is ITrustBoundary trustBoundary)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            trustBoundary.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                        _graph.Selection.Clear();
+                        _graph.Selection.Add(node);
+                        scope?.Complete();
+                    }
+                }
             }
         }
         #endregion
@@ -172,33 +184,36 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             Stack<GraphGroup> groups = new Stack<GraphGroup>();
 
-            using (var scope = UndoRedoManager.OpenScope("Create object from Template"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var template = _diagram.Model?.GetEntityTemplate(id);
-                if (template != null)
+                using (var scope = UndoRedoManager.OpenScope("Create object from Template"))
                 {
-                    var entity = template.CreateEntity(template.Name);
-                    if (entity is IGroupElement groupElement && graphGroup?.GroupShape?.Identity is IGroup group)
-                        groupElement.SetParent(group);
-                    var node = AddShape(_diagram.AddShape(entity, point));
-                    _graph.Selection.Clear();
-                    _graph.Selection.Add(node);
-                    scope?.Complete();
-                }
-                else
-                {
-                    var tbTemplate = _diagram.Model?.GetTrustBoundaryTemplate(id);
-                    if (tbTemplate != null)
+                    var template = _diagram.Model?.GetEntityTemplate(id);
+                    if (template != null)
                     {
-                        var trustBoundary = tbTemplate.CreateTrustBoundary(tbTemplate.Name);
-                        if (graphGroup?.GroupShape?.Identity is IGroup group)
-                            trustBoundary.SetParent(group);
-                        var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                        var entity = template.CreateEntity(template.Name);
+                        if (entity is IGroupElement groupElement && graphGroup?.GroupShape?.Identity is IGroup group)
+                            groupElement.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(entity, point));
                         _graph.Selection.Clear();
                         _graph.Selection.Add(node);
                         scope?.Complete();
                     }
-                } 
+                    else
+                    {
+                        var tbTemplate = _diagram.Model?.GetTrustBoundaryTemplate(id);
+                        if (tbTemplate != null)
+                        {
+                            var trustBoundary = tbTemplate.CreateTrustBoundary(tbTemplate.Name);
+                            if (graphGroup?.GroupShape?.Identity is IGroup group)
+                                trustBoundary.SetParent(group);
+                            var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                            scope?.Complete();
+                        }
+                    }
+                }
             }
         }
 
@@ -294,29 +309,32 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             Stack<GraphGroup> groups = new Stack<GraphGroup>();
 
-            using (var scope = UndoRedoManager.OpenScope("Add shape for existing object"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var entity = _diagram.Model?.GetEntity(id);
-                if (entity != null)
+                using (var scope = UndoRedoManager.OpenScope("Add shape for existing object"))
                 {
-                    RecurseEntityCreation(entity, point, groups);
-                }
-                else
-                {
-                    var group = _diagram.Model?.GetGroup(id);
-                    if (group != null)
+                    var entity = _diagram.Model?.GetEntity(id);
+                    if (entity != null)
                     {
-                        RecurseGroupCreation(group, point, groups);
+                        RecurseEntityCreation(entity, point, groups);
                     }
-                }
+                    else
+                    {
+                        var group = _diagram.Model?.GetGroup(id);
+                        if (group != null)
+                        {
+                            RecurseGroupCreation(group, point, groups);
+                        }
+                    }
 
-                while (groups.Count > 0)
-                {
-                    var current = groups.Pop();
-                    current.RefreshBorder();
-                }
+                    while (groups.Count > 0)
+                    {
+                        var current = groups.Pop();
+                        current.RefreshBorder();
+                    }
 
-                scope?.Complete();
+                    scope?.Complete();
+                }
             }
         }
 
@@ -497,7 +515,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void ConfigurePanelItemContextMenu()
         {
-            var configuration = new ExtensionConfigurationManager(_diagram.Model, (new DiagramConfigurationPanelFactory()).GetExtensionId());
+            var configuration = new DiagramConfigurationManager(_diagram.Model);
             if (configuration != null)
             {
                 var extensionId = configuration.MarkerExtension;

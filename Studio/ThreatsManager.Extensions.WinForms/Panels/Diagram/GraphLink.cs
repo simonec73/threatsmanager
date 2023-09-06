@@ -115,40 +115,44 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public void UpdateParameters([Range(8, 128)] int markerSize, [StrictlyPositive] float dpiFactor = 1.0f)
         {
-            if (_link is IThreatModelChild child && child.Model != null)
+            if (_link is IThreatModelChild child && child.Model != null &&
+                !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var schemaManager = new DiagramPropertySchemaManager(child.Model);
-                var propertyType = schemaManager.GetTextLocationPropertyType();
-                if (propertyType != null && _link.GetProperty(propertyType) is IPropertyBool propertyBool &&
-                    propertyBool.Value)
+                using (var scope = UndoRedoManager.OpenScope("Update Link parameters"))
                 {
-                    _alternativeTextLocation = propertyBool.Value;
-                }
-
-                var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
-                var property = _link.GetProperty(pointsPropertyType);
-                if (property is IPropertyArray propertyArray)
-                {
-                    List<string> points = new List<string>();
-                    var array = propertyArray.Value?.ToArray();
-                    var count = array?.Length ?? 0;
-                    if (count > 0)
+                    var schemaManager = new DiagramPropertySchemaManager(child.Model);
+                    var propertyType = schemaManager.GetTextLocationPropertyType();
+                    if (propertyType != null && _link.GetProperty(propertyType) is IPropertyBool propertyBool &&
+                        propertyBool.Value)
                     {
-                        RealLink.ClearPoints();
-                        for (int i = 0; i < count / 2; i++)
-                        {
-                            var x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo) * dpiFactor;
-                            var y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo) * dpiFactor;
-                            RealLink.AddPoint(new PointF(x, y));
-                            if (dpiFactor != 1.0f)
-                            {
-                                points.Add(x.ToString(NumberFormatInfo.InvariantInfo));
-                                points.Add(y.ToString(NumberFormatInfo.InvariantInfo));
-                            }
-                        }
+                        _alternativeTextLocation = propertyBool.Value;
+                    }
 
-                        if (points.Any())
-                            propertyArray.Value = points;
+                    var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
+                    var property = _link.GetProperty(pointsPropertyType);
+                    if (property is IPropertyArray propertyArray)
+                    {
+                        List<string> points = new List<string>();
+                        var array = propertyArray.Value?.ToArray();
+                        var count = array?.Length ?? 0;
+                        if (count > 0)
+                        {
+                            RealLink.ClearPoints();
+                            for (int i = 0; i < count / 2; i++)
+                            {
+                                var x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo) * dpiFactor;
+                                var y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo) * dpiFactor;
+                                RealLink.AddPoint(new PointF(x, y));
+                                if (dpiFactor != 1.0f)
+                                {
+                                    points.Add(x.ToString(NumberFormatInfo.InvariantInfo));
+                                    points.Add(y.ToString(NumberFormatInfo.InvariantInfo));
+                                }
+                            }
+
+                            if (points.Any())
+                                propertyArray.Value = points;
+                        }
                     }
                 }
             }
@@ -258,44 +262,19 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 if (subhint == GoText.ChangedText && string.CompareOrdinal(_link.DataFlow.Name, (string)newVal) != 0)
                 {
-                    using (var scope = UndoRedoManager.OpenScope("Change Flow name"))
+                    if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
                     {
-                        _link.DataFlow.Name = (string)newVal;
-                        scope?.Complete();
+                        using (var scope = UndoRedoManager.OpenScope("Change Flow name"))
+                        {
+                            _link.DataFlow.Name = (string)newVal;
+                            scope?.Complete();
+                        }
                     }
                 }
                 else if (_threatsMarker != null && subhint == ChangedBounds)
                 {
                     _threatsMarker.Position = new PointF(observed.Position.X + observed.Width + 2.0f,
                         observed.Position.Y + observed.Height + 2.0f);
-                }
-            } else if (observed is GraphLink graphLink && subhint == ChangedBounds &&
-                       graphLink.FromNode != null && graphLink.ToNode != null &&
-                       _link != null && !Loading)
-            {
-                var pointCount = graphLink.RealLink.PointsCount;
-                if (pointCount > 0)
-                {
-                    using (var scope = UndoRedoManager.OpenScope("Change Link points"))
-                    {
-                        var schemaManager = new DiagramPropertySchemaManager(_link.DataFlow.Model);
-                        var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
-                        var property = _link.GetProperty(pointsPropertyType) ??
-                                       _link.AddProperty(pointsPropertyType, null);
-
-                        if (property is IPropertyArray propertyArray)
-                        {
-                            var list = new List<string>();
-                            for (int i = 0; i < pointCount; i++)
-                            {
-                                var point = graphLink.RealLink.GetPoint(i);
-                                list.Add(point.X.ToString(NumberFormatInfo.InvariantInfo));
-                                list.Add(point.Y.ToString(NumberFormatInfo.InvariantInfo));
-                            }
-                            propertyArray.Value = list;
-                            scope?.Complete();
-                        }
-                    }
                 }
             }
         }

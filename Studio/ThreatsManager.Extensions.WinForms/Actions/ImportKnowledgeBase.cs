@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
@@ -11,8 +12,8 @@ using ThreatsManager.Utilities;
 namespace ThreatsManager.Extensions.Actions
 {
 #pragma warning disable CS0067
-    [Extension("EB8C6DF4-8D5A-4637-AE99-FD982A8D22AF", "Export Template Action", 50, ExecutionMode.Expert)]
-    public class ExportTemplate : IMainRibbonExtension, IDesktopAlertAwareExtension
+    [Extension("B84C6DB6-F376-4C07-9001-6EAC0B9E7FFC", "Import Knowledge Base Action", 10, ExecutionMode.Simplified)]
+    public class ImportKnowledgeBase : IMainRibbonExtension, IDesktopAlertAwareExtension
     {
         public event Action<IMainRibbonExtension> IteratePanels;
         public event Action<IMainRibbonExtension> RefreshPanels;
@@ -24,13 +25,13 @@ namespace ThreatsManager.Extensions.Actions
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.Export;
-        public string Bar => "Template";
+        public Ribbon Ribbon => Ribbon.Import;
+        public string Bar => "Knowledge Base";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {
-            new ActionDefinition(Id, "ExportTemplate", "Export Template", Properties.Resources.export_template_big,
-                Properties.Resources.export_template)
+            new ActionDefinition(Id, "ImportKB", "Import Knowledge Base", Properties.Resources.import_template_big,
+                Properties.Resources.import_template)
         };
 
         public string PanelsListRibbonAction => null;
@@ -46,11 +47,17 @@ namespace ThreatsManager.Extensions.Actions
             {
                 switch (action.Name)
                 {
-                    case "ExportTemplate":
-                        using (var dialog = new ExportTemplateDialog(threatModel))
+                    case "ImportKB":
+                        using (var dialog = new ImportTemplateDialog(threatModel))
                         {
-                            if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-                                ShowMessage?.Invoke("Export Template succeeded.");
+                            using (var scope = UndoRedoManager.OpenScope("Import Knowledge Base"))
+                            {
+                                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                                {
+                                    scope?.Complete();
+                                    ShowMessage?.Invoke("Import Knowledge Bae succeeded.");
+                                }
+                            }
                         }
 
                         break;
@@ -58,7 +65,7 @@ namespace ThreatsManager.Extensions.Actions
             }
             catch
             {
-                ShowWarning?.Invoke("Export Template failed.");
+                ShowWarning?.Invoke("Import Knowledge Base failed.\nPlease close the document without saving it.");
                 throw;
             }
         }

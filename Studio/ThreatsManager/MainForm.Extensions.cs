@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
@@ -12,7 +11,6 @@ using ThreatsManager.Engine;
 using ThreatsManager.Interfaces.Extensions;
 using PostSharp.Patterns.Threading;
 using ThreatsManager.Dialogs;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -69,54 +67,13 @@ namespace ThreatsManager
 
             var config = ExtensionsConfigurationManager.GetConfigurationSection();
             _executionMode = config.Mode;
-            Manager.Instance.LoadExtensions(_executionMode, ExceptExtension);
+            Manager.Instance.LoadExtensions(_executionMode);
 
             HandleExtensionInitializers();
 
             DiagramNameUpdater();
             var actions = Manager.Instance.GetExtensions<IContextAwareAction>();
             ItemEditor.InitializeContextMenu(actions);
-        }
-
-        private bool ExceptExtension([NotNull] Assembly assembly)
-        {
-            var result = false;
-
-            uint clientId = 0;
-
-            var attributes = CustomAttributeData.GetCustomAttributes(assembly);
-            if (attributes.Any())
-            {
-                var typeName = typeof(ExtensionsContainerAttribute).FullName;
-                {
-                    foreach (var attribute in attributes)
-                    {
-                        if (string.CompareOrdinal(attribute.AttributeType.FullName, typeName) == 0)
-                        {
-                            switch (attribute.ConstructorArguments.Count)
-                            {
-                                case 2:
-                                    if (attribute.ConstructorArguments[1].ArgumentType == typeof(uint))
-                                    {
-                                        clientId = (uint) attribute.ConstructorArguments[1].Value;
-                                    }
-                                    break;
-                                case 3:
-                                    clientId = (uint) attribute.ConstructorArguments[2].Value;
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-
-#if MICROSOFT_EDITION
-            result = (clientId != 0) && (clientId != 2875541912);
-#else
-            result = clientId != 0;
-#endif
-            
-            return result;
         }
 
         [Background]
@@ -205,19 +162,25 @@ namespace ThreatsManager
 
             var ordered = extensions
                 .OrderBy(x => x.Key)
-                .Select(x => x.Value);
+                .Select(x => x.Value)
+                .Where(x => x != null);
 
             foreach (var list in ordered)
             {
-                foreach (var item in list)
-                {
-                    if (item is IDesktopAlertAwareExtension desktopAlertAwareExtension)
-                    {
-                        desktopAlertAwareExtension.ShowMessage += DesktopAlertAwareExtensionOnShowMessage;
-                        desktopAlertAwareExtension.ShowWarning += DesktopAlertAwareExtensionOnShowWarning;
-                    }
+                var items = list?.Where(x => x != null).ToList();
 
-                    LoadMainRibbonExtension(item);
+                if (items?.Any() ?? false)
+                {
+                    foreach (var item in items)
+                    {
+                        if (item is IDesktopAlertAwareExtension desktopAlertAwareExtension)
+                        {
+                            desktopAlertAwareExtension.ShowMessage += DesktopAlertAwareExtensionOnShowMessage;
+                            desktopAlertAwareExtension.ShowWarning += DesktopAlertAwareExtensionOnShowWarning;
+                        }
+
+                        LoadMainRibbonExtension(item);
+                    }
                 }
             }
 
@@ -227,11 +190,17 @@ namespace ThreatsManager
                 if (ribbon != null)
                 {
                     var width = ribbon.Panel.Controls.OfType<Control>().Sum(x => x.Width);
-                    foreach (var bar in pair.Value)
+
+                    var values = pair.Value?.Where(x => x != null).ToArray();
+
+                    if (values?.Any() ?? false)
                     {
-                        bar.Left = width;
-                        width += 10;
-                        Add(ribbon, bar);
+                        foreach (var bar in values)
+                        {
+                            bar.Left = width;
+                            width += 10;
+                            Add(ribbon, bar);
+                        }
                     }
                 }
             }

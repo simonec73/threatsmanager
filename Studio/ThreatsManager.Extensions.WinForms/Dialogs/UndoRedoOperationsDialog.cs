@@ -56,6 +56,8 @@ namespace ThreatsManager.Extensions.Dialogs
 
                 foreach (var operation in operations)
                 {
+                    if (builder.Length > 0)
+                        builder.AppendLine("---");
                     LoadOperation(operation, builder, level, ref totalCount);
                 }
 
@@ -73,7 +75,20 @@ namespace ThreatsManager.Extensions.Dialogs
 
             var prefix = GetPrefix(level);
 
-            builder.AppendLine($"{prefix}{operation.Name}");
+            string operationName = null;
+
+            try
+            {
+                operationName = operation.Name;
+            }
+            catch
+            {
+            }
+
+            if (string.IsNullOrWhiteSpace(operationName))
+                operationName = "Unknown";
+
+            builder.AppendLine($"{prefix}{operationName}");
             builder.AppendLine($"{prefix}Operation kind: {operation.OperationKind}");
 
             if (operation is ICollectionOperation opColl)

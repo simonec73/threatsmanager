@@ -76,7 +76,7 @@ namespace ThreatsManager.Extensions.Reporting
                     if (parameters?.Any() ?? false)
                     {
                         var normalizationReference = 
-                            (new ExtensionConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId())).NormalizationReference;
+                            (new ExtensionConfigurationManager(model)).NormalizationReference;
 
                         var p = parameters.ToDictionary(x => x.Name, x => x.Value);
                         acceptableRisk = estimator.GetAcceptableRisk(model, p, normalizationReference) * 100f / currentRisk;

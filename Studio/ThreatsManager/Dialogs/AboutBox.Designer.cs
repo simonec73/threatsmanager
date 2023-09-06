@@ -35,7 +35,6 @@
             this.labelCopyright = new System.Windows.Forms.Label();
             this._moreInformation = new DevComponents.DotNetBar.LabelX();
             this.okButton = new System.Windows.Forms.Button();
-            this._microsoftEdition = new DevComponents.DotNetBar.LabelX();
             this._thirdParty = new DevComponents.DotNetBar.Controls.RichTextBoxEx();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
@@ -54,7 +53,6 @@
             this.tableLayoutPanel.Controls.Add(this.labelCopyright, 1, 1);
             this.tableLayoutPanel.Controls.Add(this._moreInformation, 1, 2);
             this.tableLayoutPanel.Controls.Add(this.okButton, 2, 6);
-            this.tableLayoutPanel.Controls.Add(this._microsoftEdition, 1, 6);
             this.tableLayoutPanel.Controls.Add(this._thirdParty, 1, 4);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(14, 14);
@@ -172,24 +170,6 @@
             this.okButton.TabIndex = 24;
             this.okButton.Text = "&OK";
             // 
-            // _microsoftEdition
-            // 
-            // 
-            // 
-            // 
-            this._microsoftEdition.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._microsoftEdition.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._microsoftEdition.ImageTextSpacing = 3;
-            this._microsoftEdition.Location = new System.Drawing.Point(218, 373);
-            this._microsoftEdition.Margin = new System.Windows.Forms.Padding(6);
-            this._microsoftEdition.Name = "_microsoftEdition";
-            this._microsoftEdition.Size = new System.Drawing.Size(325, 33);
-            this._microsoftEdition.Symbol = "";
-            this._microsoftEdition.TabIndex = 26;
-            this._microsoftEdition.Text = "<b>Microsoft Edition</b><br/>\r\nLicensed to MS staff only. Do not redistribute.";
-            this._microsoftEdition.TextAlignment = System.Drawing.StringAlignment.Center;
-            this._microsoftEdition.Visible = false;
-            // 
             // _thirdParty
             // 
             // 
@@ -205,7 +185,7 @@
             this._thirdParty.ReadOnly = true;
             this.tableLayoutPanel.SetRowSpan(this._thirdParty, 2);
             this._thirdParty.Rtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1040{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\par" +
+    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.22621}\\viewkind4\\uc1 \r\n\\par" +
     "d\\f0\\fs17\\par\r\n}\r\n";
             this._thirdParty.Size = new System.Drawing.Size(529, 275);
             this._thirdParty.TabIndex = 27;
@@ -243,7 +223,6 @@
         private System.Windows.Forms.Label labelCopyright;
         private System.Windows.Forms.Button okButton;
         private DevComponents.DotNetBar.LabelX _moreInformation;
-        private DevComponents.DotNetBar.LabelX _microsoftEdition;
         private DevComponents.DotNetBar.Controls.RichTextBoxEx _thirdParty;
         private DevComponents.DotNetBar.LabelX _links;
     }

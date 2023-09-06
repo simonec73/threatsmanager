@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using Newtonsoft.Json;
-using ThreatsManager.Packaging;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -150,19 +149,16 @@ namespace ThreatsManager.Extensions.Dialogs
 
             if (File.Exists(sourceFile))
             {
-                var package = new Package(sourceFile);
+                var managers = ExtensionUtils.GetExtensions<IPackageManager>()?.ToArray();
+                var manager = managers?.FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, sourceFile));
 
-                var threatModelContent = package.Read(ThreatModelFile);
-                if (threatModelContent != null)
+                try
                 {
-                    try
-                    {
-                        _comparison = ThreatModelManager.Deserialize(threatModelContent, true, Guid.NewGuid());
-                        result = DoComparison();
-                    }
-                    catch
-                    {
-                    }
+                    _comparison = manager.Load(LocationType.FileSystem, sourceFile, null, false, Guid.NewGuid());
+                    result = DoComparison();
+                }
+                catch
+                {
                 }
             }
 
@@ -175,9 +171,12 @@ namespace ThreatsManager.Extensions.Dialogs
 
             if (File.Exists(sourceFile))
             {
+                var managers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?.ToArray();
+                var manager = managers?.FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, sourceFile));
+
                 try
                 {
-                    _comparison = TemplateManager.OpenTemplate(sourceFile);
+                    _comparison = manager.Load(LocationType.FileSystem, sourceFile, false);
                     result = DoComparison();
                 }
                 catch (JsonSerializationException)
@@ -217,6 +216,7 @@ namespace ThreatsManager.Extensions.Dialogs
             }
 
             _tabThreatTypes.Visible = AddItems(_gridThreatTypes, Compare(_comparison?.ThreatTypes, _model?.ThreatTypes));
+            _tabWeaknesses.Visible = AddItems(_gridWeaknesses, Compare(_comparison?.Weaknesses, _model?.Weaknesses));
             _tabMitigations.Visible = AddItems(_gridMitigations, Compare(_comparison?.Mitigations, _model?.Mitigations));
             bool templatesVisible = AddItems(_gridItemTemplates,
                 Compare(_comparison?.EntityTemplates, _model?.EntityTemplates));
@@ -405,9 +405,11 @@ namespace ThreatsManager.Extensions.Dialogs
                         var propertiesContainers = ComparePropertiesContainers(s, t);
                         var parentGroups = CompareParentGroups(s, t);
                         var threatEventsContainers = CompareThreatEventsContainers(s, t);
+                        var vulnerabilitiesContainers = CompareVulnerabilitiesContainers(s, t);
                         var images = Compare(s.BigImage, t.BigImage) && Compare(s.Image, t.Image) &&
                                      Compare(s.SmallImage, t.SmallImage);
-                        if (!identities || !propertiesContainers || !parentGroups || !threatEventsContainers || !images)
+                        if (!identities || !propertiesContainers || !parentGroups || 
+                            !threatEventsContainers || !vulnerabilitiesContainers || !images)
                         {
                             var comparedObject = new ComparedObject(s, t);
                             if (!identities)
@@ -418,6 +420,8 @@ namespace ThreatsManager.Extensions.Dialogs
                                 comparedObject.AddDifference("Parent");
                             if (!threatEventsContainers)
                                 comparedObject.AddDifference("Threat Events");
+                            if (!vulnerabilitiesContainers)
+                                comparedObject.AddDifference("Vulnerabilities");
                             if (!images)
                                 comparedObject.AddDifference("Images");
                             list.Add(comparedObject);
@@ -757,6 +761,82 @@ namespace ThreatsManager.Extensions.Dialogs
                         list.Add(new ComparedObject(s, null));
                     }
                 } 
+                else if (tList.Any())
+                {
+                    foreach (var t in tList)
+                    {
+                        list.Add(new ComparedObject(null, t));
+                    }
+                }
+            }
+
+            if (list.Any())
+                result = list;
+
+            return result;
+        }
+
+        private IEnumerable<ComparedObject> Compare(IEnumerable<IWeakness> sources, IEnumerable<IWeakness> targets)
+        {
+            IEnumerable<ComparedObject> result = null;
+
+            List<ComparedObject> list = new List<ComparedObject>();
+
+            var sList = sources?.ToArray();
+            var tList = new List<IWeakness>();
+            if (targets?.Any() ?? false)
+                tList.AddRange(targets);
+
+            if ((sList?.Any() ?? false) && tList.Any())
+            {
+                foreach (var s in sList)
+                {
+                    var t = tList.FirstOrDefault(x => x.Id == s.Id);
+                    if (t == null)
+                    {
+                        list.Add(new ComparedObject(s, null));
+                    }
+                    else
+                    {
+                        var identities = CompareIdentities(s, t);
+                        var propertiesContainers = ComparePropertiesContainers(s, t);
+                        var weaknessMitigations = CompareWeaknessMitigationsContainers(s, t);
+                        var severities = (s.Severity?.Id ?? -1) == (t.Severity?.Id ?? -1);
+                        if (!identities || !propertiesContainers || !weaknessMitigations || !severities)
+                        {
+                            var comparedObject = new ComparedObject(s, t);
+                            if (!identities)
+                                comparedObject.AddDifference("Name or Description");
+                            if (!propertiesContainers)
+                                comparedObject.AddDifference("Properties");
+                            if (!weaknessMitigations)
+                                comparedObject.AddDifference("Weakness Mitigations");
+                            if (!severities)
+                                comparedObject.AddDifference("Severities");
+                            list.Add(comparedObject);
+                            tList.Remove(t);
+                        }
+                        else
+                        {
+                            tList.Remove(t);
+                        }
+                    }
+                }
+
+                foreach (var t in tList)
+                {
+                    list.Add(new ComparedObject(null, t));
+                }
+            }
+            else
+            {
+                if (sList?.Any() ?? false)
+                {
+                    foreach (var s in sList)
+                    {
+                        list.Add(new ComparedObject(s, null));
+                    }
+                }
                 else if (tList.Any())
                 {
                     foreach (var t in tList)
@@ -1445,12 +1525,48 @@ namespace ThreatsManager.Extensions.Dialogs
             return result;
         }
 
+        private bool CompareVulnerabilitiesContainers([NotNull] IVulnerabilitiesContainer source, [NotNull] IVulnerabilitiesContainer target)
+        {
+            bool result = false;
+
+            if (!(source.Vulnerabilities?.Any() ?? false) && !(target.Vulnerabilities?.Any() ?? false))
+                result = true;
+            else if (source.Vulnerabilities?.Any() ?? false)
+            {
+                if (source.Vulnerabilities.Count() == (target.Vulnerabilities?.Count() ?? 0))
+                {
+                    var vulnerabilities = source.Vulnerabilities.ToArray();
+                    result = true;
+                    foreach (var vulnerability in vulnerabilities)
+                    {
+                        var targetVulnerability =
+                            target.Vulnerabilities?.FirstOrDefault(x => x.WeaknessId == vulnerability.WeaknessId);
+
+                        if ((targetVulnerability == null) || !CompareVulnerabilities(vulnerability, targetVulnerability))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private bool CompareThreatEvents([NotNull] IThreatEvent source, [NotNull] IThreatEvent target)
         {
             return CompareIdentities(source, target) && ComparePropertiesContainers(source, target) &&
                    CompareThreatEventScenariosContainers(source, target) &&
                    CompareThreatEventMitigationsContainers(source, target) &&
                 ((source.Severity?.Id ?? 0) == (target.Severity?.Id)) ;
+        }
+
+        private bool CompareVulnerabilities([NotNull] IVulnerability source, [NotNull] IVulnerability target)
+        {
+            return CompareIdentities(source, target) && ComparePropertiesContainers(source, target) &&
+                   CompareVulnerabilityMitigationsContainers(source, target) &&
+                ((source.Severity?.Id ?? 0) == (target.Severity?.Id));
         }
 
         private bool CompareThreatEventMitigationsContainers([NotNull] IThreatEventMitigationsContainer source, [NotNull] IThreatEventMitigationsContainer target)
@@ -1482,7 +1598,43 @@ namespace ThreatsManager.Extensions.Dialogs
             return result;
         }
 
+        private bool CompareVulnerabilityMitigationsContainers([NotNull] IVulnerabilityMitigationsContainer source, [NotNull] IVulnerabilityMitigationsContainer target)
+        {
+            bool result = false;
+
+            if (!(source.Mitigations?.Any() ?? false) && !(target.Mitigations?.Any() ?? false))
+                result = true;
+            else if (source.Mitigations?.Any() ?? false)
+            {
+                if (source.Mitigations.Count() == (target.Mitigations?.Count() ?? 0))
+                {
+                    var mitigations = source.Mitigations.ToArray();
+                    result = true;
+                    foreach (var mitigation in mitigations)
+                    {
+                        var targetMitigation =
+                            target.Mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.MitigationId);
+
+                        if ((targetMitigation == null) || !CompareMitigations(mitigation, targetMitigation))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private bool CompareMitigations([NotNull] IThreatEventMitigation source, [NotNull] IThreatEventMitigation target)
+        {
+            return source.MitigationId == target.MitigationId &&
+                   (string.CompareOrdinal(source.Directives, target.Directives) == 0) &&
+                   source.StrengthId == target.StrengthId && source.Status == target.Status;
+        }
+
+        private bool CompareMitigations([NotNull] IVulnerabilityMitigation source, [NotNull] IVulnerabilityMitigation target)
         {
             return source.MitigationId == target.MitigationId &&
                    (string.CompareOrdinal(source.Directives, target.Directives) == 0) &&
@@ -1649,9 +1801,44 @@ namespace ThreatsManager.Extensions.Dialogs
             return result;
         }
 
+        private bool CompareWeaknessMitigationsContainers([NotNull] IWeaknessMitigationsContainer source, [NotNull] IWeaknessMitigationsContainer target)
+        {
+            bool result = false;
+
+            if (!(source.Mitigations?.Any() ?? false) && !(target.Mitigations?.Any() ?? false))
+                result = true;
+            else if (source.Mitigations?.Any() ?? false)
+            {
+                if (source.Mitigations.Count() == (target.Mitigations?.Count() ?? 0))
+                {
+                    var mitigations = source.Mitigations.ToArray();
+                    result = true;
+                    foreach (var mitigation in mitigations)
+                    {
+                        var targetMitigation =
+                            target.Mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.MitigationId);
+
+                        if ((targetMitigation == null) || !CompareMitigations(mitigation, targetMitigation))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private bool CompareMitigations([NotNull] IThreatTypeMitigation source, [NotNull] IThreatTypeMitigation target)
         {
             return source.ThreatTypeId == target.ThreatTypeId && source.MitigationId == target.MitigationId &&
+                   source.StrengthId == target.StrengthId;
+        }
+
+        private bool CompareMitigations([NotNull] IWeaknessMitigation source, [NotNull] IWeaknessMitigation target)
+        {
+            return source.WeaknessId == target.WeaknessId && source.MitigationId == target.MitigationId &&
                    source.StrengthId == target.StrengthId;
         }
 
@@ -1696,10 +1883,7 @@ namespace ThreatsManager.Extensions.Dialogs
         {
             if (_comparison != null)
             {
-                if (_fullComparison)
-                    ThreatModelManager.Remove(_comparison.Id);
-                else
-                    TemplateManager.CloseTemplate(_comparison.Id);
+                ThreatModelManager.Remove(_comparison.Id);
             }
         }
         #endregion

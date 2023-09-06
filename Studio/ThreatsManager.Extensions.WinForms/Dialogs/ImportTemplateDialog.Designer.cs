@@ -48,11 +48,13 @@
             this._fullyItemTemplates = new System.Windows.Forms.CheckBox();
             this._fullySchemas = new System.Windows.Forms.CheckBox();
             this._fullyThreatTypes = new System.Windows.Forms.CheckBox();
+            this._fullyWeaknesses = new System.Windows.Forms.CheckBox();
             this._fullyMitigations = new System.Windows.Forms.CheckBox();
             this._fullyThreatActors = new System.Windows.Forms.CheckBox();
             this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem9 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem10 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem11 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._pageSchemas = new DevComponents.DotNetBar.WizardPage();
@@ -64,9 +66,13 @@
             this._checkAllEntityTemplates = new System.Windows.Forms.Button();
             this._itemTemplates = new System.Windows.Forms.CheckedListBox();
             this._pageThreatTypes = new DevComponents.DotNetBar.WizardPage();
+            this._pageWeaknesses = new DevComponents.DotNetBar.WizardPage();
             this._uncheckAllThreatTypes = new System.Windows.Forms.Button();
             this._checkAllThreatTypes = new System.Windows.Forms.Button();
+            this._uncheckAllWeaknesses = new System.Windows.Forms.Button();
+            this._checkAllWeaknesses = new System.Windows.Forms.Button();
             this._threatTypes = new System.Windows.Forms.CheckedListBox();
+            this._weaknesses = new System.Windows.Forms.CheckedListBox();
             this._pageMitigations = new DevComponents.DotNetBar.WizardPage();
             this._uncheckAllMitigations = new System.Windows.Forms.Button();
             this._checkAllMitigations = new System.Windows.Forms.Button();
@@ -89,6 +95,7 @@
             this._pageSchemas.SuspendLayout();
             this._pageItemTemplates.SuspendLayout();
             this._pageThreatTypes.SuspendLayout();
+            this._pageWeaknesses.SuspendLayout();
             this._pageMitigations.SuspendLayout();
             this._pageThreatActors.SuspendLayout();
             this._pageFinish.SuspendLayout();
@@ -150,6 +157,7 @@
             this._pageSchemas,
             this._pageItemTemplates,
             this._pageThreatTypes,
+            this._pageWeaknesses,
             this._pageMitigations,
             this._pageThreatActors,
             this._pageFinish});
@@ -416,6 +424,7 @@
             this._layoutFullyCopy.Controls.Add(this._fullyItemTemplates);
             this._layoutFullyCopy.Controls.Add(this._fullySchemas);
             this._layoutFullyCopy.Controls.Add(this._fullyThreatTypes);
+            this._layoutFullyCopy.Controls.Add(this._fullyWeaknesses);
             this._layoutFullyCopy.Controls.Add(this._fullyMitigations);
             this._layoutFullyCopy.Controls.Add(this._fullyThreatActors);
             this._layoutFullyCopy.ForeColor = System.Drawing.Color.Black;
@@ -428,6 +437,7 @@
             this.layoutControlItem8,
             this.layoutControlItem9,
             this.layoutControlItem10,
+            this.layoutControlItem11,
             this.layoutControlItem6,
             this.layoutControlItem5});
             this._layoutFullyCopy.Size = new System.Drawing.Size(529, 253);
@@ -475,12 +485,26 @@
             this._fullyThreatTypes.UseVisualStyleBackColor = true;
             this._fullyThreatTypes.CheckedChanged += new System.EventHandler(this._fullyThreatTypes_CheckedChanged);
             // 
+            // _fullyWeaknesses
+            // 
+            this._fullyWeaknesses.AutoSize = true;
+            this._fullyWeaknesses.Checked = true;
+            this._fullyWeaknesses.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._fullyWeaknesses.Location = new System.Drawing.Point(4, 79);
+            this._fullyWeaknesses.Margin = new System.Windows.Forms.Padding(0);
+            this._fullyWeaknesses.Name = "_fullyWeaknesses";
+            this._fullyWeaknesses.Size = new System.Drawing.Size(521, 17);
+            this._fullyWeaknesses.TabIndex = 2;
+            this._fullyWeaknesses.Text = "Weaknesses";
+            this._fullyWeaknesses.UseVisualStyleBackColor = true;
+            this._fullyWeaknesses.CheckedChanged += new System.EventHandler(this._fullyWeaknesses_CheckedChanged);
+            // 
             // _fullyMitigations
             // 
             this._fullyMitigations.AutoSize = true;
             this._fullyMitigations.Checked = true;
             this._fullyMitigations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._fullyMitigations.Location = new System.Drawing.Point(4, 79);
+            this._fullyMitigations.Location = new System.Drawing.Point(4, 104);
             this._fullyMitigations.Margin = new System.Windows.Forms.Padding(0);
             this._fullyMitigations.Name = "_fullyMitigations";
             this._fullyMitigations.Size = new System.Drawing.Size(521, 17);
@@ -494,7 +518,7 @@
             this._fullyThreatActors.AutoSize = true;
             this._fullyThreatActors.Checked = true;
             this._fullyThreatActors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._fullyThreatActors.Location = new System.Drawing.Point(4, 104);
+            this._fullyThreatActors.Location = new System.Drawing.Point(4, 129);
             this._fullyThreatActors.Margin = new System.Windows.Forms.Padding(0);
             this._fullyThreatActors.Name = "_fullyThreatActors";
             this._fullyThreatActors.Size = new System.Drawing.Size(521, 17);
@@ -529,6 +553,15 @@
             this.layoutControlItem10.Name = "layoutControlItem10";
             this.layoutControlItem10.Width = 100;
             this.layoutControlItem10.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem11
+            // 
+            this.layoutControlItem11.Control = this._fullyWeaknesses;
+            this.layoutControlItem11.Height = 25;
+            this.layoutControlItem11.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem11.Name = "layoutControlItem11";
+            this.layoutControlItem11.Width = 100;
+            this.layoutControlItem11.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem6
             // 
@@ -739,6 +772,71 @@
             this._threatTypes.Size = new System.Drawing.Size(526, 244);
             this._threatTypes.TabIndex = 11;
             this._threatTypes.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._threatTypes_ItemCheck);
+            // 
+            // _pageWeaknesses
+            // 
+            this._pageWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._pageWeaknesses.AntiAlias = false;
+            this._pageWeaknesses.BackColor = System.Drawing.Color.White;
+            this._pageWeaknesses.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._pageWeaknesses.Controls.Add(this._uncheckAllWeaknesses);
+            this._pageWeaknesses.Controls.Add(this._checkAllWeaknesses);
+            this._pageWeaknesses.Controls.Add(this._weaknesses);
+            this._pageWeaknesses.Location = new System.Drawing.Point(7, 72);
+            this._pageWeaknesses.Name = "_pageWeaknesses";
+            this._pageWeaknesses.PageDescription = "Select the Weaknesses to be included in the Knowledge Base.";
+            this._pageWeaknesses.PageTitle = "Select Weaknesses";
+            this._pageWeaknesses.Size = new System.Drawing.Size(639, 282);
+            // 
+            // 
+            // 
+            this._pageWeaknesses.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._pageWeaknesses.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._pageWeaknesses.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._pageWeaknesses.TabIndex = 11;
+            // 
+            // _uncheckAllWeaknesses
+            // 
+            this._uncheckAllWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._uncheckAllWeaknesses.Location = new System.Drawing.Point(138, 256);
+            this._uncheckAllWeaknesses.Name = "_uncheckAllWeaknesses";
+            this._uncheckAllWeaknesses.Size = new System.Drawing.Size(75, 23);
+            this._uncheckAllWeaknesses.TabIndex = 13;
+            this._uncheckAllWeaknesses.Text = "Uncheck All";
+            this._uncheckAllWeaknesses.UseVisualStyleBackColor = true;
+            this._uncheckAllWeaknesses.Click += new System.EventHandler(this._uncheckAllWeaknesses_Click);
+            // 
+            // _checkAllWeaknesses
+            // 
+            this._checkAllWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._checkAllWeaknesses.Location = new System.Drawing.Point(57, 256);
+            this._checkAllWeaknesses.Name = "_checkAllWeaknesses";
+            this._checkAllWeaknesses.Size = new System.Drawing.Size(75, 23);
+            this._checkAllWeaknesses.TabIndex = 12;
+            this._checkAllWeaknesses.Text = "Check All";
+            this._checkAllWeaknesses.UseVisualStyleBackColor = true;
+            this._checkAllWeaknesses.Click += new System.EventHandler(this._checkAllWeaknesses_Click);
+            // 
+            // _weaknesses
+            // 
+            this._weaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._weaknesses.FormattingEnabled = true;
+            this._weaknesses.Location = new System.Drawing.Point(57, 0);
+            this._weaknesses.Margin = new System.Windows.Forms.Padding(0);
+            this._weaknesses.Name = "_weaknesses";
+            this._weaknesses.Size = new System.Drawing.Size(526, 244);
+            this._weaknesses.TabIndex = 11;
+            this._weaknesses.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._weaknesses_ItemCheck);
             // 
             // _pageMitigations
             // 
@@ -958,6 +1056,7 @@
             this._pageSchemas.ResumeLayout(false);
             this._pageItemTemplates.ResumeLayout(false);
             this._pageThreatTypes.ResumeLayout(false);
+            this._pageWeaknesses.ResumeLayout(false);
             this._pageMitigations.ResumeLayout(false);
             this._pageThreatActors.ResumeLayout(false);
             this._pageFinish.ResumeLayout(false);
@@ -983,6 +1082,10 @@
         private System.Windows.Forms.Button _uncheckAllThreatTypes;
         private System.Windows.Forms.Button _checkAllThreatTypes;
         private System.Windows.Forms.CheckedListBox _threatTypes;
+        private DevComponents.DotNetBar.WizardPage _pageWeaknesses;
+        private System.Windows.Forms.Button _uncheckAllWeaknesses;
+        private System.Windows.Forms.Button _checkAllWeaknesses;
+        private System.Windows.Forms.CheckedListBox _weaknesses;
         private DevComponents.DotNetBar.WizardPage _pageMitigations;
         private System.Windows.Forms.Button _uncheckAllMitigations;
         private System.Windows.Forms.Button _checkAllMitigations;
@@ -998,9 +1101,11 @@
         private System.Windows.Forms.CheckBox _fullyItemTemplates;
         private System.Windows.Forms.CheckBox _fullySchemas;
         private System.Windows.Forms.CheckBox _fullyThreatTypes;
+        private System.Windows.Forms.CheckBox _fullyWeaknesses;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem8;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem9;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem10;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem11;
         private System.Windows.Forms.CheckBox _fullyMitigations;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem6;
         private System.Windows.Forms.CheckBox _fullyThreatActors;

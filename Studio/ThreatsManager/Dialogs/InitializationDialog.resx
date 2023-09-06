@@ -127,9 +127,9 @@ In any case, you can return to the Options dialog and change the configuration a
   <data name="label5.Text" xml:space="preserve">
     <value>If you are not a technical person, like a Business decision maker, you may want to choose the "Business" mode.
 
-If you are a Threats Manager Platform expert, you may prefer the "Expert" mode, otherwise you may want to leave it as it is.
+If you are a Threats Manager Studio expert, you may prefer the "Expert" mode, otherwise you may want to leave it as it is.
 
-Choosing the right configuration allows to focus on what you need, hiding what has been designed for more Expert users. For example, in Simplified Mode you will not be able to edit Templates.
+Choosing the right configuration allows to focus on what you need, hiding what has been designed for more Expert users. For example, in Simplified Mode you will not be able to edit Knowledge Bases.
 
 In any case, you can return to the Options dialog and change this setting at any time.</value>
   </data>

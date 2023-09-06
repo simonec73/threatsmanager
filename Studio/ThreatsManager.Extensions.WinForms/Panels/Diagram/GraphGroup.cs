@@ -186,7 +186,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             base.OnObservedChanged(observed, subhint, oldI, oldVal, oldRect, newI, newVal, newRect);
 
-            if (!_loading)
+            if (!_loading && !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
                 using (var scope = UndoRedoManager.OpenScope("Group update"))
                 {
@@ -199,24 +199,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             scope?.Complete();
                         }
                     }
-
-                    //if (observed.Equals(_border) && subhint == ChangedBounds)
-                    //{
-                    //    if (newRect.Width != _shape.Size.Width || newRect.Height != _shape.Size.Height)
-                    //    {
-                    //        _shape.Size = new SizeF(newRect.Width, newRect.Height);
-                    //    }
-
-                    //    float centerX = newRect.X + (newRect.Width / 2f);
-                    //    float centerY = newRect.Y + (newRect.Height / 2f);
-
-                    //    if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
-                    //    {
-                    //        _shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
-                    //    }
-
-                    //    scope?.Complete();
-                    //}
                 }
             }
         }
@@ -225,10 +207,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             base.DoMove(view, origLoc, newLoc);
 
-            using (var scope = UndoRedoManager.OpenScope("Move Group"))
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                _shape.Position = new PointF(newLoc.X, newLoc.Y);
-                scope?.Complete();
+                using (var scope = UndoRedoManager.OpenScope("Move Group"))
+                {
+                    _shape.Position = new PointF(newLoc.X, newLoc.Y);
+                    scope?.Complete();
+                }
             }
         }
 
@@ -243,7 +228,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             base.OnParentChanged(oldgroup, newgroup);
 
-            if (!Deactivated && _shape?.Identity is IGroupElement groupElement)
+            if (!Deactivated && !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing &&
+                _shape?.Identity is IGroupElement groupElement)
             {
                 using (var scope = UndoRedoManager.OpenScope("Reparent Entity"))
                 {

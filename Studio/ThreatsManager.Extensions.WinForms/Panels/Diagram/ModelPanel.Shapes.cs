@@ -2,7 +2,6 @@
 using System.Linq;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;

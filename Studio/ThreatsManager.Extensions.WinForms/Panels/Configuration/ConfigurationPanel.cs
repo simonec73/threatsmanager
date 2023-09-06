@@ -29,7 +29,7 @@ namespace ThreatsManager.Extensions.Panels.Configuration
 
         public void Initialize([NotNull] IThreatModel model)
         {
-            _configuration = new ExtensionConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId());
+            _configuration = new ExtensionConfigurationManager(model);
 
             _enableEffortSupport.Checked = _configuration.EnableEffort;
             _normalizationReference.Value = _configuration.NormalizationReference;

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Panels.Configuration;
+using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -51,8 +52,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             _loading = true;
 
-            var configuration = new ExtensionConfigurationManager(_diagram.Model,
-                (new ConfigurationPanelFactory()).GetExtensionId());
+            var configuration = new DiagramConfigurationManager(_diagram.Model);
             _iconSize = configuration.DiagramIconSize;
             _iconCenterSize = configuration.DiagramIconCenterSize;
             _markerSize = configuration.DiagramMarkerSize;

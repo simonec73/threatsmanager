@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,9 +11,11 @@ using Northwoods.Go;
 using Northwoods.Go.Layout;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
@@ -37,32 +40,61 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void GraphView_ObjectResized(object sender, GoSelectionEventArgs e)
         {
-            if (e.GoObject is GraphGroup group)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                using (var scope = UndoRedoManager.OpenScope("Resize Group"))
+                if (e.GoObject is GraphGroup group)
                 {
-                    var shape = group.GroupShape;
-                    var border = group.Border;
-
-                    if (shape.Size.Width != border.Size.Width ||
-                        shape.Size.Height != border.Size.Height)
-                        shape.Size = new SizeF(border.Size.Width, border.Size.Height);
-
-                    var location = group.Location;
-                    float centerX = location.X; 
-                    float centerY = location.Y + group.Label.Height / 2f; 
-
-                    if (centerX != shape.Position.X || centerY != shape.Position.Y)
+                    using (var scope = UndoRedoManager.OpenScope("Resize Group"))
                     {
-                        shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
+                        var shape = group.GroupShape;
+                        var border = group.Border;
+
+                        if (shape.Size.Width != border.Size.Width ||
+                            shape.Size.Height != border.Size.Height)
+                            shape.Size = new SizeF(border.Size.Width, border.Size.Height);
+
+                        var location = group.Location;
+                        float centerX = location.X;
+                        float centerY = location.Y + group.Label.Height / 2f;
+
+                        if (centerX != shape.Position.X || centerY != shape.Position.Y)
+                        {
+                            shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
+                        }
+
+                        scope?.Complete();
                     }
-
-                    scope?.Complete();
                 }
-            }
-            else
-            {
+                else if (e.GoObject is GraphRealLink realLink)
+                {
+                    var pointCount = realLink.PointsCount;
+                    var link = realLink.AbstractLink as GraphLink;
+                    var tmLink = link?.Link;
 
+                    if (pointCount > 0 && tmLink != null)
+                    {
+                        using (var scope = UndoRedoManager.OpenScope("Change Link points"))
+                        {
+                            var schemaManager = new DiagramPropertySchemaManager(tmLink.DataFlow.Model);
+                            var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
+                            var property = tmLink.GetProperty(pointsPropertyType) ??
+                                           tmLink.AddProperty(pointsPropertyType, null);
+
+                            if (property is IPropertyArray propertyArray)
+                            {
+                                var list = new List<string>();
+                                for (int i = 0; i < pointCount; i++)
+                                {
+                                    var point = realLink.GetPoint(i);
+                                    list.Add(point.X.ToString(NumberFormatInfo.InvariantInfo));
+                                    list.Add(point.Y.ToString(NumberFormatInfo.InvariantInfo));
+                                }
+                                propertyArray.Value = list;
+                                scope?.Complete();
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -283,7 +315,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         protected override void DoInternalDrag(DragEventArgs evt)
         {
-            if (_moveScope == null)
+            if (_moveScope == null && !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
                 _moveScope = UndoRedoManager.OpenScope("Moving objects");
 
             base.DoInternalDrag(evt);

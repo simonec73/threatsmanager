@@ -61,6 +61,9 @@
             this.superTabControlPanel7 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this._gridThreatTypes = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
             this._tabThreatTypes = new DevComponents.DotNetBar.SuperTabItem();
+            this.superTabControlPanel14 = new DevComponents.DotNetBar.SuperTabControlPanel();
+            this._gridWeaknesses = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
+            this._tabWeaknesses = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabControlPanel6 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this._gridDiagrams = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
             this._tabDiagrams = new DevComponents.DotNetBar.SuperTabItem();
@@ -118,6 +121,7 @@
             this.superTabControlPanel10.SuspendLayout();
             this.superTabControlPanel8.SuspendLayout();
             this.superTabControlPanel7.SuspendLayout();
+            this.superTabControlPanel14.SuspendLayout();
             this.superTabControlPanel6.SuspendLayout();
             this.superTabControlPanel5.SuspendLayout();
             this.superTabControlPanel4.SuspendLayout();
@@ -267,6 +271,7 @@
             this._tabContainer.Controls.Add(this.superTabControlPanel10);
             this._tabContainer.Controls.Add(this.superTabControlPanel8);
             this._tabContainer.Controls.Add(this.superTabControlPanel7);
+            this._tabContainer.Controls.Add(this.superTabControlPanel14);
             this._tabContainer.Controls.Add(this.superTabControlPanel6);
             this._tabContainer.Controls.Add(this.superTabControlPanel5);
             this._tabContainer.Controls.Add(this.superTabControlPanel4);
@@ -290,6 +295,7 @@
             this._tabTrustBoundaries,
             this._tabDiagrams,
             this._tabThreatTypes,
+            this._tabWeaknesses,
             this._tabMitigations,
             this._tabItemTemplates,
             this._tabPropertySchemas,
@@ -537,6 +543,36 @@
             this._tabThreatTypes.GlobalItem = false;
             this._tabThreatTypes.Name = "_tabThreatTypes";
             this._tabThreatTypes.Text = "Threat Types";
+            // 
+            // superTabControlPanel14
+            // 
+            this.superTabControlPanel14.Controls.Add(this._gridWeaknesses);
+            this.superTabControlPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.superTabControlPanel14.Location = new System.Drawing.Point(0, 23);
+            this.superTabControlPanel14.Name = "superTabControlPanel14";
+            this.superTabControlPanel14.Size = new System.Drawing.Size(851, 413);
+            this.superTabControlPanel14.TabIndex = 0;
+            this.superTabControlPanel14.TabItem = this._tabWeaknesses;
+            // 
+            // _gridWeaknesses
+            // 
+            this._gridWeaknesses.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._gridWeaknesses.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._gridWeaknesses.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
+            this._gridWeaknesses.ForeColor = System.Drawing.Color.Black;
+            this._gridWeaknesses.LicenseKey = "PUT_YOUR_LICENSE_HERE";
+            this._gridWeaknesses.Location = new System.Drawing.Point(0, 0);
+            this._gridWeaknesses.Name = "_gridWeaknesses";
+            this._gridWeaknesses.Size = new System.Drawing.Size(851, 413);
+            this._gridWeaknesses.TabIndex = 1;
+            this._gridWeaknesses.Text = "superGridControl1";
+            // 
+            // _tabWeaknesses
+            // 
+            this._tabWeaknesses.AttachedControl = this.superTabControlPanel14;
+            this._tabWeaknesses.GlobalItem = false;
+            this._tabWeaknesses.Name = "_tabWeaknesses";
+            this._tabWeaknesses.Text = "Weaknesses";
             // 
             // superTabControlPanel6
             // 
@@ -1019,6 +1055,7 @@
             this.superTabControlPanel10.ResumeLayout(false);
             this.superTabControlPanel8.ResumeLayout(false);
             this.superTabControlPanel7.ResumeLayout(false);
+            this.superTabControlPanel14.ResumeLayout(false);
             this.superTabControlPanel6.ResumeLayout(false);
             this.superTabControlPanel5.ResumeLayout(false);
             this.superTabControlPanel4.ResumeLayout(false);
@@ -1055,6 +1092,8 @@
         private DevComponents.DotNetBar.SuperTabItem _tabMitigations;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel7;
         private DevComponents.DotNetBar.SuperTabItem _tabThreatTypes;
+        private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel14;
+        private DevComponents.DotNetBar.SuperTabItem _tabWeaknesses;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel6;
         private DevComponents.DotNetBar.SuperTabItem _tabDiagrams;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel10;
@@ -1082,6 +1121,7 @@
         private DevComponents.DotNetBar.SuperGrid.SuperGridControl _gridItemTemplates;
         private DevComponents.DotNetBar.SuperGrid.SuperGridControl _gridMitigations;
         private DevComponents.DotNetBar.SuperGrid.SuperGridControl _gridThreatTypes;
+        private DevComponents.DotNetBar.SuperGrid.SuperGridControl _gridWeaknesses;
         private System.Windows.Forms.Button _checkAdded;
         private System.Windows.Forms.Button _checkChanged;
         private System.Windows.Forms.Button _checkRemoved;

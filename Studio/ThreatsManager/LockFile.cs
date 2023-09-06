@@ -115,6 +115,7 @@ namespace ThreatsManager
         public static async Task<LockFile> LoadAsync(string fileName)
         {
             LockFile result = null;
+            bool error = false;
 
             if (!string.IsNullOrWhiteSpace(fileName) && File.Exists(fileName))
             {
@@ -138,13 +139,18 @@ namespace ThreatsManager
                 catch (FileNotFoundException)
                 {
                 }
-            }
+                catch (IOException)
+                {
+                    // There is an error. The file does exist and cannot be opened. It may be owned by another process.
+                    error = true;
+                }
 
-            if (result == null && !string.IsNullOrWhiteSpace(fileName))
-            {
-                result = new LockFile(fileName);
-                result.AutoLoad();
-                await result.SaveAsync();
+                if (!error && result == null && !string.IsNullOrWhiteSpace(fileName))
+                {
+                    result = new LockFile(fileName);
+                    result.AutoLoad();
+                    await result.SaveAsync();
+                }
             }
 
             return result;

@@ -6,15 +6,13 @@ using System.Windows.Forms;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Dialogs;
-using ThreatsManager.Extensions.Panels.Configuration;
-using ThreatsManager.Extensions.Schemas;
+using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.WinForms.Dialogs;
@@ -265,7 +263,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            var configuration = new ExtensionConfigurationManager(_diagram.Model, (new ConfigurationPanelFactory()).GetExtensionId());
+            var configuration = new DiagramConfigurationManager(_diagram.Model);
             var hFloat = (float) configuration.DiagramHorizontalSpacing;
             var vFloat = (float) configuration.DiagramVerticalSpacing;
 

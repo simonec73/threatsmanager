@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
@@ -13,7 +15,7 @@ namespace ThreatsManager.Extensions.Dialogs
     public partial class ImportSchemaDialog : Form, IInitializableObject
     {
         private readonly IThreatModel _model;
-        private IThreatModel _template;
+        private IThreatModel _kb;
 
         public ImportSchemaDialog()
         {
@@ -29,7 +31,7 @@ namespace ThreatsManager.Extensions.Dialogs
 
         public bool IsValid()
         {
-            return IsInitialized && _template != null && _schemas.CheckedItems.Count > 0;
+            return IsInitialized && _kb != null && _schemas.CheckedItems.Count > 0;
         }
 
         private void _ok_Click(object sender, EventArgs e)
@@ -44,7 +46,7 @@ namespace ThreatsManager.Extensions.Dialogs
 
                 using (var scope = UndoRedoManager.OpenScope("Import Schema"))
                 {
-                    if (_model.Merge(_template, def) && _applySchemas.Checked)
+                    if (_model.Merge(_kb, def) && _applySchemas.Checked)
                     {
                         foreach (var id in list)
                         {
@@ -59,22 +61,42 @@ namespace ThreatsManager.Extensions.Dialogs
 
         private void _browse_Click(object sender, EventArgs e)
         {
-            if (_openFile.ShowDialog(ActiveForm) == DialogResult.OK)
+            var kbManagers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?.ToArray();
+            
+            if (kbManagers?.Any() ?? false)
             {
-                if (_template != null)
-                    ThreatModelManager.Remove(_template.Id);
-                _schemas.Items.Clear();
+                _openFile.Filter = kbManagers.GetFilter();
 
-                _fileName.Text = _openFile.FileName;
-
-                _template = TemplateManager.OpenTemplate(_fileName.Text);
-                var schemas = _template?.Schemas?.OrderBy(x => x.Name).ToArray();
-                if (schemas?.Any() ?? false)
+                if (_openFile.ShowDialog(ActiveForm) == DialogResult.OK)
                 {
-                    _schemas.Items.AddRange(schemas);
-                }
+                    if (_kb != null)
+                        ThreatModelManager.Remove(_kb.Id);
+                    _schemas.Items.Clear();
 
-                _ok.Enabled = IsValid();
+                    var location = _openFile.FileName;
+                    _fileName.Text = location;
+
+                    IKnowledgeBaseManager selected = null;
+                    int index = _openFile.FilterIndex;
+                    if (index > 0 && index <= kbManagers.Count())
+                    {
+                        selected = kbManagers[index - 1];
+                    }
+                    else
+                    {
+                        selected = kbManagers.FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, location));
+                    }
+
+                    _kb = selected?.Load(LocationType.FileSystem, location, false);
+
+                    var schemas = _kb?.Schemas?.OrderBy(x => x.Name).ToArray();
+                    if (schemas?.Any() ?? false)
+                    {
+                        _schemas.Items.AddRange(schemas);
+                    }
+
+                    _ok.Enabled = IsValid();
+                }
             }
         }
 
@@ -86,7 +108,7 @@ namespace ThreatsManager.Extensions.Dialogs
             else
                 count--;
 
-            _ok.Enabled = IsInitialized && _template != null && count > 0;
+            _ok.Enabled = IsInitialized && _kb != null && count > 0;
         }
 
         private void _checkAll_Click(object sender, EventArgs e)
@@ -111,8 +133,8 @@ namespace ThreatsManager.Extensions.Dialogs
 
         private void ImportSchemaDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (_template != null)
-                TemplateManager.CloseTemplate(_template.Id);
+            if (_kb != null)
+                ThreatModelManager.Remove(_kb.Id);
         }
     }
 }

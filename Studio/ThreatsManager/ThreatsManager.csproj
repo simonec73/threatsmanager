@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\PostSharp.2023.0.6\build\PostSharp.props" Condition="Exists('..\packages\PostSharp.2023.0.6\build\PostSharp.props')" />
+  <Import Project="..\packages\PostSharp.2023.0.7\build\PostSharp.props" Condition="Exists('..\packages\PostSharp.2023.0.7\build\PostSharp.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -119,32 +119,32 @@
     <Reference Include="Northwoods.Go">
       <HintPath>..\References\Northwoods.Go.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Redist.2023.0.6\lib\net45\PostSharp.dll</HintPath>
+    <Reference Include="PostSharp, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Redist.2023.0.7\lib\net45\PostSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Aggregation, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.2023.0.6\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.2023.0.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Common, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.2023.0.6\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Common, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.2023.0.7\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Diagnostics, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Diagnostics.Redist.2023.0.6\lib\net47\PostSharp.Patterns.Diagnostics.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Diagnostics, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Diagnostics.Redist.2023.0.7\lib\net47\PostSharp.Patterns.Diagnostics.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Diagnostics.Backends.NLog, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Diagnostics.NLog.2023.0.6\lib\net45\PostSharp.Patterns.Diagnostics.Backends.NLog.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Diagnostics.Backends.NLog, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Diagnostics.NLog.2023.0.7\lib\net45\PostSharp.Patterns.Diagnostics.Backends.NLog.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Model, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.2023.0.6\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Model, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.2023.0.7\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Threading, Version=2023.0.6.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.2023.0.6\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Threading, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.2023.0.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
     </Reference>
     <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.3.4.4\lib\net462\Svg.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Licensing, Version=22.2460.7.0, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Licensing.22.2.7\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    <Reference Include="Syncfusion.Licensing, Version=22.2460.10.0, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.22.2.10\lib\net46\Syncfusion.Licensing.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -201,11 +201,14 @@
     <Reference Include="ThreatsManager.Utilities.WinForms">
       <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\CharacterCategory.cs" />
     <Compile Include="Controls\ExtensionConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\PasswordScore.cs" />
     <Compile Include="Controls\SecureTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -302,6 +305,9 @@
     <Compile Include="MainForm.Extensions.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MainForm.Files.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainForm.StatusInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -333,6 +339,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\InitializationDialog.resx">
       <DependentUpon>InitializationDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\StatusBarItemSelectionDialog.resx">
       <DependentUpon>StatusBarItemSelectionDialog.cs</DependentUpon>
@@ -514,13 +521,13 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets'))" />
     <Error Condition="!Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets'))" />
-    <Error Condition="!Exists('..\packages\PostSharp.2023.0.6\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.2023.0.6\build\PostSharp.props'))" />
-    <Error Condition="!Exists('..\packages\PostSharp.2023.0.6\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.2023.0.6\build\PostSharp.targets'))" />
+    <Error Condition="!Exists('..\packages\PostSharp.2023.0.7\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.2023.0.7\build\PostSharp.props'))" />
+    <Error Condition="!Exists('..\packages\PostSharp.2023.0.7\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PostSharp.2023.0.7\build\PostSharp.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets" Condition="Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" />
-  <Import Project="..\packages\PostSharp.2023.0.6\build\PostSharp.targets" Condition="Exists('..\packages\PostSharp.2023.0.6\build\PostSharp.targets')" />
+  <Import Project="..\packages\PostSharp.2023.0.7\build\PostSharp.targets" Condition="Exists('..\packages\PostSharp.2023.0.7\build\PostSharp.targets')" />
 </Project>

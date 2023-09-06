@@ -15,7 +15,7 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
 {
     public partial class DiagramConfigurationPanel : UserControl, IConfigurationPanel<Form>
     {
-        private ExtensionConfigurationManager _configuration;
+        private DiagramConfigurationManager _configuration;
 
         public DiagramConfigurationPanel()
         {
@@ -29,7 +29,7 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
 
         public void Initialize([NotNull] IThreatModel model)
         {
-            _configuration = new ExtensionConfigurationManager(model, (new DiagramConfigurationPanelFactory()).GetExtensionId());
+            _configuration = new DiagramConfigurationManager(model);
 
             switch (_configuration.DiagramIconSize)
             {

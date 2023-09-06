@@ -9,6 +9,7 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Diagrams;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
@@ -58,6 +59,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     actionsInGroup.Add(action);
                 }
             }
+            else
+            {
+                _buckets = null;
+                _actions = null;
+            }
         }
 
         public void ShowPanelItems([NotNull] IEnumerable<PanelItem> panelItems)
@@ -72,7 +78,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     Text = text,
                     Tag = panelItem,
-                    TileColor = eMetroTileColor.RedOrange,
+                    TileColor = ConvertColor(panelItem.BackColor),
                     TileSize = new Size(100, 20),
                     Image = panelItem.Icon
                 };
@@ -92,6 +98,87 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     });
                 }
             }
+        }
+
+        private eMetroTileColor ConvertColor(Color color)
+        {
+            eMetroTileColor result = eMetroTileColor.Default;
+
+            if (color.IsKnownColor)
+            {
+                switch (color.ToKnownColor())
+                {
+                    case KnownColor.Green:
+                        result = eMetroTileColor.Green;
+                        break;
+                    case KnownColor.Orange:
+                        result = eMetroTileColor.Orange;
+                        break;
+                    case KnownColor.Magenta:
+                        result = eMetroTileColor.Magenta;
+                        break;
+                    case KnownColor.Blue:
+                        result = eMetroTileColor.Blue;
+                        break;
+                    case KnownColor.Teal:
+                        result = eMetroTileColor.Teal;
+                        break;
+                    case KnownColor.Plum:
+                        result = eMetroTileColor.Plum;
+                        break;
+                    case KnownColor.MediumVioletRed:
+                    case KnownColor.PaleVioletRed:
+                        result = eMetroTileColor.RedViolet;
+                        break;
+                    case KnownColor.Olive:
+                        result = eMetroTileColor.Olive;
+                        break;
+                    case KnownColor.DarkOliveGreen:
+                        result = eMetroTileColor.DarkOlive;
+                        break;
+                    case KnownColor.Maroon:
+                        result = eMetroTileColor.Maroon;
+                        break;
+                    case KnownColor.Yellow:
+                        result = eMetroTileColor.Yellow;
+                        break;
+                    case KnownColor.LightGoldenrodYellow:
+                    case KnownColor.LightYellow:
+                        result = eMetroTileColor.Yellowish;
+                        break;
+                    case KnownColor.LightBlue:
+                    case KnownColor.LightSkyBlue:
+                    case KnownColor.SkyBlue:
+                        result = eMetroTileColor.Blueish;
+                        break;
+                    case KnownColor.DarkBlue:
+                        result = eMetroTileColor.DarkBlue;
+                        break;
+                    case KnownColor.Gray:
+                    case KnownColor.White:
+                        result = eMetroTileColor.Gray;
+                        break;
+                    case KnownColor.DarkGreen:
+                        result = eMetroTileColor.DarkGreen;
+                        break;
+                    case KnownColor.OrangeRed:
+                        result = eMetroTileColor.RedOrange;
+                        break;
+                    case KnownColor.Azure:
+                        result = eMetroTileColor.Azure;
+                        break;
+                }
+            }
+            else if (color == ThreatModelManager.StandardColor)
+            {
+                result = eMetroTileColor.Blueish;
+            }
+            else if (color == ThreatModelManager.ThreatsColor)
+            {
+                result = eMetroTileColor.RedOrange;
+            }
+
+            return result;
         }
 
         private string GetTooltipFooter(PanelItem panelItem)

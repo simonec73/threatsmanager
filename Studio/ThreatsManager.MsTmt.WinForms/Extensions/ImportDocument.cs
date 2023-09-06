@@ -66,18 +66,50 @@ namespace ThreatsManager.MsTmt.Extensions
                             Multiselect = false,
                             RestoreDirectory = true
                         };
+
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            using (var scope = UndoRedoManager.OpenScope("Import TMT Document"))
+                            int diagrams = 0;
+                            int externalInteractors = 0;
+                            int processes = 0;
+                            int dataStores = 0;
+                            int flows = 0;
+                            int trustBoundaries = 0;
+                            int entityTypes = 0;
+                            int threatTypes = 0;
+                            int customThreatTypes = 0;
+                            int threats = 0;
+                            int missingThreats = 0;
+
+                            bool success = false;
+
+                            try
                             {
-                                var importer = new Importer();
-                                importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
-                                    out var diagrams, out var externalInteractors, out var processes, out var dataStores,
-                                    out var flows, out var trustBoundaries, out var entityTypes, out var threatTypes, out var customThreatTypes,
-                                    out var threats, out var missingThreats);
-                                scope?.Complete();
+                                using (var scope = UndoRedoManager.OpenScope("Import TMT Document"))
+                                {
+                                    var importer = new Importer();
+                                    importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
+                                        out diagrams, out externalInteractors, out processes, out dataStores,
+                                        out flows, out trustBoundaries, out entityTypes, out threatTypes,
+                                        out customThreatTypes, out threats, out missingThreats);
+                                    scope?.Complete();
+                                }
+
+                                success = true;
+                            }
+                            catch (XmlException e)
+                            {
+                                ShowWarning?.Invoke($"TMT document is malformed or has an unsupported structure: {e.Message}");
+                            }
+                            catch (Exception e)
+                            {
+                                ShowWarning?.Invoke($"TMT document import failed: {e.Message}");
+                            }
+
+                            if (success)
+                            {
                                 RefreshPanels?.Invoke(this);
-                                ShowMessage?.Invoke("TMT7 file imported successfully.");
+                                ShowMessage?.Invoke("TMT file imported successfully.");
 
                                 using (var resultDialog = new ImportResultDialog()
                                 {

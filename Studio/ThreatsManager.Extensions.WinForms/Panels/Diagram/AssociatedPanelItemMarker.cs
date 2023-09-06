@@ -35,7 +35,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 _referenceObject = referenceObj;
 
-                var configuration = new ExtensionConfigurationManager(child.Model, (new DiagramConfigurationPanelFactory()).GetExtensionId());
+                var configuration = new DiagramConfigurationManager(child.Model);
                 if (configuration != null)
                 {
                     _iconSize = configuration.DiagramMarkerSize;
@@ -65,8 +65,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void MarkerStatusUpdated(IMarkerProvider provider)
         {
-            Image = _markerProvider.GetIcon(_iconSize);
-            Visible = _markerProvider.Visible;
+            if (_markerProvider != null)
+            {
+                Image = _markerProvider.GetIcon(_iconSize);
+                Visible = _markerProvider.Visible;
+            }
         }
 
         private void MarkerStatusTriggerOnMarkerStatusUpdated(MarkerStatus status)
@@ -87,7 +90,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 _visible = value;
                 base.Visible = value && (MarkerStatusTrigger.CurrentStatus == MarkerStatus.Full);
-                Image = _markerProvider.GetIcon(_iconSize);
+                if (_markerProvider != null)
+                    Image = _markerProvider.GetIcon(_iconSize);
             }
         }
 
@@ -106,7 +110,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public void ShowPanelItemListForm([NotNull] GoView view, PointF point)
         {
-            var panelItems = _markerProvider.GetPanelItems();
+            var panelItems = _markerProvider?.GetPanelItems()?.ToArray();
 
             if (panelItems?.Any() ?? false)
             {

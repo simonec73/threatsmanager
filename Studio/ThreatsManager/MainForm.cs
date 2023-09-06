@@ -5,13 +5,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Controls;
 using Exceptionless;
 using Exceptionless.Models.Collections;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Dialogs;
 using PostSharp.Patterns.Threading;
 using ThreatsManager.Engine;
@@ -21,9 +19,6 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Exceptions;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using DevComponents.DotNetBar.Metro.ColorTables;
 using Exceptionless.Logging;
 using ThreatsManager.Interfaces;
@@ -39,7 +34,6 @@ namespace ThreatsManager
         private LocationType _currentLocationType;
         private string _currentLocation;
         private IPackageManager _currentPackageManager;
-        //private SecureString _password;
         private bool _closing;
         private ExecutionMode _executionMode;
         private string _oldCaption;
@@ -54,30 +48,8 @@ namespace ThreatsManager
         private JumpListManager _jumpListManager;
         #endregion
 
-        #region Nested classes.
-        private class AcquireLockOutput
-        {
-            public AcquireLockOutput(string location,string latest,
-                OpenOutcome outcome)
-            {
-                Location = location;
-                Latest = latest;
-                Outcome = outcome;
-            }
-
-            public string Location { get; }
-            public string Latest { get; }
-            public OpenOutcome Outcome { get; }
-        }
-        #endregion
-
-        #if MICROSOFT_EDITION
-        private const string LatestVersion = "MSLatestVersion";
-        private const string Highlights = "MSHighlights";
-        #else
         private const string LatestVersion = "LatestVersion";
         private const string Highlights = "Highlights";
-        #endif
 
         public MainForm()
         {
@@ -94,7 +66,7 @@ namespace ThreatsManager
             DocumentLocker.OwnershipRequested += OwnershipRequested;
         }
 
-        #region Form events.
+        #region Main form events.
         private async void MainForm_Load(object sender, EventArgs e)
         {
             Text = Resources.Title;
@@ -116,8 +88,6 @@ namespace ThreatsManager
 
             LoadStatusInfoProviders();
 
-            // TODO: chiudere la notifica di caricamento delle estensioni.
-
             LoadKnownDocuments();
 
             CheckUpdateAvailability();
@@ -132,6 +102,88 @@ namespace ThreatsManager
             UndoRedoManager.Redone += UndoRedoManager_Redone;
         }
 
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (UndoRedoManager.IsDirty)
+            {
+                var dialogResult = MessageBox.Show(this,
+                    "The document has changed. Do you want to Save it before exiting?\n\nPlease press Yes to save and close.\nPress No to close without saving.\nPress Cancel to abort.",
+                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1);
+
+                if (dialogResult == DialogResult.Yes)
+                    _save_Click(sender, e);
+                else if (dialogResult == DialogResult.Cancel)
+                    e.Cancel = true;
+            }
+
+            if (!e.Cancel)
+            {
+                DocumentLocker.ReleaseLock();
+                ResourcesGuard.StopChecking();
+                _closing = true;
+            }
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if (_ribbonHeight > 0)
+            {
+                switch (WindowState)
+                {
+                    case FormWindowState.Normal:
+                        _ribbon.CaptionVisible = true;
+                        _controlMaximize.Visible = false;
+                        _controlMinimize.Visible = false;
+                        _controlExit.Visible = false;
+                        _title.Visible = false;
+                        _ribbon.Height = _ribbonHeight + (int)(30 * Dpi.Factor.Width);
+                        break;
+                    case FormWindowState.Maximized:
+                        _ribbon.CaptionVisible = false;
+                        _controlMaximize.Visible = true;
+                        _controlMinimize.Visible = true;
+                        _controlExit.Visible = true;
+                        _title.Visible = true;
+                        _ribbon.Height = _ribbonHeight;
+                        break;
+                }
+            }
+        }
+
+        private void MainForm_MdiChildActivate(object sender, EventArgs e)
+        {
+            RefreshCaption();
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            _jumpListManager = new JumpListManager();
+            _jumpListManager.AutoRefresh = false;
+            _jumpListManager.ShowFrequentFiles = false;
+            _jumpListManager.ShowRecentFiles = false;
+
+            var configSection = ExtensionsConfigurationManager.GetConfigurationSection();
+            var knownDocuments = configSection.KnownDocuments?.OfType<KnownDocumentConfig>()
+                .OrderBy(x => Path.GetFileNameWithoutExtension(x.Path)).ToArray();
+            if (knownDocuments?.Any() ?? false)
+            {
+                foreach (var document in knownDocuments)
+                {
+                    if (document.LocationType == LocationType.FileSystem)
+                    {
+                        _jumpListManager.AddLink(Path.GetFileNameWithoutExtension(document.Path),
+                            document.Path,
+                            categoryName: "Recent Files");
+                    }
+                }
+            }
+
+            _jumpListManager.Refresh();
+        }
+        #endregion
+
+        #region UndoRedoManager events.
         private void UndoRedoManager_Redone(string message)
         {
             UpdateFormsList();
@@ -153,7 +205,9 @@ namespace ThreatsManager
         {
             RefreshCaption();
         }
+        #endregion
 
+        #region Initializations.
         private void InitializeTelemetry()
         {
             bool disableTelemetry = true;
@@ -298,127 +352,9 @@ namespace ThreatsManager
 
             SpellCheckConfig.UserDictionary = config.UserDictionary;
         }
+        #endregion
 
-        private async Task OpenInitialFile()
-        {
-            var commandLineArgs = Environment.GetCommandLineArgs();
-            if (commandLineArgs.Length == 2)
-            {
-                var fileName = commandLineArgs[1];
-                if (File.Exists(fileName))
-                {
-                    OpenOutcome outcome = OpenOutcome.KO;
-
-                    if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tm") == 0) ||
-                        string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmj") == 0)
-                    {
-                        var packageManager = Manager.Instance.GetExtensions<IPackageManager>()?
-                            .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
-                        if (packageManager != null)
-                        {
-                            outcome = await OpenAsync(packageManager, LocationType.FileSystem, fileName);
-                        }
-                        else
-                        {
-                            ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
-                        }
-
-                        if (outcome == OpenOutcome.OK && _model != null)
-                        {
-                            ShowDesktopAlert("Document successfully opened.");
-                        }
-                    }
-                    else if ((string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmt") == 0) ||
-                                string.CompareOrdinal(Path.GetExtension(fileName.ToLower()), ".tmk") == 0)
-                    {
-                        InitializeStatus(null);
-                        IThreatModel template = null;
-
-                        try
-                        {
-                            template = TemplateManager.OpenTemplate(fileName);
-                            _model?.Merge(template, new DuplicationDefinition()
-                            {
-                                AllEntityTemplates = true,
-                                AllThreatTypes = true,
-                                AllMitigations = true,
-                                AllPropertySchemas = true,
-                                AllSeverities = true,
-                                AllStrengths = true
-                            });
-                            ShowDesktopAlert($"Template '{template.Name}' has been applied successfully.");
-                            outcome = OpenOutcome.OK;
-                        }
-                        finally
-                        {
-                            if (template != null)
-                                TemplateManager.CloseTemplate(template.Id);
-                        }
-                    }
-
-                    if (outcome != OpenOutcome.OK || _model == null)
-                    {
-                        InitializeStatus(null);
-                    }
-                }
-                else
-                {
-                    InitializeStatus(null);
-                }
-            }
-            else
-            {
-                InitializeStatus(null);
-            }
-        }
-
-        private void OnTypeNotFound(string assemblyName, string typeName)
-        {
-            _errorsOnLoading = true;
-
-            if (string.CompareOrdinal(assemblyName, "mscorlib") == 0)
-            {
-                var regex = new Regex(@"\[\[(?<class>[.\w]*), (?<assembly>[.\w]*)\]\]");
-                var match = regex.Match(typeName);
-                if (match.Success)
-                {
-                    assemblyName = match.Groups["assembly"].Value;
-                    typeName = match.Groups["class"].Value;
-                }
-            }
-            var name = $"{assemblyName}#{typeName}";
-
-            if (!_missingTypes.Contains(name))
-            {
-                _missingTypes.Add(name);
-                var parts = typeName.Split('.');
-                ShowDesktopAlert($"Document uses type {parts.Last()} from {assemblyName}, which is unknown.\nThe document will be loaded but some information may be missing.", true);
-            }
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (UndoRedoManager.IsDirty)
-            {
-                var dialogResult = MessageBox.Show(this,
-                    "The document has changed. Do you want to Save it before exiting?\n\nPlease press Yes to save and close.\nPress No to close without saving.\nPress Cancel to abort.",
-                    "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1);
-
-                if (dialogResult == DialogResult.Yes)
-                    _save_Click(sender, e);
-                else if (dialogResult == DialogResult.Cancel)
-                    e.Cancel = true;
-            }
-
-            if (!e.Cancel)
-            {
-                DocumentLocker.ReleaseLock();
-                ResourcesGuard.StopChecking();
-                _closing = true;
-            }
-        }
-
+        #region Exceptionless.
         [Dispatched(true)]
         private void OnSubmittingEvent(object sender, EventSubmittingEventArgs e)
         {
@@ -438,60 +374,6 @@ namespace ThreatsManager
             catch (Exception exception)
             {
                 exception.ToExceptionless().AddTags("Handled").Submit();
-            }
-        }
-        
-        private void EmergencySave()
-        {
-            var packageManagers = Manager.Instance.GetExtensions<IPackageManager>()?
-                .Where(x => x.SupportedLocations.HasFlag(LocationType.FileSystem)).ToArray();
-
-            if (packageManagers?.Any() ?? false)
-            {
-                StringBuilder builder = new StringBuilder();
-                foreach (var packageManager in packageManagers)
-                {
-                    if (builder.Length > 0)
-                        builder.Append("|");
-
-                    builder.Append(packageManager.GetFilter(LocationType.FileSystem));
-                }
-
-                _saveAsFile.Title = "Emergency Save";
-                _saveAsFile.Filter = builder.ToString();
-                _saveAsFile.FileName = _model?.Name;
-
-                if (_currentPackageManager != null && !string.IsNullOrWhiteSpace(_currentLocation))
-                {
-                    int pos = -1;
-                    for (int i = 0; i < packageManagers.Length; i++)
-                    {
-                        if (packageManagers[i] == _currentPackageManager)
-                        {
-                            pos = i + 1;
-                            break;
-                        }
-                    }
-
-                    if (pos > 0)
-                    {
-                        _saveAsFile.FilterIndex = pos;
-                    }
-
-                    _saveAsFile.FileName = Path.Combine(Path.GetDirectoryName(_currentLocation),
-                        $"{Path.GetFileNameWithoutExtension(_currentLocation)}.recover{Path.GetExtension(_currentLocation)}");
-                }
-
-                if (_saveAsFile.ShowDialog(this) == DialogResult.OK)
-                {
-                    var packageManager = packageManagers.ElementAt(_openFile.FilterIndex - 1);
-
-                    Save(packageManager, LocationType.FileSystem, _saveAsFile.FileName);
-                }
-            }
-            else
-            {
-                ShowDesktopAlert("An exception has occurred and Threats Manager Studio needs to close. An issue is also preventing emergency save.", true);
             }
         }
 
@@ -542,7 +424,9 @@ namespace ThreatsManager
 
             return result;
         }
+        #endregion
 
+        #region Standard Ribbon buttons.
         private void _windows_Click(object sender, EventArgs e)
         {
             var buttons = _windows.SubItems.OfType<ButtonItem>().ToArray();
@@ -607,6 +491,60 @@ namespace ThreatsManager
                 form.Close();
             }
         }
+
+        private void _controlMinimize_Click(object sender, EventArgs e)
+        {
+            SuspendLayout();
+            WindowState = FormWindowState.Minimized;
+            ResumeLayout();
+        }
+
+        private void _controlMaximize_Click(object sender, EventArgs e)
+        {
+            SuspendLayout();
+            if (WindowState == FormWindowState.Maximized)
+            {
+                WindowState = FormWindowState.Normal;
+                //_controlMaximize.Symbol = "59588";
+            }
+            else
+            {
+                WindowState = FormWindowState.Maximized;
+                //_controlMaximize.Symbol = "59562";
+            }
+            ResumeLayout();
+        }
+
+        private void _undo_Click(object sender, EventArgs e)
+        {
+            UndoRedoManager.Undo();
+
+            object found = _model.Entities?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+            if (found == null)
+                found = _model.DataFlows?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+            if (found == null)
+            {
+                var diagrams = _model.Diagrams?.ToArray();
+                if (diagrams?.Any() ?? false)
+                {
+                    found = diagrams?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+                    if (found == null)
+                    {
+                        foreach (var diagram in diagrams)
+                        {
+                            found = diagram.Entities?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+                            if (found == null)
+                                found = diagram.Links?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void _redo_Click(object sender, EventArgs e)
+        {
+            UndoRedoManager.Redo();
+        }
         #endregion
 
         #region Buttons: File.
@@ -632,6 +570,7 @@ namespace ThreatsManager
                 _lockRequest.Visible = false;
                 _currentLocationType = LocationType.FileSystem;
                 _currentLocation = null;
+                _protectionData = null;
                 InitializeStatus(null);
                 ShowDesktopAlert("Document successfully initialized.");
             }
@@ -659,32 +598,22 @@ namespace ThreatsManager
                 var packageManagers = Manager.Instance.GetExtensions<IPackageManager>()?
                     .Where(x => x.SupportedLocations.HasFlag(LocationType.FileSystem)).ToArray();
 
-                StringBuilder builder = new StringBuilder();
-                foreach (var packageManager in packageManagers)
+                if (packageManagers?.Any() ?? false)
                 {
-                    if (builder.Length > 0)
-                        builder.Append("|");
+                    _openFile.Filter = packageManagers.GetFilter();
 
-                    builder.Append(packageManager.GetFilter(LocationType.FileSystem));
-                }
-
-                _openFile.Filter = builder.ToString();
-
-                if (_openFile.ShowDialog(this) == DialogResult.OK &&
-                    string.CompareOrdinal(_openFile.FileName, _currentLocation) != 0)
-                {
-                    var packageManager = packageManagers.ElementAt(_openFile.FilterIndex - 1);
-                    if (packageManager.CanHandle(LocationType.FileSystem, _openFile.FileName) &&
-                        (await OpenAsync(packageManager, LocationType.FileSystem, _openFile.FileName)) == OpenOutcome.OK)
+                    if (_openFile.ShowDialog(this) == DialogResult.OK &&
+                        string.CompareOrdinal(_openFile.FileName, _currentLocation) != 0)
                     {
-                        _lockRequest.Visible = false;
-                        UpdateFormsList();
-                        AddKnownDocument(packageManager, LocationType.FileSystem, _openFile.FileName);
-                        ShowDesktopAlert("Document successfully opened.");
-                    }
-                    else
-                    {
-                        ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
+                        var packageManager = packageManagers.ElementAt(_openFile.FilterIndex - 1);
+                        if (packageManager.CanHandle(LocationType.FileSystem, _openFile.FileName) &&
+                            (await OpenAsync(packageManager, LocationType.FileSystem, _openFile.FileName)) == OpenOutcome.OK)
+                        {
+                            _lockRequest.Visible = false;
+                            UpdateFormsList();
+                            AddKnownDocument(packageManager, LocationType.FileSystem, _openFile.FileName);
+                            ShowDesktopAlert("Document successfully opened.");
+                        }
                     }
                 }
             }
@@ -715,54 +644,49 @@ namespace ThreatsManager
             var packageManagers = Manager.Instance.GetExtensions<IPackageManager>()?
                 .Where(x => x.SupportedLocations.HasFlag(LocationType.FileSystem)).ToArray();
 
-            StringBuilder builder = new StringBuilder();
-            foreach (var packageManager in packageManagers)
+            if (packageManagers?.Any() ?? false)
             {
-                if (builder.Length > 0)
-                    builder.Append("|");
+                _saveAsFile.Filter = packageManagers.GetFilter();
+                _saveAsFile.FileName = _model?.Name;
 
-                builder.Append(packageManager.GetFilter(LocationType.FileSystem));
-            }
-            _saveAsFile.Filter = builder.ToString();
-            _saveAsFile.FileName = _model?.Name;
-
-            if (_currentPackageManager != null && !string.IsNullOrWhiteSpace(_currentLocation))
-            {
-                int pos = -1;
-                for (int i = 0; i < packageManagers.Length; i++)
+                if (_currentPackageManager != null && !string.IsNullOrWhiteSpace(_currentLocation))
                 {
-                    if (packageManagers[i] == _currentPackageManager)
+                    int pos = -1;
+                    for (int i = 0; i < packageManagers.Length; i++)
                     {
-                        pos = i + 1;
-                        break;
+                        if (packageManagers[i] == _currentPackageManager)
+                        {
+                            pos = i + 1;
+                            break;
+                        }
                     }
+
+                    if (pos > 0)
+                    {
+                        _saveAsFile.FilterIndex = pos;
+                    }
+
+                    _saveAsFile.FileName = _currentLocation;
                 }
 
-                if (pos > 0)
+                if (_saveAsFile.ShowDialog(this) == DialogResult.OK)
                 {
-                    _saveAsFile.FilterIndex = pos;
-                }
+                    var packageManager = packageManagers.ElementAt(_saveAsFile.FilterIndex - 1);
 
-                _saveAsFile.FileName = _currentLocation;
-            }
+                    if (SaveAs(packageManager, LocationType.FileSystem, _saveAsFile.FileName))
+                    {
+                        _currentPackageManager = packageManager;
+                        _currentLocationType = LocationType.FileSystem;
+                        _currentLocation = _saveAsFile.FileName;
 
-            if (_saveAsFile.ShowDialog(this) == DialogResult.OK)
-            {
-                var packageManager = packageManagers.ElementAt(_saveAsFile.FilterIndex - 1);
+                        AddKnownDocument(packageManager, LocationType.FileSystem, _saveAsFile.FileName);
 
-                if (Save(packageManager, LocationType.FileSystem, _saveAsFile.FileName))
-                {
-                    _currentPackageManager = packageManager;
-                    _currentLocationType = LocationType.FileSystem;
-                    _currentLocation = _saveAsFile.FileName;
-
-                    AddKnownDocument(packageManager, LocationType.FileSystem, _saveAsFile.FileName);
-
-                    ShowDesktopAlert("Document saved successfully.");
-                }
-                else
-                {
-                    ShowDesktopAlert("Document save failed.", true);
+                        ShowDesktopAlert("Document saved successfully.");
+                    }
+                    else
+                    {
+                        ShowDesktopAlert("Document save failed.", true);
+                    }
                 }
             }
         }
@@ -871,7 +795,9 @@ namespace ThreatsManager
             alert.Show();
 
         }
+        #endregion
 
+        #region Threat Model initializations and events.
         private void InitializeStatus(IThreatModel model)
         {
             if (_model != null)
@@ -922,20 +848,67 @@ namespace ThreatsManager
         private void RefreshCaption()
         {
             var modelName = _model?.Name;
-            if ((modelName?.Length ?? 0) > 200)
-                modelName = modelName.Substring(0, 200) + "…";
-            var text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{modelName}";
             var currentChild = ActiveMdiChild?.Text.Replace("\n", " ");
-            var titleText = string.IsNullOrWhiteSpace(currentChild) ? text : $"{text} - [{currentChild}]";
+            var titleText = GetTitleText(modelName, currentChild);
+
+            if (!CheckCaptionWidth(titleText))
+            {
+                var found = false;
+                if ((modelName?.Length ?? 0) > 40)
+                {
+                    modelName = modelName.Substring(0, 39) + "…";
+                    titleText = GetTitleText(modelName, currentChild);
+                    found = CheckCaptionWidth(titleText);
+                }
+
+                if (!found)
+                {
+                    if ((modelName?.Length ?? 0) > 20)
+                    {
+                        modelName = modelName.Substring(0, 19) + "…";
+                        titleText = GetTitleText(modelName, currentChild);
+                        found = CheckCaptionWidth(titleText);
+                    }
+                }
+
+                if (!found)
+                {
+                    if (!string.IsNullOrWhiteSpace(currentChild))
+                    {
+                        titleText = $"{(UndoRedoManager.IsDirty ? "*" : "")}[{currentChild}]";
+                        if (!CheckCaptionWidth(titleText))
+                            titleText = string.Empty;
+                    }
+                    else
+                        titleText = string.Empty;
+                }
+            }
 
             if (string.CompareOrdinal(titleText, _oldCaption) != 0)
             {
                 _oldCaption = titleText;
-                Text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{Resources.Title} - {_model?.Name}";
                 _title.Text = titleText;
-                _title.Width = TextRenderer.MeasureText(titleText, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight;
+                _title.Visible = !string.IsNullOrWhiteSpace(titleText);
+                _title.Width = (int) ((TextRenderer.MeasureText(titleText, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight + 20) / Dpi.Factor.Width);
                 _ribbon.Refresh();
             }
+
+            Text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{Resources.Title} - {_model?.Name}";
+
+        }
+
+        private string GetTitleText(string modelName, string currentChild)
+        {
+            var text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{modelName}";
+            return string.IsNullOrWhiteSpace(currentChild) ? text : $"{text} - [{currentChild}]";
+        }
+
+        private bool CheckCaptionWidth(string caption)
+        {
+            var width = TextRenderer.MeasureText(caption, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight + 20;
+            var maxWidth = this.Width - 950 * Dpi.Factor.Width;
+
+            return width <= maxWidth;
         }
 
         private void OnThreatModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -946,493 +919,6 @@ namespace ThreatsManager
             {
                 RefreshCaption();
             }
-        }
-
-        private async Task<OpenOutcome> OpenAsync([NotNull] IPackageManager packageManager, 
-            LocationType locationType, [Required] string location)
-        {
-            OpenOutcome result = OpenOutcome.KO;
-
-            IThreatModel model = null;
-
-            var oldMissingTypes = new List<string>(_missingTypes);
-            var oldErrorsOnLoading = _errorsOnLoading;
-            _missingTypes.Clear();
-            _errorsOnLoading = false;
-            bool messageRaised = false;
-
-            try
-            {
-                var enabledExtensions = Manager.Instance.Configuration.EnabledExtensions
-                    .Select(x => Manager.Instance.GetExtensionMetadata(x));
-
-                var latest = packageManager.GetLatest(locationType, location, out var dateTime);
-
-                if (locationType == LocationType.FileSystem)
-                {
-                    var output = await AcquireLockAsync(location, latest);
-                    result = output?.Outcome ?? OpenOutcome.KO;
-                    if (result == OpenOutcome.OK)
-                    {
-                        // ReSharper disable once PossibleNullReferenceException
-                        location = output.Location;
-                        latest = output.Latest;
-                    }
-                    else
-                    {
-                        return result;
-                    }
-                }
-
-                if (latest != null) // && 
-                    //MessageBox.Show(Form.ActiveForm, 
-                    //$"A newer version is available, created on {dateTime.ToString("g")}.\nDo you want to open the newest version instead?",
-                    //"Open newest version", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                {
-                    location = latest;
-                }
-
-                if (packageManager is ISecurePackageManager securePM)
-                {
-                    // TODO: Handle the Secure Package Manager.
-                }
-                else
-                {
-                    model = packageManager.Load(locationType, location, enabledExtensions, false);
-                }
-
-                if (!(model?.Strengths?.Any() ?? false))
-                    model?.InitializeStandardStrengths();
-                if (!(model?.Severities?.Any() ?? false))
-                    model?.InitializeStandardSeverities();
-            }
-            catch (ThreatModelOpeningFailureException exc)
-            {
-                exc.ToExceptionless().Submit();
-                model = null;
-                using (var dialog = new ErrorDialog
-                       {
-                           Title = "Threat Model Opening failure",
-                           Description = exc.Message
-                       })
-                {
-                    dialog.ShowDialog(this);
-                }
-
-                messageRaised = true;
-            }
-            catch (ExistingModelException)
-            {
-                ShowDesktopAlert("The model is already open.\nClose it if you want to load it again.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (FileNotFoundException)
-            {
-                ShowDesktopAlert("File has not been found.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                ShowDesktopAlert("Directory has not been found.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                ShowDesktopAlert("The model cannot be opened because you do now have the required rights.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (IOException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (Exception e)
-            {
-                ShowDesktopAlert($"An exception occurred loading the Threat Model:\n{e.Message}", true);
-                e.ToExceptionless().Submit();
-                model = null;
-                messageRaised = true;
-            }
-
-            if (model != null)
-            {
-                result = OpenOutcome.OK;
-                _currentLocationType = locationType;
-                _currentLocation = location;
-                _currentPackageManager = packageManager;
-                InitializeStatus(model);
-                model.SetLocation(location);
-            }
-            else
-            {
-                _missingTypes.AddRange(oldMissingTypes);
-                _errorsOnLoading = oldErrorsOnLoading;
-
-                if (!messageRaised)
-                    ShowDesktopAlert("File cannot be opened.", true);
-            }
-
-            return result;
-        }
-
-        private async Task<AcquireLockOutput> AcquireLockAsync(string location, string latest)
-        {
-            var openOutcome = OpenOutcome.KO;
-
-            var lockInfo = await DocumentLocker.AcquireLockAsync(location, false);
-            if (lockInfo?.Owned ?? false)
-            {
-                openOutcome = OpenOutcome.OK;
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(lockInfo?.Owner) || string.IsNullOrWhiteSpace(lockInfo?.Machine))
-                {
-                    ShowDesktopAlert("Lock cannot be acquired.", true);
-                    openOutcome = OpenOutcome.KO;
-                } 
-                else
-                {
-                    var action = new ThreatModelInUseNotification()
-                        .Show(lockInfo.Owner, lockInfo.Machine, lockInfo.Timestamp, lockInfo.PendingRequests);
-
-                    switch (action)
-                    {
-                        case ThreatModelInUseAction.WorkWithCopyNotify:
-                            await DocumentLocker.AcquireLockAsync(location);
-                            if (_selectFolder.ShowDialog(this) == DialogResult.OK)
-                            {
-                                if (string.Compare(_selectFolder.SelectedPath, Path.GetDirectoryName(location),
-                                    StringComparison.InvariantCultureIgnoreCase) != 0)
-                                {
-                                    var newLocation = Path.Combine(_selectFolder.SelectedPath,
-                                        Path.GetFileName(location));
-                                    var newLatest = Path.Combine(_selectFolder.SelectedPath,
-                                        Path.GetFileName(latest));
-                                    File.Copy(location, newLocation, true);
-                                    if (!string.IsNullOrWhiteSpace(latest))
-                                        File.Copy(latest, newLatest, true);
-
-                                    location = newLocation;
-                                    latest = newLatest;
-
-                                    openOutcome = OpenOutcome.OK;
-
-                                    ShowDesktopAlert(
-                                        "A copy of the file has been opened.\nYou will be informed as soon as the original one has been released.",
-                                        false);
-                                }
-                            }
-                            else
-                            {
-                                ShowDesktopAlert("File is already in use and cannot be opened.\nYou will be informed as soon as it is released.", false);
-                                openOutcome = OpenOutcome.Ownership;
-                            }
-
-                            break;
-                        case ThreatModelInUseAction.WorkWithCopy:
-                            if (_selectFolder.ShowDialog(this) == DialogResult.OK)
-                            {
-                                if (string.Compare(_selectFolder.SelectedPath, Path.GetDirectoryName(location),
-                                    StringComparison.InvariantCultureIgnoreCase) != 0)
-                                {
-                                    var newLocation = Path.Combine(_selectFolder.SelectedPath,
-                                        Path.GetFileName(location));
-                                    var newLatest = Path.Combine(_selectFolder.SelectedPath,
-                                        Path.GetFileName(latest));
-                                    File.Copy(location, newLocation, true);
-                                    if (!string.IsNullOrWhiteSpace(latest))
-                                        File.Copy(latest, newLatest, true);
-
-                                    location = newLocation;
-                                    latest = newLatest;
-
-                                    lockInfo = await DocumentLocker.AcquireLockAsync(location);
-                                    openOutcome = OpenOutcome.OK;
-                                    ShowDesktopAlert("A copy of the file has been opened.");
-                                }
-                            }
-                            else
-                            {
-                                ShowDesktopAlert("File is already in use and cannot be opened.", true);
-                                openOutcome = OpenOutcome.Ownership;
-                            }
-                            break;
-                        case ThreatModelInUseAction.Notify:
-                            await DocumentLocker.AcquireLockAsync(location);
-                            ShowDesktopAlert("File is already in use and cannot be opened.\nYou will be informed as soon as it is released.", true);
-                            openOutcome = OpenOutcome.Ownership;
-                            break;
-                        default:
-                            ShowDesktopAlert("File is already in use and cannot be opened.", true);
-                            openOutcome = OpenOutcome.Ownership;
-                            break;
-                    }
-                }
-            }
-
-            return new AcquireLockOutput(location, latest, openOutcome);
-        }
-
-        private bool Save()
-        {
-            var config = ExtensionsConfigurationManager.GetConfigurationSection();
-            var result = Save(_currentPackageManager, _currentLocationType, _currentLocation, config.SmartSave);
-            if (config.SmartSaveCount > 0)
-                _currentPackageManager.AutoCleanup(_currentLocationType, _currentLocation, config.SmartSaveCount);
-
-            return result;
-        }
-
-        private bool Save([NotNull] IPackageManager packageManager, 
-            LocationType locationType, 
-            [Required] string location,
-            bool autoAddDateTime = false)
-        {
-            bool result = false;
-
-            try
-            {
-                var enabledExtensions = Manager.Instance.Configuration.EnabledExtensions
-                    .Select(x => Manager.Instance.GetExtensionMetadata(x));
-
-                var beforeSave = ExtensionUtils.GetExtensions<IBeforeSaveProcessor>()?.ToArray();
-                if (beforeSave?.Any() ?? false)
-                {
-                    foreach (var bs in beforeSave)
-                        bs.Execute(_model);
-                }
-
-                if (packageManager is ISecurePackageManager securePM)
-                {
-                    // TODO: Handle the Secure Package Manager.
-                }
-                else
-                {
-                    result = packageManager.Save(_model, locationType, location, 
-                        _errorsOnLoading | autoAddDateTime, enabledExtensions, out var newLocation);
-                    _model?.SetLocation(newLocation);
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                ShowDesktopAlert("The model cannot be saved because you do now have the required rights.", true);
-            }
-            catch (Exception e)
-            {
-                e.ToExceptionless().Submit();
-            }
-
-            if (result)
-            {
-                UndoRedoManager.ResetDirty();
-            }
-
-            return result;
-        }
-        
-        [Dispatched]
-        private void OwnershipObtained(string fileName)
-        {
-            ShowDesktopAlert($"Lock on Threat Model '{fileName}' acquired. You can open it, now.");
-        }
-
-        [Dispatched]
-        private void OwnershipRequested(string name, string computer, DateTime timestamp, int count)
-        {
-            string userCountString = count < 1 ? "No" : (count - 1).ToString();
-
-            if (count > 1)
-                _lockRequest.Symbol = "59387";
-            _lockRequest.Tooltip = $"Threat Model requested by {name}";
-            _lockRequest.Visible = true;
-            _statusBar.Refresh();
-
-            ShowDesktopAlert($"Full access to the current Threat Model has been requested by user '{name}' from machine '{computer}' on {timestamp.ToString("g")}." +
-                             $"\n{userCountString} other user(s) are also queued to get full access.");
- 
-        }
-
-        private void LoadKnownDocuments()
-        {
-            var configSection = ExtensionsConfigurationManager.GetConfigurationSection();
-            var knownDocuments = configSection.KnownDocuments?.OfType<KnownDocumentConfig>()
-                .OrderBy(x => Path.GetFileNameWithoutExtension(x.Path)).ToArray();
-            if (knownDocuments?.Any() ?? false)
-            {
-                foreach (var document in knownDocuments)
-                {
-                    var button = new ButtonItem()
-                    {
-                        Text = Path.GetFileNameWithoutExtension(document.Path),
-                        AutoExpand = false,
-                        Tag = document,
-                        Tooltip = document.Path
-                    };
-                    button.Click += KnownDocumentClick;
-                    _recentDocuments.SubItems.Add(button);
-       
-                    button.Text = Compact(button.Text);
-                }
-            }
-        }
-
-        private async void KnownDocumentClick(object sender, EventArgs e)
-        {
-            if (sender is ButtonItem buttonItem && buttonItem.Tag is KnownDocumentConfig documentConfig &&
-                string.CompareOrdinal(documentConfig.Path, _currentLocation) != 0)
-            {
-                var packageManager = Manager.Instance.GetExtension<IPackageManager>(documentConfig.PackageManager);
-                if (packageManager != null)
-                {
-                    bool abort = false;
-
-                    if (UndoRedoManager.IsDirty)
-                    {
-                        var dialogResult = MessageBox.Show(this,
-                            "The document has changed. Do you want to Save it before opening the new one?\n\nPlease press Yes to save it and open the new file.\nPress No to proceed without saving the current document.\nPress Cancel to abort.",
-                            "Current Document has changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
-                            MessageBoxDefaultButton.Button1);
-
-                        if (dialogResult == DialogResult.Yes)
-                            _save_Click(sender, e);
-                        else if (dialogResult == DialogResult.Cancel)
-                            abort = true;
-                    }
-
-                    if (!abort)
-                    {
-                        if (packageManager.CanHandle(documentConfig.LocationType, documentConfig.Path))
-                        {
-                            var outcome = await OpenAsync(packageManager, documentConfig.LocationType, documentConfig.Path);
-
-                            switch (outcome)
-                            {
-                                case OpenOutcome.OK:
-                                    UpdateFormsList();
-                                    ShowDesktopAlert("Document successfully opened.");
-                                    break;
-                                case OpenOutcome.KO:
-                                    RemoveKnownDocument(packageManager, documentConfig.LocationType, documentConfig.Path);
-                                    break;
-                                case OpenOutcome.Ownership:
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            ShowDesktopAlert("The selected document cannot be opened, most probably because its location is not supported.", true);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void AddKnownDocument([NotNull] IPackageManager packageManager, 
-            LocationType locationType, 
-            [Required] string location)
-        {
-            var configSection = ExtensionsConfigurationManager.GetConfigurationSection();
-            if (configSection.KnownDocuments.OfType<KnownDocumentConfig>()
-                .All(x => string.CompareOrdinal(x.Path, location) != 0))
-            {
-                var document = new KnownDocumentConfig()
-                {
-                    Path = location,
-                    LocationType = locationType,
-                    PackageManager = packageManager.GetExtensionId()
-                };
-                configSection.KnownDocuments.Add(document);
-
-                if (configSection.KnownDocuments.Count > 10)
-                {
-                    var toBeRemoved = configSection.KnownDocuments[0];
-                    configSection.KnownDocuments.RemoveAt(0);
-                    var buttonItem = _recentDocuments.SubItems.OfType<ButtonItem>()
-                        .FirstOrDefault(x => x.Tag is KnownDocumentConfig knownDocument && string.CompareOrdinal(toBeRemoved.Path, knownDocument.Path) == 0);
-                    if (buttonItem != null)
-                        _recentDocuments.SubItems.Remove(buttonItem);
-                }
-
-                configSection.CurrentConfiguration.Save();
-
-                var button = new ButtonItem()
-                {
-                    Text = Path.GetFileNameWithoutExtension(location),
-                    Tag = document,
-                    Tooltip = location
-                };
-                button.Click += KnownDocumentClick;
-                _recentDocuments.SubItems.Add(button);
-
-                button.Text = Compact(button.Text);
-            }
-        }
-
-        private void RemoveKnownDocument([NotNull] IPackageManager packageManager, 
-            LocationType locationType, 
-            [Required] string location)
-        {
-            var configSection = ExtensionsConfigurationManager.GetConfigurationSection();
-            var id = packageManager.GetExtensionId();
-            var existing = configSection.KnownDocuments.OfType<KnownDocumentConfig>()
-                .FirstOrDefault(x => string.CompareOrdinal(location, x.Path) == 0 && locationType == x.LocationType && string.CompareOrdinal(x.PackageManager, id) == 0);
-
-            if (existing != null)
-            {
-                configSection.KnownDocuments.Remove(existing);
-                configSection.CurrentConfiguration.Save();
-
-                var button = _recentDocuments.SubItems.OfType<ButtonItem>().FirstOrDefault(x => x.Tag.Equals(existing));
-                if (button != null)
-                    _recentDocuments.SubItems.Remove(button);
-            }
-        }
-
-        public string Compact(string text)
-        {
-            Size s = TextRenderer.MeasureText(text, this.Font);
-
-            if (s.Width <= 350)
-                return text;
-
-            int len = 0;
-            int seg = text.Length;
-            string fit = "";
-
-            while (seg > 1)
-            {
-                seg -= seg / 2;
-
-                int left = len + seg;
-                int right = text.Length;
-
-                if (left > right)
-                    continue;
-
-                string tst = text.Substring(0, left) +
-                             "..." + text.Substring(right);
-
-                s = TextRenderer.MeasureText(tst, this.Font);
-
-                if (s.Width <= 350)
-                {
-                    len += seg;
-                    fit = tst;
-                }
-            }
-
-            if (len == 0) // string can't fit into control
-            {
-                return "...";
-            }
-
-            return fit;
         }
         #endregion
 
@@ -1492,155 +978,5 @@ namespace ThreatsManager
             GC.Collect();
         }
         #endregion
-
-        private void ConfigureTimer()
-        {
-            int interval = 0;
-
-            var config = ExtensionsConfigurationManager.GetConfigurationSection();
-            if (config.SmartSave)
-            {
-                interval = config.SmartSaveInterval;
-            }
-            
-            if (interval > 0)
-            {
-                _autosaveTimer.Interval = interval * 60000;
-                _autosaveTimer.Start();
-            }
-            else
-            {
-                _autosaveTimer.Stop();
-            }
-        }
-
-        private void _autosaveTimer_Tick(object sender, EventArgs e)
-        {
-            if (UndoRedoManager.IsDirty)
-            {
-                if (_currentPackageManager != null && !string.IsNullOrWhiteSpace(_currentLocation))
-                {
-                    if (Save())
-                    {
-                        ShowDesktopAlert("Document saved successfully.");
-                    }
-                    else
-                    {
-                        ShowDesktopAlert("Document save failed.", true);
-                    }
-                }            
-            }
-        }
-
-        private void _controlMinimize_Click(object sender, EventArgs e)
-        {
-            SuspendLayout();
-            WindowState = FormWindowState.Minimized;
-            ResumeLayout();
-        }
-
-        private void _controlMaximize_Click(object sender, EventArgs e)
-        {
-            SuspendLayout();
-            if (WindowState == FormWindowState.Maximized)
-            {
-                WindowState = FormWindowState.Normal;
-                //_controlMaximize.Symbol = "59588";
-            }
-            else
-            {
-                WindowState = FormWindowState.Maximized;
-                //_controlMaximize.Symbol = "59562";
-            }
-            ResumeLayout();
-        }
-
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            if (_ribbonHeight > 0)
-            {
-                switch (WindowState)
-                {
-                    case FormWindowState.Normal:
-                        _ribbon.CaptionVisible = true;
-                        _controlMaximize.Visible = false;
-                        _controlMinimize.Visible = false;
-                        _controlExit.Visible = false;
-                        _title.Visible = false;
-                        _ribbon.Height = _ribbonHeight + (int) (30 * Dpi.Factor.Width);
-                        break;
-                    case FormWindowState.Maximized:
-                        _ribbon.CaptionVisible = false;
-                        _controlMaximize.Visible = true;
-                        _controlMinimize.Visible = true;
-                        _controlExit.Visible = true;
-                        _title.Visible = true;
-                        _ribbon.Height = _ribbonHeight;
-                        break;
-                }
-            }
-        }
-
-        private void MainForm_MdiChildActivate(object sender, EventArgs e)
-        {
-            RefreshCaption();
-        }
-
-        private void MainForm_Shown(object sender, EventArgs e)
-        {
-            _jumpListManager = new JumpListManager();
-            _jumpListManager.AutoRefresh = false;
-            _jumpListManager.ShowFrequentFiles = false;
-            _jumpListManager.ShowRecentFiles = false;
-
-            var configSection = ExtensionsConfigurationManager.GetConfigurationSection();
-            var knownDocuments = configSection.KnownDocuments?.OfType<KnownDocumentConfig>()
-                .OrderBy(x => Path.GetFileNameWithoutExtension(x.Path)).ToArray();
-            if (knownDocuments?.Any() ?? false)
-            {
-                foreach (var document in knownDocuments)
-                {
-                    if (document.LocationType == LocationType.FileSystem)
-                    {
-                        _jumpListManager.AddLink(Path.GetFileNameWithoutExtension(document.Path),
-                            document.Path,
-                            categoryName:"Recent Files");
-                    }
-                }
-            }
-
-            _jumpListManager.Refresh();
-        }
-
-        private void _undo_Click(object sender, EventArgs e)
-        {
-            UndoRedoManager.Undo();
-
-            object found = _model.Entities?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
-            if (found == null)
-                found = _model.DataFlows?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
-            if (found == null)
-            {
-                var diagrams = _model.Diagrams?.ToArray();
-                if (diagrams?.Any() ?? false)
-                {
-                    found = diagrams?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
-                    if (found == null)
-                    {
-                        foreach (var diagram in diagrams)
-                        {
-                            found = diagram.Entities?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
-                            if (found == null)
-                                found = diagram.Links?.FirstOrDefault(x => (x as IRecordable)?.Recorder == null);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void _redo_Click(object sender, EventArgs e)
-        {
-            UndoRedoManager.Redo();
-        }
     }
 }

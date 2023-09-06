@@ -19,17 +19,17 @@ using ThreatsManager.Utilities.WinForms;
 namespace ThreatsManager.Extensions.Dialogs
 {
     // ReSharper disable CoVariantArrayConversion
-    public partial class ExportTemplateDialog : Form, IInitializableObject
+    public partial class ExportKnowledgeBaseDialog : Form, IInitializableObject
     {
         private readonly IThreatModel _model;
         private static readonly IEnumerable<IPropertySchemasExtractor> _extractors;
 
-        static ExportTemplateDialog()
+        static ExportKnowledgeBaseDialog()
         {
             _extractors = ExtensionUtils.GetExtensions<IPropertySchemasExtractor>();
         }
 
-        public ExportTemplateDialog()
+        public ExportKnowledgeBaseDialog()
         {
             InitializeComponent();
             if (Dpi.Factor.Height >= 2)
@@ -50,7 +50,7 @@ namespace ThreatsManager.Extensions.Dialogs
             _spellAsYouType.SetRepaintTimer(500);
         }
 
-        public ExportTemplateDialog([NotNull] IThreatModel model) : this()
+        public ExportKnowledgeBaseDialog([NotNull] IThreatModel model) : this()
         {
             _model = model;
 
@@ -234,9 +234,13 @@ namespace ThreatsManager.Extensions.Dialogs
 
         private void _wizard_FinishButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            var kbManagers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?.ToArray();
+            var kbManager = kbManagers?
+                .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, _fileName.Text));
+
             var definition = GetDuplicationDefinition();
 
-            _model.SaveTemplate(definition, _name.Text, _description.Text, _fileName.Text);
+            kbManager?.Export(_model, definition, _name.Text, _description.Text, LocationType.FileSystem, _fileName.Text);
 
             DialogResult = DialogResult.OK;
             Close();
