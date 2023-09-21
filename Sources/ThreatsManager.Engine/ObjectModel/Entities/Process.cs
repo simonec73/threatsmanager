@@ -272,6 +272,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         internal Guid _templateId { get; set; }
 
         [Reference]
+        [property: NotRecorded]
         internal IEntityTemplate _template { get; set; }
 
         [property: NotRecorded]
