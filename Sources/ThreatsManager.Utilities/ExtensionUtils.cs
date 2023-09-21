@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
@@ -485,6 +486,35 @@ namespace ThreatsManager.Utilities
                 }
             }
 
+        }
+        #endregion
+
+        #region ICommandsBarContextAwareAction accelerator functions.
+        /// <summary>
+        /// Verifies if a <see cref="ICommandsBarContextAwareAction"/> is visible to a given context.
+        /// </summary>
+        /// <param name="action"><see cref="ICommandsBarContextAwareAction"/> to be checked.</param>
+        /// <param name="referenceContext">Reference context.</param>
+        /// <returns>True if the reference context is visible.</returns>
+        /// <remarks>If the referenceContext is null or empty, it is visible by default./></remarks>
+        public static bool IsVisible(this ICommandsBarContextAwareAction action, string referenceContext)
+        {
+            bool result = false;
+
+            if (string.IsNullOrWhiteSpace(referenceContext))
+            {
+                result = true;
+            }
+            else
+            {
+                var supported = action?.SupportedContexts?.ToArray();
+                var unsupported = action?.UnsupportedContexts?.ToArray();
+
+                result = (supported?.Contains(referenceContext) ?? true) &&
+                    !(unsupported?.Contains(referenceContext) ?? false);
+            }
+
+            return result;
         }
         #endregion
     }
