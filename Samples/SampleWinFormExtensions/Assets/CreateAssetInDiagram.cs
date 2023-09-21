@@ -7,6 +7,7 @@ using ThreatsManager.SampleWinFormExtensions.Assets;
 using System.Drawing;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ThreatsManager.Extensions.Actions
 {
@@ -28,7 +29,9 @@ namespace ThreatsManager.Extensions.Actions
             }
         });
 
-        public string VisibilityContext => "Diagram";
+        public IEnumerable<string> SupportedContexts => new[] { "Diagram" };
+
+        public IEnumerable<string> UnsupportedContexts => null;
 
         public bool Execute(object item)
         {
