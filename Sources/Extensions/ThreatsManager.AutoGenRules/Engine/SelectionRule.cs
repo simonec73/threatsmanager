@@ -5,7 +5,6 @@ using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.AutoGenRules.Properties;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
@@ -18,7 +17,7 @@ namespace ThreatsManager.AutoGenRules.Engine
     public class SelectionRule : IMergeable<SelectionRule>, IThreatModelAware
     {
         [JsonProperty("node", TypeNameHandling = TypeNameHandling.Objects)]
-        [Child]
+        [Reference]
         private SelectionRuleNode _node { get; set; }
 
         [JsonProperty("modelId")]
