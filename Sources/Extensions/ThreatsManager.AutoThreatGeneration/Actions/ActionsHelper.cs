@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Engine;
@@ -32,82 +33,53 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         }
 
         #region Public functions.
-        public static bool GenerateThreatEvents(this IThreatModel model, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
+        public static bool GenerateThreatEvents(this IThreatEventsContainer container, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
         {
             var result = false;
 
-            if (schemaManager == null)
-                schemaManager = new AutoGenRulesPropertySchemaManager(model);
-            var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
-            if (threatTypesWithRules?.Any() ?? false)
+            IThreatModel model = null;
+            var isThreatModel = false;
+            if (container is IThreatModel m)
             {
-                using (var scope = UndoRedoManager.OpenScope("Generate Threat Events for Threat Model"))
-                {
-                    ApplyThreatTypes(model, threatTypesWithRules, schemaManager);
-
-                    var entities = model.Entities?.ToArray();
-                    if (entities?.Any() ?? false)
-                    {
-                        foreach (var entity in entities)
-                        {
-                            ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
-                        }
-                    }
-                    var dataFlows = model.DataFlows?.ToArray();
-                    if (dataFlows?.Any() ?? false)
-                    {
-                        foreach (var dataFlow in dataFlows)
-                        {
-                            ApplyThreatTypes(dataFlow, threatTypesWithRules, schemaManager);
-                        }
-                    }
-
-                    scope.Complete();
-                    result = true;
-                }
+                model = m;
+                isThreatModel = true;
+            }
+            else if (container is IThreatModelChild c)
+            {
+                model = c.Model;
             }
 
-            return result;
-        }
-        
-        public static bool GenerateThreatEvents(this IEntity entity, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
-        {
-            bool result = false;
-
-            if (entity.Model is IThreatModel model)
+            if (model != null)
             {
                 if (schemaManager == null)
                     schemaManager = new AutoGenRulesPropertySchemaManager(model);
                 var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
+
                 if (threatTypesWithRules?.Any() ?? false)
                 {
-                    using (var scope = UndoRedoManager.OpenScope("Generate Threat Events for Entity"))
+                    using (var scope = UndoRedoManager.OpenScope("Generate Threat Events"))
                     {
-                        ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
+                        ApplyThreatTypes(container, threatTypesWithRules, schemaManager);
 
-                        scope.Complete();
-                        result = true;
-                    }
-                }
-            }
-
-            return result;
-        }
-        
-        public static bool GenerateThreatEvents(this IDataFlow flow, bool topOnly, AutoGenRulesPropertySchemaManager schemaManager = null)
-        {
-            bool result = false;
-
-            if (flow.Model is IThreatModel model)
-            {
-                if (schemaManager == null)
-                    schemaManager = new AutoGenRulesPropertySchemaManager(model);
-                var threatTypesWithRules = GetThreatTypesWithRules(model, topOnly, schemaManager)?.ToArray();
-                if (threatTypesWithRules?.Any() ?? false)
-                {
-                    using (var scope = UndoRedoManager.OpenScope("Generate Threat Events for Flow"))
-                    {
-                        ApplyThreatTypes(flow, threatTypesWithRules, schemaManager);
+                        if (isThreatModel)
+                        {
+                            var entities = model.Entities?.ToArray();
+                            if (entities?.Any() ?? false)
+                            {
+                                foreach (var entity in entities)
+                                {
+                                    ApplyThreatTypes(entity, threatTypesWithRules, schemaManager);
+                                }
+                            }
+                            var dataFlows = model.DataFlows?.ToArray();
+                            if (dataFlows?.Any() ?? false)
+                            {
+                                foreach (var dataFlow in dataFlows)
+                                {
+                                    ApplyThreatTypes(dataFlow, threatTypesWithRules, schemaManager);
+                                }
+                            }
+                        }
 
                         scope.Complete();
                         result = true;
@@ -334,25 +306,26 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         #endregion
 
         #region Private auxiliary functions.
-        private static bool ApplyThreatTypes([NotNull] IIdentity identity, 
+        private static bool ApplyThreatTypes([NotNull] IThreatEventsContainer container, 
             [NotNull] IEnumerable<ThreatTypeInfo> threatTypesWithRules, [NotNull] AutoGenRulesPropertySchemaManager schemaManager)
         {
             bool result = false;
 
             foreach (var threatTypeWithRule in threatTypesWithRules)
             {
-                result |= ApplyThreatType(identity, threatTypeWithRule, schemaManager);
+                result |= ApplyThreatType(container, threatTypeWithRule, schemaManager);
             }
 
             return result;
         }
 
-        private static bool ApplyThreatType([NotNull] IIdentity identity, [NotNull] ThreatTypeInfo tti, 
+        private static bool ApplyThreatType([NotNull] IThreatEventsContainer container, 
+            [NotNull] ThreatTypeInfo tti, 
             [NotNull] AutoGenRulesPropertySchemaManager schemaManager)
         {
             bool result = false;
 
-            if (tti.Rule.Evaluate(identity) && identity is IThreatEventsContainer container)
+            if (tti.Rule.Evaluate(container))
             {
                 var threatEvent = container.AddThreatEvent(tti.ThreatType);
                 if (threatEvent == null)
