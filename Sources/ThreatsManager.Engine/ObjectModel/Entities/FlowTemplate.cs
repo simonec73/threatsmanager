@@ -88,6 +88,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public void Apply(IPropertySchema schema)
         {
         }
+
+        public void Unapply(IPropertySchema schema)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.

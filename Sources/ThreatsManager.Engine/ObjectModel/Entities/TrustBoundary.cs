@@ -90,6 +90,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
         [Reference]
         [field: NotRecorded]
         public IEnumerable<IEntity> Entities { get; }

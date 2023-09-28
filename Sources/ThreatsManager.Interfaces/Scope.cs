@@ -98,10 +98,12 @@ namespace ThreatsManager.Interfaces
         [EnumLabel("Threat Event Mitigation")]
         ThreatEventMitigation = 1024,
         /// <summary>
-        /// Everything related to Threats.
+        /// Everything related to Threats and Weaknesses.
         /// </summary>
         [UiHidden]
-        Threats = ThreatType | ThreatEvent | ThreatEventScenario | Weakness | Vulnerability,
+        Threats = ThreatType | ThreatEvent | ThreatEventScenario | Weakness | Vulnerability | 
+                    ThreatTypeMitigation | ThreatEventMitigation |
+                    ThreatTypeWeakness | WeaknessMitigation | VulnerabilityMitigation,
         /// <summary>
         /// Known Mitigation.
         /// </summary>
@@ -116,6 +118,11 @@ namespace ThreatsManager.Interfaces
         /// Weakness.
         /// </summary>
         Weakness = 8388608,
+        /// <summary>
+        /// Threat Type Weakness.
+        /// </summary>
+        [EnumLabel("Threat Type Weakness")]
+        ThreatTypeWeakness = 536870912,
         /// <summary>
         /// Vulnerability.
         /// </summary>
@@ -183,8 +190,7 @@ namespace ThreatsManager.Interfaces
         /// </summary>
         [UiHidden]
         PropertyContainers = Entity | ItemTemplate | DataFlow | Group | Threats | Mitigation | ThreatActor |
-                               Severity | Strength | Diagram | ThreatTypeMitigation | ThreatEventMitigation |
-                               EntityShape | GroupShape | Link | ThreatModel | WeaknessMitigation | VulnerabilityMitigation,
+                               Severity | Strength | Diagram | EntityShape | GroupShape | Link | ThreatModel,
        /// <summary>
        /// Everything.
        /// </summary>

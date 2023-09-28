@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Properties;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -98,6 +97,71 @@ namespace ThreatsManager.Engine.ObjectModel
                         }
                     }
 
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatTypeMitigation))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var mitigations = current.Mitigations?.ToArray();
+                                if (mitigations?.Any() ?? false)
+                                {
+                                    foreach (var mitigation in mitigations)
+                                        mitigation?.Apply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatTypeWeakness))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var weaknesses = current.Weaknesses?.ToArray();
+                                if (weaknesses?.Any() ?? false)
+                                {
+                                    foreach (var weakness in weaknesses)
+                                        weakness?.Apply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Weakness))
+                    {
+                        var list = _weaknesses?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.WeaknessMitigation))
+                    {
+                        var list = _weaknesses?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var wms = current.Mitigations?.ToArray();
+                                if (wms?.Any() ?? false)
+                                {
+                                    foreach (var wm in wms)
+                                    {
+                                        wm.Apply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (schema.AppliesTo.HasFlag(Scope.ThreatEvent))
                     {
                         var threatEvents = GetThreatEvents();
@@ -129,6 +193,54 @@ namespace ThreatsManager.Engine.ObjectModel
                         }
                     }
 
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                var tms = threatEvent.Mitigations?.ToArray();
+                                if (tms?.Any() ?? false)
+                                {
+                                    foreach (var tm in tms)
+                                        tm?.Apply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Vulnerability))
+                    {
+                        var vulnerabilities = GetVulnerabilities();
+                        if (vulnerabilities?.Any() ?? false)
+                        {
+                            foreach (var vulnerability in vulnerabilities)
+                            {
+                                vulnerability.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.VulnerabilityMitigation))
+                    {
+                        var vulnerabilities = GetVulnerabilities();
+                        if (vulnerabilities?.Any() ?? false)
+                        {
+                            foreach (var vulnerability in vulnerabilities)
+                            {
+                                var vms = vulnerability.Mitigations?.ToArray();
+                                if (vms?.Any() ?? false)
+                                {
+                                    foreach (var vm in vms)
+                                    {
+                                        vm.Apply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (schema.AppliesTo.HasFlag(Scope.Mitigation))
                     {
                         var list = _mitigations?.ToArray();
@@ -149,6 +261,82 @@ namespace ThreatsManager.Engine.ObjectModel
                             foreach (var current in list)
                             {
                                 current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.EntityShape))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var shapes = diagram.Entities?.ToArray();
+                                if (shapes?.Any() ?? false)
+                                {
+                                    foreach (var shape in shapes)
+                                    {
+                                        shape.Apply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.GroupShape))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var shapes = diagram.Groups?.ToArray();
+                                if (shapes?.Any() ?? false)
+                                {
+                                    foreach (var shape in shapes)
+                                    {
+                                        shape.Apply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.EntityShape))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var shapes = diagram.Entities?.ToArray();
+                                if (shapes?.Any() ?? false)
+                                {
+                                    foreach (var shape in shapes)
+                                    {
+                                        shape.Apply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Link))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var links = diagram.Links?.ToArray();
+                                if (links?.Any() ?? false)
+                                {
+                                    foreach (var link in links)
+                                    {
+                                        link.Apply(schema);
+                                    }
+                                }
                             }
                         }
                     }
@@ -182,48 +370,50 @@ namespace ThreatsManager.Engine.ObjectModel
                         }
                     }
 
+                    if (schema.AppliesTo.HasFlag(Scope.FlowTemplate))
+                    {
+                        var list = _flowTemplates?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.TrustBoundaryTemplate))
+                    {
+                        var list = _trustBoundaryTemplates?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Apply(schema);
+                            }
+                        }
+                    }
+
                     if (schema.AppliesTo.HasFlag(Scope.LogicalGroup))
                     {
                         // TODO: Expand when the concept of Logical Group will be introduced.
                     }
 
-                    if (schema.AppliesTo.HasFlag(Scope.ThreatTypeMitigation))
+                    if (schema.AppliesTo.HasFlag(Scope.Severity))
                     {
-                        var list = _threatTypes?.ToArray();
+                        var list = _severities?.ToArray();
                         if (list?.Any() ?? false)
                         {
                             foreach (var current in list)
                             {
-                                var mitigations = current.Mitigations?.ToArray();
-                                if (mitigations?.Any() ?? false)
-                                {
-                                    foreach (var mitigation in mitigations)
-                                        mitigation?.Apply(schema);
-                                }
+                                current?.Apply(schema);
                             }
                         }
                     }
 
-                    if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
+                    if (schema.AppliesTo.HasFlag(Scope.Strength))
                     {
-                        var threatEvents = GetThreatEvents();
-                        if (threatEvents?.Any() ?? false)
-                        {
-                            foreach (var threatEvent in threatEvents)
-                            {
-                                var tms = threatEvent.Mitigations?.ToArray();
-                                if (tms?.Any() ?? false)
-                                {
-                                    foreach (var tm in tms)
-                                        tm?.Apply(schema);
-                                }
-                            }
-                        }
-                    }
-
-                    if (schema.AppliesTo.HasFlag(Scope.Severity))
-                    {
-                        var list = _severities?.ToArray();
+                        var list = _strengths?.ToArray();
                         if (list?.Any() ?? false)
                         {
                             foreach (var current in list)
@@ -262,6 +452,405 @@ namespace ThreatsManager.Engine.ObjectModel
                 foreach (var current in templates)
                 {
                     current?.Apply(schema);
+                }
+            }
+        }
+
+        [InitializationRequired]
+        public void UnapplySchema(Guid schemaId)
+        {
+            var schema = GetSchema(schemaId);
+            if (schema != null)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Unapply Schema"))
+                {
+                    if (schema.AppliesTo.HasFlag(Scope.ExternalInteractor))
+                    {
+                        UnapplySchema<IExternalInteractor>(schema);
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Process))
+                    {
+                        UnapplySchema<IProcess>(schema);
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.DataStore))
+                    {
+                        UnapplySchema<IDataStore>(schema);
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.DataFlow))
+                    {
+                        var list = _flows?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.TrustBoundary))
+                    {
+                        var list = _groups?.OfType<ITrustBoundary>().ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatType))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatTypeMitigation))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var mitigations = current.Mitigations?.ToArray();
+                                if (mitigations?.Any() ?? false)
+                                {
+                                    foreach (var mitigation in mitigations)
+                                        mitigation?.Unapply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatTypeWeakness))
+                    {
+                        var list = _threatTypes?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var weaknesses = current.Weaknesses?.ToArray();
+                                if (weaknesses?.Any() ?? false)
+                                {
+                                    foreach (var weakness in weaknesses)
+                                        weakness?.Unapply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Weakness))
+                    {
+                        var list = _weaknesses?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.WeaknessMitigation))
+                    {
+                        var list = _weaknesses?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                var wms = current.Mitigations?.ToArray();
+                                if (wms?.Any() ?? false)
+                                {
+                                    foreach (var wm in wms)
+                                    {
+                                        wm.Unapply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEvent))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                threatEvent.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEventScenario))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                var ets = threatEvent.Scenarios?.ToArray();
+                                if (ets?.Any() ?? false)
+                                {
+                                    foreach (var currEts in ets)
+                                    {
+                                        currEts?.Unapply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatEventMitigation))
+                    {
+                        var threatEvents = GetThreatEvents();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                var tms = threatEvent.Mitigations?.ToArray();
+                                if (tms?.Any() ?? false)
+                                {
+                                    foreach (var tm in tms)
+                                        tm?.Unapply(schema);
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Vulnerability))
+                    {
+                        var vulnerabilities = GetVulnerabilities();
+                        if (vulnerabilities?.Any() ?? false)
+                        {
+                            foreach (var vulnerability in vulnerabilities)
+                            {
+                                vulnerability.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.VulnerabilityMitigation))
+                    {
+                        var vulnerabilities = GetVulnerabilities();
+                        if (vulnerabilities?.Any() ?? false)
+                        {
+                            foreach (var vulnerability in vulnerabilities)
+                            {
+                                var vms = vulnerability.Mitigations?.ToArray();
+                                if (vms?.Any() ?? false)
+                                {
+                                    foreach (var vm in vms)
+                                    {
+                                        vm.Unapply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Mitigation))
+                    {
+                        var list = _mitigations?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Diagram))
+                    {
+                        var list = _diagrams?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.EntityShape))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var shapes = diagram.Entities?.ToArray();
+                                if (shapes?.Any() ?? false)
+                                {
+                                    foreach (var shape in shapes)
+                                    {
+                                        shape.Unapply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.GroupShape))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var shapes = diagram.Groups?.ToArray();
+                                if (shapes?.Any() ?? false)
+                                {
+                                    foreach (var shape in shapes)
+                                    {
+                                        shape.Unapply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Link))
+                    {
+                        var diagrams = _diagrams?.ToArray();
+                        if (diagrams?.Any() ?? false)
+                        {
+                            foreach (var diagram in diagrams)
+                            {
+                                var links = diagram.Links?.ToArray();
+                                if (links?.Any() ?? false)
+                                {
+                                    foreach (var link in links)
+                                    {
+                                        link.Unapply(schema);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatModel))
+                    {
+                        this.Unapply(schema);
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.ThreatActor))
+                    {
+                        var list = _actors?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.EntityTemplate))
+                    {
+                        var list = _entityTemplates?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.FlowTemplate))
+                    {
+                        var list = _flowTemplates?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.TrustBoundaryTemplate))
+                    {
+                        var list = _trustBoundaryTemplates?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.LogicalGroup))
+                    {
+                        // TODO: Expand when the concept of Logical Group will be introduced.
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Severity))
+                    {
+                        var list = _severities?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    if (schema.AppliesTo.HasFlag(Scope.Strength))
+                    {
+                        var list = _strengths?.ToArray();
+                        if (list?.Any() ?? false)
+                        {
+                            foreach (var current in list)
+                            {
+                                current?.Unapply(schema);
+                            }
+                        }
+                    }
+
+                    scope?.Complete();
+                }
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        private void UnapplySchema<T>([NotNull] IPropertySchema schema) where T : IEntity
+        {
+            var list = _entities?.Where(x => x is T).ToArray();
+            if (list?.Any() ?? false)
+            {
+                foreach (var current in list)
+                {
+                    current?.Unapply(schema);
+                }
+            }
+
+            IEnumerable<IEntityTemplate> templates = null;
+            if (typeof(T) == typeof(IExternalInteractor))
+                templates = _entityTemplates?.Where(x => x.EntityType == EntityType.ExternalInteractor).ToArray();
+            else if (typeof(T) == typeof(IProcess))
+                templates = _entityTemplates?.Where(x => x.EntityType == EntityType.Process).ToArray();
+            else if (typeof(T) == typeof(IDataStore))
+                templates = _entityTemplates?.Where(x => x.EntityType == EntityType.DataStore).ToArray();
+            if (templates?.Any() ?? false)
+            {
+                foreach (var current in templates)
+                {
+                    current?.Unapply(schema);
                 }
             }
         }
@@ -306,6 +895,34 @@ namespace ThreatsManager.Engine.ObjectModel
                         break;
                 }
             }
+            else if (container is ILink)
+                scope = Scope.Link;
+            else if (container is IEntityShape)
+                scope = Scope.EntityShape;
+            else if (container is IGroupShape)
+                scope = Scope.GroupShape;
+            else if (container is IThreatModel)
+                scope = Scope.ThreatModel;
+            else if (container is ISeverity)
+                scope = Scope.Severity;
+            else if (container is IStrength)
+                scope = Scope.Strength;
+            else if (container is IThreatActor)
+                scope = Scope.ThreatActor;
+            else if (container is IThreatEventMitigation)
+                scope = Scope.ThreatEventMitigation;
+            else if (container is IThreatTypeMitigation)
+                scope = Scope.ThreatTypeMitigation;
+            else if (container is IThreatTypeWeakness)
+                scope = Scope.ThreatTypeWeakness;
+            else if (container is IVulnerability)
+                scope = Scope.Vulnerability;
+            else if (container is IVulnerabilityMitigation)
+                scope = Scope.VulnerabilityMitigation;
+            else if (container is IWeakness)
+                scope = Scope.Weakness;
+            else if (container is IWeaknessMitigation)
+                scope = Scope.WeaknessMitigation;
 
             if (scope != Scope.Undefined)
             {
@@ -447,7 +1064,7 @@ namespace ThreatsManager.Engine.ObjectModel
                    (_entityTemplates?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (_trustBoundaryTemplates?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (_flowTemplates?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
-                   (_threatTypes?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   IsUsedForTC(propertySchema, this) ||
                    IsUsedForWC(propertySchema, this);
         }
 
@@ -463,6 +1080,13 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             return (container.Vulnerabilities?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
                    (container.Vulnerabilities?.Any(x => x.Mitigations?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false);
+        }
+
+        private bool IsUsedForTC([NotNull] IPropertySchema propertySchema, IThreatTypesContainer container)
+        {
+            return (container.ThreatTypes?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
+                   (container.ThreatTypes?.Any(x => x.Mitigations?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false) ||
+                   (container.ThreatTypes?.Any(x => x.Weaknesses?.Any(y => y.Properties?.Any(z => (z.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ?? false);
         }
 
         private bool IsUsedForWC([NotNull] IPropertySchema propertySchema, IWeaknessesContainer container)
@@ -530,7 +1154,11 @@ namespace ThreatsManager.Engine.ObjectModel
                 {
                     RemoveRelated(schema, threatEvent.Mitigations);
                     RemoveRelated(schema, threatEvent.Scenarios);
-                    RemoveRelated(schema, threatEvent.Vulnerabilities);
+                }
+
+                if (container is IVulnerabilitiesContainer vContainer)
+                {
+                    RemoveRelated(schema, vContainer.Vulnerabilities);
                 }
 
                 if (container is IThreatType threatType)

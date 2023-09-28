@@ -108,6 +108,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 

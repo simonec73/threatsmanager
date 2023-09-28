@@ -94,5 +94,11 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// <remarks>It will be applied only if the Scope of the Schema is compatible with the container,
         /// and if it has not been applied yet.</remarks>
         void Apply(IPropertySchema schema);
+
+        /// <summary>
+        /// Unapply a Property Schema to the container.
+        /// </summary>
+        /// <param name="schema">Property Schema to be unapplied.</param>
+        void Unapply(IPropertySchema schema);
     }
 }

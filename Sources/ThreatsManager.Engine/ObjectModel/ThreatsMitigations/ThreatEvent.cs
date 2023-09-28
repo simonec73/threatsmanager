@@ -115,6 +115,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioAdded;
         public event Action<IThreatEventScenariosContainer, IThreatEventScenario> ScenarioRemoved;
 

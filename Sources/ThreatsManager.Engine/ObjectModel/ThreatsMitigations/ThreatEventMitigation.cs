@@ -89,7 +89,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public void Apply(IPropertySchema schema)
         {
-            throw new NotImplementedException();
+        }
+
+        public void Unapply(IPropertySchema schema)
+        {
         }
 
         [Reference]

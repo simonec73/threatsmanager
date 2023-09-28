@@ -86,6 +86,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }

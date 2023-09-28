@@ -328,7 +328,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         /// <summary>
         /// Implementation of method Apply.
         /// </summary>
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 15)]
         public void Apply(IPropertySchema schema)
         {
             if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
@@ -360,6 +360,36 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                         {
                             if (item != null)
                                 container.RemoveProperty(item);
+                        }
+                    }
+
+                    scope?.Complete();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Implementation of method Unapply.
+        /// </summary>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        public void Unapply(IPropertySchema schema)
+        {
+            if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
+            {
+                using (var scope = UndoRedoManager.OpenScope("Unapply Property Schema"))
+                {
+                    var existingProp = container.Properties?.ToArray();
+                    var schemaProp = schema.PropertyTypes?.ToArray();
+                    var toBeRemoved = existingProp?
+                        .Where(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id)
+                        .ToArray();
+
+                    if (toBeRemoved?.Any() ?? false)
+                    {
+                        foreach (var property in toBeRemoved)
+                        {
+                            if (property != null)
+                                container.RemoveProperty(property.PropertyTypeId);
                         }
                     }
 
