@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace ThreatsManager.Interfaces.Extensions
 {
@@ -16,6 +17,17 @@ namespace ThreatsManager.Interfaces.Extensions
         /// Label for the Bar.
         /// </summary>
         string Label { get; }
+
+        /// <summary>
+        /// Flag specifying if the Commands Bar can be collapsed.
+        /// </summary>
+        bool Collapsible { get; }
+
+        /// <summary>
+        /// Image to use when the Commands Bar is collapsed.
+        /// </summary>
+        /// <remarks>If null, the default image is used.</remarks>
+        Image CollapsedImage { get; }
 
         /// <summary>
         /// Enumeration of the various buttons to be added to the Bar.
