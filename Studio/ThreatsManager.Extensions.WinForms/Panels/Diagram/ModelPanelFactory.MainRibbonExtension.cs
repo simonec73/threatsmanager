@@ -9,7 +9,6 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;

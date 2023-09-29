@@ -9,6 +9,7 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -521,11 +522,46 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
                 _properties.Item = entity;
                 ChangeCustomActionStatus?.Invoke("RemoveExternal", true);
                 ChangeCustomActionStatus?.Invoke("FindExternal", true);
+                ChangeActionsStatus(true);
             }
             else
             {
                 ChangeCustomActionStatus?.Invoke("RemoveExternal", false);
                 ChangeCustomActionStatus?.Invoke("FindExternal", false);
+                ChangeActionsStatus(false);
+            }
+        }
+
+        private void ChangeActionsStatus(bool newStatus)
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction &&
+                                        (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction &&
+                                        (containersContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -547,8 +583,12 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -556,14 +596,27 @@ namespace ThreatsManager.Extensions.Panels.ExternalInteractorList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
                     ShowCurrentRow();
                 }
             }
         }
-        
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
         #region Tooltip Management.
         private void AddSuperTooltipProvider([NotNull] IIdentity identity, [NotNull] GridCell cell)
         {

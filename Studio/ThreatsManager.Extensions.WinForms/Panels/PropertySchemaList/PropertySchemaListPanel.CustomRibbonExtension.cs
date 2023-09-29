@@ -46,11 +46,15 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                             Properties.Resources.property_delete,
                             true, Shortcut.None),
                     }),
-                    new CommandsBarDefinition("Apply", "Apply", new IActionDefinition[]
+                    new CommandsBarDefinition("ApplyUnapply", "Apply/Unapply", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "ApplySchema", "Apply Schema",
                             Properties.Resources.magic_wand_big,
                             Properties.Resources.magic_wand,
+                            true, Shortcut.None),
+                        new ActionDefinition(Id, "UnapplySchema", "Unapply Schema",
+                            Properties.Resources.magic_wand_big_delete,
+                            Properties.Resources.magic_wand_delete,
                             true, Shortcut.None),
                     }),
                     new CommandsBarDefinition("ImportExport", "Import/Export", new IActionDefinition[]
@@ -291,6 +295,14 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                             text = "Apply current Property Schema";
 
                             _model.ApplySchema(schema4.Id);
+                        }
+                        break;
+                    case "UnapplySchema":
+                        if (_schemas.SelectedItem is IPropertySchema schema5)
+                        {
+                            text = "Unapply current Property Schema";
+
+                            _model.UnapplySchema(schema5.Id);
                         }
                         break;
                     case "Import":

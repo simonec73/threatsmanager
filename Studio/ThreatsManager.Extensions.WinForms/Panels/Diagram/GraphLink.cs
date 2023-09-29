@@ -115,44 +115,40 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public void UpdateParameters([Range(8, 128)] int markerSize, [StrictlyPositive] float dpiFactor = 1.0f)
         {
-            if (_link is IThreatModelChild child && child.Model != null &&
-                !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
+            if (_link is IThreatModelChild child && child.Model != null)
             {
-                using (var scope = UndoRedoManager.OpenScope("Update Link parameters"))
+                var schemaManager = new DiagramPropertySchemaManager(child.Model);
+                var propertyType = schemaManager.GetTextLocationPropertyType();
+                if (propertyType != null && _link.GetProperty(propertyType) is IPropertyBool propertyBool &&
+                    propertyBool.Value)
                 {
-                    var schemaManager = new DiagramPropertySchemaManager(child.Model);
-                    var propertyType = schemaManager.GetTextLocationPropertyType();
-                    if (propertyType != null && _link.GetProperty(propertyType) is IPropertyBool propertyBool &&
-                        propertyBool.Value)
-                    {
-                        _alternativeTextLocation = propertyBool.Value;
-                    }
+                    _alternativeTextLocation = propertyBool.Value;
+                }
 
-                    var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
-                    var property = _link.GetProperty(pointsPropertyType);
-                    if (property is IPropertyArray propertyArray)
+                var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
+                var property = _link.GetProperty(pointsPropertyType);
+                if (property is IPropertyArray propertyArray)
+                {
+                    List<string> points = new List<string>();
+                    var array = propertyArray.Value?.ToArray();
+                    var count = array?.Length ?? 0;
+                    if (count > 0)
                     {
-                        List<string> points = new List<string>();
-                        var array = propertyArray.Value?.ToArray();
-                        var count = array?.Length ?? 0;
-                        if (count > 0)
+                        RealLink.ClearPoints();
+                        for (int i = 0; i < count / 2; i++)
                         {
-                            RealLink.ClearPoints();
-                            for (int i = 0; i < count / 2; i++)
+                            var x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo) * dpiFactor;
+                            var y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo) * dpiFactor;
+                            RealLink.AddPoint(new PointF(x, y));
+                            if (dpiFactor != 1.0f)
                             {
-                                var x = float.Parse(array[i * 2], NumberFormatInfo.InvariantInfo) * dpiFactor;
-                                var y = float.Parse(array[i * 2 + 1], NumberFormatInfo.InvariantInfo) * dpiFactor;
-                                RealLink.AddPoint(new PointF(x, y));
-                                if (dpiFactor != 1.0f)
-                                {
-                                    points.Add(x.ToString(NumberFormatInfo.InvariantInfo));
-                                    points.Add(y.ToString(NumberFormatInfo.InvariantInfo));
-                                }
+                                points.Add(x.ToString(NumberFormatInfo.InvariantInfo));
+                                points.Add(y.ToString(NumberFormatInfo.InvariantInfo));
                             }
-
-                            if (points.Any())
-                                propertyArray.Value = points;
                         }
+
+                        if (points.Any())
+                            propertyArray.Value = points;
                     }
                 }
             }

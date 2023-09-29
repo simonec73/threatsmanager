@@ -55,7 +55,7 @@ namespace ThreatsManager.Extensions.Actions
                                 if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                                 {
                                     scope?.Complete();
-                                    ShowMessage?.Invoke("Import Knowledge Bae succeeded.");
+                                    ShowMessage?.Invoke("Import Knowledge Base succeeded.");
                                 }
                             }
                         }

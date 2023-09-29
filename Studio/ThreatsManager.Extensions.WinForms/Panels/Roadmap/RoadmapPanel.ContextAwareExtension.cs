@@ -3,6 +3,7 @@ using System.Linq;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Roadmap
 {
@@ -19,8 +20,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             foreach (var action in _actions)
             {
                 if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction &&
-                    (string.IsNullOrWhiteSpace(commandsBarContextAwareAction.VisibilityContext) ||
-                    string.CompareOrdinal(commandsBarContextAwareAction.VisibilityContext, "Roadmap") == 0))
+                    commandsBarContextAwareAction.IsVisible("Roadmap"))
                 {
                     var commandsBar = commandsBarContextAwareAction.CommandsBar;
                     if (commandsBar != null)

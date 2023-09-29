@@ -7,6 +7,7 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -304,6 +305,35 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
         {
             _properties.Item = _currentRow?.Tag;
             ChangeCustomActionStatus?.Invoke("RemoveActor", _currentRow?.Tag is IThreatActor);
+            ChangeActionsStatus(_currentRow?.Tag is IThreatActor);
+        }
+
+        private void ChangeActionsStatus(bool newStatus)
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction &&
+                                        (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)
@@ -323,8 +353,12 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -332,9 +366,22 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
                     ShowCurrentRow();
                 }
             }

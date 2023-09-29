@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;

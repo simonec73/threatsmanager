@@ -66,7 +66,12 @@ namespace ThreatsManager.Dialogs
                         if (bar.Commands?.Any() ?? false)
                         {
                             var ribbonBar = bar.Label.CreateBar();
+                            ribbonBar.AutoOverflowEnabled = bar.Collapsible;
                             ribbonBar.Left = left;
+                            if (bar.Collapsible && bar.CollapsedImage != null)
+                            {
+                                ribbonBar.OverflowButtonImage = bar.CollapsedImage;
+                            }
                             foreach (var command in bar.Commands)
                             {
                                 var button = ribbonBar.CreateButton(command, _superTooltip);

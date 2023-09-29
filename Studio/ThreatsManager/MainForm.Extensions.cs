@@ -18,6 +18,8 @@ using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
+using System.ComponentModel.Composition.Hosting;
+using System.IO;
 
 namespace ThreatsManager
 {
@@ -59,7 +61,7 @@ namespace ThreatsManager
         #endregion
 
         #region Main entry points for the Extension management functions.
-        private void InitializeExtensionsManagement()
+        private bool InitializeExtensionsManagement()
         {
             Manager.Instance.ShowMessage += DesktopAlertAwareExtensionOnShowMessage;
             Manager.Instance.ShowWarning += DesktopAlertAwareExtensionOnShowWarning;
@@ -67,13 +69,32 @@ namespace ThreatsManager
 
             var config = ExtensionsConfigurationManager.GetConfigurationSection();
             _executionMode = config.Mode;
-            Manager.Instance.LoadExtensions(_executionMode);
 
-            HandleExtensionInitializers();
+            var result = false;
 
-            DiagramNameUpdater();
-            var actions = Manager.Instance.GetExtensions<IContextAwareAction>();
-            ItemEditor.InitializeContextMenu(actions);
+            try
+            {
+                Manager.Instance.LoadExtensions(_executionMode);
+                result = true;
+            }
+            catch (FileLoadException e)
+            {
+                if (e.InnerException is NotSupportedException)
+                {
+                    MessageBox.Show("TMS failed to run due to an error. It is possible that you downloaded it from the Internet, and that you forgot to Unblock the archive before extracting TMS.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            if (result)
+            {
+                HandleExtensionInitializers();
+
+                DiagramNameUpdater();
+                var actions = Manager.Instance.GetExtensions<IContextAwareAction>();
+                ItemEditor.InitializeContextMenu(actions);
+            }
+
+            return result;
         }
 
         [Background]

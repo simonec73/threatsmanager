@@ -7,6 +7,8 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Initializers;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -17,6 +19,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
 {
     public partial class ThreatActorListPanel
     {
+        private Dictionary<string, List<ICommandsBarDefinition>> _commandsBarContextAwareActions;
+
         public event Action<string, bool> ChangeCustomActionStatus;
 
         public string TabLabel => "Threat Actor List";
@@ -49,8 +53,33 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
                             Resources.refresh_big,
                             Resources.refresh,
                             true, Shortcut.F5),
-                    }),
+                    })
                 };
+
+                if (_commandsBarContextAwareActions?.Any() ?? false)
+                {
+                    foreach (var definitions in _commandsBarContextAwareActions.Values)
+                    {
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                    }
+                }
+
+                result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
+                {
+                    new ActionDefinition(Id, "Refresh", "Refresh List",
+                        Resources.refresh_big,
+                        Resources.refresh,
+                        true, Shortcut.F5)
+                }));
 
                 return result;
             }
@@ -64,6 +93,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
 
             try
             {
+                var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
+                    .Select(x => x.GridRow)
+                    .Distinct()
+                    .ToArray();
+
                 switch (action.Name)
                 {
                     case "AddActor":
@@ -78,11 +112,6 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
                         }
                         break;
                     case "RemoveActor":
-                        var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Distinct()
-                            .ToArray();
-
                         if (_currentRow != null)
                         {
                             if ((selected?.Length ?? 0) > 1)
@@ -169,6 +198,33 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
                         break;
                     case "Refresh":
                         LoadModel();
+                        break;
+                    default:
+                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                        {
+                            if ((selected?.Any() ?? false) &&
+                                (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                            {
+                                var identities = selected.Select(x => x.Tag as IIdentity)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (identities.Any())
+                                {
+                                    if (identitiesContextAwareAction.Execute(identities))
+                                    {
+                                        text = identitiesContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                        }
                         break;
                 }
 

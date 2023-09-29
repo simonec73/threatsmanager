@@ -139,6 +139,7 @@
     <Compile Include="Actions\CopyAutoGenRules.cs" />
     <Compile Include="Actions\EditAutoGenRule.cs" />
     <Compile Include="Actions\EditMitigationAssociationRule.cs" />
+    <Compile Include="Actions\PanelApplyAutoGenRules.cs" />
     <Compile Include="Actions\PasteAutoGenRules.cs" />
     <Compile Include="Actions\RemoveAllThreatEvents.cs" />
     <Compile Include="Dialogs\MitigationRuleEditDialog.cs">

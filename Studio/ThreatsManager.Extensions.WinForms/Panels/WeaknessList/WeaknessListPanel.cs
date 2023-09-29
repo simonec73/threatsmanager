@@ -9,6 +9,7 @@ using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -655,9 +656,53 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         {
             _properties.Item = _currentRow?.Tag;
 
-            ChangeCustomActionStatus?.Invoke("RemoveWeakness", _currentRow.Tag is IWeakness);
-            ChangeCustomActionStatus?.Invoke("AddMitigation", _currentRow.Tag is IWeakness);
-            ChangeCustomActionStatus?.Invoke("RemoveMitigation", _currentRow.Tag is IWeaknessMitigation);
+            ChangeCustomActionStatus?.Invoke("RemoveWeakness", _currentRow?.Tag is IWeakness);
+            ChangeCustomActionStatus?.Invoke("AddMitigation", _currentRow?.Tag is IWeakness);
+            ChangeCustomActionStatus?.Invoke("RemoveMitigation", _currentRow?.Tag is IWeaknessMitigation);
+            ChangeActionsStatus();
+        }
+
+        private void ChangeActionsStatus()
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                var isWeakness = _currentRow?.Tag is IWeakness;
+                var isWMitigation = _currentRow?.Tag is IWeaknessMitigation;
+
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                                    {
+                                        if (isWeakness &&
+                                            (identitiesContextAwareAction.Scope & Scope.Weakness) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isWMitigation &&
+                                            (identitiesContextAwareAction.Scope & Scope.WeaknessMitigation) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)
@@ -701,8 +746,12 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -710,9 +759,22 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
                     ShowCurrentRow();
                 }
             }

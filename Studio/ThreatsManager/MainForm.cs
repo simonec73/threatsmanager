@@ -347,7 +347,8 @@ namespace ThreatsManager
             }
             ExtensionUtils.ExtensionConfigurationFolder = config.ExtensionsConfigFolder;
 
-            InitializeExtensionsManagement();
+            if (!InitializeExtensionsManagement())
+                Close();
             #endregion
 
             SpellCheckConfig.UserDictionary = config.UserDictionary;
@@ -906,7 +907,7 @@ namespace ThreatsManager
         private bool CheckCaptionWidth(string caption)
         {
             var width = TextRenderer.MeasureText(caption, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight + 20;
-            var maxWidth = this.Width - 950 * Dpi.Factor.Width;
+            var maxWidth = this.Width - 1000 * Dpi.Factor.Width;
 
             return width <= maxWidth;
         }

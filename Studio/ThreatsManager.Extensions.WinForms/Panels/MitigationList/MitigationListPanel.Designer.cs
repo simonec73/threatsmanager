@@ -70,20 +70,20 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._properties = new ItemEditor();
+            this._properties = new ThreatsManager.Utilities.WinForms.ItemEditor();
             this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
             this._topLeftPanel = new DevComponents.DotNetBar.Layout.LayoutControl();
             this._apply = new System.Windows.Forms.Button();
             this._filter = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this._specialFilter = new System.Windows.Forms.ComboBox();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._grid = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
             this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
             this._tooltipTimer = new System.Windows.Forms.Timer(this.components);
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._specialFilter = new System.Windows.Forms.ComboBox();
-            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._topLeftPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -188,6 +188,16 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             this._filter.ButtonCustomClick += new System.EventHandler(this._filter_ButtonCustomClick);
             this._filter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this._filter_KeyPress);
             // 
+            // _specialFilter
+            // 
+            this._specialFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._specialFilter.FormattingEnabled = true;
+            this._specialFilter.Location = new System.Drawing.Point(222, 4);
+            this._specialFilter.Margin = new System.Windows.Forms.Padding(0);
+            this._specialFilter.Name = "_specialFilter";
+            this._specialFilter.Size = new System.Drawing.Size(205, 21);
+            this._specialFilter.TabIndex = 1;
+            // 
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._filter;
@@ -197,6 +207,17 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             this.layoutControlItem1.Text = "Filter";
             this.layoutControlItem1.Width = 50;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem4
+            // 
+            this.layoutControlItem4.Control = this._specialFilter;
+            this.layoutControlItem4.Height = 29;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem4.Name = "layoutControlItem4";
+            this.layoutControlItem4.Text = "Label:";
+            this.layoutControlItem4.TextVisible = false;
+            this.layoutControlItem4.Width = 49;
+            this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem2
             // 
@@ -223,6 +244,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             this._grid.CellMouseLeave += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellEventArgs>(this._grid_CellMouseLeave);
             this._grid.CellMouseMove += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseMove);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
+            this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
             // _contextMenu
@@ -252,27 +274,6 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             this.layoutControlItem3.TextVisible = false;
             this.layoutControlItem3.Width = 49;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // _specialFilter
-            // 
-            this._specialFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._specialFilter.FormattingEnabled = true;
-            this._specialFilter.Location = new System.Drawing.Point(222, 4);
-            this._specialFilter.Margin = new System.Windows.Forms.Padding(0);
-            this._specialFilter.Name = "_specialFilter";
-            this._specialFilter.Size = new System.Drawing.Size(205, 21);
-            this._specialFilter.TabIndex = 1;
-            // 
-            // layoutControlItem4
-            // 
-            this.layoutControlItem4.Control = this._specialFilter;
-            this.layoutControlItem4.Height = 29;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
-            this.layoutControlItem4.Name = "layoutControlItem4";
-            this.layoutControlItem4.Text = "Label:";
-            this.layoutControlItem4.TextVisible = false;
-            this.layoutControlItem4.Width = 49;
-            this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // MitigationListPanel
             // 

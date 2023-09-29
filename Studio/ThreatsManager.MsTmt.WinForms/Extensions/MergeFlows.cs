@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -19,7 +18,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 namespace ThreatsManager.MsTmt.Extensions
 {
 #pragma warning disable CS0067
-    [Extension("C2564246-BE5D-4C8E-A19C-E0D2CEA1BF20", "Merge Flows Context Aware Action", 21, ExecutionMode.Simplified)]
+    [Extension("C2564246-BE5D-4C8E-A19C-E0D2CEA1BF20", "Merge Flows Context Aware Action", 502, ExecutionMode.Simplified)]
     public class MergeFlows : IShapesContextAwareAction, 
         IDataFlowAddingRequiredAction, IDataFlowRemovingRequiredAction,
         ICommandsBarContextAwareAction, IDesktopAlertAwareExtension
@@ -27,14 +26,26 @@ namespace ThreatsManager.MsTmt.Extensions
         public Scope Scope => Scope.Entity | Scope.DataFlow;
         public string Label => "Merge Flows";
         public string Group => "Merge";
-        public Bitmap Icon => Properties.Resources.arrows_merge_big;
-        public Bitmap SmallIcon => Properties.Resources.arrows_merge;
+        public Bitmap Icon => Properties.Resources.arrows_merge;
+        public Bitmap SmallIcon => Properties.Resources.arrows_merge_small;
         public Shortcut Shortcut => Shortcut.None;
 
         public event Action<IDiagram, IDataFlow> DataFlowAddingRequired;
         public event Action<ILink> DataFlowRemovingRequired;
         public event Action<string> ShowMessage;
         public event Action<string> ShowWarning;
+
+        public ICommandsBarDefinition CommandsBar => new CommandsBarDefinition(Group, Group, new IActionDefinition[]
+        {
+            new ActionDefinition(new Guid(this.GetExtensionId()), Label, Label, Icon, SmallIcon, false, Shortcut)
+            {
+                Tag = this
+            }
+        }, true, Properties.Resources.logic_or);
+
+        public IEnumerable<string> SupportedContexts => new[] { "Diagram" };
+
+        public IEnumerable<string> UnsupportedContexts => null;
 
         public bool Execute([NotNull] object item)
         {
@@ -154,15 +165,5 @@ namespace ThreatsManager.MsTmt.Extensions
                 }
             }
         }
-
-        public ICommandsBarDefinition CommandsBar => new CommandsBarDefinition(Group, Group, new IActionDefinition[]
-        {
-            new ActionDefinition(new Guid(this.GetExtensionId()), Label, Label, Icon, SmallIcon, false, Shortcut)
-            {
-                Tag = this
-            }
-        });
-
-        public string VisibilityContext => "Diagram";
     }
 }

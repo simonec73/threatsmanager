@@ -1408,15 +1408,19 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Vulnerability");
             section.SuspendLayout();
             AddHyperlink(section, "Weakness", vulnerability.Weakness);
-            var label = AddHyperlink(section, "Associated To", vulnerability.Parent,
-                Dpi.Factor.Width > 1.5 ? vulnerability.Parent?.GetImage(ImageSize.Medium) : vulnerability.Parent?.GetImage(ImageSize.Small));
+            var parent = vulnerability.Parent as IIdentity;
+            if (parent != null)
+            {
+                var label = AddHyperlink(section, "Associated To", parent,
+                    Dpi.Factor.Width > 1.5 ? parent?.GetImage(ImageSize.Medium) : parent?.GetImage(ImageSize.Small));
+                _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(parent));
+            }
             //var label = AddSingleLineLabel(section, "Associated To", vulnerability.Parent.Name,
             //    Dpi.Factor.Width > 1.5 ? vulnerability.Parent?.GetImage(ImageSize.Medium) : vulnerability.Parent?.GetImage(ImageSize.Small));
             if (vulnerability.Parent is IEntity entity)
             {
                 entity.ImageChanged += OnVulnerabilityImageChanged;
             }
-            _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(vulnerability.Parent));
             AddCombo(section, "Severity", vulnerability.Severity?.Name,
                 vulnerability.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
@@ -1489,7 +1493,7 @@ namespace ThreatsManager.Utilities.WinForms
             listBox.DoubleClick += OpenSubItem;
 
             AddListView(section, "Vulnerabilities\napplied to",
-                weakness.Model?.GetVulnerabilities(weakness)?.OrderBy(x => x.Parent.Name));
+                weakness.Model?.GetVulnerabilities(weakness)?.OrderBy(x => (x.Parent as IIdentity)?.Name ?? string.Empty));
 
             if (_actions?.Any() ?? false)
             {
@@ -1638,9 +1642,14 @@ namespace ThreatsManager.Utilities.WinForms
             section.SuspendLayout();
             AddHyperlink(section, "Vulnerability", mitigation.Vulnerability);
             AddHyperlink(section, "Mitigation", mitigation.Mitigation);
-            var label = AddSingleLineLabel(section, "Associated To", mitigation.Vulnerability.Parent.Name,
-                Dpi.Factor.Width > 1.5 ? mitigation.Vulnerability?.Parent?.GetImage(ImageSize.Medium) : mitigation.Vulnerability?.Parent?.GetImage(ImageSize.Small));
-            _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(mitigation.Vulnerability.Parent));
+
+            if (mitigation.Vulnerability?.Parent is IIdentity parent)
+            {
+                var label = AddSingleLineLabel(section, "Associated To", parent.Name ?? string.Empty,
+                    Dpi.Factor.Width > 1.5 ? parent.GetImage(ImageSize.Medium) : parent.GetImage(ImageSize.Small));
+                _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(parent));
+            }
+
             if (mitigation.Vulnerability.Parent is IEntity entity)
             {
                 entity.ImageChanged += OnVulnerabilityMitigationImageChanged;

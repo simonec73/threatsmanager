@@ -12,6 +12,7 @@ using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -2088,13 +2089,89 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         {
             _properties.Item = _currentRow?.Tag;
 
+            bool isThreatType = _currentRow?.Tag is IThreatType;
             bool isMitigation = _currentRow?.Tag is IThreatEventMitigation;
             bool isThreatEvent = _currentRow?.Tag is IThreatEvent;
             bool isScenario = _currentRow?.Tag is IThreatEventScenario;
+            bool isVulnerability = _currentRow?.Tag is IVulnerability;
+            var isVMitigation = _currentRow?.Tag is IVulnerabilityMitigation;
+
             ChangeCustomActionStatus?.Invoke("AddScenario", isThreatEvent);
-            ChangeCustomActionStatus?.Invoke("AddMitigation", isThreatEvent);
+            ChangeCustomActionStatus?.Invoke("AddMitigation", isThreatEvent || isVulnerability);
+            ChangeCustomActionStatus?.Invoke("AddVulnerability", isThreatEvent);
+            ChangeCustomActionStatus?.Invoke("RemoveThreatEvent", isThreatEvent);
             ChangeCustomActionStatus?.Invoke("RemoveScenario", isScenario);
-            ChangeCustomActionStatus?.Invoke("RemoveMitigation", isMitigation);
+            ChangeCustomActionStatus?.Invoke("RemoveMitigation", isMitigation || isVMitigation);
+            ChangeCustomActionStatus?.Invoke("RemoveVulnerability", isVulnerability);
+            ChangeCustomActionStatus?.Invoke("ChangeSeverities", isThreatEvent || isScenario || isVulnerability);
+            ChangeActionsStatus();
+        }
+
+        private void ChangeActionsStatus()
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                var isThreatType = _currentRow?.Tag is IThreatType;
+                var isThreatEvent = _currentRow?.Tag is IThreatEvent;
+                var isTEMitigation = _currentRow?.Tag is IThreatEventMitigation;
+                var isScenario = _currentRow?.Tag is IThreatEventScenario;
+                var isVulnerability = _currentRow?.Tag is IVulnerability;
+                var isVMitigation = _currentRow?.Tag is IVulnerabilityMitigation;
+
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                                    {
+                                        if (isThreatType &&
+                                            (identitiesContextAwareAction.Scope & Scope.ThreatType) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isThreatEvent &&
+                                            (identitiesContextAwareAction.Scope & Scope.ThreatEvent) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isTEMitigation &&
+                                            (identitiesContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isScenario &&
+                                            (identitiesContextAwareAction.Scope & Scope.ThreatEventScenario) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isVulnerability &&
+                                            (identitiesContextAwareAction.Scope & Scope.Vulnerability) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isVMitigation &&
+                                            (identitiesContextAwareAction.Scope & Scope.VulnerabilityMitigation) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void _filter_ButtonCustomClick(object sender, EventArgs e)
@@ -2155,8 +2232,12 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -2164,9 +2245,22 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
                     ShowCurrentRow();
                 }
             }

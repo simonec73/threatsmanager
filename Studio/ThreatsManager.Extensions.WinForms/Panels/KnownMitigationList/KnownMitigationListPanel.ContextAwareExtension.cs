@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.KnownMitigationList
@@ -12,6 +15,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
     {
         private ContextMenuStrip _mitigationMenu;
         private ContextMenuStrip _threatTypeMitigationMenu;
+        private IEnumerable<IContextAwareAction> _actions;
 
         public Scope SupportedScopes => Scope.Mitigation | Scope.ThreatTypeMitigation;
 
@@ -24,6 +28,32 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             var menuThreatTypeMitigation = new MenuDefinition(actions, Scope.ThreatTypeMitigation);
             _threatTypeMitigationMenu = menuThreatTypeMitigation.CreateMenu();
             menuThreatTypeMitigation.MenuClicked += OnThreatTypeMitigationMenuClicked;
+
+            _actions = actions?.ToArray();
+
+            foreach (var action in _actions)
+            {
+                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction &&
+                    commandsBarContextAwareAction.IsVisible("KnownMitigationList"))
+                {
+                    var commandsBar = commandsBarContextAwareAction.CommandsBar;
+                    if (commandsBar != null)
+                    {
+                        if (_commandsBarContextAwareActions == null)
+                            _commandsBarContextAwareActions = new Dictionary<string, List<ICommandsBarDefinition>>();
+                        List<ICommandsBarDefinition> list;
+                        if (_commandsBarContextAwareActions.ContainsKey(commandsBar.Name))
+                            list = _commandsBarContextAwareActions[commandsBar.Name];
+                        else
+                        {
+                            list = new List<ICommandsBarDefinition>();
+                            _commandsBarContextAwareActions.Add(commandsBar.Name, list);
+                        }
+
+                        list.Add(commandsBar);
+                    }
+                }
+            }
         }
 
         private void OnMitigationMenuClicked(IContextAwareAction action, object context)

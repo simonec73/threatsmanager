@@ -1,5 +1,5 @@
-﻿using PostSharp.Patterns.Recording;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -34,7 +34,9 @@ namespace ThreatsManager.DevOps.Actions
             }
         });
 
-        public string VisibilityContext => "Roadmap";
+        public IEnumerable<string> SupportedContexts => new[] { "Roadmap" };
+
+        public IEnumerable<string> UnsupportedContexts => null;
 
         public bool Execute(object item)
         {

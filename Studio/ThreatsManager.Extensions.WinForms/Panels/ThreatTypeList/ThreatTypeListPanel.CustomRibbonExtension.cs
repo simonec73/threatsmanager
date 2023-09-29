@@ -4,8 +4,11 @@ using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -16,6 +19,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
 {
     public partial class ThreatTypeListPanel
     {
+        private Dictionary<string, List<ICommandsBarDefinition>> _commandsBarContextAwareActions;
+
         public event Action<string, bool> ChangeCustomActionStatus;
 
         public string TabLabel => "Threat Type List";
@@ -42,6 +47,13 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                             Resources.standard_mitigations_big_delete,
                             Resources.standard_mitigations_delete, false),
                     }),
+                    new CommandsBarDefinition("Severities", "Severities", new IActionDefinition[]
+                    {
+                        new ActionDefinition(Id, "ChangeSeverities", "Change Severities",
+                            Resources.severity_big,
+                            Resources.severity,
+                            false)
+                    }),
                     new CommandsBarDefinition("Outlining", "Outlining", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "OpenAllNodes", "Full Expand",
@@ -53,15 +65,33 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                         new ActionDefinition(Id, "Collapse", "Collapse All",
                             Properties.Resources.element_big,
                             Properties.Resources.element, true),
-                    }),
-                    new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
-                    {
-                        new ActionDefinition(Id, "Refresh", "Refresh List",
-                            Resources.refresh_big,
-                            Resources.refresh,
-                            true, Shortcut.F5),
-                    }),
+                    })
                 };
+
+                if (_commandsBarContextAwareActions?.Any() ?? false)
+                {
+                    foreach (var definitions in _commandsBarContextAwareActions.Values)
+                    {
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                    }
+                }
+
+                result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
+                {
+                    new ActionDefinition(Id, "Refresh", "Refresh List",
+                        Resources.refresh_big,
+                        Resources.refresh,
+                        true, Shortcut.F5)
+                }));
 
                 return result;
             }
@@ -72,6 +102,22 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         {
             string text = null;
             bool warning = false;
+
+            var selectedTT = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
+                .Select(x => x.GridRow)
+                .Where(x => x.Tag is IThreatType)
+                .Distinct()
+                .ToArray();
+
+            var currentTT = _currentRow?.Tag as IThreatType;
+
+            var selectedM = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
+                .Select(x => x.GridRow)
+                .Where(x => x.Tag is IThreatTypeMitigation)
+                .Distinct()
+                .ToArray();
+
+            var currentM = _currentRow?.Tag as IThreatTypeMitigation;
 
             try
             {
@@ -87,9 +133,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                         }
                         break;
                     case "AddMitigation":
-                        if (_currentRow.Tag is IThreatType threatType2)
+                        if (currentTT != null)
                         {
-                            using (var dialog2 = new ThreatTypeMitigationSelectionDialog(threatType2))
+                            using (var dialog2 = new ThreatTypeMitigationSelectionDialog(currentTT))
                             {
                                 if (dialog2.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                                 {
@@ -100,56 +146,55 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
 
                         break;
                     case "RemoveThreatType":
-                        var selected = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Where(x => x.Tag is IThreatType)
-                            .Distinct()
-                            .ToArray();
-
-                        if (_currentRow != null)
+                        if (currentTT != null)
                         {
-                            if ((selected?.Length ?? 0) > 1)
+                            if ((selectedTT?.Length ?? 0) > 1)
                             {
                                 var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected.Length} Threat Types. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Types,\nNo to remove only the last one you selected, '{_currentRow?.Tag?.ToString()}'.\nPress Cancel to abort.",
+                                    $"You have selected {selectedTT.Length} Threat Types. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Types,\nNo to remove only the last one you selected, '{currentTT.Name}'.\nPress Cancel to abort.",
                                     "Remove Threat Types", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
-                                switch (outcome)
+
+                                using (var scope = UndoRedoManager.OpenScope("Remove Threat Types"))
                                 {
-                                    case DialogResult.Yes:
-                                        bool removed = true;
-                                        foreach (var row in selected)
-                                        {
-                                            bool r = false;
-                                            if (row.Tag is IThreatType tt)
+                                    switch (outcome)
+                                    {
+                                        case DialogResult.Yes:
+                                            bool removed = true;
+                                            foreach (var row in selectedTT)
                                             {
-                                                r = _model.RemoveThreatType(tt.Id);
+                                                bool r = false;
+                                                if (row.Tag is IThreatType tt)
+                                                {
+                                                    r = _model.RemoveThreatType(tt.Id);
+                                                }
+
+                                                removed &= r;
+
+                                                if (r && row == _currentRow)
+                                                {
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                }
                                             }
 
-                                            removed &= r;
+                                            scope?.Complete();
 
-                                            if (r && row == _currentRow)
+                                            if (removed)
                                             {
-                                                _properties.Item = null;
-                                                _currentRow = null;
+                                                text = "Remove Threat Types";
                                             }
-                                        }
-
-                                        if (removed)
-                                        {
-                                            text = "Remove Threat Types";
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "One or more Threat Types cannot be removed.";
-                                        }
-                                        break;
-                                    case DialogResult.No:
-                                        if (_currentRow != null && _currentRow.Tag is IThreatType tt2)
-                                        {
-                                            if (_model.RemoveThreatType(tt2.Id))
+                                            else
                                             {
+                                                warning = true;
+                                                text = "One or more Threat Types cannot be removed.";
+                                            }
+                                            break;
+                                        case DialogResult.No:
+                                            if (_model.RemoveThreatType(currentTT.Id))
+                                            {
+                                                scope?.Complete();
+
                                                 _properties.Item = null;
                                                 _currentRow = null;
                                                 text = "Remove Threat Type";
@@ -159,113 +204,157 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                                                 warning = true;
                                                 text = "The Threat Type cannot be removed.";
                                             }
-                                        }
-
-                                        break;
+                                            break;
+                                    }
                                 }
                             }
-                            else if (_currentRow != null && _currentRow.Tag is IThreatType threatType3 &&
-                                     MessageBox.Show(Form.ActiveForm,
-                                         $"You are about to remove Threat Type '{threatType3.Name}'. Are you sure?",
+                            else if (MessageBox.Show(Form.ActiveForm,
+                                         $"You are about to remove Threat Type '{currentTT.Name}'. Are you sure?",
                                          "Remove Threat Type", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
-                                if (_model.RemoveThreatType(threatType3.Id))
+                                using (var scope = UndoRedoManager.OpenScope("Remove Threat Type"))
                                 {
-                                    text = "Threat Type removal";
-                                    _properties.Item = null;
-                                }
-                                else
-                                {
-                                    warning = true;
-                                    text = "The Threat Type cannot be removed.";
+                                    if (_model.RemoveThreatType(currentTT.Id))
+                                    {
+                                        scope?.Complete();
+
+                                        text = "Threat Type removal";
+                                        _properties.Item = null;
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Threat Type cannot be removed.";
+                                    }
                                 }
                             }
                         }
                         break;
                     case "RemoveMitigation":
-                        var selected2 = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Where(x => x.Tag is IThreatTypeMitigation)
-                            .Distinct()
-                            .ToArray();
-
-                        if (_currentRow != null)
+                        if (currentM != null)
                         {
-                            if ((selected2?.Length ?? 0) > 1)
+                            if ((selectedM?.Length ?? 0) > 1)
                             {
-                                var name = (_currentRow.Tag as IThreatTypeMitigation)?.Mitigation.Name;
+                                var name = currentM?.Mitigation.Name;
                                 var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected2.Length} Mitigations associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Mitigations associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
+                                    $"You have selected {selectedM.Length} Mitigations associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Mitigations associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
                                     "Remove Mitigations associations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
-                                switch (outcome)
+
+                                using (var scope = UndoRedoManager.OpenScope("Remove Mitigation"))
                                 {
-                                    case DialogResult.Yes:
-                                        bool removed = true;
-                                        foreach (var row in selected2)
-                                        {
-                                            bool r = false;
-                                            if (row.Tag is IThreatTypeMitigation m && 
-                                                m.ThreatType is IThreatType mThreatType)
+                                    switch (outcome)
+                                    {
+                                        case DialogResult.Yes:
+                                            bool removed = true;
+                                            foreach (var row in selectedM)
                                             {
-                                                r = mThreatType.RemoveMitigation(m.MitigationId);
+                                                bool r = false;
+                                                if (row.Tag is IThreatTypeMitigation m &&
+                                                    m.ThreatType is IThreatType mThreatType)
+                                                {
+                                                    r = mThreatType.RemoveMitigation(m.MitigationId);
+                                                }
+
+                                                removed &= r;
+
+                                                if (r && row == _currentRow)
+                                                {
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                }
                                             }
+                                                    
+                                            scope?.Complete();
 
-                                            removed &= r;
-
-                                            if (r && row == _currentRow)
+                                            if (removed)
                                             {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                            }
-                                        }
-
-                                        if (removed)
-                                        {
-                                            text = "Remove Mitigation associations";
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "One or more Mitigation associations cannot be removed.";
-                                        }
-                                        break;
-                                    case DialogResult.No:
-                                        if (_currentRow != null && _currentRow.Tag is IThreatTypeMitigation m2 &&
-                                            m2.ThreatType is IThreatType m2ThreatType)
-                                        {
-                                            if (m2ThreatType.RemoveMitigation(m2.MitigationId))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Mitigation association";
+                                                text = "Remove Mitigation associations";
                                             }
                                             else
                                             {
                                                 warning = true;
-                                                text = "The Mitigation association cannot be removed.";
+                                                text = "One or more Mitigation associations cannot be removed.";
                                             }
-                                        }
+                                            break;
+                                        case DialogResult.No:
+                                            if (currentM.ThreatType is IThreatType m2ThreatType)
+                                            {
+                                                if (m2ThreatType.RemoveMitigation(currentM.MitigationId))
+                                                {
+                                                    scope?.Complete();
 
-                                        break;
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                    text = "Remove Mitigation association";
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "The Mitigation association cannot be removed.";
+                                                }
+                                            }
+                                            break;
+                                    }
                                 }
                             }
-                            else if (_currentRow != null && _currentRow.Tag is IThreatTypeMitigation mitigation &&
-                                     MessageBox.Show(Form.ActiveForm,
-                                         $"You are about to disassociate Mitigation '{mitigation.Mitigation.Name}'. Are you sure?",
+                            else if (MessageBox.Show(Form.ActiveForm,
+                                         $"You are about to disassociate Mitigation '{currentM.Mitigation.Name}'. Are you sure?",
                                          "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                                          MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
-                                if (mitigation.ThreatType.RemoveMitigation(mitigation.MitigationId))
+                                using (var scope = UndoRedoManager.OpenScope("Remove Mitigation"))
                                 {
-                                    text = "Remove Mitigation association";
-                                    _properties.Item = null;
+                                    if (currentM.ThreatType.RemoveMitigation(currentM.MitigationId))
+                                    {
+                                        scope?.Complete();
+
+                                        text = "Remove Mitigation association";
+                                        _properties.Item = null;
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Mitigation association cannot be removed.";
+                                    }
                                 }
-                                else
+                            }
+                        }
+                        break;
+                    case "ChangeSeverities":
+                        if (currentTT != null && (selectedTT?.Length ?? 0) > 1)
+                        {
+                            var dialog = new SelectSeverityForItemsDialog(selectedTT?
+                                .Select(x => x.Tag as IThreatType)
+                                .Where(x => x != null), "Threat Types");
+                            if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                            {
+                                var severity = dialog.Severity;
+                                if (severity != null)
                                 {
-                                    warning = true;
-                                    text = "The Mitigation association cannot be removed.";
+                                    using (var scope = UndoRedoManager.OpenScope("Change Severities"))
+                                    {
+                                        foreach (var row in selectedTT)
+                                        {
+                                            bool ok = false;
+                                            if (row.Tag is IThreatType tt)
+                                            {
+                                                tt.Severity = severity;
+                                                ok = true;
+                                            }
+
+                                            if (ok && row == _currentRow)
+                                            {
+                                                _properties.Item = null;
+                                                _properties.Item = _currentRow;
+                                            }
+                                        }
+
+                                        scope?.Complete();
+                                    }
+
+                                    text = "Update Threat Types Severity";
                                 }
                             }
                         }
@@ -312,6 +401,56 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                         break;
                     case "Refresh":
                         LoadModel();
+                        break;
+                    default:
+                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                        {
+                            if ((selectedTT?.Any() ?? false) &&
+                                (identitiesContextAwareAction.Scope & Interfaces.Scope.ThreatType) != 0)
+                            {
+                                var identities = selectedTT.Select(x => x.Tag as IIdentity)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (identities.Any())
+                                {
+                                    if (identitiesContextAwareAction.Execute(identities))
+                                    {
+                                        text = identitiesContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                            else if ((selectedM?.Any() ?? false) &&
+                                (identitiesContextAwareAction.Scope & Interfaces.Scope.ThreatTypeMitigation) != 0)
+                            {
+                                var identities = selectedM.Select(x => x.Tag as IIdentity)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (identities.Any())
+                                {
+                                    if (identitiesContextAwareAction.Execute(identities))
+                                    {
+                                        text = identitiesContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+
+                        }
                         break;
                 }
 

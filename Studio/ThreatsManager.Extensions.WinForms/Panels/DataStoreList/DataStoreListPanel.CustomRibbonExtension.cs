@@ -6,8 +6,11 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
@@ -16,6 +19,7 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
 {
     public partial class DataStoreListPanel
     {
+        private Dictionary<string, List<ICommandsBarDefinition>> _commandsBarContextAwareActions;
         public event Action<string, bool> ChangeCustomActionStatus;
 
         public string TabLabel => "Data Store List";
@@ -41,15 +45,33 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                         new ActionDefinition(Id, "FindDataStore", "Find Data Store in Diagrams",
                             Resources.storage_big_view,
                             Resources.storage_view, false),
-                    }),
-                    new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
-                    {
-                        new ActionDefinition(Id, "Refresh", "Refresh List",
-                            Resources.refresh_big,
-                            Resources.refresh,
-                            true, Shortcut.F5),
-                    }),
+                    })
                 };
+
+                if (_commandsBarContextAwareActions?.Any() ?? false)
+                {
+                    foreach (var definitions in _commandsBarContextAwareActions.Values)
+                    {
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                    }
+                }
+
+                result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
+                {
+                    new ActionDefinition(Id, "Refresh", "Refresh List",
+                        Resources.refresh_big,
+                        Resources.refresh,
+                        true, Shortcut.F5),
+                }));
 
                 return result;
             }
@@ -63,6 +85,11 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
 
             try
             {
+                var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
+                    .Select(x => x.GridRow)
+                    .Distinct()
+                    .ToArray();
+
                 switch (action.Name)
                 {
                     case "AddDataStore":
@@ -70,11 +97,6 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                         _model.AddEntity<IDataStore>();
                         break;
                     case "RemoveDataStore":
-                        var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Distinct()
-                            .ToArray();
-
                         if (_currentRow != null)
                         {
                             if ((selected?.Length ?? 0) > 1)
@@ -182,6 +204,58 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                         break;  
                     case "Refresh":
                         LoadModel();
+                        break;
+                    default:
+                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                        {
+                            if ((selected?.Any() ?? false) &&
+                                (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                            {
+                                var identities = selected.Select(x => x.Tag as IIdentity)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (identities.Any())
+                                {
+                                    if (identitiesContextAwareAction.Execute(identities))
+                                    {
+                                        text = identitiesContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction)
+                        {
+                            if ((selected?.Any() ?? false) &&
+                                (containersContextAwareAction.Scope & SupportedScopes) != 0)
+                            {
+                                var containers = selected.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (containers.Any())
+                                {
+                                    if (containersContextAwareAction.Execute(containers))
+                                    {
+                                        text = containersContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{containersContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                        }
                         break;
                 }
 

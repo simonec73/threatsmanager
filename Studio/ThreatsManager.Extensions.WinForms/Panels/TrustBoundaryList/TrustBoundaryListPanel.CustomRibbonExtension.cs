@@ -6,7 +6,9 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -16,6 +18,8 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
 {
     public partial class TrustBoundaryListPanel
     {
+        private Dictionary<string, List<ICommandsBarDefinition>> _commandsBarContextAwareActions;
+
         public event Action<string, bool> ChangeCustomActionStatus;
 
         public string TabLabel => "Trust Boundary List";
@@ -41,15 +45,33 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                         new ActionDefinition(Id, "FindTrustBoundary", "Find Trust Boundary in Diagrams",
                             Resources.trust_boundary_big_view,
                             Resources.trust_boundary_view, false),
-                    }),
-                    new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
-                    {
-                        new ActionDefinition(Id, "Refresh", "Refresh List",
-                            Resources.refresh_big,
-                            Resources.refresh,
-                            true, Shortcut.F5),
-                    }),
+                    })
                 };
+
+                if (_commandsBarContextAwareActions?.Any() ?? false)
+                {
+                    foreach (var definitions in _commandsBarContextAwareActions.Values)
+                    {
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                    }
+                }
+
+                result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
+                {
+                    new ActionDefinition(Id, "Refresh", "Refresh List",
+                        Resources.refresh_big,
+                        Resources.refresh,
+                        true, Shortcut.F5)
+                }));
 
                 return result;
             }
@@ -63,6 +85,11 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
 
             try
             {
+                var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
+                    .Select(x => x.GridRow)
+                    .Distinct()
+                    .ToArray();
+
                 switch (action.Name)
                 {
                     case "AddTrustBoundary":
@@ -70,11 +97,6 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                         _model.AddGroup<ITrustBoundary>();
                         break;
                     case "RemoveTrustBoundary":
-                        var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Distinct()
-                            .ToArray();
-
                         if (_currentRow != null)
                         {
                             if ((selected?.Length ?? 0) > 1)
@@ -184,6 +206,33 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                         break;  
                     case "Refresh":
                         LoadModel();
+                        break;
+                    default:
+                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                        {
+                            if ((selected?.Any() ?? false) &&
+                                (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                            {
+                                var identities = selected.Select(x => x.Tag as IIdentity)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (identities.Any())
+                                {
+                                    if (identitiesContextAwareAction.Execute(identities))
+                                    {
+                                        text = identitiesContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                        }
                         break;
                 }
 

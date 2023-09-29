@@ -177,6 +177,8 @@
     </Compile>
     <Compile Include="Actions\ApplyQuestions.cs" />
     <Compile Include="Actions\EnableAnnotations.cs" />
+    <Compile Include="Actions\PanelDisableAnnotations.cs" />
+    <Compile Include="Actions\PanelEnableAnnotations.cs" />
     <Compile Include="Actions\ImportQuestions.cs" />
     <Compile Include="Annotations\AddReviewNoteButtonPropertyViewerBlock.cs" />
     <Compile Include="Annotations\AddHighlightButtonPropertyViewerBlock.cs" />

@@ -93,7 +93,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             if (diagram == null)
                 this.ParentForm?.Close();
             else
-                SetDiagram(1.0f);
+                SetDiagram(Dpi.Factor.Width);
         }
 
         private void AdjustDpiFactor(object obj)

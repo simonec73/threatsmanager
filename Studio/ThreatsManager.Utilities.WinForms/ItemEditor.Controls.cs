@@ -936,13 +936,17 @@ namespace ThreatsManager.Utilities.WinForms
                 int i = 0;
                 foreach (var value in values)
                 {
-                    smallImageList.Images.Add(value.Parent.GetImage(ImageSize.Small));
-                    imageList.Images.Add(value.Parent.GetImage(ImageSize.Medium));
-                    control.Items.Add(new ListViewItem(value.Parent.Name, i)
+                    var parent = value.Parent as IIdentity;
+                    if (parent != null)
                     {
-                        Tag = value
-                    });
-                    i++;
+                        smallImageList.Images.Add(parent.GetImage(ImageSize.Small));
+                        imageList.Images.Add(parent.GetImage(ImageSize.Medium));
+                        control.Items.Add(new ListViewItem(parent.Name, i)
+                        {
+                            Tag = value
+                        });
+                        i++;
+                    }
                 }
                 control.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
