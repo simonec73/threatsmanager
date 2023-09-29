@@ -7,14 +7,14 @@ using System.Linq;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
-namespace ThreatsManager.Extensions.Diagrams
+namespace ThreatsManager.Extensions.Diagrams.StandardMarker
 {
-    public class ThreatEventsMarkerProvider : IMarkerProvider
+    public class StandardMarkerProvider : IMarkerProvider
     {
         private readonly IThreatEventsContainer _container;
-        private List<ThreatEventPanelItem> _items;
+        private List<StandardPanelItem> _items;
 
-        public ThreatEventsMarkerProvider([NotNull] IThreatEventsContainer container) 
+        public StandardMarkerProvider([NotNull] IThreatEventsContainer container)
         {
             _container = container;
             _container.ThreatEventAdded += ThreatAdded;
@@ -168,7 +168,7 @@ namespace ThreatsManager.Extensions.Diagrams
             }
 
             _items = _container?.ThreatEvents?.OrderBy(x => x.Name)
-                .Select(x => new ThreatEventPanelItem(x))?.ToList();
+                .Select(x => new StandardPanelItem(x))?.ToList();
             if (_items?.Any() ?? false)
             {
                 foreach (var item in _items)
@@ -183,7 +183,7 @@ namespace ThreatsManager.Extensions.Diagrams
 
         private void Item_Removed(PanelItem item)
         {
-            if (item is ThreatEventPanelItem threatEventPanelItem)
+            if (item is StandardPanelItem threatEventPanelItem)
             {
                 _items?.Remove(threatEventPanelItem);
                 threatEventPanelItem.Updated -= Item_Updated;

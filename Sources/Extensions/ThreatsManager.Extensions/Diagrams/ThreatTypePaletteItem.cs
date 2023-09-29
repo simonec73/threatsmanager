@@ -6,7 +6,7 @@ namespace ThreatsManager.Extensions.Diagrams
 {
     public class ThreatTypePaletteItem : PaletteItem
     {
-        public ThreatTypePaletteItem(string name) : base(name) 
+        public ThreatTypePaletteItem(string name) : base(name)
         {
             BackColor = ThreatModelManager.ThreatsColor;
             TextColor = Color.White;

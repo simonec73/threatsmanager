@@ -3,11 +3,11 @@ using System.Drawing;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
-namespace ThreatsManager.Extensions.Diagrams
+namespace ThreatsManager.Extensions.Diagrams.StandardMarker
 {
-    public class ThreatEventPanelItem : PanelItem
+    public class StandardPanelItem : PanelItem
     {
-        public ThreatEventPanelItem([NotNull] IThreatEvent threatEvent) : base(threatEvent.Name)
+        public StandardPanelItem([NotNull] IThreatEvent threatEvent) : base(threatEvent.Name)
         {
             BackColor = ThreatModelManager.ThreatsColor;
             TextColor = Color.White;

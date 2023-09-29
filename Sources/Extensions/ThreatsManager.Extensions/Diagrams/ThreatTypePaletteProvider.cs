@@ -3,7 +3,6 @@ using System.Linq;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Utilities;
 using System.Drawing;
 
 namespace ThreatsManager.Extensions.Diagrams
