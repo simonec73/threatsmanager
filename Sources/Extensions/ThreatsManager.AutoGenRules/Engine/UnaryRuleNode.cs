@@ -11,7 +11,7 @@ namespace ThreatsManager.AutoGenRules.Engine
     public abstract class UnaryRuleNode : SelectionRuleNode
     {
         [JsonProperty("child", TypeNameHandling = TypeNameHandling.Objects)]
-        [Child]
+        [Reference]
         private SelectionRuleNode _child { get; set; }
 
         [property: NotRecorded]

@@ -46,7 +46,7 @@ namespace ThreatsManager.AutoGenRules.Engine
         private List<string> _legacyValues { get; set; }
 
         [JsonProperty("items", ItemTypeNameHandling = TypeNameHandling.None, TypeNameHandling = TypeNameHandling.None)]
-        [Child]
+        [Reference]
         private AdvisableCollection<RecordableString> _values { get; set; }
 
         [property:NotRecorded]

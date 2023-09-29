@@ -21,7 +21,7 @@ namespace ThreatsManager.AutoGenRules.Engine
         private List<SelectionRuleNode> _oldChildren { get; set; }
 
         [JsonProperty("nodes", ItemTypeNameHandling = TypeNameHandling.Objects, TypeNameHandling = TypeNameHandling.None)]
-        [Child]
+        [Reference]
         private AdvisableCollection<SelectionRuleNode> _children { get; set; }
 
         protected NaryRuleNode() 
