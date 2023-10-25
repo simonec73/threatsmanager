@@ -254,6 +254,21 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        public void Flip()
+        {
+            using (var scope = UndoRedoManager.OpenScope("Flip direction of the Flow"))
+            {
+                var newSource = _targetId;
+                _targetId = _sourceId;
+                _sourceId = newSource;
+                scope?.Complete();
+            }
+
+            Flipped?.Invoke(this);
+        }
+
+        public event Action<IDataFlow> Flipped;
+
         public IDataFlow Clone([NotNull] IDataFlowsContainer container)
         {
             DataFlow result = null;

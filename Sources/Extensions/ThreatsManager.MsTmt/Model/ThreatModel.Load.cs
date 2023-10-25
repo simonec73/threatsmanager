@@ -62,102 +62,97 @@ namespace ThreatsManager.MsTmt.Model
                 string parent;
                 string name;
                 string description;
-                bool hidden;
                 Bitmap image;
                 ElementType elementType;
                 IEnumerable<XmlNode> attributes;
 
                 foreach (XmlNode node in nodeList)
                 {
-                    if (bool.TryParse(isTemplate ? node.SelectSingleNode("Hidden")?.InnerText :
-                        node.SelectSingleNode("a:Hidden", nsManager)?.InnerText, out hidden) && !hidden)
-                    {
-                        id = isTemplate ? node.SelectSingleNode("ID")?.InnerText :
-                            node.SelectSingleNode("a:Id", nsManager)?.InnerText;
-                        parent = isTemplate ? node.SelectSingleNode("ParentElement")?.InnerText : 
-                            node.SelectSingleNode("a:ParentId", nsManager)?.InnerText;
+                    id = isTemplate ? node.SelectSingleNode("ID")?.InnerText :
+                        node.SelectSingleNode("a:Id", nsManager)?.InnerText;
+                    parent = isTemplate ? node.SelectSingleNode("ParentElement")?.InnerText : 
+                        node.SelectSingleNode("a:ParentId", nsManager)?.InnerText;
 
-                        name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
-                            node.SelectSingleNode("a:Name", nsManager)?.InnerText;
-                        description = isTemplate ? node.SelectSingleNode("Description")?.InnerText.Trim() :
-                            node.SelectSingleNode("a:Description", nsManager)?.InnerText.Trim();
-                        image = null;
-                        var imageText = isTemplate ? node.SelectSingleNode("Image")?.InnerText :
-                            node.SelectSingleNode("a:ImageSource", nsManager)?.InnerText;
-                        if (imageText != null)
+                    name = isTemplate ? node.SelectSingleNode("Name")?.InnerText :
+                        node.SelectSingleNode("a:Name", nsManager)?.InnerText;
+                    description = isTemplate ? node.SelectSingleNode("Description")?.InnerText.Trim() :
+                        node.SelectSingleNode("a:Description", nsManager)?.InnerText.Trim();
+                    image = null;
+                    var imageText = isTemplate ? node.SelectSingleNode("Image")?.InnerText :
+                        node.SelectSingleNode("a:ImageSource", nsManager)?.InnerText;
+                    if (imageText != null)
+                    {
+                        try
                         {
-                            try
+                            var imageBytes = Convert.FromBase64String(imageText);
+                            if ((imageBytes?.Length ?? 0) > 0)
                             {
-                                var imageBytes = Convert.FromBase64String(imageText);
-                                if ((imageBytes?.Length ?? 0) > 0)
+                                using (var stream = new MemoryStream())
                                 {
-                                    using (var stream = new MemoryStream())
-                                    {
-                                        stream.Write(imageBytes, 0, imageBytes.Length);
-                                        stream.Seek(0, SeekOrigin.Begin);
-                                        image = (Bitmap)Image.FromStream(stream);
-                                    }
+                                    stream.Write(imageBytes, 0, imageBytes.Length);
+                                    stream.Seek(0, SeekOrigin.Begin);
+                                    image = (Bitmap)Image.FromStream(stream);
                                 }
                             }
-                            catch (FormatException)
-                            {
-                                // We can ignore: the image is not set correctly.
-                            }
                         }
-
-                        var representation = isTemplate ? node.SelectSingleNode("Representation")?.InnerText :
-                            node.SelectSingleNode("a:Representation", nsManager)?.InnerText;
-                        switch (representation)
+                        catch (FormatException)
                         {
-                            case "Rectangle":
-                                elementType = ElementType.StencilRectangle;
-                                break;
-
-                            case "Ellipse":
-                                elementType = ElementType.StencilEllipse;
-                                break;
-
-                            case "ParallelLines":
-                                elementType = ElementType.StencilParallelLines;
-                                break;
-                            case "Line":
-                                elementType = ElementType.Connector;
-                                break;
-                            case "LineBoundary":
-                                elementType = ElementType.LineBoundary;
-                                break;
-                            case "BorderBoundary":
-                                elementType = ElementType.BorderBoundary;
-                                break;
-                            case "Inherited":
-                                elementType = _elementTypes.Values
-                                    .FirstOrDefault(x => string.CompareOrdinal(parent, x.TypeId) == 0)?.ElementType ?? 
-                                              _flowTypes.Values
-                                    .FirstOrDefault(x => string.CompareOrdinal(parent, x.TypeId) == 0)?.ElementType ??
-                                    ElementType.Undefined;
-                                break;
-                            default:
-                                elementType = ElementType.Undefined;
-                                break;
+                            // We can ignore: the image is not set correctly.
                         }
+                    }
 
-                        attributes = isTemplate ? node.SelectSingleNode("Attributes")?.OfType<XmlNode>().ToArray() :
-                            node.SelectSingleNode("a:Attributes", nsManager)?.OfType<XmlNode>().ToArray();
-                        if (!string.IsNullOrWhiteSpace(id) && elementType != ElementType.Undefined)
+                    var representation = isTemplate ? node.SelectSingleNode("Representation")?.InnerText :
+                        node.SelectSingleNode("a:Representation", nsManager)?.InnerText;
+                    switch (representation)
+                    {
+                        case "Rectangle":
+                            elementType = ElementType.StencilRectangle;
+                            break;
+
+                        case "Ellipse":
+                            elementType = ElementType.StencilEllipse;
+                            break;
+
+                        case "ParallelLines":
+                            elementType = ElementType.StencilParallelLines;
+                            break;
+                        case "Line":
+                            elementType = ElementType.Connector;
+                            break;
+                        case "LineBoundary":
+                            elementType = ElementType.LineBoundary;
+                            break;
+                        case "BorderBoundary":
+                            elementType = ElementType.BorderBoundary;
+                            break;
+                        case "Inherited":
+                            elementType = _elementTypes.Values
+                                .FirstOrDefault(x => string.CompareOrdinal(parent, x.TypeId) == 0)?.ElementType ?? 
+                                            _flowTypes.Values
+                                .FirstOrDefault(x => string.CompareOrdinal(parent, x.TypeId) == 0)?.ElementType ??
+                                ElementType.Undefined;
+                            break;
+                        default:
+                            elementType = ElementType.Undefined;
+                            break;
+                    }
+
+                    attributes = isTemplate ? node.SelectSingleNode("Attributes")?.OfType<XmlNode>().ToArray() :
+                        node.SelectSingleNode("a:Attributes", nsManager)?.OfType<XmlNode>().ToArray();
+                    if (!string.IsNullOrWhiteSpace(id) && elementType != ElementType.Undefined)
+                    {
+                        var elementTypeInfo = new ElementTypeInfo(elementType, 
+                            id, parent, name, description, image, 
+                            attributes, isGeneric, isTemplate);
+                        if (elementType == ElementType.Connector)
                         {
-                            var elementTypeInfo = new ElementTypeInfo(elementType, 
-                                id, parent, name, description, image, 
-                                attributes, isGeneric, isTemplate);
-                            if (elementType == ElementType.Connector)
-                            {
-                                if (!_flowTypes.ContainsKey(id))
-                                    _flowTypes.Add(id, elementTypeInfo);
-                            }
-                            else
-                            {
-                                if (!_elementTypes.ContainsKey(id))
-                                    _elementTypes.Add(id, elementTypeInfo);
-                            }
+                            if (!_flowTypes.ContainsKey(id))
+                                _flowTypes.Add(id, elementTypeInfo);
+                        }
+                        else
+                        {
+                            if (!_elementTypes.ContainsKey(id))
+                                _elementTypes.Add(id, elementTypeInfo);
                         }
                     }
                 }

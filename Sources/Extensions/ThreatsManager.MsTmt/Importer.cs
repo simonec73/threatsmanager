@@ -174,40 +174,7 @@ namespace ThreatsManager.MsTmt
                 var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
                 AddStandardPropertyTypes(baseTBSchema);
 
-                if (HasStandardStructure(elements))
-                {
-                    IPropertySchema schema = null;
-
-                    foreach (var element in elements)
-                    {
-                        switch (element.ElementType)
-                        {
-                            case ElementType.StencilRectangle:
-                                schema = baseEISchema;
-                                break;
-                            case ElementType.StencilEllipse:
-                                schema = basePSchema;
-                                break;
-                            case ElementType.StencilParallelLines:
-                                schema = baseDSSchema;
-                                break;
-                            case ElementType.BorderBoundary:
-                            case ElementType.LineBoundary:
-                                schema = baseTBSchema;
-                                break;
-                        }
-
-                        if (schema != null)
-                        {
-                            var properties = element.Properties?.ToArray();
-                            AddProperties(schema, null, properties);
-                        }
-                    }
-                }
-                else // We need to import all base elements!
-                {
-                    result = ImportEntityTemplates(elements, target);
-                }
+                result = ImportEntityTemplates(elements, target);
             }
 
             return result;
@@ -225,39 +192,7 @@ namespace ThreatsManager.MsTmt
             {
                 var schema = new BaseFlowPropertySchemaManager(target).GetSchema();
                 AddStandardPropertyTypes(schema);
-
-                if (HasStandardStructure(connectors))
-                {
-                    //if (!(schema.PropertyTypes?.Any(x =>
-                    //        string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
-                    //{
-                    //    var outOfScope = schema.AddPropertyType("Out of Scope",
-                    //        PropertyValueType.Boolean);
-                    //    if (outOfScope != null)
-                    //    {
-                    //        outOfScope.Priority = -2;
-                    //    }
-                    //}
-
-                    //if (!(schema.PropertyTypes?.Any(x =>
-                    //        string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
-                    //{
-                    //    var reasonOutOfScope =
-                    //        schema.AddPropertyType("Reason For Out Of Scope",
-                    //            PropertyValueType.String);
-                    //    if (reasonOutOfScope != null)
-                    //        reasonOutOfScope.Priority = -1;
-                    //}
-
-                    foreach (var connector in connectors)
-                    {
-                        AddProperties(schema, null, connector.Properties?.ToArray());
-                    }
-                }
-                else
-                {
-                    result = ImportFlowTemplates(connectors, target);
-                }
+                result = ImportFlowTemplates(connectors, target);
             }
 
             return result;
@@ -1139,15 +1074,6 @@ namespace ThreatsManager.MsTmt
                     }
                 }
             }
-        }
-
-        private bool HasStandardStructure([NotNull] IEnumerable<ElementTypeInfo> elements)
-        {
-            return !(elements.Where(x => x.ElementType == ElementType.StencilRectangle).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.StencilEllipse).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.StencilParallelLines).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.BorderBoundary).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.Connector).Count() > 1);
         }
 
         private bool IsSpecial([Required] string propertyName)

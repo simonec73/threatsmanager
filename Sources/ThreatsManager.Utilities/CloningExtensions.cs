@@ -1,6 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
@@ -152,6 +156,104 @@ namespace ThreatsManager.Utilities
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Clone an Entity converting its type.
+        /// </summary>
+        /// <param name="source">Source entity to be cloned.</param>
+        /// <param name="entityType">Target entity type.</param>
+        /// <param name="template">[Optional] Template to use for the target entity.</param>
+        /// <returns>Cloned and converting entity.</returns>
+        public static IEntity CloneAndConvert(this IEntity source, 
+            EntityType entityType, IEntityTemplate template = null)
+        {
+            IEntity result = null;
+
+            if (source != null && source.Model is IThreatModel model)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Clone and convert Entity"))
+                {
+                    if (template != null && template.EntityType == entityType)
+                    {
+                        switch (entityType)
+                        {
+                            case EntityType.ExternalInteractor:
+                                result = model.AddEntity<IExternalInteractor>(source.Name, template);
+                                break;
+                            case EntityType.Process:
+                                result = model.AddEntity<IProcess>(source.Name, template);
+                                break;
+                            case EntityType.DataStore:
+                                result = model.AddEntity<IDataStore>(source.Name, template);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (entityType)
+                        {
+                            case EntityType.ExternalInteractor:
+                                result = model.AddEntity<IExternalInteractor>(source.Name);
+                                break;
+                            case EntityType.Process:
+                                result = model.AddEntity<IProcess>(source.Name);
+                                break;
+                            case EntityType.DataStore:
+                                result = model.AddEntity<IDataStore>(source.Name);
+                                break;
+                        }
+                    }
+
+                    if (result != null)
+                    {
+                        result.Description = source.Description;
+                        if (source.Parent != null)
+                            result.SetParent(source.Parent);
+                        result.BigImage = source.BigImage;
+                        result.Image = source.Image;
+                        result.SmallImage = source.SmallImage;
+
+                        var threatEvents = source.ThreatEvents?.ToArray();
+                        if (threatEvents?.Any() ?? false)
+                        {
+                            foreach (var threatEvent in threatEvents)
+                            {
+                                var newTe = result.AddThreatEvent(threatEvent.ThreatType);
+                                if (newTe != null)
+                                {
+                                    newTe.Name = threatEvent.Name;
+                                    newTe.Description = threatEvent.Description;
+
+                                    // TODO: copy threat event data.
+                                }
+                            }
+                        }
+
+                        var vulnerabilities = source.Vulnerabilities?.ToArray();
+                        if (vulnerabilities?.Any() ?? false)
+                        {
+                            foreach (var vulnerability in vulnerabilities)
+                            {
+                                var newV = result.AddVulnerability(vulnerability.Weakness);
+                                if (newV != null)
+                                {
+                                    newV.Name = vulnerability.Name;
+                                    newV.Description = vulnerability.Description;
+
+                                    // TODO: copy vulnerability details.
+                                }
+                            }
+                        }
+
+                        // TODO: copy properties ensuring that their compatibility with the target object.
+
+                        scope?.Complete();
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

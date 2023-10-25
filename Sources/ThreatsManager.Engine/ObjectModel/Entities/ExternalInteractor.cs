@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
@@ -329,6 +330,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
+        }
+
+        public IEntity CopyAndConvert(IEntityTemplate template = null)
+        {
+            return CopyAndConvert(EntityType.ExternalInteractor, template);
+        }
+
+        public IEntity CopyAndConvert(EntityType entityType, IEntityTemplate template = null)
+        {
+            return this.CloneAndConvert(entityType, template);
         }
         #endregion
     }

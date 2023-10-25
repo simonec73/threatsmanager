@@ -47,6 +47,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         void ResetTemplate();
 
         /// <summary>
+        /// Changes the direction of the Flow.
+        /// </summary>
+        void Flip();
+
+        /// <summary>
+        /// Event raised when the direction of the Flow is changed.
+        /// </summary>
+        event Action<IDataFlow> Flipped;
+
+        /// <summary>
         /// Creates a duplicate of the current Data Flow and attaches it to the Container passed as argument.
         /// </summary>
         /// <param name="container">Destination container.</param>

@@ -330,6 +330,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             return result;
         }
+
+        public IEntity CopyAndConvert(IEntityTemplate template = null)
+        {
+            return CopyAndConvert(EntityType.DataStore, template);
+        }
+
+        public IEntity CopyAndConvert(EntityType entityType, IEntityTemplate template = null)
+        {
+            return this.CloneAndConvert(entityType, template);
+        }
         #endregion
     }
 }
