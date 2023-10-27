@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Configuration;
 using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Extensions.Panels.Configuration;
 using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
@@ -160,7 +158,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                                     if (group.Identity is IGroup groupIdentity)
                                     {
                                         var groupNode = GetGroup(groupIdentity);
-                                        groupNode.RefreshBorder();
+                                        groupNode?.RefreshBorder();
                                     }
                                 }
                             }
@@ -197,7 +195,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             float result;
 
             if (diagram.Dpi.HasValue)
-                result = diagram.Dpi.Value / 100;
+                result = diagram.Dpi.Value / 100f;
             else
             {
                 var schemaManager = new DiagramPropertySchemaManager(diagram.Model);

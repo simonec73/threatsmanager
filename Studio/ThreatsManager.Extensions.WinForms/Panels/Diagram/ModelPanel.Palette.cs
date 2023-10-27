@@ -108,8 +108,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             if (shape != null)
             {
                 var node = AddShape(shape);
-                _graph.Selection.Clear();
-                _graph.Selection.Add(node);
+                if (node != null)
+                {
+                    _graph.Selection.Clear();
+                    _graph.Selection.Add(node);
+                }
             }
         }
 
@@ -125,8 +128,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (graphGroup?.GroupShape?.Identity is IGroup group)
                             process.SetParent(group);
                         var node = AddShape(_diagram.AddShape(process, point));
-                        _graph.Selection.Clear();
-                        _graph.Selection.Add(node);
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
                         scope?.Complete();
                     }
                 }
@@ -145,8 +151,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (graphGroup?.GroupShape?.Identity is IGroup group)
                             dataStore.SetParent(group);
                         var node = AddShape(_diagram.AddShape(dataStore, point));
-                        _graph.Selection.Clear();
-                        _graph.Selection.Add(node);
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
                         scope?.Complete();
                     }
                 }
@@ -165,8 +174,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (graphGroup?.GroupShape?.Identity is IGroup group)
                             trustBoundary.SetParent(group);
                         var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
-                        _graph.Selection.Clear();
-                        _graph.Selection.Add(node);
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
                         scope?.Complete();
                     }
                 }
@@ -195,8 +207,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (entity is IGroupElement groupElement && graphGroup?.GroupShape?.Identity is IGroup group)
                             groupElement.SetParent(group);
                         var node = AddShape(_diagram.AddShape(entity, point));
-                        _graph.Selection.Clear();
-                        _graph.Selection.Add(node);
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
                         scope?.Complete();
                     }
                     else
@@ -208,8 +223,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             if (graphGroup?.GroupShape?.Identity is IGroup group)
                                 trustBoundary.SetParent(group);
                             var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
-                            _graph.Selection.Clear();
-                            _graph.Selection.Add(node);
+                            if (node != null)
+                            {
+                                _graph.Selection.Clear();
+                                _graph.Selection.Add(node);
+                            }
                             scope?.Complete();
                         }
                     }

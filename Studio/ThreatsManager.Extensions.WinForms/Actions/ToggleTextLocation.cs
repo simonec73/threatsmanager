@@ -17,7 +17,7 @@ namespace ThreatsManager.Extensions.Actions
     {
         public Scope Scope => Scope.Link;
         public string Label => "Toggle Text Location";
-        public string Group => "Text";
+        public string Group => "Flow";
         public Bitmap Icon => null;
         public Bitmap SmallIcon => null;
         public Shortcut Shortcut => Shortcut.None;

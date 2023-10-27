@@ -17,6 +17,7 @@ using ThreatsManager.Engine.Config;
 using ThreatsManager.Interfaces.Exceptions;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Exceptions;
 
@@ -275,6 +276,10 @@ namespace ThreatsManager
 
             if (model != null)
             {
+                while (!CheckLoops(model))
+                {
+                }
+
                 result = OpenOutcome.OK;
                 _currentLocationType = locationType;
                 _currentLocation = location;
@@ -327,6 +332,84 @@ namespace ThreatsManager
             }
 
             return result;
+        }
+
+        private bool CheckLoops([NotNull] IThreatModel model)
+        {
+            bool result = true;
+
+            var groups = model.Groups?.ToArray();
+            if (groups?.Any() ?? false)
+            {
+                foreach (var current in groups)
+                {
+                    if (DefinesLoop(current, groups, out var cycle))
+                    {
+                        result = false;
+                        HandleLoop(model, current, cycle);
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool DefinesLoop(IGroup group, IEnumerable<IGroup> groups, out IEnumerable<IGroup> cycle)
+        {
+            var result = false;
+            cycle = null;
+
+            var seen = new List<IGroup>();
+            seen.Add(group);
+
+            var current = group;
+
+            while (current != null)
+            {
+                if (current is IGroupElement child)
+                {
+                    current = child.Parent;
+
+                    if (current != null)
+                    {
+                        if (!seen.Contains(current))
+                        {
+                            seen.Add(current);
+                        }
+                        else
+                        {
+                            result = true;
+                            cycle = seen;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        [Dispatched]
+        private void HandleLoop(IThreatModel model, IGroup group, IEnumerable<IGroup> cycle)
+        {
+            MessageBox.Show(Form.ActiveForm,
+                $"The model has an infinite loop started with Trust Boundary '{group.Name}'.\nThreats Manager Studio will remove all the affected Trust Boundaries to address the issue.\nYou will need to adjust the Threat Model.",
+                "Loop found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            foreach (var curr in cycle)
+            {
+                var children = model.Entities?.Where(x => x.ParentId == curr.Id).ToArray();
+                if (children?.Any() ?? false)
+                {
+                    foreach (var child in children)
+                    {
+                        child.SetParent(null);
+                    }
+                }
+
+                model.RemoveGroup(curr.Id);
+            }
         }
         #endregion
 

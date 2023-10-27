@@ -10,6 +10,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
@@ -228,6 +229,31 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                                     else
                                     {
                                         text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if ((selected?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & SupportedScopes) != 0)
+                            {
+                                var containers = selected.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (containers.Any())
+                                {
+                                    if (pcContextAwareAction.Execute(containers))
+                                    {
+                                        text = pcContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{pcContextAwareAction.Label} failed.";
                                         warning = true;
                                     }
                                 }

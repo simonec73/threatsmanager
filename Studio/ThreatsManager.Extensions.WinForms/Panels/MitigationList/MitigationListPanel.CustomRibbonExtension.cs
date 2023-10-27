@@ -9,6 +9,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -231,29 +232,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                     default:
                         if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
                         {
-                            if ((selectedTEM?.Any() ?? false) &&
-                                (identitiesContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
-                            {
-                                var identities = selectedTEM.Select(x => x.Tag as IIdentity)
-                                    .Where(x => x != null)
-                                    .ToArray();
-
-                                if (identities.Any())
-                                {
-                                    if (identitiesContextAwareAction.Execute(identities))
-                                    {
-                                        text = identitiesContextAwareAction.Label;
-                                        _properties.Item = null;
-                                        _properties.Item = _currentRow?.Tag;
-                                    }
-                                    else
-                                    {
-                                        text = $"{identitiesContextAwareAction.Label} failed.";
-                                        warning = true;
-                                    }
-                                }
-                            }
-                            else if ((selectedTE?.Any() ?? false) &&
+                            if ((selectedTE?.Any() ?? false) &&
                                 (identitiesContextAwareAction.Scope & Scope.ThreatEvent) != 0)
                             {
                                 var identities = selectedTE.Select(x => x.Tag as IIdentity)
@@ -275,7 +254,54 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                                     }
                                 }
                             }
+                            
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if ((selectedTEM?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
+                            {
+                                var containers = selectedTEM.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
 
+                                if (containers.Any())
+                                {
+                                    if (pcContextAwareAction.Execute(containers))
+                                    {
+                                        text = pcContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{pcContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                            else if ((selectedTE?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEvent) != 0)
+                            {
+                                var containers = selectedTE.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (containers.Any())
+                                {
+                                    if (pcContextAwareAction.Execute(containers))
+                                    {
+                                        text = pcContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{pcContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
                         }
                         break;
                 }

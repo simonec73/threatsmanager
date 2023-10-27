@@ -76,7 +76,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                 result = node;
             }
-            else if (shape is IGroupShape groupShape)
+            else if (shape is IGroupShape groupShape && !_groups.ContainsKey(groupShape.AssociatedId))
             {
                 var group = new GraphGroup(groupShape, dpiFactor, _markerSize);
                 if (_actions != null)
@@ -93,7 +93,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 result = group;
             }
 
-            if (shape.Identity is IThreatEventsContainer container)
+            if (result != null && shape.Identity is IThreatEventsContainer container)
             {
                 container.ThreatEventAdded += OnThreatEventAddedToShape;
                 container.ThreatEventRemoved += OnThreatEventRemovedFromShape;

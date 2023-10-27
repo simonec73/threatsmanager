@@ -2141,11 +2141,6 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }
-                                        else if (isTEMitigation &&
-                                            (identitiesContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
-                                        {
-                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
-                                        }
                                         else if (isScenario &&
                                             (identitiesContextAwareAction.Scope & Scope.ThreatEventScenario) != 0)
                                         {
@@ -2156,8 +2151,40 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                                    {
+                                        if (isThreatType &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatType) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isThreatEvent &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatEvent) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isTEMitigation &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isScenario &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatEventScenario) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isVulnerability &&
+                                            (pcContextAwareAction.Scope & Scope.Vulnerability) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
                                         else if (isVMitigation &&
-                                            (identitiesContextAwareAction.Scope & Scope.VulnerabilityMitigation) != 0)
+                                            (pcContextAwareAction.Scope & Scope.VulnerabilityMitigation) != 0)
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }
@@ -2166,6 +2193,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                                             ChangeCustomActionStatus?.Invoke(action.Name, false);
                                         }
                                     }
+
                                 }
                             }
                         }

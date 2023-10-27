@@ -9,6 +9,7 @@ using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -427,29 +428,53 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                                     }
                                 }
                             }
-                            else if ((selectedM?.Any() ?? false) &&
-                                (identitiesContextAwareAction.Scope & Interfaces.Scope.ThreatTypeMitigation) != 0)
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if ((selectedTT?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Interfaces.Scope.ThreatType) != 0)
                             {
-                                var identities = selectedM.Select(x => x.Tag as IIdentity)
+                                var containers = selectedTT.Select(x => x.Tag as IPropertiesContainer)
                                     .Where(x => x != null)
                                     .ToArray();
 
-                                if (identities.Any())
+                                if (containers.Any())
                                 {
-                                    if (identitiesContextAwareAction.Execute(identities))
+                                    if (pcContextAwareAction.Execute(containers))
                                     {
-                                        text = identitiesContextAwareAction.Label;
+                                        text = pcContextAwareAction.Label;
                                         _properties.Item = null;
                                         _properties.Item = _currentRow?.Tag;
                                     }
                                     else
                                     {
-                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        text = $"{pcContextAwareAction.Label} failed.";
                                         warning = true;
                                     }
                                 }
                             }
+                            else if ((selectedM?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Interfaces.Scope.ThreatTypeMitigation) != 0)
+                            {
+                                var containers = selectedM.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
 
+                                if (containers.Any())
+                                {
+                                    if (pcContextAwareAction.Execute(containers))
+                                    {
+                                        text = pcContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{pcContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
                         }
                         break;
                 }

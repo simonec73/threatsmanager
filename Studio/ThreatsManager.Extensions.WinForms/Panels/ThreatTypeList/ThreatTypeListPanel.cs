@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
@@ -693,8 +694,20 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                                    {
+                                        if (isThreatType &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatType) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
                                         else if (isTTMitigation &&
-                                            (identitiesContextAwareAction.Scope & Scope.ThreatTypeMitigation) != 0)
+                                            (pcContextAwareAction.Scope & Scope.ThreatTypeMitigation) != 0)
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }

@@ -204,6 +204,13 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                                 identityContextAwareAction.Execute(_model);
                             }
                         }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if ((pcContextAwareAction.Scope & Scope.ThreatModel) != 0)
+                            {
+                                pcContextAwareAction.Execute(_model);
+                            }
+                        }
                         break;
                 }
 

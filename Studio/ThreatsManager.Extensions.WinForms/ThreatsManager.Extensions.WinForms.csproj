@@ -135,6 +135,7 @@
     <Compile Include="Actions\ApplySeverityToThreatEvents.cs" />
     <Compile Include="Actions\ApplyStrengthToMitigations.cs" />
     <Compile Include="Actions\ApplyStatusToMitigations.cs" />
+    <Compile Include="Actions\ChangeFlowDirection.cs" />
     <Compile Include="Actions\ChangeEntityType.cs" />
     <Compile Include="Actions\DebugUndoRedo.cs" />
     <Compile Include="Actions\ChangeTemplate.cs" />

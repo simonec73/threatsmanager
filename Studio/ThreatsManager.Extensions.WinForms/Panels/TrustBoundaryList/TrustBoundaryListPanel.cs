@@ -437,6 +437,12 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                                     {
                                         ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
                                     }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction &&
+                                        (pcContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+
                                 }
                             }
                         }

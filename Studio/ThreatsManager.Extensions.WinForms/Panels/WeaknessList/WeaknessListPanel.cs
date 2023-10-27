@@ -687,8 +687,20 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                                    {
+                                        if (isWeakness &&
+                                            (pcContextAwareAction.Scope & Scope.Weakness) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
                                         else if (isWMitigation &&
-                                            (identitiesContextAwareAction.Scope & Scope.WeaknessMitigation) != 0)
+                                            (pcContextAwareAction.Scope & Scope.WeaknessMitigation) != 0)
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }

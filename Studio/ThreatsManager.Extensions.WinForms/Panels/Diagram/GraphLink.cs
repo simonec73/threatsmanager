@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
+using Newtonsoft.Json.Linq;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Schemas;
@@ -81,8 +82,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 ((INotifyPropertyChanged)flow).PropertyChanged -= OnPropertyChanged;
                 _link.PropertyValueChanged -= OnLinkPropertyValueChanged;
-                _link.DataFlow.ThreatEventAdded -= ThreatEventsChanged;
-                _link.DataFlow.ThreatEventRemoved -= ThreatEventsChanged;
+                flow.ThreatEventAdded -= ThreatEventsChanged;
+                flow.ThreatEventRemoved -= ThreatEventsChanged;
+                flow.Flipped -= Flipped;
                 _threatsMarker.PanelItemClicked -= OnPanelItemClicked;
                 _threatsMarker.Dispose();
             }
@@ -90,27 +92,40 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void AssignLink(ILink link, int markerSize, float dpiFactor = 1.0f)
         {
-            _link = link;
-            if (MidLabel is GraphText textControl)
+            if (link != null && link.DataFlow is IDataFlow flow)
             {
-                textControl.Copyable = true;
-                textControl.Movable = false;
-                textControl.Text = _link.DataFlow.Name;
+                if (_link != null && _link.DataFlow is IDataFlow oldFlow)
+                {
+                    ((INotifyPropertyChanged)oldFlow).PropertyChanged -= OnPropertyChanged;
+                    _link.PropertyValueChanged -= OnLinkPropertyValueChanged;
+                    oldFlow.ThreatEventAdded -= ThreatEventsChanged;
+                    oldFlow.ThreatEventRemoved -= ThreatEventsChanged;
+                    oldFlow.Flipped -= Flipped;
+                }
+
+                _link = link;
+                if (MidLabel is GraphText textControl)
+                {
+                    textControl.Copyable = true;
+                    textControl.Movable = false;
+                    textControl.Text = _link.DataFlow.Name;
+                }
+                ((INotifyPropertyChanged)_link.DataFlow).PropertyChanged += OnPropertyChanged;
+                _link.PropertyValueChanged += OnLinkPropertyValueChanged;
+
+                _threatsMarker = new AssociatedPanelItemMarker(_link.DataFlow);
+                Add(_threatsMarker);
+
+                _threatsMarker.PanelItemClicked += OnPanelItemClicked;
+                flow.ThreatEventAdded += ThreatEventsChanged;
+                flow.ThreatEventRemoved += ThreatEventsChanged;
+                flow.Flipped += Flipped;
+
+                _markerSize = markerSize;
+                UpdateParameters(markerSize, dpiFactor);
+
+                RefreshFlowType();
             }
-            ((INotifyPropertyChanged)_link.DataFlow).PropertyChanged += OnPropertyChanged;
-            _link.PropertyValueChanged += OnLinkPropertyValueChanged;
-
-            _threatsMarker = new AssociatedPanelItemMarker(_link.DataFlow);
-            Add(_threatsMarker);
-
-            _threatsMarker.PanelItemClicked += OnPanelItemClicked;
-            _link.DataFlow.ThreatEventAdded += ThreatEventsChanged;
-            _link.DataFlow.ThreatEventRemoved += ThreatEventsChanged;
-
-            _markerSize = markerSize;
-            UpdateParameters(markerSize, dpiFactor);
-
-            RefreshFlowType();
         }
 
         public void UpdateParameters([Range(8, 128)] int markerSize, [StrictlyPositive] float dpiFactor = 1.0f)
@@ -218,6 +233,42 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private void ThreatEventsChanged(IThreatEventsContainer arg1, IThreatEvent arg2)
         {
             _threatsMarker.Visible = arg1.ThreatEvents?.Any() ?? false;
+        }
+
+        private void Flipped(IDataFlow flow)
+        {
+            var realLink = RealLink as GraphRealLink;
+
+            if (realLink != null)
+            {
+                var pointCount = realLink.PointsCount;
+
+                if (pointCount > 0)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Flip direction in diagram"))
+                    {
+                        var schemaManager = new DiagramPropertySchemaManager(_link.DataFlow.Model);
+                        var pointsPropertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
+                        var property = _link.GetProperty(pointsPropertyType) ??
+                                       _link.AddProperty(pointsPropertyType, null);
+
+                        if (property is IPropertyArray propertyArray)
+                        {
+                            var list = new List<string>();
+                            for (int i = pointCount - 1; i >= 0; i--)
+                            {
+                                var point = realLink.GetPoint(i);
+                                list.Add(point.X.ToString(NumberFormatInfo.InvariantInfo));
+                                list.Add(point.Y.ToString(NumberFormatInfo.InvariantInfo));
+                            }
+                            propertyArray.Value = list;
+                            scope?.Complete();
+                        }
+                    }
+                }
+            }
+
+            AssignLink(_link, _markerSize);
         }
 
         public string Text

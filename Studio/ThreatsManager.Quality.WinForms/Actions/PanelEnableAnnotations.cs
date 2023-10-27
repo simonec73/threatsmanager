@@ -37,7 +37,7 @@ namespace ThreatsManager.Quality.Actions
 
         public IEnumerable<string> SupportedContexts => null;
 
-        public IEnumerable<string> UnsupportedContexts => null;
+        public IEnumerable<string> UnsupportedContexts => new[] { "Roadmap" };
 
         public bool IsVisible(object item)
         {

@@ -539,7 +539,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 RecursivelyAddShapes(shapes, links, shape);
             }
 
-            return shapes.Any();
+            return shapes.Any() || links.Any();
         }
 
         private void RecursivelyAddShapes([NotNull] List<IShape> shapes, [NotNull] List<ILink> links, 

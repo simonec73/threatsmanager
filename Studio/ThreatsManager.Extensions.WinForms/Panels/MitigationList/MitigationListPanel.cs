@@ -957,8 +957,20 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                                    {
+                                        if (isMitigation &&
+                                            (pcContextAwareAction.Scope & Scope.Mitigation) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
                                         else if (isThreatEvent &&
-                                            (identitiesContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
+                                            (pcContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
                                         {
                                             ChangeCustomActionStatus?.Invoke(action.Name, true);
                                         }

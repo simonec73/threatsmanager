@@ -826,11 +826,6 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             {
                                 ProcessIdentities(identitiesContextAwareAction, selectedS, ref text, ref warning);
                             }
-                            else if (currentTEM != null && (selectedTEM?.Any() ?? false) &&
-                                (identitiesContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
-                            {
-                                ProcessIdentities(identitiesContextAwareAction, selectedTEM, ref text, ref warning);
-                            }
                             else if (currentTE != null && (selectedTE?.Any() ?? false) &&
                                 (identitiesContextAwareAction.Scope & Scope.ThreatEvent) != 0)
                             {
@@ -846,12 +841,39 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             {
                                 ProcessIdentities(identitiesContextAwareAction, selectedV, ref text, ref warning);
                             }
-                            else if (currentVM != null && (selectedVM?.Any() ?? false) &&
-                                (identitiesContextAwareAction.Scope & Scope.VulnerabilityMitigation) != 0)
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if (currentS != null && (selectedS?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEventScenario) != 0)
                             {
-                                ProcessIdentities(identitiesContextAwareAction, selectedVM, ref text, ref warning);
+                                ProcessContainers(pcContextAwareAction, selectedS, ref text, ref warning);
                             }
-
+                            else if (currentTEM != null && (selectedTEM?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
+                            {
+                                ProcessContainers(pcContextAwareAction, selectedTEM, ref text, ref warning);
+                            }
+                            else if (currentTE != null && (selectedTE?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEvent) != 0)
+                            {
+                                ProcessContainers(pcContextAwareAction, selectedTE, ref text, ref warning);
+                            }
+                            else if (currentTT != null && (selectedTT?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatType) != 0)
+                            {
+                                ProcessContainers(pcContextAwareAction, selectedTT, ref text, ref warning);
+                            }
+                            else if (currentV != null && (selectedV?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.Vulnerability) != 0)
+                            {
+                                ProcessContainers(pcContextAwareAction, selectedV, ref text, ref warning);
+                            }
+                            else if (currentVM != null && (selectedVM?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.VulnerabilityMitigation) != 0)
+                            {
+                                ProcessContainers(pcContextAwareAction, selectedVM, ref text, ref warning);
+                            }
                         }
                         break;
                 }
@@ -888,6 +910,31 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 else
                 {
                     text = $"{identitiesContextAwareAction.Label} failed.";
+                    warning = true;
+                }
+            }
+        }
+
+        private void ProcessContainers(IPropertiesContainersContextAwareAction contextAwareAction,
+                                       IEnumerable<GridRow> selectedRows,
+                                       ref string text,
+                                       ref bool warning)
+        {
+            var identities = selectedRows?.Select(x => x.Tag as IPropertiesContainer)
+                .Where(x => x != null)
+                .ToArray();
+
+            if (identities?.Any() ?? false)
+            {
+                if (contextAwareAction.Execute(identities))
+                {
+                    text = contextAwareAction.Label;
+                    _properties.Item = null;
+                    _properties.Item = _currentRow?.Tag;
+                }
+                else
+                {
+                    text = $"{contextAwareAction.Label} failed.";
                     warning = true;
                 }
             }
