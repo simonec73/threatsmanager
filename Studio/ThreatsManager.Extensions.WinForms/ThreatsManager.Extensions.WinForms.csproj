@@ -1421,35 +1421,31 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.1938.49</Version>
+      <Version>1.0.2088.41</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="PostSharp">
-      <Version>2023.0.7</Version>
+      <Version>2023.0.8</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>2023.0.7</Version>
+      <Version>2023.0.8</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>2023.0.7</Version>
+      <Version>2023.0.8</Version>
     </PackageReference>
     <PackageReference Include="Svg">
       <Version>3.4.4</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.DocIO.WinForms">
-      <Version>22.2.10</Version>
+      <Version>23.1.42</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.XlsIO.WinForms">
-      <Version>22.2.10</Version>
+      <Version>23.1.42</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThreatsManager.AutoThreatGeneration.WinForms\ThreatsManager.AutoThreatGeneration.WinForms.csproj">
-      <Project>{36F9BD7B-0A5D-43E5-9069-3731FDB96252}</Project>
-      <Name>ThreatsManager.AutoThreatGeneration.WinForms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ThreatsManager.Extensions.Word\ThreatsManager.Extensions.Word.csproj">
       <Project>{ce23c9bf-5841-412f-a20c-b0b96bb12686}</Project>
       <Name>ThreatsManager.Extensions.Word</Name>

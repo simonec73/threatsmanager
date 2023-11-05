@@ -319,12 +319,10 @@
             // _smartSaveHigh
             // 
             this._smartSaveHigh.AutoSize = true;
-            this._smartSaveHigh.Checked = true;
             this._smartSaveHigh.Location = new System.Drawing.Point(57, 90);
             this._smartSaveHigh.Name = "_smartSaveHigh";
             this._smartSaveHigh.Size = new System.Drawing.Size(348, 17);
             this._smartSaveHigh.TabIndex = 7;
-            this._smartSaveHigh.TabStop = true;
             this._smartSaveHigh.Text = "High Frequency: automatic save every 3 minutes, maintains 5 saves.";
             this._smartSaveHigh.UseVisualStyleBackColor = true;
             // 
@@ -349,10 +347,12 @@
             // _smartSaveOff
             // 
             this._smartSaveOff.AutoSize = true;
+            this._smartSaveOff.Checked = true;
             this._smartSaveOff.Location = new System.Drawing.Point(57, 44);
             this._smartSaveOff.Name = "_smartSaveOff";
             this._smartSaveOff.Size = new System.Drawing.Size(97, 17);
             this._smartSaveOff.TabIndex = 0;
+            this._smartSaveOff.TabStop = true;
             this._smartSaveOff.Text = "No Smart Save";
             this._smartSaveOff.UseVisualStyleBackColor = true;
             // 

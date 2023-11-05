@@ -21,7 +21,7 @@ namespace ThreatsManager.Interfaces.Extensions.Actions
         /// Specifies the unsupported contexts.
         /// </summary>
         /// <remarks>If not configured, the action is visible for all contexts specified with <see cref="SupportedContexts"/>.<para/>
-        /// If configured, then it is visible for those contexts specified with <see cref="SupportedContexts", with the exception of those specified here./>.<para/>
+        /// If configured, then it is visible for those contexts specified with <see cref="SupportedContexts"/>, with the exception of those specified here.<para/>
         /// For example, the Diagram panel is identified by "Diagram", while the Roadmap panel by "Roadmap".<para/>
         /// If a context is included in <see cref="SupportedContexts"/> and here, it is considered as unsupported.</remarks>
         IEnumerable<string> UnsupportedContexts { get; }

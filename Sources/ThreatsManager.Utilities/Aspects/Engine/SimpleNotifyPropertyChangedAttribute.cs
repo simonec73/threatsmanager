@@ -1,8 +1,11 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using System.ComponentModel;
+using static PostSharp.Patterns.Recording.RecordableAttribute;
 
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
@@ -10,6 +13,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
     /// Aspect used to introduce automatic notification of property updates.
     /// </summary>
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(RecordableAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(SetRecordableFieldAspect))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(AggregatableAttribute))]
     public class SimpleNotifyPropertyChangedAttribute : LocationInterceptionAspect
     {
         /// <summary>
