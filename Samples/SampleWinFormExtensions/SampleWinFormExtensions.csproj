@@ -47,26 +47,26 @@
       <HintPath>..\packages\Fizzler.1.3.0\lib\netstandard2.0\Fizzler.dll</HintPath>
     </Reference>
     <Reference Include="Keyoti.RapidSpell.NET4, Version=6.2.22.214, Culture=neutral, PublicKeyToken=58d9fd2e9ec4dc0e, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.2.0.8\lib\net481\Keyoti.RapidSpell.NET4.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.2.1.0\lib\net481\Keyoti.RapidSpell.NET4.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Redist.2023.0.7\lib\net45\PostSharp.dll</HintPath>
+    <Reference Include="PostSharp, Version=2023.0.8.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Redist.2023.0.8\lib\net45\PostSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Aggregation, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.2023.0.7\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=2023.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Aggregation.Redist.2023.0.8\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Common, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.2023.0.7\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Common, Version=2023.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Common.Redist.2023.0.8\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Model, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.2023.0.7\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Model, Version=2023.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Model.Redist.2023.0.8\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Threading, Version=2023.0.7.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.2023.0.7\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Threading, Version=2023.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>..\packages\PostSharp.Patterns.Threading.Redist.2023.0.8\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
     </Reference>
     <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.3.4.4\lib\net462\Svg.dll</HintPath>
@@ -81,6 +81,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Drawing.Common.7.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.7.0.0\lib\net462\System.IO.Packaging.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
@@ -103,24 +106,25 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ThreatsManager.AutoGenRules, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.2.0.8\lib\net481\ThreatsManager.AutoGenRules.dll</HintPath>
+    <Reference Include="ThreatsManager.AutoGenRules, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.2.1.0\lib\net481\ThreatsManager.AutoGenRules.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Extensions.Client, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Extensions.Client.2.0.8\lib\net481\ThreatsManager.Extensions.Client.dll</HintPath>
+    <Reference Include="ThreatsManager.Extensions.Client, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Extensions.Client.2.1.0\lib\net481\ThreatsManager.Extensions.Client.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Icons, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.0.8\lib\net481\ThreatsManager.Icons.dll</HintPath>
+    <Reference Include="ThreatsManager.Icons, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.2.1.0\lib\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Interfaces.2.0.8\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
+    <Reference Include="ThreatsManager.Interfaces, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Interfaces.2.1.0\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.0.8\lib\net481\ThreatsManager.Utilities.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.2.1.0\lib\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities.WinForms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.2.0.8\lib\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities.WinForms, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.WinForms.2.1.0\lib\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\CreateAssetInDiagram.cs" />
