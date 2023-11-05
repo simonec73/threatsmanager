@@ -9,6 +9,7 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -38,6 +39,9 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
  
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<DataFlowListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -56,8 +60,62 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
             _model.ChildRemoved += ModelChildRemoved;
             _model.LinkAdded += LinkAdded;
             _model.LinkRemoved += LinkRemoved;
+            
+            if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+            {
+                undoable.Undone += ModelUndone;
+            }
 
             LoadModel();
+        }
+
+        private void ModelUndone(object item, bool removed)
+        {
+            if (removed)
+            {
+                this.ParentForm?.Close();
+            }
+            else
+            {
+                if (item is IThreatModel model)
+                {
+                    var flows = model.DataFlows?.ToArray();
+                    var list = new List<IDataFlow>();
+                    if (flows?.Any() ?? false)
+                    {
+                        list.AddRange(flows);
+                    }
+
+                    var grid = _grid.PrimaryGrid;
+                    var rows = grid.Rows.OfType<GridRow>().ToArray();
+                    if (rows.Any())
+                    {
+                        foreach (var row in rows)
+                        {
+                            if (row.Tag is IDataFlow flow)
+                            {
+                                if (model.GetDataFlow(flow.Id) == null)
+                                {
+                                    RemoveEventSubscriptions(row);
+                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                }
+                                else
+                                {
+                                    list.Remove(flow);
+                                }
+                            }
+                        }
+                    }
+
+                    if (list.Any())
+                    {
+                        foreach (var i in list)
+                        {
+                            AddGridRow(i, grid);
+                        }
+                    }
+                }
+            }
         }
 
         private void ModelChildRemoved(IIdentity identity)
@@ -239,6 +297,11 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
             }
         }
 
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
+
         private void AddGridRow([NotNull] IDataFlow dataFlow, [NotNull] GridPanel panel)
         {
             var row = new GridRow(
@@ -270,6 +333,40 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
             AddSuperTooltipProvider(dataFlow.Target, row.Cells[2]);
 
             panel.Rows.Add(row);
+
+            if (dataFlow is IUndoable undoable && undoable.IsUndoEnabled)
+                undoable.Undone += FlowUndone;
+        }
+
+        private void FlowUndone(object item, bool removed)
+        {
+            if (item is IDataFlow flow)
+            {
+                var row = GetRow(flow);
+                if (row != null)
+                {
+                    if (removed)
+                    {
+                        RemoveEventSubscriptions(row);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _loading = true;
+                            row.Cells["Name"].Value = flow.Name;
+                            row.Cells["Source"].Value = flow.Source?.Name ?? string.Empty;
+                            row.Cells["Target"].Value = flow.Target?.Name ?? string.Empty;
+                            row.Cells["FlowType"].Value = flow.FlowType.GetEnumLabel();
+                        }
+                        finally
+                        {
+                            _loading = false;
+                        }
+                    }
+                }
+            }
         }
 
         private void RemoveEventSubscriptions()
@@ -296,6 +393,8 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                 }
                 for (int i = 0; i < row.Cells.Count; i++)
                     row.Cells[i].PropertyChanged -= OnPropertyChanged;
+                if (dataFlow is IUndoable undoable && undoable.IsUndoEnabled)
+                    undoable.Undone -= FlowUndone;
                 RemoveSuperTooltipProvider(row.Cells[0]);
                 RemoveSuperTooltipProvider(row.Cells[1]);
                 RemoveSuperTooltipProvider(row.Cells[2]);
@@ -554,11 +653,46 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                 _properties.Item = dataFlow;
                 ChangeCustomActionStatus?.Invoke("RemoveDataFlow", true);
                 ChangeCustomActionStatus?.Invoke("FindDataFlow", true);
+                ChangeActionsStatus(true);
             }
             else
             {
                 ChangeCustomActionStatus?.Invoke("RemoveDataFlow", false);
                 ChangeCustomActionStatus?.Invoke("FindDataFlow", false);
+                ChangeActionsStatus(false);
+            }
+        }
+
+        private void ChangeActionsStatus(bool newStatus)
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction &&
+                                        (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction &&
+                                        (containersContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -579,8 +713,12 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -588,14 +726,27 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
                     ShowCurrentRow();
                 }
             }
         }
-        
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() && 
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
         #region Tooltip Management.
         private void AddSuperTooltipProvider([NotNull] IIdentity identity, [NotNull] GridCell cell)
         {

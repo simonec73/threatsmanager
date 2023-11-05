@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Icons;
-using ThreatsManager.Interfaces;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -16,10 +14,12 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("trustBoundaryTemplates")]
-        private List<ITrustBoundaryTemplate> _trustBoundaryTemplates;
+        [Child]
+        [JsonProperty("trustBoundaryTemplates", Order = 47)]
+        private AdvisableCollection<TrustBoundaryTemplate> _trustBoundaryTemplates { get; set; }
 
-        public IEnumerable<ITrustBoundaryTemplate> TrustBoundaryTemplates => _trustBoundaryTemplates?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<ITrustBoundaryTemplate> TrustBoundaryTemplates => _trustBoundaryTemplates?.AsEnumerable();
 
         [InitializationRequired]
         public ITrustBoundaryTemplate GetTrustBoundaryTemplate(Guid id)
@@ -30,22 +30,28 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
         {
-            if (trustBoundaryTemplate is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
+            if (trustBoundaryTemplate is TrustBoundaryTemplate tbt)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Trust Boundary Template"))
+                {
+                    if (_trustBoundaryTemplates == null)
+                        _trustBoundaryTemplates = new AdvisableCollection<TrustBoundaryTemplate>();
 
-            if (_trustBoundaryTemplates == null)
-                _trustBoundaryTemplates = new List<ITrustBoundaryTemplate>();
+                    UndoRedoManager.Attach(tbt, this);
+                    _trustBoundaryTemplates.Add(tbt);
+                    scope?.Complete();
 
-            _trustBoundaryTemplates.Add(trustBoundaryTemplate);
- 
-            SetDirty();
-            ChildCreated?.Invoke(trustBoundaryTemplate);
+                    ChildCreated?.Invoke(trustBoundaryTemplate);
+                }
+            }
+            else
+                throw new ArgumentException(nameof(trustBoundaryTemplate));
         }
 
         [InitializationRequired]
         public ITrustBoundaryTemplate AddTrustBoundaryTemplate([Required] string name, string description, ITrustBoundary source = null)
         {
-            var result = new TrustBoundaryTemplate(this, name)
+            var result = new TrustBoundaryTemplate(name)
             {
                 Description = description,
             };
@@ -60,15 +66,20 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var template = GetTrustBoundaryTemplate(id);
+            var template = GetTrustBoundaryTemplate(id) as TrustBoundaryTemplate;
 
             if (template != null)
             {
-                result = _trustBoundaryTemplates.Remove(template);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Trust Boundary Template"))
                 {
-                    SetDirty();
-                    ChildRemoved?.Invoke(template);
+                    result = _trustBoundaryTemplates.Remove(template);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(template);
+                        scope?.Complete();
+
+                        ChildRemoved?.Invoke(template);
+                    }
                 }
             }
 

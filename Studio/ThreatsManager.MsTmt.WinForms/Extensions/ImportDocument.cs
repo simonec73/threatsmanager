@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Xml;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -65,35 +66,71 @@ namespace ThreatsManager.MsTmt.Extensions
                             Multiselect = false,
                             RestoreDirectory = true
                         };
+
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            var importer = new Importer();
-                            importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
-                                out var diagrams, out var externalInteractors, out var processes, out var dataStores,
-                                out var flows, out var trustBoundaries, out var entityTypes, out var threatTypes, out var customThreatTypes, 
-                                out var threats, out var missingThreats);
-                            RefreshPanels?.Invoke(this);
-                            ShowMessage?.Invoke("TMT7 file imported successfully.");
+                            int diagrams = 0;
+                            int externalInteractors = 0;
+                            int processes = 0;
+                            int dataStores = 0;
+                            int flows = 0;
+                            int trustBoundaries = 0;
+                            int entityTypes = 0;
+                            int threatTypes = 0;
+                            int customThreatTypes = 0;
+                            int threats = 0;
+                            int missingThreats = 0;
 
-                            using (var resultDialog = new ImportResultDialog()
+                            bool success = false;
+
+                            try
                             {
-                                Properties = new ImportStatus()
+                                using (var scope = UndoRedoManager.OpenScope("Import TMT Document"))
                                 {
-                                    Diagrams = diagrams,
-                                    ExternalInteractors = externalInteractors,
-                                    Processes = processes,
-                                    DataStores = dataStores,
-                                    DataFlows = flows,
-                                    TrustBoundaries = trustBoundaries,
-                                    EntityTypes = entityTypes,
-                                    ThreatTypes = threatTypes,
-                                    CustomThreatTypes = customThreatTypes,
-                                    Threats = threats,
-                                    MissingThreats = missingThreats
+                                    var importer = new Importer();
+                                    importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
+                                        out diagrams, out externalInteractors, out processes, out dataStores,
+                                        out flows, out trustBoundaries, out entityTypes, out threatTypes,
+                                        out customThreatTypes, out threats, out missingThreats);
+                                    scope?.Complete();
                                 }
-                            })
+
+                                success = true;
+                            }
+                            catch (XmlException e)
                             {
-                                resultDialog.ShowDialog(Form.ActiveForm);
+                                ShowWarning?.Invoke($"TMT document is malformed or has an unsupported structure: {e.Message}");
+                            }
+                            catch (Exception e)
+                            {
+                                ShowWarning?.Invoke($"TMT document import failed: {e.Message}");
+                            }
+
+                            if (success)
+                            {
+                                RefreshPanels?.Invoke(this);
+                                ShowMessage?.Invoke("TMT file imported successfully.");
+
+                                using (var resultDialog = new ImportResultDialog()
+                                {
+                                    Properties = new ImportStatus()
+                                    {
+                                        Diagrams = diagrams,
+                                        ExternalInteractors = externalInteractors,
+                                        Processes = processes,
+                                        DataStores = dataStores,
+                                        DataFlows = flows,
+                                        TrustBoundaries = trustBoundaries,
+                                        EntityTypes = entityTypes,
+                                        ThreatTypes = threatTypes,
+                                        CustomThreatTypes = customThreatTypes,
+                                        Threats = threats,
+                                        MissingThreats = missingThreats
+                                    }
+                                })
+                                {
+                                    resultDialog.ShowDialog(Form.ActiveForm);
+                                }
                             }
                         }
                         break;

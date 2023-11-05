@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
@@ -204,6 +202,13 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                             if ((identityContextAwareAction.Scope & Scope.ThreatModel) != 0)
                             {
                                 identityContextAwareAction.Execute(_model);
+                            }
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if ((pcContextAwareAction.Scope & Scope.ThreatModel) != 0)
+                            {
+                                pcContextAwareAction.Execute(_model);
                             }
                         }
                         break;

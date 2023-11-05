@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -16,10 +19,12 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("entityTemplates")]
-        private List<IEntityTemplate> _entityTemplates;
+        [Child]
+        [JsonProperty("entityTemplates", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 45)]
+        private AdvisableCollection<IEntityTemplate> _entityTemplates { get; set; }
 
-        public IEnumerable<IEntityTemplate> EntityTemplates => _entityTemplates?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IEntityTemplate> EntityTemplates => _entityTemplates?.AsEnumerable();
 
         [InitializationRequired]
         public IEntityTemplate GetEntityTemplate(Guid id)
@@ -36,16 +41,17 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IEntityTemplate entityTemplate)
         {
-            if (entityTemplate is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
+            using (var scope = UndoRedoManager.OpenScope("Add Entity Template"))
+            {
+                if (_entityTemplates == null)
+                    _entityTemplates = new AdvisableCollection<IEntityTemplate>();
 
-            if (_entityTemplates == null)
-                _entityTemplates = new List<IEntityTemplate>();
+                UndoRedoManager.Attach(entityTemplate, this);
+                _entityTemplates.Add(entityTemplate);
+                scope?.Complete();
 
-            _entityTemplates.Add(entityTemplate);
- 
-            SetDirty();
-            ChildCreated?.Invoke(entityTemplate);
+                ChildCreated?.Invoke(entityTemplate);
+            }
         }
 
         [InitializationRequired]
@@ -58,7 +64,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public IEntityTemplate AddEntityTemplate([Required] string name, string description, 
             Bitmap bigImage, Bitmap image, Bitmap smallImage, [NotNull] IEntity source)
         {
-            var result = new EntityTemplate(this, name)
+            var result = new EntityTemplate(name)
             {
                 Description = description,
                 BigImage = bigImage ?? source.GetImage(ImageSize.Big), 
@@ -82,7 +88,7 @@ namespace ThreatsManager.Engine.ObjectModel
         public IEntityTemplate AddEntityTemplate([Required] string name, string description, 
             Bitmap bigImage, Bitmap image, Bitmap smallImage, EntityType entityType)
         {
-            var result = new EntityTemplate(this, name)
+            var result = new EntityTemplate(name)
             {
                 Description = description,
                 EntityType = entityType
@@ -137,11 +143,16 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (template != null)
             {
-                result = _entityTemplates.Remove(template);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Entity Template"))
                 {
-                    SetDirty();
-                    ChildRemoved?.Invoke(template);
+                    result = _entityTemplates.Remove(template);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(template);
+                        scope?.Complete();
+
+                        ChildRemoved?.Invoke(template);
+                    }
                 }
             }
 

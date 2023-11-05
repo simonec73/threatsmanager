@@ -5,6 +5,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Quality.Schemas;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Quality.PropertySchemasUpdaters
 {
@@ -58,10 +59,15 @@ namespace ThreatsManager.Quality.PropertySchemasUpdaters
             var questions = (new QuestionsPropertySchemaManager(model)).GetQuestions()?.ToArray();
             if (questions?.Any() ?? false)
             {
-                foreach (var question in questions)
+                using (var scope = UndoRedoManager.OpenScope("Update Questions Schema Name"))
                 {
-                    var rule = question.Rule;
-                    result |= rule?.Root?.UpdateSchema(oldName, oldNamespace, newName, newNamespace) ?? false;
+                    foreach (var question in questions)
+                    {
+                        var rule = question.Rule;
+                        result |= rule?.Root?.UpdateSchema(oldName, oldNamespace, newName, newNamespace) ?? false;
+                    }
+
+                    scope?.Complete();
                 }
             }
 
@@ -77,10 +83,15 @@ namespace ThreatsManager.Quality.PropertySchemasUpdaters
             var questions = (new QuestionsPropertySchemaManager(model)).GetQuestions()?.ToArray();
             if (questions?.Any() ?? false)
             {
-                foreach (var question in questions)
+                using (var scope = UndoRedoManager.OpenScope("Update Questions Property Type"))
                 {
-                    var rule = question.Rule;
-                    result |= rule?.Root?.UpdateSchema(schemaName, schemaNamespace, oldPropertyTypeName, newPropertyTypeName) ?? false;
+                    foreach (var question in questions)
+                    {
+                        var rule = question.Rule;
+                        result |= rule?.Root?.UpdateSchema(schemaName, schemaNamespace, oldPropertyTypeName, newPropertyTypeName) ?? false;
+                    }
+
+                    scope?.Complete();
                 }
             }
 

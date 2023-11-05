@@ -58,7 +58,7 @@ namespace ThreatsManager.DevOps.Dialogs
                     {
                         var schemaManager = new DevOpsPropertySchemaManager(_mitigation.Model);
                         schemaManager.SetDevOpsStatus(_mitigation, connector, devOpsItemInfo.Id, 
-                            devOpsItemInfo.Url, devOpsItemInfo.AssignedTo, workItemInfo.Status);
+                            devOpsItemInfo.Url, workItemInfo.Status, devOpsItemInfo.AssignedTo);
 
                         SelectedItemInfo = devOpsItemInfo;
                         DialogResult = DialogResult.OK;

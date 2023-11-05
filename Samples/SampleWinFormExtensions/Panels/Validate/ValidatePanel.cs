@@ -7,7 +7,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Panels.Validate
+namespace ThreatsManager.SampleWinFormExtensions.Panels.Validate
 {
     public partial class ValidatePanel : UserControl, IShowThreatModelPanel<Form>
     {

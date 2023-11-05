@@ -21,6 +21,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         {
             _properties.Item = null;
 
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
             if (ddc != null)
             {
@@ -222,6 +225,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
             this._grid.Text = "superGridControl1";
             this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
+            this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
             // ThreatTypeListPanel

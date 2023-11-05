@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
-using ThreatsManager.DevOps.Dialogs;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
@@ -43,19 +44,23 @@ namespace ThreatsManager.DevOps.Actions
 
             if (identity is IMitigation mitigation && mitigation.Model is IThreatModel model)
             {
-                var schemaManager = new DevOpsPropertySchemaManager(model);
-                var iteration = schemaManager.GetFirstSeenOn(mitigation)?.GetIteration(model);
-                if (iteration != null)
+                using (var scope = UndoRedoManager.OpenScope("Unassign Mitigation from Iteration"))
                 {
-                    if (MessageBox.Show(
-                        $"You are about to unassign mitigation '{mitigation.Name}' from iteration '{iteration.Name}'." +
-                        $"\nDo you confirm?", "Unassign from Iteration", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    var schemaManager = new DevOpsPropertySchemaManager(model);
+                    var iteration = schemaManager.GetFirstSeenOn(mitigation)?.GetIteration(model);
+                    if (iteration != null)
                     {
-                        schemaManager.SetFirstSeenOn(mitigation, null);
-                        result = true;
+                        if (MessageBox.Show(
+                            $"You are about to unassign mitigation '{mitigation.Name}' from iteration '{iteration.Name}'." +
+                            $"\nDo you confirm?", "Unassign from Iteration", MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            schemaManager.SetFirstSeenOn(mitigation, null);
+                            scope?.Complete();
+                            result = true;
+                        }
                     }
-                }
+                }            
             }
 
             return result;

@@ -2,8 +2,9 @@
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Schemas
+namespace ThreatsManager.SampleWinFormExtensions.Schemas
 {
     public class DefinitionsPropertySchemaManager
     {
@@ -23,13 +24,17 @@ namespace SampleWinFormExtensions.Schemas
             var result = _model.GetSchema(SchemaName, Namespace);
             if (result == null)
             {
-                result = _model.AddSchema(SchemaName, Namespace);
-                result.AppliesTo = Scope.ThreatModel;
-                result.AutoApply = false;
-                result.Priority = 10;
-                result.Visible = false;
-                result.System = true;
-                result.Description = "This is a description for the Property Schema.";
+                using (var scope = UndoRedoManager.OpenScope("Add Definitions schema"))
+                {
+                    result = _model.AddSchema(SchemaName, Namespace);
+                    result.AppliesTo = Scope.ThreatModel;
+                    result.AutoApply = false;
+                    result.Priority = 10;
+                    result.Visible = false;
+                    result.System = true;
+                    result.Description = "This is a description for the Property Schema.";
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -43,9 +48,13 @@ namespace SampleWinFormExtensions.Schemas
                 var result = schema?.GetPropertyType(Name);
                 if (result == null)
                 {
-                    result = schema.AddPropertyType(Name, PropertyValueType.JsonSerializableObject);
-                    result.Visible = false;
-                    result.Description = "This is a description for the Property Type";
+                    using (var scope = UndoRedoManager.OpenScope("Add Definitions Property Type"))
+                    {
+                        result = schema.AddPropertyType(Name, PropertyValueType.JsonSerializableObject);
+                        result.Visible = false;
+                        result.Description = "This is a description for the Property Type";
+                        scope?.Complete();
+                    }
                 }
 
                 return result;

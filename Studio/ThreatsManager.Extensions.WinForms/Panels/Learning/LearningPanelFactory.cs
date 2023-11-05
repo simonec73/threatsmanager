@@ -9,6 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
+#if !PORTABLE
     [Extension("C48605C4-DC28-4F50-9453-3003B2AA3185", "Learning Panel", 30, ExecutionMode.Business)]
     public partial class LearningPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {
@@ -34,4 +35,5 @@ namespace ThreatsManager.Extensions.Panels.Learning
         }
         #endregion
     }
+#endif
 }

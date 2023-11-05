@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Schemas
 {
@@ -23,19 +24,26 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetLinksSchema()
         {
-            var result = _model.GetSchema(LinksSchemaName, Properties.Resources.DefaultNamespace) ?? _model.AddSchema(LinksSchemaName, Properties.Resources.DefaultNamespace);
-            result.AppliesTo = Scope.Link;
-            result.Priority = 15;
-            result.Visible = false;
-            result.System = true;
-            result.AutoApply = false;
-            result.NotExportable = true;
-            result.Description = Properties.Resources.LinksPropertySchemaDescription;
+            IPropertySchema result;
 
-            var points = result.GetPropertyType("Points") ?? result.AddPropertyType("Points", PropertyValueType.Array);
-            points.Visible = false;
-            points.DoNotPrint = true;
-            points.Description = Resources.PropertyPoints;
+            using (var scope = UndoRedoManager.OpenScope($"Get '{LinksSchemaName}' schema"))
+            {
+                result = _model.GetSchema(LinksSchemaName, Properties.Resources.DefaultNamespace) ?? _model.AddSchema(LinksSchemaName, Properties.Resources.DefaultNamespace);
+                result.AppliesTo = Scope.Link;
+                result.Priority = 15;
+                result.Visible = false;
+                result.System = true;
+                result.AutoApply = false;
+                result.NotExportable = true;
+                result.Description = Properties.Resources.LinksPropertySchemaDescription;
+
+                var points = result.GetPropertyType("Points") ?? result.AddPropertyType("Points", PropertyValueType.Array);
+                points.Visible = false;
+                points.DoNotPrint = true;
+                points.Description = Resources.PropertyPoints;
+
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -44,14 +52,18 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetLinksSchema();
-
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Links property type"))
             {
-                result = schema.GetPropertyType("Points") ?? schema.AddPropertyType("Points", PropertyValueType.Array);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Resources.PropertyPoints;
+                var schema = GetLinksSchema();
+
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("Points") ?? schema.AddPropertyType("Points", PropertyValueType.Array);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Resources.PropertyPoints;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -61,15 +73,19 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetLinksSchema();
-
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get TextLocation property type"))
             {
-                result = schema.GetPropertyType("TextLocation") ??
-                         schema.AddPropertyType("TextLocation", PropertyValueType.Boolean);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Resources.PropertyTextLocation;
+                var schema = GetLinksSchema();
+
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("TextLocation") ??
+                             schema.AddPropertyType("TextLocation", PropertyValueType.Boolean);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Resources.PropertyTextLocation;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -77,13 +93,19 @@ namespace ThreatsManager.Extensions.Schemas
  
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(DiagramSchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(DiagramSchemaName, Resources.DefaultNamespace);
-            result.AppliesTo = Scope.Diagram;
-            result.Priority = 15;
-            result.Visible = false;
-            result.System = true;
-            result.AutoApply = false;
-            result.Description = Resources.DiagramPropertySchemaDescription;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{DiagramSchemaName}' schema"))
+            {
+                result = _model.GetSchema(DiagramSchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(DiagramSchemaName, Resources.DefaultNamespace);
+                result.AppliesTo = Scope.Diagram;
+                result.Priority = 15;
+                result.Visible = false;
+                result.System = true;
+                result.AutoApply = false;
+                result.Description = Resources.DiagramPropertySchemaDescription;
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -92,13 +114,17 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get DpiFactor property type"))
             {
-                result = schema.GetPropertyType("DpiFactor") ?? schema.AddPropertyType("DpiFactor", PropertyValueType.Decimal);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Resources.PropertyDpiFactor;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("DpiFactor") ?? schema.AddPropertyType("DpiFactor", PropertyValueType.Decimal);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Resources.PropertyDpiFactor;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -122,14 +148,17 @@ namespace ThreatsManager.Extensions.Schemas
 
         public void SetDpiFactor([NotNull] IDiagram diagram)
         {
-
-            var propertyType = GetDpiFactorPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set DpiFactor"))
             {
-                if ((diagram.GetProperty(propertyType) ?? 
-                     diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
+                var propertyType = GetDpiFactorPropertyType();
+                if (propertyType != null)
                 {
-                    property.Value = Convert.ToDecimal(Dpi.Factor.Height);
+                    if ((diagram.GetProperty(propertyType) ??
+                         diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
+                    {
+                        property.Value = Convert.ToDecimal(Dpi.Factor.Height);
+                        scope?.Complete();
+                    }
                 }
             }
         }

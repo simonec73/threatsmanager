@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
@@ -15,6 +13,9 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Diagrams
 {
@@ -22,14 +23,16 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
     [EntityShapesContainerAspect]
     [GroupShapesContainerAspect]
     [LinksContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public class Diagram : IDiagram, IInitializableObject
     {
         public Diagram()
@@ -37,14 +40,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             
         }
 
-        public Diagram([NotNull] IThreatModel model, [Required] string name) : this()
+        public Diagram([Required] string name) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
-
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -53,13 +52,29 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public event Action<IEntityShapesContainer, IEntityShape> EntityShapeAdded;
         public event Action<IEntityShapesContainer, IEntity> EntityShapeRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IEntityShape> Entities { get; }
         public IEntityShape GetShape(IEntity entity)
         {
             return null;
+        }
+
+        public void Add(IEntityShape entityShape)
+        {
+        }
+
+        public void Add(IGroupShape groupShape)
+        {
+        }
+
+        public void Add(ILink link)
+        {
         }
 
         public IEntityShape GetEntityShape(Guid entityId)
@@ -94,6 +109,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public event Action<IGroupShapesContainer, IGroupShape> GroupShapeAdded;
         public event Action<IGroupShapesContainer, IGroup> GroupShapeRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IGroupShape> Groups { get; }
         public IGroupShape GetShape(IGroup @group)
         {
@@ -132,6 +149,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public event Action<ILinksContainer, ILink> LinkAdded;
         public event Action<ILinksContainer, IDataFlow> LinkRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<ILink> Links { get; }
         public ILink GetLink(Guid dataFlowId)
         {
@@ -151,6 +170,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
 
         public bool HasProperty(IPropertyType propertyType)
@@ -185,34 +206,37 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
+        public void Unapply(IPropertySchema schema)
         {
         }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IEntityShape> _entities { get; set; }
-        private List<IGroupShape> _groups { get; set; }
-        private List<ILink> _links { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("entities")]
+        private AdvisableCollection<EntityShape> _entities { get; set; }
+        [Child]
+        [JsonProperty("groups")]
+        private AdvisableCollection<GroupShape> _groups { get; set; }
+        [Child]
+        [JsonProperty("links")]
+        private AdvisableCollection<Link> _links { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -220,6 +244,9 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [JsonProperty("order")]
         public int Order { get; set; }
+
+        [JsonProperty("dpi")]
+        public int? Dpi { get; set; }
 
         public override string ToString()
         {
@@ -239,7 +266,9 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                     Name = Name, 
                     Description = Description,
                     _model = model, 
-                    _modelId = model.Id
+                    _modelId = model.Id,
+                    Order = Order,
+                    Dpi = Dpi
                 };
                 this.CloneProperties(result);
                 container.Add(result);
@@ -273,36 +302,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             }
 
             return result;
-        }
-
-        [InitializationRequired]
-        public void Add([NotNull] IEntityShape entityShape)
-        {
-            if (entityShape.Identity is IThreatModelChild child &&
-                child.Model != _model)
-                throw new ArgumentException();
-
-            _entities.Add(entityShape);
-        }
- 
-        [InitializationRequired]
-        public void Add([NotNull] IGroupShape groupShape)
-        {
-            if (groupShape.Identity is IThreatModelChild child &&
-                child.Model != _model)
-                throw new ArgumentException();
-
-            _groups.Add(groupShape);
-        }
- 
-        [InitializationRequired]
-        public void Add([NotNull] ILink link)
-        {
-            if (link.DataFlow is IThreatModelChild child &&
-                child.Model != _model)
-                throw new ArgumentException();
-
-            _links.Add(link);
         }
         #endregion
     }

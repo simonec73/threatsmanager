@@ -65,9 +65,13 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
         {
             if (Enum.TryParse<SecurityControlType>((string) _controlType.SelectedItem, out var controlType))
             {
-                _mitigation = _threatModel.AddMitigation(_name.Text);
-                _mitigation.Description = _description.Text;
-                _mitigation.ControlType = controlType;
+                using (var scope = UndoRedoManager.OpenScope("Add Known Mitigation"))
+                {
+                    _mitigation = _threatModel.AddMitigation(_name.Text);
+                    _mitigation.Description = _description.Text;
+                    _mitigation.ControlType = controlType;
+                    scope?.Complete();
+                }
             }
         }
 

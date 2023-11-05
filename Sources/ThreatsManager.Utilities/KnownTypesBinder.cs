@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
@@ -122,7 +123,7 @@ namespace ThreatsManager.Utilities
                 Type type = assembly.GetType(name);
                 if (type?.IsGenericType ?? false)
                 {
-                    List<Type> typeList = new List<Type>();
+                    var typeList = new List<Type>();
                     int position = 0;
                     int startIndex = 0;
                     int last = typeName.Length - 1;

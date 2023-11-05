@@ -9,6 +9,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Scope = ThreatsManager.Interfaces.Scope;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
@@ -118,8 +119,12 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         {
             if (answer == AnswerType.Yes && context is Context c)
             {
-                c.Container?.SetRule(c.Rule);
-                ShowMessage?.Invoke("Auto Gen Rule copied successfully.");
+                using (var scope = UndoRedoManager.OpenScope("Inherit Gen Rule from Parent"))
+                {
+                    c.Container?.SetRule(c.Rule);
+                    scope?.Complete();
+                    ShowMessage?.Invoke("Auto Gen Rule copied successfully.");
+                }
             }
         }
     }

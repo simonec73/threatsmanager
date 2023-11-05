@@ -51,29 +51,29 @@ namespace ThreatsManager.Utilities.WinForms
                 _reference = reference;
             }
 
-            public Func<string, T, bool> Created { get; set; }
-            public Func<string, T, bool> Removed { get; set; }
-            public Func<string, string, T, bool> Changed { get; set; }
-            public Action<T> Cleared { get; set; }
+            public Func<Control, string, T, bool> Created { get; set; }
+            public Func<Control, string, T, bool> Removed { get; set; }
+            public Func<Control, string, string, T, bool> Changed { get; set; }
+            public Action<Control, T> Cleared { get; set; }
 
-            public bool RaiseCreated(string name)
+            public bool RaiseCreated(Control control, string name)
             {
-                return Created?.Invoke(name, _reference) ?? false;
+                return Created?.Invoke(control, name, _reference) ?? false;
             }
 
-            public bool RaiseRemoved(string name)
+            public bool RaiseRemoved(Control control, string name)
             {
-                return Removed?.Invoke(name, _reference) ?? false;
+                return Removed?.Invoke(control, name, _reference) ?? false;
             }
 
-            public bool RaiseChanged(string oldName, string newName)
+            public bool RaiseChanged(Control control, string oldName, string newName)
             {
-                return Changed?.Invoke(oldName, newName, _reference) ?? false;
+                return Changed?.Invoke(control, oldName, newName, _reference) ?? false;
             }
 
-            public void RaiseCleared()
+            public void RaiseCleared(Control control)
             {
-                Cleared?.Invoke(_reference);
+                Cleared?.Invoke(control, _reference);
             }
 
             public void Dispose()
@@ -88,15 +88,16 @@ namespace ThreatsManager.Utilities.WinForms
 
         private interface IActions : IDisposable
         {
-            bool RaiseCreated(string name);
-            bool RaiseRemoved(string name);
-            bool RaiseChanged(string oldName, string newName);
-            void RaiseCleared();
+            bool RaiseCreated(Control control, string name);
+            bool RaiseRemoved(Control control, string name);
+            bool RaiseChanged(Control control, string oldName, string newName);
+            void RaiseCleared(Control control);
         }
         #endregion
-        
+
         #region Private member variables.
         private object _item;
+        private object _container;
         private bool _loading;
         private bool _readonly;
         private Label _parentLabel;
@@ -104,11 +105,17 @@ namespace ThreatsManager.Utilities.WinForms
         private ExecutionMode _executionMode = ExecutionMode.Expert;
         private static IEnumerable<IContextAwareAction> _actions;
         private MenuDefinition _threatEventMenuDefinition;
+        private MenuDefinition _vulnerabilityMenuDefinition;
         private IThreatEvent _menuThreatEvent;
+        private IVulnerability _menuVulnerability;
         private MenuDefinition _threatEventMitigationMenuDefinition;
+        private MenuDefinition _vulnerabilityMitigationMenuDefinition;
         private IThreatEventMitigation _menuThreatEventMitigation;
+        private IVulnerabilityMitigation _menuVulnerabilityMitigation;
         private MenuDefinition _threatTypeMitigationMenuDefinition;
+        private MenuDefinition _weaknessMitigationMenuDefinition;
         private IThreatTypeMitigation _menuThreatTypeMitigation;
+        private IWeaknessMitigation _menuWeaknessMitigation;
         #endregion
 
         public event Action<Guid> OpenDiagram;
@@ -131,6 +138,12 @@ namespace ThreatsManager.Utilities.WinForms
             }
 
             AddSpellCheck(_itemDescription);
+
+            EventsDispatcher.Register("ItemChanged", ItemChangedHandler);
+            EventsDispatcher.Register("DeletingItem", DeletingItemHandler);
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         private void AddSpellCheck([NotNull] TextBoxBase control)
@@ -179,12 +192,119 @@ namespace ThreatsManager.Utilities.WinForms
                             {
                                 DeregisterCurrentEventHandlers();
                                 _item = value;
+                                _container = null;
 
                                 if (value != null)
                                 {
-
                                     if (value is INotifyPropertyChanged notifyPropertyChanged)
                                         notifyPropertyChanged.PropertyChanged += OnPropertyChanged;
+
+                                    if (value is IUndoable undoable && undoable.IsUndoEnabled)
+                                    {
+                                        undoable.Undone += OnUndone;
+
+                                        if (value is IEntity entity)
+                                            _container = entity.Model;
+                                        else if (value is IDataFlow flow)
+                                            _container = flow.Model;
+                                        else if (value is IGroup group)
+                                            _container = group.Model;
+                                        else if (value is IPropertySchema propertySchema)
+                                            _container = propertySchema.Model;
+                                        else if (value is IDiagram diagram)
+                                            _container = diagram.Model;
+                                        else if (value is ISeverity severity)
+                                            _container = severity.Model;
+                                        else if (value is IStrength strength)
+                                            _container = strength.Model;
+                                        else if (value is IThreatType threatType)
+                                            _container = threatType.Model;
+                                        else if (value is IMitigation mitigation)
+                                            _container = mitigation.Model;
+                                        else if (value is IThreatActor threatActor)
+                                            _container = threatActor.Model;
+                                        else if (value is IEntityTemplate entityTemplate)
+                                            _container = entityTemplate.Model;
+                                        else if (value is IFlowTemplate flowTemplate)
+                                            _container = flowTemplate.Model;
+                                        else if (value is ITrustBoundaryTemplate trustBoundaryTemplate)
+                                            _container = trustBoundaryTemplate.Model;
+                                        else if (value is IThreatEvent threatEvent)
+                                            _container = threatEvent.Parent;
+                                        else if (value is IWeakness weakness)
+                                            _container = weakness.Model;
+                                        else if (value is IVulnerability vulnerability)
+                                            _container = vulnerability.Parent;
+                                        else if (value is IEntityShape entityShape && entityShape.Identity is IThreatModelChild child1)
+                                        {
+                                            var diagrams = child1.Model?.Diagrams?.ToArray();
+                                            if (diagrams?.Any() ?? false)
+                                            {
+                                                foreach (var d in diagrams)
+                                                {
+                                                    if (d.Entities.Contains(entityShape))
+                                                    {
+                                                        _container = d;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (value is IGroupShape groupShape && groupShape.Identity is IThreatModelChild child2)
+                                        {
+                                            var diagrams = child2.Model?.Diagrams?.ToArray();
+                                            if (diagrams?.Any() ?? false)
+                                            {
+                                                foreach (var d in diagrams)
+                                                {
+                                                    if (d.Groups.Contains(groupShape))
+                                                    {
+                                                        _container = d;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (value is ILink link && link.DataFlow is IThreatModelChild child3)
+                                        {
+                                            var diagrams = child3.Model?.Diagrams?.ToArray();
+                                            if (diagrams?.Any() ?? false)
+                                            {
+                                                foreach (var d in diagrams)
+                                                {
+                                                    if (d.Links.Contains(link))
+                                                    {
+                                                        _container = d;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (value is IThreatTypeMitigation ttMitigation)
+                                        {
+                                            _container = ttMitigation.ThreatType;
+                                        }
+                                        else if (value is IThreatEventMitigation teMitigation)
+                                        {
+                                            _container = teMitigation.ThreatEvent;
+                                        }
+                                        else if (value is IThreatEventScenario teScenario)
+                                        {
+                                            _container = teScenario.ThreatEvent;
+                                        }
+                                        else if (value is IWeaknessMitigation wMitigation)
+                                        {
+                                            _container = wMitigation.Weakness;
+                                        }
+                                        else if (value is IVulnerabilityMitigation vMitigation)
+                                        {
+                                            _container = vMitigation.Vulnerability;
+                                        }
+
+                                        if (_container is IUndoable containerUndoable)
+                                            containerUndoable.Undone += OnContainerUndone;
+                                    }
+
                                     if (value is IGroupElement groupElement)
                                     {
                                         groupElement.ParentChanged += GroupElementOnParentChanged;
@@ -202,13 +322,13 @@ namespace ThreatsManager.Utilities.WinForms
                                                 if (_model != null)
                                                 {
                                                     _model.ChildPropertyAdded -= ChildPropertyAdded;
-                                                    _model.ChildPropertyChanged -= ChildPropertyChanged;
+                                                    _model.ChildPropertyValueChanged -= ChildPropertyChanged;
                                                     _model.ChildPropertyRemoved -= ChildPropertyRemoved;
                                                 }
 
                                                 _model = model;
                                                 _model.ChildPropertyAdded += ChildPropertyAdded;
-                                                _model.ChildPropertyChanged += ChildPropertyChanged;
+                                                _model.ChildPropertyValueChanged += ChildPropertyChanged;
                                                 _model.ChildPropertyRemoved += ChildPropertyRemoved;
 
                                             }
@@ -218,7 +338,7 @@ namespace ThreatsManager.Utilities.WinForms
                                             if (_model != null)
                                             {
                                                 _model.ChildPropertyAdded -= ChildPropertyAdded;
-                                                _model.ChildPropertyChanged -= ChildPropertyChanged;
+                                                _model.ChildPropertyValueChanged -= ChildPropertyChanged;
                                                 _model.ChildPropertyRemoved -= ChildPropertyRemoved;
                                                 _model = null;
                                             }
@@ -269,8 +389,17 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item != null)
             {
+                _spellAsYouType.RemoveAllTextComponents();
+                AddSpellCheck(_itemDescription);
+
                 if (_item is INotifyPropertyChanged notifyPropertyChanged)
                     notifyPropertyChanged.PropertyChanged -= OnPropertyChanged;
+
+                if (_item is IUndoable undoable)
+                    undoable.Undone -= OnUndone;
+
+                if (_container is IUndoable containerUndoable)
+                    containerUndoable.Undone -= OnContainerUndone;
 
                 if (_item is IGroupElement groupElement)
                 {
@@ -283,7 +412,7 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     threatEventsContainer.ThreatEventAdded -= ThreatEventAdded;
                     threatEventsContainer.ThreatEventRemoved -= ThreatEventRemoved;
-                    
+
                     if (_threatEventMenuDefinition != null)
                         _threatEventMenuDefinition.MenuClicked -= OnThreatEventMenuClicked;
                 }
@@ -302,7 +431,7 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     if (dataFlow.Source is IEntity source)
                     {
-                        ((INotifyPropertyChanged) source).PropertyChanged -= OnSourcePropertyChanged;
+                        ((INotifyPropertyChanged)source).PropertyChanged -= OnSourcePropertyChanged;
                         source.ImageChanged -= OnSourceImageChanged;
                     }
                     var labelSource = GetControl("Flow", "Source");
@@ -311,7 +440,7 @@ namespace ThreatsManager.Utilities.WinForms
 
                     if (dataFlow.Target is IEntity target)
                     {
-                        ((INotifyPropertyChanged) target).PropertyChanged -= OnTargetPropertyChanged;
+                        ((INotifyPropertyChanged)target).PropertyChanged -= OnTargetPropertyChanged;
                         target.ImageChanged -= OnTargetImageChanged;
                     }
                     var labelTarget = GetControl("Flow", "Target");
@@ -337,7 +466,7 @@ namespace ThreatsManager.Utilities.WinForms
                     }
                     threatEvent.ThreatEventMitigationAdded -= ThreatEventMitigationAdded;
                     threatEvent.ThreatEventMitigationRemoved -= ThreatEventMitigationRemoved;
-                    ((INotifyPropertyChanged) threatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
+                    ((INotifyPropertyChanged)threatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
                     var labetThreatEvent = GetControl("Threat Event", "Associated To");
                     if (labetThreatEvent != null)
                         _superTooltip.SetSuperTooltip(labetThreatEvent, null);
@@ -355,7 +484,7 @@ namespace ThreatsManager.Utilities.WinForms
                     {
                         mitigationEntity.ImageChanged -= OnThreatEventMitigationImageChanged;
                     }
-                    ((INotifyPropertyChanged) mitigation.ThreatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
+                    ((INotifyPropertyChanged)mitigation.ThreatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
                     var labelThreatEventMitigation = GetControl("Threat Event Mitigation", "Associated To");
                     if (labelThreatEventMitigation != null)
                         _superTooltip.SetSuperTooltip(labelThreatEventMitigation, null);
@@ -375,29 +504,9 @@ namespace ThreatsManager.Utilities.WinForms
                                 if (control is TextBox textBox)
                                 {
                                     ClearEventInvocations(control, "TextChanged");
-                                    try
-                                    {
-                                        _spellAsYouType.RemoveTextBoxBase(textBox);
-                                    }
-                                    catch
-                                    {
-                                    }
                                 } else if (control is RichTextBox richTextBox)
                                 {
                                     ClearEventInvocations(control, "TextChanged");
-                                    var component = _spellAsYouType.GetTextComponents()?
-                                        .OfType<RichTextBoxSpellAsYouTypeAdapter>()
-                                        .FirstOrDefault(x => x.TextBox == richTextBox);
-                                    if (component != null)
-                                    {
-                                        try
-                                        {
-                                            _spellAsYouType.RemoveTextComponent(component);
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
                                 } else if (control is SwitchButton)
                                 {
                                     ClearEventInvocations(control, "ValueChanged");
@@ -449,7 +558,7 @@ namespace ThreatsManager.Utilities.WinForms
             if (_model != null)
             {
                 _model.ChildPropertyAdded -= ChildPropertyAdded;
-                _model.ChildPropertyChanged -= ChildPropertyChanged;
+                _model.ChildPropertyValueChanged -= ChildPropertyChanged;
                 _model.ChildPropertyRemoved -= ChildPropertyRemoved;
             }
 
@@ -567,6 +676,104 @@ namespace ThreatsManager.Utilities.WinForms
                 }
             }
         }
+
+        private void OnUndone(object item, bool removed)
+        {
+            if (removed)
+                Item = null;
+            else
+            {
+                try
+                {
+                    _loading = true;
+                    ShowItem(item);
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+
+        private void OnContainerUndone(object item, bool removed)
+        {
+            if (removed)
+            {
+                Item = null;
+            }
+            else
+            {
+                if (item is IThreatModel threatModel)
+                {
+                    if (_item is IIdentity identity && threatModel.GetIdentity(identity.Id) == null)
+                        Item = null;
+                    else if (_item is ISeverity severity && threatModel.GetSeverity(severity.Id) == null)
+                        Item = null;
+                    else if (_item is IStrength strength && threatModel.GetStrength(strength.Id) == null)
+                        Item = null;
+                }
+                else if (item is IDiagram diagram)
+                {
+                    if (_item is IEntityShape entityShape && diagram.GetEntityShape(entityShape.AssociatedId) == null)
+                        Item = null;
+                    else if (_item is IGroupShape groupShape && diagram.GetGroupShape(groupShape.AssociatedId) == null)
+                        Item = null;
+                    else if (_item is ILink link && diagram.GetLink(link.AssociatedId) == null)
+                        Item = null;
+                } else if (item is IEntity entity)
+                {
+                    if (_item is IThreatEvent threatEvent && entity.GetThreatEvent(threatEvent.Id) == null)
+                        Item = null;
+                    else if (_item is IVulnerability vulnerability && entity.GetVulnerability(vulnerability.Id) == null)
+                        Item = null;
+                } else if (item is IDataFlow flow)
+                {
+                    if (_item is IThreatEvent threatEvent && flow.GetThreatEvent(threatEvent.Id) == null)
+                        Item = null;
+                    else if (_item is IVulnerability vulnerability && flow.GetVulnerability(vulnerability.Id) == null)
+                        Item = null;
+                } else if (item is IThreatEvent threatEvent)
+                {
+                    if (_item is IThreatEventMitigation tem && threatEvent.GetMitigation(tem.MitigationId) == null)
+                        Item = null;
+                    else if (_item is IThreatEventScenario tes && threatEvent.GetScenario(tes.Id) == null)
+                        Item = null;
+                    else if (_item is IVulnerability vulnerability && threatEvent.GetVulnerability(vulnerability.Id) == null)
+                        Item = null;
+                } else if (item is IThreatType threatType)
+                {
+                    if (_item is IThreatTypeMitigation ttm && threatType.GetMitigation(ttm.MitigationId) == null)
+                        Item = null;
+                    else if (_item is IThreatTypeWeakness ttw && threatType.GetWeakness(ttw.WeaknessId) == null)
+                        Item = null;
+                } else if (item is IVulnerability vulnerability)
+                {
+                    if (_item is IVulnerabilityMitigation vm && vulnerability.GetMitigation(vm.MitigationId) == null)
+                        Item = null;
+                } else if (item is IWeakness weakness)
+                {
+                    if (_item is IWeaknessMitigation wm && weakness.GetMitigation(wm.WeaknessId) == null)
+                        Item = null;
+                }
+            }
+        }
+
+        private void ItemChangedHandler(object item)
+        {
+            if (item?.Equals(_item) ?? false)
+            {
+                Item = null;
+                Item = item;
+            }
+        }
+
+        private void DeletingItemHandler(object item)
+        {
+            if (item?.Equals(_item) ?? false)
+            {
+                Item = null;
+            }
+        }
         #endregion
 
         #region Showing Items.
@@ -579,6 +786,8 @@ namespace ThreatsManager.Utilities.WinForms
             var identity = item as IIdentity;
             var typeMitigation = item as IThreatTypeMitigation;
             var eventMitigation = item as IThreatEventMitigation;
+            var weaknessMitigation = item as IWeaknessMitigation;
+            var vulnerabilityMitigation = item as IVulnerabilityMitigation;
 
             if (typeMitigation != null)
             {
@@ -592,6 +801,18 @@ namespace ThreatsManager.Utilities.WinForms
                 _itemName.ReadOnly = true;
                 _itemDescription.ReadOnly = true;
             }
+            else if (weaknessMitigation != null)
+            {
+                identity = weaknessMitigation.Mitigation;
+                _itemName.ReadOnly = true;
+                _itemDescription.ReadOnly = true;
+            }
+            else if (vulnerabilityMitigation != null)
+            {
+                identity = vulnerabilityMitigation.Mitigation;
+                _itemName.ReadOnly = true;
+                _itemDescription.ReadOnly = true;
+            }
             else
             {
                 _itemName.ReadOnly = _readonly;
@@ -602,6 +823,11 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 _itemName.Text = identity.Name;
                 _itemDescription.Text = identity.Description;
+            }
+
+            if (item is IVulnerabilitiesContainer vulnerabilitiesContainer)
+            {
+                AddVulnerabilitiesContainerSection(vulnerabilitiesContainer);
             }
 
             if (item is IThreatEventsContainer threatEventsContainer)
@@ -669,6 +895,11 @@ namespace ThreatsManager.Utilities.WinForms
                 ShowItem(threatEvent);
             }
 
+            if (item is IVulnerability vulnerability)
+            {
+                ShowItem(vulnerability);
+            }
+
             if (item is IThreatEventScenario scenario)
             {
                 ShowItem(scenario);
@@ -677,6 +908,11 @@ namespace ThreatsManager.Utilities.WinForms
             if (item is IThreatType threatType)
             {
                 ShowItem(threatType);
+            }
+
+            if (item is IWeakness weakness)
+            {
+                ShowItem(weakness);
             }
 
             if (item is IThreatActor threatActor)
@@ -694,9 +930,19 @@ namespace ThreatsManager.Utilities.WinForms
                 ShowItem(typeMitigation);
             }
 
+            if (weaknessMitigation != null)
+            {
+                ShowItem(weaknessMitigation);
+            }
+
             if (eventMitigation != null)
             {
                 ShowItem(eventMitigation);
+            }
+
+            if (vulnerabilityMitigation != null)
+            {
+                ShowItem(vulnerabilityMitigation);
             }
 
             if (identity != null)
@@ -784,7 +1030,7 @@ namespace ThreatsManager.Utilities.WinForms
                     show = _executionMode == ExecutionMode.Pioneer;
                     break;
                 case ExecutionMode.Expert:
-                    show = _executionMode == ExecutionMode.Pioneer || 
+                    show = _executionMode == ExecutionMode.Pioneer ||
                            _executionMode == ExecutionMode.Expert;
                     break;
                 case ExecutionMode.Simplified:
@@ -918,6 +1164,30 @@ namespace ThreatsManager.Utilities.WinForms
             container.ThreatEventRemoved += ThreatEventRemoved;
         }
 
+        private void AddVulnerabilitiesContainerSection([NotNull] IVulnerabilitiesContainer container)
+        {
+            var infoSection = AddSection("Vulnerabilities");
+            infoSection.SuspendLayout();
+            var listBox = AddListBox(infoSection, string.Empty,
+                container.Vulnerabilities?.OrderBy(x => x.Name), AddVulnerabilityHandler, _readonly);
+            listBox.DoubleClick += OpenSubItem;
+
+            if (_actions?.Any() ?? false)
+            {
+                _vulnerabilityMenuDefinition = new MenuDefinition(_actions, Scope.Vulnerability);
+                _vulnerabilityMenuDefinition.MenuClicked += OnVulnerabilityMenuClicked;
+                var menu = _vulnerabilityMenuDefinition.CreateMenu();
+                menu.Opening += OnVulnerabilityMenuOpening;
+                listBox.ContextMenuStrip = menu;
+            }
+
+            FinalizeSection(infoSection);
+            infoSection.ResumeLayout();
+
+            container.VulnerabilityAdded += VulnerabilityAdded;
+            container.VulnerabilityRemoved += VulnerabilityRemoved;
+        }
+
         private IEnumerable<IPropertySchema> GetSchemas(IEnumerable<IProperty> properties)
         {
             IEnumerable<IPropertySchema> result = null;
@@ -956,18 +1226,22 @@ namespace ThreatsManager.Utilities.WinForms
             section.SuspendLayout();
             if (dataFlow.Source != null)
             {
-                var source = AddSingleLineLabel(section, "Source", dataFlow.Source.Name, 
+                var source = AddHyperlink(section, "Source", dataFlow.Source,
                     Dpi.Factor.Width > 1.5 ? dataFlow.Source.GetImage(ImageSize.Medium) : dataFlow.Source.GetImage(ImageSize.Small));
-                ((INotifyPropertyChanged) dataFlow.Source).PropertyChanged += OnSourcePropertyChanged;
+                //var source = AddSingleLineLabel(section, "Source", dataFlow.Source.Name,
+                //    Dpi.Factor.Width > 1.5 ? dataFlow.Source.GetImage(ImageSize.Medium) : dataFlow.Source.GetImage(ImageSize.Small));
+                ((INotifyPropertyChanged)dataFlow.Source).PropertyChanged += OnSourcePropertyChanged;
                 _superTooltip.SetSuperTooltip(source, _model.GetSuperTooltipInfo(dataFlow.Source));
                 dataFlow.Source.ImageChanged += OnSourceImageChanged;
             }
             if (dataFlow.Target != null)
             {
-                var target = AddSingleLineLabel(section, "Target", dataFlow.Target.Name, 
+                var target = AddHyperlink(section, "Target", dataFlow.Target,
                     Dpi.Factor.Width > 1.5 ? dataFlow.Target.GetImage(ImageSize.Medium) : dataFlow.Target.GetImage(ImageSize.Small));
+                //var target = AddSingleLineLabel(section, "Target", dataFlow.Target.Name,
+                //    Dpi.Factor.Width > 1.5 ? dataFlow.Target.GetImage(ImageSize.Medium) : dataFlow.Target.GetImage(ImageSize.Small));
                 _superTooltip.SetSuperTooltip(target, _model.GetSuperTooltipInfo(dataFlow.Target));
-                ((INotifyPropertyChanged) dataFlow.Target).PropertyChanged += OnTargetPropertyChanged;
+                ((INotifyPropertyChanged)dataFlow.Target).PropertyChanged += OnTargetPropertyChanged;
                 dataFlow.Target.ImageChanged += OnTargetImageChanged;
             }
             AddCombo(section, "Flow Type", dataFlow.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
@@ -994,7 +1268,7 @@ namespace ThreatsManager.Utilities.WinForms
             _itemType.Text = "Entity Template";
             _itemPicture.Image = entityTemplate.GetImage(ImageSize.Big);
             entityTemplate.ImageChanged += OnTemplateImageChanged;
- 
+
             var section = AddSection("Entity Template");
             section.SuspendLayout();
             AddSingleLineLabel(section, "Entity Type", entityTemplate.EntityType.GetEnumLabel());
@@ -1006,7 +1280,7 @@ namespace ThreatsManager.Utilities.WinForms
         {
             _itemType.Text = "Flow Template";
             _itemPicture.Image = flowTemplate.GetImage(ImageSize.Big);
- 
+
             var section = AddSection("Flow Template");
             section.SuspendLayout();
             AddCombo(section, "Flow Type", flowTemplate.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
@@ -1093,18 +1367,20 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Threat Event");
             section.SuspendLayout();
             AddHyperlink(section, "Threat Type", threatEvent.ThreatType);
-            var label = AddSingleLineLabel(section, "Associated To", threatEvent.Parent.Name,
+            var label = AddHyperlink(section, "Associated To", threatEvent.Parent,
                 Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
+            //var label = AddSingleLineLabel(section, "Associated To", threatEvent.Parent.Name,
+            //    Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
             if (threatEvent.Parent is IEntity entity)
             {
                 entity.ImageChanged += OnThreatEventImageChanged;
             }
             _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(threatEvent.Parent));
-            AddCombo(section, "Severity", threatEvent.Severity?.Name, 
+            AddCombo(section, "Severity", threatEvent.Severity?.Name,
                 threatEvent.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
             var listBox = AddListBox(section, "Mitigations",
-                threatEvent.Mitigations, AddMitigationEventHandler, _readonly);
+                threatEvent.Mitigations, AddThreatEventMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
             if (_actions?.Any() ?? false)
@@ -1118,10 +1394,55 @@ namespace ThreatsManager.Utilities.WinForms
 
             FinalizeSection(section);
             section.ResumeLayout();
-   
+
             threatEvent.ThreatEventMitigationAdded += ThreatEventMitigationAdded;
             threatEvent.ThreatEventMitigationRemoved += ThreatEventMitigationRemoved;
-            ((INotifyPropertyChanged) threatEvent.Parent).PropertyChanged += OnThreatEventParentPropertyChanged;
+            ((INotifyPropertyChanged)threatEvent.Parent).PropertyChanged += OnThreatEventParentPropertyChanged;
+        }
+
+        private void ShowItem([NotNull] IVulnerability vulnerability)
+        {
+            _itemType.Text = "Vulnerability";
+            _itemPicture.Image = Resources.vulnerability_big;
+
+            var section = AddSection("Vulnerability");
+            section.SuspendLayout();
+            AddHyperlink(section, "Weakness", vulnerability.Weakness);
+            var parent = vulnerability.Parent as IIdentity;
+            if (parent != null)
+            {
+                var label = AddHyperlink(section, "Associated To", parent,
+                    Dpi.Factor.Width > 1.5 ? parent?.GetImage(ImageSize.Medium) : parent?.GetImage(ImageSize.Small));
+                _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(parent));
+            }
+            //var label = AddSingleLineLabel(section, "Associated To", vulnerability.Parent.Name,
+            //    Dpi.Factor.Width > 1.5 ? vulnerability.Parent?.GetImage(ImageSize.Medium) : vulnerability.Parent?.GetImage(ImageSize.Small));
+            if (vulnerability.Parent is IEntity entity)
+            {
+                entity.ImageChanged += OnVulnerabilityImageChanged;
+            }
+            AddCombo(section, "Severity", vulnerability.Severity?.Name,
+                vulnerability.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
+                ChangeSeverity, _readonly);
+            var listBox = AddListBox(section, "Mitigations",
+                vulnerability.Mitigations, AddVulnerabilityMitigationEventHandler, _readonly);
+            listBox.DoubleClick += OpenSubItem;
+
+            if (_actions?.Any() ?? false)
+            {
+                _vulnerabilityMitigationMenuDefinition = new MenuDefinition(_actions, Scope.VulnerabilityMitigation);
+                _vulnerabilityMitigationMenuDefinition.MenuClicked += OnVulnerabilityMitigationMenuClicked;
+                var menu = _vulnerabilityMitigationMenuDefinition.CreateMenu();
+                menu.Opening += OnVulnerabilityMitigationMenuOpening;
+                listBox.ContextMenuStrip = menu;
+            }
+
+            FinalizeSection(section);
+            section.ResumeLayout();
+
+            vulnerability.VulnerabilityMitigationAdded += VulnerabilityMitigationAdded;
+            vulnerability.VulnerabilityMitigationRemoved += VulnerabilityMitigationRemoved;
+            ((INotifyPropertyChanged)vulnerability.Parent).PropertyChanged += OnVulnerabilityParentPropertyChanged;
         }
 
         private void ShowItem([NotNull] IThreatType threatType)
@@ -1131,14 +1452,14 @@ namespace ThreatsManager.Utilities.WinForms
 
             var section = AddSection("Threat Type");
             section.SuspendLayout();
-            AddCombo(section, "Severity", threatType.Severity?.Name, 
+            AddCombo(section, "Severity", threatType.Severity?.Name,
                 threatType.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
             var listBox = AddListBox(section, "Standard Mitigations",
-                threatType.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddStandardMitigationEventHandler, _readonly);
+                threatType.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddThreatTypeStandardMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
-            AddListView(section, "Threat Events\napplied to", 
+            AddListView(section, "Threat Events\napplied to",
                 threatType.Model?.GetThreatEvents(threatType)?.OrderBy(x => x.Parent.Name));
 
             if (_actions?.Any() ?? false)
@@ -1152,9 +1473,42 @@ namespace ThreatsManager.Utilities.WinForms
 
             FinalizeSection(section);
             section.ResumeLayout();
-   
+
             threatType.ThreatTypeMitigationAdded += ThreatTypeMitigationAdded;
             threatType.ThreatTypeMitigationRemoved += ThreatTypeMitigationRemoved;
+        }
+
+        private void ShowItem([NotNull] IWeakness weakness)
+        {
+            _itemType.Text = "Weakness";
+            _itemPicture.Image = Resources.weakness_big;
+
+            var section = AddSection("Weakness");
+            section.SuspendLayout();
+            AddCombo(section, "Severity", weakness.Severity?.Name,
+                weakness.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
+                ChangeSeverity, _readonly);
+            var listBox = AddListBox(section, "Standard Mitigations",
+                weakness.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddWeaknessStandardMitigationEventHandler, _readonly);
+            listBox.DoubleClick += OpenSubItem;
+
+            AddListView(section, "Vulnerabilities\napplied to",
+                weakness.Model?.GetVulnerabilities(weakness)?.OrderBy(x => (x.Parent as IIdentity)?.Name ?? string.Empty));
+
+            if (_actions?.Any() ?? false)
+            {
+                _weaknessMitigationMenuDefinition = new MenuDefinition(_actions, Scope.WeaknessMitigation);
+                _weaknessMitigationMenuDefinition.MenuClicked += OnWeaknessMitigationMenuClicked;
+                var menu = _weaknessMitigationMenuDefinition.CreateMenu();
+                menu.Opening += OnWeaknessMitigationMenuOpening;
+                listBox.ContextMenuStrip = menu;
+            }
+
+            FinalizeSection(section);
+            section.ResumeLayout();
+
+            weakness.WeaknessMitigationAdded += WeaknessMitigationAdded;
+            weakness.WeaknessMitigationRemoved += WeaknessMitigationRemoved;
         }
 
         private void ShowItem([NotNull] IThreatEventScenario scenario)
@@ -1165,10 +1519,10 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Threat Event Scenario");
             section.SuspendLayout();
             AddHyperlink(section, "Threat Event", scenario.ThreatEvent);
-            AddCombo(section, "Severity", scenario.Severity?.Name, 
+            AddCombo(section, "Severity", scenario.Severity?.Name,
                 scenario.Model?.Severities?.OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
-            AddCombo(section, "Actor", scenario.Actor?.Name, 
+            AddCombo(section, "Actor", scenario.Actor?.Name,
                 scenario.Model?.ThreatActors?.Select(x => x.Name),
                 ChangeActor, _readonly);
             AddText(section, "Motivation", scenario.Motivation, ChangeMotivation, null, _readonly);
@@ -1223,19 +1577,42 @@ namespace ThreatsManager.Utilities.WinForms
             section.ResumeLayout();
         }
 
+        private void ShowItem([NotNull] IWeaknessMitigation mitigation)
+        {
+            _itemType.Text = "Weakness Mitigation";
+            _itemPicture.Image = Resources.standard_mitigations_big;
+
+            var section = AddSection("Weakness Mitigation");
+            section.SuspendLayout();
+            AddHyperlink(section, "Weakness", mitigation.Weakness);
+            AddHyperlink(section, "Mitigation", mitigation.Mitigation);
+            AddCombo(section, "Control", mitigation.Mitigation.ControlType.ToString(),
+                Enum.GetValues(typeof(SecurityControlType)).OfType<SecurityControlType>().Select(x => x.GetEnumLabel()),
+                SecurityControlTypeChanged, true);
+            AddCombo(section, "Strength", mitigation.Strength.ToString(),
+                _model.Strengths.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name).ToArray(),
+                ThreatTypeStrengthChanged, _readonly);
+
+            FinalizeSection(section);
+            section.ResumeLayout();
+        }
+
         private void ShowItem([NotNull] IThreatEventMitigation mitigation)
         {
             _itemType.Text = "Threat Event Mitigation";
             _itemPicture.Image = Resources.mitigations_big;
 
+            var threatEvent = mitigation.ThreatEvent;
             var section = AddSection("Threat Event Mitigation");
             section.SuspendLayout();
-            AddHyperlink(section, "Threat Event", mitigation.ThreatEvent);
+            AddHyperlink(section, "Threat Event", threatEvent);
             AddHyperlink(section, "Mitigation", mitigation.Mitigation);
-            var label = AddSingleLineLabel(section, "Associated To", mitigation.ThreatEvent.Parent.Name,
-                Dpi.Factor.Width > 1.5 ? mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Medium) : mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Small));
-            _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(mitigation.ThreatEvent.Parent));
-            if (mitigation.ThreatEvent.Parent is IEntity entity)
+            var label = AddHyperlink(section, "Associated To", threatEvent.Parent,
+                Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
+            //var label = AddSingleLineLabel(section, "Associated To", mitigation.ThreatEvent.Parent.Name,
+            //    Dpi.Factor.Width > 1.5 ? mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Medium) : mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Small));
+            _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(threatEvent.Parent));
+            if (threatEvent.Parent is IEntity entity)
             {
                 entity.ImageChanged += OnThreatEventMitigationImageChanged;
             }
@@ -1253,7 +1630,45 @@ namespace ThreatsManager.Utilities.WinForms
             FinalizeSection(section);
             section.ResumeLayout();
 
-            ((INotifyPropertyChanged) mitigation.ThreatEvent.Parent).PropertyChanged += OnThreatEventParentPropertyChanged;
+            ((INotifyPropertyChanged)mitigation.ThreatEvent.Parent).PropertyChanged += OnThreatEventParentPropertyChanged;
+        }
+
+        private void ShowItem([NotNull] IVulnerabilityMitigation mitigation)
+        {
+            _itemType.Text = "Vulnerability Mitigation";
+            _itemPicture.Image = Resources.mitigations_big;
+
+            var section = AddSection("Vulnerability Mitigation");
+            section.SuspendLayout();
+            AddHyperlink(section, "Vulnerability", mitigation.Vulnerability);
+            AddHyperlink(section, "Mitigation", mitigation.Mitigation);
+
+            if (mitigation.Vulnerability?.Parent is IIdentity parent)
+            {
+                var label = AddSingleLineLabel(section, "Associated To", parent.Name ?? string.Empty,
+                    Dpi.Factor.Width > 1.5 ? parent.GetImage(ImageSize.Medium) : parent.GetImage(ImageSize.Small));
+                _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(parent));
+            }
+
+            if (mitigation.Vulnerability.Parent is IEntity entity)
+            {
+                entity.ImageChanged += OnVulnerabilityMitigationImageChanged;
+            }
+            AddCombo(section, "Control", mitigation.Mitigation.ControlType.ToString(),
+                Enum.GetValues(typeof(SecurityControlType)).OfType<SecurityControlType>().Select(x => x.GetEnumLabel()),
+                SecurityControlTypeChanged, true);
+            AddCombo(section, "Strength", mitigation.Strength.ToString(),
+                _model.Strengths.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name).ToArray(),
+                VulnerabilityStrengthChanged, _readonly);
+            AddCombo(section, "Status", mitigation.Status.ToString(),
+                Enum.GetValues(typeof(MitigationStatus)).OfType<MitigationStatus>().Select(x => x.GetEnumLabel()),
+                MitigationStatusChanged, _readonly);
+            AddText(section, "Directives", mitigation.Directives, ChangeDirectives, null, _readonly);
+
+            FinalizeSection(section);
+            section.ResumeLayout();
+
+            ((INotifyPropertyChanged)mitigation.Vulnerability.Parent).PropertyChanged += OnVulnerabilityParentPropertyChanged;
         }
 
         private void OpenSubItem(object source, EventArgs args)
@@ -1285,12 +1700,30 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
+        private void VulnerabilityRemoved([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            var control = GetControl("Vulnerabilities", string.Empty);
+            if (control is ListBox listBox && listBox.Items.Contains(vulnerability))
+            {
+                listBox.Items.Remove(vulnerability);
+            }
+        }
+
         private void ThreatEventAdded([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             var control = GetControl("Threat Events", string.Empty);
             if (control is ListBox listBox && !listBox.Items.Contains(threatEvent))
             {
                 listBox.Items.Add(threatEvent);
+            }
+        }
+
+        private void VulnerabilityAdded([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            var control = GetControl("Vulnerabilities", string.Empty);
+            if (control is ListBox listBox && !listBox.Items.Contains(vulnerability))
+            {
+                listBox.Items.Add(vulnerability);
             }
         }
 
@@ -1304,22 +1737,68 @@ namespace ThreatsManager.Utilities.WinForms
                     model = child.Model;
                 else if (_item is IThreatModel tm)
                     model = tm;
-                using (var dialog = new ThreatTypeSelectionDialog())
+
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Event"))
                 {
-                    dialog.Initialize(model, container);
-                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    using (var dialog = new ThreatTypeSelectionDialog())
                     {
-                        var threatType = dialog.ThreatType;
-                        if (threatType != null)
-                            container.AddThreatEvent(threatType);
+                        dialog.Initialize(model, container);
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            var threatType = dialog.ThreatType;
+                            if (threatType != null)
+                            {
+                                container.AddThreatEvent(threatType);
+                                scope?.Complete();
+                            }
+                        }
                     }
                 }
-            }            
+            }
+        }
+
+        private void AddVulnerabilityHandler(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is ListBox listBox &&
+                _item is IVulnerabilitiesContainer container)
+            {
+                IThreatModel model = null;
+                if (_item is IThreatModelChild child)
+                    model = child.Model;
+                else if (_item is IThreatModel tm)
+                    model = tm;
+
+                using (var scope = UndoRedoManager.OpenScope("Add Vulnerability"))
+                {
+                    using (var dialog = new WeaknessSelectionDialog())
+                    {
+                        dialog.Initialize(model, container);
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            var weakness = dialog.Weakness;
+                            if (weakness != null)
+                            {
+                                container.AddVulnerability(weakness);
+                                scope?.Complete();
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void ThreatTypeMitigationAdded(IThreatTypeMitigationsContainer container, IThreatTypeMitigation mitigation)
         {
             var control = GetControl("Threat Type", "Standard Mitigations");
+            if (control is ListBox listBox && !listBox.Items.Contains(mitigation))
+            {
+                listBox.Items.Add(mitigation);
+            }
+        }
+
+        private void WeaknessMitigationAdded(IWeaknessMitigationsContainer container, IWeaknessMitigation mitigation)
+        {
+            var control = GetControl("Weakness", "Standard Mitigations");
             if (control is ListBox listBox && !listBox.Items.Contains(mitigation))
             {
                 listBox.Items.Add(mitigation);
@@ -1335,7 +1814,16 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private void AddStandardMitigationEventHandler(object sender, EventArgs e)
+        private void WeaknessMitigationRemoved(IWeaknessMitigationsContainer container, IWeaknessMitigation mitigation)
+        {
+            var control = GetControl("Weakness", "Standard Mitigations");
+            if (control is ListBox listBox && listBox.Items.Contains(mitigation))
+            {
+                listBox.Items.Remove(mitigation);
+            }
+        }
+
+        private void AddThreatTypeStandardMitigationEventHandler(object sender, EventArgs e)
         {
             if (sender is Button button && button.Tag is ListBox listBox &&
                 _item is IThreatType threatType)
@@ -1344,12 +1832,33 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     dialog.ShowDialog(Form.ActiveForm);
                 }
-            }            
+            }
+        }
+
+        private void AddWeaknessStandardMitigationEventHandler(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is ListBox listBox &&
+                _item is IWeakness weakness)
+            {
+                using (var dialog = new WeaknessMitigationSelectionDialog(weakness))
+                {
+                    dialog.ShowDialog(Form.ActiveForm);
+                }
+            }
         }
 
         private void ThreatEventMitigationAdded(IThreatEventMitigationsContainer container, IThreatEventMitigation mitigation)
         {
             var control = GetControl("Threat Event", "Mitigations");
+            if (control is ListBox listBox && !listBox.Items.Contains(mitigation))
+            {
+                listBox.Items.Add(mitigation);
+            }
+        }
+
+        private void VulnerabilityMitigationAdded(IVulnerabilityMitigationsContainer container, IVulnerabilityMitigation mitigation)
+        {
+            var control = GetControl("Vulnerability", "Mitigations");
             if (control is ListBox listBox && !listBox.Items.Contains(mitigation))
             {
                 listBox.Items.Add(mitigation);
@@ -1364,7 +1873,16 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.Items.Remove(mitigation);
             }
         }
-        
+
+        private void VulnerabilityMitigationRemoved(IVulnerabilityMitigationsContainer container, IVulnerabilityMitigation mitigation)
+        {
+            var control = GetControl("Vulnerability", "Mitigations");
+            if (control is ListBox listBox && listBox.Items.Contains(mitigation))
+            {
+                listBox.Items.Remove(mitigation);
+            }
+        }
+
         private void OnThreatEventParentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (sender is IIdentity identity && string.CompareOrdinal(e.PropertyName, "Name") == 0)
@@ -1385,7 +1903,27 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private void AddMitigationEventHandler(object sender, EventArgs e)
+        private void OnVulnerabilityParentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is IIdentity identity && string.CompareOrdinal(e.PropertyName, "Name") == 0)
+            {
+                var control = GetControl("Vulnerability", "Associated To");
+                if (control is LabelX label)
+                {
+                    label.Text = identity.Name;
+                }
+                else
+                {
+                    var control2 = GetControl("Vulnerability Mitigation", "Associated To");
+                    if (control2 is LabelX label2)
+                    {
+                        label2.Text = identity.Name;
+                    }
+                }
+            }
+        }
+
+        private void AddThreatEventMitigationEventHandler(object sender, EventArgs e)
         {
             if (sender is Button button && button.Tag is ListBox listBox &&
                 _item is IThreatEvent threatEvent)
@@ -1393,15 +1931,32 @@ namespace ThreatsManager.Utilities.WinForms
                 using (var dialog = new ThreatEventMitigationSelectionDialog(threatEvent))
                 {
                     dialog.ShowDialog(Form.ActiveForm);
-                }            }            
+                }
+            }
+        }
+
+        private void AddVulnerabilityMitigationEventHandler(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is ListBox listBox &&
+                _item is IVulnerability vulnerability)
+            {
+                using (var dialog = new VulnerabilityMitigationSelectionDialog(vulnerability))
+                {
+                    dialog.ShowDialog(Form.ActiveForm);
+                }
+            }
         }
 
         private void ChangeFlowType([Required] string text)
         {
             if (_item is IDataFlow dataFlow)
             {
-                var flowType = text.GetEnumValue<FlowType>();
-                dataFlow.FlowType = flowType;
+                using (var scope = UndoRedoManager.OpenScope("Change Flow Type"))
+                {
+                    var flowType = text.GetEnumValue<FlowType>();
+                    dataFlow.FlowType = flowType;
+                    scope?.Complete();
+                }
             }
         }
 
@@ -1409,28 +1964,58 @@ namespace ThreatsManager.Utilities.WinForms
         {
             ISeverity severity;
 
-            if (_item is IThreatType threatType)
+            using (var scope = UndoRedoManager.OpenScope("Change Severity"))
             {
-                severity =
-                    threatType.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
-                if (severity != null)
-                    threatType.Severity = severity;
-            }
-
-            if (_item is IThreatEvent threatEvent)
-            {
-                severity =
-                    threatEvent.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
-                if (severity != null)
-                    threatEvent.Severity = severity;
-            }
-
-            if (_item is IThreatEventScenario scenario)
-            {
-                severity =
-                    scenario.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
-                if (severity != null)
-                    scenario.Severity = severity;
+                if (_item is IThreatType threatType)
+                {
+                    severity =
+                        threatType.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
+                    if (severity != null)
+                    {
+                        threatType.Severity = severity;
+                        scope?.Complete();
+                    }
+                }
+                else if (_item is IThreatEvent threatEvent)
+                {
+                    severity =
+                        threatEvent.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
+                    if (severity != null)
+                    {
+                        threatEvent.Severity = severity;
+                        scope?.Complete();
+                    }
+                }
+                else if (_item is IThreatEventScenario scenario)
+                {
+                    severity =
+                        scenario.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
+                    if (severity != null)
+                    {
+                        scenario.Severity = severity;
+                        scope?.Complete();
+                    }
+                }
+                else if (_item is IWeakness weakness)
+                {
+                    severity =
+                        weakness.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
+                    if (severity != null)
+                    {
+                        weakness.Severity = severity;
+                        scope?.Complete();
+                    }
+                }
+                else if (_item is IVulnerability vulnerability)
+                {
+                    severity =
+                        vulnerability.Model?.Severities?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
+                    if (severity != null)
+                    {
+                        vulnerability.Severity = severity;
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
@@ -1443,7 +2028,11 @@ namespace ThreatsManager.Utilities.WinForms
                 actor =
                     scenario.Model?.ThreatActors?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
                 if (actor != null)
-                    scenario.Actor = actor;
+                    using (var scope = UndoRedoManager.OpenScope("Change Actor"))
+                    {
+                        scenario.Actor = actor;
+                        scope?.Complete();
+                    }
             }
         }
 
@@ -1451,7 +2040,11 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item is IThreatEventScenario scenario)
             {
-                scenario.Motivation = motivation?.Text;
+                using (var scope = UndoRedoManager.OpenScope("Change Scenario Motivation"))
+                {
+                    scenario.Motivation = motivation?.Text;
+                    scope?.Complete();
+                }
             }
         }
 
@@ -1459,7 +2052,11 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item is IThreatEventMitigation mitigation)
             {
-                mitigation.Directives = directives?.Text;
+                using (var scope = UndoRedoManager.OpenScope("Change Directives"))
+                {
+                    mitigation.Directives = directives?.Text;
+                    scope?.Complete();
+                }
             }
         }
 
@@ -1467,158 +2064,210 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item is IThreatModel model)
             {
-                model.Owner = textBox?.Text;
+                using (var scope = UndoRedoManager.OpenScope("Change Threat Model Owner"))
+                {
+                    model.Owner = textBox?.Text;
+                    scope?.Complete();
+                }
             }
         }
 
-        private bool CreateContributor(string name, object reference)
+        private bool CreateContributor(Control control, string name, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(name))
             {
-                result = model.AddContributor(name);
+                using (var scope = UndoRedoManager.OpenScope("Create Contributor"))
+                {
+                    result = model.AddContributor(name);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private bool ChangeContributor(string oldName, string newName, object reference)
+        private bool ChangeContributor(Control control, string oldName, string newName, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(oldName) && !string.IsNullOrWhiteSpace(newName))
             {
-                result = model.ChangeContributor(oldName, newName);
+                using (var scope = UndoRedoManager.OpenScope("Change Contributor"))
+                {
+                    result = model.ChangeContributor(oldName, newName);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private bool RemoveContributor(string name, object reference)
+        private bool RemoveContributor(Control control, string name, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(name))
             {
-                result = model.RemoveContributor(name);
+                using (var scope = UndoRedoManager.OpenScope("Remove Contributor"))
+                {
+                    result = model.RemoveContributor(name);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private void ClearContributors(object reference)
+        private void ClearContributors(Control control, object reference)
         {
             if (_item is IThreatModel model)
             {
                 var contributors = model.Contributors?.ToArray();
                 if (contributors?.Any() ?? false)
                 {
-                    foreach (var contributor in contributors)
+                    using (var scope = UndoRedoManager.OpenScope("Clear Contributors"))
                     {
-                        model.RemoveContributor(contributor);
+                        foreach (var contributor in contributors)
+                        {
+                            model.RemoveContributor(contributor);
+                        }
+                        scope?.Complete();
                     }
                 }
             }
         }
 
-        private bool CreateAssumption(string name, object reference)
+        private bool CreateAssumption(Control control, string name, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(name))
             {
-                result = model.AddAssumption(name);
+                using (var scope = UndoRedoManager.OpenScope("Create Assumption"))
+                {
+                    result = model.AddAssumption(name);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private bool ChangeAssumption(string oldName, string newName, object reference)
+        private bool ChangeAssumption(Control control, string oldName, string newName, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(oldName) && !string.IsNullOrWhiteSpace(newName))
             {
-                result = model.ChangeAssumption(oldName, newName);
+                using (var scope = UndoRedoManager.OpenScope("Change Assumption"))
+                {
+                    result = model.ChangeAssumption(oldName, newName);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private bool RemoveAssumption(string name, object reference)
+        private bool RemoveAssumption(Control control, string name, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(name))
             {
-                result = model.RemoveAssumption(name);
+                using (var scope = UndoRedoManager.OpenScope("Remove Assumption"))
+                {
+                    result = model.RemoveAssumption(name);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private void ClearAssumptions(object reference)
+        private void ClearAssumptions(Control control, object reference)
         {
             if (_item is IThreatModel model)
             {
                 var assumptions = model.Assumptions?.ToArray();
                 if (assumptions?.Any() ?? false)
                 {
-                    foreach (var assumption in assumptions)
+                    using (var scope = UndoRedoManager.OpenScope("Clear Assumptions"))
                     {
-                        model.RemoveAssumption(assumption);
+                        foreach (var assumption in assumptions)
+                        {
+                            model.RemoveAssumption(assumption);
+                        }
+                        scope?.Complete();
                     }
                 }
             }
         }
 
-        private bool CreateDependency(string name, object reference)
+        private bool CreateDependency(Control control, string name, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(name))
             {
-                result = model.AddDependency(name);
+                using (var scope = UndoRedoManager.OpenScope("Create Dependency"))
+                {
+                    result = model.AddDependency(name);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private bool ChangeDependency(string oldName, string newName, object reference)
+        private bool ChangeDependency(Control control, string oldName, string newName, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(oldName) && !string.IsNullOrWhiteSpace(newName))
             {
-                result = model.ChangeDependency(oldName, newName);
+                using (var scope = UndoRedoManager.OpenScope("Change Dependency"))
+                {
+                    result = model.ChangeDependency(oldName, newName);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private bool RemoveDependency(string name, object reference)
+        private bool RemoveDependency(Control control, string name, object reference)
         {
             bool result = false;
 
             if (_item is IThreatModel model && !string.IsNullOrWhiteSpace(name))
             {
-                result = model.RemoveDependency(name);
+                using (var scope = UndoRedoManager.OpenScope("Remove Dependency"))
+                {
+                    result = model.RemoveDependency(name);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
-        private void ClearDependencies(object reference)
+        private void ClearDependencies(Control control, object reference)
         {
             if (_item is IThreatModel model)
             {
                 var dependencies = model.ExternalDependencies?.ToArray();
                 if (dependencies?.Any() ?? false)
                 {
-                    foreach (var dependency in dependencies)
+                    using (var scope = UndoRedoManager.OpenScope("Clear Dependencies"))
                     {
-                        model.RemoveDependency(dependency);
+                        foreach (var dependency in dependencies)
+                        {
+                            model.RemoveDependency(dependency);
+                        }
+                        scope?.Complete();
                     }
                 }
             }
@@ -1653,28 +2302,33 @@ namespace ThreatsManager.Utilities.WinForms
         {
             AddToGrid("Threat Model", "Contributors", text);
         }
-   
-        private void AddToGrid([Required] string sectionName, 
-            [Required] string controlName, [Required] string text)
-        {
-            var control = GetControl(sectionName, controlName);
-            if (_item is IThreatModel && control is SuperGridControl grid)
-            {
-                var row = new GridRow(text);
-                row.Cells[0].Tag = text;
-                row.Cells[0].PropertyChanged += RowCellChanged;
-                grid.PrimaryGrid.Rows.Add(row);
-            }
-        }
-     
-        private void RemoveFromGrid([Required] string sectionName, 
+
+        private void AddToGrid([Required] string sectionName,
             [Required] string controlName, [Required] string text)
         {
             var control = GetControl(sectionName, controlName);
             if (_item is IThreatModel && control is SuperGridControl grid)
             {
                 var row = grid.PrimaryGrid.Rows.OfType<GridRow>()
-                    .FirstOrDefault(x => string.CompareOrdinal((string) x.Cells[0].Value, text) == 0);
+                    .FirstOrDefault(x => string.CompareOrdinal((string)x.Cells[0].Value, text) == 0);
+                if (row == null)
+                {
+                    row = new GridRow(text);
+                    row.Cells[0].Tag = text;
+                    row.Cells[0].PropertyChanged += RowCellChanged;
+                    grid.PrimaryGrid.Rows.Add(row);
+                }
+            }
+        }
+
+        private void RemoveFromGrid([Required] string sectionName,
+            [Required] string controlName, [Required] string text)
+        {
+            var control = GetControl(sectionName, controlName);
+            if (_item is IThreatModel && control is SuperGridControl grid)
+            {
+                var row = grid.PrimaryGrid.Rows.OfType<GridRow>()
+                    .FirstOrDefault(x => string.CompareOrdinal((string)x.Cells[0].Value, text) == 0);
                 if (row != null)
                 {
                     row.Cells[0].PropertyChanged -= RowCellChanged;
@@ -1687,7 +2341,11 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item is IMitigation mitigation)
             {
-                mitigation.ControlType = newValue.GetEnumValue<SecurityControlType>();
+                using (var scope = UndoRedoManager.OpenScope("Change Control Type"))
+                {
+                    mitigation.ControlType = newValue.GetEnumValue<SecurityControlType>();
+                    scope?.Complete();
+                }
             }
         }
 
@@ -1697,7 +2355,13 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 var strength = _model.Strengths?.FirstOrDefault(x => string.CompareOrdinal(x.Name, newValue) == 0);
                 if (strength != null)
-                    mitigation.Strength = strength;
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Change Strength"))
+                    {
+                        mitigation.Strength = strength;
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
@@ -1707,7 +2371,45 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 var strength = _model.Strengths?.FirstOrDefault(x => string.CompareOrdinal(x.Name, newValue) == 0);
                 if (strength != null)
-                    mitigation.Strength = strength;
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Change Strength"))
+                    {
+                        mitigation.Strength = strength;
+                        scope?.Complete();
+                    }
+                }
+            }
+        }
+
+        private void WeaknessStrengthChanged([Required] string newValue)
+        {
+            if (_item is IWeaknessMitigation mitigation)
+            {
+                var strength = _model.Strengths?.FirstOrDefault(x => string.CompareOrdinal(x.Name, newValue) == 0);
+                if (strength != null)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Change Strength"))
+                    {
+                        mitigation.Strength = strength;
+                        scope?.Complete();
+                    }
+                }
+            }
+        }
+
+        private void VulnerabilityStrengthChanged([Required] string newValue)
+        {
+            if (_item is IVulnerabilityMitigation mitigation)
+            {
+                var strength = _model.Strengths?.FirstOrDefault(x => string.CompareOrdinal(x.Name, newValue) == 0);
+                if (strength != null)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Change Strength"))
+                    {
+                        mitigation.Strength = strength;
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
@@ -1715,18 +2417,26 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item is IThreatEventMitigation mitigation)
             {
-                mitigation.Status = newValue.GetEnumValue<MitigationStatus>();
+                using (var scope = UndoRedoManager.OpenScope("Change Mitigation Status"))
+                {
+                    mitigation.Status = newValue.GetEnumValue<MitigationStatus>();
+                    scope?.Complete();
+                }
             }
         }
 
         private void _itemName_TextChanged(object sender, EventArgs e)
         {
-            if ((_item is IIdentity identity) && (string.CompareOrdinal(identity.Name, _itemName.Text) != 0))
+            if (!_loading && (_item is IIdentity identity) && (string.CompareOrdinal(identity.Name, _itemName.Text) != 0))
             {
                 try
                 {
                     _loading = true;
-                    identity.Name = _itemName.Text;
+                    using (var scope = UndoRedoManager.OpenScope("Change Name"))
+                    {
+                        identity.Name = _itemName.Text;
+                        scope?.Complete();
+                    }
                 }
                 finally
                 {
@@ -1737,12 +2447,16 @@ namespace ThreatsManager.Utilities.WinForms
 
         private void _itemDescription_TextChanged(object sender, EventArgs e)
         {
-            if ((_item is IIdentity identity) && (string.CompareOrdinal(identity.Description, _itemDescription.Text) != 0))
+            if (!_loading && (_item is IIdentity identity) && (string.CompareOrdinal(identity.Description, _itemDescription.Text) != 0))
             {
                 try
                 {
                     _loading = true;
-                    identity.Description = _itemDescription.Text;
+                    using (var scope = UndoRedoManager.OpenScope("Change Description"))
+                    {
+                        identity.Description = _itemDescription.Text;
+                        scope?.Complete();
+                    }
                 }
                 finally
                 {
@@ -1848,11 +2562,31 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
+        private void OnVulnerabilityImageChanged([NotNull] IEntity entity, ImageSize size)
+        {
+            if (_item is IVulnerability vulnerability && vulnerability.Parent == entity)
+            {
+                var control = GetControl("Vulnerability", "Associated To");
+                if (control is LabelX label)
+                    label.Image = entity.GetImage(ImageSize.Small);
+            }
+        }
+
         private void OnThreatEventMitigationImageChanged([NotNull] IEntity entity, ImageSize size)
         {
             if (_item is IThreatEventMitigation mitigation && mitigation.ThreatEvent?.Parent == entity)
             {
                 var control = GetControl("Threat Event Mitigation", "Associated To");
+                if (control is LabelX label)
+                    label.Image = entity.GetImage(ImageSize.Small);
+            }
+        }
+
+        private void OnVulnerabilityMitigationImageChanged([NotNull] IEntity entity, ImageSize size)
+        {
+            if (_item is IVulnerabilityMitigation mitigation && mitigation.Vulnerability?.Parent == entity)
+            {
+                var control = GetControl("Vulnerability", "Associated To");
                 if (control is LabelX label)
                     label.Image = entity.GetImage(ImageSize.Small);
             }
@@ -2161,12 +2895,39 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
+        private void OnVulnerabilityMenuOpening(object sender, CancelEventArgs e)
+        {
+            _menuVulnerability = null;
+
+            if (sender is ContextMenuStrip menuStrip && menuStrip.SourceControl is ListBox listBox)
+            {
+                var index = listBox.IndexFromPoint(listBox.PointToClient(Cursor.Position));
+                if (index >= 0 && index < listBox.Items.Count && listBox.Items[index] is IVulnerability vulnerability)
+                {
+                    _menuVulnerability = vulnerability;
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
         private void OnThreatEventMenuClicked(IContextAwareAction action, object context)
         {
             var control = GetControl("Threat Events", string.Empty);
             if (control is ListBox listBox && _menuThreatEvent != null)
             {
                 action.Execute(_menuThreatEvent);
+            }
+        }
+
+        private void OnVulnerabilityMenuClicked(IContextAwareAction action, object context)
+        {
+            var control = GetControl("Vulnerabilities", string.Empty);
+            if (control is ListBox listBox && _menuVulnerability != null)
+            {
+                action.Execute(_menuVulnerability);
             }
         }
 
@@ -2188,12 +2949,39 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
+        private void OnVulnerabilityMitigationMenuOpening(object sender, CancelEventArgs e)
+        {
+            _menuVulnerabilityMitigation = null;
+
+            if (sender is ContextMenuStrip menuStrip && menuStrip.SourceControl is ListBox listBox)
+            {
+                var index = listBox.IndexFromPoint(listBox.PointToClient(Cursor.Position));
+                if (index >= 0 && index < listBox.Items.Count && listBox.Items[index] is IVulnerabilityMitigation vulnerabilityMitigation)
+                {
+                    _menuVulnerabilityMitigation = vulnerabilityMitigation;
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
         private void OnThreatEventMitigationMenuClicked(IContextAwareAction action, object context)
         {
             var control = GetControl("Threat Event", "Mitigations");
             if (control is ListBox listBox && _menuThreatEventMitigation != null)
             {
                 action.Execute(_menuThreatEventMitigation);
+            }
+        }
+
+        private void OnVulnerabilityMitigationMenuClicked(IContextAwareAction action, object context)
+        {
+            var control = GetControl("Vulnerability", "Mitigations");
+            if (control is ListBox listBox && _menuVulnerabilityMitigation != null)
+            {
+                action.Execute(_menuVulnerabilityMitigation);
             }
         }
 
@@ -2215,6 +3003,24 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
+        private void OnWeaknessMitigationMenuOpening(object sender, CancelEventArgs e)
+        {
+            _menuWeaknessMitigation = null;
+
+            if (sender is ContextMenuStrip menuStrip && menuStrip.SourceControl is ListBox listBox)
+            {
+                var index = listBox.IndexFromPoint(listBox.PointToClient(Cursor.Position));
+                if (index >= 0 && index < listBox.Items.Count && listBox.Items[index] is IWeaknessMitigation weaknessMitigation)
+                {
+                    _menuWeaknessMitigation = weaknessMitigation;
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
         private void OnThreatTypeMitigationMenuClicked(IContextAwareAction action, object context)
         {
             var control = GetControl("Threat Type", "Standard Mitigations");
@@ -2223,7 +3029,21 @@ namespace ThreatsManager.Utilities.WinForms
                 action.Execute(_menuThreatTypeMitigation);
             }
         }
+
+        private void OnWeaknessMitigationMenuClicked(IContextAwareAction action, object context)
+        {
+            var control = GetControl("Weakness", "Standard Mitigations");
+            if (control is ListBox listBox && _menuWeaknessMitigation != null)
+            {
+                action.Execute(_menuWeaknessMitigation);
+            }
+        }
         #endregion
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            _refresh_Click(this, EventArgs.Empty);
+        }
 
         private void _refresh_Click(object sender, EventArgs e)
         {

@@ -174,40 +174,7 @@ namespace ThreatsManager.MsTmt
                 var baseTBSchema = new BaseTrustBoundaryPropertySchemaManager(target).GetSchema();
                 AddStandardPropertyTypes(baseTBSchema);
 
-                if (HasStandardStructure(elements))
-                {
-                    IPropertySchema schema = null;
-
-                    foreach (var element in elements)
-                    {
-                        switch (element.ElementType)
-                        {
-                            case ElementType.StencilRectangle:
-                                schema = baseEISchema;
-                                break;
-                            case ElementType.StencilEllipse:
-                                schema = basePSchema;
-                                break;
-                            case ElementType.StencilParallelLines:
-                                schema = baseDSSchema;
-                                break;
-                            case ElementType.BorderBoundary:
-                            case ElementType.LineBoundary:
-                                schema = baseTBSchema;
-                                break;
-                        }
-
-                        if (schema != null)
-                        {
-                            var properties = element.Properties?.ToArray();
-                            AddProperties(schema, null, properties);
-                        }
-                    }
-                }
-                else // We need to import all base elements!
-                {
-                    result = ImportEntityTemplates(elements, target);
-                }
+                result = ImportEntityTemplates(elements, target);
             }
 
             return result;
@@ -225,39 +192,7 @@ namespace ThreatsManager.MsTmt
             {
                 var schema = new BaseFlowPropertySchemaManager(target).GetSchema();
                 AddStandardPropertyTypes(schema);
-
-                if (HasStandardStructure(connectors))
-                {
-                    //if (!(schema.PropertyTypes?.Any(x =>
-                    //        string.CompareOrdinal("Out of Scope", x.Name) == 0) ?? false))
-                    //{
-                    //    var outOfScope = schema.AddPropertyType("Out of Scope",
-                    //        PropertyValueType.Boolean);
-                    //    if (outOfScope != null)
-                    //    {
-                    //        outOfScope.Priority = -2;
-                    //    }
-                    //}
-
-                    //if (!(schema.PropertyTypes?.Any(x =>
-                    //        string.CompareOrdinal("Reason For Out Of Scope", x.Name) == 0) ?? false))
-                    //{
-                    //    var reasonOutOfScope =
-                    //        schema.AddPropertyType("Reason For Out Of Scope",
-                    //            PropertyValueType.String);
-                    //    if (reasonOutOfScope != null)
-                    //        reasonOutOfScope.Priority = -1;
-                    //}
-
-                    foreach (var connector in connectors)
-                    {
-                        AddProperties(schema, null, connector.Properties?.ToArray());
-                    }
-                }
-                else
-                {
-                    result = ImportFlowTemplates(connectors, target);
-                }
+                result = ImportFlowTemplates(connectors, target);
             }
 
             return result;
@@ -297,101 +232,109 @@ namespace ThreatsManager.MsTmt
             {
                 IItemTemplate parent = null;
                 IPropertySchema schema = null;
-                if (!element.IsGeneric)
-                {
-                    var parentTypeId = element.ParentTypeId;
-                    if (!string.IsNullOrWhiteSpace(parentTypeId))
-                    {
-                        parent = GetEntityTemplate(parentTypeId, target, schemaManager);
-                        if (parent == null)
-                            parent = GetTrustBoundaryTemplate(parentTypeId, target, schemaManager);
 
-                        if (parent != null)
+                try
+                {
+                    if (!element.IsGeneric)
+                    {
+                        var parentTypeId = element.ParentTypeId;
+                        if (!string.IsNullOrWhiteSpace(parentTypeId))
                         {
-                            schema = target.GetSchema(parent.Name, Resources.DefaultNamespace);
+                            parent = GetEntityTemplate(parentTypeId, target, schemaManager);
+                            if (parent == null)
+                                parent = GetTrustBoundaryTemplate(parentTypeId, target, schemaManager);
+
+                            if (parent != null)
+                            {
+                                schema = target.GetSchema(parent.Name, Resources.DefaultNamespace);
+                            }
+                        }
+                    }
+
+                    switch (element.ElementType)
+                    {
+                        case ElementType.StencilRectangle:
+                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description,
+                                element.Image, element.Image, element.Image,
+                                EntityType.ExternalInteractor);
+                            trustBoundaryTemplate = null;
+                            scope = Scope.ExternalInteractor;
+                            baseSchema = baseEISchema;
+                            result++;
+                            break;
+                        case ElementType.StencilEllipse:
+                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description,
+                                element.Image, element.Image, element.Image,
+                                EntityType.Process);
+                            trustBoundaryTemplate = null;
+                            scope = Scope.Process;
+                            baseSchema = basePSchema;
+                            result++;
+                            break;
+                        case ElementType.StencilParallelLines:
+                            entityTemplate = target.AddEntityTemplate(element.Name, element.Description,
+                                element.Image, element.Image, element.Image,
+                                EntityType.DataStore);
+                            trustBoundaryTemplate = null;
+                            scope = Scope.DataStore;
+                            baseSchema = baseDSSchema;
+                            result++;
+                            break;
+                        case ElementType.LineBoundary:
+                        case ElementType.BorderBoundary:
+                            entityTemplate = null;
+                            trustBoundaryTemplate = target.AddTrustBoundaryTemplate(element.Name, element.Description);
+                            scope = Scope.TrustBoundary;
+                            baseSchema = baseTBSchema;
+                            result++;
+                            break;
+                        default:
+                            entityTemplate = null;
+                            trustBoundaryTemplate = null;
+                            scope = Scope.Undefined;
+                            baseSchema = null;
+                            break;
+                    }
+
+                    if (entityTemplate != null)
+                    {
+                        schemaManager.SetObjectId(entityTemplate, element.TypeId);
+                        if (baseSchema != null)
+                        {
+                            InitializeBaseSchema(entityTemplate, baseSchema);
+                            var properties = element.Properties?.ToArray();
+                            AddProperties(target, element.Name, scope, baseSchema, entityTemplate, properties);
+                        }
+
+                        if (schema != null)
+                        {
+                            InitializeBaseSchema(entityTemplate, schema);
+                            var properties = element.Properties?.ToArray();
+                            AddProperties(target, element.Name, scope, schema, entityTemplate, properties);
+                        }
+                    }
+                    else if (trustBoundaryTemplate != null)
+                    {
+                        schemaManager.SetObjectId(trustBoundaryTemplate, element.TypeId);
+
+                        var properties = element.Properties?.ToArray();
+
+                        if (baseSchema != null)
+                        {
+                            InitializeBaseSchema(trustBoundaryTemplate, baseSchema);
+                            AddProperties(target, element.Name, scope, baseSchema, trustBoundaryTemplate, properties);
+                        }
+
+                        if (schema != null)
+                        {
+                            InitializeBaseSchema(trustBoundaryTemplate, schema);
+                            AddProperties(target, element.Name, scope, schema, trustBoundaryTemplate, properties);
                         }
                     }
                 }
-
-                switch (element.ElementType)
+                catch
                 {
-                    case ElementType.StencilRectangle:
-                        entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
-                            element.Image, element.Image, element.Image,
-                            EntityType.ExternalInteractor);
-                        trustBoundaryTemplate = null;
-                        scope = Scope.ExternalInteractor;
-                        baseSchema = baseEISchema;
-                        result++;
-                        break;
-                    case ElementType.StencilEllipse:
-                        entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
-                            element.Image, element.Image, element.Image,
-                            EntityType.Process);
-                        trustBoundaryTemplate = null;
-                        scope = Scope.Process;
-                        baseSchema = basePSchema;
-                        result++;
-                        break;
-                    case ElementType.StencilParallelLines:
-                        entityTemplate = target.AddEntityTemplate(element.Name, element.Description, 
-                            element.Image, element.Image, element.Image,
-                            EntityType.DataStore);
-                        trustBoundaryTemplate = null;
-                        scope = Scope.DataStore;
-                        baseSchema = baseDSSchema;
-                        result++;
-                        break;
-                    case ElementType.LineBoundary:
-                    case ElementType.BorderBoundary:
-                        entityTemplate = null;
-                        trustBoundaryTemplate = target.AddTrustBoundaryTemplate(element.Name, element.Description);
-                        scope = Scope.TrustBoundary;
-                        baseSchema = baseTBSchema;
-                        result++;
-                        break;
-                    default:
-                        entityTemplate = null;
-                        trustBoundaryTemplate = null;
-                        scope = Scope.Undefined;
-                        baseSchema = null;
-                        break;
-                }
-
-                if (entityTemplate != null)
-                {
-                    schemaManager.SetObjectId(entityTemplate, element.TypeId);
-                    if (baseSchema != null)
-                    {
-                        InitializeBaseSchema(entityTemplate, baseSchema);
-                        var properties = element.Properties?.ToArray();
-                        AddProperties(target, element.Name, scope, baseSchema, entityTemplate, properties);
-                    }
-
-                    if (schema != null)
-                    {
-                        InitializeBaseSchema(entityTemplate, schema);
-                        var properties = element.Properties?.ToArray();
-                        AddProperties(target, element.Name, scope, schema, entityTemplate, properties);
-                    }
-                } 
-                else if (trustBoundaryTemplate != null)
-                {
-                    schemaManager.SetObjectId(trustBoundaryTemplate, element.TypeId);
-
-                    var properties = element.Properties?.ToArray();
-
-                    if (baseSchema != null)
-                    {
-                        InitializeBaseSchema(trustBoundaryTemplate, baseSchema);
-                        AddProperties(target, element.Name, scope, baseSchema, trustBoundaryTemplate, properties);
-                    }
-
-                    if (schema != null)
-                    {
-                        InitializeBaseSchema(entityTemplate, schema);
-                        AddProperties(target, element.Name, scope, schema, entityTemplate, properties);
-                    }
+                    throw;
                 }
             }
 
@@ -908,16 +851,7 @@ namespace ThreatsManager.MsTmt
                     IThreatType threatType = null;
                     if (!string.IsNullOrWhiteSpace(tt?.Name))
                     {
-                        ISeverity severity;
-                        if (Enum.TryParse<DefaultSeverity>(tt.Priority, out var severityId))
-                        {
-                            severity = target.GetMappedSeverity((int) severityId);
-                        }
-                        else
-                        {
-                            severity = target.GetMappedSeverity((int) DefaultSeverity.High);
-                        }
-
+                        ISeverity severity = GetSeverity(target, tt.Priority);
                         threatType = target.AddThreatType(tt.Name, severity);
                         if (threatType != null)
                         {
@@ -965,7 +899,8 @@ namespace ThreatsManager.MsTmt
                         {
                             foreach (var internalThreat in internalThreats)
                             {
-                                threatType = target.AddThreatType(internalThreat.ToString(), defaultSeverity);
+                                var severity = GetSeverity(target, internalThreat.Priority) ?? defaultSeverity;
+                                threatType = target.AddThreatType(internalThreat.ToString(), severity);
                                 if (threatType != null)
                                 {
                                     threatType.Description = internalThreat.GetValueFromLabel("Description");
@@ -982,7 +917,7 @@ namespace ThreatsManager.MsTmt
                         }
                     }
 
-                    if (threatType != null)
+                    if (threatType != null && tt != null)
                     {
                         CreateGenerationRule(source, tt, threatType);
 
@@ -1029,6 +964,21 @@ namespace ThreatsManager.MsTmt
             }
         }
 
+        private ISeverity GetSeverity([NotNull] IThreatModel target, string severity)
+        {
+            ISeverity result;
+            if (Enum.TryParse<DefaultSeverity>(severity, out var severityId))
+            {
+                result = target.GetMappedSeverity((int)severityId);
+            }
+            else
+            {
+                result = target.GetMappedSeverity((int)DefaultSeverity.High);
+            }
+
+            return result;
+        }
+
         private void CreateGenerationRule([NotNull] ThreatModel model, 
             [NotNull] ThreatType source, [NotNull] IThreatType target)
         {
@@ -1064,7 +1014,8 @@ namespace ThreatsManager.MsTmt
 
                 rule = new SelectionRule()
                 {
-                    Root = andNode
+                    Root = andNode,
+                    ModelId = target.Id
                 };
 
                 var schemaManager = new AutoGenRulesPropertySchemaManager(target.Model);
@@ -1123,15 +1074,6 @@ namespace ThreatsManager.MsTmt
                     }
                 }
             }
-        }
-
-        private bool HasStandardStructure([NotNull] IEnumerable<ElementTypeInfo> elements)
-        {
-            return !(elements.Where(x => x.ElementType == ElementType.StencilRectangle).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.StencilEllipse).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.StencilParallelLines).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.BorderBoundary).Count() > 1 ||
-                   elements.Where(x => x.ElementType == ElementType.Connector).Count() > 1);
         }
 
         private bool IsSpecial([Required] string propertyName)

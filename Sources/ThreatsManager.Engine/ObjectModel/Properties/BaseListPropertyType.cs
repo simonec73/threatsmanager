@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
@@ -16,11 +17,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertyTypeAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public class BaseListPropertyType : IPropertyType
     {
         public BaseListPropertyType()
@@ -33,22 +36,16 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             _id = Guid.NewGuid();
             _schemaId = schema.Id;
             _model = schema.Model;
-            _modelId = schema.Model?.Id ?? Guid.Empty;
             Name = name;
             Visible = true;
         }
-
-        #region Additional placeholders required.
-        protected Guid _id { get; set; }
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
-        protected Guid _schemaId { get; set; }
-        #endregion
 
         #region Default implementation.
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public Guid SchemaId { get; set; }
         public int Priority { get; set; }
@@ -56,25 +53,23 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public bool DoNotPrint { get; set; }
         public bool ReadOnly { get; set; }
         public string CustomPropertyViewer { get; set; }
+        #endregion
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("schema")]
+        protected Guid _schemaId { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -82,10 +77,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         /// Identifier of the List Provider that provides the list of available items.
         /// </summary>
         [JsonProperty("listProvider")]
-        protected string _listProviderId;
+        [NotRecorded]
+        protected string _listProviderId { get; set; }
 
+        [Reference]
+        [NotRecorded]
         private IListProviderExtension _listProvider;
 
+        [IgnoreAutoChangeNotification]
         private IListProviderExtension ListProvider
         {
             get
@@ -108,9 +107,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [JsonProperty("context")]
         public string Context { get; set; }
 
-        [JsonProperty("cachedList")]
-        protected IEnumerable<IListItem> _cachedList;
+        [JsonProperty("cachedList", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        [NotRecorded]
+        [Reference]
+        protected List<IListItem> _cachedList { get; set; }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IListItem> Values
         {
             get
@@ -122,7 +124,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (listProvider != null)
                 {
                     result = listProvider.GetAvailableItems(Context);
-                    _cachedList = result?.ToArray();
+                    _cachedList = result?.ToList();
                 }
                 else
                 {

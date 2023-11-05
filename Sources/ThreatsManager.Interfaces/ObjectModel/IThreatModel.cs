@@ -16,7 +16,7 @@ namespace ThreatsManager.Interfaces.ObjectModel
         IThreatTypesContainer, IStrengthsContainer, IMitigationsContainer, 
         IThreatActorsContainer, IEntityTemplatesContainer, IFlowTemplatesContainer,
         ITrustBoundaryTemplatesContainer, IThreatEventsContainer, IThreatEventFinder,
-        IWeaknessesContainer, IVulnerabilitiesContainer, IVulnerabilityFinder, IDirty
+        IWeaknessesContainer, IVulnerabilitiesContainer, IVulnerabilityFinder
     {
         #region Events.
         /// <summary>
@@ -65,7 +65,7 @@ namespace ThreatsManager.Interfaces.ObjectModel
         /// <seealso cref="IIdentity"/>
         /// <seealso cref="IPropertyType"/>
         /// <seealso cref="IProperty"/>
-        event Action<IIdentity, IPropertyType, IProperty> ChildPropertyChanged;
+        event Action<IIdentity, IPropertyType, IProperty> ChildPropertyValueChanged;
 
         /// <summary>
         /// Event raised when a contributor is added.

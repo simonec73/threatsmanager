@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -12,6 +16,7 @@ using ThreatsManager.Utilities;
 namespace ThreatsManager.AutoGenRules.Engine
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
     public class EnumValueRuleNode : SelectionRuleNode
     {
         public EnumValueRuleNode()
@@ -36,20 +41,38 @@ namespace ThreatsManager.AutoGenRules.Engine
         public string Schema { get; set; }
 
         [JsonProperty("values")]
-        private List<string> _values;
+        [Reference]
+        [field:NotRecorded]
+        private List<string> _legacyValues { get; set; }
 
+        [JsonProperty("items", ItemTypeNameHandling = TypeNameHandling.None, TypeNameHandling = TypeNameHandling.None)]
+        [Reference]
+        private AdvisableCollection<RecordableString> _values { get; set; }
+
+        [property:NotRecorded]
         public IEnumerable<string> Values
         {
-            get { return _values; }
+            get { return _values?.Select(x => x.Value).AsEnumerable(); ; }
             set
             {
+                if (_values?.Any() ?? false)
+                {
+                     foreach (var item in _values)
+                        UndoRedoManager.Detach(item);
+
+                     _values.Clear();
+                }
+
                 if (value?.Any() ?? false)
                 {
-                    _values = new List<string>(value);
-                }
-                else
-                {
-                    _values = null;
+                    if (_values == null)
+                        _values = new AdvisableCollection<RecordableString>();
+                    foreach (var v in value)
+                    {
+                        var r = new RecordableString(v);
+                        UndoRedoManager.Attach(r, Model);
+                        _values.Add(r);
+                    }
                 }
             }
         }
@@ -172,6 +195,25 @@ namespace ThreatsManager.AutoGenRules.Engine
         public override string ToString()
         {
             return $"{Scope.ToString()}:{Schema}.{Name} = '{Value}'";
+        }
+
+        [OnDeserialized]
+        public void PostDeserialization(StreamingContext context)
+        {
+            if (_legacyValues?.Any() ?? false)
+            {
+                if (_values == null)
+                    _values = new AdvisableCollection<RecordableString>();
+
+                foreach (var item in _legacyValues)
+                {
+                    var r = new RecordableString(item);
+                    UndoRedoManager.Attach(r, Model);
+                    _values.Add(r);
+                }
+
+                _legacyValues.Clear();
+            }
         }
     }
 }

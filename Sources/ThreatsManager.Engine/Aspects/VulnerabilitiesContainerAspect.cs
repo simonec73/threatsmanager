@@ -5,100 +5,122 @@ using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
-using PostSharp.Patterns.Contracts;
-using PostSharp.Reflection;
+using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //private List<IVulnerability> _vulnerabilities { get; set; }
+    //[Child]
+    //[JsonProperty("vulnerabilities")]
+    //private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
     //#endregion    
 
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class VulnerabilitiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("vulnerabilities")]
-        public List<IVulnerability> _vulnerabilities { get; set; }
+        [ImportMember(nameof(_vulnerabilities))]
+        public Property<AdvisableCollection<Vulnerability>> _vulnerabilities;
         #endregion
 
         #region Implementation of interface IVulnerabilitiesContainer.
         private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "VulnerabilityAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnVulnerabilityAddedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_vulnerabilityAdded == null || !_vulnerabilityAdded.GetInvocationList().Contains(args.Handler))
             {
-                if (_vulnerabilityAdded == null || !_vulnerabilityAdded.GetInvocationList().Contains(value))
-                {
-                    _vulnerabilityAdded += value;
-                }
-            }
-            remove
-            {
-                _vulnerabilityAdded -= value;
+                _vulnerabilityAdded += (Action<IVulnerabilitiesContainer, IVulnerability>)args.Handler;
+                args.ProceedAddHandler();
             }
         }
 
-        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnVulnerabilityAddedAdd))]
+        public void OnVulnerabilityAddedRemove(EventInterceptionArgs args)
         {
-            add
+            _vulnerabilityAdded -= (Action<IVulnerabilitiesContainer, IVulnerability>)args.Handler;
+            args.ProceedRemoveHandler();
+        }
+
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityRemoved;
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "VulnerabilityRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnVulnerabilityRemovedAdd(EventInterceptionArgs args)
+        {
+            if (_vulnerabilityRemoved == null || !_vulnerabilityRemoved.GetInvocationList().Contains(args.Handler))
             {
-                if (_vulnerabilityRemoved == null || !_vulnerabilityRemoved.GetInvocationList().Contains(value))
-                {
-                    _vulnerabilityRemoved += value;
-                }
+                _vulnerabilityRemoved += (Action<IVulnerabilitiesContainer, IVulnerability>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove
-            {
-                _vulnerabilityRemoved -= value;
-            }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnVulnerabilityRemovedAdd))]
+        public void OnVulnerabilityRemovedRemove(EventInterceptionArgs args)
+        {
+            _vulnerabilityRemoved -= (Action<IVulnerabilitiesContainer, IVulnerability>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         [CopyCustomAttributes(typeof(JsonIgnoreAttribute), OverrideAction = CustomAttributeOverrideAction.Ignore)]
         [JsonIgnore]
-        public IEnumerable<IVulnerability> Vulnerabilities => _vulnerabilities?.AsReadOnly();
+        public IEnumerable<IVulnerability> Vulnerabilities => _vulnerabilities?.Get()?.AsEnumerable();
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IVulnerability GetVulnerability(Guid id)
         {
-            return _vulnerabilities?.FirstOrDefault(x => x.Id == id);
+            return _vulnerabilities?.Get()?.FirstOrDefault(x => x.Id == id);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IVulnerability GetVulnerabilityByWeakness(Guid weaknessId)
         {
-            return _vulnerabilities?.FirstOrDefault(x => x.WeaknessId == weaknessId);
+            return _vulnerabilities?.Get()?.FirstOrDefault(x => x.WeaknessId == weaknessId);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IVulnerability vulnerability)
         {
-            if (vulnerability == null)
+            if (vulnerability is Vulnerability v)
+            {
+                if (v is IThreatModelChild child &&
+                    child.Model != (Instance as IThreatModelChild)?.Model &&
+                    child.Model != Instance)
+                    throw new ArgumentException();
+
+                using (var scope = UndoRedoManager.OpenScope("Add Vulnerability"))
+                {
+                    var vulnerabilities = _vulnerabilities?.Get();
+                    if (vulnerabilities == null)
+                    {
+                        vulnerabilities = new AdvisableCollection<Vulnerability>();
+                        _vulnerabilities?.Set(vulnerabilities);
+                    }
+
+                    UndoRedoManager.Attach(v, v.Model);
+                    vulnerabilities.Add(v);
+                    scope?.Complete();
+
+                    if (Instance is IVulnerabilitiesContainer container)
+                        _vulnerabilityAdded?.Invoke(container, v);
+                }
+            }
+            else
                 throw new ArgumentNullException(nameof(vulnerability));
-            if (vulnerability is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model)
-                throw new ArgumentException();
-
-            if (_vulnerabilities == null)
-                _vulnerabilities = new List<IVulnerability>();
-
-            _vulnerabilities.Add(vulnerability);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 14)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public IVulnerability AddVulnerability(IWeakness weakness)
         {
             IVulnerability result = null;
@@ -109,16 +131,10 @@ namespace ThreatsManager.Engine.Aspects
 
                 if (model != null)
                 {
-                    if (_vulnerabilities?.All(x => x.WeaknessId != weakness.Id) ?? true)
+                    if (_vulnerabilities?.Get()?.All(x => x.WeaknessId != weakness.Id) ?? true)
                     {
-                        result = new Vulnerability(model, weakness, identity);
-                        if (_vulnerabilities == null)
-                            _vulnerabilities = new List<IVulnerability>();
-                        _vulnerabilities.Add(result);
-                        if (Instance is IDirty dirtyObject)
-                            dirtyObject.SetDirty();
-                        if (Instance is IVulnerabilitiesContainer container)
-                            _vulnerabilityAdded?.Invoke(container, result);
+                        result = new Vulnerability(weakness);
+                        Add(result);
                     }
                 }
             }
@@ -131,16 +147,20 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            var vulnerability = GetVulnerability(id);
+            var vulnerability = GetVulnerability(id) as Vulnerability;
             if (vulnerability != null)
             {
-                result = _vulnerabilities.Remove(vulnerability);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Vulnerability"))
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                    if (Instance is IVulnerabilitiesContainer container)
-                        _vulnerabilityRemoved?.Invoke(container, vulnerability);
+                    result = _vulnerabilities?.Get()?.Remove(vulnerability) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(vulnerability);
+                        scope?.Complete();
+
+                        if (Instance is IVulnerabilitiesContainer container)
+                            _vulnerabilityRemoved?.Invoke(container, vulnerability);
+                    }
                 }
             }
 

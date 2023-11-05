@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -65,13 +66,18 @@ namespace ThreatsManager.Extensions.Actions
                     var threatEvents = model.GetThreatEvents(threatType)?.ToArray();
                     if (threatEvents?.Any() ?? false)
                     {
-                        foreach (var t in threatEvents)
+                        using (var scope = UndoRedoManager.OpenScope("Propagate Threat Event"))
                         {
-                            if (t != threatEvent)
+                            foreach (var t in threatEvents)
                             {
-                                t.Name = threatEvent.Name;
-                                t.Description = threatEvent.Description;
+                                if (t != threatEvent)
+                                {
+                                    t.Name = threatEvent.Name;
+                                    t.Description = threatEvent.Description;
+                                }
                             }
+
+                            scope?.Complete();
                         }
                     }
                 }

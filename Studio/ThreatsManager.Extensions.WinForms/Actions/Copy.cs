@@ -68,6 +68,10 @@ namespace ThreatsManager.Extensions.Actions
             {
                 Tag = this
             }
-        });
+        }, false);
+
+        public IEnumerable<string> SupportedContexts => new[] { "Diagram" };
+
+        public IEnumerable<string> UnsupportedContexts => null;
     }
 }

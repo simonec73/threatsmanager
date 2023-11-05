@@ -3,6 +3,7 @@ using ThreatsManager.AutoGenRules.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.AutoGenRules.Schemas
 {
@@ -19,14 +20,20 @@ namespace ThreatsManager.AutoGenRules.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
-            result.AppliesTo = Scope.All;
-            result.AutoApply = false;
-            result.Priority = 10;
-            result.Visible = false;
-            result.System = true;
-            result.NotExportable = false;
-            result.Description = Resources.AutoGenRulePropertySchemaDescription;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
+            {
+                result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+                result.AppliesTo = Scope.All;
+                result.AutoApply = false;
+                result.Priority = 10;
+                result.Visible = false;
+                result.System = true;
+                result.NotExportable = false;
+                result.Description = Resources.AutoGenRulePropertySchemaDescription;
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -35,13 +42,17 @@ namespace ThreatsManager.AutoGenRules.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get AutoGenRule property type"))
             {
-                result = schema.GetPropertyType("AutoGenRule") ?? schema.AddPropertyType("AutoGenRule", PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Resources.PropertyAutoGenRule;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("AutoGenRule") ?? schema.AddPropertyType("AutoGenRule", PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Resources.PropertyAutoGenRule;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -51,13 +62,17 @@ namespace ThreatsManager.AutoGenRules.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Top property type"))
             {
-                result = schema.GetPropertyType("Top") ?? schema.AddPropertyType("Top", PropertyValueType.Boolean);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Resources.PropertyTop;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("Top") ?? schema.AddPropertyType("Top", PropertyValueType.Boolean);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Resources.PropertyTop;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -82,13 +97,17 @@ namespace ThreatsManager.AutoGenRules.Schemas
 
         public void SetTop([NotNull] IPropertiesContainer container, bool top)
         {
-            var propertyType = GetTopPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Top property"))
             {
-                var property = container.GetProperty(propertyType) ?? container.AddProperty(propertyType, null);
-                if (property is IPropertyBool boolProperty)
+                var propertyType = GetTopPropertyType();
+                if (propertyType != null)
                 {
-                    boolProperty.Value = top;
+                    var property = container.GetProperty(propertyType) ?? container.AddProperty(propertyType, null);
+                    if (property is IPropertyBool boolProperty)
+                    {
+                        boolProperty.Value = top;
+                        scope?.Complete();
+                    }
                 }
             }
         }

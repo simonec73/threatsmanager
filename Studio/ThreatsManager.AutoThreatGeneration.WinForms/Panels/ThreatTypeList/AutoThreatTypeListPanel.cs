@@ -768,6 +768,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
         }
         #endregion
 
+        #region Private members to handle events.
         private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
         {
             if (!_loading)
@@ -815,5 +816,6 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                 _ruleFilter.Image = null;
             }
         }
+        #endregion
     }
 }

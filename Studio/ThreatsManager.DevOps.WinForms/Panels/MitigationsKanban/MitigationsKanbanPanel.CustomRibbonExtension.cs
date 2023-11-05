@@ -155,7 +155,7 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                         if (workItemInfo != null)
                         {
                             schemaManager.SetDevOpsStatus(mitigation, connector, info.Id, 
-                                info.Url, info.AssignedTo, workItemInfo.Status);
+                                info.Url, workItemInfo.Status, info.AssignedTo);
                         }
                     }
                 }

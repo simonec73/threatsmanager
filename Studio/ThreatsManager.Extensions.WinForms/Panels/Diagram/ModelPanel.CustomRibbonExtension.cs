@@ -6,11 +6,12 @@ using System.Windows.Forms;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Dialogs;
-using ThreatsManager.Extensions.Schemas;
+using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -37,7 +38,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                 if (_executionMode != ExecutionMode.Business && _executionMode != ExecutionMode.Management)
                 {
-                    var addList = new List<IActionDefinition>()
+                    #region Add/Remove.
+                    var addRemoveList = new List<IActionDefinition>()
                     {
                         new ActionDefinition(Id, "CreateExtInteractor", "New External Interactor",
                             Resources.external_big_new,
@@ -72,11 +74,115 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             }
                         }
 
-                        addList.AddRange(actions);
+                        addRemoveList.AddRange(actions);
                         _commandsBarContextAwareActions.Remove("Add");
                     }
-                    result.Add(new CommandsBarDefinition("Add", "Add", addList));
 
+                    addRemoveList.Add(new ActionDefinition(Id, "RemoveDiagram", "Remove Current Diagram",
+                            Resources.model_big_delete,
+                            Resources.model_delete));
+                    if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Remove", x.Key) == 0) ?? false)
+                    {
+                        var definitions = _commandsBarContextAwareActions["Remove"];
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        addRemoveList.AddRange(actions);
+                        _commandsBarContextAwareActions.Remove("Remove");
+                    }
+                    result.Add(new CommandsBarDefinition("AddRemove", "Add/Remove", addRemoveList));
+                    #endregion
+                }
+
+                #region View.
+                var viewList = new List<IActionDefinition>()
+                {
+                    new ActionDefinition(Id, "MarkerToggle", "Toggle Markers",
+                        Properties.Resources.cubes_big, Properties.Resources.cubes, true)
+                };
+                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("View", x.Key) == 0) ?? false)
+                {
+                    var definitions = _commandsBarContextAwareActions["View"];
+                    List<IActionDefinition> actions = new List<IActionDefinition>();
+                    foreach (var definition in definitions)
+                    {
+                        foreach (var command in definition.Commands)
+                        {
+                            actions.Add(command);
+                        }
+                    }
+
+                    viewList.AddRange(actions);
+                    _commandsBarContextAwareActions.Remove("View");
+                }
+                result.Add(new CommandsBarDefinition("View", "View", viewList, false));
+                #endregion
+
+                #region Zoom.
+                var zoomList = new List<IActionDefinition>()
+                {
+                    new ActionDefinition(Id, "ZoomIn", "Zoom In", Properties.Resources.zoom_in_big,
+                        Properties.Resources.zoom_in),
+                    new ActionDefinition(Id, "ZoomOut", "Zoom Out", Properties.Resources.zoom_out_big,
+                        Properties.Resources.zoom_out),
+                    new ActionDefinition(Id, "ZoomNormal", "100%", Properties.Resources.view_1_1_big,
+                        Properties.Resources.view_1_1),
+                    new ActionDefinition(Id, "ZoomFit", "Zoom to Fit", Properties.Resources.window_size_big,
+                        Properties.Resources.window_size),
+                };
+                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Zoom", x.Key) == 0) ?? false)
+                {
+                    var definitions = _commandsBarContextAwareActions["Zoom"];
+                    List<IActionDefinition> actions = new List<IActionDefinition>();
+                    foreach (var definition in definitions)
+                    {
+                        foreach (var command in definition.Commands)
+                        {
+                            actions.Add(command);
+                        }
+                    }
+
+                    zoomList.AddRange(actions);
+                    _commandsBarContextAwareActions.Remove("Zoom");
+                }
+                result.Add(new CommandsBarDefinition("Zoom", "Zoom", zoomList));
+                #endregion
+
+                #region Snapshot.
+                var snapshotList = new List<IActionDefinition>()
+                {
+                    new ActionDefinition(Id, "Clipboard", "Copy to Clipboard", Properties.Resources.clipboard_big,
+                        Properties.Resources.clipboard),
+                    new ActionDefinition(Id, "File", "Copy to File", Properties.Resources.floppy_disk_big,
+                        Properties.Resources.floppy_disk),
+                };
+                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Snapshot", x.Key) == 0) ?? false)
+                {
+                    var definitions = _commandsBarContextAwareActions["Snapshot"];
+                    List<IActionDefinition> actions = new List<IActionDefinition>();
+                    foreach (var definition in definitions)
+                    {
+                        foreach (var command in definition.Commands)
+                        {
+                            actions.Add(command);
+                        }
+                    }
+
+                    snapshotList.AddRange(actions);
+                    _commandsBarContextAwareActions.Remove("Snapshot");
+                }
+                result.Add(new CommandsBarDefinition("Snapshot", "Create Snapshot", snapshotList));
+                #endregion
+
+                if (_executionMode != ExecutionMode.Business && _executionMode != ExecutionMode.Management)
+                {
+                    #region Layout.
                     var layoutList = new List<IActionDefinition>()
                     {
                         new ActionDefinition(Id, "AlignH", "Align Horizontally",
@@ -114,109 +220,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         layoutList.AddRange(actions);
                         _commandsBarContextAwareActions.Remove("Layout");
                     }
-                    result.Add(new CommandsBarDefinition("Layout", "Layout", layoutList));
+                    result.Add(new CommandsBarDefinition("Layout", "Layout", layoutList, true, Properties.Resources.graph_star));
+                    #endregion
                 }
 
-                var viewList = new List<IActionDefinition>()
-                {
-                    new ActionDefinition(Id, "MarkerToggle", "Toggle Markers",
-                        Properties.Resources.cubes_big, Properties.Resources.cubes, true)
-                };
-                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("View", x.Key) == 0) ?? false)
-                {
-                    var definitions = _commandsBarContextAwareActions["View"];
-                    List<IActionDefinition> actions = new List<IActionDefinition>();
-                    foreach (var definition in definitions)
-                    {
-                        foreach (var command in definition.Commands)
-                        {
-                            actions.Add(command);
-                        }
-                    }
-
-                    viewList.AddRange(actions);
-                    _commandsBarContextAwareActions.Remove("View");
-                }
-                result.Add(new CommandsBarDefinition("View", "View", viewList));
-
-                var zoomList = new List<IActionDefinition>()
-                {
-                    new ActionDefinition(Id, "ZoomIn", "Zoom In", Properties.Resources.zoom_in_big,
-                        Properties.Resources.zoom_in),
-                    new ActionDefinition(Id, "ZoomOut", "Zoom Out", Properties.Resources.zoom_out_big,
-                        Properties.Resources.zoom_out),
-                    new ActionDefinition(Id, "ZoomNormal", "100%", Properties.Resources.view_1_1_big,
-                        Properties.Resources.view_1_1),
-                    new ActionDefinition(Id, "ZoomFit", "Zoom to Fit", Properties.Resources.window_size_big,
-                        Properties.Resources.window_size),
-                };
-                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Zoom", x.Key) == 0) ?? false)
-                {
-                    var definitions = _commandsBarContextAwareActions["Zoom"];
-                    List<IActionDefinition> actions = new List<IActionDefinition>();
-                    foreach (var definition in definitions)
-                    {
-                        foreach (var command in definition.Commands)
-                        {
-                            actions.Add(command);
-                        }
-                    }
-
-                    zoomList.AddRange(actions);
-                    _commandsBarContextAwareActions.Remove("Zoom");
-                }
-                result.Add(new CommandsBarDefinition("Zoom", "Zoom", zoomList));
-
-                var snapshotList = new List<IActionDefinition>()
-                {
-                    new ActionDefinition(Id, "Clipboard", "Copy to Clipboard", Properties.Resources.clipboard_big,
-                        Properties.Resources.clipboard),
-                    new ActionDefinition(Id, "File", "Copy to File", Properties.Resources.floppy_disk_big,
-                        Properties.Resources.floppy_disk),
-                };
-                if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Snapshot", x.Key) == 0) ?? false)
-                {
-                    var definitions = _commandsBarContextAwareActions["Snapshot"];
-                    List<IActionDefinition> actions = new List<IActionDefinition>();
-                    foreach (var definition in definitions)
-                    {
-                        foreach (var command in definition.Commands)
-                        {
-                            actions.Add(command);
-                        }
-                    }
-
-                    snapshotList.AddRange(actions);
-                    _commandsBarContextAwareActions.Remove("Snapshot");
-                }
-                result.Add(new CommandsBarDefinition("Snapshot", "Create Snapshot", snapshotList));
-
-                if (_executionMode != ExecutionMode.Business && _executionMode != ExecutionMode.Management)
-                {
-                    var removeList = new List<IActionDefinition>()
-                    {
-                        new ActionDefinition(Id, "RemoveDiagram", "Remove Current Diagram",
-                            Resources.model_big_delete,
-                            Resources.model_delete)
-                    };
-                    if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("Remove", x.Key) == 0) ?? false)
-                    {
-                        var definitions = _commandsBarContextAwareActions["Remove"];
-                        List<IActionDefinition> actions = new List<IActionDefinition>();
-                        foreach (var definition in definitions)
-                        {
-                            foreach (var command in definition.Commands)
-                            {
-                                actions.Add(command);
-                            }
-                        }
-
-                        removeList.AddRange(actions);
-                        _commandsBarContextAwareActions.Remove("Remove");
-                    }
-                    result.Add(new CommandsBarDefinition("Remove", "Remove", removeList));
-                }
-
+                #region Fix.
                 var fixList = new List<IActionDefinition>()
                 {
                     new ActionDefinition(Id, "FixDiagram", "Fix Current Diagram",
@@ -238,8 +246,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     fixList.AddRange(actions);
                     _commandsBarContextAwareActions.Remove("Fix");
                 }
-                result.Add(new CommandsBarDefinition("Fix", "Fix", fixList));
+                result.Add(new CommandsBarDefinition("Fix", "Fix", fixList, true, Properties.Resources.tools));
+                #endregion
 
+                #region Other.
                 if (_commandsBarContextAwareActions?.Any() ?? false)
                 {
                     foreach (var definitions in _commandsBarContextAwareActions.Values)
@@ -253,9 +263,14 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             }
                         }
 
-                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, 
+                            definitions[0].Label, 
+                            actions, 
+                            definitions[0].Collapsible,
+                            definitions[0].CollapsedImage));
                     }
                 }
+                #endregion
 
                 return result;
             }
@@ -264,39 +279,58 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            var schemaManager = new ModelConfigPropertySchemaManager(_diagram.Model);
-            var schema = schemaManager.GetSchema();
-            var hpt = schema.GetPropertyType("Diagram Layout Horizontal Spacing");
-            var vpt = schema.GetPropertyType("Diagram Layout Vertical Spacing");
-            var h = _diagram.Model.GetProperty(hpt) as IPropertyInteger;
-            var v = _diagram.Model.GetProperty(vpt) as IPropertyInteger;
-            var hFloat = (float) (h?.Value ?? 150f);
-            var vFloat = (float) (h?.Value ?? 100f);
+            var configuration = new DiagramConfigurationManager(_diagram.Model);
+            var hFloat = (float) configuration.DiagramHorizontalSpacing;
+            var vFloat = (float) configuration.DiagramVerticalSpacing;
 
             switch (action.Name)
             {
                 case "CreateExtInteractor":
-                    var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
-                    var p1 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(100, 100), hFloat, vFloat);
-                    AddShape(_diagram.AddShape(interactor, p1));
+                    var p1 = GetFreePoint(new PointF(50 + _iconSize, vFloat), new SizeF(250, _iconSize + 20), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create External Interactor"))
+                    {
+                        var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
+                        AddShape(_diagram.AddShape(interactor, p1));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateProcess":
-                    var process = _diagram.Model?.AddEntity<IProcess>();
-                    var p2 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(100, 100), hFloat, vFloat);
-                    AddShape(_diagram.AddShape(process, p2));
+                    var p2 = GetFreePoint(new PointF(50 + _iconSize, vFloat), new SizeF(250, _iconSize + 20), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create Process"))
+                    {
+                        var process = _diagram.Model?.AddEntity<IProcess>();
+                        AddShape(_diagram.AddShape(process, p2));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateDataStore":
-                    var dataStore = _diagram.Model?.AddEntity<IDataStore>();
-                    var p3 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(100, 100), hFloat, vFloat);
-                    AddShape(_diagram.AddShape(dataStore, p3));
+                    var p3 = GetFreePoint(new PointF(50 + _iconSize, vFloat), new SizeF(250, _iconSize + 20), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create Data Store"))
+                    {
+                        var dataStore = _diagram.Model?.AddEntity<IDataStore>();
+                        AddShape(_diagram.AddShape(dataStore, p3));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateTrustBoundary":
-                    var trustBoundary = _diagram.Model?.AddGroup<ITrustBoundary>();
-                    var p4 = GetFreePoint(new PointF(350, 200), new SizeF(600, 300), hFloat, 200 + vFloat);
-                    AddShape(_diagram.AddShape(trustBoundary, p4, new SizeF(600, 300)));
+                    var p4 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(600, 300), hFloat, vFloat);
+
+                    using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
+                    {
+                        var trustBoundary = _diagram.Model?.AddGroup<ITrustBoundary>();
+                        AddShape(_diagram.AddShape(trustBoundary, p4, new SizeF(600, 300)));
+                        scope?.Complete();
+                    }
+
                     CheckRefresh();
                     break;
                 case "CreateThreatType":
@@ -311,6 +345,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             "Delete Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
+                        _properties.Item = null;
                         if (_factory.Delete(this))
                         {
                             ShowMessage("Diagram removed successfully.");
@@ -322,19 +357,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     }
                     break;
                 case "FixDiagram":
-                    var fixDiagram = new FixDiagram();
-                    if (fixDiagram.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-                    {
-                        switch (fixDiagram.Issue)
-                        {
-                            case DiagramIssue.TooSmall:
-                                HandleTooSmall();
-                                break;
-                            case DiagramIssue.TooLarge:
-                                HandleTooLarge();
-                                break;
-                        }
-                    }
+                    var fixDiagram = new FixDiagram(_diagram);
+                    fixDiagram.ShowDialog(Form.ActiveForm);
                     break;
                 case "AlignH":
                     _graph.AlignHorizontally();
@@ -358,7 +382,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     if (MessageBox.Show("Are you sure you want to automatically layout the Diagram?",
                         "Automatic Layout confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                        _graph.DoLayout(h?.Value ?? 200, v?.Value ?? 100);
+                        _graph.DoLayout(configuration.DiagramHorizontalSpacing, configuration.DiagramVerticalSpacing);
                     break;
                 case "MarkerToggle":
                     switch (MarkerStatusTrigger.CurrentStatus)
@@ -412,51 +436,110 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 default:
                     if (action.Tag is IShapesContextAwareAction shapesAction)
                     {
-                        var selection = _graph.Selection.ToArray();
-                        List<IShape> shapes = new List<IShape>();
-                        List<ILink> links = new List<ILink>();
-                        foreach (var shape in selection)
-                        {
-                            RecursivelyAddShapes(shapes, links, shape);
-                        }
-
-                        if (shapes.Any())
+                        if (GetShapesAndLinks(out var shapes, out var links))
                             shapesAction.Execute(shapes, links);
                     }
+                    else if (action.Tag is IIdentityContextAwareAction identityAction)
+                    {
+                        if (identityAction.Scope.HasFlag(Scope.Diagram))
+                        {
+                            identityAction.Execute(_diagram);
+                        }
+                        else if (identityAction.Scope.HasFlag(Scope.ThreatModel))
+                        {
+                            identityAction.Execute(_diagram.Model);
+                        }
+                    }
+                    else if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                    {
+                        if (GetShapesAndLinks(out var shapes, out var links) &&
+                            ((identitiesContextAwareAction.Scope & Scope.Entity) != 0 ||
+                            (identitiesContextAwareAction.Scope & Scope.TrustBoundary) != 0 ||
+                            (identitiesContextAwareAction.Scope & Scope.DataFlow) != 0))
+                        {
+                            var identities = new List<IIdentity>();
+
+                            if (shapes?.Any() ?? false)
+                            {
+                                if ((identitiesContextAwareAction.Scope & Scope.Entity) != 0)
+                                {
+                                    var entities = shapes.Where(x => x is IEntityShape).Select(x => x.Identity);
+                                    if (entities.Any())
+                                        identities.AddRange(entities);
+                                }
+                            }
+                            if (links?.Any() ?? false)
+                            {
+                                identities.AddRange(links.Select(x => x.DataFlow));
+                            }
+
+                            if (identities.Any())
+                            {
+                                if (identitiesContextAwareAction.Execute(identities))
+                                {
+                                    ShowMessage?.Invoke($"{identitiesContextAwareAction.Label} succeeded.");
+                                    var item = _properties.Item;
+                                    _properties.Item = null;
+                                    _properties.Item = item;
+                                }
+                                else
+                                {
+                                    ShowWarning?.Invoke($"{identitiesContextAwareAction.Label} failed.");
+                                }
+                            }
+
+                        }
+                    }
+                    else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction)
+                    {
+                        if (GetShapesAndLinks(out var shapes, out var links) &&
+                            ((containersContextAwareAction.Scope & Scope.Entity) != 0 ||
+                            (containersContextAwareAction.Scope & Scope.TrustBoundary) != 0 ||
+                            (containersContextAwareAction.Scope & Scope.DataFlow) != 0))
+                        {
+                            var containers = new List<IPropertiesContainer>();
+                            if (shapes?.Any() ?? false)
+                            {
+                                containers.AddRange(shapes.Select(x => x.Identity as IPropertiesContainer));
+                            }
+                            if (links?.Any() ?? false)
+                            {
+                                containers.AddRange(links.Select(x => x.DataFlow as IPropertiesContainer));
+                            }
+
+                            if (containers.Any())
+                            {
+                                if (containersContextAwareAction.Execute(containers))
+                                {
+                                    ShowMessage?.Invoke($"{containersContextAwareAction.Label} succeeded.");
+                                    var item = _properties.Item;
+                                    _properties.Item = null;
+                                    _properties.Item = item;
+                                }
+                                else
+                                {
+                                    ShowWarning?.Invoke($"{containersContextAwareAction.Label} failed.");
+                                }
+                            }
+
+                        }
+                    }
+
                     break;
             }
         }
 
-        private void HandleTooSmall()
+        private bool GetShapesAndLinks(out List<IShape> shapes, out List<ILink> links)
         {
-            var schemaManager = new DiagramPropertySchemaManager(_diagram.Model);
-            var propertyType = schemaManager.GetDpiFactorPropertyType();
-            if (propertyType != null)
+            var selection = _graph.Selection.ToArray();
+            shapes = new List<IShape>();
+            links = new List<ILink>();
+            foreach (var shape in selection)
             {
-                if ((_diagram.GetProperty(propertyType) ?? 
-                     _diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
-                {
-                    property.Value /= 2;
-                    MessageBox.Show(this,
-                        "The Diagram will now be closed.\nPlease open it again and apply the minor fixes which may eventually be required",
-                        "Diagram fix", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ParentForm?.Close();
-                }
+                RecursivelyAddShapes(shapes, links, shape);
             }
-        }
 
-        private void HandleTooLarge()
-        {
-            var schemaManager = new DiagramPropertySchemaManager(_diagram.Model);
-            var propertyType = schemaManager.GetDpiFactorPropertyType();
-            if (propertyType != null)
-            {
-                if ((_diagram.GetProperty(propertyType) ?? 
-                     _diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
-                {
-                    property.Value *= 2;
-                }
-            }
+            return shapes.Any() || links.Any();
         }
 
         private void RecursivelyAddShapes([NotNull] List<IShape> shapes, [NotNull] List<ILink> links, 

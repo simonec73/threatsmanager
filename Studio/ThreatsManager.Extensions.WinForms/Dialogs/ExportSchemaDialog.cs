@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
@@ -60,12 +61,16 @@ namespace ThreatsManager.Extensions.Dialogs
             var list = _schemas.CheckedItems.OfType<IPropertySchema>().Select(x => x.Id).ToArray();
             if (list.Any())
             {
+                var kbManagers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?.ToArray();
+                var kbManager = kbManagers?
+                    .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, _fileName.Text));
+
                 var def = new DuplicationDefinition()
                 {
                     PropertySchemas = list
                 };
 
-                _model.SaveTemplate(def, _name.Text, _description.Text, _fileName.Text);
+                kbManager?.Export(_model, def, _name.Text, _description.Text, LocationType.FileSystem, _fileName.Text);
             }
         }
 

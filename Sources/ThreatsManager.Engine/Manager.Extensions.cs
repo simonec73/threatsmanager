@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.Extensions;
 
 namespace ThreatsManager.Engine
@@ -23,6 +23,7 @@ namespace ThreatsManager.Engine
                 .Where(x => _configuration?.IsEnabled(x.Key.Id) ?? false);
         }
 
+        [Pure]
         public T GetExtension<T>([Required] string id) where T : class, IExtension
         {
             return (_configuration?.IsEnabled(id) ?? false) ?
@@ -41,6 +42,11 @@ namespace ThreatsManager.Engine
             }
 
             return result;
+        }
+
+        public T GetExtensionByUniversalId<T>([Required] string universalId) where T : class, IExtension
+        {
+            return _extensionsManager.GetExtensionByUniversalId<T>(universalId);
         }
 
         public IEnumerable<T> GetExtensions<T>() where T : class, IExtension

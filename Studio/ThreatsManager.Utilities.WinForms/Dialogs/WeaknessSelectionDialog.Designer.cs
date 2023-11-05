@@ -149,7 +149,7 @@
             this._createNew.Name = "_createNew";
             this._createNew.Size = new System.Drawing.Size(432, 17);
             this._createNew.TabIndex = 3;
-            this._createNew.Text = "Assign a new Threat Type";
+            this._createNew.Text = "Assign a new Weakness";
             this._createNew.UseVisualStyleBackColor = true;
             this._createNew.CheckedChanged += new System.EventHandler(this._createNew_CheckedChanged);
             // 
@@ -163,11 +163,11 @@
             this._useExisting.Size = new System.Drawing.Size(432, 17);
             this._useExisting.TabIndex = 1;
             this._useExisting.TabStop = true;
-            this._useExisting.Text = "Use Existing Threat Type";
+            this._useExisting.Text = "Use Existing Weakness";
             this._useExisting.UseVisualStyleBackColor = true;
             this._useExisting.CheckedChanged += new System.EventHandler(this._useExisting_CheckedChanged);
             // 
-            // _threatTypes
+            // _weaknesses
             // 
             this._weaknesses.FormattingEnabled = true;
             this._weaknesses.Location = new System.Drawing.Point(104, 54);
@@ -240,7 +240,7 @@
             this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 18);
             this.layoutControlItem1.Name = "layoutControlItem1";
             this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(25, 4, 4, 4);
-            this.layoutControlItem1.Text = "Threat Type";
+            this.layoutControlItem1.Text = "Weakness";
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
@@ -360,7 +360,7 @@
             this._superTooltip.DelayTooltipHideDuration = 250;
             this._superTooltip.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             // 
-            // ThreatTypeSelectionDialog
+            // WeaknessSelectionDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -370,11 +370,11 @@
             this.Controls.Add(this._layout);
             this.Controls.Add(this.panel1);
             this.MinimizeBox = false;
-            this.Name = "ThreatTypeSelectionDialog";
+            this.Name = "WeaknessSelectionDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Select Threat Type";
+            this.Text = "Select Weakness";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ThreatTypeSelectionDialog_FormClosed);
             this.panel1.ResumeLayout(false);
             this._layout.ResumeLayout(false);

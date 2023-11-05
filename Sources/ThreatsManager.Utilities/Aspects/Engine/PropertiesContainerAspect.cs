@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -15,20 +17,30 @@ using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 namespace ThreatsManager.Utilities.Aspects.Engine
 {
     //#region Additional placeholders required.
-    //private List<IProperty> _properties { get; set; }
+    //[Child]
+    //[JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+    //private AdvisableCollection<IProperty> _properties { get; set; }
     //#endregion    
 
+    /// <summary>
+    /// Aspect adding the standard implementation for Property Containers.
+    /// </summary>
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class PropertiesContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute),
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("properties")]
-        public List<IProperty> _properties { get; set; }
+        /// <summary>
+        /// Importer for local property _properties.
+        /// </summary>
+        [ImportMember(nameof(_properties))]
+        public Property<AdvisableCollection<IProperty>> _properties;
 
+        /// <summary>
+        /// Implementation of method OnPropertyChanged.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
             LinesOfCodeAvoided = 2, Visibility = Visibility.Private)]
         public void OnPropertyChanged(IProperty property)
@@ -44,70 +56,121 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         #region Implementation of interface IPropertiesContainer.
         private Action<IPropertiesContainer, IProperty> _propertyAdded;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "PropertyAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnPropertyAddedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_propertyAdded == null || !_propertyAdded.GetInvocationList().Contains(args.Handler))
             {
-                if (_propertyAdded == null || !_propertyAdded.GetInvocationList().Contains(value))
-                {
-                    _propertyAdded += value;
-                }
+                _propertyAdded += (Action<IPropertiesContainer, IProperty>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove { _propertyAdded -= value; }
+        }
+
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyAddedAdd))]
+        public void OnPropertyAddedRemove(EventInterceptionArgs args)
+        {
+            _propertyAdded -= (Action<IPropertiesContainer, IProperty>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<IPropertiesContainer, IProperty> _propertyRemoved;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "PropertyRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnPropertyRemovedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_propertyRemoved == null || !_propertyRemoved.GetInvocationList().Contains(args.Handler))
             {
-                if (_propertyRemoved == null || !_propertyRemoved.GetInvocationList().Contains(value))
-                {
-                    _propertyRemoved += value;
-                }
+                _propertyRemoved += (Action<IPropertiesContainer, IProperty>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove { _propertyRemoved -= value; }
+        }
+
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyRemovedAdd))]
+        public void OnPropertyRemovedRemove(EventInterceptionArgs args)
+        {
+            _propertyRemoved -= (Action<IPropertiesContainer, IProperty>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<IPropertiesContainer, IProperty> _propertyValueChanged;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "PropertyValueChanged", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnPropertyValueChangedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_propertyValueChanged == null || !_propertyValueChanged.GetInvocationList().Contains(args.Handler))
             {
-                if (_propertyValueChanged == null || !_propertyValueChanged.GetInvocationList().Contains(value))
-                {
-                    _propertyValueChanged += value;
-                }
+                _propertyValueChanged += (Action<IPropertiesContainer, IProperty>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove { _propertyValueChanged -= value; }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<IProperty> Properties => _properties?.AsReadOnly();
+        /// <summary>
+        /// Implementation of Event Handler.
+        /// </summary>
+        /// <param name="args">Argument of the interception.</param>
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnPropertyValueChangedAdd))]
+        public void OnPropertyValueChangedRemove(EventInterceptionArgs args)
+        {
+            _propertyValueChanged -= (Action<IPropertiesContainer, IProperty>)args.Handler;
+            args.ProceedRemoveHandler();
+        }
 
+        /// <summary>
+        /// Implementation of Properties getter.
+        /// </summary>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
+        public IEnumerable<IProperty> Properties => _properties?.Get()?.AsEnumerable();
+
+        /// <summary>
+        /// Implementation of method HasProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public bool HasProperty(IPropertyType propertyType)
         {
             if (propertyType == null)
                 throw new ArgumentNullException(nameof(propertyType));
 
-            return _properties?.Any(x => x.PropertyTypeId == propertyType.Id) ?? false;
+            return _properties?.Get()?.Any(x => x.PropertyTypeId == propertyType.Id) ?? false;
         }
 
+        /// <summary>
+        /// Implementation of method GetProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public IProperty GetProperty(IPropertyType propertyType)
         {
             if (propertyType == null)
                 throw new ArgumentNullException(nameof(propertyType));
 
-            return _properties?.FirstOrDefault(x => x.PropertyTypeId == propertyType.Id);
+            return _properties?.Get()?.FirstOrDefault(x => x.PropertyTypeId == propertyType.Id);
         }
 
+        /// <summary>
+        /// Implementation of method AddProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 20)]
         public IProperty AddProperty(IPropertyType propertyType, string value)
         {
@@ -116,7 +179,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             IProperty result = null;
             if (model != null)
             {
-                result = InternalAddProperty(model, propertyType, value);
+                result = InternalAddProperty(propertyType, value);
 
                 if (result != null)
                 {
@@ -132,33 +195,43 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             return result;
         }
 
-        private IProperty InternalAddProperty(IThreatModel model, IPropertyType propertyType, string value)
+        private IProperty InternalAddProperty(IPropertyType propertyType, string value)
         {
             IProperty result = null;
 
-            var associatedClass = propertyType.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>()
-                .FirstOrDefault();
-            if (associatedClass != null)
+            using (var scope = UndoRedoManager.OpenScope("Add property"))
             {
-                var associatedClassType = Type.GetType(associatedClass.AssociatedType, false);
-                if (associatedClassType != null)
+                var associatedClass = propertyType.GetType().GetCustomAttributes<AssociatedPropertyClassAttribute>()
+                    .FirstOrDefault();
+                if (associatedClass != null)
                 {
-                    result = Activator.CreateInstance(associatedClassType, model, propertyType) as IProperty;
+                    var associatedClassType = Type.GetType(associatedClass.AssociatedType, false);
+                    if (associatedClassType != null)
+                    {
+                        result = Activator.CreateInstance(associatedClassType, propertyType) as IProperty;
+                    }
                 }
-            }
 
-            if (result != null)
-            {
-                if (_properties == null)
-                    _properties = new List<IProperty>();
-                result.StringValue = value;
-                _properties.Add(result);
+                if (result != null)
+                {
+                    var model = GetModel();
 
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
-                if (Instance is IPropertiesContainer container)
-                    _propertyAdded?.Invoke(container, result);
-                result.Changed += OnPropertyChanged;
+                    var properties = _properties?.Get();
+                    if (properties == null)
+                    { 
+                        properties = new AdvisableCollection<IProperty>();
+                        _properties?.Set(properties);
+                    }
+                    result.StringValue = value;
+
+                    UndoRedoManager.Attach(result, model);
+                    properties?.Add(result);
+                    scope?.Complete();
+
+                    if (Instance is IPropertiesContainer container)
+                        _propertyAdded?.Invoke(container, result);
+                    result.Changed += OnPropertyChanged;
+                }
             }
 
             return result;
@@ -171,127 +244,173 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
         private void OnPropertyTypeAdded(IPropertySchema schema, IPropertyType propertyType)
         {
-            var model = GetModel();
-            if (model != null && schema != null && propertyType != null && !HasProperty(propertyType))
+            if (schema != null && propertyType != null && !HasProperty(propertyType))
             {
-                if (_properties?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
-                    InternalAddProperty(model, propertyType, null);
+                if (_properties?.Get()?.Any(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id) ?? false)
+                    InternalAddProperty(propertyType, null);
             }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 12)]
+        /// <summary>
+        /// Implementation of method RemoveProperty.
+        /// </summary>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public bool RemoveProperty(IPropertyType propertyType)
         {
             if (propertyType == null)
                 throw new ArgumentNullException(nameof(propertyType));
 
-            bool result = false;
-
-            var property = GetProperty(propertyType);
-            if (property != null)
-            {
-                result = _properties?.Remove(property) ?? false;
-                if (result)
-                {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                    if (Instance is IPropertiesContainer container)
-                        _propertyRemoved?.Invoke(container, property);
-                }
-            }
-
-            return result;
+            return RemoveProperty(propertyType.Id);
         }
 
+        /// <summary>
+        /// Implementation of method RemoveProperty.
+        /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public bool RemoveProperty(Guid propertyTypeId)
         {
             bool result = false;
 
-            var properties = _properties?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
+            var properties = _properties?.Get()?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
             if (properties?.Any() ?? false) 
             {
-                foreach (var property in properties)
+                using (var scope = UndoRedoManager.OpenScope("Remove property"))
                 {
-                    if (_properties.Remove(property))
+                    foreach (var property in properties)
                     {
-                        if (Instance is IPropertiesContainer container)
-                            _propertyRemoved?.Invoke(container, property);
-                        result = true;
-                    }
-                }
+                        if (property != null && (_properties?.Get()?.Remove(property) ?? false))
+                        {
+                            UndoRedoManager.Detach(property);
 
-                if (result)
-                {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                }
+                            if (Instance is IPropertiesContainer container)
+                                _propertyRemoved?.Invoke(container, property);
+                            result = true;
+                        }
+                    }
+                             
+                    scope?.Complete();
+               }
             }
 
             return result;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        /// <summary>
+        /// Implementation of method ClearProperties.
+        /// </summary>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 8)]
         public void ClearProperties()
         {
-            var properties = _properties?.ToArray();
+            var properties = _properties?.Get()?.ToArray();
 
             if (properties?.Any() ?? false)
             {
-                foreach (var property in properties)
+                using (var scope = UndoRedoManager.OpenScope("Remove properties"))
                 {
-                    if (Instance is IPropertiesContainer container)
-                        _propertyRemoved?.Invoke(container, property);
-                }
+                    foreach (var property in properties)
+                    {
+                        if (property != null)
+                        {
+                            UndoRedoManager.Detach(property);
 
-                _properties?.Clear();
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
+                            if (Instance is IPropertiesContainer container)
+                                _propertyRemoved?.Invoke(container, property);
+                        }
+                    }
+
+                    _properties?.Get()?.Clear();
+                         
+                    scope?.Complete();
+               }
             }
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
+        /// <summary>
+        /// Implementation of method Apply.
+        /// </summary>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 15)]
         public void Apply(IPropertySchema schema)
         {
             if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
             {
-                var existingProp = container.Properties?.ToArray();
-                var schemaProp = schema.PropertyTypes?.ToArray();
-                var missing = existingProp == null
-                    ? schemaProp
-                    : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
-                var inExcess = existingProp?.Where(x => x.PropertyType != null &&
-                                                        x.PropertyType.SchemaId == schema.Id &&
-                                                        !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
-                    .Select(x => x.PropertyType).ToArray();
-
-                if (missing?.Any() ?? false)
+                using (var scope = UndoRedoManager.OpenScope("Apply Property Schema"))
                 {
-                    foreach (var item in missing)
+                    var existingProp = container.Properties?.ToArray();
+                    var schemaProp = schema.PropertyTypes?.ToArray();
+                    var missing = existingProp == null
+                        ? schemaProp
+                        : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
+                    var inExcess = existingProp?.Where(x => x.PropertyType != null &&
+                                                            x.PropertyType.SchemaId == schema.Id &&
+                                                            !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
+                        .Select(x => x.PropertyType).ToArray();
+
+                    if (missing?.Any() ?? false)
                     {
-                        container.AddProperty(item, null);
+                        foreach (var item in missing)
+                        {
+                            if (item != null)
+                                container.AddProperty(item, null);
+                        }
                     }
+
+                    if (inExcess?.Any() ?? false)
+                    {
+                        foreach (var item in inExcess)
+                        {
+                            if (item != null)
+                                container.RemoveProperty(item);
+                        }
+                    }
+
+                    scope?.Complete();
                 }
+            }
+        }
 
-                if (inExcess?.Any() ?? false)
+        /// <summary>
+        /// Implementation of method Unapply.
+        /// </summary>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
+        public void Unapply(IPropertySchema schema)
+        {
+            if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
+            {
+                using (var scope = UndoRedoManager.OpenScope("Unapply Property Schema"))
                 {
-                    foreach (var item in inExcess)
+                    var existingProp = container.Properties?.ToArray();
+                    var schemaProp = schema.PropertyTypes?.ToArray();
+                    var toBeRemoved = existingProp?
+                        .Where(x => x.PropertyType != null && x.PropertyType.SchemaId == schema.Id)
+                        .ToArray();
+
+                    if (toBeRemoved?.Any() ?? false)
                     {
-                        container.RemoveProperty(item);
+                        foreach (var property in toBeRemoved)
+                        {
+                            if (property != null)
+                                container.RemoveProperty(property.PropertyTypeId);
+                        }
                     }
+
+                    scope?.Complete();
                 }
             }
         }
         #endregion
 
         #region Additional methods.
-        [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7, 
+        /// <summary>
+        /// Activities to be executed after the deserialization of the object. 
+        /// </summary>
+        /// <param name="context">Serialization context</param>
+        [IntroduceMember(OverrideAction=MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 17, 
             Visibility = Visibility.Assembly)]
         [CopyCustomAttributes(typeof(OnDeserializedAttribute))]
         [OnDeserialized]
         public void PostDeserialization(StreamingContext context)
         {
-            var schemas = _properties?
+            var schemas = _properties?.Get()?
                 .Select(x => x.PropertyType)
                 .Where(x => x != null)
                 .Select(x => x.SchemaId)
@@ -304,21 +423,31 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 {
                     foreach (var schemaId in schemas)
                     {
-                        var schema = model.GetSchema(schemaId);
-                        schema.PropertyTypeAdded += OnPropertyTypeAdded;
-                        schema.PropertyTypeRemoved += OnPropertyTypeRemoved;
+                        if (schemaId != null)
+                        {
+                            var schema = model.GetSchema(schemaId);
+                            if (schema != null)
+                            {
+                                schema.PropertyTypeAdded += OnPropertyTypeAdded;
+                                schema.PropertyTypeRemoved += OnPropertyTypeRemoved;
+                            }
+                        }
                     }
                 }
             }
 
-            var properties = _properties?.ToArray();
+            var properties = _properties?.Get()?.ToArray();
             if (properties?.Any() ?? false)
             {
                 foreach (var property in properties)
                 {
-                    property.Changed += OnPropertyChanged;
+                    if (property != null)
+                        property.Changed += OnPropertyChanged;
                 }
             }
+
+            if (Instance is IPostDeserialization postDeserialization)
+                postDeserialization.ExecutePostDeserialization();
         }
 
         private IThreatModel GetModel()

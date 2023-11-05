@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -10,6 +12,8 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -17,11 +21,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [SeverityIdChanger]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Threat Type")]
     public partial class ThreatType : IThreatType, IInitializableObject
     {
@@ -29,47 +36,120 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
         
-        public ThreatType([NotNull] IThreatModel model, 
-            [Required] string name, [NotNull] ISeverity severity) : this()
+        public ThreatType([Required] string name, [NotNull] ISeverity severity) : this()
         {
             _id = Guid.NewGuid();
-            _model = model;
-            _modelId = model.Id;
             Name = name;
             _severity = severity;
-            _severityId = severity.Id;
-
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
+
+        #region Default implementations.
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
+        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
+        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
+        public IEnumerable<IProperty> Properties { get; }
+        public bool HasProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+        public IProperty GetProperty(IPropertyType propertyType)
+        {
+            return null;
+        }
+
+        public IProperty AddProperty(IPropertyType propertyType, string value)
+        {
+            return null;
+        }
+
+        public bool RemoveProperty(IPropertyType propertyType)
+        {
+            return false;
+        }
+
+        public bool RemoveProperty(Guid propertyTypeId)
+        {
+            return false;
+        }
+
+        public void ClearProperties()
+        {
+        }
+
+        public void Apply(IPropertySchema schema)
+        {
+        }
+
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
+        [Reference]
+        [field: NotRecorded]
+        public IThreatModel Model { get; }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        #endregion
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatType;
 
         [JsonProperty("severity")]
-        private int _severityId;
-
-        private ISeverity _severity;
+        private int _severityId { get; set; }
 
         public int SeverityId => _severityId;
 
+        [Reference]
+        [NotRecorded]
+        [UpdateSeverityId]
+        private ISeverity _severity;
+
         [InitializationRequired]
+        [SafeForDependencyAnalysis]
+        [property: NotRecorded]
         public ISeverity Severity
         {
-            get => _severity ?? (_severity = Model?.GetSeverity(_severityId));
+            get
+            {
+                if ((_severity?.Id ?? -1) != _severityId)
+                    _severity = Model?.GetSeverity(_severityId);
+
+                return _severity;
+            }
 
             set
             {
                 if (value != null && value.Equals(Model.GetSeverity(value.Id)))
                 {
                     _severity = value;
-                    _severityId = value.Id;
-                    SetDirty();
                 }
             }
         }
-        
+
         public MitigationLevel GetMitigationLevel()
         {
             MitigationLevel result = MitigationLevel.NotMitigated;
@@ -105,7 +185,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     Name = Name,
                     Description = Description,
                     _model = model,
-                    _modelId = model.Id,
                     _severityId = _severityId
                 };
                 this.CloneProperties(result);
@@ -131,93 +210,15 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         }
 
         [InitializationRequired]
-        public void Add([NotNull] IThreatTypeMitigation mitigation)
+        public IThreatEvent GenerateEvent()
         {
-            if (_mitigations == null)
-                _mitigations = new List<IThreatTypeMitigation>();
-
-            _mitigations.Add(mitigation);
-        }
-
-        [InitializationRequired]
-        public IThreatEvent GenerateEvent([NotNull] IIdentity identity)
-        {
-            return new ThreatEvent(Model, this, identity);
+            return new ThreatEvent(this);
         }
 
         public override string ToString()
         {
             return Name ?? "<undefined>";
         }
-        #endregion
-
-        #region Default implementations.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public event Action<IPropertiesContainer, IProperty> PropertyAdded;
-        public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
-        public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
-        public IEnumerable<IProperty> Properties { get; }
-        public bool HasProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-        public IProperty GetProperty(IPropertyType propertyType)
-        {
-            return null;
-        }
-
-        public IProperty AddProperty(IPropertyType propertyType, string value)
-        {
-            return null;
-        }
-
-        public bool RemoveProperty(IPropertyType propertyType)
-        {
-            return false;
-        }
-
-        public bool RemoveProperty(Guid propertyTypeId)
-        {
-            return false;
-        }
-
-        public void ClearProperties()
-        {
-        }
-
-        public void Apply(IPropertySchema schema)
-        {
-        }
-
-        public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-        #endregion
-
-        #region Additional placeholders required.
-        protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
         #endregion
     }
 }

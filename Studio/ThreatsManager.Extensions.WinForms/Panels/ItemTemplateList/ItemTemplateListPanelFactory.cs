@@ -9,7 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.ItemTemplateList
 {
-    [Extension("9CE89064-492F-4683-84CD-E47F400E9151", "Item Template List", 15, ExecutionMode.Simplified)]
+    [Extension("9CE89064-492F-4683-84CD-E47F400E9151", "Item Template List", 20, ExecutionMode.Simplified)]
     public partial class ItemTemplateListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, 
         IContextAwareExtension, IPanelFactoryActionsRequestor
     {

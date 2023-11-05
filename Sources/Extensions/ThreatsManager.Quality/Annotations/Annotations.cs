@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Quality.Annotations
 {
@@ -10,28 +17,52 @@ namespace ThreatsManager.Quality.Annotations
     /// Annotations object.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class Annotations
+    [Recordable(AutoRecord = false)]
+    [Undoable]
+    public class Annotations : IThreatModelAware
     {
         /// <summary>
         /// Enumeration of the Annotations.
         /// </summary>
-        [JsonProperty("annotations")] 
-        private List<Annotation> _annotations { get; set; }
+        [JsonProperty("annotations")]
+        [Reference]
+        [field:NotRecorded]
+        private List<Annotation> _legacyAnnotations { get; set; }
+
+        [JsonProperty("items")]
+        [Child]
+        private AdvisableCollection<Annotation> _annotations { get; set; }
+
+        [JsonProperty("modelId")]
+        private Guid _modelId { get; set; }
 
         public event Action<Annotation> AnnotationAdded;
 
         public event Action<Annotation> AnnotationRemoved;
-            
-        public IEnumerable<Annotation> Items => _annotations?.AsReadOnly();
+
+        public Guid ModelId
+        {
+            get => _modelId;
+
+            set
+            {
+                if (_modelId != value)
+                    _modelId = value;
+            }
+        }
+
+        [property:NotRecorded]
+        public IEnumerable<Annotation> Items => _annotations?.AsEnumerable();
 
         public void Add([NotNull] Annotation annotation)
         {
             if (_annotations == null)
-                _annotations = new List<Annotation>();
+                _annotations = new AdvisableCollection<Annotation>();
 
             if (!_annotations.Contains(annotation))
             {
                 _annotations.Add(annotation);
+                UndoRedoManager.Attach(annotation, ThreatModelManager.Get(_modelId));
                 AnnotationAdded?.Invoke(annotation);
             }
         }
@@ -41,6 +72,7 @@ namespace ThreatsManager.Quality.Annotations
             if (_annotations?.Contains(annotation) ?? false)
             {
                 _annotations.Remove(annotation);
+                UndoRedoManager.Detach(annotation);
                 AnnotationRemoved?.Invoke(annotation);
             }
         }
@@ -52,10 +84,30 @@ namespace ThreatsManager.Quality.Annotations
             {
                 foreach (var annotation in annotations)
                 {
+                    UndoRedoManager.Detach(annotation);
                     AnnotationRemoved?.Invoke(annotation);
                 }
 
                 _annotations.Clear();
+            }
+        }
+
+        [OnDeserialized]
+        public void PostDeserialization(StreamingContext context)
+        {
+            if (_legacyAnnotations?.Any() ?? false)
+            {
+                if (_annotations == null)
+                    _annotations = new AdvisableCollection<Annotation>();
+
+                var model = ThreatModelManager.Get(_modelId);
+                foreach (var ann in _legacyAnnotations)
+                {
+                    UndoRedoManager.Attach(ann, model);
+                    _annotations.Add(ann);
+                }
+
+                _legacyAnnotations.Clear();
             }
         }
     }

@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using DevComponents.DotNetBar.Charts;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Panels.Configuration;
-using ThreatsManager.Extensions.Panels.Roadmap;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
@@ -146,15 +145,11 @@ namespace ThreatsManager.Extensions.Panels
             var parameters = schemaManager.Parameters?.ToArray();
             if (parameters?.Any() ?? false)
             {
-                var infinite = schemaManager.Infinite;
-                if (infinite < 0)
-                    infinite = estimator.DefaultInfinite;
-
                 var normalizationReference =
-                    (new ExtensionConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId())).NormalizationReference;
+                    (new ExtensionConfigurationManager(model)).NormalizationReference;
 
                 var p = parameters.ToDictionary(x => x.Name, x => x.Value);
-                AcceptableRisk = estimator.GetAcceptableRisk(model, p, infinite, normalizationReference) * 100f / reference;
+                AcceptableRisk = estimator.GetAcceptableRisk(model, p, normalizationReference) * 100f / reference;
             }
             else
             {

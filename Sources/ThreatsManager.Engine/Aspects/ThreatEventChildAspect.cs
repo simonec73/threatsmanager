@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
+    //[JsonProperty("threatEventId")]
     //private Guid _threatEventId { get; set; }
+    //[Reference]
+    //[field: NotRecorded]
+    //[field: UpdateThreatEventId]
     //private IThreatEvent _threatEvent { get; set; }
     //#endregion    
 
@@ -21,32 +20,34 @@ namespace ThreatsManager.Engine.Aspects
     public class ThreatEventChildAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("threatEventId")]
-        public Guid _threatEventId { get; set; }
+        [ImportMember(nameof(_threatEventId))]
+        public Property<Guid> _threatEventId;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 0, Visibility = Visibility.Private)]
-        public IThreatEvent _threatEvent { get; set; }
+        [ImportMember(nameof(_threatEvent))]
+        public Property<IThreatEvent> _threatEvent;
         #endregion
 
         #region Implementation of interface IThreatEventChild.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 4)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 9)]
         public IThreatEvent ThreatEvent
         {
             get
             {
                 var model = (Instance as IThreatModelChild)?.Model;
 
-                if (_threatEvent == null)
+                var threatEvent = _threatEvent?.Get();
+                if (threatEvent == null)
                 {
-                    _threatEvent = model?.FindThreatEvent(_threatEventId);
+                    var threatEventId =  _threatEventId?.Get() ?? Guid.Empty;
+                    if (threatEventId != Guid.Empty)
+                    { 
+                        threatEvent = model?.FindThreatEvent(threatEventId);
+                        if (threatEvent != null)
+                            _threatEvent?.Set(threatEvent);
+                    }
                 }
 
-                return _threatEvent;
+                return threatEvent;
             }
         }
         #endregion

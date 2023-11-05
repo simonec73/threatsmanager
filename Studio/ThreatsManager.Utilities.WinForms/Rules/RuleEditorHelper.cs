@@ -63,17 +63,78 @@ namespace ThreatsManager.Utilities.WinForms.Rules
             ruleEditor.AddButton(item, scope);
         }
 
-        public static void AddCrossTrustBoundaryRule(this IRuleEditor ruleEditor, 
-            [NotNull] string propertyName, Scope scope = Scope.Object)
+        public static void AddCrossTrustBoundaryRule(this IRuleEditor ruleEditor, Scope scope = Scope.Object)
         {
             ButtonItem item = new ButtonItem()
             {
                 ButtonStyle = eButtonStyle.ImageAndText,
                 Image = GetImage(scope),
                 ImagePosition = eImagePosition.Left,
-                Text = propertyName,
-                Tooltip = propertyName,
-                Tag = new CrossTrustBoundaryItemContext()
+                Text = "Crosses Trust Boundary",
+                Tooltip = "Crosses Trust Boundary",
+                Tag = new CrossTrustBoundaryItemContext(scope)
+            };
+
+            ruleEditor.AddButton(item, scope);
+        }
+
+        public static void AddEnterTrustBoundaryRule(this IRuleEditor ruleEditor, Scope scope = Scope.Object)
+        {
+            ButtonItem item = new ButtonItem()
+            {
+                ButtonStyle = eButtonStyle.ImageAndText,
+                Image = GetImage(scope),
+                ImagePosition = eImagePosition.Left,
+                Text = "Enters Trust Boundary",
+                Tooltip = "Flow entering any Trust Boundary.\nEvaluates to false if the object is not a flow.",
+                Tag = new EnterTrustBoundaryItemContext(scope)
+            };
+
+            ruleEditor.AddButton(item, scope);
+        }
+
+        public static void AddExitTrustBoundaryRule(this IRuleEditor ruleEditor, Scope scope = Scope.Object)
+        {
+            ButtonItem item = new ButtonItem()
+            {
+                ButtonStyle = eButtonStyle.ImageAndText,
+                Image = GetImage(scope),
+                ImagePosition = eImagePosition.Left,
+                Text = "Exits Trust Boundary",
+                Tooltip = "Flow exiting any Trust Boundary.\nEvaluates to false if the object is not a flow.",
+                Tag = new ExitTrustBoundaryItemContext(scope)
+            };
+
+            ruleEditor.AddButton(item, scope);
+        }
+
+        public static void AddEnterTrustBoundaryTemplateRule(this IRuleEditor ruleEditor, 
+            [NotNull] IThreatModel model, Scope scope = Scope.Object)
+        {
+            ButtonItem item = new ButtonItem()
+            {
+                ButtonStyle = eButtonStyle.ImageAndText,
+                Image = GetImage(scope),
+                ImagePosition = eImagePosition.Left,
+                Text = "Enters Trust Boundary Template",
+                Tooltip = "Flow entering a Trust Boundary derived from a specific Template.\nEvaluates to false if the object is not a flow.",
+                Tag = new EnterTrustBoundaryTemplateItemContext(model, scope)
+            };
+
+            ruleEditor.AddButton(item, scope);
+        }
+
+        public static void AddExitTrustBoundaryTemplateRule(this IRuleEditor ruleEditor,
+            [NotNull] IThreatModel model, Scope scope = Scope.Object)
+        {
+            ButtonItem item = new ButtonItem()
+            {
+                ButtonStyle = eButtonStyle.ImageAndText,
+                Image = GetImage(scope),
+                ImagePosition = eImagePosition.Left,
+                Text = "Exits Trust Boundary Template",
+                Tooltip = "Flow exiting a Trust Boundary derived from a specific Template.\nEvaluates to false if the object is not a flow.",
+                Tag = new ExitTrustBoundaryTemplateItemContext(model, scope)
             };
 
             ruleEditor.AddButton(item, scope);
@@ -235,7 +296,7 @@ namespace ThreatsManager.Utilities.WinForms.Rules
             else if (ruleNode is CrossTrustBoundaryRuleNode crossRuleNode)
             {
                 UpdateNode(result, crossRuleNode);
-                result.Tag = new CrossTrustBoundaryItemContext();
+                result.Tag = new CrossTrustBoundaryItemContext(crossRuleNode.Scope);
             }
             else if (ruleNode is ComparisonRuleNode comparisonRuleNode)
             {
@@ -341,6 +402,28 @@ namespace ThreatsManager.Utilities.WinForms.Rules
                 UpdateNode(result, model.FlowTemplates, flowTemplateRuleNode);
                 result.Tag = flowTemplateContext;
             }
+            else if (ruleNode is EnterTrustBoundaryRuleNode enterTrustBoundaryRuleNode)
+            {
+                UpdateNode(result, enterTrustBoundaryRuleNode);
+                result.Tag = new EnterTrustBoundaryItemContext(enterTrustBoundaryRuleNode.Scope);
+            }
+            else if (ruleNode is ExitTrustBoundaryRuleNode exitTrustBoundaryRuleNode)
+            {
+                UpdateNode(result, exitTrustBoundaryRuleNode);
+                result.Tag = new EnterTrustBoundaryItemContext(exitTrustBoundaryRuleNode.Scope);
+            }
+            else if (ruleNode is EnterTrustBoundaryTemplateRuleNode enterTrustBoundaryTemplateRuleNode)
+            {
+                var enterTrustBoundaryContext = new EnterTrustBoundaryTemplateItemContext(model, enterTrustBoundaryTemplateRuleNode.Scope);
+                UpdateNode(result, model.TrustBoundaryTemplates, enterTrustBoundaryTemplateRuleNode);
+                result.Tag = enterTrustBoundaryContext;
+            }
+            else if (ruleNode is ExitTrustBoundaryTemplateRuleNode exitTrustBoundaryTemplateRuleNode)
+            {
+                var exitTrustBoundaryContext = new ExitTrustBoundaryTemplateItemContext(model, exitTrustBoundaryTemplateRuleNode.Scope);
+                UpdateNode(result, model.TrustBoundaryTemplates, exitTrustBoundaryTemplateRuleNode);
+                result.Tag = exitTrustBoundaryContext;
+            }
 
             return result;
         }
@@ -444,6 +527,20 @@ namespace ThreatsManager.Utilities.WinForms.Rules
                         result = crossTrustBoundaryItemContext.CreateNode(node, switchButton.Value);
                     }
                 }
+                else if (node.Tag is EnterTrustBoundaryItemContext enterTrustBoundaryItemContext)
+                {
+                    if (switchButton != null)
+                    {
+                        result = enterTrustBoundaryItemContext.CreateNode(node, switchButton.Value);
+                    }
+                }
+                else if (node.Tag is ExitTrustBoundaryItemContext exitTrustBoundaryItemContext)
+                {
+                    if (switchButton != null)
+                    {
+                        result = exitTrustBoundaryItemContext.CreateNode(node, switchButton.Value);
+                    }
+                }
                 else if (node.Tag is EnumValueItemContext enumValueItemContext)
                 {
                     result = enumValueItemContext.CreateNode(node, values, value);
@@ -495,6 +592,14 @@ namespace ThreatsManager.Utilities.WinForms.Rules
                 {
                     result = trustBoundaryTemplateItemContext.CreateNode(node, value);
                 }
+                else if (node.Tag is EnterTrustBoundaryTemplateItemContext enterTrustBoundaryTemplateItemContext)
+                {
+                    result = enterTrustBoundaryTemplateItemContext.CreateNode(node, value);
+                }
+                else if (node.Tag is ExitTrustBoundaryTemplateItemContext exitTrustBoundaryTemplateItemContext)
+                {
+                    result = exitTrustBoundaryTemplateItemContext.CreateNode(node, value);
+                }
                 else if (node.Tag is ButtonItemContext context)
                 {
                     result = context.CreateNode(node);
@@ -517,6 +622,16 @@ namespace ThreatsManager.Utilities.WinForms.Rules
         }
 
         private static void UpdateNode([NotNull] Node node, [NotNull] CrossTrustBoundaryRuleNode ruleNode)
+        {
+            UpdateNode(node, ruleNode.Name, null, null, ruleNode.Value);
+        }
+
+        private static void UpdateNode([NotNull] Node node, [NotNull] EnterTrustBoundaryRuleNode ruleNode)
+        {
+            UpdateNode(node, ruleNode.Name, null, null, ruleNode.Value);
+        }
+
+        private static void UpdateNode([NotNull] Node node, [NotNull] ExitTrustBoundaryRuleNode ruleNode)
         {
             UpdateNode(node, ruleNode.Name, null, null, ruleNode.Value);
         }
@@ -562,6 +677,24 @@ namespace ThreatsManager.Utilities.WinForms.Rules
             var selected = templates?.FirstOrDefault(x => x.Id == ruleNode.FlowTemplate)?.Name;
             if ((values?.Any() ?? false) && !string.IsNullOrWhiteSpace(selected))
                 UpdateNode(node, ruleNode.Name, null, null, values, selected);
+        }
+
+        private static void UpdateNode([NotNull] Node node,
+            IEnumerable<ITrustBoundaryTemplate> templates, [NotNull] EnterTrustBoundaryTemplateRuleNode ruleNode)
+        {
+            var values = templates?.Select(x => x.Name).ToArray();
+            var selected = templates?.FirstOrDefault(x => x.Id == ruleNode.TrustBoundaryTemplate)?.Name;
+            if ((values?.Any() ?? false) && !string.IsNullOrWhiteSpace(selected))
+                UpdateNode(node, ruleNode.Name, null, null, values, selected, "enters");
+        }
+
+        private static void UpdateNode([NotNull] Node node,
+            IEnumerable<ITrustBoundaryTemplate> templates, [NotNull] ExitTrustBoundaryTemplateRuleNode ruleNode)
+        {
+            var values = templates?.Select(x => x.Name).ToArray();
+            var selected = templates?.FirstOrDefault(x => x.Id == ruleNode.TrustBoundaryTemplate)?.Name;
+            if ((values?.Any() ?? false) && !string.IsNullOrWhiteSpace(selected))
+                UpdateNode(node, ruleNode.Name, null, null, values, selected, "exits");
         }
 
         public static void UpdateNode([NotNull] Node node, [Required] string name,
@@ -779,6 +912,16 @@ namespace ThreatsManager.Utilities.WinForms.Rules
                 node.Text = "Flow";
                 UpdateNode(node, item.Text, null, null, tbContext.Values, null, "crosses");
             }
+            else if (item.Tag is EnterTrustBoundaryTemplateItemContext enContext)
+            {
+                node.Text = "Flow";
+                UpdateNode(node, item.Text, null, null, enContext.Values, null, "enters");
+            }
+            else if (item.Tag is ExitTrustBoundaryTemplateItemContext exContext)
+            {
+                node.Text = "Flow";
+                UpdateNode(node, item.Text, null, null, exContext.Values, null, "exits");
+            }
             else if (item.Tag is ListItemContext lContext)
             {
                 UpdateNode(node, item.Text, null, null, lContext.Values, null);
@@ -791,7 +934,9 @@ namespace ThreatsManager.Utilities.WinForms.Rules
             {
 
             }
-            else if (item.Tag is CrossTrustBoundaryItemContext)
+            else if (item.Tag is CrossTrustBoundaryItemContext || 
+                item.Tag is EnterTrustBoundaryItemContext ||
+                item.Tag is ExitTrustBoundaryItemContext)
             {
                 UpdateNode(node, item.Text, null, null, true);
             }

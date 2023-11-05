@@ -30,7 +30,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
         
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.View;
+        public Ribbon Ribbon => Ribbon.KnowledgeBase;
         public string Bar => "Configuration Lists";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>

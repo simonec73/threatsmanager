@@ -3,11 +3,12 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
 
@@ -15,11 +16,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertyAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyJsonSerializableObject, ThreatsManager.Engine")]
     public class PropertyJsonSerializableObject : IPropertyJsonSerializableObject
     {
@@ -28,49 +29,44 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyJsonSerializableObject([NotNull] IThreatModel model, [NotNull] IJsonSerializableObjectPropertyType propertyType) : this()
+        public PropertyJsonSerializableObject([NotNull] IJsonSerializableObjectPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
+            _model = propertyType.Model;
         }
 
-        #region Additional placeholders required.
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
-        protected Guid _id { get; set; }
-        #endregion
-        
         #region Default implementation.
         public Guid Id { get; }
         public event Action<IProperty> Changed;
         public Guid PropertyTypeId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
+        #endregion
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("propertyTypeId")]
+        protected Guid _propertyTypeId { get; set; }
+        [JsonProperty("readOnly")]
+        protected bool _readOnly { get; set; }
         #endregion
 
         #region Specific implementation.
+        [property: NotRecorded]
         public string StringValue
         {
 #pragma warning disable SCS0028 // Type information used to serialize and deserialize objects
@@ -118,8 +114,10 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 #pragma warning restore SCS0028 // Type information used to serialize and deserialize objects
         }
 
-        [JsonProperty("value")]
-        private object _value;
+        [Reference]
+        [JsonProperty("value", TypeNameHandling = TypeNameHandling.Objects)]
+        [NotRecorded]
+        private object _value { get; set; }
 
         public virtual object Value
         {
@@ -131,7 +129,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (value != _value)
                 {
+                    UndoRedoManager.Attach(value, _model);
                     _value = value;
+
+                    if (value is IThreatModelAware aware)
+                    {
+                        aware.ModelId = _modelId;
+                    }
+
                     InvokeChanged();
                 }
             }

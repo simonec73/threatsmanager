@@ -5,7 +5,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Panels.Definitions
+namespace ThreatsManager.SampleWinFormExtensions.Panels.Definitions
 {
     public partial class DefinitionsPanelFactory
     {

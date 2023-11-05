@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities.Exceptions;
@@ -17,11 +18,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         }
 
-        public ShadowPropertyBool([NotNull] IPropertyBool original) : base(original.Model, original.PropertyType as IBoolPropertyType)
+        public ShadowPropertyBool([NotNull] IPropertyBool original) : base(original.PropertyType as IBoolPropertyType)
         {
             _originalId = original.Id;
             _original = original;
         }
+
+        #region Default implementation.
+        [Reference]
+        [field: NonSerialized]
+        public IProperty Original { get; }
+        public bool IsOverridden { get; }
+        public void RevertToOriginal()
+        {
+        }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("originalId")]
+        private Guid _originalId { get; set; }
+        [JsonProperty("overridden")]
+        private bool _overridden { get; set; }
+        [Reference]
+        [field: NonSerialized]
+        private IProperty _original { get; set; }
+        #endregion    
 
         #region Specific implementation.
         public override bool Value
@@ -71,19 +92,5 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             }
         }
         #endregion
-
-        #region Default implementation.
-        public IProperty Original { get; }
-        public bool IsOverridden { get; }
-        public void RevertToOriginal()
-        {
-        }
-        #endregion
-
-        #region Additional placeholders required.
-        private Guid _originalId { get; set; }
-        private bool _overridden { get; set; }
-        private IProperty _original { get; set; }
-        #endregion    
     }
 }

@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -17,14 +19,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
     [EntitiesReadOnlyContainerAspect]
     [GroupsReadOnlyContainerAspect]
     [GroupElementAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Trust Boundary")]
     [TypeInitial("T")]
     public class TrustBoundary : ITrustBoundary, IInitializableObject
@@ -33,14 +37,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public TrustBoundary([NotNull] IThreatModel model, [Required] string name) : this()
+        public TrustBoundary([Required] string name) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
-  
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -49,10 +49,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -86,6 +90,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IEntity> Entities { get; }
         public IEntity GetEntity(Guid id)
         {
@@ -104,44 +114,43 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IGroupElement, IGroup, IGroup> ParentChanged;
         public Guid ParentId { get; }
+        [Reference]
+        [field: NotRecorded]
         public IGroup Parent { get; }
         public void SetParent(IGroup parent)
         {
         }
-        
+
+        [property: NotRecorded]
         public IEnumerable<IGroup> Groups => null;
 
         public IGroup GetGroup(Guid id)
         {
             return null;
         }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        [JsonProperty("parentId")]
         private Guid _parentId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         private IGroup _parent { get; set; }
         #endregion
 
@@ -149,17 +158,21 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Scope PropertiesScope => Scope.TrustBoundary;
 
         [JsonProperty("template")]
-        internal Guid _templateId;
+        internal Guid _templateId { get; set; }
 
+        [Reference]
+        [property: NotRecorded]
         internal ITrustBoundaryTemplate _template { get; set; }
 
+        [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public ITrustBoundaryTemplate Template
         {
             get
             {
                 if (_template == null && _templateId != Guid.Empty)
                 {
-                    _template = _model?.GetTrustBoundaryTemplate(_templateId);
+                    _template = Model?.GetTrustBoundaryTemplate(_templateId);
                 }
 
                 return _template;
@@ -168,11 +181,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public void ResetTemplate()
         {
-            this.ClearProperties();
-            _model.AutoApplySchemas(this);
+            using (var scope = UndoRedoManager.OpenScope("Detach from Template"))
+            {
+                this.ClearProperties();
+                Model?.AutoApplySchemas(this);
 
-            _templateId = Guid.Empty;
-            _template = null;
+                _templateId = Guid.Empty;
+                _template = null;
+
+                scope?.Complete();
+            }
         }
 
         public override string ToString()

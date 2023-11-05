@@ -19,6 +19,9 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellActivated -= this._grid_CellActivated;
             _grid.CellMouseDown -= this._grid_CellMouseDown;
             _grid.CellMouseLeave -= this._grid_CellMouseLeave;
@@ -40,6 +43,11 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                 _model.ChildRemoved -= ModelChildRemoved;
                 _model.EntityShapeAdded -= EntityShapeAdded;
                 _model.EntityShapeRemoved -= EntityShapeRemoved;
+
+                if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+                {
+                    undoable.Undone -= ModelUndone;
+                }
             }
 
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
@@ -236,6 +244,7 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             this._grid.CellMouseLeave += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellEventArgs>(this._grid_CellMouseLeave);
             this._grid.CellMouseMove += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseMove);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
+            this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
             // _superTooltip

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -13,10 +15,12 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("weaknesses")]
-        private List<IWeakness> _weaknesses;
+        [Child]
+        [JsonProperty("weaknesses", Order = 41)]
+        private AdvisableCollection<Weakness> _weaknesses { get; set; }
 
-        public IEnumerable<IWeakness> Weaknesses => _weaknesses?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IWeakness> Weaknesses => _weaknesses?.AsEnumerable();
 
         [InitializationRequired]
         public IEnumerable<IWeakness> SearchWeaknesses(string filter)
@@ -93,13 +97,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IWeakness weakness)
         {
-            if (_weaknesses == null)
-                _weaknesses = new List<IWeakness>();
+            if (weakness is Weakness w)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Weakness"))
+                {
+                    if (_weaknesses == null)
+                        _weaknesses = new AdvisableCollection<Weakness>();
 
-            _weaknesses.Add(weakness);
+                    UndoRedoManager.Attach(w, this);
+                    _weaknesses.Add(w);
+                    scope?.Complete();
 
-            SetDirty();
-            ChildCreated?.Invoke(weakness);
+                    ChildCreated?.Invoke(w);
+                }
+            }
+            else
+                throw new ArgumentException(nameof(weakness));
         }
 
         [InitializationRequired]
@@ -109,7 +122,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (GetWeakness(name) == null)
             {
-                result = new Weakness(this, name, severity);
+                result = new Weakness(name, severity);
                 Add(result);
                 RegisterEvents(result);
             }
@@ -122,18 +135,23 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var weakness = GetWeakness(id);
+            var weakness = GetWeakness(id) as Weakness;
 
             if (weakness != null && (force || !IsUsed(weakness)))
             {
-                RemoveRelated(weakness);
-
-                result = _weaknesses.Remove(weakness);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Weakness"))
                 {
-                    UnregisterEvents(weakness);
-                    SetDirty();
-                    ChildRemoved?.Invoke(weakness);
+                    RemoveRelated(weakness);
+
+                    result = _weaknesses.Remove(weakness);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(weakness);
+                        UnregisterEvents(weakness);
+                        ChildRemoved?.Invoke(weakness);
+                    }
+
+                    scope?.Complete();
                 }
             }
 
@@ -143,58 +161,39 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IWeakness weakness)
         {
             return (_entities?.Any(x => x.Vulnerabilities?.Any(y => y.WeaknessId == weakness.Id) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.Vulnerabilities?.Any(y => y.WeaknessId == weakness.Id) ?? false) ?? false) || 
-                   (Vulnerabilities?.Any(x => x.WeaknessId == weakness.Id) ?? false);
+                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.WeaknessId == weakness.Id) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.Vulnerabilities?.Any(y => y.WeaknessId == weakness.Id) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.WeaknessId == weakness.Id) ?? false) ?? false) ?? false) ||
+                   (Vulnerabilities?.Any(x => x.WeaknessId == weakness.Id) ?? false) ||
+                   (ThreatEvents?.Any(x => x.Vulnerabilities?.Any(y => y.WeaknessId == weakness.Id) ?? false) ?? false);
         }
 
         private void RemoveRelated([NotNull] IWeakness weakness)
         {
-            RemoveRelatedForEntities(weakness);
-            RemoveRelatedForDataFlows(weakness);
-            var vulnerabilities = Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id).ToArray();
+            RemoveRelated(weakness, _entities);
+            RemoveRelated(weakness, _flows);
+            RemoveRelated(weakness, this);
+        }
+
+        private void RemoveRelated([NotNull] IWeakness weakness, IEnumerable<IVulnerabilitiesContainer> containers)
+        {
+            if (containers?.Any() ?? false)
+            {
+                foreach (var container in containers)
+                {
+                    RemoveRelated(weakness, container);
+                }
+            }
+        }
+
+        private void RemoveRelated([NotNull] IWeakness weakness, IVulnerabilitiesContainer container)
+        {
+            var vulnerabilities = container?.Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id).ToArray();
             if (vulnerabilities?.Any() ?? false)
             {
                 foreach (var vulnerability in vulnerabilities)
                 {
-                    RemoveVulnerability(vulnerability.Id);
-                }
-            }
-        }
-
-        private void RemoveRelatedForEntities([NotNull] IWeakness weakness)
-        {
-            var entities = _entities?.ToArray();
-            if (entities?.Any() ?? false)
-            {
-                foreach (var entity in entities)
-                {
-                    var vulnerabilities = entity.Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id).ToArray();
-                    if (vulnerabilities?.Any() ?? false)
-                    {
-                        foreach (var vulnerability in vulnerabilities)
-                        {
-                            entity.RemoveVulnerability(vulnerability.Id);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void RemoveRelatedForDataFlows([NotNull] IWeakness weakness)
-        {
-            var dataFlows = _dataFlows?.ToArray();
-            if (dataFlows?.Any() ?? false)
-            {
-                foreach (var dataFlow in dataFlows)
-                {
-                    var vulnerabilities = dataFlow.Vulnerabilities?.Where(x => x.WeaknessId == weakness.Id).ToArray();
-                    if (vulnerabilities?.Any() ?? false)
-                    {
-                        foreach (var vulnerability in vulnerabilities)
-                        {
-                            dataFlow.RemoveVulnerability(vulnerability.Id);
-                        }
-                    }
+                    container.RemoveVulnerability(vulnerability.Id);
                 }
             }
         }

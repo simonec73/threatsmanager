@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.Charts;
-using ThreatsManager.DevOps.Panels.Configuration;
 using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -81,12 +75,8 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
                     var parameters = residualRiskSchemaManager.Parameters?.ToArray();
                     if (parameters?.Any() ?? false)
                     {
-                        var infinite = residualRiskSchemaManager.Infinite;
-                        if (infinite < 0)
-                            infinite = estimator.DefaultInfinite;
-
                         var p = parameters.ToDictionary(x => x.Name, x => x.Value);
-                        AcceptableRisk = estimator.GetAcceptableRisk(threatModel, p, infinite, 0);
+                        AcceptableRisk = estimator.GetAcceptableRisk(threatModel, p, 0);
                     }
                     else
                     {

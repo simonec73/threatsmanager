@@ -1,10 +1,14 @@
 ﻿using System;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Quality.Annotations
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public class Annotation
     {
         public Annotation()
@@ -17,6 +21,7 @@ namespace ThreatsManager.Quality.Annotations
         [JsonProperty("text")]
         private string _text { get; set; }
 
+        [property:NotRecorded]
         public string Text
         {
             get => _text;
@@ -29,6 +34,7 @@ namespace ThreatsManager.Quality.Annotations
         }
 
         [JsonProperty("printable")]
+        [field:NotRecorded]
         public bool Printable { get; protected set; }
             
         [JsonProperty("createdOn")]

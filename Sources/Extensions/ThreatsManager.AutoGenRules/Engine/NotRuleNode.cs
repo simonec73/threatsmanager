@@ -1,11 +1,19 @@
 ﻿using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
     public class NotRuleNode : UnaryRuleNode
     {
+        public NotRuleNode() : base()
+        {
+            Name = "NOT";
+        }
+
         public override bool Evaluate([NotNull] object context)
         {
             return !(Child?.Evaluate(context) ?? false);

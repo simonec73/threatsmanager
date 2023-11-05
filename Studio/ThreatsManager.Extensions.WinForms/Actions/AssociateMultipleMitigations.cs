@@ -1,10 +1,12 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -39,24 +41,30 @@ namespace ThreatsManager.Extensions.Actions
             var result = false;
             var dialog = new AssociateMitigationsDialog();
 
-            if (identity is IThreatType threatType)
+            using (var scope = UndoRedoManager.OpenScope("Associate Multiple Mitigations"))
             {
-                dialog.Initialize(threatType);
-                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
-            } else if (identity is IThreatEvent threatEvent)
-            {
-                dialog.Initialize(threatEvent);
-                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
-            }
-            else if (identity is IWeakness weakness)
-            {
-                dialog.Initialize(weakness);
-                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
-            }
-            else if (identity is IVulnerability vulnerability)
-            {
-                dialog.Initialize(vulnerability);
-                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                if (identity is IThreatType threatType)
+                {
+                    dialog.Initialize(threatType);
+                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                }
+                else if (identity is IThreatEvent threatEvent)
+                {
+                    dialog.Initialize(threatEvent);
+                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                }
+                else if (identity is IWeakness weakness)
+                {
+                    dialog.Initialize(weakness);
+                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                }
+                else if (identity is IVulnerability vulnerability)
+                {
+                    dialog.Initialize(vulnerability);
+                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                }
+
+                if (result) scope?.Complete();
             }
 
             return result;

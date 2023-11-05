@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Actions
 {
@@ -40,17 +41,22 @@ namespace ThreatsManager.Extensions.Actions
         {
             bool result = false;
 
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if (identity is IDiagram diagram)
+            using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
             {
-                var trustBoundary = diagram.Model?.AddGroup<ITrustBoundary>();
-                IdentityAddingRequired?.Invoke(diagram, trustBoundary, PointF.Empty, new SizeF(600, 300));
-                result = true;
-            } 
-            else if (identity is IThreatModel threatModel)
-            {
-                threatModel.AddGroup<ITrustBoundary>();
-                result = true;
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                if (identity is IDiagram diagram)
+                {
+                    var trustBoundary = diagram.Model?.AddGroup<ITrustBoundary>();
+                    IdentityAddingRequired?.Invoke(diagram, trustBoundary, PointF.Empty, new SizeF(600, 300));
+                    result = true;
+                }
+                else if (identity is IThreatModel threatModel)
+                {
+                    threatModel.AddGroup<ITrustBoundary>();
+                    result = true;
+                }
+
+                scope?.Complete();
             }
 
             return result;

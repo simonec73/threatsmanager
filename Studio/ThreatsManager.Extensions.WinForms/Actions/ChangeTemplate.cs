@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -37,10 +39,15 @@ namespace ThreatsManager.Extensions.Actions
         {
             bool result = false;
 
-            using (var dialog = new ChangeTemplateDialog(identity))
+            using (var scope = UndoRedoManager.OpenScope("Change Template"))
             {
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    result = true;
+                using (var dialog = new ChangeTemplateDialog(identity))
+                {
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                        result = true;
+                }
+
+                if (result) scope?.Complete();
             }
 
             return result;

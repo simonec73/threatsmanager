@@ -21,11 +21,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
     [Serializable]
     public class GraphGroup : GoSubGraphBase, IDisposable
     {
-        private readonly DpiState _dpiState = DpiState.Ok;
         private readonly IGroupShape _shape = null;
-        private List<string> _buckets;
-        private Dictionary<string, List<IContextAwareAction>> _actions;
-        private readonly BlockingSubGraphMarker _blockingMarker;
         private GoShape _border = null;
         private GoText _label = null;
         private static Pen _borderPen;
@@ -57,37 +53,21 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         #endregion
 
         #region Initialization.
-        public GraphGroup([NotNull] IGroupShape shape, DpiState dpiState)
+        public GraphGroup([NotNull] IGroupShape shape, [StrictlyPositive] float dpiFactor, [Range(8, 128)] int markerSize)
         {
             try
             {
                 _loading = true;
                 _shape = shape;
-                _dpiState = dpiState;
                 if (shape.Identity is IGroup group)
                 {
                     Initializing = true;
                     // ReSharper disable once SuspiciousTypeConversion.Global
                     ((INotifyPropertyChanged) group).PropertyChanged += OnPropertyChanged;
 
-                    SizeF size;
-                    switch (_dpiState)
-                    {
-                        case DpiState.TooSmall:
-                            size = new SizeF(_shape.Size.Width * 2, _shape.Size.Height * 2);
-                            break;
-                        case DpiState.TooBig:
-                            size = new SizeF(_shape.Size.Width / 2, _shape.Size.Height / 2);
-                            break;
-                        default:
-                            size = _shape.Size;
-                            break;
-                    }
-
                     _border = new GoRoundedRectangle()
                     {
-                        Selectable = false,
-                        Size = size
+                        Selectable = false
                     };
                     if (_borderPen == null)
                     {
@@ -98,18 +78,17 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     _border.FillSimpleGradient(Color.FromArgb(0xB0, 0x87, 0xCE, 0xFF), Color.FromArgb(0xB0, 0x87, 0xCE, 0xFF), GoObject.MiddleTop);
                     _border.AddObserver(this);
                     Add(_border);
+
                     _label = new GoText
                     {
                         Text = group.Name,
                         Selectable = false,
                         Movable = false,
                         Editable = true,
-                        Position = new PointF(0.0f, -16.0f * Dpi.Factor.Width)
+                        Position = new PointF(0.0f, -16.0f * Dpi.Factor.Height)
                     };
                     _label.AddObserver(this);
                     Add(_label);
-                    _blockingMarker = new BlockingSubGraphMarker { Position = new PointF(10, 10) };
-                    Add(_blockingMarker);
 
                     _warningMarker = new WarningMarker()
                     {
@@ -123,18 +102,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     Initializing = false;
                     //LayoutChildren(_border);
 
-                    switch (_dpiState)
-                    {
-                        case DpiState.TooSmall:
-                            Location = new PointF(_shape.Position.X * 2, _shape.Position.Y * 2);
-                            break;
-                        case DpiState.TooBig:
-                            Location = new PointF(_shape.Position.X / 2, _shape.Position.Y / 2);
-                            break;
-                        default:
-                            Location = _shape.Position;
-                            break;
-                    }
+                    UpdateParameters(markerSize, dpiFactor);
                 }
                 else
                     throw new ArgumentException(Properties.Resources.ShapeNotEntityError);
@@ -144,6 +112,19 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 _loading = false;
             }
         }
+
+        public void UpdateParameters([Range(8, 128)] int markerSize, [StrictlyPositive] float dpiFactor = 1.0f)
+        {
+            _warningMarker.Size = new SizeF(markerSize, markerSize);
+
+            if (dpiFactor != 1.0f)
+            {
+                _shape.Size = new SizeF(_shape.Size.Width * dpiFactor, _shape.Size.Height * dpiFactor);
+                _shape.Position = new PointF(_shape.Position.X * dpiFactor, _shape.Position.Y * dpiFactor);
+            }
+            _border.Size = new SizeF(_shape.Size.Width, _shape.Size.Height);
+            Location = new PointF(_shape.Position.X, _shape.Position.Y);
+        }
         #endregion
 
         public void Dispose()
@@ -152,7 +133,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 Initializing = true;
                 ((INotifyPropertyChanged) group).PropertyChanged -= OnPropertyChanged;
-                _blockingMarker?.Dispose();
             }
         }
 
@@ -182,7 +162,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 }
                 else if (parent is GraphLink)
                 {
-                    if (node is AssociatedThreatsMarker marker)
+                    if (node is AssociatedPanelItemMarker marker)
                     {
                         marker.OnSingleClick(evt, view);
                     }
@@ -206,28 +186,18 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             base.OnObservedChanged(observed, subhint, oldI, oldVal, oldRect, newI, newVal, newRect);
 
-            if (!_loading)
+            if (!_loading && !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                if (observed.Equals(Label) && subhint == 1501)
+                using (var scope = UndoRedoManager.OpenScope("Group update"))
                 {
-                    var group = _shape.Identity;
-                    if (group != null)
-                        group.Name = Text;
-                }
-
-                if (observed.Equals(_border) && subhint == 1001)
-                {
-                    if (newRect.Width != _shape.Size.Width || newRect.Height != _shape.Size.Height)
+                    if (observed.Equals(Label) && subhint == GoText.ChangedText)
                     {
-                        _shape.Size = new SizeF(newRect.Width, newRect.Height);
-                    }
-
-                    float centerX = newRect.X + (newRect.Width / 2f);
-                    float centerY = newRect.Y + (newRect.Height / 2f);
-
-                    if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
-                    {
-                        _shape.Position = new PointF(centerX, centerY);
+                        var group = _shape.Identity;
+                        if (group != null)
+                        {
+                            group.Name = Text;
+                            scope?.Complete();
+                        }
                     }
                 }
             }
@@ -237,7 +207,14 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             base.DoMove(view, origLoc, newLoc);
 
-            _shape.Position = new PointF(newLoc.X, newLoc.Y);
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Move Group"))
+                {
+                    _shape.Position = new PointF(newLoc.X, newLoc.Y);
+                    scope?.Complete();
+                }
+            }
         }
 
         public override void OnGotSelection(GoSelection sel)
@@ -251,17 +228,23 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             base.OnParentChanged(oldgroup, newgroup);
 
-            if (!Deactivated && _shape?.Identity is IGroupElement groupElement)
+            if (!Deactivated && !UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing &&
+                _shape?.Identity is IGroupElement groupElement)
             {
-                if (newgroup is GraphGroup graphGroup &&
-                    graphGroup.GroupShape.Identity is IGroup group)
+                using (var scope = UndoRedoManager.OpenScope("Reparent Entity"))
                 {
-                    groupElement.SetParent(group);
-                    RecursiveRefreshBorder();
-                }
-                else
-                {
-                    groupElement.SetParent(null);
+                    if (newgroup is GraphGroup graphGroup &&
+                        graphGroup.GroupShape.Identity is IGroup group)
+                    {
+                            groupElement.SetParent(group);
+                            RecursiveRefreshBorder();
+                    }
+                    else
+                    {
+                        groupElement.SetParent(null);
+                    }
+
+                    scope?.Complete();
                 }
 
                 ParentChanged?.Invoke(_shape.Identity);
@@ -323,7 +306,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 if (obj == Border) continue;
                 if (obj == Label) continue;
-                if (obj is GraphThreatTypeNode) continue;
+                if (obj is GraphPaletteItemNode) continue;
                 if (first)
                 {
                     first = false;
@@ -428,7 +411,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
         }
 
-        // Allow the user to interactively resize the border;
+        //Allow the user to interactively resize the border;
         // this ensures that the border surrounds all of the children.
         public override void DoResize(GoView view, RectangleF origRect, PointF newPoint, int whichHandle,
             GoInputState evttype, SizeF min, SizeF max)
@@ -446,8 +429,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
             // update the bounding rect of the Border
             Border.Bounds = newRect;
-
-            _blockingMarker.Position = new PointF(newRect.X + 10, newRect.Y + 10);
         }
 
         public void RefreshBorder()
@@ -456,7 +437,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             GoObject border = Border;
             GoObject label = Label;
             RectangleF rect = ComputeBorder();
-      
+
             if (rect != RectangleF.Empty)
             {
                 // but don't have the box shrink to minimum size continuously
@@ -480,6 +461,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         #endregion
 
         #region Context menu.
+        private List<string> _buckets;
+        private Dictionary<string, List<IContextAwareAction>> _actions;
+
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
             Scope scope = Scope.Undefined;
@@ -488,7 +472,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 scope = Scope.Group;
 
             var effective = actions.Where(x => (x.Scope & scope) != 0 && 
-                                               (x is IIdentityContextAwareAction || x is IShapeContextAwareAction)).ToArray();
+                                                (x is IIdentityContextAwareAction || x is IShapeContextAwareAction)).ToArray();
             if (effective.Any())
             {
                 _buckets = new List<string>();
@@ -536,11 +520,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         separator = true;
 
-                        if (menu.MenuItems.Count > 0)
-                            menu.MenuItems.Add(new MenuItem("-"));
+                        if (menu.Items.Count > 0)
+                            menu.Items.Add(new ToolStripSeparator());
                     }
 
-                    menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                    menu.Items.Add(new ToolStripMenuItem(action.Label, action.SmallIcon, DoAction)
                     {
                         Tag = action
                     });
@@ -550,7 +534,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         
         private void DoAction(object sender, EventArgs e)
         {
-            if (sender is MenuItem menuItem &&
+            if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IContextAwareAction action)
             {
                 if (action is IIdentityContextAwareAction identityContextAwareAction)

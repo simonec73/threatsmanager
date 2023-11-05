@@ -54,27 +54,34 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
-            result.AppliesTo = Scope.Mitigation | Scope.ThreatEventMitigation;
-            result.AutoApply = true;
-            result.Priority = 50;
-            result.Visible = true;
-            result.System = true;
-            result.NotExportable = true;
-            result.Description = Properties.Resources.EffortPropertySchemaDescription;
+            IPropertySchema result;
 
-            var effort = result.GetPropertyType("Effort");
-            if (effort == null)
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
             {
-                effort = result.AddPropertyType("Effort", PropertyValueType.List);
-                if (effort is IListPropertyType listPropertyType)
+                result = _model.GetSchema(SchemaName, Properties.Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Properties.Resources.DefaultNamespace);
+                result.AppliesTo = Scope.Mitigation | Scope.ThreatEventMitigation;
+                result.AutoApply = true;
+                result.Priority = 50;
+                result.Visible = true;
+                result.System = true;
+                result.NotExportable = true;
+                result.Description = Properties.Resources.EffortPropertySchemaDescription;
+
+                var effort = result.GetPropertyType("Effort");
+                if (effort == null)
                 {
-                    listPropertyType.SetListProvider(new ListProvider());
-                    listPropertyType.Context = EnumExtensions.GetEnumLabels<Effort>().TagConcat();
+                    effort = result.AddPropertyType("Effort", PropertyValueType.List);
+                    if (effort is IListPropertyType listPropertyType)
+                    {
+                        listPropertyType.SetListProvider(new ListProvider());
+                        listPropertyType.Context = EnumExtensions.GetEnumLabels<Effort>().TagConcat();
+                    }
                 }
+                effort.Visible = true;
+                effort.Description = Resources.PropertyEffort;
+
+                scope?.Complete();
             }
-            effort.Visible = true;
-            effort.Description = Resources.PropertyEffort;
 
             return result;
         }

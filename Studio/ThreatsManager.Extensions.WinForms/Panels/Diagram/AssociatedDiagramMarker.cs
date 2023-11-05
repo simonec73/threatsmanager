@@ -10,6 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
@@ -26,25 +27,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Copyable = false;
             Selectable = false;
             Image = Resources.model_big;
-            Size = new SizeF(16.0f * Dpi.Factor.Width, 16.0f * Dpi.Factor.Height);
 
             MarkerStatusTrigger.MarkerStatusUpdated += MarkerStatusTriggerOnMarkerStatusUpdated;
-        }
-
-        public void Dispose()
-        {
-            MarkerStatusTrigger.MarkerStatusUpdated -= MarkerStatusTriggerOnMarkerStatusUpdated;
-            if (_entity != null)
-            {
-                DiagramAssociationHelper.DiagramAssociated -= OnDiagramAssociated;
-                DiagramAssociationHelper.DiagramDisassociated -= OnDiagramDisassociated;
-                _entity.Model.ChildRemoved -= OnModelChildRemoved;
-            }
-        }
-
-        private void MarkerStatusTriggerOnMarkerStatusUpdated(MarkerStatus status)
-        {
-            Visible = _visible && (MarkerStatusTrigger.CurrentStatus == MarkerStatus.Full);
         }
 
         public AssociatedDiagramMarker([NotNull] IEntity entity) : this()
@@ -55,6 +39,38 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             DiagramAssociationHelper.DiagramAssociated += OnDiagramAssociated;
             DiagramAssociationHelper.DiagramDisassociated += OnDiagramDisassociated;
             entity.Model.ChildRemoved += OnModelChildRemoved;
+
+            if (_entity is IUndoable undoable)
+                undoable.Undone += HandleOperationUndone;
+        }
+
+        public void Dispose()
+        {
+            MarkerStatusTrigger.MarkerStatusUpdated -= MarkerStatusTriggerOnMarkerStatusUpdated;
+            if (_entity != null)
+            {
+                DiagramAssociationHelper.DiagramAssociated -= OnDiagramAssociated;
+                DiagramAssociationHelper.DiagramDisassociated -= OnDiagramDisassociated;
+                if (_entity.Model != null)
+                    _entity.Model.ChildRemoved -= OnModelChildRemoved;
+
+                if (_entity is IUndoable undoable)
+                    undoable.Undone -= HandleOperationUndone;
+            }
+        }
+
+        private void HandleOperationUndone(object undoableObject, bool removed)
+        {
+            var associatedDiagram = GetAssociatedDiagram();
+            if (associatedDiagram != null)
+                OnDiagramAssociated(_entity, associatedDiagram);
+            else
+                OnDiagramDisassociated(_entity);
+        }
+
+        private void MarkerStatusTriggerOnMarkerStatusUpdated(MarkerStatus status)
+        {
+            Visible = _visible && (MarkerStatusTrigger.CurrentStatus == MarkerStatus.Full);
         }
 
         public Action<IDiagram> DiagramClicked;

@@ -5,7 +5,6 @@ using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -39,6 +38,9 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             _midTermPalette.MitigationDropped += SetMidTerm;
             _longTermPalette.MitigationDropped += SetLongTerm;
             _noActionRequiredPalette.MitigationDropped += SetNoActionRequired;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         #region Implementation of interface IShowThreatModelPanel.
@@ -120,6 +122,11 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             _loading = false;
         }
         #endregion
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
 
         public event Action<IPanelFactory, IIdentity> OpenPanel;
 

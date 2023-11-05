@@ -46,11 +46,15 @@ namespace SampleExtensions.RibbonExtensions
                 switch (action.Name)
                 {
                     case "ImportAzure":
+                        using (var scope = UndoRedoManager.OpenScope("Import from Azure simulation"))
+                        {
+                            threatModel.AddEntity<IProcess>("Azure Function");
+                            threatModel.AddEntity<IProcess>("Azure ML");
+                            threatModel.AddEntity<IDataStore>("Azure SQL");
+                            threatModel.AddEntity<IDataStore>("Azure Storage Blob");
 
-                        threatModel.AddEntity<IProcess>("Azure Function");
-                        threatModel.AddEntity<IProcess>("Azure ML");
-                        threatModel.AddEntity<IDataStore>("Azure SQL");
-                        threatModel.AddEntity<IDataStore>("Azure Storage Blob");
+                            scope?.Complete();
+                        }
 
                         ShowMessage?.Invoke("Import Azure Subscription succeeded.");
 

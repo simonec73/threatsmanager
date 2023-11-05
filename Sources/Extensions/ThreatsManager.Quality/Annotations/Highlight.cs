@@ -1,5 +1,11 @@
-﻿namespace ThreatsManager.Quality.Annotations
+﻿using Newtonsoft.Json;
+using PostSharp.Patterns.Recording;
+using ThreatsManager.Utilities.Aspects.Engine;
+
+namespace ThreatsManager.Quality.Annotations
 {
+    [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
     public class Highlight : Annotation
     {
     }

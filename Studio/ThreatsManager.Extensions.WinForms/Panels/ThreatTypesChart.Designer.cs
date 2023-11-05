@@ -54,6 +54,7 @@
             this._chart = new DevComponents.DotNetBar.Charts.ChartControl();
             this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._snapshot = new System.Windows.Forms.ToolStripMenuItem();
+            this._tooltip = new DevComponents.DotNetBar.SuperTooltip();
             this._contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -168,7 +169,7 @@
             this._contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._snapshot});
             this._contextMenu.Name = "_contextMenu";
-            this._contextMenu.Size = new System.Drawing.Size(212, 48);
+            this._contextMenu.Size = new System.Drawing.Size(212, 26);
             // 
             // _snapshot
             // 
@@ -176,6 +177,12 @@
             this._snapshot.Size = new System.Drawing.Size(211, 22);
             this._snapshot.Text = "Get snapshot in Clipboard";
             this._snapshot.Click += new System.EventHandler(this._snapshot_Click);
+            // 
+            // _tooltip
+            // 
+            this._tooltip.DefaultTooltipSettings = new DevComponents.DotNetBar.SuperTooltipInfo("", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray);
+            this._tooltip.BeforeTooltipDisplay += new DevComponents.DotNetBar.SuperTooltipEventHandler(this._tooltip_BeforeTooltipDisplay);
+            this._tooltip.MarkupLinkClick += new DevComponents.DotNetBar.MarkupLinkClickEventHandler(this._tooltip_MarkupLinkClick);
             // 
             // ThreatTypesChart
             // 
@@ -194,5 +201,6 @@
         private DevComponents.DotNetBar.Charts.ChartControl _chart;
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
         private System.Windows.Forms.ToolStripMenuItem _snapshot;
+        private DevComponents.DotNetBar.SuperTooltip _tooltip;
     }
 }

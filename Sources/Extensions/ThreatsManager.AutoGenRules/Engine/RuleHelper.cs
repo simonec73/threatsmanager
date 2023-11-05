@@ -77,6 +77,39 @@ namespace ThreatsManager.AutoGenRules.Engine
             return list.Any() ? list : null;
         }
 
+        public static IEnumerable<SelectionRuleNode> Traverse(this SelectionRuleNode node)
+        {
+            IEnumerable<SelectionRuleNode> result = null;
+
+            List<SelectionRuleNode> nodes = new List<SelectionRuleNode>();
+            if (node is UnaryRuleNode unary && unary.Child != null)
+            {
+                nodes.Add(unary.Child);
+                var children = unary.Child.Traverse();
+                if (children?.Any() ?? false)
+                    nodes.AddRange(children);
+            } 
+            else if (node is NaryRuleNode nary)
+            {
+                var naryChildren = nary.Children?.ToArray();
+                if (naryChildren?.Any() ?? false)
+                {
+                    foreach (var child in naryChildren)
+                    {
+                        nodes.Add(child);
+                        var children = child.Traverse();
+                        if (children?.Any() ?? false)
+                            nodes.AddRange(children);
+                    }
+                }
+            }
+
+            if (nodes.Any())
+                result = nodes.AsEnumerable();
+
+            return result;
+        }
+
         public static bool HasSchema(this SelectionRuleNode node,
             [Required] string schemaName, [Required] string schemaNamespace)
         {

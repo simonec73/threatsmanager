@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using ThreatsManager.AutoGenRules.Engine;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -11,6 +9,7 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Scope = ThreatsManager.Interfaces.Scope;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
@@ -85,12 +84,16 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 var containers = c.Containers?.ToArray();
                 if (containers?.Any() ?? false)
                 {
-                    foreach (var container in containers)
+                    using (var scope = UndoRedoManager.OpenScope("Propagate Gen Rule To Children"))
                     {
-                        container.SetRule(c.Rule);
+                        foreach (var container in containers)
+                        {
+                            container.SetRule(c.Rule);
+                        }
+                        scope?.Complete();
                     }
+                    ShowMessage?.Invoke("Auto Gen Rule copied successfully.");
                 }
-                ShowMessage?.Invoke("Auto Gen Rule copied successfully.");
             }
         }
     }

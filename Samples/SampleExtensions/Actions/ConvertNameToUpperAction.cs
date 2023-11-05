@@ -4,6 +4,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 
 namespace SampleExtensions.Actions
 {
@@ -95,7 +96,11 @@ namespace SampleExtensions.Actions
                 // for example, it is possible to get a reference to the Model, by casting
                 // the identity to IThreatModelChild, because most identities are children of the Threat Model.
 
-                identity.Name = identity.Name.ToUpper();
+                using (var scope = UndoRedoManager.OpenScope("Converting to uppercase"))
+                {
+                    identity.Name = identity.Name.ToUpper();
+                    scope?.Complete();
+                }
                 result = true;
             }
 

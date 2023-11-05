@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -26,7 +29,7 @@ namespace ThreatsManager.Extensions.Panels.Configuration
 
         public void Initialize([NotNull] IThreatModel model)
         {
-            _configuration = new ExtensionConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId());
+            _configuration = new ExtensionConfigurationManager(model);
 
             _enableEffortSupport.Checked = _configuration.EnableEffort;
             _normalizationReference.Value = _configuration.NormalizationReference;

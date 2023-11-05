@@ -1,6 +1,6 @@
 ﻿namespace ThreatsManager.Extensions.Dialogs
 {
-    partial class ExportTemplateDialog
+    partial class ExportKnowledgeBaseDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportTemplateDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportKnowledgeBaseDialog));
             this._saveFile = new System.Windows.Forms.SaveFileDialog();
             this._wizard = new DevComponents.DotNetBar.Wizard();
             this._pageIntro = new DevComponents.DotNetBar.WizardPage();

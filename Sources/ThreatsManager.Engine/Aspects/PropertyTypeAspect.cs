@@ -2,12 +2,12 @@
 using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
+    //[JsonProperty("schema")]
     //protected Guid _schemaId { get; set; }
     //#endregion    
 
@@ -15,17 +15,13 @@ namespace ThreatsManager.Engine.Aspects
     public class PropertyTypeAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Family)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("schema")]
-        public Guid _schemaId { get; set; }
+        [ImportMember(nameof(_schemaId))]
+        public Property<Guid> _schemaId;
         #endregion
 
         #region Implementation of interface IPropertyType.
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public Guid SchemaId => _schemaId;
+        public Guid SchemaId => _schemaId?.Get() ?? Guid.Empty;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         [CopyCustomAttributes(typeof(JsonPropertyAttribute), 

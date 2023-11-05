@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 
@@ -28,11 +29,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension, then the method returns null.</remarks>
         public static string GetExtensionId(this object value)
         {
+            return value?.GetType()?.GetExtensionId();
+        }
+
+        /// <summary>
+        /// Get the Extension Identifier.
+        /// </summary>
+        /// <param name="type">Extension Type whose identifier is to be returned.</param>
+        /// <returns>Identifier of the Extension.</returns>
+        /// <remarks>If the Type is not related to an Extension, then the method returns null.</remarks>
+        public static string GetExtensionId(this Type type)
+        {
             string result = null;
 
-            Type type = value.GetType();
-
-            var attribs = type.GetCustomAttributes(
+            var attribs = type?.GetCustomAttributes(
                 typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
 
             var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Id") == 0);
@@ -59,11 +69,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension, then the method returns null.</remarks>
         public static string GetExtensionLabel(this object value)
         {
+            return value?.GetType()?.GetExtensionLabel();
+        }
+
+        /// <summary>
+        /// Get the Extension Label.
+        /// </summary>
+        /// <param name="type">Extension Type whose Label is to be returned.</param>
+        /// <returns>Label of the Extension.</returns>
+        /// <remarks>If the Type is not an Extension, then the method returns null.</remarks>
+        public static string GetExtensionLabel(this Type type)
+        {
             string result = null;
 
-            Type type = value.GetType();
-
-            ExportMetadataAttribute[] attribs = type.GetCustomAttributes(
+            ExportMetadataAttribute[] attribs = type?.GetCustomAttributes(
                 typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
 
             var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Label") == 0);
@@ -90,7 +109,18 @@ namespace ThreatsManager.Utilities
         /// <remarks>This method can be used for all classes, not only for Extensions.</remarks>
         public static string GetExtensionAssemblyTitle(this object value)
         {
-            return value.GetType().Assembly
+            return value?.GetType()?.GetExtensionAssemblyTitle();
+        }
+
+        /// <summary>
+        /// Get the Title of the Assembly containing the Extension.
+        /// </summary>
+        /// <param name="type">Reference extension Type.</param>
+        /// <returns>Title of the containing Assembly.</returns>
+        /// <remarks>This method can be used for all classes, not only for Extensions.</remarks>
+        public static string GetExtensionAssemblyTitle(this Type type)
+        {
+            return type?.Assembly
                 .GetCustomAttributes(typeof(AssemblyTitleAttribute), false)
                 .OfType<AssemblyTitleAttribute>()
                 .Select(x => x.Title)
@@ -105,11 +135,20 @@ namespace ThreatsManager.Utilities
         /// <remarks>If the object is not an Extension, then the method returns 0.</remarks>
         public static int GetExtensionPriority(this object value)
         {
+            return value?.GetType()?.GetExtensionPriority() ?? 0;
+        }
+
+        /// <summary>
+        /// Get the Extension priority.
+        /// </summary>
+        /// <param name="type">Extension Type whose priority is to be returned.</param>
+        /// <returns>Priority of the Extension.</returns>
+        /// <remarks>If the Type is not an Extension, then the method returns 0.</remarks>
+        public static int GetExtensionPriority(this Type type)
+        {
             int result = 0;
 
-            Type type = value.GetType();
-
-            var attribs = type.GetCustomAttributes(
+            var attribs = type?.GetCustomAttributes(
                 typeof(ExportMetadataAttribute), false) as ExportMetadataAttribute[];
 
             var attrib = attribs?.FirstOrDefault(x => string.CompareOrdinal(x.Name, "Priority") == 0);
@@ -123,6 +162,38 @@ namespace ThreatsManager.Utilities
                     .OfType<ExtensionAttribute>().FirstOrDefault();
                 if (extensionAttribute != null)
                     result = extensionAttribute.Priority;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the Universal Identifier of the Extension.
+        /// </summary>
+        /// <param name="value">Extension whose Universal Identifier is to be returned.</param>
+        /// <returns>Universal Identifier of the Extension.</returns>
+        /// <remarks>If the object is not an Extension or if the Universal Identifier has not been defined, then the method returns null.</remarks>
+        public static string GetExtensionUniversalId(this object value)
+        {
+            return value?.GetType()?.GetExtensionUniversalId();
+        }
+
+        /// <summary>
+        /// Get the Universal Identifier of the Extension.
+        /// </summary>
+        /// <param name="type">Extension Type whose Universal Identifier is to be returned.</param>
+        /// <returns>Universal Identifier of the Extension Type.</returns>
+        /// <remarks>If the Type is not an Extension or if the Universal Identifier has not been defined, then the method returns null.</remarks>
+        public static string GetExtensionUniversalId(this Type type)
+        {
+            string result = null;
+
+            var attrib = type?.GetCustomAttributes(
+                typeof(UniversalIdentifierAttribute), false)?.FirstOrDefault() as UniversalIdentifierAttribute;
+
+            if (attrib != null)
+            {
+                result = attrib.Name;
             }
 
             return result;
@@ -191,6 +262,27 @@ namespace ThreatsManager.Utilities
 
             return result;
         }
+
+        /// <summary>
+        /// Gets the Extension of a specific type Universal Identifier, loaded by the Platform. 
+        /// </summary>
+        /// <typeparam name="T">Extension type.</typeparam>
+        /// <param name="universalId">Universal Identifier of the searched Extension.</param>
+        /// <returns>Registered Extension.</returns>
+        public static T GetExtensionByUniversalId<T>([Required] string universalId) where T : class, IExtension
+        {
+            T result = null;
+
+            var type = Type.GetType("ThreatsManager.Engine.Manager, ThreatsManager.Engine", false);
+            var property = type?.GetProperty("Instance");
+            if (property != null)
+            {
+                var instance = property.GetValue(null) as IExtensionManager;
+                result = instance?.GetExtensionByUniversalId<T>(universalId);
+            }
+
+            return result;
+        }
         #endregion
 
         #region Extensions Configuration.
@@ -247,10 +339,14 @@ namespace ThreatsManager.Utilities
         {
             var data = configuration?.Data?.ToArray();
 
-            var property = GetExtensionConfigurationProperty(model, extensionId);
-            if (property != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Extension Configuration"))
             {
-                property.Value = GetConfigurationObject(data?.Where(x => !x.Global));
+                var property = GetExtensionConfigurationProperty(model, extensionId);
+                if (property != null)
+                {
+                    property.Value = GetConfigurationObject(data?.Where(x => !x.Global));
+                    scope?.Complete();
+                }
             }
 
             SaveGlobalConfiguration(extensionId, ExtensionConfigurationFolder, GetConfigurationObject(data?.Where(x => x.Global)));
@@ -258,21 +354,29 @@ namespace ThreatsManager.Utilities
 
         private static IPropertyJsonSerializableObject GetExtensionConfigurationProperty([NotNull] IThreatModel model, [Required] string extensionId)
         {
-            var propertySchema =
-                model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager") ?? model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
-            propertySchema.AppliesTo = Scope.ThreatModel;
-            propertySchema.AutoApply = false;
-            propertySchema.NotExportable = true;
-            propertySchema.Priority = 100;
-            propertySchema.RequiredExecutionMode = ExecutionMode.Business;
-            propertySchema.System = true;
-            propertySchema.Visible = false;
+            IPropertyJsonSerializableObject result;
 
-            var propertyType = propertySchema.GetPropertyType(extensionId) ?? propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
-            propertyType.Visible = false;
-            propertyType.DoNotPrint = true;
+            using (var scope = UndoRedoManager.OpenScope("Get Extension Configuration property"))
+            {
+                var propertySchema =
+                    model.GetSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager") ?? model.AddSchema("ExtensionsConfiguration", "https://github.com/simonec73/ThreatsManager");
+                propertySchema.AppliesTo = Scope.ThreatModel;
+                propertySchema.AutoApply = false;
+                propertySchema.NotExportable = true;
+                propertySchema.Priority = 100;
+                propertySchema.RequiredExecutionMode = ExecutionMode.Business;
+                propertySchema.System = true;
+                propertySchema.Visible = false;
 
-            return (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
+                var propertyType = propertySchema.GetPropertyType(extensionId) ?? propertySchema.AddPropertyType(extensionId, PropertyValueType.JsonSerializableObject);
+                propertyType.Visible = false;
+                propertyType.DoNotPrint = true;
+
+                result = (model.GetProperty(propertyType) ?? model.AddProperty(propertyType, null)) as IPropertyJsonSerializableObject;
+                scope?.Complete();
+            }
+
+            return result;
         }
 
         private static ExtensionConfigurationData GetConfigurationObject(IEnumerable<ConfigurationData> configuration)
@@ -332,7 +436,8 @@ namespace ThreatsManager.Utilities
                             {
                                 var serializer = new JsonSerializer
                                 {
-                                    TypeNameHandling = TypeNameHandling.All,
+                                    TypeNameHandling = TypeNameHandling.Auto,
+                                    DefaultValueHandling = DefaultValueHandling.Ignore,
                                     SerializationBinder = new KnownTypesBinder(),
                                     MissingMemberHandling = MissingMemberHandling.Ignore
                                 };
@@ -367,7 +472,9 @@ namespace ThreatsManager.Utilities
 
                     using(JsonWriter jtw = new JsonTextWriter(sw))
                     {
-                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented};
+                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto,
+                            DefaultValueHandling = DefaultValueHandling.Ignore,
+                            Formatting = Formatting.Indented};
                         serializer.Serialize(jtw, config);
                     }
 
@@ -379,6 +486,35 @@ namespace ThreatsManager.Utilities
                 }
             }
 
+        }
+        #endregion
+
+        #region ICommandsBarContextAwareAction accelerator functions.
+        /// <summary>
+        /// Verifies if a <see cref="ICommandsBarContextAwareAction"/> is visible to a given context.
+        /// </summary>
+        /// <param name="action"><see cref="ICommandsBarContextAwareAction"/> to be checked.</param>
+        /// <param name="referenceContext">Reference context.</param>
+        /// <returns>True if the reference context is visible.</returns>
+        /// <remarks>If the referenceContext is null or empty, it is visible by default./></remarks>
+        public static bool IsVisible(this ICommandsBarContextAwareAction action, string referenceContext)
+        {
+            bool result = false;
+
+            if (string.IsNullOrWhiteSpace(referenceContext))
+            {
+                result = true;
+            }
+            else
+            {
+                var supported = action?.SupportedContexts?.ToArray();
+                var unsupported = action?.UnsupportedContexts?.ToArray();
+
+                result = (supported?.Contains(referenceContext) ?? true) &&
+                    !(unsupported?.Contains(referenceContext) ?? false);
+            }
+
+            return result;
         }
         #endregion
     }

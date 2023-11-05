@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.WeaknessList
@@ -15,29 +15,56 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
     {
         private ContextMenuStrip _weaknessMenu;
         private ContextMenuStrip _weaknessMitigationMenu;
+        private IEnumerable<IContextAwareAction> _actions;
 
-        public Scope SupportedScopes => Scope.ThreatType | Scope.ThreatTypeMitigation;
+        public Scope SupportedScopes => Scope.Weakness | Scope.WeaknessMitigation;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menuThreatTypes = new MenuDefinition(actions, Scope.ThreatType);
-            _weaknessMenu = menuThreatTypes.CreateMenu();
-            menuThreatTypes.MenuClicked += OnThreatTypeMenuClicked;
+            var menuWeakness = new MenuDefinition(actions, Scope.Weakness);
+            _weaknessMenu = menuWeakness.CreateMenu();
+            menuWeakness.MenuClicked += OnWeaknessMenuClicked;
 
-            var menuThreatTypeMitigation = new MenuDefinition(actions, Scope.ThreatTypeMitigation);
-            _weaknessMitigationMenu = menuThreatTypeMitigation.CreateMenu();
-            menuThreatTypeMitigation.MenuClicked += OnThreatTypeMitigationMenuClicked;
+            var menuWeaknessMitigation = new MenuDefinition(actions, Scope.WeaknessMitigation);
+            _weaknessMitigationMenu = menuWeaknessMitigation.CreateMenu();
+            menuWeaknessMitigation.MenuClicked += OnWeaknessMitigationMenuClicked;
+
+            _actions = actions?.ToArray();
+
+            foreach (var action in _actions)
+            {
+                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction &&
+                    commandsBarContextAwareAction.IsVisible("TrustBoundaryList"))
+                {
+                    var commandsBar = commandsBarContextAwareAction.CommandsBar;
+                    if (commandsBar != null)
+                    {
+                        if (_commandsBarContextAwareActions == null)
+                            _commandsBarContextAwareActions = new Dictionary<string, List<ICommandsBarDefinition>>();
+                        List<ICommandsBarDefinition> list;
+                        if (_commandsBarContextAwareActions.ContainsKey(commandsBar.Name))
+                            list = _commandsBarContextAwareActions[commandsBar.Name];
+                        else
+                        {
+                            list = new List<ICommandsBarDefinition>();
+                            _commandsBarContextAwareActions.Add(commandsBar.Name, list);
+                        }
+
+                        list.Add(commandsBar);
+                    }
+                }
+            }
         }
 
-        private void OnThreatTypeMenuClicked(IContextAwareAction action, object context)
+        private void OnWeaknessMenuClicked(IContextAwareAction action, object context)
         {
-            if (context is IThreatType threatType)
-                action.Execute(threatType);
+            if (context is IWeakness weakness)
+                action.Execute(weakness);
         }
 
-        private void OnThreatTypeMitigationMenuClicked(IContextAwareAction action, object context)
+        private void OnWeaknessMitigationMenuClicked(IContextAwareAction action, object context)
         {
-            if (context is IThreatTypeMitigation mitigation)
+            if (context is IWeaknessMitigation mitigation)
                 action.Execute(mitigation);
         }
     }

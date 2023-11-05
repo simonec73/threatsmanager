@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -53,10 +55,46 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        [JsonProperty("entities")]
-        private List<IEntity> _entities;
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityAddedToEntity;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAddedToEntity
+        {
+            add
+            {
+                if (_vulnerabilityAddedToEntity == null || !_vulnerabilityAddedToEntity.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityAddedToEntity += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityAddedToEntity != null) _vulnerabilityAddedToEntity -= value;
+            }
+        }
 
-        public IEnumerable<IEntity> Entities => _entities?.AsReadOnly();
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityRemovedFromEntity;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemovedFromEntity
+        {
+            add
+            {
+                if (_vulnerabilityRemovedFromEntity == null || !_vulnerabilityRemovedFromEntity.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityRemovedFromEntity += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityRemovedFromEntity != null) _vulnerabilityRemovedFromEntity -= value;
+            }
+        }
+
+        [Child]
+        [JsonProperty("entities", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 20)]
+        private AdvisableCollection<IEntity> _entities { get; set; }
+
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IEntity> Entities => _entities?.AsEnumerable();
 
         [InitializationRequired]
         public IEntity GetEntity(Guid id)
@@ -81,10 +119,15 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IEntity entity)
         {
-            if (_entities == null)
-                _entities = new List<IEntity>();
+            using (var scope = UndoRedoManager.OpenScope("Add Entity"))
+            {
+                if (_entities == null)
+                    _entities = new AdvisableCollection<IEntity>();
 
-            _entities.Add(entity);
+                UndoRedoManager.Attach(entity, this);
+                _entities.Add(entity);
+                scope?.Complete();
+            }
         }
 
         [InitializationRequired]
@@ -105,28 +148,25 @@ namespace ThreatsManager.Engine.ObjectModel
             IEntity result = null;
 
             if (typeof(T) == typeof(IProcess))
-                result = new Process(this, name)
+                result = new Process(name)
                 {
                     _templateId = template?.Id ?? Guid.Empty
                 };
             if (typeof(T) == typeof(IExternalInteractor))
-                result = new ExternalInteractor(this, name)
+                result = new ExternalInteractor(name)
                 {
                     _templateId = template?.Id ?? Guid.Empty
                 };
             if (typeof(T) == typeof(IDataStore))
-                result = new DataStore(this, name)
+                result = new DataStore(name)
                 {
                     _templateId = template?.Id ?? Guid.Empty
                 };
 
             if (result != null)
             {
-                if (_entities == null)
-                    _entities = new List<IEntity>();
-                _entities.Add(result);
+                Add(result);
                 RegisterEvents(result);
-                SetDirty();
                 ChildCreated?.Invoke(result);
             }
 
@@ -141,6 +181,16 @@ namespace ThreatsManager.Engine.ObjectModel
         private void OnThreatEventAddedToEntity([NotNull] IThreatEventsContainer container, [NotNull] IThreatEvent threatEvent)
         {
             _threatEventAddedToEntity?.Invoke(container, threatEvent);
+        }
+
+        private void OnVulnerabilityRemovedFromEntity([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityRemovedFromEntity?.Invoke(container, vulnerability);
+        }
+
+        private void OnVulnerabilityAddedToEntity([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityAddedToEntity?.Invoke(container, vulnerability);
         }
 
         private string GetFirstAvailableEntityName<T>() where T : IEntity
@@ -210,13 +260,19 @@ namespace ThreatsManager.Engine.ObjectModel
             var entity = GetEntity(id);
             if (entity != null)
             {
-                RemoveRelated(entity);
-                result = _entities?.Remove(entity) ?? false;
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Entity"))
                 {
-                    UnregisterEvents(entity);
-                    SetDirty();
-                    ChildRemoved?.Invoke(entity);
+                    RemoveRelated(entity);
+                    result = _entities?.Remove(entity) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(entity);
+
+                        UnregisterEvents(entity);
+                        ChildRemoved?.Invoke(entity);
+                    }
+                        
+                    scope?.Complete();
                 }
             }
 
@@ -234,7 +290,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 }
             }
 
-            var dataFlows = _dataFlows?.Where(x => x.SourceId == entity.Id || x.TargetId == entity.Id).ToArray();
+            var dataFlows = _flows?.Where(x => x.SourceId == entity.Id || x.TargetId == entity.Id).ToArray();
             if (dataFlows?.Any() ?? false)
             {
                 foreach (var flow in dataFlows)

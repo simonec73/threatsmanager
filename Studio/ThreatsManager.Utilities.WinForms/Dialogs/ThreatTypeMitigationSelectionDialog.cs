@@ -109,7 +109,11 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 if (_existingMitigation.SelectedItem is IMitigation mitigation &&
                     _strengthExisting.SelectedItem != null)
                 {
-                    _mitigation = _threatType.AddMitigation(mitigation, _strengthExisting.SelectedItem as IStrength);
+                    using (var scope = UndoRedoManager.OpenScope("ASsociate existing Mitigation"))
+                    {
+                        _mitigation = _threatType.AddMitigation(mitigation, _strengthExisting.SelectedItem as IStrength);
+                        scope?.Complete();
+                    }
                 }
             }
             else if (_createNew.Checked)
@@ -117,10 +121,14 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 if (Enum.TryParse<SecurityControlType>((string)_controlType.SelectedItem, out var controlType) &&
                     _strength.SelectedItem != null)
                 {
-                    var newMitigation = _threatType.Model.AddMitigation(_name.Text);
-                    newMitigation.Description = _description.Text;
-                    newMitigation.ControlType = controlType;
-                    _mitigation = _threatType.AddMitigation(newMitigation, _strength.SelectedItem as IStrength);
+                    using (var scope = UndoRedoManager.OpenScope("ASsociate new Mitigation"))
+                    {
+                        var newMitigation = _threatType.Model.AddMitigation(_name.Text);
+                        newMitigation.Description = _description.Text;
+                        newMitigation.ControlType = controlType;
+                        _mitigation = _threatType.AddMitigation(newMitigation, _strength.SelectedItem as IStrength);
+                        scope?.Complete();
+                    }
                 }
             }
         }

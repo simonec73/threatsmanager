@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
     public class ComparisonRuleNode : SelectionRuleNode
     {
         public ComparisonRuleNode()
@@ -32,6 +36,7 @@ namespace ThreatsManager.AutoGenRules.Engine
         public string Schema { get; set; }
 
         [JsonProperty("operator")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public ComparisonOperator Operator { get; set; }
 
         [JsonProperty("value")]

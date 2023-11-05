@@ -5,7 +5,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Panels.AzureDevOps
+namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
 {
     public partial class AzureDevOpsPanelFactory
     {

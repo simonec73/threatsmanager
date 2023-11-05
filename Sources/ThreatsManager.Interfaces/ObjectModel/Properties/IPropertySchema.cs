@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface defining a Property Schema, that is a container of Properties, associated to a Namespace.
     /// </summary>
-    public interface IPropertySchema : IIdentity, IPropertyTypesContainer, IThreatModelChild, IDirty
+    public interface IPropertySchema : IIdentity, IPropertyTypesContainer, IThreatModelChild
     {
         /// <summary>
         /// Namespace of the Property Schema.

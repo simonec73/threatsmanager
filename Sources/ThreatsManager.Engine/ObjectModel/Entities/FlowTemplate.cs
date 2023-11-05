@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -10,6 +12,8 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -17,11 +21,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Flow Template")]
     public class FlowTemplate : IFlowTemplate, IInitializableObject
     {
@@ -29,10 +35,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public FlowTemplate([NotNull] IThreatModel model, [Required] string name)
+        public FlowTemplate([Required] string name)
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
         }
@@ -43,11 +47,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -81,32 +89,27 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
+        public void Unapply(IPropertySchema schema)
         {
         }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -124,27 +127,38 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [InitializationRequired]
         public IDataFlow CreateFlow([Required] string name, Guid sourceId, Guid targetId)
         {
-            IDataFlow result = _model.AddDataFlow(name, sourceId, targetId, this);
+            IDataFlow result;
 
-            if (result != null)
+            using (var scope = UndoRedoManager.OpenScope("Create Flow from Template"))
             {
-                result.Description = Description;
-                result.FlowType = FlowType;
-                this.CloneProperties(result);
+                result = Model?.AddDataFlow(name, sourceId, targetId, this);
+
+                if (result != null)
+                {
+                    result.Description = Description;
+                    result.FlowType = FlowType;
+                    this.CloneProperties(result);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
+        [InitializationRequired]
         public void ApplyTo([NotNull] IDataFlow flow)
         {
-            flow.FlowType = FlowType;
-            flow.ClearProperties();
-            this.CloneProperties(flow);
-            if (flow is DataFlow internalFlow)
+            using (var scope = UndoRedoManager.OpenScope("Apply Template to an existing Flow"))
             {
-                internalFlow._templateId = Id;
-                internalFlow._template = this;
+                flow.FlowType = FlowType;
+                flow.ClearProperties();
+                this.CloneProperties(flow);
+                if (flow is DataFlow internalFlow)
+                {
+                    internalFlow._templateId = Id;
+                    internalFlow._template = this;
+                }
+                scope?.Complete();
             }
         }
 

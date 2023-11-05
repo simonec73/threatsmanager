@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
@@ -68,11 +69,17 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
             {
                 if (context is IThreatEvent threatEvent)
                 {
-                    if (threatEvent.ApplyMitigations(answer == AnswerType.No))
-                        ShowMessage?.Invoke(Resources.SuccessAssociation);
-                    else
+                    using (var scope = UndoRedoManager.OpenScope("Apply Mitigation Association Rules"))
                     {
-                        ShowWarning?.Invoke(Resources.WarningNoAssociations);
+                        if (threatEvent.ApplyMitigations(answer == AnswerType.No))
+                        {
+                            scope?.Complete();
+                            ShowMessage?.Invoke(Resources.SuccessAssociation);
+                        }
+                        else
+                        {
+                            ShowWarning?.Invoke(Resources.WarningNoAssociations);
+                        }
                     }
                 }
             }

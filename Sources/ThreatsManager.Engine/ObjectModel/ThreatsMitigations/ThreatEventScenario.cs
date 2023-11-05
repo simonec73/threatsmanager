@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -10,6 +12,7 @@ using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -17,12 +20,17 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [ThreatActorIdChanger]
+    [SeverityIdChanger]
+    [ThreatEventIdChanger]
     [ThreatEventChildAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Scenario")]
     public class ThreatEventScenario : IThreatEventScenario, IInitializableObject
     {
@@ -35,111 +43,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             _id = Guid.NewGuid();
             _model = threatEvent.Model;
-            _modelId = threatEvent.Model.Id;
             _threatEvent = threatEvent;
-            _threatEventId = threatEvent.Id;
-            _actorId = actor.Id;
             _actor = actor;
             Name = string.IsNullOrWhiteSpace(name) ? actor.Name : name;
             Description = actor.Description;
-    
-            _model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
-
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.ThreatEventScenario;
-
-        [JsonProperty("severity")]
-        private int _severityId;
-
-        public int SeverityId => _severityId;
-
-        private ISeverity _severity;
-
-        [InitializationRequired]
-        public ISeverity Severity
-        {
-            get => _severity ?? (_severity = Model.GetSeverity(_severityId));
-
-            set
-            {
-                if (value != null && value.Equals(Model.GetSeverity(value.Id)))
-                {
-                    _severity = value;
-                    _severityId = value.Id;
-                }
-                else
-                {
-                    _severity = null;
-                    _severityId = (int)DefaultSeverity.Unknown;
-                }
-            }
-        }
-
-        [JsonProperty("actorId")]
-        private Guid _actorId;
-
-        private IThreatActor _actor;
-
-        public Guid ActorId => _actorId;
-
-        [InitializationRequired]
-        public IThreatActor Actor
-        {
-            get => _actor ?? (_actor = Model.GetThreatActor(_actorId));
-            set
-            {
-                if (value != null && value.Equals(Model.GetThreatActor(value.Id)))
-                {
-                    _actor = value;
-                    _actorId = value.Id;
-                }
-                else
-                {
-                    _actor = null;
-                    _actorId = Guid.Empty;
-                }
-            }
-        }
-
-        [JsonProperty("motivation")]
-        public string Motivation { get; set; }
-
-        public IThreatEventScenario Clone([NotNull] IThreatEventScenariosContainer container)
-        {
-            IThreatEventScenario result = null;
-
-            if (container is IThreatModelChild child && child.Model is IThreatModel model)
-            {
-                result = new ThreatEventScenario()
-                {
-                    _id = _id,
-                    Name = Name,
-                    Description = Description,
-                    _modelId = model.Id,
-                    _model = model,
-                    _actorId = _actorId,
-                    _severityId = _severityId,
-                    _threatEventId = _threatEventId,
-                    Motivation = Motivation,
-                };
-                this.CloneProperties(result);
-
-                container.Add(result);
-            }
-
-            return result;
-
-        }
-
-        public override string ToString()
-        {
-            return Name ?? "<undefined>";
-        }
-
-        #endregion
 
         #region Default implementation.
         public Guid Id { get; }
@@ -152,6 +62,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return false;
         }
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public IProperty GetProperty(IPropertyType propertyType)
         {
@@ -181,37 +93,139 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
+        [Reference]
+        [field: NotRecorded]
         public IThreatEvent ThreatEvent { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("threatEventId")]
         private Guid _threatEventId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatEventId]
         private IThreatEvent _threatEvent { get; set; }
+        #endregion
+
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatEventScenario;
+
+        [NotRecorded]
+        [JsonProperty("severity")]
+        private int _severityId { get; set; }
+
+        public int SeverityId => _severityId;
+
+        [NotRecorded]
+        [Reference]
+        [UpdateSeverityId]
+        private ISeverity _severity;
+
+        [InitializationRequired]
+        [SafeForDependencyAnalysis]
+        public ISeverity Severity
+        {
+            get => _severity ?? (_severity = Model.GetSeverity(_severityId));
+
+            set
+            {
+                if (value != null && value.Equals(Model.GetSeverity(value.Id)))
+                {
+                    _severity = value;
+                }
+                else
+                {
+                    _severity = null;
+                }
+            }
+        }
+
+        [JsonProperty("actorId")]
+        [NotRecorded]
+        private Guid _actorId { get; set; }
+
+        [Reference]
+        [NotRecorded]
+        [UpdateActorId]
+        private IThreatActor _actor;
+
+        public Guid ActorId => _actorId;
+
+        [InitializationRequired]
+        [SafeForDependencyAnalysis]
+        public IThreatActor Actor
+        {
+            get => _actor ?? (_actor = Model?.GetThreatActor(_actorId));
+            set
+            {
+                if (value != null && value.Equals(Model?.GetThreatActor(value.Id)))
+                {
+                    _actor = value;
+                }
+                else
+                {
+                    _actor = null;
+                }
+            }
+        }
+
+        [JsonProperty("motivation")]
+        public string Motivation { get; set; }
+
+        public IThreatEventScenario Clone([NotNull] IThreatEventScenariosContainer container)
+        {
+            IThreatEventScenario result = null;
+
+            if (container is IThreatModelChild child && child.Model is IThreatModel model)
+            {
+                result = new ThreatEventScenario()
+                {
+                    _id = _id,
+                    Name = Name,
+                    Description = Description,
+                    _model = model,
+                    _actorId = _actorId,
+                    _severityId = _severityId,
+                    _threatEventId = _threatEventId,
+                    Motivation = Motivation,
+                };
+                this.CloneProperties(result);
+
+                container.Add(result);
+            }
+
+            return result;
+
+        }
+
+        public override string ToString()
+        {
+            return Name ?? "<undefined>";
+        }
         #endregion
     }
 }

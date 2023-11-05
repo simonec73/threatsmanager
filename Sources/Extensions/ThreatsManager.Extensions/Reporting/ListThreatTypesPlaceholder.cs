@@ -84,12 +84,14 @@ namespace ThreatsManager.Extensions.Reporting
             return result;
         }
 
-        public IEnumerable<ListItem> GetList(IThreatModel model)
+        public IEnumerable<ListItem> GetList([NotNull] IThreatModel model)
         {
             IEnumerable<ListItem> result = null;
 
+            var comparer = new SeverityComparer();
+
             var threatTypes = model.ThreatTypes?
-                .OrderByDescending(x => x.Severity, new SeverityComparer())
+                .OrderByDescending(x => model.GetThreatEvents(x)?.Select(y => y.Severity).OrderByDescending(y => y, comparer).FirstOrDefault(), comparer)
                 .ThenBy(x => x.Name)
                 .ToArray();
 
@@ -97,7 +99,7 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 var list = new List<ListItem>();
 
-                var eventProperties = new ListThreatEventsPlaceholder().GetProperties(model)?
+                var eventProperties = new ListThreatTypesPlaceholder().GetProperties(model)?
                     .OrderBy(x => model.GetSchema(x.Value.SchemaId).Priority)
                     .ThenBy(x => model.GetSchema(x.Value.SchemaId).Namespace)
                     .ThenBy(x => model.GetSchema(x.Value.SchemaId).Name)
@@ -111,8 +113,10 @@ namespace ThreatsManager.Extensions.Reporting
                     {
                         var items = new List<ItemRow>();
 
-                        items.Add(new TextRow("Severity", threatType.Severity.Name,
-                            threatType.Severity.TextColor, threatType.Severity.BackColor, true, true, 75));
+                        var severity = threatEvents.Select(x => x.Severity)
+                            .OrderByDescending(x => x, comparer).FirstOrDefault();
+                        items.Add(new TextRow("Severity", severity.Name,
+                            severity.TextColor, severity.BackColor, true, true, 75));
                         items.Add(new TextRow("Description", threatType.Description));
                         items.Add(new ListRow("Affected Objects", 
                             threatEvents.Select(x => 

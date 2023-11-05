@@ -24,16 +24,43 @@ fragment UPPERLETTER : [A-Z] ;
 fragment LOWERLETTER : [a-z] ;
 fragment DIGIT : [0-9] ;
 
-FLOW       : 'flow';
-SOURCE     : 'source';
-TARGET     : 'target';
+fragment A : [aA]; // match either an 'a' or 'A'
+fragment B : [bB];
+fragment C : [cC];
+fragment D : [dD];
+fragment E : [eE];
+fragment F : [fF];
+fragment G : [gG];
+fragment H : [hH];
+fragment I : [iI];
+fragment J : [jJ];
+fragment K : [kK];
+fragment L : [lL];
+fragment M : [mM];
+fragment N : [nN];
+fragment O : [oO];
+fragment P : [pP];
+fragment Q : [qQ];
+fragment R : [rR];
+fragment S : [sS];
+fragment T : [tT];
+fragment U : [uU];
+fragment V : [vV];
+fragment W : [wW];
+fragment X : [xX];
+fragment Y : [yY];
+fragment Z : [zZ];
 
-IS         : 'is';
-CROSSES    : 'crosses';
+FLOW       : F L O W;
+SOURCE     : S O U R C E;
+TARGET     : T A R G E T;
 
-AND        : 'and' ;
-OR         : 'or' ;
-NOT        : 'not';
+IS         : I S;
+CROSSES    : C R O S S E S;
+
+AND        : A N D;
+OR         : O R;
+NOT        : N O T;
 
 LPAREN     : '(' ;
 RPAREN     : ')' ;

@@ -20,7 +20,7 @@ using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 namespace ThreatsManager.MsTmt.Extensions
 {
 #pragma warning disable CS0067
-    [Extension("C40C1DBE-7856-434C-9023-4EF8686E08BC", "Merge Entities Context Aware Action", 20, ExecutionMode.Simplified)]
+    [Extension("C40C1DBE-7856-434C-9023-4EF8686E08BC", "Merge Entities Context Aware Action", 500, ExecutionMode.Simplified)]
     public class MergeEntities : IShapesContextAwareAction, 
         IDataFlowAddingRequiredAction, IDataFlowRemovingRequiredAction,
         ICommandsBarContextAwareAction, IDesktopAlertAwareExtension
@@ -28,14 +28,26 @@ namespace ThreatsManager.MsTmt.Extensions
         public Scope Scope => Scope.Entity;
         public string Label => "Merge Entities";
         public string Group => "Merge";
-        public Bitmap Icon => Properties.Resources.logic_or_big;
-        public Bitmap SmallIcon => Properties.Resources.logic_or;
+        public Bitmap Icon => Properties.Resources.logic_or;
+        public Bitmap SmallIcon => Properties.Resources.logic_or_small;
         public Shortcut Shortcut => Shortcut.None;
 
         public event Action<IDiagram, IDataFlow> DataFlowAddingRequired;
         public event Action<ILink> DataFlowRemovingRequired;
         public event Action<string> ShowMessage;
         public event Action<string> ShowWarning;
+
+        public ICommandsBarDefinition CommandsBar => new CommandsBarDefinition(Group, Group, new IActionDefinition[]
+        {
+            new ActionDefinition(new Guid(this.GetExtensionId()), Label, Label, Icon, SmallIcon, false, Shortcut)
+            {
+                Tag = this
+            }
+        }, true, Icon);
+
+        public IEnumerable<string> SupportedContexts => new[] { "Diagram" };
+
+        public IEnumerable<string> UnsupportedContexts => null;
 
         public bool Execute([NotNull] object item)
         {
@@ -59,28 +71,32 @@ namespace ThreatsManager.MsTmt.Extensions
                     dialog.Initialize(entities);
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        var target = dialog.Target;
-                        var sources = dialog.Sources?.ToArray();
-                        var strategy = dialog.Strategy;
-
-                        if (target != null && target.Model is IThreatModel model &&
-                            (sources?.Any() ?? false) && Validate(target, sources, model, strategy))
+                        using (var scope = UndoRedoManager.OpenScope("Merge Entities"))
                         {
-                            var targetShape = shapes.FirstOrDefault(x => x.AssociatedId == target.Id);
+                            var target = dialog.Target;
+                            var sources = dialog.Sources?.ToArray();
+                            var strategy = dialog.Strategy;
 
-                            var diagram =
-                                model.Diagrams?.FirstOrDefault(x => x.GetEntityShape(target.Id) == targetShape);
-
-                            // Merge is about moving the Data Flows, nothing else.
-                            HandleIncoming(target, sources, model, diagram, strategy);
-                            HandleOutgoing(target, sources, model, diagram, strategy);
-
-                            foreach (var source in sources)
+                            if (target != null && target.Model is IThreatModel model &&
+                                (sources?.Any() ?? false) && Validate(target, sources, model, strategy))
                             {
-                                model.RemoveEntity(source.Id);
-                            }
+                                var targetShape = shapes.FirstOrDefault(x => x.AssociatedId == target.Id);
 
-                            result = true;
+                                var diagram =
+                                    model.Diagrams?.FirstOrDefault(x => x.GetEntityShape(target.Id) == targetShape);
+
+                                // Merge is about moving the Data Flows, nothing else.
+                                HandleIncoming(target, sources, model, diagram, strategy);
+                                HandleOutgoing(target, sources, model, diagram, strategy);
+
+                                foreach (var source in sources)
+                                {
+                                    model.RemoveEntity(source.Id);
+                                }
+
+                                scope?.Complete();
+                                result = true;
+                            }
                         }
                     }
                 }
@@ -89,7 +105,6 @@ namespace ThreatsManager.MsTmt.Extensions
             return result;
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private bool Validate([NotNull] IEntity target, [NotNull] IEnumerable<IEntity> sources, 
             [NotNull] IThreatModel model, ReplacementStrategy strategy)
         {
@@ -293,13 +308,5 @@ namespace ThreatsManager.MsTmt.Extensions
                 }
             }
         }
-
-        public ICommandsBarDefinition CommandsBar => new CommandsBarDefinition(Group, Group, new IActionDefinition[]
-        {
-            new ActionDefinition(new Guid(this.GetExtensionId()), Label, Label, Icon, SmallIcon, false, Shortcut)
-            {
-                Tag = this
-            }
-        });
     }
 }

@@ -73,7 +73,9 @@ namespace ThreatsManager.Utilities
             {
                 result = GetThreatEventImage(size);
             }
-            else if (identity is IThreatEventMitigation || identity is IMitigation)
+            else if (identity is IThreatEventMitigation || identity is IMitigation || 
+                identity is IVulnerabilityMitigation || identity is IThreatTypeMitigation ||
+                identity is IWeaknessMitigation)
             {
                 result = GetMitigationImage(size);
             }
@@ -88,6 +90,14 @@ namespace ThreatsManager.Utilities
             else if (identity is IThreatActor)
             {
                 result = GetThreatActorImage(size);
+            }
+            else if (identity is IWeakness || identity is IThreatTypeWeakness)
+            {
+                result = GetWeaknessImage(size);
+            }
+            else if (identity is IVulnerability)
+            {
+                result = GetVulnerabilityImage(size);
             }
 
             if (result == null)
@@ -245,7 +255,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetFlowImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Flows.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>
+        public static Bitmap GetFlowImage(ImageSize size)
         {
             Bitmap result;
 
@@ -268,7 +283,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetTrustBoundaryImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Trust Boundaries.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>
+        public static Bitmap GetTrustBoundaryImage(ImageSize size)
         {
             Bitmap result;
 
@@ -314,7 +334,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetThreatModelImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Threat Model.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>
+        public static Bitmap GetThreatModelImage(ImageSize size)
         {
             Bitmap result;
 
@@ -337,7 +362,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetDiagramImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Diagrams.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>
+        public static Bitmap GetDiagramImage(ImageSize size)
         {
             Bitmap result;
 
@@ -360,7 +390,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetThreatEventImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Threat Events.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>        
+        public static Bitmap GetThreatEventImage(ImageSize size)
         {
             Bitmap result;
 
@@ -383,7 +418,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetMitigationImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Mitigations.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>
+        public static Bitmap GetMitigationImage(ImageSize size)
         {
             Bitmap result;
 
@@ -406,7 +446,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetThreatTypeImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Threat Types.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>
+        public static Bitmap GetThreatTypeImage(ImageSize size)
         {
             Bitmap result;
 
@@ -429,7 +474,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetScenarioImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Scenarios.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>        
+        public static Bitmap GetScenarioImage(ImageSize size)
         {
             Bitmap result;
 
@@ -452,7 +502,12 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
-        private static Bitmap GetThreatActorImage(ImageSize size)
+        /// <summary>
+        /// Get the standard image for the Threat Actors.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>        
+        public static Bitmap GetThreatActorImage(ImageSize size)
         {
             Bitmap result;
 
@@ -466,6 +521,62 @@ namespace ThreatsManager.Utilities
                     break;
                 case ImageSize.Big:
                     result = Resources.actor_big;
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the standard image for the Weaknesses.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>        
+        public static Bitmap GetWeaknessImage(ImageSize size)
+        {
+            Bitmap result;
+
+            switch (size)
+            {
+                case ImageSize.Small:
+                    result = Resources.weakness_small;
+                    break;
+                case ImageSize.Medium:
+                    result = Resources.weakness;
+                    break;
+                case ImageSize.Big:
+                    result = Resources.weakness_big;
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the standard image for the Vulnerabilities.
+        /// </summary>
+        /// <param name="size">Size of the Image.</param>
+        /// <returns>Requested image.</returns>        
+        public static Bitmap GetVulnerabilityImage(ImageSize size)
+        {
+            Bitmap result;
+
+            switch (size)
+            {
+                case ImageSize.Small:
+                    result = Resources.vulnerability_small;
+                    break;
+                case ImageSize.Medium:
+                    result = Resources.vulnerability;
+                    break;
+                case ImageSize.Big:
+                    result = Resources.vulnerability_big;
                     break;
                 default:
                     result = null;

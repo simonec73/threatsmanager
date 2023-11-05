@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using DevComponents.DotNetBar;
+using DevComponents.DotNetBar.Controls;
+using DevComponents.DotNetBar.Layout;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Icons;
+using ThreatsManager.Extensions.Diagrams;
+using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
@@ -18,26 +21,31 @@ namespace ThreatsManager.Extensions.Panels.Diagram
     public partial class ModelPanel
     {
         #region Standard Palette.
-        private void LoadStandardPalette()
+        private void InitializeStandardPalette()
         {
             _graph.CreateExternalInteractor += GraphOnCreateExternalInteractor;
             _graph.CreateProcess += GraphOnCreateProcess;
             _graph.CreateDataStore += GraphOnCreateDataStore;
             _graph.CreateTrustBoundary += GraphOnCreateTrustBoundary;
+        }
+
+        private void LoadStandardPalette()
+        {
+            _standardPalette.Document.Clear();
 
             float width = 0;
             float height = 0;
             var ei = CreateNode("ExternalInteractor", "External Interactor", 
-                _imageSize == ImageSize.Big ? Resources.external_big : Resources.external, 
+                EntityType.ExternalInteractor.GetEntityImage(_imageSize),
                 ref width, ref height);
-            var p = CreateNode("Process", "Process", 
-                _imageSize == ImageSize.Big ? Resources.process_big : Resources.process, 
+            var p = CreateNode("Process", "Process",
+                EntityType.Process.GetEntityImage(_imageSize),
                 ref width, ref height);
             var ds = CreateNode("DataStore", "Data Store",
-                _imageSize == ImageSize.Big ? Resources.storage_big : Resources.storage, 
+                EntityType.DataStore.GetEntityImage(_imageSize),
                 ref width, ref height);
             var tb = CreateNode("TrustBoundary", "Trust Boundary",
-                _imageSize == ImageSize.Big ? Resources.trust_boundary_big : Resources.trust_boundary, 
+                ImageExtensions.GetTrustBoundaryImage(_imageSize),
                 ref width, ref height);
 
             ei.Position = CalculatePosition(ei, 0, width, height);
@@ -63,7 +71,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 Icon = new GoImage()
                 {
                     Image = image,
-                    Size = _imageSize == ImageSize.Big ? new Size(64, 64) : new Size(32, 32),
+                    Size = new SizeF(_iconSize, _iconSize),
                     Selectable = false
                 },
             };
@@ -80,53 +88,100 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void GraphOnCreateExternalInteractor(PointF point, GraphGroup graphGroup)
         {
-            var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
-            if (interactor != null)
+            IEntityShape shape = null;
+
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                if (graphGroup?.GroupShape?.Identity is IGroup group)
-                    interactor.SetParent(group);
-                var node = AddShape(_diagram.AddShape(interactor, point));
-                _graph.Selection.Clear();
-                _graph.Selection.Add(node);
+                using (var scope = UndoRedoManager.OpenScope("Create External Interactor"))
+                {
+                    var interactor = _diagram.Model?.AddEntity<IExternalInteractor>();
+                    if (interactor != null)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            interactor.SetParent(group);
+                        shape = _diagram.AddShape(interactor, point);
+                        scope?.Complete();
+                    }
+                }
+            }
+
+            if (shape != null)
+            {
+                var node = AddShape(shape);
+                if (node != null)
+                {
+                    _graph.Selection.Clear();
+                    _graph.Selection.Add(node);
+                }
             }
         }
 
         private void GraphOnCreateProcess(PointF point, GraphGroup graphGroup)
         {
-            var process = _diagram.Model?.AddEntity<IProcess>();
-            if (process != null)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                if (graphGroup?.GroupShape?.Identity is IGroup group)
-                    process.SetParent(group);
-                var node = AddShape(_diagram.AddShape(process, point));
-                _graph.Selection.Clear();
-                _graph.Selection.Add(node);
+                using (var scope = UndoRedoManager.OpenScope("Create Process"))
+                {
+                    var process = _diagram.Model?.AddEntity<IProcess>();
+                    if (process != null)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            process.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(process, point));
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
         private void GraphOnCreateDataStore(PointF point, GraphGroup graphGroup)
         {
-            var dataStore = _diagram.Model?.AddEntity<IDataStore>();
-            if (dataStore != null)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                if (graphGroup?.GroupShape?.Identity is IGroup group)
-                    dataStore.SetParent(group);
-                var node = AddShape(_diagram.AddShape(dataStore, point));
-                _graph.Selection.Clear();
-                _graph.Selection.Add(node);
+                using (var scope = UndoRedoManager.OpenScope("Create Data Store"))
+                {
+                    var dataStore = _diagram.Model?.AddEntity<IDataStore>();
+                    if (dataStore != null)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            dataStore.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(dataStore, point));
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
         private void GraphOnCreateTrustBoundary(PointF point, GraphGroup graphGroup)
         {
-            var newGroup = _diagram.Model?.AddGroup<ITrustBoundary>();
-            if (newGroup is ITrustBoundary trustBoundary)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                if (graphGroup?.GroupShape?.Identity is IGroup group)
-                    trustBoundary.SetParent(group);
-                var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
-                _graph.Selection.Clear();
-                _graph.Selection.Add(node);
+                using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
+                {
+                    var newGroup = _diagram.Model?.AddGroup<ITrustBoundary>();
+                    if (newGroup is ITrustBoundary trustBoundary)
+                    {
+                        if (graphGroup?.GroupShape?.Identity is IGroup group)
+                            trustBoundary.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
+                        scope?.Complete();
+                    }
+                }
             }
         }
         #endregion
@@ -141,27 +196,41 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             Stack<GraphGroup> groups = new Stack<GraphGroup>();
 
-            var template = _diagram.Model?.GetEntityTemplate(id);
-            if (template != null)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                var entity = template.CreateEntity(template.Name);
-                if (entity is IGroupElement groupElement && graphGroup?.GroupShape?.Identity is IGroup group)
-                    groupElement.SetParent(group);
-                var node = AddShape(_diagram.AddShape(entity, point));
-                _graph.Selection.Clear();
-                _graph.Selection.Add(node);
-            }
-            else
-            {
-                var tbTemplate = _diagram.Model?.GetTrustBoundaryTemplate(id);
-                if (tbTemplate != null)
+                using (var scope = UndoRedoManager.OpenScope("Create object from Template"))
                 {
-                    var trustBoundary = tbTemplate.CreateTrustBoundary(tbTemplate.Name);
-                    if (graphGroup?.GroupShape?.Identity is IGroup group)
-                        trustBoundary.SetParent(group);
-                    var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
-                    _graph.Selection.Clear();
-                    _graph.Selection.Add(node);
+                    var template = _diagram.Model?.GetEntityTemplate(id);
+                    if (template != null)
+                    {
+                        var entity = template.CreateEntity(template.Name);
+                        if (entity is IGroupElement groupElement && graphGroup?.GroupShape?.Identity is IGroup group)
+                            groupElement.SetParent(group);
+                        var node = AddShape(_diagram.AddShape(entity, point));
+                        if (node != null)
+                        {
+                            _graph.Selection.Clear();
+                            _graph.Selection.Add(node);
+                        }
+                        scope?.Complete();
+                    }
+                    else
+                    {
+                        var tbTemplate = _diagram.Model?.GetTrustBoundaryTemplate(id);
+                        if (tbTemplate != null)
+                        {
+                            var trustBoundary = tbTemplate.CreateTrustBoundary(tbTemplate.Name);
+                            if (graphGroup?.GroupShape?.Identity is IGroup group)
+                                trustBoundary.SetParent(group);
+                            var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                            if (node != null)
+                            {
+                                _graph.Selection.Clear();
+                                _graph.Selection.Add(node);
+                            }
+                            scope?.Complete();
+                        }
+                    }
                 }
             }
         }
@@ -258,24 +327,32 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             Stack<GraphGroup> groups = new Stack<GraphGroup>();
 
-            var entity = _diagram.Model?.GetEntity(id);
-            if (entity != null)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                RecurseEntityCreation(entity, point, groups);
-            }
-            else
-            {
-                var group = _diagram.Model?.GetGroup(id);
-                if (group != null)
+                using (var scope = UndoRedoManager.OpenScope("Add shape for existing object"))
                 {
-                    RecurseGroupCreation(group, point, groups);
-                }
-            }
+                    var entity = _diagram.Model?.GetEntity(id);
+                    if (entity != null)
+                    {
+                        RecurseEntityCreation(entity, point, groups);
+                    }
+                    else
+                    {
+                        var group = _diagram.Model?.GetGroup(id);
+                        if (group != null)
+                        {
+                            RecurseGroupCreation(group, point, groups);
+                        }
+                    }
 
-            while (groups.Count > 0)
-            {
-                var current = groups.Pop();
-                current.RefreshBorder();
+                    while (groups.Count > 0)
+                    {
+                        var current = groups.Pop();
+                        current.RefreshBorder();
+                    }
+
+                    scope?.Complete();
+                }
             }
         }
 
@@ -436,54 +513,277 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         }
         #endregion
 
-        #region Threat Types Palette.
-        private GraphThreatTypeNode CreateNode([NotNull] IThreatType threatType, ref float width, ref float height)
+        #region Add Palettes using Palette Providers.
+        private void AddPalettes()
         {
-            var result = new GraphThreatTypeNode(threatType);
+            var paletteProviders = ExtensionUtils.GetExtensions<IPaletteProvider>().ToArray();
+            if (paletteProviders?.Any() ?? false)
+            {
+                this.SuspendLayout();
+
+                foreach (var provider in paletteProviders)
+                {
+                    var palette = CreatePalette(provider);
+                    RefreshPaletteContent(palette, provider);
+                }
+
+                this.ResumeLayout();
+            }
+        }
+
+        private void ConfigurePanelItemContextMenu()
+        {
+            var configuration = new DiagramConfigurationManager(_diagram.Model);
+            if (configuration != null)
+            {
+                var extensionId = configuration.MarkerExtension;
+                var factory = ExtensionUtils.GetExtension<IMarkerProviderFactory>(extensionId);
+                PanelItemListForm.SetActions(_actions
+                    .Where(x => factory.ContextScope != Scope.Undefined && x.Scope.HasFlag(factory.ContextScope)));
+            }
+        }
+
+        private GraphPalette CreatePalette([NotNull] IPaletteProvider provider)
+        {
+            var paletteTabControlPanel = new SuperTabControlPanel();
+            var paletteTabItem = new SuperTabItem();
+            var paletteLayoutControl = new LayoutControl();
+            var palette = new GraphPalette();
+            var filterBox = new DevComponents.DotNetBar.Controls.TextBoxX();
+            var searchButton = new Button();
+            var filterLayoutControlItem = new LayoutControlItem();
+            var searchLayoutControlItem = new LayoutControlItem();
+
+            paletteLayoutControl.SuspendLayout();
+            paletteTabControlPanel.SuspendLayout();
+
+            _tabContainer.Tabs.Add(paletteTabItem);
+            _tabContainer.Controls.Add(paletteTabControlPanel);
+
+            #region paletteTabControlPanel definition.
+            paletteTabControlPanel.Controls.Add(palette);
+            paletteTabControlPanel.Controls.Add(paletteLayoutControl);
+            paletteTabControlPanel.Dock = DockStyle.Fill;
+            paletteTabControlPanel.Location = new Point(0, 40);
+            paletteTabControlPanel.Name = $"{provider.Name.Replace(" ", "")}TabControlPanel";
+            paletteTabControlPanel.Size = new Size(179, 454);
+            paletteTabControlPanel.TabIndex = 0;
+            paletteTabControlPanel.TabItem = paletteTabItem;
+            #endregion
+
+            #region palette definition.
+            palette.AllowDelete = false;
+            palette.AllowEdit = false;
+            palette.AllowInsert = false;
+            palette.AllowLink = false;
+            palette.AllowMove = false;
+            palette.AllowReshape = false;
+            palette.AllowResize = false;
+            palette.ArrowMoveLarge = 10F;
+            palette.ArrowMoveSmall = 1F;
+            palette.AutomaticLayout = false;
+            palette.AutoScrollRegion = new Size(0, 0);
+            palette.BackColor = Color.White;
+            palette.Dock = DockStyle.Fill;
+            palette.GridCellSizeHeight = 58F;
+            palette.GridCellSizeWidth = 52F;
+            palette.GridOriginX = 20F;
+            palette.GridOriginY = 5F;
+            palette.HidesSelection = true;
+            palette.Location = new Point(0, 35);
+            palette.Name = $"{provider.Name.Replace(" ", "")}Palette";
+            palette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            palette.ShowsNegativeCoordinates = false;
+            palette.ShowVerticalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Show;
+            palette.Size = new Size(179, 419);
+            palette.TabIndex = 2;
+            palette.Text = provider.Name;
+            palette.MouseEnter += new EventHandler(this.palette_MouseEnter);
+            palette.Tag = provider;
+            #endregion
+
+            #region paletteLayoutControl definition.
+            paletteLayoutControl.BackColor = Color.White;
+            paletteLayoutControl.Controls.Add(searchButton);
+            paletteLayoutControl.Controls.Add(filterBox);
+            paletteLayoutControl.Dock = DockStyle.Top;
+            paletteLayoutControl.ForeColor = Color.Black;
+            paletteLayoutControl.Location = new Point(0, 0);
+            paletteLayoutControl.Name = $"{provider.Name.Replace(" ", "")}ToolsPanel";
+            paletteLayoutControl.RootGroup.Items.AddRange(new LayoutItemBase[] {
+            filterLayoutControlItem,
+            searchLayoutControlItem});
+            paletteLayoutControl.Size = new Size(179, 35);
+            paletteLayoutControl.TabIndex = 1;
+            #endregion
+
+            #region searchButton definition.
+            searchButton.Image = Properties.Resources.nav_refresh_small;
+            searchButton.Location = new Point(147, 4);
+            searchButton.Margin = new System.Windows.Forms.Padding(0);
+            searchButton.Name = $"{provider.Name.Replace(" ", "")}Search";
+            searchButton.Size = new Size(28, 27);
+            searchButton.TabIndex = 1;
+            searchButton.UseVisualStyleBackColor = true;
+            searchButton.Click += new EventHandler(search_Click);
+            searchButton.Tag = filterBox;
+            #endregion
+
+            #region filterBox definition.
+            filterBox.BackColor = Color.White;
+            filterBox.Border.Class = "TextBoxBorder";
+            filterBox.Border.CornerType = eCornerType.Square;
+            filterBox.DisabledBackColor = Color.White;
+            filterBox.ForeColor = Color.Black;
+            filterBox.Location = new Point(4, 4);
+            filterBox.Margin = new System.Windows.Forms.Padding(0);
+            filterBox.Name = $"{provider.Name.Replace(" ", "")}Filter";
+            filterBox.PreventEnterBeep = true;
+            filterBox.Size = new Size(135, 20);
+            filterBox.TabIndex = 0;
+            filterBox.WatermarkText = "Please specify the text to search";
+            filterBox.KeyPress += new KeyPressEventHandler(filter_KeyPress);
+            filterBox.Tag = palette;
+            #endregion
+
+            #region filterLayoutControlItem definition.
+            filterLayoutControlItem.Control = filterBox;
+            filterLayoutControlItem.Height = 35;
+            filterLayoutControlItem.MinSize = new Size(120, 0);
+            filterLayoutControlItem.Name = $"{provider.Name.Replace(" ", "")}FilterLCI";
+            filterLayoutControlItem.TextVisible = false;
+            filterLayoutControlItem.Width = 80;
+            filterLayoutControlItem.WidthType = eLayoutSizeType.Percent;
+            #endregion
+
+            #region searchLayoutControlItem definition.
+            searchLayoutControlItem.Control = searchButton;
+            searchLayoutControlItem.Height = 31;
+            searchLayoutControlItem.MinSize = new Size(32, 20);
+            searchLayoutControlItem.Name = $"{provider.Name.Replace(" ", "")}SearchLCI";
+            searchLayoutControlItem.Width = 20;
+            searchLayoutControlItem.WidthType = eLayoutSizeType.Percent;
+            #endregion
+
+            #region paletteTabItem definition.
+            paletteTabItem.AttachedControl = paletteTabControlPanel;
+            paletteTabItem.CloseButtonVisible = false;
+            paletteTabItem.GlobalItem = false;
+            paletteTabItem.Image = provider.Icon;
+            paletteTabItem.Name = $"{provider.Name.Replace(" ", "")}TabItem";
+            paletteTabItem.Text = " ";
+            paletteTabItem.Tooltip = provider.Name;
+            #endregion
+
+            paletteTabControlPanel.ResumeLayout(false);
+            paletteLayoutControl.ResumeLayout(false);
+
+            return palette;
+        }
+
+        private void RefreshPaletteContent([NotNull] GraphPalette palette, 
+            [NotNull] IPaletteProvider provider,
+            string filter = null)
+        {
+            var items = provider.GetPaletteItems(_diagram.Model, filter)?.ToArray();
+
+            if (items?.Any() ?? false)
+            {
+                List<GraphPaletteItemNode> nodes = new List<GraphPaletteItemNode>();
+                float width = 0f;
+                float height = 0f;
+
+                foreach (var item in items)
+                {
+                    nodes.Add(CreateNode(item, ref width, ref height));
+                }
+
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    var position = CalculatePosition(nodes[i], i, width, height);
+                    nodes[i].Position = new PointF(10, position.Y);
+                    palette.Document.Add(nodes[i]);
+                }
+            }
+        }
+
+        private GraphPaletteItemNode CreateNode([NotNull] PaletteItem item, ref float width, ref float height)
+        {
+            var result = new GraphPaletteItemNode(item);
             width = Math.Max(width, result.Width);
             height = Math.Max(height, result.Height);
 
             return result;
         }
 
-        private void _threatsSearch_Click(object sender, EventArgs e)
+        private void ClearPalettesEvents()
         {
-            RefreshThreatsPalette(_threatsFilter.Text);
-        }
-
-        private void RefreshThreatsPalette(string filter)
-        {
-            _threatsPalette.Document.Clear();
-            IEnumerable<IThreatType> threats;
-            if (string.IsNullOrWhiteSpace(filter))
+            var count = _tabContainer.Tabs.Count;
+            if (count > 3)
             {
-                threats = _diagram.Model?.ThreatTypes?.OrderBy(x => x.Name).ToArray();
-            }
-            else
-            {
-                threats = _diagram.Model?.SearchThreatTypes(filter);
-            }
+                for (int i = 3; i < count; i++)
+                {
+                    if (_tabContainer.Tabs[i] is SuperTabItem paletteTabItem &&
+                        paletteTabItem.AttachedControl is SuperTabControlPanel paletteTabControlPanel)
+                    {
+                        var palette = paletteTabControlPanel.Controls.OfType<GraphPalette>().FirstOrDefault();
+                        if (palette != null)
+                        {
+                            palette.MouseEnter -= new EventHandler(palette_MouseEnter);
+                        }
 
-            if (threats?.Any() ?? false)
-                AddThreatsToExistingPalette(threats);
+                        var paletteLayoutControl = paletteTabControlPanel.Controls.OfType<LayoutControl>().FirstOrDefault();
+                        if (paletteLayoutControl != null)
+                        {
+                            var searchButton = paletteLayoutControl.Controls.OfType<Button>().FirstOrDefault();
+                            if (searchButton != null)
+                            {
+                                searchButton.Click -= new EventHandler(search_Click);
+                            }
+
+                            var filterBox = paletteLayoutControl.Controls.OfType<TextBoxX>().FirstOrDefault();
+                            if (filterBox != null)
+                            {
+                                filterBox.KeyPress -= new KeyPressEventHandler(filter_KeyPress);
+                            }
+                        }
+                    }
+                }
+            }
         }
         
-        private void AddThreatsToExistingPalette([NotNull] IEnumerable<IThreatType> threats)
+        private void palette_MouseEnter(object sender, EventArgs e)
         {
-            List<GraphThreatTypeNode> nodes = new List<GraphThreatTypeNode>();
-            float width = 0f;
-            float height = 0f;
+            PanelItemListForm.CloseAll();
+        }
 
-            foreach (var threat in threats)
+        private void search_Click(object sender, EventArgs e)
+        {
+            if (sender is Button searchButton && 
+                searchButton.Tag is TextBoxX searchBox && 
+                searchBox.Tag is GraphPalette palette && 
+                palette.Tag is IPaletteProvider provider)
             {
-                nodes.Add(CreateNode(threat, ref width, ref height));             
+                RefreshPaletteContent(palette, provider, searchBox.Text);
             }
+        }
 
-            for (int i = 0; i < nodes.Count; i++)
+        private void filter_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (sender is TextBoxX searchBox &&
+                searchBox.Tag is GraphPalette palette &&
+                palette.Tag is IPaletteProvider provider)
             {
-                var position = CalculatePosition(nodes[i], i, width, height);
-                nodes[i].Position = new PointF(10, position.Y);
-                _threatsPalette.Document.Add(nodes[i]);
+                if (e.KeyChar == (char)Keys.Enter)
+                {
+                    e.Handled = true;
+                    RefreshPaletteContent(palette, provider, searchBox.Text);
+                }
+                else if (e.KeyChar == (char)Keys.Escape)
+                {
+                    e.Handled = true;
+                    searchBox.Text = string.Empty;
+                }
             }
         }
         #endregion

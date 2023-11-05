@@ -1,5 +1,6 @@
 ﻿namespace ThreatsManager.Extensions.Panels.Troubleshooting
 {
+#if !PORTABLE
     partial class TroubleshootingPanel
     {
         /// <summary> 
@@ -135,4 +136,5 @@
         private DevComponents.DotNetBar.ExpandableSplitter expandableSplitter1;
         private Microsoft.Web.WebView2.WinForms.WebView2 _browser;
     }
+#endif
 }

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ThreatsManager.Engine;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Packaging;
 using ThreatsManager.Utilities;
 
 namespace SimpleThreatModelAnalyzer
@@ -52,14 +50,14 @@ namespace SimpleThreatModelAnalyzer
         {
             IThreatModel result = null;
 
-            var package = new Package(fileName);
+            var manager = ExtensionUtils.GetExtensions<IPackageManager>()?
+                .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
 
-            var threatModelContent = package.Read("threatmodel.json");
-            if (threatModelContent != null)
+            if (manager != null)
             {
                 try
                 {
-                    result = ThreatModelManager.Deserialize(threatModelContent, true);
+                    result = manager.Load(LocationType.FileSystem, fileName, null);
                 }
                 catch (JsonSerializationException e)
                 {

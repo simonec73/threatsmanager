@@ -28,7 +28,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             SelectionRuleNode result;
 
             NaryRuleNode rule = null;
-            switch (context.op?.GetText())
+            switch (context.op?.GetText()?.ToLower())
             {
                 case "and":
                     rule = new AndRuleNode()
@@ -80,7 +80,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             var id = context.right?.Text?.Trim('\'');
             if (!string.IsNullOrWhiteSpace(id))
             {
-                switch (context.op?.GetText())
+                switch (context.op?.GetText()?.ToLower())
                 {
                     case "is":
                         result = GetIdComparisonRuleNode(id, Scope.Object);
@@ -165,7 +165,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
                 var scope = Scope.Object;
 
                 // ReSharper disable once PossibleNullReferenceException
-                switch (left[0])
+                switch (left[0]?.ToLower())
                 {
                     case "source":
                         scope = Scope.Source;
@@ -227,60 +227,68 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
 
             if (elementType?.IsGeneric ?? false)
             {
-                switch (elementType.ElementType)
+                var derivedTypes = _source.ElementTypes?.Where(x => string.CompareOrdinal(x.ParentTypeId, id) == 0);
+                if (derivedTypes?.Any() ?? false)
                 {
-                    case ElementType.StencilRectangle:
-                        result = new EnumValueRuleNode("Object Type", null, null,
-                            new[] { "External Interactor", "Process", "Data Store" },
-                            "External Interactor")
+                    OrRuleNode orNode = null;
+
+                    if (derivedTypes.Count() > 1)
+                    {
+                        orNode = new OrRuleNode() { Name = "OR" };
+                        result = orNode;
+                    }
+
+                    foreach (var type in derivedTypes)
+                    {
+                        var dT = GetEntityTemplate(type.TypeId);
+                        if (dT != null)
                         {
-                            Scope = scope
-                        };
-                        break;
-                    case ElementType.StencilEllipse:
-                        result = new EnumValueRuleNode("Object Type", null, null,
-                            new[] { "External Interactor", "Process", "Data Store" },
-                            "Process")
-                        {
-                            Scope = scope
-                        };
-                        break;
-                    case ElementType.StencilParallelLines:
-                        result = new EnumValueRuleNode("Object Type", null, null,
-                            new[] { "External Interactor", "Process", "Data Store" },
-                            "Data Store")
-                        {
-                            Scope = scope
-                        };
-                        break;
+                            var ruleNode = GetRuleNode(dT, scope);
+                            if (orNode != null)
+                            {
+                                orNode.Children.Add(ruleNode);
+                            }
+                            else
+                            {
+                                result = ruleNode;
+                            }
+                        }
+                    }
+                }   
+                else
+                {
+                    switch (elementType.ElementType)
+                    {
+                        case ElementType.StencilRectangle:
+                            result = new EnumValueRuleNode("Object Type", null, null,
+                                new[] { "External Interactor", "Process", "Data Store" },
+                                "External Interactor")
+                            {
+                                Scope = scope
+                            };
+                            break;
+                        case ElementType.StencilEllipse:
+                            result = new EnumValueRuleNode("Object Type", null, null,
+                                new[] { "External Interactor", "Process", "Data Store" },
+                                "Process")
+                            {
+                                Scope = scope
+                            };
+                            break;
+                        case ElementType.StencilParallelLines:
+                            result = new EnumValueRuleNode("Object Type", null, null,
+                                new[] { "External Interactor", "Process", "Data Store" },
+                                "Data Store")
+                            {
+                                Scope = scope
+                            };
+                            break;
+                    }
                 }
             }
             else if (entityTemplate != null)
             {
-                switch (entityTemplate.EntityType)
-                {
-                    case EntityType.ExternalInteractor:
-                        result = new ExternalInteractorTemplateRuleNode(entityTemplate)
-                        {
-                            Scope = scope
-                        };
-                        break;
-                    case EntityType.Process:
-                        result = new ProcessTemplateRuleNode(entityTemplate)
-                        {
-                            Scope = scope
-                        };
-                        break;
-                    case EntityType.DataStore:
-                        result = new DataStoreTemplateRuleNode(entityTemplate)
-                        {
-                            Scope = scope
-                        };
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                
+                result = GetRuleNode(entityTemplate, scope);                
             }
             else
             {
@@ -301,6 +309,37 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             }
 
 
+
+            return result;
+        }
+
+        private SelectionRuleNode GetRuleNode([NotNull] IEntityTemplate entityTemplate, Scope scope)
+        {
+            SelectionRuleNode result = null;
+
+            switch (entityTemplate.EntityType)
+            {
+                case EntityType.ExternalInteractor:
+                    result = new ExternalInteractorTemplateRuleNode(entityTemplate)
+                    {
+                        Scope = scope
+                    };
+                    break;
+                case EntityType.Process:
+                    result = new ProcessTemplateRuleNode(entityTemplate)
+                    {
+                        Scope = scope
+                    };
+                    break;
+                case EntityType.DataStore:
+                    result = new DataStoreTemplateRuleNode(entityTemplate)
+                    {
+                        Scope = scope
+                    };
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             return result;
         }
@@ -336,7 +375,7 @@ namespace ThreatsManager.MsTmt.Model.AutoThreatGen
             var schema = elementSchemas?.FirstOrDefault();
             var property = schema?.Properties?.FirstOrDefault(x => string.CompareOrdinal(x.Key, propertyKey) == 0);
             string schemaName;
-            if (schema != null && schema.IsGeneric)
+            if (schema != null && schema.IsGeneric && property == null)
             {
                 switch (schema.ElementType)
                 {

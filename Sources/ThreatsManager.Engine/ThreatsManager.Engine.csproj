@@ -1,20 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFrameworks>net481</TargetFrameworks>
     <Description>Threats Manager Platform Engine.</Description>
-    <AssemblyVersion>1.5.2.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
-    <Copyright>Copyright © Simone Curzi, 2018-2022. All Rights Reserved.</Copyright>
+    <Copyright>Copyright © Simone Curzi, 2018-2023. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
-    <FileVersion>1.5.2.0</FileVersion>
-    <Version>1.5.2</Version>
+    <FileVersion>2.1.0.0</FileVersion>
+    <Version>2.1.0</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ThreatsManager.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <NoWarn>$(NoWarn);NU1505;CS0649</NoWarn>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <DocumentationFile>.\bin\Debug\net481\ThreatsManager.Engine.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,9 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.10.5" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
+    <PackageReference Include="PostSharp" Version="2023.0.8" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="2023.0.8" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,12 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'net472' ">
-      <HintPath>..\Resources\net472\ThreatsManager.Icons.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-      <HintPath>..\Resources\netcoreapp3.1\ThreatsManager.Icons.dll</HintPath>
+    <Reference Include="ThreatsManager.Icons" Condition=" '$(TargetFramework)' == 'net481' ">
+      <HintPath>..\Resources\net481\ThreatsManager.Icons.dll</HintPath>
       <Private>true</Private>
     </Reference>
   </ItemGroup>

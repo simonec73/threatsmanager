@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.AutoGenRules.Engine;
-using ThreatsManager.AutoThreatGeneration.Engine;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities.WinForms.Rules;

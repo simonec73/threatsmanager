@@ -17,7 +17,17 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Event raised when a Threat Event is removed from an Entity.
         /// </summary>
         event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemovedFromEntity;
-        
+
+        /// <summary>
+        /// Event raised when a Vulnerability is associated to an Entity.
+        /// </summary>
+        event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAddedToEntity;
+
+        /// <summary>
+        /// Event raised when a Vulnerability is associated to an Entity.
+        /// </summary>
+        event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemovedFromEntity;
+
         /// <summary>
         /// Adds the Entity passed as argument to the container.
         /// </summary>

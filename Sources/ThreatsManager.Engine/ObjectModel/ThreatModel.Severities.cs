@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -12,8 +16,9 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("severities")]
-        private List<ISeverity> _severities;
+        [Child]
+        [JsonProperty("severities", Order = 51)]
+        private AdvisableCollection<SeverityDefinition> _severities { get; set; }
 
         private Action<ISeverity> _severityCreated;
         public event Action<ISeverity> SeverityCreated
@@ -49,6 +54,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<ISeverity> Severities => _severities?.OrderByDescending(x => x.Id);
 
         [InitializationRequired]
@@ -84,13 +90,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] ISeverity severity)
         {
-            if (_severities == null)
-                _severities = new List<ISeverity>();
+            if (severity is SeverityDefinition sd)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Severity"))
+                {
+                    if (_severities == null)
+                        _severities = new AdvisableCollection<SeverityDefinition>();
 
-            _severities.Add(severity);
+                    UndoRedoManager.Attach(sd, this);
+                    _severities.Add(sd);
+                    scope?.Complete();
 
-            SetDirty();
-            _severityCreated?.Invoke(severity);
+                    _severityCreated?.Invoke(sd);
+                }
+            }
+            else
+                throw new ArgumentException(nameof(severity));
         }
 
         [InitializationRequired]
@@ -100,7 +115,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (!(_severities?.Any(x => x.Id == id) ?? false))
             {
-                result = new SeverityDefinition(this, id, name);
+                result = new SeverityDefinition(id, name);
                 Add(result);
                 RegisterEvents(result);
             }
@@ -126,15 +141,20 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var definition = GetSeverity(id);
+            var definition = GetSeverity(id) as SeverityDefinition;
             if (definition != null && !IsUsed(definition))
             {
-                result = _severities.Remove(definition);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Severity"))
                 {
-                    UnregisterEvents(definition);
-                    SetDirty();
-                    _severityRemoved?.Invoke(definition);
+                    result = _severities.Remove(definition);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(definition);
+                        scope?.Complete();
+
+                        UnregisterEvents(definition);
+                        _severityRemoved?.Invoke(definition);
+                    }
                 }
             }
 
@@ -145,9 +165,15 @@ namespace ThreatsManager.Engine.ObjectModel
         public void InitializeStandardSeverities()
         {
             var values = Enum.GetValues(typeof(DefaultSeverity));
-            foreach (var value in values)
+
+            using (var scope = UndoRedoManager.OpenScope("Initialize Standard Severities"))
             {
-                AddSeverity((DefaultSeverity) value);
+                foreach (var value in values)
+                {
+                    AddSeverity((DefaultSeverity)value);
+                }
+
+                scope?.Complete();
             }
         }
         
@@ -155,9 +181,18 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
                    (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
-                   (_threatTypes?.Any(x => x.Severity == severity) ?? false);
+                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
+                   (_entities?.Any(x => x.Vulnerabilities?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Severity == severity) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.Vulnerabilities?.Any(y => y.Severity == severity) ?? false) ?? false) ||
+                   (_threatEvents?.Any(y => y.Severity == severity) ?? false) ||
+                   (_threatEvents?.Any(y => y.Scenarios?.Any(z => z.Severity == severity) ?? false) ?? false) ||
+                   (_threatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Severity == severity) ?? false) ?? false) ||
+                   (_vulnerabilities?.Any(y => y.Severity == severity) ?? false) || 
+                   (_threatTypes?.Any(x => x.Severity == severity) ?? false) ||
+                   (_weaknesses?.Any(x => x.Severity == severity) ?? false);
         }
     }
 }

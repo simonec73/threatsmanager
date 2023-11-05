@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Icons;
-using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Utilities;
@@ -16,10 +16,12 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("flowTemplates")]
-        private List<IFlowTemplate> _flowTemplates;
+        [Child]
+        [JsonProperty("flowTemplates", Order = 46)]
+        private AdvisableCollection<FlowTemplate> _flowTemplates { get; set; }
 
-        public IEnumerable<IFlowTemplate> FlowTemplates => _flowTemplates?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IFlowTemplate> FlowTemplates => _flowTemplates?.AsEnumerable();
 
         [InitializationRequired]
         public IFlowTemplate GetFlowTemplate(Guid id)
@@ -30,22 +32,28 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IFlowTemplate flowTemplate)
         {
-            if (flowTemplate is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
+            if (flowTemplate is FlowTemplate ft)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Flow Tempalte"))
+                {
+                    if (_flowTemplates == null)
+                        _flowTemplates = new AdvisableCollection<FlowTemplate>();
 
-            if (_flowTemplates == null)
-                _flowTemplates = new List<IFlowTemplate>();
+                    UndoRedoManager.Attach(ft, this);
+                    _flowTemplates.Add(ft);
+                    scope?.Complete();
 
-            _flowTemplates.Add(flowTemplate);
- 
-            SetDirty();
-            ChildCreated?.Invoke(flowTemplate);
+                    ChildCreated?.Invoke(ft);
+                }
+            }
+            else
+                throw new ArgumentException(nameof(flowTemplate));
         }
 
         [InitializationRequired]
         public IFlowTemplate AddFlowTemplate([Required] string name, string description, IDataFlow source = null)
         {
-            var result = new FlowTemplate(this, name)
+            var result = new FlowTemplate(name)
             {
                 Description = description,
                 FlowType = source?.FlowType ?? FlowType.ReadWriteCommand
@@ -61,15 +69,20 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var template = GetFlowTemplate(id);
+            var template = GetFlowTemplate(id) as FlowTemplate;
 
             if (template != null)
             {
-                result = _flowTemplates.Remove(template);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Flow Template"))
                 {
-                    SetDirty();
-                    ChildRemoved?.Invoke(template);
+                    result = _flowTemplates.Remove(template);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(template);
+                        scope?.Complete();
+
+                        ChildRemoved?.Invoke(template);
+                    }
                 }
             }
 

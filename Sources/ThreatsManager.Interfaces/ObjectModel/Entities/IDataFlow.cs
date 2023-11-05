@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// Interface implemented by Data Flows.
     /// </summary>
     public interface IDataFlow : IIdentity, IThreatModelChild, IPropertiesContainer, IVulnerabilitiesContainer, 
-        IThreatEventsContainer, IDirty//, ILockable
+        IThreatEventsContainer//, ILockable
     {
         /// <summary>
         /// Identifier of the Source.
@@ -45,6 +45,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
         /// Disassociate the Flow from the underlying Template.
         /// </summary>
         void ResetTemplate();
+
+        /// <summary>
+        /// Changes the direction of the Flow.
+        /// </summary>
+        void Flip();
+
+        /// <summary>
+        /// Event raised when the direction of the Flow is changed.
+        /// </summary>
+        event Action<IDataFlow> Flipped;
 
         /// <summary>
         /// Creates a duplicate of the current Data Flow and attaches it to the Container passed as argument.

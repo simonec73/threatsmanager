@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -147,10 +150,12 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private static int _lastDiagram;
 
-        [JsonProperty("diagrams")]
-        private List<IDiagram> _diagrams;
+        [Child]
+        [JsonProperty("diagrams", Order = 25)]
+        private AdvisableCollection<Diagram> _diagrams { get; set; }
 
-        public IEnumerable<IDiagram> Diagrams => _diagrams?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IDiagram> Diagrams => _diagrams?.AsEnumerable();
 
         [InitializationRequired]
         public IEnumerable<IDiagram> GetDiagrams([Required] string name)
@@ -167,10 +172,20 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IDiagram diagram)
         {
-            if (_diagrams == null)
-                _diagrams = new List<IDiagram>();
+            if (diagram is Diagram d)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Diagram"))
+                {
+                    if (_diagrams == null)
+                        _diagrams = new AdvisableCollection<Diagram>();
 
-            _diagrams.Add(diagram);
+                    UndoRedoManager.Attach(d, this);
+                    _diagrams.Add(d);
+                    scope?.Complete();
+                }
+            }
+            else
+                throw new ArgumentException(nameof(diagram));
         }
 
         [InitializationRequired]
@@ -202,14 +217,11 @@ namespace ThreatsManager.Engine.ObjectModel
             var diagrams = GetDiagrams(name);
             if (!(diagrams?.Any() ?? false))
             {
-                if (_diagrams == null)
-                    _diagrams = new List<IDiagram>();
-                result = new Diagram(this, name)
+                result = new Diagram(name)
                 {
-                    Order = _diagrams.Any() ? _diagrams.Max(x => x.Order) + 1 : 1
+                    Order = (_diagrams?.Any() ?? false) ? _diagrams.Max(x => x.Order) + 1 : 1
                 };
-                _diagrams.Add(result);
-                SetDirty();
+                Add(result);
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -222,15 +234,20 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var diagram = GetDiagram(id);
+            var diagram = GetDiagram(id) as Diagram;
             if (diagram != null)
             {
-                result = _diagrams.Remove(diagram);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Diagram"))
                 {
-                    UnregisterEvents(diagram);
-                    SetDirty();
-                    ChildRemoved?.Invoke(diagram);
+                    result = _diagrams.Remove(diagram);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(diagram);
+
+                        UnregisterEvents(diagram);
+                        ChildRemoved?.Invoke(diagram);
+                        scope?.Complete();
+                    }
                 }
             }
 

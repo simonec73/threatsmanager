@@ -31,20 +31,20 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this._ribbon = new DevComponents.DotNetBar.RibbonControl();
-            this._ribbonPanelHome = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelHelp = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelConfigure = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelReview = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelIntegrate = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelExport = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelImport = new DevComponents.DotNetBar.RibbonPanel();
             this._ribbonPanelView = new DevComponents.DotNetBar.RibbonPanel();
             this._viewWindow = new DevComponents.DotNetBar.RibbonBar();
             this._windows = new DevComponents.DotNetBar.ButtonItem();
             this._closeWindows = new DevComponents.DotNetBar.ButtonItem();
             this._closeWindow = new DevComponents.DotNetBar.ButtonItem();
-            this._ribbonPanelInsert = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelIntegrate = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelExport = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelKnowledgeBase = new DevComponents.DotNetBar.RibbonPanel();
+            this._ribbonPanelHome = new DevComponents.DotNetBar.RibbonPanel();
             this._ribbonPanelAnalyze = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelReview = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelHelp = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelConfigure = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelImport = new DevComponents.DotNetBar.RibbonPanel();
             this._fileButton = new DevComponents.DotNetBar.ApplicationButton();
             this.itemContainer1 = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainer2 = new DevComponents.DotNetBar.ItemContainer();
@@ -62,9 +62,9 @@
             this._options = new DevComponents.DotNetBar.ButtonItem();
             this._exit = new DevComponents.DotNetBar.ButtonItem();
             this._ribbonTabHome = new DevComponents.DotNetBar.RibbonTabItem();
-            this._ribbonTabInsert = new DevComponents.DotNetBar.RibbonTabItem();
-            this._ribbonTabView = new DevComponents.DotNetBar.RibbonTabItem();
+            this._ribbonTabKnowledgeBase = new DevComponents.DotNetBar.RibbonTabItem();
             this._ribbonTabAnalyze = new DevComponents.DotNetBar.RibbonTabItem();
+            this._ribbonTabView = new DevComponents.DotNetBar.RibbonTabItem();
             this._ribbonTabImport = new DevComponents.DotNetBar.RibbonTabItem();
             this._ribbonTabExport = new DevComponents.DotNetBar.RibbonTabItem();
             this._ribbonTabIntegrate = new DevComponents.DotNetBar.RibbonTabItem();
@@ -74,6 +74,8 @@
             this._title = new DevComponents.DotNetBar.LabelItem();
             this._closeCurrentWindow = new DevComponents.DotNetBar.ButtonItem();
             this._closeAllWindows = new DevComponents.DotNetBar.ButtonItem();
+            this._undo = new DevComponents.DotNetBar.ButtonItem();
+            this._redo = new DevComponents.DotNetBar.ButtonItem();
             this._feedback = new DevComponents.DotNetBar.ButtonItem();
             this._controlMinimize = new DevComponents.DotNetBar.ButtonItem();
             this._controlMaximize = new DevComponents.DotNetBar.ButtonItem();
@@ -99,24 +101,24 @@
             // 
             // 
             this._ribbon.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbon.Controls.Add(this._ribbonPanelHome);
-            this._ribbon.Controls.Add(this._ribbonPanelInsert);
-            this._ribbon.Controls.Add(this._ribbonPanelView);
-            this._ribbon.Controls.Add(this._ribbonPanelIntegrate);
-            this._ribbon.Controls.Add(this._ribbonPanelExport);
-            this._ribbon.Controls.Add(this._ribbonPanelAnalyze);
-            this._ribbon.Controls.Add(this._ribbonPanelReview);
             this._ribbon.Controls.Add(this._ribbonPanelHelp);
             this._ribbon.Controls.Add(this._ribbonPanelConfigure);
+            this._ribbon.Controls.Add(this._ribbonPanelReview);
+            this._ribbon.Controls.Add(this._ribbonPanelIntegrate);
+            this._ribbon.Controls.Add(this._ribbonPanelExport);
             this._ribbon.Controls.Add(this._ribbonPanelImport);
+            this._ribbon.Controls.Add(this._ribbonPanelView);
+            this._ribbon.Controls.Add(this._ribbonPanelAnalyze);
+            this._ribbon.Controls.Add(this._ribbonPanelKnowledgeBase);
+            this._ribbon.Controls.Add(this._ribbonPanelHome);
             this._ribbon.Dock = System.Windows.Forms.DockStyle.Top;
             this._ribbon.ForeColor = System.Drawing.Color.Black;
             this._ribbon.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this._fileButton,
             this._ribbonTabHome,
-            this._ribbonTabInsert,
-            this._ribbonTabView,
+            this._ribbonTabKnowledgeBase,
             this._ribbonTabAnalyze,
+            this._ribbonTabView,
             this._ribbonTabImport,
             this._ribbonTabExport,
             this._ribbonTabIntegrate,
@@ -126,6 +128,8 @@
             this._title,
             this._closeCurrentWindow,
             this._closeAllWindows,
+            this._undo,
+            this._redo,
             this._feedback,
             this._controlMinimize,
             this._controlMaximize,
@@ -137,7 +141,7 @@
             this._ribbon.Name = "_ribbon";
             this._ribbon.QuickToolbarItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.qatCustomizeItem1});
-            this._ribbon.Size = new System.Drawing.Size(1078, 140);
+            this._ribbon.Size = new System.Drawing.Size(1048, 140);
             this._ribbon.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbon.SystemText.MaximizeRibbonText = "&Maximize the Ribbon";
             this._ribbon.SystemText.MinimizeRibbonText = "Mi&nimize the Ribbon";
@@ -158,27 +162,142 @@
             this._ribbon.TabIndex = 0;
             this._ribbon.Text = "ribbonControl1";
             // 
-            // _ribbonPanelHome
+            // _ribbonPanelHelp
             // 
-            this._ribbonPanelHome.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelHome.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelHome.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelHome.Name = "_ribbonPanelHome";
-            this._ribbonPanelHome.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelHome.Size = new System.Drawing.Size(1078, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelHome.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelHelp.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelHelp.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelHelp.Name = "_ribbonPanelHelp";
+            this._ribbonPanelHelp.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelHelp.Size = new System.Drawing.Size(1048, 97);
             // 
             // 
             // 
-            this._ribbonPanelHome.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelHelp.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // 
             // 
-            this._ribbonPanelHome.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelHome.TabIndex = 4;
+            this._ribbonPanelHelp.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelHelp.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelHelp.TabIndex = 10;
+            // 
+            // _ribbonPanelConfigure
+            // 
+            this._ribbonPanelConfigure.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelConfigure.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelConfigure.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelConfigure.Name = "_ribbonPanelConfigure";
+            this._ribbonPanelConfigure.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelConfigure.Size = new System.Drawing.Size(1048, 97);
+            // 
+            // 
+            // 
+            this._ribbonPanelConfigure.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelConfigure.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelConfigure.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelConfigure.TabIndex = 9;
+            this._ribbonPanelConfigure.Visible = false;
+            // 
+            // _ribbonPanelReview
+            // 
+            this._ribbonPanelReview.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelReview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelReview.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelReview.Name = "_ribbonPanelReview";
+            this._ribbonPanelReview.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelReview.Size = new System.Drawing.Size(1048, 97);
+            // 
+            // 
+            // 
+            this._ribbonPanelReview.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelReview.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelReview.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelReview.TabIndex = 6;
+            this._ribbonPanelReview.Visible = false;
+            // 
+            // _ribbonPanelIntegrate
+            // 
+            this._ribbonPanelIntegrate.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelIntegrate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelIntegrate.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelIntegrate.Name = "_ribbonPanelIntegrate";
+            this._ribbonPanelIntegrate.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelIntegrate.Size = new System.Drawing.Size(1048, 97);
+            // 
+            // 
+            // 
+            this._ribbonPanelIntegrate.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelIntegrate.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelIntegrate.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelIntegrate.TabIndex = 11;
+            this._ribbonPanelIntegrate.Visible = false;
+            // 
+            // _ribbonPanelExport
+            // 
+            this._ribbonPanelExport.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelExport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelExport.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelExport.Name = "_ribbonPanelExport";
+            this._ribbonPanelExport.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelExport.Size = new System.Drawing.Size(1048, 97);
+            // 
+            // 
+            // 
+            this._ribbonPanelExport.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelExport.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelExport.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelExport.TabIndex = 3;
+            this._ribbonPanelExport.Visible = false;
+            // 
+            // _ribbonPanelImport
+            // 
+            this._ribbonPanelImport.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelImport.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelImport.Name = "_ribbonPanelImport";
+            this._ribbonPanelImport.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelImport.Size = new System.Drawing.Size(1048, 97);
+            // 
+            // 
+            // 
+            this._ribbonPanelImport.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelImport.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelImport.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelImport.TabIndex = 8;
+            this._ribbonPanelImport.Visible = false;
             // 
             // _ribbonPanelView
             // 
@@ -189,7 +308,7 @@
             this._ribbonPanelView.Margin = new System.Windows.Forms.Padding(2);
             this._ribbonPanelView.Name = "_ribbonPanelView";
             this._ribbonPanelView.Padding = new System.Windows.Forms.Padding(2, 0, 2, 2);
-            this._ribbonPanelView.Size = new System.Drawing.Size(1078, 97);
+            this._ribbonPanelView.Size = new System.Drawing.Size(1048, 97);
             // 
             // 
             // 
@@ -276,74 +395,51 @@
             this._closeWindow.Text = "Close Window";
             this._closeWindow.Click += new System.EventHandler(this._closeCurrentWindow_Click);
             // 
-            // _ribbonPanelInsert
+            // _ribbonPanelKnowledgeBase
             // 
-            this._ribbonPanelInsert.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelInsert.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelInsert.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelInsert.Name = "_ribbonPanelInsert";
-            this._ribbonPanelInsert.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelInsert.Size = new System.Drawing.Size(1078, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelInsert.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelKnowledgeBase.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelKnowledgeBase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelKnowledgeBase.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelKnowledgeBase.Name = "_ribbonPanelKnowledgeBase";
+            this._ribbonPanelKnowledgeBase.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelKnowledgeBase.Size = new System.Drawing.Size(1048, 97);
             // 
             // 
             // 
-            this._ribbonPanelInsert.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelKnowledgeBase.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // 
             // 
-            this._ribbonPanelInsert.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelInsert.TabIndex = 5;
-            this._ribbonPanelInsert.Visible = false;
-            // 
-            // _ribbonPanelIntegrate
-            // 
-            this._ribbonPanelIntegrate.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelIntegrate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelIntegrate.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelIntegrate.Name = "_ribbonPanelIntegrate";
-            this._ribbonPanelIntegrate.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelIntegrate.Size = new System.Drawing.Size(1078, 97);
+            this._ribbonPanelKnowledgeBase.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // 
             // 
-            this._ribbonPanelIntegrate.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelKnowledgeBase.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelKnowledgeBase.TabIndex = 5;
+            this._ribbonPanelKnowledgeBase.Visible = false;
+            // 
+            // _ribbonPanelHome
+            // 
+            this._ribbonPanelHome.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelHome.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelHome.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelHome.Name = "_ribbonPanelHome";
+            this._ribbonPanelHome.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelHome.Size = new System.Drawing.Size(1048, 97);
             // 
             // 
             // 
-            this._ribbonPanelIntegrate.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelHome.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // 
             // 
-            this._ribbonPanelIntegrate.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelIntegrate.TabIndex = 11;
-            this._ribbonPanelIntegrate.Visible = false;
-            // 
-            // _ribbonPanelExport
-            // 
-            this._ribbonPanelExport.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelExport.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelExport.Name = "_ribbonPanelExport";
-            this._ribbonPanelExport.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelExport.Size = new System.Drawing.Size(1078, 97);
+            this._ribbonPanelHome.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // 
             // 
-            this._ribbonPanelExport.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelExport.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelExport.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelExport.TabIndex = 3;
-            this._ribbonPanelExport.Visible = false;
+            this._ribbonPanelHome.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelHome.TabIndex = 4;
+            this._ribbonPanelHome.Visible = false;
             // 
             // _ribbonPanelAnalyze
             // 
@@ -352,7 +448,7 @@
             this._ribbonPanelAnalyze.Location = new System.Drawing.Point(0, 43);
             this._ribbonPanelAnalyze.Name = "_ribbonPanelAnalyze";
             this._ribbonPanelAnalyze.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelAnalyze.Size = new System.Drawing.Size(1078, 97);
+            this._ribbonPanelAnalyze.Size = new System.Drawing.Size(1048, 97);
             // 
             // 
             // 
@@ -368,102 +464,11 @@
             this._ribbonPanelAnalyze.TabIndex = 7;
             this._ribbonPanelAnalyze.Visible = false;
             // 
-            // _ribbonPanelReview
-            // 
-            this._ribbonPanelReview.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelReview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelReview.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelReview.Name = "_ribbonPanelReview";
-            this._ribbonPanelReview.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelReview.Size = new System.Drawing.Size(1078, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelReview.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelReview.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelReview.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelReview.TabIndex = 6;
-            this._ribbonPanelReview.Visible = false;
-            // 
-            // _ribbonPanelHelp
-            // 
-            this._ribbonPanelHelp.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelHelp.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelHelp.Name = "_ribbonPanelHelp";
-            this._ribbonPanelHelp.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelHelp.Size = new System.Drawing.Size(1078, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelHelp.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelHelp.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelHelp.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelHelp.TabIndex = 10;
-            this._ribbonPanelHelp.Visible = false;
-            // 
-            // _ribbonPanelConfigure
-            // 
-            this._ribbonPanelConfigure.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelConfigure.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelConfigure.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelConfigure.Name = "_ribbonPanelConfigure";
-            this._ribbonPanelConfigure.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelConfigure.Size = new System.Drawing.Size(1078, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelConfigure.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelConfigure.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelConfigure.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelConfigure.TabIndex = 9;
-            this._ribbonPanelConfigure.Visible = false;
-            // 
-            // _ribbonPanelImport
-            // 
-            this._ribbonPanelImport.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelImport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelImport.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelImport.Name = "_ribbonPanelImport";
-            this._ribbonPanelImport.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelImport.Size = new System.Drawing.Size(1078, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelImport.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelImport.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelImport.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelImport.TabIndex = 8;
-            this._ribbonPanelImport.Visible = false;
-            // 
             // _fileButton
             // 
             this._fileButton.AutoExpandOnClick = true;
             this._fileButton.CanCustomize = false;
+            this._fileButton.FixedSize = new System.Drawing.Size(60, 40);
             this._fileButton.HotTrackingStyle = DevComponents.DotNetBar.eHotTrackingStyle.Image;
             this._fileButton.ImageFixedSize = new System.Drawing.Size(16, 16);
             this._fileButton.ImagePaddingHorizontal = 0;
@@ -671,10 +676,10 @@
             // 
             this._options.ButtonStyle = DevComponents.DotNetBar.eButtonStyle.ImageAndText;
             this._options.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this._options.Image = global::ThreatsManager.Properties.Resources.gearwheels;
+            this._options.Image = global::ThreatsManager.Properties.Resources.control_panel;
             this._options.Name = "_options";
             this._options.SubItemsExpandWidth = 24;
-            this._options.Text = "Opt&ions";
+            this._options.Text = "Sett&ings";
             this._options.Click += new System.EventHandler(this._options_Click);
             // 
             // _exit
@@ -689,35 +694,39 @@
             // 
             // _ribbonTabHome
             // 
-            this._ribbonTabHome.Checked = true;
+            this._ribbonTabHome.FixedSize = new System.Drawing.Size(50, 0);
             this._ribbonTabHome.Name = "_ribbonTabHome";
             this._ribbonTabHome.Panel = this._ribbonPanelHome;
             this._ribbonTabHome.Text = "Home";
             this._ribbonTabHome.Visible = false;
             // 
-            // _ribbonTabInsert
+            // _ribbonTabKnowledgeBase
             // 
-            this._ribbonTabInsert.Name = "_ribbonTabInsert";
-            this._ribbonTabInsert.Panel = this._ribbonPanelInsert;
-            this._ribbonTabInsert.Text = "Insert";
-            this._ribbonTabInsert.Visible = false;
-            // 
-            // _ribbonTabView
-            // 
-            this._ribbonTabView.Name = "_ribbonTabView";
-            this._ribbonTabView.Panel = this._ribbonPanelView;
-            this._ribbonTabView.Text = "View";
-            this._ribbonTabView.Visible = false;
+            this._ribbonTabKnowledgeBase.FixedSize = new System.Drawing.Size(100, 0);
+            this._ribbonTabKnowledgeBase.Name = "_ribbonTabKnowledgeBase";
+            this._ribbonTabKnowledgeBase.Panel = this._ribbonPanelKnowledgeBase;
+            this._ribbonTabKnowledgeBase.Text = "Knowledge Base";
+            this._ribbonTabKnowledgeBase.Visible = false;
             // 
             // _ribbonTabAnalyze
             // 
+            this._ribbonTabAnalyze.FixedSize = new System.Drawing.Size(60, 0);
             this._ribbonTabAnalyze.Name = "_ribbonTabAnalyze";
             this._ribbonTabAnalyze.Panel = this._ribbonPanelAnalyze;
             this._ribbonTabAnalyze.Text = "Analyze";
             this._ribbonTabAnalyze.Visible = false;
             // 
+            // _ribbonTabView
+            // 
+            this._ribbonTabView.FixedSize = new System.Drawing.Size(50, 0);
+            this._ribbonTabView.Name = "_ribbonTabView";
+            this._ribbonTabView.Panel = this._ribbonPanelView;
+            this._ribbonTabView.Text = "View";
+            this._ribbonTabView.Visible = false;
+            // 
             // _ribbonTabImport
             // 
+            this._ribbonTabImport.FixedSize = new System.Drawing.Size(60, 0);
             this._ribbonTabImport.Name = "_ribbonTabImport";
             this._ribbonTabImport.Panel = this._ribbonPanelImport;
             this._ribbonTabImport.Text = "Import";
@@ -725,6 +734,7 @@
             // 
             // _ribbonTabExport
             // 
+            this._ribbonTabExport.FixedSize = new System.Drawing.Size(60, 0);
             this._ribbonTabExport.Name = "_ribbonTabExport";
             this._ribbonTabExport.Panel = this._ribbonPanelExport;
             this._ribbonTabExport.Text = "Export";
@@ -732,6 +742,7 @@
             // 
             // _ribbonTabIntegrate
             // 
+            this._ribbonTabIntegrate.FixedSize = new System.Drawing.Size(70, 0);
             this._ribbonTabIntegrate.Name = "_ribbonTabIntegrate";
             this._ribbonTabIntegrate.Panel = this._ribbonPanelIntegrate;
             this._ribbonTabIntegrate.Text = "Integrate";
@@ -739,6 +750,7 @@
             // 
             // _ribbonTabReview
             // 
+            this._ribbonTabReview.FixedSize = new System.Drawing.Size(60, 0);
             this._ribbonTabReview.Name = "_ribbonTabReview";
             this._ribbonTabReview.Panel = this._ribbonPanelReview;
             this._ribbonTabReview.Text = "Review";
@@ -746,6 +758,7 @@
             // 
             // _ribbonTabConfigure
             // 
+            this._ribbonTabConfigure.FixedSize = new System.Drawing.Size(70, 0);
             this._ribbonTabConfigure.Name = "_ribbonTabConfigure";
             this._ribbonTabConfigure.Panel = this._ribbonPanelConfigure;
             this._ribbonTabConfigure.Text = "Configure";
@@ -753,6 +766,8 @@
             // 
             // _ribbonTabHelp
             // 
+            this._ribbonTabHelp.Checked = true;
+            this._ribbonTabHelp.FixedSize = new System.Drawing.Size(50, 0);
             this._ribbonTabHelp.Name = "_ribbonTabHelp";
             this._ribbonTabHelp.Panel = this._ribbonPanelHelp;
             this._ribbonTabHelp.Text = "Help";
@@ -763,7 +778,7 @@
             this._title.CanCustomize = false;
             this._title.ItemAlignment = DevComponents.DotNetBar.eItemAlignment.Center;
             this._title.Name = "_title";
-            this._title.PaddingBottom = 15;
+            this._title.PaddingBottom = 14;
             this._title.PaddingLeft = 50;
             this._title.PaddingRight = 50;
             this._title.TextLineAlignment = System.Drawing.StringAlignment.Near;
@@ -777,6 +792,7 @@
             this._closeCurrentWindow.Name = "_closeCurrentWindow";
             this._superTooltip.SetSuperTooltip(this._closeCurrentWindow, new DevComponents.DotNetBar.SuperTooltipInfo("Close the current window (Ctrl+F4)", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray));
             this._closeCurrentWindow.Text = "Close Window";
+            this._closeCurrentWindow.Tooltip = "Close current panel";
             this._closeCurrentWindow.Click += new System.EventHandler(this._closeCurrentWindow_Click);
             // 
             // _closeAllWindows
@@ -788,7 +804,32 @@
             this._closeAllWindows.Name = "_closeAllWindows";
             this._superTooltip.SetSuperTooltip(this._closeAllWindows, new DevComponents.DotNetBar.SuperTooltipInfo("Close All Windows", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray));
             this._closeAllWindows.Text = "Close All Windows";
+            this._closeAllWindows.Tooltip = "Close all panels";
             this._closeAllWindows.Click += new System.EventHandler(this._closeAllWindows_Click);
+            // 
+            // _undo
+            // 
+            this._undo.HotTrackingStyle = DevComponents.DotNetBar.eHotTrackingStyle.Image;
+            this._undo.HoverImage = global::ThreatsManager.Properties.Resources.undo_sel;
+            this._undo.Image = global::ThreatsManager.Properties.Resources.undo;
+            this._undo.ItemAlignment = DevComponents.DotNetBar.eItemAlignment.Far;
+            this._undo.Name = "_undo";
+            this._undo.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.CtrlZ);
+            this._undo.Text = "Undo";
+            this._undo.Tooltip = "Undo";
+            this._undo.Click += new System.EventHandler(this._undo_Click);
+            // 
+            // _redo
+            // 
+            this._redo.HotTrackingStyle = DevComponents.DotNetBar.eHotTrackingStyle.Image;
+            this._redo.HoverImage = global::ThreatsManager.Properties.Resources.redo_sel;
+            this._redo.Image = global::ThreatsManager.Properties.Resources.redo;
+            this._redo.ItemAlignment = DevComponents.DotNetBar.eItemAlignment.Far;
+            this._redo.Name = "_redo";
+            this._redo.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.CtrlY);
+            this._redo.Text = "Redo";
+            this._redo.Tooltip = "Redo";
+            this._redo.Click += new System.EventHandler(this._redo_Click);
             // 
             // _feedback
             // 
@@ -798,6 +839,7 @@
             this._feedback.ItemAlignment = DevComponents.DotNetBar.eItemAlignment.Far;
             this._feedback.Name = "_feedback";
             this._feedback.Text = "Feedback";
+            this._feedback.Tooltip = "Provide feedback";
             this._feedback.Click += new System.EventHandler(this._feedback_Click);
             // 
             // _controlMinimize
@@ -856,10 +898,10 @@
             this._addStatusInfoProvider,
             this._lockRequest});
             this._statusBar.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._statusBar.Location = new System.Drawing.Point(5, 519);
+            this._statusBar.Location = new System.Drawing.Point(5, 441);
             this._statusBar.Margin = new System.Windows.Forms.Padding(6);
             this._statusBar.Name = "_statusBar";
-            this._statusBar.Size = new System.Drawing.Size(1078, 22);
+            this._statusBar.Size = new System.Drawing.Size(1048, 22);
             this._statusBar.TabIndex = 1;
             this._statusBar.Text = "metroStatusBar1";
             // 
@@ -905,7 +947,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1088, 543);
+            this.ClientSize = new System.Drawing.Size(1058, 465);
             this.Controls.Add(this._statusBar);
             this.Controls.Add(this._ribbon);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -955,8 +997,8 @@
         private DevComponents.DotNetBar.RibbonTabItem _ribbonTabHome;
         private DevComponents.DotNetBar.Metro.MetroStatusBar _statusBar;
         private DevComponents.DotNetBar.ButtonItem _extensionsConfig;
-        private DevComponents.DotNetBar.RibbonPanel _ribbonPanelInsert;
-        private DevComponents.DotNetBar.RibbonTabItem _ribbonTabInsert;
+        private DevComponents.DotNetBar.RibbonPanel _ribbonPanelKnowledgeBase;
+        private DevComponents.DotNetBar.RibbonTabItem _ribbonTabKnowledgeBase;
         private DevComponents.DotNetBar.RibbonPanel _ribbonPanelAnalyze;
         private DevComponents.DotNetBar.RibbonPanel _ribbonPanelReview;
         private DevComponents.DotNetBar.RibbonTabItem _ribbonTabAnalyze;
@@ -986,5 +1028,7 @@
         private DevComponents.DotNetBar.RibbonTabItem _ribbonTabIntegrate;
         private System.Windows.Forms.FolderBrowserDialog _selectFolder;
         private DevComponents.DotNetBar.LabelItem _lockRequest;
+        private DevComponents.DotNetBar.ButtonItem _undo;
+        private DevComponents.DotNetBar.ButtonItem _redo;
     }
 }

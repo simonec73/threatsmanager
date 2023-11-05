@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Panels.Diagram;

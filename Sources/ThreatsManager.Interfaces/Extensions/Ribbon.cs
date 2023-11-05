@@ -11,9 +11,10 @@
         Home,
 
         /// <summary>
-        /// The Ribbon used to collect the actions to insert objects and entities in the Model.
+        /// The Ribbon used to collect the actions related to the underlying knowledge base.
         /// </summary>
-        Insert,
+        [EnumLabel("Knowledge Base")]
+        KnowledgeBase,
 
         /// <summary>
         /// The Ribbon used to perform Analysis of the Model.

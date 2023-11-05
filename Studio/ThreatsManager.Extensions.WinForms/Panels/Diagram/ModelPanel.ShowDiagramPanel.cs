@@ -1,20 +1,24 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Panels.DiagramConfiguration;
 using ThreatsManager.Extensions.Schemas;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
     public partial class ModelPanel
     {
-        private DpiState _dpiState;
+        private int _iconSize;
+        private int _iconCenterSize;
+        private int _markerSize;
+        private ImageSize _imageSize;
 
         public Form PanelContainer { get; set; }
 
@@ -24,18 +28,81 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             _loading = true;
             _diagram = diagram;
-            _properties.Item = diagram;
+            _properties.Item = _diagram;
 
-            if (_diagram.Model != null)
+            if (_diagram != null)
             {
                 _diagram.Model.ChildCreated += OnModelChildCreated;
                 _diagram.Model.ChildRemoved += OnModelChildRemoved;
 
+                var dpi = GetDiagramDpi(diagram);
+                var factor = Dpi.Factor.Height / dpi;
+
+                _graph.Initialize(_diagram);
+
+                SetDiagram(factor);
+
+                AddPalettes();
+                ConfigurePanelItemContextMenu();
+            }
+        }
+
+        internal void SetDiagram(float dpiFactor)
+        {
+            _loading = true;
+
+            var configuration = new DiagramConfigurationManager(_diagram.Model);
+            _iconSize = configuration.DiagramIconSize;
+            _iconCenterSize = configuration.DiagramIconCenterSize;
+            _markerSize = configuration.DiagramMarkerSize;
+            switch (_iconSize)
+            {
+                case 32:
+                    _imageSize = ImageSize.Medium;
+                    break;
+                case 64:
+                case 96:
+                case 128:
+                case 256:
+                    _imageSize = ImageSize.Big;
+                    break;
+                default:
+                    if (Dpi.Factor.Height >= 8)
+                    {
+                        configuration.DiagramIconSize = 256;
+                        _imageSize = ImageSize.Big;
+                    }
+                    else if (Dpi.Factor.Height >= 4)
+                    {
+                        configuration.DiagramIconSize = 128;
+                        _imageSize = ImageSize.Big;
+                    }
+                    else if (Dpi.Factor.Height >= 3)
+                    {
+                        configuration.DiagramIconSize = 96;
+                        _imageSize = ImageSize.Big;
+                    }
+                    else if (Dpi.Factor.Height >= 2)
+                    {
+                        configuration.DiagramIconSize = 64;
+                        _imageSize = ImageSize.Big;
+                    }
+                    else
+                    {
+                        configuration.DiagramIconSize = 32;
+                        _imageSize = ImageSize.Medium;
+                    }
+                    configuration.Apply();
+                    break;
+            }
+
+            LoadStandardPalette();
+
+            if (_diagram.Model != null)
+            {
                 var groups = _diagram.Groups?.ToArray();
                 var entities = _diagram.Entities?.ToArray();
 
-                _dpiState = CalculateDpiActions(diagram);
-                _graph.Initialize(diagram, _dpiState);
                 var doc = _graph.Doc;
 
                 if (doc != null)
@@ -44,61 +111,76 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         doc.StartTransaction();
 
-                        if (groups?.Any() ?? false)
-                        {
-                            AddShapes(groups);
-                        }
+                        doc.Clear();
 
-                        if (entities?.Any() ?? false)
-                        {
-                            var npEntities = AddShapes(entities)?.ToArray();
+                        _graph.Zoom(((float)configuration.DiagramZoomFactor) / 100f);
 
-                            if (npEntities?.Any() ?? false)
+                        _entities.Clear();
+                        _groups.Clear();
+                        _links.Clear();
+
+                        using (var scope = UndoRedoManager.OpenScope("Diagram loading"))
+                        {
+                            if (groups?.Any() ?? false)
                             {
-                                // We have at least an unprocessed shape!
-                                foreach (var entity in npEntities)
+                                AddShapes(groups, dpiFactor);
+                            }
+
+                            if (entities?.Any() ?? false)
+                            {
+                                var npEntities = AddShapes(entities, dpiFactor)?.ToArray();
+
+                                if (npEntities?.Any() ?? false)
                                 {
-                                    GraphOnCreateIdentity(entity.AssociatedId, entity.Position);
-                                    AddShape(entity);
+                                    // We have at least an unprocessed shape!
+                                    foreach (var entity in npEntities)
+                                    {
+                                        GraphOnCreateIdentity(entity.AssociatedId, entity.Position);
+                                        AddShape(entity, dpiFactor);
+                                    }
+                                }
+
+                                var links = _diagram.Links?.ToArray();
+
+                                if (links != null)
+                                {
+                                    foreach (var link in links)
+                                    {
+                                        AddLink(link, dpiFactor);
+                                    }
                                 }
                             }
 
-                            var links = _diagram.Links?.ToArray();
-
-                            if (links != null)
+                            if (groups?.Any() ?? false)
                             {
+                                foreach (var group in groups)
+                                {
+                                    if (group.Identity is IGroup groupIdentity)
+                                    {
+                                        var groupNode = GetGroup(groupIdentity);
+                                        groupNode?.RefreshBorder();
+                                    }
+                                }
+                            }
+
+                            if (_links?.Any() ?? false)
+                            {
+                                var links = _links.Values.ToArray();
                                 foreach (var link in links)
-                                {
-                                    AddLink(link);
-                                }
+                                    link.UpdateRoute();
                             }
-                        }
 
-                        if (groups?.Any() ?? false)
-                        {
-                            foreach (var group in groups)
-                            {
-                                if (group.Identity is IGroup groupIdentity)
-                                {
-                                    var groupNode = GetGroup(groupIdentity);
-                                    groupNode.RefreshBorder();
-                                }
-                            }
-                        }
+                            _graph.DocPosition = _graph.DocumentTopLeft;
 
-                        if (_links?.Any() ?? false)
-                        {
-                            var links = _links.Values.ToArray();
-                            foreach (var link in links)
-                                link.UpdateRoute();
-                        }
+                            SetDiagramDpi(_diagram);
 
-                        _graph.DocPosition = _graph.DocumentTopLeft;
+                            scope?.Complete();
+                        }
                     }
                     finally
                     {
                         _loading = false;
-                        doc.FinishTransaction($"Set Diagram {diagram.Name}");
+                        doc.FinishTransaction($"Set Diagram {_diagram.Name}");
                     }
                 }
             }
@@ -108,74 +190,26 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
         }
 
-        private DpiState CalculateDpiActions(IDiagram diagram)
+        private float GetDiagramDpi([NotNull] IDiagram diagram)
         {
-            DpiState result = DpiState.Ok;
+            float result;
 
-            var schemaManager = new DiagramPropertySchemaManager(diagram.Model);
-            var dpiFactor = schemaManager.GetDpiFactor(diagram);
-            if (dpiFactor > 0f)
-            {
-                if (dpiFactor > Dpi.Factor.Height + 0.25)
-                    result = DpiState.TooBig;
-                else if (dpiFactor < Dpi.Factor.Height - 0.25)
-                    result = DpiState.TooSmall;
-            }
+            if (diagram.Dpi.HasValue)
+                result = diagram.Dpi.Value / 100f;
             else
             {
-                schemaManager.SetDpiFactor(diagram);
-
-                var links = diagram.Links?.ToArray();
-
-                if (links?.Any() ?? false)
-                {
-                    var propertyType = schemaManager.GetLinksSchema()?.GetPropertyType("Points");
-                    if (propertyType != null)
-                    {
-                        var totalDistanceFactor = 0.0;
-                        var count = 0;
-
-                        foreach (var link in links)
-                        {
-                            var property = link.GetProperty(propertyType);
-                            if (property is IPropertyArray array)
-                            {
-                                var points = array.Value?.Select(x => float.Parse(x, NumberFormatInfo.InvariantInfo))
-                                    .ToArray();
-                                if (points?.Any() ?? false)
-                                {
-                                    var source = link.DataFlow.Source;
-                                    var sourceShape = diagram.Entities.FirstOrDefault(x => x.AssociatedId == source.Id);
-                                    if (sourceShape != null)
-                                    {
-                                        var position = sourceShape.Position;
-                                        var x = points[0];
-                                        var y = points[1];
-
-                                        var distance =
-                                            Math.Sqrt(Math.Pow(position.X - x, 2) + Math.Pow(position.Y - y, 2));
-
-                                        totalDistanceFactor += distance / Dpi.Factor.Width;
-                                        count++;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (count > 0)
-                        {
-                            var distanceFactor = totalDistanceFactor / count;
-
-                            if (distanceFactor < 13f)
-                                result = DpiState.TooSmall;
-                            else if (distanceFactor > 26f)
-                                result = DpiState.TooBig;
-                        }
-                    }
-                }
+                var schemaManager = new DiagramPropertySchemaManager(diagram.Model);
+                result = schemaManager.GetDpiFactor(diagram);
+                if (result == 0f)
+                    result = Dpi.Factor.Height;
             }
 
             return result;
+        }
+
+        private void SetDiagramDpi([NotNull] IDiagram diagram)
+        {
+            diagram.Dpi = (int) (Dpi.Factor.Height * 100);
         }
 
         private void OnModelChildCreated(IIdentity identity)

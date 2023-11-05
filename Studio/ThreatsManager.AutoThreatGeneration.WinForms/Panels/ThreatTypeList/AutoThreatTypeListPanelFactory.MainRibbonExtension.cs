@@ -22,8 +22,8 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.Analyze;
-        public string Bar => "Auto Generation";
+        public Ribbon Ribbon => Ribbon.KnowledgeBase;
+        public string Bar => "Configuration Lists";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {

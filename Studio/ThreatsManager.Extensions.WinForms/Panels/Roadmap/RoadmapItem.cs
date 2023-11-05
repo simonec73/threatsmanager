@@ -203,7 +203,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                     if (first)
                         first = false;
                     else
-                        cm.MenuItems.Add(new MenuItem("-"));
+                        cm.Items.Add(new ToolStripSeparator());
                     AddMenu(cm, _actions[bucket]);
                 }
             }
@@ -215,7 +215,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
         {
             foreach (var action in actions)
             {
-                menu.MenuItems.Add(new MenuItem(action.Label, DoAction)
+                menu.Items.Add(new ToolStripMenuItem(action.Label, action.SmallIcon, DoAction)
                 {
                     Tag = action
                 });
@@ -224,7 +224,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
         private void DoAction(object sender, EventArgs e)
         {
-            if (sender is MenuItem menuItem &&
+            if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IIdentityContextAwareAction action)
             {
                 if (action.Execute(_mitigation))

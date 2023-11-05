@@ -16,6 +16,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.WinForms.Dialogs;
+using static System.Net.Mime.MediaTypeNames;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 using MarkupLinkClickEventArgs = DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs;
 using Padding = System.Windows.Forms.Padding;
@@ -28,7 +29,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Label.
         private static Label AddSingleLineLabel([NotNull] LayoutControl container,
-            [Required] string label, string text, Bitmap image = null)
+            string label, string text, Bitmap image = null)
         {
             int height = (int) (21 * Dpi.Factor.Height);
             if (image != null)
@@ -48,7 +49,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
@@ -63,7 +64,7 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private static Label AddLabel([NotNull] LayoutControl container,
-            [Required] string label, string text, Bitmap image = null)
+            string label, string text, Bitmap image = null)
         {
             int height = (int) (105 * Dpi.Factor.Height);
             if (image != null)
@@ -83,7 +84,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
@@ -100,21 +101,30 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Hyperlink.
         private LinkLabel AddHyperlink([NotNull] LayoutControl container,
-            [Required] string label, [NotNull] IIdentity identity)
+            string label, IIdentity identity, Bitmap image = null)
         {
             int height = (int) (25 * Dpi.Factor.Height);
+            var text = identity?.Name;
+            var padding = 4;
+            if (image != null)
+            {
+                height = image.Height + 10;
+                padding += 20;
+            }
             var control = new LinkLabel()
             {
-                Text = identity.Name,
+                Text = text,
                 UseMnemonic = false,
-                Padding = new Padding(4, 0, 4, 0),
+                Padding = new Padding(padding, 0, 4, 0),
+                Image = image,
+                ImageAlign = ContentAlignment.TopLeft,
                 Tag = identity
             };
            control.LinkClicked += OnHyperlinkClicked;
 
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
@@ -143,17 +153,17 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Text and String properties.
         private TextBox AddSingleLineText([NotNull] LayoutControl container,
-            [NotNull] IPropertySingleLineString property, bool readOnly)
+            IPropertySingleLineString property, bool readOnly)
         {
-            var control = AddSingleLineText(container, property.PropertyType.Name,
-                property.StringValue, null,
-                property.PropertyType.Description, readOnly);
+            var control = AddSingleLineText(container, property?.PropertyType?.Name,
+                property?.StringValue, null,
+                property?.PropertyType?.Description, readOnly);
             control.Tag = property;
             return control;
         }
 
         private TextBox AddSingleLineText([NotNull] LayoutControl container,
-            [Required] string name, string text, Action<TextBox> changeAction,
+            string name, string text, Action<TextBox> changeAction,
             string tooltip, bool readOnly)
         {
             var control = new TextBox()
@@ -176,7 +186,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.TextChanged += TextPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = $"<a href=\"SingleLineText\">{name.Replace("&", "&&")}</a>",
+                Text = $"<a href=\"SingleLineText\">{name?.Replace("&", "&&")}</a>",
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -241,17 +251,17 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private RichTextBox AddText([NotNull] LayoutControl container,
-            [NotNull] IPropertyString property, bool readOnly)
+            IPropertyString property, bool readOnly)
         {
-            var control = AddText(container, property.PropertyType.Name,
-                property.StringValue, null,
-                property.PropertyType.Description, readOnly);
+            var control = AddText(container, property?.PropertyType?.Name,
+                property?.StringValue, null,
+                property?.PropertyType?.Description, readOnly);
             control.Tag = property;
             return control;
         }
 
         private RichTextBox AddText([NotNull] LayoutControl container,
-            [Required] string name, string text, Action<RichTextBox> changeAction,
+            string name, string text, Action<RichTextBox> changeAction,
             string tooltip, bool readOnly)
         {
             var control = new RichTextBox()
@@ -274,7 +284,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.TextChanged += TextPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = $"<a href=\"Text\">{name.Replace("&", "&&")}</a>",
+                Text = $"<a href=\"Text\">{name?.Replace("&", "&&")}</a>",
                 Control = control,
                 Height = 150,
                 HeightType = eLayoutSizeType.Absolute,
@@ -311,7 +321,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Boolean properties.
         private SwitchButton AddBool([NotNull] LayoutControl container,
-            [Required] string label, bool value, string description,
+            string label, bool value, string description,
             Action<bool> changeAction, bool readOnly)
         {
             var control = new SwitchButton() {Value = value, Width = 100, IsReadOnly = readOnly};
@@ -329,7 +339,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.ValueChanged += BoolPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = 20 + (int)(10 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -344,10 +354,10 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private SwitchButton AddBool([NotNull] LayoutControl container,
-            [NotNull] IPropertyBool property, bool readOnly)
+            IPropertyBool property, bool readOnly)
         {
-            var control = AddBool(container, property.PropertyType.Name, property.Value,
-                property.PropertyType.Description, null, readOnly);
+            var control = AddBool(container, property?.PropertyType?.Name, property?.Value ?? false,
+                property?.PropertyType?.Description, null, readOnly);
             control.Tag = property;
             return control;
         }
@@ -364,7 +374,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Integer properties.
         private IntegerInput AddInteger([NotNull] LayoutControl container,
-            [Required] string label, int value, string description,
+            string label, int value, string description,
             Action<int> changeAction, bool readOnly)
         {
             var control = new IntegerInput() {Value = value, Width = 100, IsInputReadOnly = readOnly};
@@ -382,7 +392,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.ValueChanged += IntegerPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -397,10 +407,10 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private IntegerInput AddInteger([NotNull] LayoutControl container,
-            [NotNull] IPropertyInteger property, bool readOnly)
+            IPropertyInteger property, bool readOnly)
         {
-            var control = AddInteger(container, property.PropertyType.Name, property.Value,
-                property.PropertyType.Description, null, readOnly);
+            var control = AddInteger(container, property?.PropertyType?.Name, property?.Value ?? 0,
+                property?.PropertyType?.Description, null, readOnly);
             control.Tag = property;
             return control;
         }
@@ -417,7 +427,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Decimal properties.
         private DoubleInput AddDecimal([NotNull] LayoutControl container,
-            [Required] string label, decimal value, string description,
+            string label, decimal value, string description,
             Action<decimal> changeAction, bool readOnly)
         {
             var control = new DoubleInput() {Value = Convert.ToDouble(value), Width = 100, DisplayFormat = "F2", IsInputReadOnly = readOnly};
@@ -435,7 +445,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.ValueChanged += DecimalPropertyChanged;
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -450,10 +460,10 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private DoubleInput AddDecimal([NotNull] LayoutControl container,
-            [NotNull] IPropertyDecimal property, bool readOnly)
+            IPropertyDecimal property, bool readOnly)
         {
-            var control = AddDecimal(container, property.PropertyType.Name, property.Value,
-                property.PropertyType.Description, null, readOnly);
+            var control = AddDecimal(container, property?.PropertyType?.Name, property?.Value ?? 0,
+                property?.PropertyType?.Description, null, readOnly);
             control.Tag = property;
             return control;
         }
@@ -470,14 +480,14 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Tokens properties.
         private static TokenEditor AddTokens([NotNull] LayoutControl container,
-            [NotNull] IPropertyTokens property, bool readOnly)
+            IPropertyTokens property, bool readOnly)
         {
             var control = new TokenEditor()
             {
                 Tag = property
             };
             control.EditTextBox.KeyPress += OnKeywordsKeyPress;
-            var values = property.Value?.ToArray();
+            var values = property?.Value?.ToArray();
             if (values != null)
             {
                 foreach (var value in values)
@@ -491,14 +501,14 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = property.PropertyType.Name.Replace("&", "&&"),
+                Text = property?.PropertyType?.Name.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (20 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
                 //MinSize = new Size(500, 30),
-                Tooltip = property.PropertyType.Description
+                Tooltip = property?.PropertyType?.Description
             };
             container.Controls.Add(control);
             container.RootGroup.Items.Add(item);
@@ -527,11 +537,11 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region Combo Box properties.
         private static ComboBox AddCombo([NotNull] LayoutControl container,
-            [NotNull] IPropertyList property, bool readOnly)
+            IPropertyList property, bool readOnly)
         {
             ComboBox control = null;
 
-            if (property.PropertyType is IListPropertyType listPropertyType)
+            if (property?.PropertyType is IListPropertyType listPropertyType)
             {
                 var items = listPropertyType.Values?.ToArray();
                 if (items?.Any() ?? false)
@@ -576,16 +586,19 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private ComboBox AddCombo([NotNull] LayoutControl container,
-            [Required] string label, string selected,
-            [NotNull] IEnumerable<string> values, Action<string> changeAction, bool readOnly)
+            string label, string selected,
+            IEnumerable<string> values, Action<string> changeAction, bool readOnly)
         {
             var control = new ComboBox()
             {
                 Enabled = !readOnly,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            control.Items.AddRange(values.ToArray());
-            control.SelectedItem = selected;
+            if (values?.Any() ?? false)
+            {
+                control.Items.AddRange(values?.ToArray());
+                control.SelectedItem = selected;
+            }
             if (changeAction != null)
             {
                 void handler(object sender, EventArgs args)
@@ -598,7 +611,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (25 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -614,7 +627,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region List Box.
         private ListBox AddListBox([NotNull] LayoutControl container,
-            [NotNull] string label, IEnumerable<object> values,
+            string label, IEnumerable<object> values,
             EventHandler addItemEventHandler, bool readOnly)
         {
             var control = new ListBox()
@@ -626,7 +639,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.Items.AddRange(items.ToArray());
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (150 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -846,7 +859,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region List View.
         private ListView AddListView([NotNull] LayoutControl container,
-            [NotNull] string label, IEnumerable<IThreatEvent> threatEvents)
+            string label, IEnumerable<IThreatEvent> threatEvents)
         {
             var smallImageList = new ImageList();
             var imageList = new ImageList();
@@ -882,9 +895,68 @@ namespace ThreatsManager.Utilities.WinForms
 
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (150 * Dpi.Factor.Height),
+                HeightType = eLayoutSizeType.Absolute,
+                Width = 101,
+                WidthType = eLayoutSizeType.Percent,
+                Padding = new Padding(4)
+            };
+            if (string.IsNullOrWhiteSpace(label))
+            {
+                item.TextVisible = false;
+            }
+            container.Controls.Add(control);
+            container.RootGroup.Items.Add(item);
+
+            return control;
+        }
+
+        private ListView AddListView([NotNull] LayoutControl container,
+            string label, IEnumerable<IVulnerability> vulnerabilities)
+        {
+            var smallImageList = new ImageList();
+            var imageList = new ImageList();
+            var control = new ListView()
+            {
+                HeaderStyle = ColumnHeaderStyle.None,
+                View = View.Details,
+                SmallImageList = smallImageList,
+                LargeImageList = imageList,
+                UseCompatibleStateImageBehavior = false,
+                HideSelection = false,
+                MultiSelect = false
+            };
+
+            control.Columns.AddRange(new[] { new ColumnHeader() });
+            var values = vulnerabilities?.ToArray();
+            if (values?.Any() ?? false)
+            {
+                int i = 0;
+                foreach (var value in values)
+                {
+                    var parent = value.Parent as IIdentity;
+                    if (parent != null)
+                    {
+                        smallImageList.Images.Add(parent.GetImage(ImageSize.Small));
+                        imageList.Images.Add(parent.GetImage(ImageSize.Medium));
+                        control.Items.Add(new ListViewItem(parent.Name, i)
+                        {
+                            Tag = value
+                        });
+                        i++;
+                    }
+                }
+                control.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
+            control.MouseDoubleClick += OnListViewDoubleClick;
+
+            var item = new LayoutControlItem()
+            {
+                Text = label?.Replace("&", "&&"),
+                Control = control,
+                Height = (int)(150 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
@@ -919,9 +991,9 @@ namespace ThreatsManager.Utilities.WinForms
         #endregion
 
         #region List properties.
-        private SuperGridControl AddList([NotNull] LayoutControl container, [NotNull] IPropertyArray property, bool readOnly)
+        private SuperGridControl AddList([NotNull] LayoutControl container, IPropertyArray property, bool readOnly)
         {
-            var control = AddList(container, property.PropertyType.Name, property.Value, readOnly);
+            var control = AddList(container, property?.PropertyType?.Name, property?.Value, readOnly);
             control.Tag = new WinForms.ItemEditor.Actions<IPropertyArray>(property)
             {
                 Created = CreatePropertyArrayItem,
@@ -930,7 +1002,8 @@ namespace ThreatsManager.Utilities.WinForms
                 Cleared = ClearPropertyArrayItem
             };
 
-            property.Changed += PropertyChanged;
+            if (property != null)
+                property.Changed += PropertyChanged;
 
             return control;
 
@@ -965,13 +1038,13 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private bool CreatePropertyArrayItem(string text, [NotNull] IPropertyArray property)
+        private bool CreatePropertyArrayItem(Control control, string text, IPropertyArray property)
         {
             bool result = false;
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                var current = property.Value?.ToArray();
+                var current = property?.Value?.ToArray();
                 if (!(current?.Contains(text) ?? false))
                 {
                     var list = new List<string>();
@@ -990,13 +1063,13 @@ namespace ThreatsManager.Utilities.WinForms
             return result;
         }
 
-        private bool ChangePropertyArrayItem(string oldText, string newText, [NotNull] IPropertyArray property)
+        private bool ChangePropertyArrayItem(Control control, string oldText, string newText, IPropertyArray property)
         {
             bool result = false;
 
             if (!string.IsNullOrWhiteSpace(oldText) && !string.IsNullOrWhiteSpace(newText))
             {
-                var current = property.Value?.ToArray();
+                var current = property?.Value?.ToArray();
                 if (current?.Contains(oldText) ?? false)
                 {
                     var list = new List<string>(current);
@@ -1012,13 +1085,13 @@ namespace ThreatsManager.Utilities.WinForms
             return result;
         }
 
-        private bool RemovePropertyArrayItem(string text, [NotNull] IPropertyArray property)
+        private bool RemovePropertyArrayItem(Control control, string text, IPropertyArray property)
         {
             bool result = false;
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                var current = property.Value?.ToArray();
+                var current = property?.Value?.ToArray();
                 if (current?.Contains(text) ?? false)
                 {
                     var list = new List<string>(current);
@@ -1032,13 +1105,13 @@ namespace ThreatsManager.Utilities.WinForms
             return result;
         }
 
-        private void ClearPropertyArrayItem([NotNull] IPropertyArray property)
+        private void ClearPropertyArrayItem(Control control, IPropertyArray property)
         {
             property.Value = null;
         }
 
         private SuperGridControl AddList([NotNull] LayoutControl container,
-            [Required] string label, IEnumerable<string> values, bool readOnly)
+            string label, IEnumerable<string> values, bool readOnly)
         {
             var control = new SuperGridControl();
             control.LicenseKey = "PUT_YOUR_LICENSE_HERE";
@@ -1058,7 +1131,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             var controlItem = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 Control = control,
                 Height = (int) (150 * Dpi.Factor.Height),
                 HeightType = eLayoutSizeType.Absolute,
@@ -1133,7 +1206,7 @@ namespace ThreatsManager.Utilities.WinForms
                 cell.SuperGrid.Tag is WinForms.ItemEditor.IActions actions)
             {
                 cell.Tag = cell.Value;
-                if (!actions.RaiseChanged(oldText, (string) cell.Value) &&
+                if (!actions.RaiseChanged(cell.SuperGrid, oldText, (string) cell.Value) &&
                     !string.IsNullOrWhiteSpace(oldText))
                 {
                     MessageBox.Show(Form.ActiveForm, "Please do not clear the text. Empty text is not supported.",
@@ -1174,7 +1247,7 @@ namespace ThreatsManager.Utilities.WinForms
                         "Remove all items", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    actions.RaiseCleared();
+                    actions.RaiseCleared(grid);
                     grid.PrimaryGrid.Rows.Clear();
                 }
             }
@@ -1196,7 +1269,7 @@ namespace ThreatsManager.Utilities.WinForms
                     foreach (var item in rows)
                     {
                         if (item.Cells[0].Value is string text)
-                            actions.RaiseRemoved(text);
+                            actions.RaiseRemoved(grid, text);
                     }
 
                     var cells = grid.PrimaryGrid.SelectedCells.OfType<GridCell>().ToArray();
@@ -1205,7 +1278,7 @@ namespace ThreatsManager.Utilities.WinForms
                         if (cell.Value is string text)
                         {
                             //grid.PrimaryGrid.Rows.Remove(cell.GridRow);
-                            actions.RaiseRemoved(text);
+                            actions.RaiseRemoved(grid, text);
                         }
                     }
                 }
@@ -1222,17 +1295,17 @@ namespace ThreatsManager.Utilities.WinForms
                 //row.Cells[0].Tag = "New";
                 //row.Cells[0].PropertyChanged += RowCellChanged;
                 //grid.PrimaryGrid.Rows.Add(row);
-                actions.RaiseCreated("New");
+                actions.RaiseCreated(grid, "New");
             }
         }
         #endregion
 
         #region Property Viewer.
-        private void AddPropertyViewer([NotNull] LayoutControl container, [NotNull] IPropertyViewer viewer, bool readOnly)
+        private void AddPropertyViewer([NotNull] LayoutControl container, IPropertyViewer viewer, bool readOnly)
         {
             container.Tag = viewer;
 
-            var blocks = viewer.Blocks?.ToArray();
+            var blocks = viewer?.Blocks?.ToArray();
             if (blocks?.Any() ?? false)
             {
                 Control control;
@@ -1277,7 +1350,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private Button AddCompactButton([NotNull] LayoutControl container, [Required] string label, 
+        private Button AddCompactButton([NotNull] LayoutControl container, string label, 
             Bitmap image, Action<Button> clickAction, bool readOnly)
         {
             var picture = image;
@@ -1309,7 +1382,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
                 Height = (int) (48 * Dpi.Factor.Height),
@@ -1320,7 +1393,7 @@ namespace ThreatsManager.Utilities.WinForms
             _superTooltip.SetSuperTooltip(result, new SuperTooltipInfo()
             {
                 HeaderVisible = false,
-                BodyText = label.Replace("\n", "<br/>"),
+                BodyText = label?.Replace("\n", "<br/>"),
                 FooterVisible = false
             });
             container.Controls.Add(result);
@@ -1329,7 +1402,7 @@ namespace ThreatsManager.Utilities.WinForms
             return result;
         }
 
-        private Button AddButton([NotNull] LayoutControl container, [Required] string label, string description,
+        private Button AddButton([NotNull] LayoutControl container, string label, string description,
             Bitmap image, Action<Button> clickAction, bool readOnly)
         {
             var result = new Button() {Text = label, Image = image, Enabled = !readOnly};
@@ -1348,7 +1421,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
                 Height = (int) (36 * Dpi.Factor.Height),
@@ -1380,7 +1453,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
         }
 
-        private DateTimePicker AddDateTimePicker([NotNull] LayoutControl container, [Required] string label, DateTime? dateTime,
+        private DateTimePicker AddDateTimePicker([NotNull] LayoutControl container, string label, DateTime? dateTime,
             Action<DateTimePicker> changeAction, bool readOnly)
         {
             var result = new DateTimePicker() {
@@ -1404,7 +1477,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             var item = new LayoutControlItem()
             {
-                Text = label.Replace("&", "&&"),
+                Text = label?.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
                 Height = 36,

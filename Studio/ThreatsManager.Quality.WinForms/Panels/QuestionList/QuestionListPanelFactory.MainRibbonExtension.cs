@@ -22,7 +22,7 @@ namespace ThreatsManager.Quality.Panels.QuestionList
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.View;
+        public Ribbon Ribbon => Ribbon.KnowledgeBase;
         public string Bar => "Questions";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>

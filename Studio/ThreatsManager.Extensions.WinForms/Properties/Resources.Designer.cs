@@ -19,7 +19,7 @@ namespace ThreatsManager.Extensions.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -1086,6 +1086,26 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap dependencies_small {
             get {
                 object obj = ResourceManager.GetObject("dependencies_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap diagram_black {
+            get {
+                object obj = ResourceManager.GetObject("diagram_black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap diagram_white {
+            get {
+                object obj = ResourceManager.GetObject("diagram_white", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2167,6 +2187,26 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap magic_wand_big_delete {
+            get {
+                object obj = ResourceManager.GetObject("magic_wand_big_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap magic_wand_delete {
+            get {
+                object obj = ResourceManager.GetObject("magic_wand_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap magic_wand_huge {
             get {
                 object obj = ResourceManager.GetObject("magic_wand_huge", resourceCulture);
@@ -2177,9 +2217,29 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap magic_wand_huge_delete {
+            get {
+                object obj = ResourceManager.GetObject("magic_wand_huge_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap magic_wand_small {
             get {
                 object obj = ResourceManager.GetObject("magic_wand_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap magic_wand_small_delete {
+            get {
+                object obj = ResourceManager.GetObject("magic_wand_small_delete", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

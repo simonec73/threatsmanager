@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ThreatsManager.DevOps.Dialogs;
@@ -61,26 +62,30 @@ namespace ThreatsManager.DevOps.Actions
                 switch (action.Name)
                 {
                     case "Connect":
-                        var dialog = new DevOpsConnectionDialog();
-                        if (connector == null)
+                        using (var scope = UndoRedoManager.OpenScope("Connect DevOps"))
                         {
-                            var schemaManager = new DevOpsConfigPropertySchemaManager(threatModel);
-                            dialog.Connection = schemaManager.ConnectionInfo;
-                        }
-                        else
-                        {
-                            dialog.Connector = connector;
-                        }
-                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-                        {
-                            connector = dialog.Connector;
-                            var project = dialog.ProjectName;
-                            if (connector != null && !string.IsNullOrWhiteSpace(project))
+                            var dialog = new DevOpsConnectionDialog();
+                            if (connector == null)
                             {
-                                connector.OpenProject(project);
-                                DevOpsManager.Register(connector, threatModel);
-                                ChangeDisconnectButtonStatus(connector, true);
+                                var schemaManager = new DevOpsConfigPropertySchemaManager(threatModel);
+                                dialog.Connection = schemaManager.ConnectionInfo;
                             }
+                            else
+                            {
+                                dialog.Connector = connector;
+                            }
+                            if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                            {
+                                connector = dialog.Connector;
+                                var project = dialog.ProjectName;
+                                if (connector != null && !string.IsNullOrWhiteSpace(project))
+                                {
+                                    connector.OpenProject(project);
+                                    DevOpsManager.Register(connector, threatModel);
+                                    scope?.Complete();
+                                    ChangeDisconnectButtonStatus(connector, true);
+                                }
+                            } 
                         }
 
                         break;
@@ -90,8 +95,12 @@ namespace ThreatsManager.DevOps.Actions
                                 "DevOps Disconnect", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) ==
                             DialogResult.Yes)
                         {
-                            DevOpsManager.Unregister(threatModel);
-                            ChangeDisconnectButtonStatus(null, false);
+                            using (var scope = UndoRedoManager.OpenScope("Disconnect DevOps"))
+                            {
+                                DevOpsManager.Unregister(threatModel);
+                                scope?.Complete();
+                                ChangeDisconnectButtonStatus(null, false); 
+                            }
                         }
                         break;
                 }

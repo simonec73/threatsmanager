@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -67,20 +68,25 @@ namespace ThreatsManager.Extensions.Actions
             dataObject.SetData("ShapesInfo", serialized);
             Clipboard.SetDataObject(dataObject);
 
-            if (linksArray?.Any() ?? false)
+            using (var scope = UndoRedoManager.OpenScope("Cut"))
             {
-                foreach (var link in linksArray)
+                if (linksArray?.Any() ?? false)
                 {
-                    DataFlowRemovingRequired?.Invoke(link);
+                    foreach (var link in linksArray)
+                    {
+                        DataFlowRemovingRequired?.Invoke(link);
+                    }
                 }
-            }
 
-            if (shapesArray?.Any() ?? false)
-            {
-                foreach (var shape in shapesArray)
+                if (shapesArray?.Any() ?? false)
                 {
-                    EntityGroupRemovingRequired?.Invoke(shape);
+                    foreach (var shape in shapesArray)
+                    {
+                        EntityGroupRemovingRequired?.Invoke(shape);
+                    }
                 }
+
+                scope?.Complete();
             }
 
             return true;
@@ -92,6 +98,10 @@ namespace ThreatsManager.Extensions.Actions
             {
                 Tag = this
             }
-        });
+        }, false);
+
+        public IEnumerable<string> SupportedContexts => new[] { "Diagram" };
+
+        public IEnumerable<string> UnsupportedContexts => null;
     }
 }

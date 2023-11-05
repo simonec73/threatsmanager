@@ -1,50 +1,84 @@
 ﻿using System;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Aspects.Dependencies;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
-using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
+    //[JsonProperty("id")]
     //protected Guid _id { get; set; }
+    //[JsonProperty("propertyTypeId")]
+    //protected Guid _propertyTypeId { get; set; }
+    //[JsonProperty("readOnly")]
+    //protected bool _readOnly { get; set; }
     //#endregion
 
     [PSerializable]
     public class PropertyAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Family)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("id")]
-        public Guid _id { get; set; }
+        [ImportMember(nameof(_id))]
+        public Property<Guid> _id;
+
+        [ImportMember(nameof(_propertyTypeId))]
+        public Property<Guid> _propertyTypeId;
+
+        [ImportMember(nameof(_readOnly))]
+        public Property<bool> _readOnly;
         #endregion
 
         #region Implementation of interface IProperty.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("propertyTypeId")]
-        public Guid PropertyTypeId { get; set; }
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 6)]
+        public IPropertyType PropertyType
+        {
+            get 
+            {
+                IPropertyType result = null;
+
+                var propertyTypeId = _propertyTypeId?.Get() ?? Guid.Empty;
+                var model = (Instance as IThreatModelChild)?.Model;
+                if (propertyTypeId != Guid.Empty && model != null)
+                {
+                    result = model.GetPropertyType(propertyTypeId);
+                }
+
+                return result;
+            }
+        }
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 2)]
+        public Guid PropertyTypeId
+        {
+            get
+            {
+                return _propertyTypeId?.Get() ?? Guid.Empty;
+            }
+
+            set
+            {
+                _propertyTypeId?.Set(value);
+            }
+        }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IPropertyType PropertyType => (Instance as IThreatModelChild)?.Model?.GetPropertyType(PropertyTypeId);
+        public Guid Id => _id?.Get() ?? Guid.Empty;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public Guid Id => _id;
+        public bool ReadOnly
+        {
+            get
+            {
+                return _readOnly?.Get() ?? false;
+            }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("readOnly")]
-        public bool ReadOnly { get; set; }
+            set
+            {
+                _readOnly?.Set(value);
+            }
+        }
         #endregion
     }
 }

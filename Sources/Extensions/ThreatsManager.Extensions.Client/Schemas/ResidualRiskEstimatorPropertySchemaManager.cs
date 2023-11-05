@@ -21,14 +21,20 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
-            result.AppliesTo = Scope.ThreatModel;
-            result.AutoApply = false;
-            result.Priority = 100;
-            result.Visible = false;
-            result.System = true;
-            result.NotExportable = true;
-            result.Description = Resources.ResidualRiskEstimatorConfigurationPropertySchemaDescription;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
+            {
+                result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+                result.AppliesTo = Scope.ThreatModel;
+                result.AutoApply = false;
+                result.Priority = 100;
+                result.Visible = false;
+                result.System = true;
+                result.NotExportable = true;
+                result.Description = Resources.ResidualRiskEstimatorConfigurationPropertySchemaDescription;
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -37,13 +43,17 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get SelectedEstimatorId property type"))
             {
-                result = schema.GetPropertyType("Selected Estimator") ?? schema.AddPropertyType("Selected Estimator", PropertyValueType.SingleLineString);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = "Extension Id of the Selected Residual Risk Estimator";
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("Selected Estimator") ?? schema.AddPropertyType("Selected Estimator", PropertyValueType.SingleLineString);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = "Extension Id of the Selected Residual Risk Estimator";
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -53,28 +63,17 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get Parameters property type"))
             {
-                result = schema.GetPropertyType("Estimator Parameters") ?? schema.AddPropertyType("Estimator Parameters", PropertyValueType.JsonSerializableObject);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = "Parameters of the Selected Residual Risk Estimator";
-            }
-
-            return result;
-        }
-
-        public IPropertyType GetInfinitePropertyType()
-        {
-            IPropertyType result = null;
-
-            var schema = GetSchema();
-            if (schema != null)
-            {
-                result = schema.GetPropertyType("Infinite Cap") ?? schema.AddPropertyType("Infinite Cap", PropertyValueType.Decimal);
-                result.Visible = false;
-                result.Description = "Infinite Cap for the selected Residual Risk Estimator";
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("Estimator Parameters") ?? schema.AddPropertyType("Estimator Parameters", PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = "Parameters of the Selected Residual Risk Estimator";
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -99,21 +98,26 @@ namespace ThreatsManager.Extensions.Schemas
 
             set
             {
-                var propertyType = GetSelectedEstimatorIdPropertyType();
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set Selected Estimator"))
                 {
-                    var property = _model.GetProperty(propertyType);
+                    var propertyType = GetSelectedEstimatorIdPropertyType();
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType);
 
-                    if (property == null)
-                    {
-                        if (value != null)
+                        if (property == null)
                         {
-                            _model.AddProperty(propertyType, value.GetExtensionId());
+                            if (value != null)
+                            {
+                                _model.AddProperty(propertyType, value.GetExtensionId());
+                                scope?.Complete();
+                            }
                         }
-                    }
-                    else
-                    {
-                        property.StringValue = value?.GetExtensionId();
+                        else
+                        {
+                            property.StringValue = value?.GetExtensionId();
+                            scope?.Complete();
+                        }
                     }
                 }
             }
@@ -140,67 +144,39 @@ namespace ThreatsManager.Extensions.Schemas
 
             set
             {
-                var propertyType = GetParametersPropertyType();
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set Parameters"))
                 {
-                    if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject property)
+                    var propertyType = GetParametersPropertyType();
+                    if (propertyType != null)
                     {
-                        if (value == null)
-                            property.Value = null;
-                        else
+                        if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject property)
                         {
-                            property.Value = new ResidualRiskEstimatorConfiguration()
+                            if (value == null)
+                                property.Value = null;
+                            else
                             {
-                                Parameters = new List<ResidualRiskEstimatorParameter>(value)
-                            };
-                        }
-                    }
-                    else
-                    {
-                        if (value != null)
-                        {
-                            if (_model.AddProperty(propertyType, null) is IPropertyJsonSerializableObject p)
-                            {
-                                p.Value = new ResidualRiskEstimatorConfiguration()
+                                property.Value = new ResidualRiskEstimatorConfiguration()
                                 {
                                     Parameters = new List<ResidualRiskEstimatorParameter>(value)
                                 };
                             }
+                            scope?.Complete();
+                        }
+                        else
+                        {
+                            if (value != null)
+                            {
+                                if (_model.AddProperty(propertyType, null) is IPropertyJsonSerializableObject p)
+                                {
+                                    p.Value = new ResidualRiskEstimatorConfiguration()
+                                    {
+                                        Parameters = new List<ResidualRiskEstimatorParameter>(value)
+                                    };
+                                    scope?.Complete();
+                                }
+                            }
                         }
                     }
-                }
-            }
-        }
-
-        public float Infinite
-        {
-            get
-            {
-                float result = -1f;
-
-                var propertyType = GetInfinitePropertyType();
-                if (propertyType != null)
-                {
-                    var property = _model.GetProperty(propertyType);
-                    if (property is IPropertyDecimal decimalProperty)
-                        result = (float) decimalProperty.Value;
-                }
-
-                return result;
-            }
-
-            set
-            {
-                var propertyType = GetInfinitePropertyType();
-                if (propertyType != null)
-                {
-                    var property = _model.GetProperty(propertyType);
-
-                    if (property == null)
-                        property = _model.AddProperty(propertyType, null);
-
-                    if (property is IPropertyDecimal decimalProperty)
-                        decimalProperty.Value = (decimal) value;
                 }
             }
         }

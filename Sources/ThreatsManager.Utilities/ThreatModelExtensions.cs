@@ -229,7 +229,7 @@ namespace ThreatsManager.Utilities
             var model = mitigation?.Model;
             if (model != null)
             {
-                List<IThreatEventMitigation> mitigations = new List<IThreatEventMitigation>();
+                var mitigations = new List<IThreatEventMitigation>();
 
                 GetThreatEventMitigations(mitigation, model, mitigations);
                 GetThreatEventMitigations(mitigation, model.Entities, mitigations);
@@ -261,7 +261,8 @@ namespace ThreatsManager.Utilities
             {
                 foreach (var te in tes)
                 {
-                    var m = te.Mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.Id);
+                    var mitigations = te.Mitigations?.ToArray();
+                    var m = mitigations?.FirstOrDefault(x => x.MitigationId == mitigation.Id);
                     if (m != null)
                         list.Add(m);
                 }

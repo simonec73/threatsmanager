@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using DevComponents.DotNetBar.Layout;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Roadmap
 {
@@ -16,6 +17,9 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellMouseDown -= _grid_CellMouseDown;
             _grid.CellMouseLeave -= _grid_CellMouseLeave;
             _grid.CellMouseMove -= _grid_CellMouseMove;

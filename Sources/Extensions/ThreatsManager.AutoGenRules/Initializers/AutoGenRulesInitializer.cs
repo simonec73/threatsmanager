@@ -31,6 +31,10 @@ namespace ThreatsManager.AutoGenRules.Initializers
             KnownTypesBinder.AddKnownType(typeof(DataStoreTemplateRuleNode));
             KnownTypesBinder.AddKnownType(typeof(FlowTemplateRuleNode));
             KnownTypesBinder.AddKnownType(typeof(TrustBoundaryTemplateRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(EnterTrustBoundaryRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(EnterTrustBoundaryTemplateRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(ExitTrustBoundaryRuleNode));
+            KnownTypesBinder.AddKnownType(typeof(ExitTrustBoundaryTemplateRuleNode));
         }
     }
 }

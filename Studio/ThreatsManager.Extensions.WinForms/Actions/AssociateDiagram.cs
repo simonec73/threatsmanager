@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
@@ -77,39 +78,44 @@ namespace ThreatsManager.Extensions.Actions
                 {
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        var diagram = dialog.Diagram;
-                        if (diagram == null)
+                        using (var scope = UndoRedoManager.OpenScope("Associate Diagram"))
                         {
-                            diagram = model.AddDiagram(dialog.DiagramName);
-                        }
-
-                        if (diagram != null)
-                        {
-                            var schemaManager = new AssociatedDiagramPropertySchemaManager(model);
-                            var propertyType = schemaManager.GetAssociatedDiagramIdPropertyType();
-                            if (propertyType != null)
+                            var diagram = dialog.Diagram;
+                            if (diagram == null)
                             {
-                                var property = entity.GetProperty(propertyType);
-                                if (property == null)
-                                {
-                                    property = entity.AddProperty(propertyType, diagram.Id.ToString("N"));
-                                }
-                                else
-                                {
-                                    property.StringValue = diagram.Id.ToString("N");
-                                }
+                                diagram = model.AddDiagram(dialog.DiagramName);
+                            }
 
-                                result = true;
-                                DiagramAssociationHelper.NotifyDiagramAssociation(entity, diagram);
-                                var factory = ExtensionUtils.GetExtensionByLabel<IPanelFactory>("Diagram");
-                                if (factory != null)
+                            if (diagram != null)
+                            {
+                                var schemaManager = new AssociatedDiagramPropertySchemaManager(model);
+                                var propertyType = schemaManager.GetAssociatedDiagramIdPropertyType();
+                                if (propertyType != null)
                                 {
-                                    OpenPanel?.Invoke(factory, diagram);
-                                    ShowMessage?.Invoke("Diagram has been associated successfully.");
+                                    var property = entity.GetProperty(propertyType);
+                                    if (property == null)
+                                    {
+                                        property = entity.AddProperty(propertyType, diagram.Id.ToString("N"));
+                                    }
+                                    else
+                                    {
+                                        property.StringValue = diagram.Id.ToString("N");
+                                    }
+
+                                    scope?.Complete();
+                                    result = true;
+
+                                    DiagramAssociationHelper.NotifyDiagramAssociation(entity, diagram);
+                                    var factory = ExtensionUtils.GetExtensionByLabel<IPanelFactory>("Diagram");
+                                    if (factory != null)
+                                    {
+                                        OpenPanel?.Invoke(factory, diagram);
+                                        ShowMessage?.Invoke("Diagram has been associated successfully.");
+                                    }
                                 }
                             }
-                        }
-                    }
+
+                        }                    }
                 }
             }
 

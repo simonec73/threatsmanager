@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Interfaces", "ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj", "{35F18D83-9CBD-4FA3-8A68-24D9490F688D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.Packaging", "ThreatsManager.Packaging\ThreatsManager.Packaging.csproj", "{E347FA46-2669-45DA-887C-9674B4B5567D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Utilities", "ThreatsManager.Utilities\ThreatsManager.Utilities.csproj", "{0B0AE317-E33E-4CDF-B063-25E891F4DCCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.Utilities", "ThreatsManager.Utilities\ThreatsManager.Utilities.csproj", "{0B0AE317-E33E-4CDF-B063-25E891F4DCCE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.Engine", "ThreatsManager.Engine\ThreatsManager.Engine.csproj", "{5B85DB90-043B-41AD-ABFD-74F4D153C499}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Engine", "ThreatsManager.Engine\ThreatsManager.Engine.csproj", "{5B85DB90-043B-41AD-ABFD-74F4D153C499}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{35F18D83-9CBD-4FA3-8A68-24D9490F688D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35F18D83-9CBD-4FA3-8A68-24D9490F688D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35F18D83-9CBD-4FA3-8A68-24D9490F688D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E347FA46-2669-45DA-887C-9674B4B5567D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E347FA46-2669-45DA-887C-9674B4B5567D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E347FA46-2669-45DA-887C-9674B4B5567D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E347FA46-2669-45DA-887C-9674B4B5567D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B0AE317-E33E-4CDF-B063-25E891F4DCCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B0AE317-E33E-4CDF-B063-25E891F4DCCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B0AE317-E33E-4CDF-B063-25E891F4DCCE}.Release|Any CPU.ActiveCfg = Release|Any CPU

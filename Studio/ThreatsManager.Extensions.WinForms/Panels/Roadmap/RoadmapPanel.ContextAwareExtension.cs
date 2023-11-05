@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
-using ThreatsManager.Utilities.WinForms;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Roadmap
 {
@@ -24,7 +19,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
             foreach (var action in _actions)
             {
-                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction)
+                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction &&
+                    commandsBarContextAwareAction.IsVisible("Roadmap"))
                 {
                     var commandsBar = commandsBarContextAwareAction.CommandsBar;
                     if (commandsBar != null)

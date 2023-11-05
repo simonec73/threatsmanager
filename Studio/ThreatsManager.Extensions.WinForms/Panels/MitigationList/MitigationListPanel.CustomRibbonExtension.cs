@@ -7,6 +7,9 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
+using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -16,6 +19,8 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
 {
     public partial class MitigationListPanel
     {
+        private Dictionary<string, List<ICommandsBarDefinition>> _commandsBarContextAwareActions;
+
         public event Action<string, bool> ChangeCustomActionStatus;
 
         public string TabLabel => "Mitigation List";
@@ -48,12 +53,30 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                         Properties.Resources.element_big,
                         Properties.Resources.element, true),
                 }));
+
+                if (_commandsBarContextAwareActions?.Any() ?? false)
+                {
+                    foreach (var definitions in _commandsBarContextAwareActions.Values)
+                    {
+                        List<IActionDefinition> actions = new List<IActionDefinition>();
+                        foreach (var definition in definitions)
+                        {
+                            foreach (var command in definition.Commands)
+                            {
+                                actions.Add(command);
+                            }
+                        }
+
+                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
+                    }
+                }
+
                 result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
                 {
                     new ActionDefinition(Id, "Refresh", "Refresh List",
                         Resources.refresh_big,
                         Resources.refresh,
-                        true, Shortcut.F5),
+                        true, Shortcut.F5)
                 }));
 
                 return result;
@@ -68,29 +91,35 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
 
             try
             {
+                var selectedTEM = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
+                    .Select(x => x.GridRow)
+                    .Where(x => x.Tag is IThreatEventMitigation)
+                    .Distinct()
+                    .ToArray();
+
+                var selectedTE = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
+                    .Select(x => x.GridRow)
+                    .Where(x => x.Tag is IThreatEvent)
+                    .Distinct()
+                    .ToArray();
+
                 switch (action.Name)
                 {
                     case "RemoveThreatEvent":
-                        var selected = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Where(x => x.Tag is IThreatEventMitigation)
-                            .Distinct()
-                            .ToArray();
-
                         if (_currentRow != null)
                         {
-                            if ((selected?.Length ?? 0) > 1)
+                            if ((selectedTEM?.Length ?? 0) > 1)
                             {
                                 var name = (_currentRow?.Tag as IThreatEventMitigation)?.ThreatEvent.Name;
                                 var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected.Length} Threat Event associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Event associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
+                                    $"You have selected {selectedTEM.Length} Threat Event associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Threat Event associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
                                     "Remove Threat Event associations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
                                     MessageBoxDefaultButton.Button3);
                                 switch (outcome)
                                 {
                                     case DialogResult.Yes:
                                         bool removed = true;
-                                        foreach (var row in selected)
+                                        foreach (var row in selectedTEM)
                                         {
                                             bool r = false;
                                             if (row.Tag is IThreatEventMitigation mitigation)
@@ -199,6 +228,81 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                         break;
                     case "Refresh":
                         LoadModel();
+                        break;
+                    default:
+                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                        {
+                            if ((selectedTE?.Any() ?? false) &&
+                                (identitiesContextAwareAction.Scope & Scope.ThreatEvent) != 0)
+                            {
+                                var identities = selectedTE.Select(x => x.Tag as IIdentity)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (identities.Any())
+                                {
+                                    if (identitiesContextAwareAction.Execute(identities))
+                                    {
+                                        text = identitiesContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{identitiesContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                            
+                        }
+                        else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                        {
+                            if ((selectedTEM?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEventMitigation) != 0)
+                            {
+                                var containers = selectedTEM.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (containers.Any())
+                                {
+                                    if (pcContextAwareAction.Execute(containers))
+                                    {
+                                        text = pcContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{pcContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                            else if ((selectedTE?.Any() ?? false) &&
+                                (pcContextAwareAction.Scope & Scope.ThreatEvent) != 0)
+                            {
+                                var containers = selectedTE.Select(x => x.Tag as IPropertiesContainer)
+                                    .Where(x => x != null)
+                                    .ToArray();
+
+                                if (containers.Any())
+                                {
+                                    if (pcContextAwareAction.Execute(containers))
+                                    {
+                                        text = pcContextAwareAction.Label;
+                                        _properties.Item = null;
+                                        _properties.Item = _currentRow?.Tag;
+                                    }
+                                    else
+                                    {
+                                        text = $"{pcContextAwareAction.Label} failed.";
+                                        warning = true;
+                                    }
+                                }
+                            }
+                        }
                         break;
                 }
 

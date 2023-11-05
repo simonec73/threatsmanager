@@ -1,10 +1,11 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
@@ -12,11 +13,13 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertyTypeAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.PropertyInteger, ThreatsManager.Engine")]
     public class IntegerPropertyType : IIntegerPropertyType
     {
@@ -30,7 +33,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             _id = Guid.NewGuid();
             _schemaId = schema.Id;
             _model = schema.Model;
-            _modelId = schema.Model?.Id ?? Guid.Empty;
             Name = name;
             Visible = true;
         }
@@ -39,6 +41,8 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public bool Locked { get; set; }
         public Guid SchemaId { get; }
@@ -47,31 +51,22 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public bool DoNotPrint { get; set; }
         public bool ReadOnly { get; set; }
         public string CustomPropertyViewer { get; set; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("schema")]
         protected Guid _schemaId { get; set; }
         #endregion
 

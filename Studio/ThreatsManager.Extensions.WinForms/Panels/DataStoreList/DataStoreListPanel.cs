@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -8,6 +9,7 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -35,6 +37,9 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
  
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<DataStoreListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -54,7 +59,61 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             _model.EntityShapeAdded += EntityShapeAdded;
             _model.EntityShapeRemoved += EntityShapeRemoved;
 
+            if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+            {
+                undoable.Undone += ModelUndone;
+            }
+
             LoadModel();
+        }
+
+        private void ModelUndone(object item, bool removed)
+        {
+            if (removed)
+            {
+                this.ParentForm?.Close();
+            }
+            else
+            {
+                if (item is IThreatModel model)
+                {
+                    var entities = model.Entities?.OfType<IDataStore>().ToArray();
+                    var list = new List<IDataStore>();
+                    if (entities?.Any() ?? false)
+                    {
+                        list.AddRange(entities);
+                    }
+
+                    var grid = _grid.PrimaryGrid;
+                    var rows = grid.Rows.OfType<GridRow>().ToArray();
+                    if (rows.Any())
+                    {
+                        foreach (var row in rows)
+                        {
+                            if (row.Tag is IDataStore dataStore)
+                            {
+                                if (model.GetEntity(dataStore.Id) == null)
+                                {
+                                    RemoveEventSubscriptions(row);
+                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                } 
+                                else
+                                {
+                                    list.Remove(dataStore);
+                                }
+                            }
+                        }
+                    }
+
+                    if (list.Any())
+                    {
+                        foreach (var i in list)
+                        {
+                            AddGridRow(i, grid);
+                        }
+                    }
+                }
+            }
         }
 
         private void ModelChildRemoved(IIdentity identity)
@@ -210,6 +269,11 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             }
         }
 
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
+
         private void AddGridRow([NotNull] IEntity entity, [NotNull] GridPanel panel)
         {
             var row = new GridRow(
@@ -225,6 +289,39 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             AddSuperTooltipProvider(entity, row.Cells[0]);
 
             panel.Rows.Add(row);
+
+            if (entity is IUndoable undoable && undoable.IsUndoEnabled)
+                undoable.Undone += EntityUndone;
+        }
+
+        private void EntityUndone(object item, bool removed)
+        {
+            if (item is IDataStore dataStore)
+            {
+                var row = GetRow(dataStore);
+                if (row != null)
+                {
+                    if (removed)
+                    {
+                        RemoveEventSubscriptions(row);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _loading = true;
+                            row.Cells["Name"].Value = dataStore.Name;
+                            row.Cells["Parent"].Value = dataStore.Parent?.Name ?? String.Empty;
+                            row.Cells[0].CellStyles.Default.Image = dataStore.GetImage(ImageSize.Small);
+                        }
+                        finally
+                        {
+                            _loading = false;
+                        }
+                    }
+                }
+            }
         }
 
         private void RemoveEventSubscriptions()
@@ -243,6 +340,8 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                 entity.ImageChanged -= OnImageChanged;
                 for (int i = 0; i < row.Cells.Count; i++)
                     row.Cells[i].PropertyChanged -= OnPropertyChanged;
+                if (entity is IUndoable undoable && undoable.IsUndoEnabled)
+                    undoable.Undone -= EntityUndone;
                 RemoveSuperTooltipProvider(row.Cells["Name"]);
             }
         }
@@ -421,11 +520,46 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                 _properties.Item = entity;
                 ChangeCustomActionStatus?.Invoke("RemoveDataStore", true);
                 ChangeCustomActionStatus?.Invoke("FindDataStore", true);
+                ChangeActionsStatus(true);
             }
             else
             {
                 ChangeCustomActionStatus?.Invoke("RemoveDataStore", false);
                 ChangeCustomActionStatus?.Invoke("FindDataStore", false);
+                ChangeActionsStatus(false);
+            }
+        }
+
+        private void ChangeActionsStatus(bool newStatus)
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction &&
+                                        (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction &&
+                                        (containersContextAwareAction.Scope & SupportedScopes) != 0)
+                                    {
+                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -446,8 +580,12 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -455,9 +593,22 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
                     ShowCurrentRow();
                 }
             }

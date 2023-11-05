@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -10,6 +11,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -72,21 +74,25 @@ namespace ThreatsManager.Extensions.Actions
                 MessageBoxIcon.Information, 
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                var schemaManager = new AssociatedDiagramPropertySchemaManager(model);
-                var propertyType = schemaManager.GetAssociatedDiagramIdPropertyType();
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Disassociate Diagram"))
                 {
-                    if (entity.GetProperty(propertyType) is IPropertyIdentityReference property && 
-                        property.ValueId != Guid.Empty)
+                    var schemaManager = new AssociatedDiagramPropertySchemaManager(model);
+                    var propertyType = schemaManager.GetAssociatedDiagramIdPropertyType();
+                    if (propertyType != null)
                     {
-                        result = true;
-                        property.Value = null;
-                        DiagramAssociationHelper.NotifyDiagramDisassociation(entity);
-                        ShowMessage?.Invoke("Diagram has been disassociated successfully.");
-                    }
-                    else
-                    {
-                        ShowWarning?.Invoke("The Entity is not associated to any Diagram.");
+                        if (entity.GetProperty(propertyType) is IPropertyIdentityReference property &&
+                            property.ValueId != Guid.Empty)
+                        {
+                            property.Value = null;
+                            result = true;
+                            DiagramAssociationHelper.NotifyDiagramDisassociation(entity);
+                            scope?.Complete();
+                            ShowMessage?.Invoke("Diagram has been disassociated successfully.");
+                        }
+                        else
+                        {
+                            ShowWarning?.Invoke("The Entity is not associated to any Diagram.");
+                        }
                     }
                 }
             }

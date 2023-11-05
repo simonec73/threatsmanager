@@ -1,4 +1,4 @@
-﻿namespace SampleWinFormExtensions.Panels.Definitions
+﻿namespace ThreatsManager.SampleWinFormExtensions.Panels.Definitions
 {
     partial class DefinitionsPanel
     {

@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Scenario for a specific Threat Event.
     /// </summary>
-    public interface IThreatEventScenario : IIdentity, IPropertiesContainer, IThreatModelChild, IThreatEventChild, IDirty
+    public interface IThreatEventScenario : IIdentity, IPropertiesContainer, IThreatModelChild, IThreatEventChild
     {
         /// <summary>
         /// Identifier of the Severity.

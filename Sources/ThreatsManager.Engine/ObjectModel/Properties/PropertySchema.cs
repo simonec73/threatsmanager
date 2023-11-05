@@ -1,26 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using PostSharp.Patterns.Collections;
+using ThreatsManager.Engine.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public partial class PropertySchema : IPropertySchema
     {
         public PropertySchema()
@@ -28,21 +31,38 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertySchema([Required] IThreatModel model, [Required] string name, [Required] string nspace, int priority = 50) : this()
+        public PropertySchema([Required] string name, [Required] string nspace, int priority = 50) : this()
         {
             _id = Guid.NewGuid();
             Name = name;
             Namespace = nspace;
-            _model = model;
-            _modelId = model.Id;
             Priority = priority;
             RequiredExecutionMode = ExecutionMode.Business;
             Visible = true;
         }
 
+        #region Default implementation.
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        [Reference]
+        [field: NotRecorded]
+        public IThreatModel Model { get; }
+        #endregion
+
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
         #endregion
 
@@ -110,36 +130,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         public void Add([NotNull] IPropertyType propertyType)
         {
             if (_propertyTypes == null)
-                _propertyTypes = new List<IPropertyType>();
+                _propertyTypes = new AdvisableCollection<IPropertyType>();
 
             _propertyTypes.Add(propertyType);
-        }
-        #endregion
-
-        #region Default implementation.
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
         }
         #endregion
     }

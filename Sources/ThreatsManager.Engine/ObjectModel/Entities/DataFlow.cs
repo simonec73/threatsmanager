@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -18,14 +22,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Flow")]
     [TypeInitial("F")]
     public class DataFlow : IDataFlow, IInitializableObject
@@ -35,21 +41,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             
         }
 
-        public DataFlow([NotNull] IThreatModel model, [Required] string name, Guid sourceId, Guid targetId) : this()
+        public DataFlow([Required] string name, Guid sourceId, Guid targetId) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
             _sourceId = sourceId;
             _targetId = targetId;
             FlowType = FlowType.ReadWriteCommand;
-  
-            model.AutoApplySchemas(this);
         }
 
-        public DataFlow([NotNull] IThreatModel model, [Required] string name, [NotNull] IEntity source, 
-            [NotNull] IEntity target) : this(model, name, source.Id, target.Id)
+        public DataFlow([Required] string name, [NotNull] IEntity source, [NotNull] IEntity target) : this(name, source.Id, target.Id)
         {
         }
 
@@ -62,6 +63,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -95,9 +98,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IThreatEvent> ThreatEvents { get; }
         public IThreatEvent GetThreatEvent(Guid id)
         {
@@ -107,6 +116,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public IThreatEvent GetThreatEventByThreatType(Guid threatTypeId)
         {
             return null;
+        }
+
+        public void Add(IThreatEvent threatEvent)
+        {
         }
 
         public IThreatEvent AddThreatEvent(IThreatType threatType)
@@ -119,29 +132,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
 
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IVulnerability> Vulnerabilities { get; }
         public IVulnerability GetVulnerability(Guid id)
         {
@@ -169,11 +167,27 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
-        private List<IThreatEvent> _threatEvents { get; set; }
-        private List<IVulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("threatEvents")]
+        private AdvisableCollection<ThreatEvent> _threatEvents { get; set; }
+        [Child]
+        [JsonProperty("vulnerabilities")]
+        private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
         #endregion    
 
@@ -181,19 +195,23 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Scope PropertiesScope => Scope.DataFlow;
 
         [JsonProperty("source")]
-        private Guid _sourceId;
+        private Guid _sourceId { get; set; }
 
         public Guid SourceId => _sourceId;
 
         [JsonProperty("target")]
-        private Guid _targetId;
+        private Guid _targetId { get; set; }
 
         public Guid TargetId => _targetId;
 
+        [property: NotRecorded]
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IEntity Source => Model.GetEntity(_sourceId);
 
+        [property: NotRecorded]
         [InitializationRequired]
+        [IgnoreAutoChangeNotification]
         public IEntity Target => Model.GetEntity(_targetId);
 
         [JsonProperty("flowType")]
@@ -201,17 +219,21 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public FlowType FlowType { get; set; }
 
         [JsonProperty("template")]
-        internal Guid _templateId;
+        internal Guid _templateId { get; set; }
 
+        [Reference]
+        [property: NotRecorded]
         internal IFlowTemplate _template { get; set; }
 
+        [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IFlowTemplate Template
         {
             get
             {
                 if (_template == null && _templateId != Guid.Empty)
                 {
-                    _template = _model?.GetFlowTemplate(_templateId);
+                    _template = Model?.GetFlowTemplate(_templateId);
                 }
 
                 return _template;
@@ -220,12 +242,32 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public void ResetTemplate()
         {
-            this.ClearProperties();
-            _model.AutoApplySchemas(this);
+            using (var scope = UndoRedoManager.OpenScope("Detach from Template"))
+            {
+                this.ClearProperties();
+                Model?.AutoApplySchemas(this);
 
-           _templateId = Guid.Empty;
-           _template = null;
+                _templateId = Guid.Empty;
+                _template = null;
+
+                scope?.Complete();
+            }
         }
+
+        public void Flip()
+        {
+            using (var scope = UndoRedoManager.OpenScope("Flip direction of the Flow"))
+            {
+                var newSource = _targetId;
+                _targetId = _sourceId;
+                _sourceId = newSource;
+                scope?.Complete();
+            }
+
+            Flipped?.Invoke(this);
+        }
+
+        public event Action<IDataFlow> Flipped;
 
         public IDataFlow Clone([NotNull] IDataFlowsContainer container)
         {
@@ -252,15 +294,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
-        }
-
-        [InitializationRequired]
-        public void Add([NotNull] IThreatEvent threatEvent)
-        {
-            if (_threatEvents == null)
-                _threatEvents = new List<IThreatEvent>();
-
-            _threatEvents.Add(threatEvent);
         }
 
         public override string ToString()

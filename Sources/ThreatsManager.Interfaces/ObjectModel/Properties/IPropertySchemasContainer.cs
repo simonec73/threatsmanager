@@ -36,6 +36,13 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         void ApplySchema(Guid schemaId);
 
         /// <summary>
+        /// Unapplies the selected Schema from all objects that are defined in the Threat Model
+        /// and that have received it. 
+        /// </summary>
+        /// <param name="schemaId">Identifier of the Schema.</param>
+        void UnapplySchema(Guid schemaId);
+
+        /// <summary>
         /// Apply the AutoApply Properties Schemas to the specified Properties Container.  
         /// </summary>
         /// <param name="container">Container to be extended.</param>

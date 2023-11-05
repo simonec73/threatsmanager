@@ -9,8 +9,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
     {
         private IEnumerable<IContextAwareAction> _actions;
 
-        public Scope SupportedScopes => Scope.Diagram | Scope.Entity | Scope.Group | Scope.DataFlow | Scope.ThreatEvent | 
-                                        Scope.Link | Scope.EntityShape | Scope.GroupShape;
+        public Scope SupportedScopes => Scope.All;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {

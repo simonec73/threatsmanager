@@ -2,12 +2,20 @@
 using System.Text;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.AutoGenRules.Engine
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
     public class AndRuleNode : NaryRuleNode
     {
+        public AndRuleNode() : base() 
+        {
+            Name = "AND";
+        }
+
         public override bool Evaluate([NotNull] object context)
         {
             bool result = true;

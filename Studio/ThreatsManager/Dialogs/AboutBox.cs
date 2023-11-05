@@ -20,13 +20,7 @@ namespace ThreatsManager.Dialogs
                 _moreInformation.Text = _moreInformation.Text.Replace("v{ENGINE_VERSION}", string.Empty);
             else
                 _moreInformation.Text = _moreInformation.Text.Replace("{ENGINE_VERSION}", engineVersion);
-
-#if MICROSOFT_EDITION
-            _thirdParty.Text = $"{Properties.Resources.MicrosoftOnly}\n\n{Properties.Resources.ThirdParties}";
-            _microsoftEdition.Visible = true;
-#else
             _thirdParty.Text = Properties.Resources.ThirdParties;
-#endif
         }
 
 #region Assembly Attribute Accessors

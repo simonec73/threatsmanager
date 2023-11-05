@@ -4,6 +4,8 @@ using System.Drawing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -12,6 +14,8 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ImageConverter = ThreatsManager.Utilities.ImageConverter;
+using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -19,11 +23,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Entity Template")]
     public class EntityTemplate : IEntityTemplate, IInitializableObject
     {
@@ -31,10 +37,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public EntityTemplate([NotNull] IThreatModel model, [Required] string name)
+        public EntityTemplate([Required] string name)
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
         }
@@ -45,11 +49,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -83,31 +91,27 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
+        public void Unapply(IPropertySchema schema)
         {
         }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -124,9 +128,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public event Action<IEntityTemplate, ImageSize> ImageChanged;
 
+        [Reference]
+        [NotRecorded]
         [JsonProperty("bigImage")]
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _bigImage;
+        private Bitmap _bigImage { get; set; }
 
         public Bitmap BigImage 
         {
@@ -142,9 +148,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
+        [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _image;
+        private Bitmap _image { get; set; }
 
         public Bitmap Image 
         {
@@ -160,9 +168,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
+        [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _smallImage;
+        private Bitmap _smallImage { get; set; }
 
         public Bitmap SmallImage 
         {
@@ -183,26 +193,30 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             IEntity result = null;
 
-            switch (this.EntityType)
+            using (var scope = UndoRedoManager.OpenScope("Create Entity"))
             {
-                case EntityType.ExternalInteractor:
-                    result = _model.AddEntity<IExternalInteractor>(name, this);
-                    break;
-                case EntityType.Process:
-                    result = _model.AddEntity<IProcess>(name, this);
-                    break;
-                case EntityType.DataStore:
-                    result = _model.AddEntity<IDataStore>(name, this);
-                    break;
-            }
+                switch (EntityType)
+                {
+                    case EntityType.ExternalInteractor:
+                        result = Model?.AddEntity<IExternalInteractor>(name, this);
+                        break;
+                    case EntityType.Process:
+                        result = Model?.AddEntity<IProcess>(name, this);
+                        break;
+                    case EntityType.DataStore:
+                        result = Model?.AddEntity<IDataStore>(name, this);
+                        break;
+                }
 
-            if (result != null)
-            {
-                result.Description = Description;
-                result.BigImage = this.GetImage(ImageSize.Big);
-                result.Image = this.GetImage(ImageSize.Medium);
-                result.SmallImage = this.GetImage(ImageSize.Small);
-                this.CloneProperties(result);
+                if (result != null)
+                {
+                    result.Description = Description;
+                    result.BigImage = this.GetImage(ImageSize.Big);
+                    result.Image = this.GetImage(ImageSize.Medium);
+                    result.SmallImage = this.GetImage(ImageSize.Small);
+                    this.CloneProperties(result);
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -210,25 +224,30 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public void ApplyTo(IEntity entity)
         {
-            entity.BigImage = this.GetImage(ImageSize.Big);
-            entity.Image = this.GetImage(ImageSize.Medium);
-            entity.SmallImage = this.GetImage(ImageSize.Small);
-            entity.ClearProperties();
-            this.CloneProperties(entity);
-            switch (entity)
+            using (var scope = UndoRedoManager.OpenScope("Apply Template to an existing Entity"))
             {
-                case ExternalInteractor externalInteractor:
-                    externalInteractor._templateId = Id;
-                    externalInteractor._template = this;
-                    break;
-                case Process process:
-                    process._templateId = Id;
-                    process._template = this;
-                    break;
-                case DataStore dataStore:
-                    dataStore._templateId = Id;
-                    dataStore._template = this;
-                    break;
+                entity.BigImage = this.GetImage(ImageSize.Big);
+                entity.Image = this.GetImage(ImageSize.Medium);
+                entity.SmallImage = this.GetImage(ImageSize.Small);
+                entity.ClearProperties();
+                this.CloneProperties(entity);
+                switch (entity)
+                {
+                    case ExternalInteractor externalInteractor:
+                        externalInteractor._templateId = Id;
+                        externalInteractor._template = this;
+                        break;
+                    case Process process:
+                        process._templateId = Id;
+                        process._template = this;
+                        break;
+                    case DataStore dataStore:
+                        dataStore._templateId = Id;
+                        dataStore._template = this;
+                        break;
+                }
+
+                scope?.Complete();
             }
         }
 

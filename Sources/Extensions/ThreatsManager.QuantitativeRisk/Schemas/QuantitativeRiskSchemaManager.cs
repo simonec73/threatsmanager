@@ -25,90 +25,98 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
         
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(Resources.QuantitativeRiskSchemaName, Resources.DefaultNamespace) ??
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{Resources.QuantitativeRiskSchemaName}' schema"))
+            {
+                result = _model.GetSchema(Resources.QuantitativeRiskSchemaName, Resources.DefaultNamespace) ??
                          _model.AddSchema(Resources.QuantitativeRiskSchemaName, Resources.DefaultNamespace);
-            result.AppliesTo = Scope.ThreatModel;
-            result.Priority = 20;
-            result.Visible = false;
-            result.System = true;
-            result.NotExportable = true;
-            result.AutoApply = false;
-            result.RequiredExecutionMode = ExecutionMode.Expert;
-            result.Description = Resources.ConfigurationPropertySchemaDescription;
+                result.AppliesTo = Scope.ThreatModel;
+                result.Priority = 20;
+                result.Visible = false;
+                result.System = true;
+                result.NotExportable = true;
+                result.AutoApply = false;
+                result.RequiredExecutionMode = ExecutionMode.Expert;
+                result.Description = Resources.ConfigurationPropertySchemaDescription;
 
-            var currency = result.GetPropertyType("Currency") ?? result.AddPropertyType("Currency", PropertyValueType.SingleLineString);
-            currency.Visible = false;
-            currency.DoNotPrint = true;
-            currency.Description = Resources.CurrencyProperty;
+                var currency = result.GetPropertyType("Currency") ?? result.AddPropertyType("Currency", PropertyValueType.SingleLineString);
+                currency.Visible = false;
+                currency.DoNotPrint = true;
+                currency.Description = Resources.CurrencyProperty;
 
-            var context = result.GetPropertyType("Context") ?? result.AddPropertyType("Context", PropertyValueType.SingleLineString);
-            context.Visible = false;
-            context.DoNotPrint = true;
-            context.Description = Resources.FactContextProperty;
+                var context = result.GetPropertyType("Context") ?? result.AddPropertyType("Context", PropertyValueType.SingleLineString);
+                context.Visible = false;
+                context.DoNotPrint = true;
+                context.Description = Resources.FactContextProperty;
 
-            var factProvider = result.GetPropertyType("FactProvider") ?? result.AddPropertyType("FactProvider", PropertyValueType.SingleLineString);
-            factProvider.Visible = false;
-            factProvider.DoNotPrint = true;
-            factProvider.Description = Resources.FactProviderProperty;
+                var factProvider = result.GetPropertyType("FactProvider") ?? result.AddPropertyType("FactProvider", PropertyValueType.SingleLineString);
+                factProvider.Visible = false;
+                factProvider.DoNotPrint = true;
+                factProvider.Description = Resources.FactProviderProperty;
 
-            var fpParameters = result.GetPropertyType("FactProviderParams") ??
-                               result.AddPropertyType("FactProviderParams", PropertyValueType.JsonSerializableObject);
-            fpParameters.Visible = false;
-            fpParameters.DoNotPrint = true;
-            fpParameters.Description = Resources.FactProviderParamsProperty;
+                var fpParameters = result.GetPropertyType("FactProviderParams") ??
+                                   result.AddPropertyType("FactProviderParams", PropertyValueType.JsonSerializableObject);
+                fpParameters.Visible = false;
+                fpParameters.DoNotPrint = true;
+                fpParameters.Description = Resources.FactProviderParamsProperty;
 
-            var facts = result.GetPropertyType("Facts") ?? result.AddPropertyType("Facts", PropertyValueType.JsonSerializableObject);
-            facts.Visible = false;
-            facts.DoNotPrint = true;
-            facts.Description = Resources.FactsProperty;
+                var facts = result.GetPropertyType("Facts") ?? result.AddPropertyType("Facts", PropertyValueType.JsonSerializableObject);
+                facts.Visible = false;
+                facts.DoNotPrint = true;
+                facts.Description = Resources.FactsProperty;
 
-            var thresholds = result.GetPropertyType("Thresholds") ?? result.AddPropertyType("Thresholds", PropertyValueType.JsonSerializableObject);
-            thresholds.Visible = false;
-            thresholds.DoNotPrint = true;
-            thresholds.Description = Resources.ThresholdsProperty;
+                var thresholds = result.GetPropertyType("Thresholds") ?? result.AddPropertyType("Thresholds", PropertyValueType.JsonSerializableObject);
+                thresholds.Visible = false;
+                thresholds.DoNotPrint = true;
+                thresholds.Description = Resources.ThresholdsProperty;
 
-            var lowerPercentile = result.GetPropertyType("LowerPercentile") ?? result.AddPropertyType("LowerPercentile", PropertyValueType.Integer);
-            lowerPercentile.Visible = false;
-            lowerPercentile.DoNotPrint = true;
-            lowerPercentile.Description = Resources.LowerPercentileProperty;
+                var lowerPercentile = result.GetPropertyType("LowerPercentile") ?? result.AddPropertyType("LowerPercentile", PropertyValueType.Integer);
+                lowerPercentile.Visible = false;
+                lowerPercentile.DoNotPrint = true;
+                lowerPercentile.Description = Resources.LowerPercentileProperty;
 
-            var upperPercentile = result.GetPropertyType("UpperPercentile") ?? result.AddPropertyType("UpperPercentile", PropertyValueType.Integer);
-            upperPercentile.Visible = false;
-            upperPercentile.DoNotPrint = true;
-            upperPercentile.Description = Resources.UpperPercentileProperty;
+                var upperPercentile = result.GetPropertyType("UpperPercentile") ?? result.AddPropertyType("UpperPercentile", PropertyValueType.Integer);
+                upperPercentile.Visible = false;
+                upperPercentile.DoNotPrint = true;
+                upperPercentile.Description = Resources.UpperPercentileProperty;
 
-            var referenceMeasure = result.GetPropertyType("ReferenceMeasure") ?? result.AddPropertyType("ReferenceMeasure", PropertyValueType.SingleLineString);
-            referenceMeasure.Visible = false;
-            referenceMeasure.DoNotPrint = true;
-            referenceMeasure.Description = Resources.ReferenceMeasureProperty;
+                var referenceMeasure = result.GetPropertyType("ReferenceMeasure") ?? result.AddPropertyType("ReferenceMeasure", PropertyValueType.SingleLineString);
+                referenceMeasure.Visible = false;
+                referenceMeasure.DoNotPrint = true;
+                referenceMeasure.Description = Resources.ReferenceMeasureProperty;
 
-            var iterations = result.GetPropertyType("Iterations") ?? result.AddPropertyType("Iterations", PropertyValueType.Integer);
-            upperPercentile.Visible = false;
-            upperPercentile.DoNotPrint = true;
-            upperPercentile.Description = Resources.IterationsProperty;
+                var iterations = result.GetPropertyType("Iterations") ?? result.AddPropertyType("Iterations", PropertyValueType.Integer);
+                upperPercentile.Visible = false;
+                upperPercentile.DoNotPrint = true;
+                upperPercentile.Description = Resources.IterationsProperty;
+
+                scope?.Complete();
+            }
 
             return result;
         }
 
         public IPropertySchema GetEvaluationSchema()
         {
-            var result = _model.GetSchema(Resources.EvaluationSchemaName, Resources.DefaultNamespace);
-            if (result == null)
-            {
-                result = _model.AddSchema(Resources.EvaluationSchemaName, Resources.DefaultNamespace);
-            }
-            result.AppliesTo = Scope.ThreatEventScenario;
-            result.AutoApply = false;
-            result.Priority = 20;
-            result.Visible = false;
-            result.System = true;
-            result.NotExportable = true;
-            result.Description = Resources.EvaluationPropertySchemaDescription;
+            IPropertySchema result;
 
-            var risk = result.GetPropertyType(Resources.RiskProperty);
-            if (risk == null)
+            using (var scope = UndoRedoManager.OpenScope($"Get '{Resources.EvaluationSchemaName}' schema"))
             {
-                risk = result.AddPropertyType(Resources.RiskProperty, PropertyValueType.JsonSerializableObject);
+                result = _model.GetSchema(Resources.EvaluationSchemaName, Resources.DefaultNamespace) ??
+                _model.AddSchema(Resources.EvaluationSchemaName, Resources.DefaultNamespace);
+
+                result.AppliesTo = Scope.ThreatEventScenario;
+                result.AutoApply = false;
+                result.Priority = 20;
+                result.Visible = false;
+                result.System = true;
+                result.NotExportable = true;
+                result.Description = Resources.EvaluationPropertySchemaDescription;
+
+                var risk = result.GetPropertyType(Resources.RiskProperty) ?? result.AddPropertyType(Resources.RiskProperty, PropertyValueType.JsonSerializableObject);
+
+                scope?.Complete();
             }
 
             return result;
@@ -120,10 +128,14 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             {
                 string result = null;
 
-                var propertyType = GetSchema()?.GetPropertyType("Currency");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Get Currency"))
                 {
-                    result = (_model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, NumberFormatInfo.CurrentInfo.CurrencySymbol))?.StringValue;
+                    var propertyType = GetSchema()?.GetPropertyType("Currency");
+                    if (propertyType != null)
+                    {
+                        result = (_model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, NumberFormatInfo.CurrentInfo.CurrencySymbol))?.StringValue;
+                        scope?.Complete();
+                    }
                 }
 
                 return result;
@@ -131,11 +143,15 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var propertyType = GetSchema()?.GetPropertyType("Currency");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set Currency"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    property.StringValue = value;
+                    var propertyType = GetSchema()?.GetPropertyType("Currency");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        property.StringValue = value;
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -157,11 +173,15 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var propertyType = GetSchema()?.GetPropertyType("FactProvider");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set FactProvider"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    property.StringValue = value;
+                    var propertyType = GetSchema()?.GetPropertyType("FactProvider");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        property.StringValue = value;
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -199,21 +219,25 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
         public void SetFactProviderParameters(IEnumerable<Parameter> parameters)
         {
-            var propertyType = GetSchema()?.GetPropertyType("FactProviderParams");
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set FactProvider parameters"))
             {
-                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonObject)
+                var propertyType = GetSchema()?.GetPropertyType("FactProviderParams");
+                if (propertyType != null)
                 {
-                    var container = new Parameters();
-                    
-                    var p = parameters?.ToArray();
-                    if (p?.Any() ?? false)
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonObject)
                     {
-                        container.Items = new List<Parameter>(p);
-                    }
+                        var container = new Parameters();
 
-                    jsonObject.Value = container;
+                        var p = parameters?.ToArray();
+                        if (p?.Any() ?? false)
+                        {
+                            container.Items = new List<Parameter>(p);
+                        }
+
+                        jsonObject.Value = container;
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -224,13 +248,17 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             {
                 int result = 10;
 
-                var propertyType = GetSchema()?.GetPropertyType("LowerPercentile");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Get LowerPercentile"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "10");
-                    if (property is IPropertyInteger propertyInteger)
+                    var propertyType = GetSchema()?.GetPropertyType("LowerPercentile");
+                    if (propertyType != null)
                     {
-                        result = propertyInteger.Value;
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "10");
+                        if (property is IPropertyInteger propertyInteger)
+                        {
+                            result = propertyInteger.Value;
+                            scope?.Complete();
+                        }
                     }
                 }
 
@@ -239,11 +267,15 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var propertyType = GetSchema()?.GetPropertyType("LowerPercentile");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set LowerPercentile"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    property.StringValue = value.ToString();
+                    var propertyType = GetSchema()?.GetPropertyType("LowerPercentile");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        property.StringValue = value.ToString();
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -254,13 +286,17 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             {
                 int result = 90;
 
-                var propertyType = GetSchema()?.GetPropertyType("UpperPercentile");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Get UpperPercentile"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "90");
-                    if (property is IPropertyInteger propertyInteger)
+                    var propertyType = GetSchema()?.GetPropertyType("UpperPercentile");
+                    if (propertyType != null)
                     {
-                        result = propertyInteger.Value;
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "90");
+                        if (property is IPropertyInteger propertyInteger)
+                        {
+                            result = propertyInteger.Value;
+                            scope?.Complete();
+                        }
                     }
                 }
 
@@ -269,11 +305,15 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var propertyType = GetSchema()?.GetPropertyType("UpperPercentile");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set UpperPercentile"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    property.StringValue = value.ToString();
+                    var propertyType = GetSchema()?.GetPropertyType("UpperPercentile");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        property.StringValue = value.ToString();
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -284,10 +324,14 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             {
                 string result = null;
 
-                var propertyType = GetSchema()?.GetPropertyType("ReferenceMeasure");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Get ReferenceMeasure"))
                 {
-                    result = (_model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "Mode"))?.StringValue;
+                    var propertyType = GetSchema()?.GetPropertyType("ReferenceMeasure");
+                    if (propertyType != null)
+                    {
+                        result = (_model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "Mode"))?.StringValue;
+                        scope?.Complete();
+                    }
                 }
 
                 return result;
@@ -295,11 +339,15 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var propertyType = GetSchema()?.GetPropertyType("ReferenceMeasure");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set ReferenceMeasure"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    property.StringValue = value;
+                    var propertyType = GetSchema()?.GetPropertyType("ReferenceMeasure");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        property.StringValue = value;
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -310,13 +358,17 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
             {
                 int result = 100000;
 
-                var propertyType = GetSchema()?.GetPropertyType("Iterations");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Get Iterations"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "100000");
-                    if (property is IPropertyInteger propertyInteger)
+                    var propertyType = GetSchema()?.GetPropertyType("Iterations");
+                    if (propertyType != null)
                     {
-                        result = propertyInteger.Value;
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, "100000");
+                        if (property is IPropertyInteger propertyInteger)
+                        {
+                            result = propertyInteger.Value;
+                            scope?.Complete();
+                        }
                     }
                 }
 
@@ -325,11 +377,15 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var propertyType = GetSchema()?.GetPropertyType("Iterations");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set Iterations"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    property.StringValue = value.ToString();
+                    var propertyType = GetSchema()?.GetPropertyType("Iterations");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        property.StringValue = value.ToString();
+                        scope?.Complete();
+                    }
                 }
             }
         }
@@ -341,10 +397,14 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
         public void SetRisk([NotNull] IThreatEventScenario scenario, Risk risk)
         {
-            var property = GetProperty(scenario, Resources.RiskProperty) ?? AddProperty(scenario, Resources.RiskProperty);
-            if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+            using (var scope = UndoRedoManager.OpenScope("Set Risk"))
             {
-                jsonSerializableObject.Value = risk;
+                var property = GetProperty(scenario, Resources.RiskProperty) ?? AddProperty(scenario, Resources.RiskProperty);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                {
+                    jsonSerializableObject.Value = risk;
+                    scope?.Complete();
+                }
             }
         }
 
@@ -363,26 +423,33 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
         public void SetThresholds(IDictionary<int, decimal> thresholds)
         {
-            var propertyType = GetSchema()?.GetPropertyType("Thresholds");
-
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Thresholds"))
             {
-                if (thresholds?.Any() ?? false)
+                var propertyType = GetSchema()?.GetPropertyType("Thresholds");
+
+                if (propertyType != null)
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    if (property is IPropertyJsonSerializableObject jsonObject)
+                    if (thresholds?.Any() ?? false)
                     {
-                        jsonObject.Value = new Thresholds()
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        if (property is IPropertyJsonSerializableObject jsonObject)
                         {
-                            Items = new List<Threshold>(thresholds.Select(x => new Threshold(x.Key, x.Value)))
-                        };
+                            jsonObject.Value = new Thresholds()
+                            {
+                                Items = new List<Threshold>(thresholds.Select(x => new Threshold(x.Key, x.Value)))
+                            };
+                            scope?.Complete();
+                        }
                     }
-                }
-                else
-                {
-                    var property = _model.GetProperty(propertyType);
-                    if (property != null)
-                        property.StringValue = null;
+                    else
+                    {
+                        var property = _model.GetProperty(propertyType);
+                        if (property != null)
+                        {
+                            property.StringValue = null;
+                            scope?.Complete();
+                        }
+                    }
                 }
             }
         }
@@ -434,13 +501,19 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
 
             set
             {
-                var schema = GetSchema();           
-                var propertyType = schema?.GetPropertyType("Context");
-                if (propertyType != null)
+                using (var scope = UndoRedoManager.OpenScope("Set Context"))
                 {
-                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                    if (property != null)
-                        property.StringValue = value;
+                    var schema = GetSchema();
+                    var propertyType = schema?.GetPropertyType("Context");
+                    if (propertyType != null)
+                    {
+                        var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                        if (property != null)
+                        {
+                            property.StringValue = value;
+                            scope?.Complete();
+                        }
+                    }
                 }
             }
         }
@@ -498,22 +571,26 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
         {
             bool result = false;
 
-            var schema = GetSchema();           
-            var propertyType = schema?.GetPropertyType("Facts");
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Add Fact"))
             {
-                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                var schema = GetSchema();
+                var propertyType = schema?.GetPropertyType("Facts");
+                if (propertyType != null)
                 {
-                    if (jsonSerializableObject.Value is FactContainer container)
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
                     {
-                        result = container.Add(fact);
-                    }
-                    else
-                    {
-                        container = new FactContainer();
-                        result = container.Add(fact);
-                        jsonSerializableObject.Value = container;
+                        if (jsonSerializableObject.Value is FactContainer container)
+                        {
+                            result = container.Add(fact);
+                        }
+                        else
+                        {
+                            container = new FactContainer();
+                            result = container.Add(fact);
+                            jsonSerializableObject.Value = container;
+                        }
+                        scope?.Complete();
                     }
                 }
             }
@@ -525,16 +602,20 @@ namespace ThreatsManager.QuantitativeRisk.Schemas
         {
             bool result = false;
 
-            var schema = GetSchema();           
-            var propertyType = schema?.GetPropertyType("Facts");
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Remove Fact"))
             {
-                var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject)
+                var schema = GetSchema();
+                var propertyType = schema?.GetPropertyType("Facts");
+                if (propertyType != null)
                 {
-                    if (jsonSerializableObject.Value is FactContainer container)
+                    var property = _model.GetProperty(propertyType) ?? _model.AddProperty(propertyType, null);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject)
                     {
-                        result = container.Remove(fact);
+                        if (jsonSerializableObject.Value is FactContainer container)
+                        {
+                            result = container.Remove(fact);
+                            scope?.Complete();
+                        }
                     }
                 }
             }

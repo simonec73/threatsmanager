@@ -7,6 +7,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -59,11 +60,17 @@ namespace ThreatsManager.Extensions.Actions
             if (answer == AnswerType.Yes && context is IThreatEvent threatEvent &&
                 threatEvent.Parent is IThreatEventsContainer container)
             {
-                var result = container.RemoveThreatEvent(threatEvent.Id);
-                if (result)
-                    ShowMessage?.Invoke("Remove Threat Event has been executed successfully.");
-                else
-                    ShowWarning?.Invoke("Remove Threat Event has failed.");
+                using (var scope = UndoRedoManager.OpenScope("Remove Threat Event"))
+                {
+                    var result = container.RemoveThreatEvent(threatEvent.Id);
+                    if (result)
+                    {
+                        scope?.Complete();
+                        ShowMessage?.Invoke("Remove Threat Event has been executed successfully.");
+                    }
+                    else
+                        ShowWarning?.Invoke("Remove Threat Event has failed.");
+                }
             }
         }
     }

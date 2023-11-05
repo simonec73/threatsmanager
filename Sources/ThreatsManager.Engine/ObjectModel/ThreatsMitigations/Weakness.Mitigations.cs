@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
@@ -42,16 +45,37 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
         }
 
+        [Child]
         [JsonProperty("mitigations")]
-        private List<IWeaknessMitigation> _mitigations;
+        private AdvisableCollection<WeaknessMitigation> _mitigations { get; set; }
 
         [InitializationRequired]
-        public IEnumerable<IWeaknessMitigation> Mitigations => _mitigations?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IWeaknessMitigation> Mitigations => _mitigations?.AsEnumerable();
 
         [InitializationRequired]
         public IWeaknessMitigation GetMitigation(Guid mitigationId)
         {
             return _mitigations?.FirstOrDefault(x => x.MitigationId == mitigationId);
+        }
+
+        [InitializationRequired]
+        public void Add([NotNull] IWeaknessMitigation mitigation)
+        {
+            if (mitigation is WeaknessMitigation wm)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Weakness"))
+                {
+                    if (_mitigations == null)
+                        _mitigations = new AdvisableCollection<WeaknessMitigation>();
+
+                    UndoRedoManager.Attach(wm, Model);
+                    _mitigations.Add(wm);
+                    scope?.Complete();
+                }
+            }
+            else
+                throw new ArgumentException(nameof(mitigation));
         }
 
         [InitializationRequired]
@@ -62,10 +86,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             if (GetMitigation(mitigation.Id) == null)
             {
                 result = new WeaknessMitigation(Model, this, mitigation, strength);
-                if (_mitigations == null)
-                    _mitigations = new List<IWeaknessMitigation>();
-                _mitigations.Add(result);
-                SetDirty();
+                Add(result);
                 _weaknessMitigationAdded?.Invoke(this, result);
             }
 
@@ -77,14 +98,19 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             bool result = false;
 
-            var mitigation = GetMitigation(mitigationId);
+            var mitigation = GetMitigation(mitigationId) as WeaknessMitigation;
             if (mitigation != null)
             {
-                result = _mitigations.Remove(mitigation);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Mitigation from Weakness"))
                 {
-                    SetDirty();
-                    _weaknessMitigationRemoved?.Invoke(this, mitigation);
+                    result = _mitigations.Remove(mitigation);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(mitigation);
+                        scope?.Complete();
+
+                        _weaknessMitigationRemoved?.Invoke(this, mitigation);
+                    }
                 }
             }
 

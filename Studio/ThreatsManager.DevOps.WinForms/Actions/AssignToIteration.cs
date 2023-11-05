@@ -1,10 +1,12 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.DevOps.Dialogs;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.DevOps.Actions
@@ -42,8 +44,12 @@ namespace ThreatsManager.DevOps.Actions
 
             if (identity is IMitigation mitigation)
             {
-                var dialog = new DevOpsIterationAssignmentDialog(mitigation);
-                result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                using (var scope = UndoRedoManager.OpenScope("Assign Mitigation to Iteration"))
+                {
+                    var dialog = new DevOpsIterationAssignmentDialog(mitigation);
+                    result = dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK;
+                    if (result) scope?.Complete();
+                }            
             }
 
             return result;

@@ -1,10 +1,12 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using System.Windows.Forms;
 using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
@@ -37,46 +39,51 @@ namespace ThreatsManager.Extensions.Actions
 
         public bool Execute(IIdentity identity)
         {
-            if (identity is IEntity entity)
+            using (var scope = UndoRedoManager.OpenScope("Derive Template"))
             {
-                using (var dialog = new CreateEntityTemplateDialog(entity))
+                if (identity is IEntity entity)
                 {
-                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    using (var dialog = new CreateEntityTemplateDialog(entity))
                     {
-                        entity.Model?.AddEntityTemplate(dialog.EntityName,
-                            dialog.EntityDescription, dialog.BigImage, dialog.Image, dialog.SmallImage, entity);
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            entity.Model?.AddEntityTemplate(dialog.EntityName,
+                                dialog.EntityDescription, dialog.BigImage, dialog.Image, dialog.SmallImage, entity);
+                        }
                     }
                 }
-            }
-            else if (identity is IDataFlow flow)
-            {
-                using (var dialog = new GenericIdentityCreationDialog())
+                else if (identity is IDataFlow flow)
                 {
-                    dialog.IdentityName = flow.Name;
-                    dialog.IdentityDescription = flow.Description;
-                    dialog.IdentityTypeName = "Flow Template";
-                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    using (var dialog = new GenericIdentityCreationDialog())
                     {
-                        var flowTemplate = flow.Model.AddFlowTemplate(dialog.IdentityName,
-                            dialog.IdentityDescription, flow);
-                        flow.Model.AutoApplySchemas(flowTemplate);
+                        dialog.IdentityName = flow.Name;
+                        dialog.IdentityDescription = flow.Description;
+                        dialog.IdentityTypeName = "Flow Template";
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            var flowTemplate = flow.Model.AddFlowTemplate(dialog.IdentityName,
+                                dialog.IdentityDescription, flow);
+                            flow.Model.AutoApplySchemas(flowTemplate);
+                        }
                     }
                 }
-            }
-            else if (identity is ITrustBoundary trustBoundary)
-            {
-                using (var dialog = new GenericIdentityCreationDialog())
+                else if (identity is ITrustBoundary trustBoundary)
                 {
-                    dialog.IdentityName = trustBoundary.Name;
-                    dialog.IdentityDescription = trustBoundary.Description;
-                    dialog.IdentityTypeName = "Trust Boundary Template";
-                    if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    using (var dialog = new GenericIdentityCreationDialog())
                     {
-                        var trustBoundaryTemplate = trustBoundary.Model.AddTrustBoundaryTemplate(dialog.IdentityName,
-                            dialog.IdentityDescription, trustBoundary);
-                        trustBoundary.Model.AutoApplySchemas(trustBoundaryTemplate);
+                        dialog.IdentityName = trustBoundary.Name;
+                        dialog.IdentityDescription = trustBoundary.Description;
+                        dialog.IdentityTypeName = "Trust Boundary Template";
+                        if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                        {
+                            var trustBoundaryTemplate = trustBoundary.Model.AddTrustBoundaryTemplate(dialog.IdentityName,
+                                dialog.IdentityDescription, trustBoundary);
+                            trustBoundary.Model.AutoApplySchemas(trustBoundaryTemplate);
+                        }
                     }
                 }
+
+                scope?.Complete();
             }
 
             return true;

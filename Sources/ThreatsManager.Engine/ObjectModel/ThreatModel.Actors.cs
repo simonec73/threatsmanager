@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -12,10 +15,12 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("actors")]
-        private List<IThreatActor> _actors;
+        [Child]
+        [JsonProperty("actors", Order = 50)]
+        private AdvisableCollection<ThreatActor> _actors { get; set; }
 
-        public IEnumerable<IThreatActor> ThreatActors => _actors?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IThreatActor> ThreatActors => _actors?.AsEnumerable();
 
         [InitializationRequired]
         public IThreatActor GetThreatActor(Guid id)
@@ -32,13 +37,24 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IThreatActor actor)
         {
-            if (_actors == null)
-                _actors = new List<IThreatActor>();
+            if (actor is ThreatActor a)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Threat Actor"))
+                {
+                    if (_actors == null)
+                    { 
+                        _actors = new AdvisableCollection<ThreatActor>();
+                    }
 
-            _actors.Add(actor);
+                    UndoRedoManager.Attach(a, this);
+                    _actors.Add(a);
+                    scope?.Complete();
 
-            SetDirty();
-            ChildCreated?.Invoke(actor);
+                    ChildCreated?.Invoke(a);
+                }
+            }
+            else
+                throw new ArgumentException(nameof(actor));
         }
 
         [InitializationRequired]
@@ -51,7 +67,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 var threatActor = GetThreatActor(actor);
                 if (threatActor == null)
                 {
-                    result = new ThreatActor(this, actor);
+                    result = new ThreatActor(actor);
                     Add(result);
                     RegisterEvents(result);
                 }
@@ -63,7 +79,7 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public IThreatActor AddThreatActor([Required] string name, string description)
         {
-            IThreatActor result = new ThreatActor(this, name)
+            IThreatActor result = new ThreatActor(name)
             {
                 Description = description
             };
@@ -78,17 +94,23 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var actor = GetThreatActor(id);
+            var actor = GetThreatActor(id) as ThreatActor;
             if (actor != null && (force || !IsUsed(actor)))
             {
-                RemoveRelated(actor);
-
-                result = _actors.Remove(actor);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Threat Actor"))
                 {
-                    UnregisterEvents(actor);
-                    SetDirty();
-                    ChildRemoved?.Invoke(actor);
+                    RemoveRelated(actor);
+
+                    result = _actors.Remove(actor);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(actor);
+
+                        UnregisterEvents(actor);
+                        ChildRemoved?.Invoke(actor);
+                    }
+                        
+                    scope?.Complete();
                 }
             }
 
@@ -98,7 +120,7 @@ namespace ThreatsManager.Engine.ObjectModel
         private bool IsUsed([NotNull] IThreatActor actor)
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Actor == actor) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Actor == actor) ?? false) ?? false) ?? false);
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Scenarios?.Any(z => z.Actor == actor) ?? false) ?? false) ?? false);
         }
 
         private void RemoveRelated([NotNull] IThreatActor actor)
@@ -123,7 +145,10 @@ namespace ThreatsManager.Engine.ObjectModel
                             if (scenarios?.Any() ?? false)
                             {
                                 foreach (var scenario in scenarios)
-                                    threatEvent.RemoveScenario(scenario.Id);
+                                {
+                                    if (threatEvent.RemoveScenario(scenario.Id))
+                                        UndoRedoManager.Detach(scenario);
+                                }
                             }
                         }
                     }
@@ -133,7 +158,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void RemoveRelatedForDataFlows([NotNull] IThreatActor actor)
         {
-            var dataFlows = _dataFlows?.ToArray();
+            var dataFlows = _flows?.ToArray();
             if (dataFlows?.Any() ?? false)
             {
                 foreach (var dataFlow in dataFlows)
@@ -147,7 +172,10 @@ namespace ThreatsManager.Engine.ObjectModel
                             if (scenarios?.Any() ?? false)
                             {
                                 foreach (var scenario in scenarios)
-                                    threatEvent.RemoveScenario(scenario.Id);
+                                {
+                                    if (threatEvent.RemoveScenario(scenario.Id))
+                                        UndoRedoManager.Detach(scenario);
+                                }
                             }
                         }
                     }

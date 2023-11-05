@@ -117,4 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label1.Text" xml:space="preserve">
+    <value>This tool helps if your diagram looks too small and the objects are too close together, or vice versa, if they are too scattered. The cursor below allows you to adjust the diagram: if it is too compressed, move the slider to the right; if it is too dispersed, move it to the left.
+</value>
+  </data>
 </root>

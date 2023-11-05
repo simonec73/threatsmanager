@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -94,9 +95,23 @@ namespace ThreatsManager.Extensions.Dialogs
                 eWizardButtonState.True : eWizardButtonState.False;
         }
 
+        private void _checkAllWeaknesses_Click(object sender, EventArgs e)
+        {
+            CheckAll(_weaknesses);
+            _pageWeaknesses.NextButtonEnabled = AnythingSelected(true) ?
+                eWizardButtonState.True : eWizardButtonState.False;
+        }
+
         private void _uncheckAllThreatTypes_Click(object sender, EventArgs e)
         {
             UncheckAll(_threatTypes);
+            _pageThreatTypes.NextButtonEnabled = AnythingSelected(true) ?
+                eWizardButtonState.True : eWizardButtonState.False;
+        }
+
+        private void _uncheckAllWeaknesses_Click(object sender, EventArgs e)
+        {
+            UncheckAll(_weaknesses);
             _pageThreatTypes.NextButtonEnabled = AnythingSelected(true) ?
                 eWizardButtonState.True : eWizardButtonState.False;
         }
@@ -150,7 +165,10 @@ namespace ThreatsManager.Extensions.Dialogs
 
         private void LoadTemplate([Required] string fileName)
         {
-            _template = TemplateManager.OpenTemplate(fileName);
+            var kbManagers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?.ToArray();
+            var kbManager = kbManagers?
+                .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
+            _template = kbManager.Load(LocationType.FileSystem, fileName, false);
 
             if (_template != null)
             {
@@ -216,6 +234,17 @@ namespace ThreatsManager.Extensions.Dialogs
                     _fullyThreatTypes.CheckState = CheckState.Indeterminate;
                 }
 
+                var weaknesses = _template.Weaknesses?.OrderBy(x => x.Name).ToArray();
+                if (weaknesses?.Any() ?? false)
+                {
+                    _weaknesses.Items.AddRange(weaknesses);
+                }
+                else
+                {
+                    _fullyThreatTypes.Enabled = false;
+                    _fullyThreatTypes.CheckState = CheckState.Indeterminate;
+                }
+
                 var mitigations = _template.Mitigations?.OrderBy(x => x.Name).ToArray();
                 if (mitigations?.Any() ?? false)
                 {
@@ -256,6 +285,7 @@ namespace ThreatsManager.Extensions.Dialogs
 
             AddThreatActors(result, schemas);
             AddThreatTypes(result, schemas, mitigations, severities, strengths);
+            AddWeaknesses(result, schemas, mitigations, severities, strengths);
             AddMitigations(result, mitigations, schemas);
             AddItemTemplates(result, schemas);
             AddStrengths(result, strengths, schemas);
@@ -325,6 +355,32 @@ namespace ThreatsManager.Extensions.Dialogs
                     AddSeverities(severities, threatTypes);
                     AddStrengths(strengths, threatTypes);
                     AddSchemas(schemas, threatTypes.Select(x => x.Properties));
+                }
+            }
+        }
+
+        private void AddWeaknesses([NotNull] DuplicationDefinition definition, [NotNull] List<Guid> schemas,
+            [NotNull] List<Guid> mitigations, [NotNull] List<int> severities, [NotNull] List<int> strengths)
+        {
+            if (_fullyWeaknesses.Checked)
+            {
+                definition.AllWeaknesses = true;
+                AddMitigations(mitigations, _template.Weaknesses);
+                AddSeverities(severities, _template.Weaknesses);
+                AddStrengths(strengths, _template.Weaknesses);
+                AddSchemas(schemas, _template.Weaknesses?.Select(x => x.Properties));
+            }
+            else
+            {
+                var weaknesses = _weaknesses.CheckedItems.OfType<IWeakness>().ToArray();
+                if (weaknesses.Any())
+                {
+                    definition.Weaknesses = weaknesses.Select(x => x.Id).ToArray();
+
+                    AddMitigations(mitigations, weaknesses);
+                    AddSeverities(severities, weaknesses);
+                    AddStrengths(strengths, weaknesses);
+                    AddSchemas(schemas, weaknesses.Select(x => x.Properties));
                 }
             }
         }
@@ -435,12 +491,48 @@ namespace ThreatsManager.Extensions.Dialogs
             }
         }
 
+        private void AddMitigations(List<Guid> mitigations, IEnumerable<IWeakness> weaknesses)
+        {
+            var w = weaknesses?.ToArray();
+            if (w?.Any() ?? false)
+            {
+                foreach (var weakness in w)
+                {
+                    var mm = weakness.Mitigations?.ToArray();
+                    if (mm?.Any() ?? false)
+                    {
+                        foreach (var mitigation in mm)
+                        {
+                            if (!mitigations.Contains(mitigation.MitigationId))
+                            {
+                                mitigations.Add(mitigation.MitigationId);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void AddSeverities([NotNull] List<int> severities, IEnumerable<IThreatType> threatTypes)
         {
             var tt = threatTypes?.ToArray();
             if (tt?.Any() ?? false)
             {
                 var sevs = tt.Select(x => x.SeverityId);
+                foreach (var sev in sevs)
+                {
+                    if (!severities.Contains(sev))
+                        severities.Add(sev);
+                }
+            }
+        }
+
+        private void AddSeverities([NotNull] List<int> severities, IEnumerable<IWeakness> weaknesses)
+        {
+            var w = weaknesses?.ToArray();
+            if (w?.Any() ?? false)
+            {
+                var sevs = w.Select(x => x.SeverityId);
                 foreach (var sev in sevs)
                 {
                     if (!severities.Contains(sev))
@@ -457,6 +549,28 @@ namespace ThreatsManager.Extensions.Dialogs
                 foreach (var threatType in tt)
                 {
                     var mitigations = threatType.Mitigations?.ToArray();
+                    if (mitigations?.Any() ?? false)
+                    {
+                        foreach (var mitigation in mitigations)
+                        {
+                            if (mitigation.Strength != null && !strengths.Contains(mitigation.StrengthId))
+                            {
+                                strengths.Add(mitigation.StrengthId);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AddStrengths(List<int> strengths, IEnumerable<IWeakness> weaknesses)
+        {
+            var w = weaknesses?.ToArray();
+            if (w?.Any() ?? false)
+            {
+                foreach (var weakness in w)
+                {
+                    var mitigations = weakness.Mitigations?.ToArray();
                     if (mitigations?.Any() ?? false)
                     {
                         foreach (var mitigation in mitigations)
@@ -564,6 +678,14 @@ namespace ThreatsManager.Extensions.Dialogs
                     result.NextButtonEnabled = eWizardButtonState.True;
             } else if (current == _pageThreatTypes)
             {
+                result = !_fullyWeaknesses.Checked ? _pageWeaknesses : GetNextPage(_pageWeaknesses);
+                if (GetNextPage(result) == _pageFinish)
+                    result.NextButtonEnabled = AnythingSelected(true) ?
+                        eWizardButtonState.True : eWizardButtonState.False;
+                else
+                    result.NextButtonEnabled = eWizardButtonState.True;
+            } else if (current == _pageWeaknesses)
+            {
                 result = !_fullyMitigations.Checked ? _pageMitigations : GetNextPage(_pageMitigations);
                 if (GetNextPage(result) == _pageFinish)
                     result.NextButtonEnabled = AnythingSelected(true) ?
@@ -608,10 +730,13 @@ namespace ThreatsManager.Extensions.Dialogs
             } else if (current == _pageThreatTypes)
             {
                 result = !_fullyItemTemplates.Checked ? _pageItemTemplates : GetPreviousPage(_pageItemTemplates);
-            } else if (current == _pageMitigations)
+            } else if (current == _pageWeaknesses)
             {
                 result = !_fullyThreatTypes.Checked ? _pageThreatTypes : GetPreviousPage(_pageThreatTypes);
-           } else if (current == _pageThreatActors)
+            } else if (current == _pageMitigations)
+            {
+                result = !_fullyWeaknesses.Checked ? _pageWeaknesses : GetPreviousPage(_pageWeaknesses);
+            } else if (current == _pageThreatActors)
             {
                 result = !_fullyMitigations.Checked ? _pageMitigations : GetPreviousPage(_pageMitigations);
             } else if (current == _pageFinish)
@@ -643,6 +768,12 @@ namespace ThreatsManager.Extensions.Dialogs
                 eWizardButtonState.True : eWizardButtonState.False;
         }
 
+        private void _fullyWeaknesses_CheckedChanged(object sender, EventArgs e)
+        {
+            _pageFullyInclude.NextButtonEnabled = AnythingSelected(false) ?
+                eWizardButtonState.True : eWizardButtonState.False;
+        }
+
         private void _fullyMitigations_CheckedChanged(object sender, EventArgs e)
         {
             _pageFullyInclude.NextButtonEnabled = AnythingSelected(false) ?
@@ -667,11 +798,12 @@ namespace ThreatsManager.Extensions.Dialogs
                    _fullySchemas.CheckState == CheckState.Checked ||
                    _fullyItemTemplates.CheckState == CheckState.Checked ||
                    _fullyThreatTypes.CheckState == CheckState.Checked ||
+                   _fullyWeaknesses.CheckState == CheckState.Checked ||
                    _fullyMitigations.CheckState == CheckState.Checked || 
                    _fullyThreatActors.CheckState == CheckState.Checked || 
                    _schemas.CheckedItems.Count > 0 || _itemTemplates.CheckedItems.Count > 0 ||
-                   _threatTypes.CheckedItems.Count > 0 || _mitigations.CheckedItems.Count > 0 ||
-                   _threatActors.CheckedItems.Count > 0;
+                   _threatTypes.CheckedItems.Count > 0 || _weaknesses.CheckedItems.Count > 0 || 
+                   _mitigations.CheckedItems.Count > 0 || _threatActors.CheckedItems.Count > 0;
         }
 
         private void _schemas_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -680,12 +812,13 @@ namespace ThreatsManager.Extensions.Dialogs
                                               _fullySchemas.CheckState == CheckState.Checked ||
                                               _fullyItemTemplates.CheckState == CheckState.Checked ||
                                               _fullyThreatTypes.CheckState == CheckState.Checked ||
+                                              _fullyWeaknesses.CheckState == CheckState.Checked ||
                                               _fullyMitigations.CheckState == CheckState.Checked || 
                                               _fullyThreatActors.CheckState == CheckState.Checked || 
                                               (e.NewValue == CheckState.Checked || _schemas.CheckedItems.Count > 1) || 
                                               _itemTemplates.CheckedItems.Count > 0 ||
-                                              _threatTypes.CheckedItems.Count > 0 || _mitigations.CheckedItems.Count > 0 ||
-                                              _threatActors.CheckedItems.Count > 0) ?
+                                              _threatTypes.CheckedItems.Count > 0 || _weaknesses.CheckedItems.Count > 0 || 
+                                              _mitigations.CheckedItems.Count > 0 || _threatActors.CheckedItems.Count > 0) ?
                 eWizardButtonState.True : eWizardButtonState.False;
         }
 
@@ -695,12 +828,13 @@ namespace ThreatsManager.Extensions.Dialogs
                                                       _fullySchemas.CheckState == CheckState.Checked ||
                                                       _fullyItemTemplates.CheckState == CheckState.Checked ||
                                                       _fullyThreatTypes.CheckState == CheckState.Checked ||
+                                                      _fullyWeaknesses.CheckState == CheckState.Checked ||
                                                       _fullyMitigations.CheckState == CheckState.Checked || 
                                                       _fullyThreatActors.CheckState == CheckState.Checked || 
                                                       _schemas.CheckedItems.Count > 0 || 
                                                       (e.NewValue == CheckState.Checked || _itemTemplates.CheckedItems.Count > 1) ||
-                                                      _threatTypes.CheckedItems.Count > 0 || _mitigations.CheckedItems.Count > 0 ||
-                                                      _threatActors.CheckedItems.Count > 0) ?
+                                                      _threatTypes.CheckedItems.Count > 0 || _weaknesses.CheckedItems.Count > 0 || 
+                                                      _mitigations.CheckedItems.Count > 0 || _threatActors.CheckedItems.Count > 0) ?
                 eWizardButtonState.True : eWizardButtonState.False;
         }
 
@@ -710,10 +844,12 @@ namespace ThreatsManager.Extensions.Dialogs
                                                    _fullySchemas.CheckState == CheckState.Checked ||
                                                    _fullyItemTemplates.CheckState == CheckState.Checked ||
                                                    _fullyThreatTypes.CheckState == CheckState.Checked ||
+                                                   _fullyWeaknesses.CheckState == CheckState.Checked ||
                                                    _fullyMitigations.CheckState == CheckState.Checked || 
                                                    _fullyThreatActors.CheckState == CheckState.Checked || 
                                                    _schemas.CheckedItems.Count > 0 || _itemTemplates.CheckedItems.Count > 0 ||
-                                                   _threatTypes.CheckedItems.Count > 0 || _mitigations.CheckedItems.Count > 0 ||
+                                                   _threatTypes.CheckedItems.Count > 0 || _weaknesses.CheckedItems.Count > 0 || 
+                                                   _mitigations.CheckedItems.Count > 0 ||
                                                    (e.NewValue == CheckState.Checked || _threatActors.CheckedItems.Count > 1)) ?
                 eWizardButtonState.True : eWizardButtonState.False;
         }
@@ -724,10 +860,28 @@ namespace ThreatsManager.Extensions.Dialogs
                                                   _fullySchemas.CheckState == CheckState.Checked ||
                                                   _fullyItemTemplates.CheckState == CheckState.Checked ||
                                                   _fullyThreatTypes.CheckState == CheckState.Checked ||
+                                                  _fullyWeaknesses.CheckState == CheckState.Checked ||
                                                   _fullyMitigations.CheckState == CheckState.Checked || 
                                                   _fullyThreatActors.CheckState == CheckState.Checked || 
                                                   _schemas.CheckedItems.Count > 0 || _itemTemplates.CheckedItems.Count > 0 ||
-                                                  (e.NewValue == CheckState.Checked || _threatTypes.CheckedItems.Count > 1 ) || 
+                                                  (e.NewValue == CheckState.Checked || _threatTypes.CheckedItems.Count > 1 ) ||
+                                                  _weaknesses.CheckedItems.Count > 0 ||
+                                                  _mitigations.CheckedItems.Count > 0 || _threatActors.CheckedItems.Count > 0) ?
+                eWizardButtonState.True : eWizardButtonState.False;
+        }
+
+        private void _weaknesses_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            _pageWeaknesses.NextButtonEnabled = (_wizard.GetNextPage() != _pageFinish ||
+                                                  _fullySchemas.CheckState == CheckState.Checked ||
+                                                  _fullyItemTemplates.CheckState == CheckState.Checked ||
+                                                  _fullyThreatTypes.CheckState == CheckState.Checked ||
+                                                  _fullyWeaknesses.CheckState == CheckState.Checked ||
+                                                  _fullyMitigations.CheckState == CheckState.Checked ||
+                                                  _fullyThreatActors.CheckState == CheckState.Checked ||
+                                                  _schemas.CheckedItems.Count > 0 || _itemTemplates.CheckedItems.Count > 0 ||
+                                                  _threatTypes.CheckedItems.Count > 0 ||
+                                                  (e.NewValue == CheckState.Checked || _weaknesses.CheckedItems.Count > 1) ||
                                                   _mitigations.CheckedItems.Count > 0 || _threatActors.CheckedItems.Count > 0) ?
                 eWizardButtonState.True : eWizardButtonState.False;
         }
@@ -738,10 +892,12 @@ namespace ThreatsManager.Extensions.Dialogs
                                                   _fullySchemas.CheckState == CheckState.Checked ||
                                                   _fullyItemTemplates.CheckState == CheckState.Checked ||
                                                   _fullyThreatTypes.CheckState == CheckState.Checked ||
+                                                  _fullyWeaknesses.CheckState == CheckState.Checked ||
                                                   _fullyMitigations.CheckState == CheckState.Checked || 
                                                   _fullyThreatActors.CheckState == CheckState.Checked || 
                                                   _schemas.CheckedItems.Count > 0 || _itemTemplates.CheckedItems.Count > 0 ||
-                                                  _threatTypes.CheckedItems.Count > 0 || _mitigations.CheckedItems.Count > 0 ||
+                                                  _threatTypes.CheckedItems.Count > 0 || _weaknesses.CheckedItems.Count > 0 ||
+                                                  _mitigations.CheckedItems.Count > 0 || 
                                                   _threatActors.CheckedItems.Count > 0) ?
                 eWizardButtonState.True : eWizardButtonState.False;
         }
@@ -750,7 +906,7 @@ namespace ThreatsManager.Extensions.Dialogs
         private void ImportTemplateDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (_template != null)
-                TemplateManager.CloseTemplate(_template.Id);
+                ThreatModelManager.Remove(_template.Id);
         }
 
         private void _description_LinkClicked(object sender, LinkClickedEventArgs e)

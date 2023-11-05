@@ -15,7 +15,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <summary>
         /// Informative Severity.
         /// </summary>
-        [EnumDescription("Informational only. It is related to mitigated issues or to topics that are included for completeness.")]
+        [EnumDescription("Informational only. It is related to mitigated issues that have a negligible probability of causing even a minor damage to the solution and the involved counterparts.")]
         [BackColor(KnownColor.Green)]
         [TextColor(KnownColor.White)]
         Info = 1,
@@ -30,21 +30,21 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <summary>
         /// Low Severity.
         /// </summary>
-        [EnumDescription("Low Severity. It is related to minor issues.")]
+        [EnumDescription("Low Severity. Low-level threats are related to minor issues, both for their probability and potential impact.")]
         [BackColor(KnownColor.Yellow)]
         [TextColor(KnownColor.Black)]
         Low = 25,
         /// <summary>
         /// Medium Severity.
         /// </summary>
-        [EnumDescription("Medium Severity. It is related to issues that should represent some concern and thus should not be overlooked.")]
+        [EnumDescription("Medium Severity. Medium-level threats are related to average issues, both for their probability and potential impact.")]
         [BackColor(KnownColor.Orange)]
         [TextColor(KnownColor.Black)]
         Medium = 50,
         /// <summary>
         /// High Severity.
         /// </summary>
-        [EnumDescription("High Severity. It is related to important issues that may cause major disruption and thus should be seriously considered.")]
+        [EnumDescription("High Severity. High-level threats are related to important issues both for their probability and potential impact. They have a significant probability of causing major damage to the solution and the involved counterparts.")]
         [BackColor(KnownColor.Red)]
         [TextColor(KnownColor.White)]
         High = 75,
@@ -59,7 +59,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <summary>
         /// Critical Severity.
         /// </summary>
-        [EnumDescription("Critical Severity. It is related to the most important issues, which could cause a catastrophic failure of the solution and critical damage to the involved counterparts.")]
+        [EnumDescription("Critical Severity. Critical-level threats are related to the most important issues, both for the probability and potential impact. Critical threats have a high probability of causing a catastrophic failure of the solution and critical damage to the involved counterparts.")]
         [BackColor(KnownColor.Black)]
         [TextColor(KnownColor.White)]
         Critical = 100

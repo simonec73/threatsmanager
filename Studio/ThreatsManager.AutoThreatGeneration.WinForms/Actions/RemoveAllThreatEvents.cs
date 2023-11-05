@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.AutoThreatGeneration.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -73,24 +74,29 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
 
         private void Do([NotNull] IThreatModel threatModel)
         {
-            RemoveThreatEvents(threatModel);
-
-            var entities = threatModel.Entities?.ToArray();
-            if (entities?.Any() ?? false)
+            using (var scope = UndoRedoManager.OpenScope("Remove Threat Events"))
             {
-                foreach (var entity in entities)
-                {
-                    RemoveThreatEvents(entity);
-                }
-            }
+                RemoveThreatEvents(threatModel);
 
-            var flows = threatModel.DataFlows?.ToArray();
-            if (flows?.Any() ?? false)
-            {
-                foreach (var flow in flows)
+                var entities = threatModel.Entities?.ToArray();
+                if (entities?.Any() ?? false)
                 {
-                    RemoveThreatEvents(flow);
+                    foreach (var entity in entities)
+                    {
+                        RemoveThreatEvents(entity);
+                    }
                 }
+
+                var flows = threatModel.DataFlows?.ToArray();
+                if (flows?.Any() ?? false)
+                {
+                    foreach (var flow in flows)
+                    {
+                        RemoveThreatEvents(flow);
+                    }
+                }
+
+                scope?.Complete();
             }
         }
 

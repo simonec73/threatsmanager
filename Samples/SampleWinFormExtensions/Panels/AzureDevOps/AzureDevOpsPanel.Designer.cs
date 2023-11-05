@@ -1,6 +1,6 @@
 ﻿using ThreatsManager.Utilities.WinForms;
 
-namespace SampleWinFormExtensions.Panels.AzureDevOps
+namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
 {
     partial class AzureDevOpsPanel
     {

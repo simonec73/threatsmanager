@@ -5,6 +5,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -44,9 +45,13 @@ namespace ThreatsManager.Extensions.Actions
 
             if (identity is IThreatType threatType)
             {
-                threatType.Model?.AddThreatEvent(threatType);
-                ShowMessage?.Invoke("Add Global Threat Event has been executed successfully.");
-                result = true;
+                using (var scope = UndoRedoManager.OpenScope("Create Global Threat Event"))
+                {
+                    threatType.Model?.AddThreatEvent(threatType);
+                    ShowMessage?.Invoke("Add Global Threat Event has been executed successfully.");
+                    result = true;
+                    scope?.Complete();
+                }
             }
 
             return result;

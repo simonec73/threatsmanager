@@ -4,6 +4,7 @@ using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -48,7 +49,10 @@ namespace ThreatsManager.Extensions.Actions
         public void Answer(object context, AnswerType answer)
         {
             if (answer == AnswerType.Yes && context is IIdentity identity)
+            {
+                EventsDispatcher.RaiseEvent("DeletingItem", identity);
                 IdentityRemovingRequired?.Invoke(identity);
+            }
         }
     }
 }

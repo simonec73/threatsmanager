@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
@@ -42,16 +45,37 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             }
         }
 
+        [Child]
         [JsonProperty("mitigations")]
-        private List<IThreatTypeMitigation> _mitigations;
+        private AdvisableCollection<ThreatTypeMitigation> _mitigations { get; set; }
 
         [InitializationRequired]
-        public IEnumerable<IThreatTypeMitigation> Mitigations => _mitigations?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IThreatTypeMitigation> Mitigations => _mitigations?.AsEnumerable();
 
         [InitializationRequired]
         public IThreatTypeMitigation GetMitigation(Guid mitigationId)
         {
             return _mitigations?.FirstOrDefault(x => x.MitigationId == mitigationId);
+        }
+
+        [InitializationRequired]
+        public void Add([NotNull] IThreatTypeMitigation mitigation)
+        {
+            if (mitigation is ThreatTypeMitigation ttm)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Mitigation to Threat Type"))
+                {
+                    if (_mitigations == null)
+                        _mitigations = new AdvisableCollection<ThreatTypeMitigation>();
+
+                    UndoRedoManager.Attach(ttm, Model);
+                    _mitigations.Add(ttm);
+                    scope?.Complete();
+                }
+            }
+            else
+                throw new ArgumentException(nameof(mitigation));
         }
 
         [InitializationRequired]
@@ -61,11 +85,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (GetMitigation(mitigation.Id) == null)
             {
-                result = new ThreatTypeMitigation(Model, this, mitigation, strength);
-                if (_mitigations == null)
-                    _mitigations = new List<IThreatTypeMitigation>();
-                _mitigations.Add(result);
-                SetDirty();
+                result = new ThreatTypeMitigation(this, mitigation, strength);
+                Add(result);
                 _threatTypeMitigationAdded?.Invoke(this, result);
             }
 
@@ -77,14 +98,19 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             bool result = false;
 
-            var mitigation = GetMitigation(mitigationId);
+            var mitigation = GetMitigation(mitigationId) as ThreatTypeMitigation;
             if (mitigation != null)
             {
-                result = _mitigations.Remove(mitigation);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Mitigation from Threat Type"))
                 {
-                    SetDirty();
-                    _threatTypeMitigationRemoved?.Invoke(this, mitigation);
+                    result = _mitigations.Remove(mitigation);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(mitigation);
+                        scope?.Complete();
+
+                        _threatTypeMitigationRemoved?.Invoke(this, mitigation);
+                    }
                 }
             }
 

@@ -1,4 +1,6 @@
-﻿namespace ThreatsManager.Extensions.Panels.Overview
+﻿using ThreatsManager.Utilities;
+
+namespace ThreatsManager.Extensions.Panels.Overview
 {
     partial class OverviewPanel
     {
@@ -13,6 +15,9 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _itemEditor.Item = null;
 
             if (disposing && (components != null))

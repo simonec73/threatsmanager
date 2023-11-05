@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -11,6 +11,8 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
@@ -18,11 +20,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Trust Boundary Template")]
     public class TrustBoundaryTemplate : ITrustBoundaryTemplate, IInitializableObject
     {
@@ -30,10 +34,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public TrustBoundaryTemplate([NotNull] IThreatModel model, [Required] string name)
+        public TrustBoundaryTemplate([Required] string name)
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
         }
@@ -44,11 +46,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -82,31 +88,27 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
+        public void Unapply(IPropertySchema schema)
         {
         }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -120,25 +122,36 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [InitializationRequired]
         public ITrustBoundary CreateTrustBoundary([Required] string name)
         {
-            ITrustBoundary result = _model.AddTrustBoundary(name, this);
+            ITrustBoundary result;
 
-            if (result != null)
+            using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary from Template"))
             {
-                result.Description = Description;
-                this.CloneProperties(result);
+                result = Model?.AddTrustBoundary(name, this);
+
+                if (result != null)
+                {
+                    result.Description = Description;
+                    this.CloneProperties(result);
+                    scope?.Complete();
+                }
             }
 
             return result;
         }
 
+        [InitializationRequired]
         public void ApplyTo([NotNull] ITrustBoundary trustBoundary)
         {
-            trustBoundary.ClearProperties();
-            this.CloneProperties(trustBoundary);
-            if (trustBoundary is TrustBoundary internalTb)
+            using (var scope = UndoRedoManager.OpenScope("Apply Template to an existing Trust Boundary"))
             {
-                internalTb._templateId = Id;
-                internalTb._template = this;
+                trustBoundary.ClearProperties();
+                this.CloneProperties(trustBoundary);
+                if (trustBoundary is TrustBoundary internalTb)
+                {
+                    internalTb._templateId = Id;
+                    internalTb._template = this;
+                }
+                scope?.Complete();
             }
         }
 

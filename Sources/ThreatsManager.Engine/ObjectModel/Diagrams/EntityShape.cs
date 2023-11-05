@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
+using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -18,84 +23,45 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [AssociatedIdChanger]
     [PropertiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public class EntityShape : IEntityShape, IThreatModelChild, IInitializableObject
     {
-        [JsonIgnore]
-        private IEntity _entity;
-
         public EntityShape()
         {
 
         }
 
-        public EntityShape([NotNull] IThreatModel model, [NotNull] IEntity entity) : this()
+        public EntityShape([NotNull] IEntity entity) : this()
         {
-            _modelId = model.Id;
-            _model = model;
-            _entity = entity;
-            _associatedId = entity.Id;
+            _model = entity.Model;
+            _associated = entity;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
 
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.EntityShape;
-
-        [JsonProperty("id")]
-        private Guid _associatedId;
-
-        public Guid AssociatedId => _associatedId;
-
-        [InitializationRequired]
-        public IIdentity Identity => _entity ?? (_entity = Model.GetEntity(_associatedId));
-
-        [JsonProperty("pos")]
-        public PointF Position { get; set; }
-
-        public IEntityShape Clone([NotNull] IEntityShapesContainer container)
-        {
-            EntityShape result = null;
-            if (container is IThreatModelChild child && child.Model is IThreatModel model)
-            {
-                result = new EntityShape()
-                {
-                    _associatedId = _associatedId,
-                    _model = model,
-                    _modelId = model.Id,
-                    Position = new PointF(Position.X, Position.Y),
-                };
-                this.CloneProperties(result);
-
-                container.Add(result);
-            }
-
-            return result;
-        }
-        #endregion
-
-        #region Additional placeholders required.
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
-        private IPropertiesContainer PropertiesContainer => this;
-        private List<IProperty> _properties { get; set; }
-        #endregion
-
         #region Default implementation.
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
 
         public bool HasProperty(IPropertyType propertyType)
         {
             return false;
         }
+
         public IProperty GetProperty(IPropertyType propertyType)
         {
             return null;
@@ -124,23 +90,83 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
+        public void Unapply(IPropertySchema schema)
         {
         }
+        #endregion
 
-        public void ResetDirty()
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        #endregion
+
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.EntityShape;
+
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateAssociatedId]
+        private IEntity _associated { get; set; }
+
+        [JsonProperty("id")]
+        private Guid _associatedId { get; set; }
+
+        public Guid AssociatedId => _associatedId;
+
+        [InitializationRequired]
+        [IgnoreAutoChangeNotification]
+        public IIdentity Identity => _associated ?? (_associated = Model.GetEntity(_associatedId));
+
+        [Child]
+        private RecordablePointF _recordablePosition { get; set; }
+
+        [property: NotRecorded]
+        [JsonProperty("pos")]
+        [SafeForDependencyAnalysis]
+        public PointF Position
         {
+            get
+            {
+                return _recordablePosition?.Position ?? PointF.Empty;
+            }
+
+            set
+            {
+                if (_recordablePosition == null)
+                    _recordablePosition = new RecordablePointF(value);
+                else
+                {
+                    _recordablePosition.Position = value;
+                }
+            }
         }
 
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
+        public IEntityShape Clone([NotNull] IEntityShapesContainer container)
         {
-        }
+            EntityShape result = null;
+            if (container is IThreatModelChild child && child.Model is IThreatModel model)
+            {
+                result = new EntityShape()
+                {
+                    _associatedId = _associatedId,
+                    _model = model,
+                    _modelId = model.Id,
+                    Position = new PointF(Position.X, Position.Y),
+                };
+                this.CloneProperties(result);
 
-        public void ResumeDirty()
-        {
+                container.Add(result);
+            }
+
+            return result;
         }
         #endregion
     }

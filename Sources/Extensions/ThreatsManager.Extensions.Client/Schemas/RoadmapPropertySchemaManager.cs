@@ -24,14 +24,20 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
-            result.Description = Resources.RoadmapPropertySchemaDescription;
-            result.Visible = false;
-            result.System = true;
-            result.Priority = 10;
-            result.AutoApply = false;
-            result.NotExportable = true;
-            result.AppliesTo = Scope.Mitigation;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
+            {
+                result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+                result.Description = Resources.RoadmapPropertySchemaDescription;
+                result.Visible = false;
+                result.System = true;
+                result.Priority = 10;
+                result.AutoApply = false;
+                result.NotExportable = true;
+                result.AppliesTo = Scope.Mitigation;
+                scope?.Complete();
+            }
 
             return result;
         }
@@ -40,13 +46,17 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope($"Get {PropertyName} property type"))
             {
-                result = schema.GetPropertyType(PropertyName) ?? schema.AddPropertyType(PropertyName, PropertyValueType.SingleLineString);
-                result.Description = Resources.PropertyRoadmap;
-                result.Visible = false;
-                result.DoNotPrint = true;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(PropertyName) ?? schema.AddPropertyType(PropertyName, PropertyValueType.SingleLineString);
+                    result.Description = Resources.PropertyRoadmap;
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    scope?.Complete();
+                }
             }
 
             return result;

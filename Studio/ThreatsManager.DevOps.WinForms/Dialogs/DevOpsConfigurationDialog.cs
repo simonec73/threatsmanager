@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Model.TypeAdapters;
-using ThreatsManager.DevOps.Schemas;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 

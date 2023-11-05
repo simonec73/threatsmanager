@@ -1,50 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFrameworks>net481</TargetFrameworks>
     <Description>Common Interfaces used to define the object, entities and extensions that compose the Threats Manager Platform and allow to extend it.</Description>
-    <AssemblyVersion>1.5.2.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
-    <Copyright>Copyright © Simone Curzi, 2018-2022. All Rights Reserved.</Copyright>
+    <Copyright>Copyright © Simone Curzi, 2018-2023. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Interfaces/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
-    <FileVersion>1.5.2.0</FileVersion>
-    <Version>1.5.2</Version>
+    <FileVersion>2.1.0.0</FileVersion>
+    <Version>2.1.0</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <NoWarn>$(NoWarn);NU1505</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net481' ">
     <None Include="..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <None Include="..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net481' ">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
-    <DocumentationFile>.\bin\Debug\net472\ThreatsManager.Interfaces.xml</DocumentationFile>
+    <DocumentationFile>.\bin\Debug\net481\ThreatsManager.Interfaces.xml</DocumentationFile>
  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
-    <DocumentationFile>.\bin\Debug\netcoreapp3.1\ThreatsManager.Interfaces.xml</DocumentationFile>
-  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="..\ThreatsManager.Engine\PostSharp.license" Link="PostSharp.license" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.10.5" />
-    <PackageReference Include="PostSharp.Patterns.Common" Version="6.10.5" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="6.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="PostSharp" Version="2023.0.8" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="2023.0.8" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -10,23 +12,27 @@ using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ImageConverter = ThreatsManager.Utilities.ImageConverter;
+using PostSharp.Patterns.Collections;
+using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Engine.ObjectModel.Entities
 {
 #pragma warning disable CS0067
     [JsonObject(MemberSerialization.OptIn)]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
+    [IntroduceNotifyPropertyChanged]
     [Serializable]
     [IdentityAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [GroupElementAspect]
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Data Store")]
     [TypeInitial("D")]
     public class DataStore : IDataStore, IInitializableObject
@@ -35,14 +41,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
-        public DataStore([NotNull] IThreatModel model, [Required] string name) : this()
+        public DataStore([Required] string name) : this()
         {
-            _modelId = model.Id;
-            _model = model;
             _id = Guid.NewGuid();
             Name = name;
-   
-            model.AutoApplySchemas(this);
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty;
@@ -51,9 +53,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public Guid Id { get; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
         public event Action<IGroupElement, IGroup, IGroup> ParentChanged;
         public Guid ParentId { get; }
+        [Reference]
+        [field: NotRecorded]
         public IGroup Parent { get; }
         public void SetParent(IGroup parent)
         {
@@ -62,6 +68,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -95,9 +103,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventAdded;
         public event Action<IThreatEventsContainer, IThreatEvent> ThreatEventRemoved;
 
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IThreatEvent> ThreatEvents { get; }
         public IThreatEvent GetThreatEvent(Guid id)
         {
@@ -107,6 +121,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public IThreatEvent GetThreatEventByThreatType(Guid threatTypeId)
         {
             return null;
+        }
+
+        public void Add(IThreatEvent threatEvent)
+        {
         }
 
         public IThreatEvent AddThreatEvent(IThreatType threatType)
@@ -119,27 +137,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return false;
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
-
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAdded;
         public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemoved;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IVulnerability> Vulnerabilities { get; }
         public IVulnerability GetVulnerability(Guid id)
         {
@@ -167,13 +168,32 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
-        private List<IThreatEvent> _threatEvents { get; set; }
-        private List<IVulnerability> _vulnerabilities { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        [Child]
+        [JsonProperty("threatEvents")]
+        private AdvisableCollection<ThreatEvent> _threatEvents { get; set; }
+        [Child]
+        [JsonProperty("vulnerabilities")]
+        private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("parentId")]
         private Guid _parentId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         private IGroup _parent { get; set; }
         #endregion
 
@@ -185,19 +205,13 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return Name ?? "<undefined>";
         }
 
-        public void Add([NotNull] IThreatEvent threatEvent)
-        {
-            if (_threatEvents == null)
-                _threatEvents = new List<IThreatEvent>();
-
-            _threatEvents.Add(threatEvent);
-        }
-
         public event Action<IEntity, ImageSize> ImageChanged;
 
+        [Reference]
+        [NotRecorded]
         [JsonProperty("bigImage")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _bigImage;
+        private Bitmap _bigImage { get; set; }
 
         public Bitmap BigImage 
         {
@@ -213,9 +227,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
+        [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _image;
+        private Bitmap _image { get; set; }
 
         public Bitmap Image 
         {
@@ -231,9 +247,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
         }
 
+        [Reference]
+        [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
-        private Bitmap _smallImage;
+        private Bitmap _smallImage { get; set; }
 
         public Bitmap SmallImage 
         {
@@ -250,17 +268,21 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [JsonProperty("template")]
-        internal Guid _templateId;
+        internal Guid _templateId { get; set; }
 
+        [Reference]
+        [property: NotRecorded]
         internal IEntityTemplate _template { get; set; }
 
+        [property: NotRecorded]
+        [IgnoreAutoChangeNotification]
         public IEntityTemplate Template
         {
             get
             {
                 if (_template == null && _templateId != Guid.Empty)
                 {
-                    _template = _model?.GetEntityTemplate(_templateId);
+                    _template = Model?.GetEntityTemplate(_templateId);
                 }
 
                 return _template;
@@ -269,14 +291,19 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public void ResetTemplate()
         {
-            this.BigImage = EntityType.DataStore.GetEntityImage(ImageSize.Big);
-            this.Image = EntityType.DataStore.GetEntityImage(ImageSize.Medium);
-            this.SmallImage = EntityType.DataStore.GetEntityImage(ImageSize.Small);
-            this.ClearProperties();
-            _model.AutoApplySchemas(this);
+            using (var scope = UndoRedoManager.OpenScope("Detach from Template"))
+            {
+                BigImage = EntityType.DataStore.GetEntityImage(ImageSize.Big);
+                Image = EntityType.DataStore.GetEntityImage(ImageSize.Medium);
+                SmallImage = EntityType.DataStore.GetEntityImage(ImageSize.Small);
+                ClearProperties();
+                Model?.AutoApplySchemas(this);
 
-            _templateId = Guid.Empty;
-            _template = null;
+                _templateId = Guid.Empty;
+                _template = null;
+
+                scope?.Complete();
+            }
         }
 
         public IEntity Clone([NotNull] IEntitiesContainer container)
@@ -302,6 +329,16 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             }
 
             return result;
+        }
+
+        public IEntity CopyAndConvert(IEntityTemplate template = null)
+        {
+            return CopyAndConvert(EntityType.DataStore, template);
+        }
+
+        public IEntity CopyAndConvert(EntityType entityType, IEntityTemplate template = null)
+        {
+            return this.CloneAndConvert(entityType, template);
         }
         #endregion
     }

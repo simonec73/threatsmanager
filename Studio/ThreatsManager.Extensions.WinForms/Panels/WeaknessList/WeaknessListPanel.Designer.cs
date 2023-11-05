@@ -21,6 +21,9 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         {
             _properties.Item = null;
 
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             GridTextBoxDropDownEditControl ddc = _grid.PrimaryGrid.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
             if (ddc != null)
             {
@@ -222,9 +225,10 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
             this._grid.Text = "superGridControl1";
             this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
+            this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
-            // ThreatTypeListPanel
+            // WeaknessListPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -232,7 +236,7 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
             this.Controls.Add(this._topLeftPanel);
             this.Controls.Add(this.expandableSplitter1);
             this.Controls.Add(this._properties);
-            this.Name = "ThreatTypeListPanel";
+            this.Name = "WeaknessListPanel";
             this.Size = new System.Drawing.Size(834, 512);
             this._topLeftPanel.ResumeLayout(false);
             this.ResumeLayout(false);

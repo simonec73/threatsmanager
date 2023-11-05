@@ -46,11 +46,15 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                             Properties.Resources.property_delete,
                             true, Shortcut.None),
                     }),
-                    new CommandsBarDefinition("Apply", "Apply", new IActionDefinition[]
+                    new CommandsBarDefinition("ApplyUnapply", "Apply/Unapply", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "ApplySchema", "Apply Schema",
                             Properties.Resources.magic_wand_big,
                             Properties.Resources.magic_wand,
+                            true, Shortcut.None),
+                        new ActionDefinition(Id, "UnapplySchema", "Unapply Schema",
+                            Properties.Resources.magic_wand_big_delete,
+                            Properties.Resources.magic_wand_delete,
                             true, Shortcut.None),
                     }),
                     new CommandsBarDefinition("ImportExport", "Import/Export", new IActionDefinition[]
@@ -99,10 +103,16 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                         {
                             if (dialogSchema.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                             {
-                                var schema = _model.AddSchema(dialogSchema.SchemaName, dialogSchema.SchemaNamespace);
-                                schema.Description = dialogSchema.Description;
                                 text = "Add Property Schema";
-                                _schemas.SelectedIndex = _schemas.Items.Add(schema);
+
+                                using (var scope = UndoRedoManager.OpenScope($"Add Schema '{dialogSchema.SchemaName}'"))
+                                {
+                                    var schema = _model.AddSchema(dialogSchema.SchemaName, dialogSchema.SchemaNamespace);
+                                    schema.Description = dialogSchema.Description;
+                                    scope?.Complete();
+
+                                    _schemas.SelectedIndex = _schemas.Items.Add(schema);
+                                }
                             }
                         }
                         break;
@@ -114,17 +124,22 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                                 if (dialogProperty.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                                 {
                                     text = "Add Property";
-                                    var propertyType = schema1.AddPropertyType(dialogProperty.PropertyName,
-                                        dialogProperty.PropertyValueType);
-                                    if (propertyType != null)
+                                    using (var scope = UndoRedoManager.OpenScope($"Add Property Type '{dialogProperty.PropertyName}'"))
                                     {
-                                        propertyType.Description = dialogProperty.Description;
-                                        propertyType.Visible = true;
-                                        if (propertyType is IListPropertyType listPt)
-                                            listPt.SetListProvider(new ListProvider());
-                                        else if (propertyType is IListMultiPropertyType listMultiPt)
-                                            listMultiPt.SetListProvider(new ListProvider());
-                                        AddGridRow(propertyType, _grid.PrimaryGrid);
+                                        var propertyType = schema1.AddPropertyType(dialogProperty.PropertyName,
+                                            dialogProperty.PropertyValueType);
+                                        if (propertyType != null)
+                                        {
+                                            propertyType.Description = dialogProperty.Description;
+                                            propertyType.Visible = true;
+                                            if (propertyType is IListPropertyType listPt)
+                                                listPt.SetListProvider(new ListProvider());
+                                            else if (propertyType is IListMultiPropertyType listMultiPt)
+                                                listMultiPt.SetListProvider(new ListProvider());
+                                            scope?.Complete();
+
+                                            AddGridRow(propertyType, _grid.PrimaryGrid);
+                                        }
                                     }
                                 }
                             }
@@ -157,35 +172,42 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                                     "Property Schema removal", MessageBoxButtons.YesNo,
                                     MessageBoxIcon.Exclamation) == DialogResult.Yes)
                                 {
-                                    if (_model.RemoveSchema(schema2.Id))
+                                    using (var scope = UndoRedoManager.OpenScope($"Remove Schema '{schema2.Name}'"))
                                     {
-                                        text = "Remove Property Schema";
-                                        _schemas.Items.Remove(schema2);
-                                        Reset();
-                                    }
-                                    else
-                                    {
-                                        if (MessageBox.Show(Form.ActiveForm,
-                                            "The Property Schema is in use. Do you want to force its removal?",
-                                            "Property Schema Removal", MessageBoxButtons.YesNo,
-                                            MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                                        if (_model.RemoveSchema(schema2.Id))
                                         {
-                                            if (_model.RemoveSchema(schema2.Id, true))
+                                            scope?.Complete();
+
+                                            text = "Remove Property Schema";
+                                            _schemas.Items.Remove(schema2);
+                                            Reset();
+                                        }
+                                        else
+                                        {
+                                            if (MessageBox.Show(Form.ActiveForm,
+                                                "The Property Schema is in use. Do you want to force its removal?",
+                                                "Property Schema Removal", MessageBoxButtons.YesNo,
+                                                MessageBoxIcon.Exclamation) == DialogResult.Yes)
                                             {
-                                                text = "Remove Property Schema";
-                                                _schemas.Items.Remove(schema2);
-                                                Reset();
+                                                if (_model.RemoveSchema(schema2.Id, true))
+                                                {
+                                                    scope?.Complete();
+
+                                                    text = "Remove Property Schema";
+                                                    _schemas.Items.Remove(schema2);
+                                                    Reset();
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "Schema removal has failed.";
+                                                }
                                             }
                                             else
                                             {
                                                 warning = true;
                                                 text = "Schema removal has failed.";
                                             }
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "Schema removal has failed.";
                                         }
                                     }
                                 }
@@ -238,13 +260,19 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                                         MessageBoxIcon.Exclamation) == DialogResult.Yes)
                                     {
                                         text = "Remove Properties";
-                                        foreach (var row in rows)
+
+                                        using (var scope = UndoRedoManager.OpenScope("Remove Property Type(s)"))
                                         {
-                                            if (row.Tag is IPropertyType propertyType)
+                                            foreach (var row in rows)
                                             {
-                                                if (schema3.RemovePropertyType(propertyType.Id))
-                                                    _grid.PrimaryGrid.Rows.Remove(row);
+                                                if (row.Tag is IPropertyType propertyType)
+                                                {
+                                                    if (schema3.RemovePropertyType(propertyType.Id))
+                                                        _grid.PrimaryGrid.Rows.Remove(row);
+                                                }
                                             }
+
+                                            scope?.Complete();
                                         }
                                     }
                                 }
@@ -265,7 +293,16 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                         if (_schemas.SelectedItem is IPropertySchema schema4)
                         {
                             text = "Apply current Property Schema";
+
                             _model.ApplySchema(schema4.Id);
+                        }
+                        break;
+                    case "UnapplySchema":
+                        if (_schemas.SelectedItem is IPropertySchema schema5)
+                        {
+                            text = "Unapply current Property Schema";
+
+                            _model.UnapplySchema(schema5.Id);
                         }
                         break;
                     case "Import":

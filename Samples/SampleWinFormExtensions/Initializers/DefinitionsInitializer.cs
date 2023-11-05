@@ -1,11 +1,12 @@
 ﻿using PostSharp.Patterns.Contracts;
-using SampleWinFormExtensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.SampleWinFormExtensions.Schemas;
+using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Initializers
+namespace ThreatsManager.SampleWinFormExtensions.Initializers
 {
     /// <summary>
     /// Initializers are called every time a new Threat Model is created. 
@@ -17,6 +18,10 @@ namespace SampleWinFormExtensions.Initializers
     {
         public void Initialize([NotNull] IThreatModel model)
         {
+            // Note: there is no need to create a scope for the Undo/Redo, for Initializers
+            //  because whatever is done during the initialization of the Threat Model or
+            //  when the threat model is loaded, is automatically cleared and cannot be undone. 
+
             var schemaManager = new DefinitionsPropertySchemaManager(model);
 
             var propertyType = schemaManager.DefinitionsPropertyType;

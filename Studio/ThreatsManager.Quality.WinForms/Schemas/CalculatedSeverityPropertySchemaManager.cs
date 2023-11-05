@@ -62,22 +62,29 @@ namespace ThreatsManager.Quality.Schemas
         [InitializationRequired]
         public IPropertySchema GetSchema()
         {
-            var schema = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
-            schema.Description = Resources.CalculatedSeverityPropertySchemaDescription;
-            schema.Visible = true;
-            schema.AppliesTo = Scope.ThreatEvent;
-            schema.System = true;
-            schema.AutoApply = true;
-            schema.NotExportable = true;
-            schema.Priority = 500;
+            IPropertySchema result;
 
-            var propertyType = schema.GetPropertyType(PropertyName) ?? schema.AddPropertyType(PropertyName, PropertyValueType.JsonSerializableObject);
-            propertyType.DoNotPrint = true;
-            propertyType.Visible = true;
-            propertyType.CustomPropertyViewer = "Calculated Severity Property Viewer";
-            propertyType.Description = Resources.CalculatedSeverityDescription;
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
+            {
+                result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+                result.Description = Resources.CalculatedSeverityPropertySchemaDescription;
+                result.Visible = true;
+                result.AppliesTo = Scope.ThreatEvent;
+                result.System = true;
+                result.AutoApply = true;
+                result.NotExportable = true;
+                result.Priority = 500;
 
-            return schema;
+                var propertyType = result.GetPropertyType(PropertyName) ?? result.AddPropertyType(PropertyName, PropertyValueType.JsonSerializableObject);
+                propertyType.DoNotPrint = true;
+                propertyType.Visible = true;
+                propertyType.CustomPropertyViewer = "Calculated Severity Property Viewer";
+                propertyType.Description = Resources.CalculatedSeverityDescription;
+
+                scope?.Complete();
+            }
+
+            return result;
         }
 
         #region Calculated Severity.
@@ -118,36 +125,41 @@ namespace ThreatsManager.Quality.Schemas
         {
             CalculatedSeverityConfiguration result = null;
 
-            var propertyType = GetCalculatedSeverityPropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set Severity Calculation Config"))
             {
-                var property = threatEvent.GetProperty(propertyType);
-                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
-                    jsonSerializableObject.Value is CalculatedSeverityConfiguration configuration)
+                var propertyType = GetCalculatedSeverityPropertyType();
+                if (propertyType != null)
                 {
-                    result = configuration;
-                }
-                else
-                {
-                    result = new CalculatedSeverityConfiguration();
-                    if (property == null)
+                    var property = threatEvent.GetProperty(propertyType);
+                    if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is CalculatedSeverityConfiguration configuration)
                     {
-                        property = threatEvent.AddProperty(propertyType, null);
-                        if (property is IPropertyJsonSerializableObject jsonObject)
+                        result = configuration;
+                    }
+                    else
+                    {
+                        result = new CalculatedSeverityConfiguration();
+                        if (property == null)
+                        {
+                            property = threatEvent.AddProperty(propertyType, null);
+                            if (property is IPropertyJsonSerializableObject jsonObject)
+                            {
+                                jsonObject.Value = result;
+                            }
+                        }
+                        else if (property is IPropertyJsonSerializableObject jsonObject)
                         {
                             jsonObject.Value = result;
                         }
                     }
-                    else if (property is IPropertyJsonSerializableObject jsonObject)
-                    {
-                        jsonObject.Value = result;
-                    }
-                }
 
-                result.Delta = points;
-                result.DeltaReason = reason;
-                result.DeltaSetBy = UserName.GetDisplayName();
-                result.DeltaSetOn = DateTime.Now;
+                    result.Delta = points;
+                    result.DeltaReason = reason;
+                    result.DeltaSetBy = UserName.GetDisplayName();
+                    result.DeltaSetOn = DateTime.Now;
+
+                    scope?.Complete();
+                }
             }
 
             return result;

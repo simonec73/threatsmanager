@@ -5,6 +5,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.Extensions.Actions
@@ -56,11 +57,17 @@ namespace ThreatsManager.Extensions.Actions
             if (answer == AnswerType.Yes && context is IThreatType threatType &&
                 threatType.Model is IThreatModel model)
             {
-                var result = model.RemoveThreatType(threatType.Id);
-                if (result)
-                    ShowMessage?.Invoke("Remove Threat Type has been executed successfully.");
-                else
-                    ShowWarning?.Invoke("Remove Threat Type has failed.");
+                using (var scope = UndoRedoManager.OpenScope("Remove Threat Type"))
+                {
+                    var result = model.RemoveThreatType(threatType.Id);
+                    if (result)
+                    {
+                        scope?.Complete();
+                        ShowMessage?.Invoke("Remove Threat Type has been executed successfully.");
+                    }
+                    else
+                        ShowWarning?.Invoke("Remove Threat Type has failed.");
+                }
             }
         }
     }

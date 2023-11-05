@@ -16,6 +16,7 @@ namespace ThreatsManager.AutoThreatGeneration.Engine
         public MitigationSelectionRule([NotNull] SelectionRule rule)
         {
             Root = rule.Root;
+            ModelId = rule.ModelId;
         }
 
         [JsonProperty("severity")]

@@ -3,12 +3,14 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
@@ -17,6 +19,8 @@ using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.ThreatTypeList
 {
+    // TODO: Threat Type List Panel must be expanded to include ThreatTypeWeaknesses.
+
     public partial class ThreatTypeListPanel : UserControl, IShowThreatModelPanel<Form>, ICustomRibbonExtension, 
         IInitializableObject, IContextAwareExtension, IDesktopAlertAwareExtension, IExecutionModeSupport
     {
@@ -31,6 +35,9 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
 
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<ThreatTypeListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -79,6 +86,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         #endregion
 
         public bool IsInitialized => _model != null;
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
+        }
 
         #region Threat Type level.
         private void InitializeGrid()
@@ -650,9 +662,66 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         {
             _properties.Item = _currentRow?.Tag;
 
-            ChangeCustomActionStatus?.Invoke("RemoveThreatType", _currentRow.Tag is IThreatType);
-            ChangeCustomActionStatus?.Invoke("AddMitigation", _currentRow.Tag is IThreatType);
-            ChangeCustomActionStatus?.Invoke("RemoveMitigation", _currentRow.Tag is IThreatTypeMitigation);
+            ChangeCustomActionStatus?.Invoke("RemoveThreatType", _currentRow?.Tag is IThreatType);
+            ChangeCustomActionStatus?.Invoke("AddMitigation", _currentRow?.Tag is IThreatType);
+            ChangeCustomActionStatus?.Invoke("RemoveMitigation", _currentRow?.Tag is IThreatTypeMitigation);
+            ChangeCustomActionStatus?.Invoke("ChangeSeverities", _currentRow?.Tag is IThreatType);
+            ChangeActionsStatus();
+        }
+
+        private void ChangeActionsStatus()
+        {
+            if (_commandsBarContextAwareActions?.Any() ?? false)
+            {
+                var isThreatType = _currentRow?.Tag is IThreatType;
+                var isTTMitigation = _currentRow?.Tag is IThreatTypeMitigation;
+
+                foreach (var definitions in _commandsBarContextAwareActions.Values)
+                {
+                    if (definitions.Any())
+                    {
+                        foreach (var definition in definitions)
+                        {
+                            var actions = definition.Commands?.ToArray();
+                            if (actions?.Any() ?? false)
+                            {
+                                foreach (var action in actions)
+                                {
+                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
+                                    {
+                                        if (isThreatType &&
+                                            (identitiesContextAwareAction.Scope & Scope.ThreatType) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                    else if (action.Tag is IPropertiesContainersContextAwareAction pcContextAwareAction)
+                                    {
+                                        if (isThreatType &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatType) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else if (isTTMitigation &&
+                                            (pcContextAwareAction.Scope & Scope.ThreatTypeMitigation) != 0)
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, true);
+                                        }
+                                        else
+                                        {
+                                            ChangeCustomActionStatus?.Invoke(action.Name, false);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)
@@ -696,8 +765,12 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
-                ShowCurrentRow();
+                var row = e.NewActiveCell.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 
@@ -705,9 +778,22 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         {
             if (!_loading)
             {
-                if (e.NewActiveRow is GridRow gridRow)
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
                 {
                     _currentRow = gridRow;
+                    ShowCurrentRow();
+                }
+            }
+        }
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
                     ShowCurrentRow();
                 }
             }

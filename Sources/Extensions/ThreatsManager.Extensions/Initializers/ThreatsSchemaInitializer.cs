@@ -3,6 +3,7 @@ using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Initializers
 {
@@ -11,8 +12,13 @@ namespace ThreatsManager.Extensions.Initializers
     {
         public void Initialize([NotNull] IThreatModel model)
         {
-            var schemaManager = new ThreatsPropertySchemaManager(model);
-            schemaManager.GetSchema();
+            using (var scope = UndoRedoManager.OpenScope("Initialize Threats Property Schema"))
+            {
+                var schemaManager = new ThreatsPropertySchemaManager(model);
+                schemaManager.GetSchema();
+
+                scope?.Complete();
+            }
         }
     }
 }

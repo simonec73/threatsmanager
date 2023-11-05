@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     public partial class PropertySchema
     {
-        [JsonProperty("propertyTypes")]
-        private List<IPropertyType> _propertyTypes;
+        [Child]
+        [JsonProperty("propertyTypes", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IPropertyType> _propertyTypes { get; set; }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IPropertyType> PropertyTypes => _propertyTypes?.OrderBy(x => x.Priority);
 
         public event Action<IPropertySchema, IPropertyType> PropertyTypeAdded;
@@ -36,27 +39,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (GetPropertyType(name) == null)
             {
-                var propertyTypeInterface = type.GetEnumType();
-                if (propertyTypeInterface != null)
-                {
-                    var implementation = Assembly.GetExecutingAssembly().DefinedTypes
-                        .FirstOrDefault(x => x.ImplementedInterfaces.Contains(propertyTypeInterface));
-
-                    if (implementation != null)
+                using (var scope = UndoRedoManager.OpenScope("Add Property Type"))
+                { 
+                    var propertyTypeInterface = type.GetEnumType();
+                    if (propertyTypeInterface != null)
                     {
-                        result = Activator.CreateInstance(implementation, name, this) as IPropertyType;
+                        var implementation = Assembly.GetExecutingAssembly().DefinedTypes
+                            .FirstOrDefault(x => x.ImplementedInterfaces.Contains(propertyTypeInterface));
+
+                        if (implementation != null)
+                        {
+                            result = Activator.CreateInstance(implementation, name, this) as IPropertyType;
+                        }
                     }
-                }
 
-                if (result != null)
-                {
-                    if (_propertyTypes == null)
-                        _propertyTypes = new List<IPropertyType>();
+                    if (result != null)
+                    {
+                        if (_propertyTypes == null)
+                            _propertyTypes = new AdvisableCollection<IPropertyType>();
 
-                    _propertyTypes.Add(result);
-                    SetDirty();
+                        UndoRedoManager.Attach(result, Model);
+                        _propertyTypes.Add(result);
+                        scope?.Complete();
 
-                    PropertyTypeAdded?.Invoke(this, result);
+                        PropertyTypeAdded?.Invoke(this, result);
+                    }
                 }
             }
 
@@ -71,11 +78,16 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (propertyType != null)
             {
-                result = _propertyTypes.Remove(propertyType);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Property Type"))
                 {
-                    SetDirty();
-                    PropertyTypeRemoved?.Invoke(this, propertyType);
+                    result = _propertyTypes.Remove(propertyType);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(propertyType);
+                        scope?.Complete();
+
+                        PropertyTypeRemoved?.Invoke(this, propertyType);
+                    }
                 }
             }
 

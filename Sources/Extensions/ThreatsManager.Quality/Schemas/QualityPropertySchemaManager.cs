@@ -26,16 +26,23 @@ namespace ThreatsManager.Quality.Schemas
         [InitializationRequired]
         public IPropertySchema GetSchema()
         {
-            var schema = _model.GetSchema(Resources.SchemaName, Resources.DefaultNamespace) ??
-                         _model.AddSchema(Resources.SchemaName, Resources.DefaultNamespace);
-            schema.Description = Resources.QualityPropertySchemaDescription;
-            schema.Visible = false;
-            schema.AppliesTo = Scope.All;
-            schema.System = true;
-            schema.AutoApply = false;
-            schema.NotExportable = true;
+            IPropertySchema result;
 
-            return schema;
+            using (var scope = UndoRedoManager.OpenScope($"Get '{Resources.SchemaName}' schema"))
+            {
+                result = _model.GetSchema(Resources.SchemaName, Resources.DefaultNamespace) ??
+                         _model.AddSchema(Resources.SchemaName, Resources.DefaultNamespace);
+                result.Description = Resources.QualityPropertySchemaDescription;
+                result.Visible = false;
+                result.AppliesTo = Scope.All;
+                result.System = true;
+                result.AutoApply = false;
+                result.NotExportable = true;
+
+                scope?.Complete();
+            }
+
+            return result;
         }
 
         #region False Positive.
@@ -44,12 +51,16 @@ namespace ThreatsManager.Quality.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get FalsePositive property type"))
             {
-                result = schema.GetPropertyType(FalsePositive) ?? schema.AddPropertyType(FalsePositive, PropertyValueType.JsonSerializableObject);
-                result.DoNotPrint = true;
-                result.Visible = false;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(FalsePositive) ?? schema.AddPropertyType(FalsePositive, PropertyValueType.JsonSerializableObject);
+                    result.DoNotPrint = true;
+                    result.Visible = false;
+                    scope?.Complete();
+                }
             }
 
             return result;
@@ -99,29 +110,35 @@ namespace ThreatsManager.Quality.Schemas
             [Required] string analyzerId,
             [Required] string reason)
         {
-            var propertyType = GetFalsePositivePropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Set FalsePositive"))
             {
-                var property = container.GetProperty(propertyType) as IPropertyJsonSerializableObject;
-                if (property == null)
+                var propertyType = GetFalsePositivePropertyType();
+                if (propertyType != null)
                 {
-                    var list = new FalsePositiveList
+                    var property = container.GetProperty(propertyType) as IPropertyJsonSerializableObject;
+                    if (property == null)
                     {
-                        FalsePositives = new List<FalsePositiveInfo> {CreateInfo(analyzerId, reason)}
-                    };
-                    property = container.AddProperty(propertyType, null) as IPropertyJsonSerializableObject;
-                    if (property != null)
-                        property.Value = list;
-
-                }
-                else
-                {
-                    if (property.Value is FalsePositiveList list &&
-                        !(list.FalsePositives?.Any(x => string.CompareOrdinal(x.QualityInitializerId, analyzerId) == 0) ?? false))
+                        var list = new FalsePositiveList
+                        {
+                            FalsePositives = new List<FalsePositiveInfo> { CreateInfo(analyzerId, reason) }
+                        };
+                        property = container.AddProperty(propertyType, null) as IPropertyJsonSerializableObject;
+                        if (property != null)
+                        {
+                            property.Value = list;
+                            scope?.Complete();
+                        }
+                    }
+                    else
                     {
-                        if (list.FalsePositives == null)
-                            list.FalsePositives = new List<FalsePositiveInfo>();
-                        list.FalsePositives.Add(CreateInfo(analyzerId, reason));
+                        if (property.Value is FalsePositiveList list &&
+                            !(list.FalsePositives?.Any(x => string.CompareOrdinal(x.QualityInitializerId, analyzerId) == 0) ?? false))
+                        {
+                            if (list.FalsePositives == null)
+                                list.FalsePositives = new List<FalsePositiveInfo>();
+                            list.FalsePositives.Add(CreateInfo(analyzerId, reason));
+                            scope?.Complete();
+                        }
                     }
                 }
             }
@@ -130,16 +147,22 @@ namespace ThreatsManager.Quality.Schemas
         public void ResetFalsePositive([NotNull] IPropertiesContainer container, 
             [NotNull] IQualityAnalyzer analyzer)
         {
-            var propertyType = GetFalsePositivePropertyType();
-            if (propertyType != null)
+            using (var scope = UndoRedoManager.OpenScope("Reset FalsePositive"))
             {
-                var property = container.GetProperty(propertyType) as IPropertyJsonSerializableObject;
-                if (property?.Value is FalsePositiveList list)
+                var propertyType = GetFalsePositivePropertyType();
+                if (propertyType != null)
                 {
-                    var item = list.FalsePositives?.FirstOrDefault(x =>
-                        string.CompareOrdinal(x.QualityInitializerId, analyzer.GetExtensionId()) == 0);
-                    if (item != null)
-                        list.FalsePositives.Remove(item);
+                    var property = container.GetProperty(propertyType) as IPropertyJsonSerializableObject;
+                    if (property?.Value is FalsePositiveList list)
+                    {
+                        var item = list.FalsePositives?.FirstOrDefault(x =>
+                            string.CompareOrdinal(x.QualityInitializerId, analyzer.GetExtensionId()) == 0);
+                        if (item != null)
+                        {
+                            list.FalsePositives.Remove(item);
+                            scope?.Complete();
+                        }
+                    }
                 }
             }
         }

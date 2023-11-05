@@ -1,71 +1,77 @@
 ﻿using System;
 using System.Linq;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
-using PostSharp.Reflection;
+using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
+    //[JsonProperty("parentId")]
     //private Guid _parentId { get; set; }
+    //[Reference]
+    //[field: NotRecorded]
     //private IGroup _parent { get; set; }
     //#endregion    
 
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class GroupElementAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("parentId")]
-        public Guid _parentId { get; set; }
+        [ImportMember(nameof(_parentId))]
+        public Property<Guid> _parentId;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 0, Visibility = Visibility.Private)]
-        public IGroup _parent { get; set; }
+        [ImportMember(nameof(_parent))]
+        public Property<IGroup> _parent;
         #endregion
 
         #region Implementation of interface IGroupElement.
         private Action<IGroupElement, IGroup, IGroup> _parentChanged;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IGroupElement, IGroup, IGroup> ParentChanged
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "ParentChanged", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnParentChangedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_parentChanged == null || !_parentChanged.GetInvocationList().Contains(args.Handler))
             {
-                if (_parentChanged == null || !_parentChanged.GetInvocationList().Contains(value))
-                {
-                    _parentChanged += value;
-                }
-            }
-            remove
-            {
-                _parentChanged -= value;
+                _parentChanged += (Action<IGroupElement, IGroup, IGroup>)args.Handler;
+                args.ProceedAddHandler();
             }
         }
 
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnParentChangedAdd))]
+        public void OnParentChangedRemove(EventInterceptionArgs args)
+        {
+            _parentChanged -= (Action<IGroupElement, IGroup, IGroup>)args.Handler;
+            args.ProceedRemoveHandler();
+        }
+
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public Guid ParentId => _parentId;
+        public Guid ParentId => _parentId?.Get() ?? Guid.Empty;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public IGroup Parent
         {
             get
             {
-                if (_parent == null && _parentId != Guid.Empty && Instance is IThreatModelChild child)
+                IGroup result = _parent?.Get();
+
+                var parentId = ParentId;
+                if (result == null && parentId != Guid.Empty && Instance is IThreatModelChild child)
                 {
-                    _parent = child.Model?.GetGroup(_parentId);
+                    result = child.Model?.GetGroup(parentId);
+                    if (result != null)
+                        _parent?.Set(result);
                 }
 
-                return _parent;
+                return result;
             }
         }
 
@@ -74,15 +80,19 @@ namespace ThreatsManager.Engine.Aspects
         {
             IGroup oldParent = null;
 
-            if (((parent == null && _parentId != Guid.Empty) || (parent != null && _parentId != parent.Id)))
+            var parentId = _parentId?.Get() ?? Guid.Empty;
+            if ((parent == null && parentId != Guid.Empty) || (parent != null && parentId != parent.Id))
             {
-                oldParent = Parent;
-                _parentId = parent?.Id ?? Guid.Empty;
-                _parent = parent;
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
-                if (Instance is IGroupElement groupElement)
-                    _parentChanged?.Invoke(groupElement, oldParent, parent);
+                using (var scope = UndoRedoManager.OpenScope("Set parent"))
+                {
+                    oldParent = Parent;
+                    _parentId.Set(parent?.Id ?? Guid.Empty);
+                    _parent.Set(parent);
+                    scope?.Complete();
+
+                    if (Instance is IGroupElement groupElement)
+                        _parentChanged?.Invoke(groupElement, oldParent, parent);
+                }
             }
         }
         #endregion

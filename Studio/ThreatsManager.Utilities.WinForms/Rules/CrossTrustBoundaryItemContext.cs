@@ -10,6 +10,10 @@ namespace ThreatsManager.Utilities.WinForms.Rules
         {
         }
 
+        public CrossTrustBoundaryItemContext(Scope scope) : base(scope)
+        {
+        }
+
         public override SelectionRuleNode CreateNode([NotNull] Node node, params object[] parameters)
         {
             SelectionRuleNode result = null;

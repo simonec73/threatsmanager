@@ -12,7 +12,7 @@ namespace ThreatsManager.Interfaces.Exceptions
         /// <summary>
         /// Public Constructor.
         /// </summary>
-        public EncryptionRequiredException(ProtectionType protection) : base("An encryption is required (see RequiredProtection)")
+        public EncryptionRequiredException(ProtectionType protection) : base("Encryption is required (see RequiredProtection)")
         {
             RequiredProtection = protection;
         }

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
+using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -17,14 +21,15 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [AssociatedIdChanger]
     [PropertiesContainerAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     public class Link : ILink, IThreatModelChild, IInitializableObject
     {
-        private IDataFlow _dataFlow;
-
         public Link()
         {
 
@@ -32,58 +37,22 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public Link([NotNull] IDataFlow dataFlow) : this()
         {
-            _dataFlow = dataFlow;
-            _modelId = dataFlow.Model.Id;
             _model = dataFlow.Model;
-            _associatedId = _dataFlow.Id;
+            _associated = dataFlow;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
 
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.Link;
-
-        [JsonProperty("id")]
-        private Guid _associatedId;
-
-        public Guid AssociatedId => _associatedId;
-
-        [InitializationRequired]
-        public IDataFlow DataFlow => _dataFlow ?? (_dataFlow = _model?.GetDataFlow(_associatedId));
-
-        public ILink Clone(ILinksContainer container)
-        {
-            Link result = null;
-            if (container is IThreatModelChild child && child.Model is IThreatModel model)
-            {
-                result = new Link()
-                {
-                    _associatedId = _associatedId,
-                    _model = model,
-                    _modelId = model.Id,
-                };
-                this.CloneProperties(result);
-
-                container.Add(result);
-            }
-
-            return result;
-        }
-
-        #endregion
-
-        #region Additional placeholders required.
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
-        private List<IProperty> _properties { get; set; }
-        #endregion
-
         #region Default implementation.
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
 
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -117,23 +86,58 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
         }
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
+        public void Unapply(IPropertySchema schema)
         {
         }
+        #endregion
 
-        public void ResetDirty()
-        {
-        }
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        #endregion
 
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.Link;
 
-        public void ResumeDirty()
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateAssociatedId]
+        private IDataFlow _associated;
+
+        [JsonProperty("id")]
+        private Guid _associatedId { get; set; }
+
+        public Guid AssociatedId => _associatedId;
+
+        [InitializationRequired]
+        [IgnoreAutoChangeNotification]
+        public IDataFlow DataFlow => _associated ?? (_associated = Model?.GetDataFlow(_associatedId));
+
+        public ILink Clone(ILinksContainer container)
         {
+            Link result = null;
+            if (container is IThreatModelChild child && child.Model is IThreatModel model)
+            {
+                result = new Link()
+                {
+                    _associatedId = _associatedId,
+                    _model = model,
+                    _modelId = model.Id,
+                };
+                this.CloneProperties(result);
+
+                container.Add(result);
+            }
+
+            return result;
         }
         #endregion
     }

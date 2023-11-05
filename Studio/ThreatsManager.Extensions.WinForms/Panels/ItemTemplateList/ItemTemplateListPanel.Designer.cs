@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using DevComponents.DotNetBar.Layout;
 using DevComponents.DotNetBar.SuperGrid;
+using ThreatsManager.Utilities;
 using ItemEditor = ThreatsManager.Utilities.WinForms.ItemEditor;
 
 namespace ThreatsManager.Extensions.Panels.ItemTemplateList
@@ -18,6 +19,9 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
             _grid.CellActivated -= _grid_CellActivated;
             _grid.RowActivated -= _grid_RowActivated;
             _grid.MouseClick -= _grid_MouseClick;
@@ -34,6 +38,11 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             {
                 _model.ChildCreated -= ModelChildCreated;
                 _model.ChildRemoved -= ModelChildRemoved;
+
+                if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+                {
+                    undoable.Undone -= ModelUndone;
+                }
             }
 
             var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
@@ -200,6 +209,7 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
             this._grid.Text = "superGridControl1";
             this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
+            this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
             // ItemTemplateListPanel

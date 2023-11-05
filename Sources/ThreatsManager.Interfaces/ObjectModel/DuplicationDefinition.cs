@@ -9,6 +9,47 @@ namespace ThreatsManager.Interfaces.ObjectModel
     public class DuplicationDefinition
     {
         /// <summary>
+        /// Standard DuplicationDefinition for Threat Models.
+        /// </summary>
+        /// <remarks>It forces the duplication of everything.</remarks>
+        public static DuplicationDefinition Default = new DuplicationDefinition()
+        {
+            Contributors = true,
+            Assumptions = true,
+            Dependencies = true,
+            AllProperties = true,
+            AllEntities = true,
+            AllDataFlows = true,
+            AllGroups = true,
+            AllDiagrams = true,
+            AllEntityTemplates = true,
+            AllFlowTemplates = true,
+            AllTrustBoundaryTemplates = true,
+            AllThreatTypes = true,
+            AllWeaknesses = true,
+            AllMitigations = true,
+            AllPropertySchemas = true,
+            AllSeverities = true,
+            AllStrengths = true
+        };
+
+        /// <summary>
+        /// Standard DuplicationDefinition for Knowledge Bases.
+        /// </summary>
+        public static DuplicationDefinition KBDefault = new DuplicationDefinition()
+        {
+            AllEntityTemplates = true,
+            AllFlowTemplates = true,
+            AllTrustBoundaryTemplates = true,
+            AllThreatTypes = true,
+            AllWeaknesses = true,
+            AllMitigations = true,
+            AllPropertySchemas = true,
+            AllSeverities = true,
+            AllStrengths = true
+        };
+
+        /// <summary>
         /// If true, all Contributors will be included.
         /// </summary>
         public bool Contributors;
@@ -118,6 +159,18 @@ namespace ThreatsManager.Interfaces.ObjectModel
         /// </summary>
         /// <remarks>If <see cref="AllThreatTypes"/> is true, then this list will be ignored.</remarks>
         public IEnumerable<Guid> ThreatTypes;
+
+        /// <summary>
+        /// If true, all Weaknesses will be included.
+        /// </summary>
+        /// <remarks>If true, <see cref="Weaknesses"/> will be ignored.</remarks>
+        public bool AllWeaknesses;
+
+        /// <summary>
+        /// List of the Weaknesses to include.
+        /// </summary>
+        /// <remarks>If <see cref="AllWeaknesses"/> is true, then this list will be ignored.</remarks>
+        public IEnumerable<Guid> Weaknesses;
 
         /// <summary>
         /// If true, all Strengths will be included.

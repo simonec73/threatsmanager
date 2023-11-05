@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
-using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
+using ThreatsManager.Engine.Aspects;
+using PostSharp.Patterns.Collections;
+using Newtonsoft.Json.Converters;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -16,11 +20,13 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
     [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
+    [IntroduceNotifyPropertyChanged]
     [IdentityAspect]
     [PropertiesContainerAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [TypeLabel("Threat Actor")]
     public class ThreatActor : IThreatActor, IInitializableObject
     {
@@ -29,70 +35,22 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         }
 
-        public ThreatActor([NotNull] IThreatModel model, DefaultActor actor)
+        public ThreatActor(DefaultActor actor)
         {
             _id = Guid.NewGuid();
-            _model = model;
-            _modelId = model.Id;
             _actor = actor;
             Name = actor.GetEnumLabel();
             Description = actor.GetEnumDescription();
         }
 
-        public ThreatActor([NotNull] IThreatModel model, [Required] string name) : this()
+        public ThreatActor([Required] string name) : this()
         {
             _id = Guid.NewGuid();
-            _model = model;
-            _modelId = model.Id;
             _actor = DefaultActor.Unknown;
             Name = name;
         }
 
         public bool IsInitialized => _id != Guid.Empty && Model != null;
-
-        #region Specific implementation.
-        public Scope PropertiesScope => Scope.ThreatActor;
-
-        [JsonProperty("actor")]
-        private DefaultActor _actor = DefaultActor.Unknown;
-
-        public DefaultActor ActorType => _actor;
-
-        public IThreatActor Clone(IThreatActorsContainer container)
-        {
-            ThreatActor result = null;
-
-            if (container is IThreatModel model)
-            {
-                result = new ThreatActor
-                {
-                    _id = Id, 
-                    Name = Name, 
-                    Description = Description,
-                    _model = model, 
-                    _modelId = model.Id,
-                    _actor = ActorType
-                };
-                this.CloneProperties(result);
-                container.Add(result);
-            }
-
-            return result;
-        }
-
-        public void Apply([NotNull] IThreatActor actor)
-        {
-            _id = actor.Id;
-            Description = actor.Description;
-            _actor = actor.ActorType;
-            actor.CloneProperties(this);
-        }
-
-        public override string ToString()
-        {
-            return Name ?? "<undefined>";
-        }
-        #endregion
 
         #region Default implementation.
         public Guid Id { get; }
@@ -101,6 +59,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public event Action<IPropertiesContainer, IProperty> PropertyAdded;
         public event Action<IPropertiesContainer, IProperty> PropertyRemoved;
         public event Action<IPropertiesContainer, IProperty> PropertyValueChanged;
+        [Reference]
+        [field: NotRecorded]
         public IEnumerable<IProperty> Properties { get; }
         public bool HasProperty(IPropertyType propertyType)
         {
@@ -134,33 +94,81 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
         }
 
+        public void Unapply(IPropertySchema schema)
+        {
+        }
+
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
-
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
         #endregion
 
         #region Additional placeholders required.
+        [JsonProperty("id")]
         protected Guid _id { get; set; }
-        private List<IProperty> _properties { get; set; }
+        [JsonProperty("name")]
+        protected string _name { get; set; }
+        [JsonProperty("description")]
+        protected string _description { get; set; }
+        [Child]
+        [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
+        private AdvisableCollection<IProperty> _properties { get; set; }
+        [JsonProperty("modelId")]
         protected Guid _modelId { get; set; }
+        [Parent]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        #endregion
+
+        #region Specific implementation.
+        public Scope PropertiesScope => Scope.ThreatActor;
+
+        [JsonProperty("actor")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        private DefaultActor _actor { get; set; }
+
+        public DefaultActor ActorType => _actor;
+
+        public IThreatActor Clone(IThreatActorsContainer container)
+        {
+            ThreatActor result = null;
+
+            if (container is IThreatModel model)
+            {
+                result = new ThreatActor
+                {
+                    _id = Id, 
+                    Name = Name, 
+                    Description = Description,
+                    _model = model, 
+                    _modelId = model.Id,
+                    _actor = ActorType
+                };
+                this.CloneProperties(result);
+                container.Add(result);
+            }
+
+            return result;
+        }
+
+        public void Apply([NotNull] IThreatActor actor)
+        {
+            using (var scope = UndoRedoManager.OpenScope("Apply a different Actor Type"))
+            {
+                _id = actor.Id;
+                Description = actor.Description;
+                _actor = actor.ActorType;
+                actor.CloneProperties(this);
+                scope?.Complete();
+            }
+        }
+
+        public override string ToString()
+        {
+            return Name ?? "<undefined>";
+        }
         #endregion
     }
 }

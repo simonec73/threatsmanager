@@ -19,18 +19,29 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            _properties.OpenDiagram -= OpenDiagram;
-            _model.ChildCreated -= ModelChildCreated;
-            _model.ChildRemoved -= ModelChildRemoved;
-            _model.LinkAdded -= LinkAdded;
-            _model.LinkRemoved -= LinkRemoved;
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
 
-            _grid.CellActivated -= _grid_CellActivated;
-            _grid.CellMouseDown -= _grid_CellMouseDown;
-            _grid.CellMouseLeave -= _grid_CellMouseLeave;
-            _grid.CellMouseMove -= _grid_CellMouseMove;
-            _grid.RowActivated -= _grid_RowActivated;
-            _grid.MouseClick -= _grid_MouseClick;
+            _properties.OpenDiagram -= OpenDiagram;
+            if (_model != null)
+            {
+                _model.ChildCreated -= ModelChildCreated;
+                _model.ChildRemoved -= ModelChildRemoved;
+                _model.LinkAdded -= LinkAdded;
+                _model.LinkRemoved -= LinkRemoved;
+
+                _grid.CellActivated -= _grid_CellActivated;
+                _grid.CellMouseDown -= _grid_CellMouseDown;
+                _grid.CellMouseLeave -= _grid_CellMouseLeave;
+                _grid.CellMouseMove -= _grid_CellMouseMove;
+                _grid.RowActivated -= _grid_RowActivated;
+                _grid.MouseClick -= _grid_MouseClick;
+
+                if (_model is IUndoable undoable && undoable.IsUndoEnabled)
+                {
+                    undoable.Undone -= ModelUndone;
+                }
+            }
 
             _properties.Item = null;
 
@@ -63,7 +74,7 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._properties = new ItemEditor();
+            this._properties = new ThreatsManager.Utilities.WinForms.ItemEditor();
             this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
             this._topLeftPanel = new DevComponents.DotNetBar.Layout.LayoutControl();
             this._specialFilter = new System.Windows.Forms.ComboBox();
@@ -234,6 +245,7 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
             this._grid.CellMouseLeave += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellEventArgs>(this._grid_CellMouseLeave);
             this._grid.CellMouseMove += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseMove);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
+            this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
             // _superTooltip

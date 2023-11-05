@@ -95,6 +95,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     using (var dialog = new DiagramSortDialog(threatModel))
                     {
                         dialog.ShowDialog(Form.ActiveForm);
+                        RefreshPanels?.Invoke(this);
                     }
                     break;
                 default:

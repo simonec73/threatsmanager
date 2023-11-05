@@ -1,10 +1,12 @@
-﻿using System.Drawing;
+﻿using PostSharp.Patterns.Recording;
+using System.Drawing;
 using ThreatsManager.AutoThreatGeneration.Dialogs;
 using ThreatsManager.AutoThreatGeneration.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 
 namespace ThreatsManager.AutoThreatGeneration.Actions
@@ -46,7 +48,11 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
                 {
                     dialog.Initialize(threatType);
 
-                    result = threatType.SetRule(dialog);
+                    using (var scope = UndoRedoManager.OpenScope("Edit Auto Gen Rule"))
+                    {
+                        result = threatType.SetRule(dialog);
+                        scope?.Complete();
+                    }
                 }
             }
 

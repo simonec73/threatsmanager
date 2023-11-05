@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.StrengthList
@@ -27,9 +28,12 @@ namespace ThreatsManager.Extensions.Panels.StrengthList
             InitializeComponent();
 
             InitializeGrid();
+
+            UndoRedoManager.Undone += RefreshOnUndoRedo;
+            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
-        
+
         public event Action<string> ShowMessage;
         
         public event Action<string> ShowWarning;
@@ -163,6 +167,11 @@ namespace ThreatsManager.Extensions.Panels.StrengthList
                 _loading = false;
                 _grid.ResumeLayout(true);
             }
+        }
+
+        private void RefreshOnUndoRedo(string text)
+        {
+            LoadModel();
         }
 
         private void AddGridRow([NotNull] IStrength strength, [NotNull] GridPanel panel)

@@ -3,6 +3,7 @@ using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Schemas
 {
@@ -19,14 +20,20 @@ namespace ThreatsManager.Extensions.Schemas
 
         public IPropertySchema GetSchema()
         {
-            var result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
-            result.AppliesTo = Scope.Threats;
-            result.Priority = 12;
-            result.Visible = true;
-            result.System = true;
-            result.AutoApply = false;
-            result.NotExportable = true;
-            result.Description = Resources.CapecPropertySchemaDescription;
+            IPropertySchema result;
+
+            using (var scope = UndoRedoManager.OpenScope($"Get '{SchemaName}' schema"))
+            {
+                result = _model.GetSchema(SchemaName, Resources.DefaultNamespace) ?? _model.AddSchema(SchemaName, Resources.DefaultNamespace);
+                result.AppliesTo = Scope.Threats;
+                result.Priority = 12;
+                result.Visible = true;
+                result.System = true;
+                result.AutoApply = false;
+                result.NotExportable = true;
+                result.Description = Resources.CapecPropertySchemaDescription;
+                scope?.Complete();
+            }
            
             return result;
         }
@@ -35,13 +42,17 @@ namespace ThreatsManager.Extensions.Schemas
         {
             IPropertyType result = null;
 
-            var schema = GetSchema();
-            if (schema != null)
+            using (var scope = UndoRedoManager.OpenScope("Get HiddenProperties property type"))
             {
-                result = schema.GetPropertyType("HiddenProperties") ?? schema.AddPropertyType("HiddenProperties", PropertyValueType.Tokens);
-                result.Visible = false;
-                result.DoNotPrint = true;
-                result.Description = Resources.PropertyHiddenProperties;
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType("HiddenProperties") ?? schema.AddPropertyType("HiddenProperties", PropertyValueType.Tokens);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Resources.PropertyHiddenProperties;
+                    scope?.Complete();
+                }
             }
 
             return result;

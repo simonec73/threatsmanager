@@ -19,6 +19,15 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            UndoRedoManager.Undone -= RefreshOnUndoRedo;
+            UndoRedoManager.Redone -= RefreshOnUndoRedo;
+
+            EventsDispatcher.Deregister("AdjustDpiFactor", AdjustDpiFactor);
+            EventsDispatcher.Deregister("ResetFlows", ResetFlows);
+            EventsDispatcher.Deregister("RefreshDiagram", RefreshDiagram);
+
+            ClearPalettesEvents();
+
             _properties.OpenDiagram -= OpenDiagram;
             GraphEntity.ParentChanged -= GraphEntityParentChanged;
             GraphGroup.ParentChanged -= GraphGroupParentChanged;
@@ -30,7 +39,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             _properties.Item = null;
 
-            if (_diagram != null)
+            if (_diagram?.Model != null)
             {
                 _diagram.Model.ChildCreated -= OnModelChildCreated;
                 _diagram.Model.ChildRemoved -= OnModelChildRemoved;
@@ -104,14 +113,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._existing = new DevComponents.DotNetBar.SuperTabItem();
-            this.superTabControlPanel3 = new DevComponents.DotNetBar.SuperTabControlPanel();
-            this._threatsPalette = new ThreatsManager.Extensions.Panels.Diagram.GraphPalette();
-            this._threatsToolsPanel = new DevComponents.DotNetBar.Layout.LayoutControl();
-            this._threatsSearch = new System.Windows.Forms.Button();
-            this._threatsFilter = new DevComponents.DotNetBar.Controls.TextBoxX();
-            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._threats = new DevComponents.DotNetBar.SuperTabItem();
             this._leftSplitter = new DevComponents.DotNetBar.ExpandableSplitter();
             this._rightSplitter = new DevComponents.DotNetBar.ExpandableSplitter();
             this._properties = new ThreatsManager.Utilities.WinForms.ItemEditor();
@@ -128,8 +129,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this.superTabControlPanel1.SuspendLayout();
             this.superTabControlPanel2.SuspendLayout();
             this._existingToolsPanel.SuspendLayout();
-            this.superTabControlPanel3.SuspendLayout();
-            this._threatsToolsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // _palettePanel
@@ -165,7 +164,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._tabContainer.Controls.Add(this.superTabControlPanel4);
             this._tabContainer.Controls.Add(this.superTabControlPanel1);
             this._tabContainer.Controls.Add(this.superTabControlPanel2);
-            this._tabContainer.Controls.Add(this.superTabControlPanel3);
             this._tabContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabContainer.ForeColor = System.Drawing.Color.Black;
             this._tabContainer.Location = new System.Drawing.Point(0, 0);
@@ -180,8 +178,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._tabContainer.Tabs.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this._standard,
             this._templates,
-            this._existing,
-            this._threats});
+            this._existing});
             this._tabContainer.TabStyle = DevComponents.DotNetBar.eSuperTabStyle.VisualStudio2008Dock;
             this._tabContainer.TabVerticalSpacing = 2;
             // 
@@ -246,7 +243,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             // 
             // _templateRefresh
             // 
-            this._templateRefresh.Image = global::ThreatsManager.Extensions.Properties.Resources.nav_refresh_small;
+            this._templateRefresh.Image = ThreatsManager.Extensions.Properties.Resources.nav_refresh_small;
             this._templateRefresh.Location = new System.Drawing.Point(147, 4);
             this._templateRefresh.Margin = new System.Windows.Forms.Padding(0);
             this._templateRefresh.Name = "_templateRefresh";
@@ -529,125 +526,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._existing.TextAlignment = DevComponents.DotNetBar.eItemAlignment.Near;
             this._existing.Tooltip = "Existing Objects";
             // 
-            // superTabControlPanel3
-            // 
-            this.superTabControlPanel3.Controls.Add(this._threatsPalette);
-            this.superTabControlPanel3.Controls.Add(this._threatsToolsPanel);
-            this.superTabControlPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel3.Location = new System.Drawing.Point(0, 40);
-            this.superTabControlPanel3.Name = "superTabControlPanel3";
-            this.superTabControlPanel3.Size = new System.Drawing.Size(179, 454);
-            this.superTabControlPanel3.TabIndex = 0;
-            this.superTabControlPanel3.TabItem = this._threats;
-            // 
-            // _threatsPalette
-            // 
-            this._threatsPalette.AllowDelete = false;
-            this._threatsPalette.AllowEdit = false;
-            this._threatsPalette.AllowInsert = false;
-            this._threatsPalette.AllowLink = false;
-            this._threatsPalette.AllowMove = false;
-            this._threatsPalette.AllowReshape = false;
-            this._threatsPalette.AllowResize = false;
-            this._threatsPalette.ArrowMoveLarge = 10F;
-            this._threatsPalette.ArrowMoveSmall = 1F;
-            this._threatsPalette.AutomaticLayout = false;
-            this._threatsPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._threatsPalette.BackColor = System.Drawing.Color.White;
-            this._threatsPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._threatsPalette.GridCellSizeHeight = 58F;
-            this._threatsPalette.GridCellSizeWidth = 52F;
-            this._threatsPalette.GridOriginX = 20F;
-            this._threatsPalette.GridOriginY = 5F;
-            this._threatsPalette.HidesSelection = true;
-            this._threatsPalette.Location = new System.Drawing.Point(0, 35);
-            this._threatsPalette.Name = "_threatsPalette";
-            this._threatsPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
-            this._threatsPalette.ShowsNegativeCoordinates = false;
-            this._threatsPalette.ShowVerticalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Show;
-            this._threatsPalette.Size = new System.Drawing.Size(179, 419);
-            this._threatsPalette.TabIndex = 2;
-            this._threatsPalette.Text = "graphPalette1";
-            this._threatsPalette.MouseEnter += new System.EventHandler(this._threatsPalette_MouseEnter);
-            // 
-            // _threatsToolsPanel
-            // 
-            this._threatsToolsPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this._threatsToolsPanel.Controls.Add(this._threatsSearch);
-            this._threatsToolsPanel.Controls.Add(this._threatsFilter);
-            this._threatsToolsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this._threatsToolsPanel.ForeColor = System.Drawing.Color.Black;
-            this._threatsToolsPanel.Location = new System.Drawing.Point(0, 0);
-            this._threatsToolsPanel.Name = "_threatsToolsPanel";
-            // 
-            // 
-            // 
-            this._threatsToolsPanel.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
-            this.layoutControlItem5,
-            this.layoutControlItem6});
-            this._threatsToolsPanel.Size = new System.Drawing.Size(179, 35);
-            this._threatsToolsPanel.TabIndex = 1;
-            this._threatsToolsPanel.Text = "_templateToolsPanel";
-            // 
-            // _threatsSearch
-            // 
-            this._threatsSearch.Image = global::ThreatsManager.Extensions.Properties.Resources.nav_refresh_small;
-            this._threatsSearch.Location = new System.Drawing.Point(147, 4);
-            this._threatsSearch.Margin = new System.Windows.Forms.Padding(0);
-            this._threatsSearch.Name = "_threatsSearch";
-            this._threatsSearch.Size = new System.Drawing.Size(28, 27);
-            this._threatsSearch.TabIndex = 1;
-            this._threatsSearch.UseVisualStyleBackColor = true;
-            this._threatsSearch.Click += new System.EventHandler(this._threatsSearch_Click);
-            // 
-            // _threatsFilter
-            // 
-            this._threatsFilter.BackColor = System.Drawing.Color.White;
-            // 
-            // 
-            // 
-            this._threatsFilter.Border.Class = "TextBoxBorder";
-            this._threatsFilter.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._threatsFilter.DisabledBackColor = System.Drawing.Color.White;
-            this._threatsFilter.ForeColor = System.Drawing.Color.Black;
-            this._threatsFilter.Location = new System.Drawing.Point(4, 4);
-            this._threatsFilter.Margin = new System.Windows.Forms.Padding(0);
-            this._threatsFilter.Name = "_threatsFilter";
-            this._threatsFilter.PreventEnterBeep = true;
-            this._threatsFilter.Size = new System.Drawing.Size(135, 20);
-            this._threatsFilter.TabIndex = 0;
-            this._threatsFilter.WatermarkText = "Please specify the text to search";
-            this._threatsFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this._threatsFilter_KeyPress);
-            // 
-            // layoutControlItem5
-            // 
-            this.layoutControlItem5.Control = this._threatsFilter;
-            this.layoutControlItem5.Height = 35;
-            this.layoutControlItem5.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem5.Name = "layoutControlItem5";
-            this.layoutControlItem5.TextVisible = false;
-            this.layoutControlItem5.Width = 80;
-            this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // layoutControlItem6
-            // 
-            this.layoutControlItem6.Control = this._threatsSearch;
-            this.layoutControlItem6.Height = 31;
-            this.layoutControlItem6.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem6.Name = "layoutControlItem6";
-            this.layoutControlItem6.Width = 20;
-            this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // _threats
-            // 
-            this._threats.AttachedControl = this.superTabControlPanel3;
-            this._threats.CloseButtonVisible = false;
-            this._threats.GlobalItem = false;
-            this._threats.Image = ((System.Drawing.Image)(resources.GetObject("_threats.Image")));
-            this._threats.Name = "_threats";
-            this._threats.Text = " ";
-            this._threats.Tooltip = "Threat Types";
-            // 
             // _leftSplitter
             // 
             this._leftSplitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
@@ -796,8 +674,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this.superTabControlPanel1.ResumeLayout(false);
             this.superTabControlPanel2.ResumeLayout(false);
             this._existingToolsPanel.ResumeLayout(false);
-            this.superTabControlPanel3.ResumeLayout(false);
-            this._threatsToolsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -817,14 +693,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private DevComponents.DotNetBar.SuperTabItem _existing;
         private GraphPalette _existingPalette;
         private DevComponents.DotNetBar.Layout.LayoutControl _existingToolsPanel;
-        private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel3;
-        private DevComponents.DotNetBar.SuperTabItem _threats;
-        private DevComponents.DotNetBar.Layout.LayoutControl _threatsToolsPanel;
         private DevComponents.Editors.ComboItem comboItem1;
         private DevComponents.Editors.ComboItem comboItem2;
         private DevComponents.Editors.ComboItem comboItem3;
         private DevComponents.Editors.ComboItem comboItem4;
-        private GraphPalette _threatsPalette;
         private SuperTabControlPanel superTabControlPanel4;
         private SuperTabItem _templates;
         private GraphPalette _templatesPalette;
@@ -833,10 +705,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private LayoutControlItem layoutControlItem2;
         private System.Windows.Forms.Button _existingRefresh;
         private LayoutControlItem layoutControlItem4;
-        private DevComponents.DotNetBar.Controls.TextBoxX _threatsFilter;
-        private LayoutControlItem layoutControlItem5;
-        private System.Windows.Forms.Button _threatsSearch;
-        private LayoutControlItem layoutControlItem6;
         private DevComponents.DotNetBar.Controls.ComboBoxEx _templateTypes;
         private DevComponents.Editors.ComboItem _templateExternalInteractor;
         private DevComponents.Editors.ComboItem _templateProcess;

@@ -10,7 +10,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.KnownMitigationList
 {
-    [Extension("99EC3AAB-9346-4EF2-8A39-858D130D0A17", "Known Mitigation List", 11, ExecutionMode.Simplified)]
+    [Extension("99EC3AAB-9346-4EF2-8A39-858D130D0A17", "Known Mitigation List", 14, ExecutionMode.Simplified)]
     public partial class KnownMitigationListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IContextAwareExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.

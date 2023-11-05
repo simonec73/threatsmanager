@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -47,33 +50,76 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        [JsonProperty("dataFlows")]
-        private List<IDataFlow> _dataFlows;
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityAddedToDataFlow;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityAddedToDataFlow
+        {
+            add
+            {
+                if (_vulnerabilityAddedToDataFlow == null || !_vulnerabilityAddedToDataFlow.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityAddedToDataFlow += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityAddedToDataFlow != null) _vulnerabilityAddedToDataFlow -= value;
+            }
+        }
 
-        public IEnumerable<IDataFlow> DataFlows => _dataFlows?.AsReadOnly();
+        private Action<IVulnerabilitiesContainer, IVulnerability> _vulnerabilityRemovedFromDataFlow;
+        public event Action<IVulnerabilitiesContainer, IVulnerability> VulnerabilityRemovedFromDataFlow
+        {
+            add
+            {
+                if (_vulnerabilityRemovedFromDataFlow == null || !_vulnerabilityRemovedFromDataFlow.GetInvocationList().Contains(value))
+                {
+                    _vulnerabilityRemovedFromDataFlow += value;
+                }
+            }
+            remove
+            {
+                // ReSharper disable once DelegateSubtraction
+                if (_vulnerabilityRemovedFromDataFlow != null) _vulnerabilityRemovedFromDataFlow -= value;
+            }
+        }
+
+        [Child]
+        [JsonProperty("dataFlows", Order = 21)]
+        private AdvisableCollection<DataFlow> _flows { get; set; }
+
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IDataFlow> DataFlows => _flows?.AsEnumerable();
 
         [InitializationRequired]
         public IDataFlow GetDataFlow(Guid id)
         {
-            return _dataFlows?.FirstOrDefault(x => x.Id == id);
+            return _flows?.FirstOrDefault(x => x.Id == id);
         }
 
         [InitializationRequired]
         public IDataFlow GetDataFlow(Guid sourceId, Guid targetId)
         {
-            return _dataFlows?.FirstOrDefault(x => (x.SourceId == sourceId) && (x.TargetId == targetId));
+            return _flows?.FirstOrDefault(x => (x.SourceId == sourceId) && (x.TargetId == targetId));
         }
 
         [InitializationRequired]
         public void Add(IDataFlow dataFlow)
         {
-            if (dataFlow is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
+            if (dataFlow is DataFlow df)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Data Flow"))
+                {
+                    if (_flows == null)
+                        _flows = new AdvisableCollection<DataFlow>();
 
-            if (_dataFlows == null)
-                _dataFlows = new List<IDataFlow>();
-
-            _dataFlows.Add(dataFlow);
+                    UndoRedoManager.Attach(df, this);
+                    _flows.Add(df);
+                    scope?.Complete();
+                }
+            }
+            else
+                throw new ArgumentException(nameof(dataFlow));
         }
 
         [InitializationRequired]
@@ -81,14 +127,10 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             IDataFlow result = null;
 
-            if (!(_dataFlows?.Any(x => (x.SourceId == sourceId) && (x.TargetId == targetId)) ?? false))
+            if (!(_flows?.Any(x => (x.SourceId == sourceId) && (x.TargetId == targetId)) ?? false))
             {
-                if (_dataFlows == null)
-                    _dataFlows = new List<IDataFlow>();
-
-                result = new DataFlow(this, name, sourceId, targetId);
-                _dataFlows.Add(result);
-                SetDirty();
+                result = new DataFlow(name, sourceId, targetId);
+                Add(result);
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -99,16 +141,13 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public IDataFlow AddDataFlow([Required] string name, Guid sourceId, Guid targetId, IFlowTemplate template)
         {
-            IDataFlow result = new DataFlow(this, name, sourceId, targetId)
+            IDataFlow result = new DataFlow(name, sourceId, targetId)
             {
                 _templateId = template?.Id ?? Guid.Empty
             };
 
-            if (_dataFlows == null)
-                _dataFlows = new List<IDataFlow>();
-            _dataFlows.Add(result);
+            Add(result);
             RegisterEvents(result);
-            SetDirty();
             ChildCreated?.Invoke(result);
 
             return result;
@@ -124,24 +163,40 @@ namespace ThreatsManager.Engine.ObjectModel
             _threatEventAddedToDataFlow?.Invoke(container, threatEvent);
         }
 
+        private void OnVulnerabilityRemovedFromDataFlow([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityRemovedFromDataFlow?.Invoke(container, vulnerability);
+        }
+
+        private void OnVulnerabilityAddedToDataFlow([NotNull] IVulnerabilitiesContainer container, [NotNull] IVulnerability vulnerability)
+        {
+            _vulnerabilityAddedToDataFlow?.Invoke(container, vulnerability);
+        }
+
         public bool RemoveDataFlow(Guid id)
         {
             bool result = false;
 
-            var flow = GetDataFlow(id);
+            var flow = GetDataFlow(id) as DataFlow;
 
             if (flow != null)
             {
-                RemoveRelated(flow);
-                flow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
-                flow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
-
-                result = _dataFlows.Remove(flow);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Data Flow"))
                 {
-                    UnregisterEvents(flow);
-                    SetDirty();
-                    ChildRemoved?.Invoke(flow);
+                    RemoveRelated(flow);
+                    flow.ThreatEventAdded += OnThreatEventAddedToDataFlow;
+                    flow.ThreatEventRemoved += OnThreatEventRemovedFromDataFlow;
+
+                    result = _flows.Remove(flow);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(flow);
+
+                        UnregisterEvents(flow);
+                        ChildRemoved?.Invoke(flow);
+                    }
+                        
+                    scope?.Complete();
                 }
             }
 

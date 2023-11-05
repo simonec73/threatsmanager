@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.Entities;
-using ThreatsManager.Engine.Properties;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Engine.ObjectModel
@@ -16,10 +19,12 @@ namespace ThreatsManager.Engine.ObjectModel
         private static int _lastGroup = 0;
         private static int _lastTrustBoundary = 0;
 
-        [JsonProperty("groups")]
-        private List<IGroup> _groups;
+        [Child]
+        [JsonProperty("groups", ItemTypeNameHandling = TypeNameHandling.Objects, Order = 22)]
+        private AdvisableCollection<IGroup> _groups { get; set; }
 
-        public IEnumerable<IGroup> Groups => _groups?.AsReadOnly();
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IGroup> Groups => _groups?.AsEnumerable();
 
         [InitializationRequired]
         public IGroup GetGroup(Guid id)
@@ -30,13 +35,15 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add(IGroup group)
         {
-            if (group is IThreatModelChild child && child.Model != this)
-                throw new ArgumentException();
+            using (var scope = UndoRedoManager.OpenScope("Add Group"))
+            {
+                if (_groups == null)
+                    _groups = new AdvisableCollection<IGroup>();
 
-            if (_groups == null)
-                _groups = new List<IGroup>();
-
-            _groups.Add(group);
+                UndoRedoManager.Attach(group, this);
+                _groups.Add(group);
+                scope?.Complete();
+            }
         }
 
         [InitializationRequired]
@@ -52,11 +59,8 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (typeof(T) == typeof(ITrustBoundary))
             {
-                result = new TrustBoundary(this, name) as T;
-                if (_groups == null)
-                    _groups = new List<IGroup>();
-                _groups.Add(result);
-                SetDirty();
+                result = new TrustBoundary(name) as T;
+                Add(result);
                 RegisterEvents(result);
                 ChildCreated?.Invoke(result);
             }
@@ -67,16 +71,13 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public ITrustBoundary AddTrustBoundary([Required] string name, ITrustBoundaryTemplate template)
         {
-            ITrustBoundary result = new TrustBoundary(this, name)
+            ITrustBoundary result = new TrustBoundary(name)
             {
                 _templateId = template?.Id ?? Guid.Empty
             };
             
-            if (_groups == null)
-                _groups = new List<IGroup>();
-            _groups.Add(result);
+            Add(result);
             RegisterEvents(result);
-            SetDirty();
             ChildCreated?.Invoke(result);
 
             return result;
@@ -88,10 +89,7 @@ namespace ThreatsManager.Engine.ObjectModel
             if (group.Model != this)
                 throw new ArgumentException();
 
-            if (_groups == null)
-                _groups = new List<IGroup>();
-            _groups.Add(group);
-            SetDirty();
+            Add(group);
             RegisterEvents(group);
             ChildCreated?.Invoke(group);
         }
@@ -146,32 +144,38 @@ namespace ThreatsManager.Engine.ObjectModel
             var item = GetGroup(id);
             if (item != null)
             {
-                var newParent = (item as IGroupElement)?.Parent;
-                
-                var entities = item.Entities?.ToArray();
-                if (entities?.Any() ?? false)
+                using (var scope = UndoRedoManager.OpenScope("Remove Group"))
                 {
-                    foreach (var entity in entities)
-                        entity.SetParent(newParent);
-                }
+                    var newParent = (item as IGroupElement)?.Parent;
 
-                var groups = item.Groups?.ToArray();
-                if (groups?.Any() ?? false)
-                {
-                    foreach (var group in groups)
+                    var entities = item.Entities?.ToArray();
+                    if (entities?.Any() ?? false)
                     {
-                        (group as IGroupElement)?.SetParent(newParent);
+                        foreach (var entity in entities)
+                            entity.SetParent(newParent);
                     }
-                }
 
-                RemoveRelated(item);
+                    var groups = item.Groups?.ToArray();
+                    if (groups?.Any() ?? false)
+                    {
+                        foreach (var group in groups)
+                        {
+                            (group as IGroupElement)?.SetParent(newParent);
+                        }
+                    }
 
-                result = _groups.Remove(item);
-                if (result)
-                {
-                    UnregisterEvents(item);
-                    SetDirty();
-                    ChildRemoved?.Invoke(item);
+                    RemoveRelated(item);
+
+                    result = _groups.Remove(item);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(item);
+
+                        UnregisterEvents(item);
+                        ChildRemoved?.Invoke(item);
+                    }
+
+                    scope?.Complete();
                 }
             }
 

@@ -2,6 +2,8 @@
 using System.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -14,11 +16,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
-    [SimpleNotifyPropertyChanged]
-    [AutoDirty]
-    [DirtyAspect]
     [ThreatModelChildAspect]
+    [ThreatModelIdChanger]
     [PropertyAspect]
+    [Recordable(AutoRecord = false)]
+    [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyList, ThreatsManager.Engine")]
     public class PropertyList : IPropertyList, IInitializableObject
     {
@@ -27,57 +29,54 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             
         }
 
-        public PropertyList([NotNull] IThreatModel model, [NotNull] IListPropertyType propertyType) : this()
+        public PropertyList([NotNull] IListPropertyType propertyType) : this()
         {
             _id = Guid.NewGuid();
-            _modelId = model.Id;
-            _model = model;
             PropertyTypeId = propertyType.Id;
+            _model = propertyType.Model;
         }
 
         public bool IsInitialized => Model != null && _id != Guid.Empty && PropertyTypeId != Guid.Empty;
 
-        #region Additional placeholders required.
-        protected Guid _modelId { get; set; }
-        protected IThreatModel _model { get; set; }
-        protected Guid _id { get; set; }
-        #endregion
-        
         #region Default implementation.
         public Guid Id { get; }
         public event Action<IProperty> Changed;
         public Guid PropertyTypeId { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IPropertyType PropertyType { get; }
         public bool ReadOnly { get; set; }
+        [Reference]
+        [field: NotRecorded]
         public IThreatModel Model { get; }
+        #endregion
 
-        public event Action<IDirty, bool> DirtyChanged;
-        public bool IsDirty { get; }
-        public void SetDirty()
-        {
-        }
-
-        public void ResetDirty()
-        {
-        }
-
-        public bool IsDirtySuspended { get; }
-        public void SuspendDirty()
-        {
-        }
-
-        public void ResumeDirty()
-        {
-        }
+        #region Additional placeholders required.
+        [JsonProperty("modelId")]
+        protected Guid _modelId { get; set; }
+        [Reference]
+        [field: NotRecorded]
+        [field: UpdateThreatModelId]
+        [field: AutoApplySchemas]
+        protected IThreatModel _model { get; set; }
+        [JsonProperty("id")]
+        protected Guid _id { get; set; }
+        [JsonProperty("propertyTypeId")]
+        protected Guid _propertyTypeId { get; set; }
+        [JsonProperty("readOnly")]
+        protected bool _readOnly { get; set; }
         #endregion
 
         #region Specific implementation.
         [JsonProperty("item")]
-        private string _item;
+        [NotRecorded]
+        private string _item { get; set; }
 
+        [Reference]
         private IListItem _value;
 
         [InitializationRequired]
+        [property: NotRecorded]
         public string StringValue
         {
             get => _item;

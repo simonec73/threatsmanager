@@ -6,7 +6,6 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Panels.Configuration;
 using ThreatsManager.Extensions.Schemas;
-using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 
@@ -34,7 +33,7 @@ namespace ThreatsManager.Extensions.Dialogs
             _model = model;
 
             var normalizationReference =
-                (new ExtensionConfigurationManager(_model, (new ConfigurationPanelFactory()).GetExtensionId())).NormalizationReference;
+                (new ExtensionConfigurationManager(_model)).NormalizationReference;
             if (normalizationReference == 0)
                 _labelNormalizationContainer.Visible = false;
             else
@@ -73,7 +72,6 @@ namespace ThreatsManager.Extensions.Dialogs
             }
 
             schemaManager.Parameters = parameters;
-            schemaManager.Infinite = (float) _cap.Value;
 
             DialogResult = DialogResult.OK;
         }
@@ -95,15 +93,6 @@ namespace ThreatsManager.Extensions.Dialogs
 
             var configured = schemaManager.Parameters?.ToArray();
 
-            if (!_loading)
-                schemaManager.Infinite = estimator.DefaultInfinite;
-
-            var infinite = schemaManager.Infinite;
-            if (infinite < 0)
-                infinite = estimator.DefaultInfinite;
-
-            _cap.Value = infinite;
-
             _parameters.PrimaryGrid.Rows.Clear();
             var parameters = estimator.GetAcceptableRiskParameters(_model)?.ToArray();
             foreach (var parameter in parameters)
@@ -111,6 +100,8 @@ namespace ThreatsManager.Extensions.Dialogs
                 var value = configured?
                     .FirstOrDefault(x => string.CompareOrdinal(parameter, x.Name) == 0)?
                     .Value ?? 0.0f;
+                if (value < 0.0f)
+                    value = 100.0f;
 
                 var row = new GridRow(parameter, value);
                 _parameters.PrimaryGrid.Rows.Add(row);

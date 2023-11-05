@@ -1,94 +1,113 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
+using PostSharp.Aspects.Dependencies;
+using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
-    //private List<IThreatEventMitigation> _mitigations { get; set; }
+    //[Child]
+    //[JsonProperty("mitigations")]
+    //private AdvisableCollection<ThreatEventMitigation> _mitigations { get; set; }
     //#endregion    
 
     [PSerializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]
     public class ThreatEventMitigationsContainerAspect : InstanceLevelAspect
     {
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, 
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute), 
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("mitigations")]
-        public List<IThreatEventMitigation> _mitigations { get; set; }
+        [ImportMember(nameof(_mitigations))]
+        public Property<AdvisableCollection<ThreatEventMitigation>> _mitigations;
         #endregion
 
         #region Implementation of interface IThreatEventMitigationsContainer.
         private Action<IThreatEventMitigationsContainer, IThreatEventMitigation> _threatEventMitigationAdded;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationAdded
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "ThreatEventMitigationAdded", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnThreatEventMitigationAddedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_threatEventMitigationAdded == null || !_threatEventMitigationAdded.GetInvocationList().Contains(args.Handler))
             {
-                if (_threatEventMitigationAdded == null || !_threatEventMitigationAdded.GetInvocationList().Contains(value))
-                {
-                    _threatEventMitigationAdded += value;
-                }
+                _threatEventMitigationAdded += (Action<IThreatEventMitigationsContainer, IThreatEventMitigation>)args.Handler;
+                args.ProceedAddHandler();
             }
-            remove
-            {
-                _threatEventMitigationAdded -= value;
-            }
+        }
+
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnThreatEventMitigationAddedAdd))]
+        public void OnThreatEventMitigationAddedRemove(EventInterceptionArgs args)
+        {
+            _threatEventMitigationAdded -= (Action<IThreatEventMitigationsContainer, IThreatEventMitigation>)args.Handler;
+            args.ProceedRemoveHandler();
         }
 
         private Action<IThreatEventMitigationsContainer, IThreatEventMitigation> _threatEventMitigationRemoved;
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
-        public event Action<IThreatEventMitigationsContainer, IThreatEventMitigation> ThreatEventMitigationRemoved
+
+        [OnEventAddHandlerAdvice]
+        [MulticastPointcut(MemberName = "ThreatEventMitigationRemoved", Targets = PostSharp.Extensibility.MulticastTargets.Event, Attributes = PostSharp.Extensibility.MulticastAttributes.AnyVisibility)]
+        public void OnThreatEventMitigationRemovedAdd(EventInterceptionArgs args)
         {
-            add
+            if (_threatEventMitigationRemoved == null || !_threatEventMitigationRemoved.GetInvocationList().Contains(args.Handler))
             {
-                if (_threatEventMitigationRemoved == null || !_threatEventMitigationRemoved.GetInvocationList().Contains(value))
-                {
-                    _threatEventMitigationRemoved += value;
-                }
-            }
-            remove
-            {
-                _threatEventMitigationRemoved -= value;
+                _threatEventMitigationRemoved += (Action<IThreatEventMitigationsContainer, IThreatEventMitigation>)args.Handler;
+                args.ProceedAddHandler();
             }
         }
 
+        [OnEventRemoveHandlerAdvice(Master = nameof(OnThreatEventMitigationRemovedAdd))]
+        public void OnThreatEventMitigationRemovedRemove(EventInterceptionArgs args)
+        {
+            _threatEventMitigationRemoved -= (Action<IThreatEventMitigationsContainer, IThreatEventMitigation>)args.Handler;
+            args.ProceedRemoveHandler();
+        }
+
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<IThreatEventMitigation> Mitigations => _mitigations?.AsReadOnly();
+        public IEnumerable<IThreatEventMitigation> Mitigations => _mitigations?.Get()?.AsEnumerable();
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IThreatEventMitigation GetMitigation(Guid mitigationId)
         {
-            return _mitigations?.FirstOrDefault(x => x.MitigationId == mitigationId);
+            return _mitigations?.Get()?.FirstOrDefault(x => x.MitigationId == mitigationId);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 7)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public void Add(IThreatEventMitigation mitigation)
         {
-            if (mitigation == null)
+            if (mitigation is ThreatEventMitigation tem)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add a Mitigation to a Threat Event"))
+                {
+                    var mitigations = _mitigations?.Get();
+                    if (mitigations == null)
+                    {
+                        mitigations = new AdvisableCollection<ThreatEventMitigation>();
+                        _mitigations?.Set(mitigations);
+                    }
+
+                    UndoRedoManager.Attach(tem, tem.Model);
+                    mitigations.Add(tem);
+                    scope?.Complete();
+
+                    if (Instance is IThreatEventMitigationsContainer container)
+                    {
+                        _threatEventMitigationAdded?.Invoke(container, tem);
+                    }
+                }
+            }
+            else
                 throw new ArgumentNullException(nameof(mitigation));
-            if (mitigation.ThreatEvent != Instance || 
-                (mitigation.Mitigation is IThreatModelChild child && child.Model != (Instance as IThreatModelChild)?.Model))
-                throw new ArgumentException();
-
-            if (_mitigations == null)
-                _mitigations = new List<IThreatEventMitigation>();
-
-            _mitigations.Add(mitigation);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 13)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 10)]
         public IThreatEventMitigation AddMitigation(IMitigation mitigation, IStrength strength, 
             MitigationStatus status = MitigationStatus.Proposed, string directives = null)
         {
@@ -101,14 +120,10 @@ namespace ThreatsManager.Engine.Aspects
             {
                 result = new ThreatEventMitigation(threatEvent, mitigation, strength)
                 {
-                    Status = status, Directives = directives
+                    Status = status,
+                    Directives = directives
                 };
-                if (_mitigations == null)
-                    _mitigations = new List<IThreatEventMitigation>();
-                _mitigations.Add(result);
-                if (Instance is IDirty dirtyObject)
-                    dirtyObject.SetDirty();
-                _threatEventMitigationAdded?.Invoke(threatEvent, result);
+                Add(result);
             }
 
             return result;
@@ -119,16 +134,20 @@ namespace ThreatsManager.Engine.Aspects
         {
             bool result = false;
 
-            var mitigation = GetMitigation(mitigationId);
+            var mitigation = GetMitigation(mitigationId) as ThreatEventMitigation;
             if (mitigation != null)
             {
-                result = _mitigations.Remove(mitigation);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove a Mitigation from a Threat Event"))
                 {
-                    if (Instance is IDirty dirtyObject)
-                        dirtyObject.SetDirty();
-                    if (Instance is IThreatEventMitigationsContainer container)
-                        _threatEventMitigationRemoved?.Invoke(container, mitigation);
+                    result = _mitigations?.Get()?.Remove(mitigation) ?? false;
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(mitigation);
+                        scope?.Complete();
+
+                        if (Instance is IThreatEventMitigationsContainer container)
+                            _threatEventMitigationRemoved?.Invoke(container, mitigation);
+                    }
                 }
             }
 

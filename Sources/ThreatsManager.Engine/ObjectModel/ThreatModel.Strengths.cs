@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Model;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -12,8 +15,9 @@ namespace ThreatsManager.Engine.ObjectModel
 {
     public partial class ThreatModel
     {
-        [JsonProperty("strengths")]
-        private List<IStrength> _strengths;
+        [Child]
+        [JsonProperty("strengths", Order = 52)]
+        private AdvisableCollection<StrengthDefinition> _strengths { get; set; }
 
         private Action<IStrength> _strengthCreated;
         public event Action<IStrength> StrengthCreated
@@ -49,6 +53,7 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
+        [IgnoreAutoChangeNotification]
         public IEnumerable<IStrength> Strengths => _strengths?.OrderByDescending(x => x.Id);
 
         [InitializationRequired]
@@ -84,13 +89,22 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void Add([NotNull] IStrength strength)
         {
-            if (_strengths == null)
-                _strengths = new List<IStrength>();
+            if (strength is StrengthDefinition sd)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Add Strength"))
+                {
+                    if (_strengths == null)
+                        _strengths = new AdvisableCollection<StrengthDefinition>();
 
-            _strengths.Add(strength);
-            
-            SetDirty();
-            _strengthCreated?.Invoke(strength);
+                    UndoRedoManager.Attach(sd, this);
+                    _strengths.Add(sd);
+                    scope?.Complete();
+
+                    _strengthCreated?.Invoke(sd);
+                }
+            }
+            else
+                throw new ArgumentException(nameof(strength));
         }
 
         [InitializationRequired]
@@ -100,7 +114,7 @@ namespace ThreatsManager.Engine.ObjectModel
 
             if (!(_strengths?.Any(x => x.Id == id) ?? false))
             {
-                result = new StrengthDefinition(this, id, name);
+                result = new StrengthDefinition(id, name);
                 Add(result);
             }
 
@@ -125,14 +139,19 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = false;
 
-            var definition = GetStrength(id);
+            var definition = GetStrength(id) as StrengthDefinition;
             if (definition != null && !IsUsed(definition))
             {
-                result = _strengths.Remove(definition);
-                if (result)
+                using (var scope = UndoRedoManager.OpenScope("Remove Strength"))
                 {
-                    SetDirty();
-                    _strengthRemoved?.Invoke(definition);
+                    result = _strengths.Remove(definition);
+                    if (result)
+                    {
+                        UndoRedoManager.Detach(definition);
+                        scope?.Complete();
+
+                        _strengthRemoved?.Invoke(definition);
+                    }
                 }
             }
 
@@ -142,21 +161,34 @@ namespace ThreatsManager.Engine.ObjectModel
         [InitializationRequired]
         public void InitializeStandardStrengths()
         {
-            if (_strengths == null)
-                _strengths = new List<IStrength>();
-
-            var values = Enum.GetValues(typeof(DefaultStrength));
-            foreach (var value in values)
+            using (var scope = UndoRedoManager.OpenScope("Initialize Standard Strengths"))
             {
-                AddStrength((DefaultStrength) value);
+                if (_strengths == null)
+                    _strengths = new AdvisableCollection<StrengthDefinition>();
+
+                var values = Enum.GetValues(typeof(DefaultStrength));
+                foreach (var value in values)
+                {
+                    AddStrength((DefaultStrength)value);
+                }
+
+                scope?.Complete();
             }
         }
         
         private bool IsUsed([NotNull] IStrength strength)
         {
             return (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
-                   (_dataFlows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
-                   (_threatTypes?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false);
+                   (_entities?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Mitigations?.Any(t => t.StrengthId == strength.Id) ?? false) ?? false) ?? false) ?? false) || 
+                   (_entities?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.ThreatEvents?.Any(y => y.Vulnerabilities?.Any(z => z.Mitigations?.Any(t => t.StrengthId == strength.Id) ?? false) ?? false) ?? false) ?? false) ||
+                   (_flows?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_threatEvents?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
+                   (_threatEvents?.Any(x => x.Vulnerabilities?.Any(y => y.Mitigations?.Any(z => z.StrengthId == strength.Id) ?? false) ?? false) ?? false) ||
+                   (_vulnerabilities?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
+                   (_threatTypes?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false) ||
+                   (_weaknesses?.Any(x => x.Mitigations?.Any(y => y.StrengthId == strength.Id) ?? false) ?? false);
         }
     }
 }

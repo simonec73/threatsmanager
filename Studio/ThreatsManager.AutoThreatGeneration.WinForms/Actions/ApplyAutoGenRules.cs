@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PostSharp.Patterns.Recording;
+using System;
 using System.Collections.Generic;
 using ThreatsManager.AutoThreatGeneration.Properties;
 using ThreatsManager.Interfaces;
@@ -73,11 +74,17 @@ namespace ThreatsManager.AutoThreatGeneration.Actions
         {
             if ((answer == AnswerType.Yes || answer == AnswerType.Ok || answer == AnswerType.No) && context is IThreatModel threatModel)
             {
-                if (threatModel.GenerateThreatEvents(answer == AnswerType.No))
-                    ShowMessage?.Invoke("Threat Events generated successfully.");
-                else
+                using (var scope = UndoRedoManager.OpenScope("Apply Auto Gen Rules"))
                 {
-                    ShowWarning?.Invoke("No Threat Event or Mitigation has been generated.");
+                    if (threatModel.GenerateThreatEvents(answer == AnswerType.No))
+                    {
+                        scope?.Complete();
+                        ShowMessage?.Invoke("Threat Events generated successfully.");
+                    }
+                    else
+                    {
+                        ShowWarning?.Invoke("No Threat Event or Mitigation has been generated.");
+                    }
                 }
             }
         }

@@ -5,7 +5,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 
-namespace SampleWinFormExtensions.Panels.Validate
+namespace ThreatsManager.SampleWinFormExtensions.Panels.Validate
 {
     public partial class ValidatePanelFactory
     {

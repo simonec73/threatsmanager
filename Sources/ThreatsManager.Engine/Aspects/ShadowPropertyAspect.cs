@@ -1,18 +1,19 @@
 ﻿using System;
-using Newtonsoft.Json;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces.ObjectModel;
-using ThreatsManager.Interfaces.ObjectModel.Properties;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 
 namespace ThreatsManager.Engine.Aspects
 {
     //#region Additional placeholders required.
+    //[JsonProperty("originalId")]
     //private Guid _originalId { get; set; }
+    //[JsonProperty("overridden")]
     //private bool _overridden { get; set; }
+    //[Reference]
+    //[field: NonSerialized]
     //private IProperty _original { get; set; }
     //#endregion    
 
@@ -25,38 +26,47 @@ namespace ThreatsManager.Engine.Aspects
         #endregion
 
         #region Extra elements to be added.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute),
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("originalId")]
-        public Guid _originalId { get; set; }
+        [ImportMember(nameof(_originalId))]
+        public Property<Guid> _originalId;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 0, Visibility = Visibility.Private)]
-        public IProperty _original { get; set; }
+        [ImportMember(nameof(_original))]
+        public Property<IProperty> _original;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail,
-            LinesOfCodeAvoided = 1, Visibility = Visibility.Private)]
-        [CopyCustomAttributes(typeof(JsonPropertyAttribute),
-            OverrideAction = CustomAttributeOverrideAction.MergeReplaceProperty)]
-        [JsonProperty("overridden")]
-        public bool _overridden { get; set; }
+        [ImportMember(nameof(_overridden))]
+        public Property<bool> _overridden;
         #endregion
 
         #region Implementation of interface IShadowProperty.
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IProperty Original => _original ?? (_original = (Instance as IThreatModelChild)?.Model?.FindProperty(_originalId));
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 8)]
+        public IProperty Original
+        {
+            get
+            {
+                IProperty result = _original?.Get();
+                if (result == null)
+                {
+                    var originalId = _originalId?.Get() ?? Guid.Empty;
+                    if (originalId != Guid.Empty)
+                    {
+                        result = (Instance as IThreatModelChild)?.Model?.FindProperty(originalId);
+                        if (result != null)
+                            _original?.Set(result);
+                    }
+                }
+
+                return result;
+            }
+        }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public bool IsOverridden => _overridden;
+        public bool IsOverridden => _overridden?.Get() ?? false;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 3)]
         public void RevertToOriginal()
         {
-            if (_overridden)
+            if (IsOverridden)
             {
-                _overridden = false;
+                _overridden?.Set(false);
                 InvokeChanged();
             }
         }

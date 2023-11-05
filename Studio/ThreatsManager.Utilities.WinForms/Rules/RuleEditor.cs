@@ -49,7 +49,11 @@ namespace ThreatsManager.Utilities.WinForms.Rules
             this.AddComparisonRule("Description", Scope.Source);
             this.AddComparisonRule("Description", Scope.Target);
             this.AddEnumValueRule("Flow Type", EnumExtensions.GetEnumLabels<FlowType>());
-            this.AddCrossTrustBoundaryRule("Crosses Trust Boundary");
+            this.AddCrossTrustBoundaryRule();
+            this.AddEnterTrustBoundaryRule();
+            this.AddEnterTrustBoundaryTemplateRule(model);
+            this.AddExitTrustBoundaryRule();
+            this.AddExitTrustBoundaryTemplateRule(model);
             this.AddEnumValueRule("Object Type",
                 new[] { "External Interactor", "Process", "Data Store", "Flow", "Threat Model" });
             this.AddEnumValueRule("Object Type",

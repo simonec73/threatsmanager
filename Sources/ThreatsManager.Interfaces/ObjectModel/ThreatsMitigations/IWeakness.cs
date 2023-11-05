@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// Interface that defines a Weakness, that is the definition of a issue from which Vulnerabilities can be derived.
     /// </summary>
     public interface IWeakness : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IWeaknessMitigationsContainer, IDirty
+        IWeaknessMitigationsContainer
     {
         /// <summary>
         /// Identifier of the Severity.
@@ -21,9 +21,8 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <summary>
         /// Generates a Vulnerability from the Weakness.
         /// </summary>
-        /// <param name="identity">Reference identity to which the Vulnerability belongs.</param>
         /// <returns>Vulnerability generated from the current Weakness.</returns>
-        IVulnerability GenerateVulnerability(IIdentity identity);
+        IVulnerability GenerateVulnerability();
 
         /// <summary>
         /// Get the Mitigation Level for the Weakness.

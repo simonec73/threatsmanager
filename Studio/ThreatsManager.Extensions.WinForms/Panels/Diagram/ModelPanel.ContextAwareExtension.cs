@@ -12,6 +12,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
@@ -22,59 +23,65 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public Scope SupportedScopes => Scope.All;
 
-        
         public event Action<IPanelFactory, IIdentity> OpenPanel;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
             _actions = actions.ToArray();
             _graph.SetContextAwareActions(_actions);
-            ThreatEventListForm.SetActions(actions.Where(x => x.Scope.HasFlag(Scope.ThreatEvent)));
 
             foreach (var action in _actions)
             {
-                if (action is IIdentityAddingRequiredAction identityAddingRequiredAction)
-                    identityAddingRequiredAction.IdentityAddingRequired += AddIdentity;
-
-                if (action is IRefreshGroupBorderRequiredAction refreshGroupBorderRequiredAction)
-                    refreshGroupBorderRequiredAction.RefreshGroupBorderRequired += RefreshGroupBorder;
-
-                if (action is IEntityGroupRemovingRequiredAction entityGroupRemovingRequiredAction)
-                    entityGroupRemovingRequiredAction.EntityGroupRemovingRequired += RemoveEntityGroup;
-
-                if (action is IDataFlowAddingRequiredAction dataFlowAddingRequiredAction)
+                try
                 {
-                    dataFlowAddingRequiredAction.DataFlowAddingRequired += AddDataFlow;
-                }
+                    if (action is IIdentityAddingRequiredAction identityAddingRequiredAction)
+                        identityAddingRequiredAction.IdentityAddingRequired += AddIdentity;
 
-                if (action is IDataFlowRemovingRequiredAction dataFlowRemovingRequiredAction)
-                    dataFlowRemovingRequiredAction.DataFlowRemovingRequired += RemoveDataFlow;
+                    if (action is IRefreshGroupBorderRequiredAction refreshGroupBorderRequiredAction)
+                        refreshGroupBorderRequiredAction.RefreshGroupBorderRequired += RefreshGroupBorder;
 
-                if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction)
-                {
-                    var commandsBar = commandsBarContextAwareAction.CommandsBar;
-                    if (commandsBar != null)
+                    if (action is IEntityGroupRemovingRequiredAction entityGroupRemovingRequiredAction)
+                        entityGroupRemovingRequiredAction.EntityGroupRemovingRequired += RemoveEntityGroup;
+
+                    if (action is IDataFlowAddingRequiredAction dataFlowAddingRequiredAction)
                     {
-                        if (_commandsBarContextAwareActions == null)
-                            _commandsBarContextAwareActions = new Dictionary<string, List<ICommandsBarDefinition>>();
-                        List<ICommandsBarDefinition> list;
-                        if (_commandsBarContextAwareActions.ContainsKey(commandsBar.Name))
-                            list = _commandsBarContextAwareActions[commandsBar.Name];
-                        else
-                        {
-                            list = new List<ICommandsBarDefinition>();
-                            _commandsBarContextAwareActions.Add(commandsBar.Name, list);
-                        }
-
-                        list.Add(commandsBar);
+                        dataFlowAddingRequiredAction.DataFlowAddingRequired += AddDataFlow;
                     }
+
+                    if (action is IDataFlowRemovingRequiredAction dataFlowRemovingRequiredAction)
+                        dataFlowRemovingRequiredAction.DataFlowRemovingRequired += RemoveDataFlow;
+
+                    if (action is ICommandsBarContextAwareAction commandsBarContextAwareAction &&
+                        commandsBarContextAwareAction.IsVisible("Diagram"))
+                    {
+                        var commandsBar = commandsBarContextAwareAction.CommandsBar;
+                        if (commandsBar != null)
+                        {
+                            if (_commandsBarContextAwareActions == null)
+                                _commandsBarContextAwareActions = new Dictionary<string, List<ICommandsBarDefinition>>();
+                            List<ICommandsBarDefinition> list;
+                            if (_commandsBarContextAwareActions.ContainsKey(commandsBar.Name))
+                                list = _commandsBarContextAwareActions[commandsBar.Name];
+                            else
+                            {
+                                list = new List<ICommandsBarDefinition>();
+                                _commandsBarContextAwareActions.Add(commandsBar.Name, list);
+                            }
+
+                            list.Add(commandsBar);
+                        }
+                    }
+
+                    if (action is IPanelOpenerExtension panelCreationRequired)
+                        panelCreationRequired.OpenPanel += CreatePanel;
+
+                    if (action is IRemoveIdentityFromModelRequiredAction removeIdentityFromModelRequiredAction)
+                        removeIdentityFromModelRequiredAction.IdentityRemovingRequired += RemoveIdentityFromModel;
                 }
+                catch
+                {
 
-                if (action is IPanelOpenerExtension panelCreationRequired)
-                    panelCreationRequired.OpenPanel += CreatePanel;
-
-                if (action is IRemoveIdentityFromModelRequiredAction removeIdentityFromModelRequiredAction)
-                    removeIdentityFromModelRequiredAction.IdentityRemovingRequired += RemoveIdentityFromModel;
+                }
             }
         }
 
@@ -170,9 +177,15 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             if (diagram == _diagram && !_graph.IsDisposed)
             {
-                var link = _diagram.AddLink(dataFlow);
-                if (link != null)
-                    AddLink(link);
+                using (var scope = UndoRedoManager.OpenScope("Adding a Data Flow"))
+                {
+                    var link = _diagram.AddLink(dataFlow);
+                    if (link != null)
+                    {
+                        AddLink(link);
+                        scope?.Complete();
+                    }
+                }
             }
         }
 
