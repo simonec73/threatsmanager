@@ -14,6 +14,7 @@ namespace ThreatsManager.Engine.Aspects
     //private bool _overridden { get; set; }
     //[Reference]
     //[field: NonSerialized]
+    //[field: NotRecorded]
     //private IProperty _original { get; set; }
     //#endregion    
 

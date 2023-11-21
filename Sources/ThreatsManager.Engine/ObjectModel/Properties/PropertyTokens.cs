@@ -104,34 +104,34 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                if (value?.Any() ?? false)
+                var existing = _values?.Select(x => x.Value).OrderBy(x => x).TagConcat();
+                var incoming = value?.OrderBy(x => x).TagConcat();
+
+                if (string.CompareOrdinal(existing, incoming) != 0)
                 {
-                    if (_values == null)
-                    { 
-                        _values = new AdvisableCollection<RecordableString>();
-                    }
-                    else
+                    using (var scope = UndoRedoManager.OpenScope("Set Property Tokens"))
                     {
-                        if (_values.Any())
+                        if (_values?.Any() ?? false)
                         {
                             foreach (var item in _values)
                             {
                                 UndoRedoManager.Detach(item);
                             }
+                            _values.Clear();
                         }
-                        _values.Clear();
-                    }
 
-                    foreach (var item in value)
-                    {
-                        var r = new RecordableString(item);
-                        UndoRedoManager.Attach(r, Model);
-                        _values.Add(r);
+                        foreach (var item in value)
+                        {
+                            if (_values == null)
+                                _values = new AdvisableCollection<RecordableString>();
+
+                            var r = new RecordableString(item);
+                            UndoRedoManager.Attach(r, Model);
+                            _values.Add(r);
+                        }
+
+                        scope?.Complete();
                     }
-                }
-                else
-                {
-                    _values = null;
                 }
                 Changed?.Invoke(this);
             }

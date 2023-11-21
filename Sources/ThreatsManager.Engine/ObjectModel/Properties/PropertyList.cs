@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -101,7 +102,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 {
                     if (PropertyType is IListPropertyType listPropertyType)
                     {
-                        _value = listPropertyType.Values?.FirstOrDefault(x => string.CompareOrdinal(x.Id, _item) == 0);
+                        using (var scope = UndoRedoManager.OpenScope("Get Property List Value"))
+                        {
+                            _value = listPropertyType.Values?.FirstOrDefault(x => string.CompareOrdinal(x.Id, _item) == 0);
+                            scope?.Complete();
+                        }
                     }
                 }
 
@@ -115,15 +120,24 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (PropertyType is IListPropertyType listPropertyType)
                 {
-                    if (value != null)
+                    using (var scope = UndoRedoManager.OpenScope("Set Property List Value"))
                     {
-                        _value = listPropertyType.Values?.FirstOrDefault(x => string.CompareOrdinal(x.Id, value.Id) == 0);
-                        _item = _value != null ? value.Id : null;
-                    }
-                    else
-                    {
-                        _value = null;
-                        _item = null;
+                        if (value != null)
+                        {
+                            var comparer = new ListItemComparer();
+                            if (!comparer.Equals(value, _value))
+                            {
+                                _value = listPropertyType.Values?.FirstOrDefault(x => string.CompareOrdinal(x.Id, value.Id) == 0);
+                                _item = _value != null ? value.Id : null;
+                            }
+                        }
+                        else if (_value != null)
+                        {
+                            _value = null;
+                            _item = null;
+                        }
+
+                        scope?.Complete();
                     }
 
                     InvokeChanged();

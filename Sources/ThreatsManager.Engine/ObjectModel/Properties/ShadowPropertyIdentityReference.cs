@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -42,6 +43,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         private bool _overridden { get; set; }
         [Reference]
         [field: NonSerialized]
+        [field: NotRecorded]
         private IProperty _original { get; set; }
         #endregion    
 
