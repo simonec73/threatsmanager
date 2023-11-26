@@ -773,7 +773,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
+                _currentRow = e.NewActiveCell?.GridRow;
                 ShowCurrentRow();
             }
         }

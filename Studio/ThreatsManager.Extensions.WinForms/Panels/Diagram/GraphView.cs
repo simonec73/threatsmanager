@@ -311,7 +311,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
         }
 
-        private RecordingScope _moveScope;
+        private UndoRedoScope _moveScope;
 
         protected override void DoInternalDrag(DragEventArgs evt)
         {

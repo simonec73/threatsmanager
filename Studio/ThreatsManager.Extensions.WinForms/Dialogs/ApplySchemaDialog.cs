@@ -5,6 +5,7 @@ using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -62,8 +63,31 @@ namespace ThreatsManager.Extensions.Dialogs
                     }
                 }
 
+                var eiTemplate = false;
+                var pTemplate = false;
+                var dsTemplate = false;
+                var fTemplate = false;
+                var tbTemplate = false;
+                if (container is IEntityTemplate entityTemplate)
+                {
+                    eiTemplate = entityTemplate.EntityType == EntityType.ExternalInteractor;
+                    pTemplate = entityTemplate.EntityType == EntityType.Process;
+                    dsTemplate = entityTemplate.EntityType == EntityType.DataStore;
+                }
+                else
+                {
+                    fTemplate = container is IFlowTemplate;
+                    tbTemplate = container is ITrustBoundaryTemplate;
+                }
+
                 var schemas = model.Schemas?
-                    .Where(x => x.Visible && x.AppliesTo.HasFlag(container.PropertiesScope) &&
+                    .Where(x => x.Visible && 
+                        (x.AppliesTo.HasFlag(container.PropertiesScope) ||
+                        (eiTemplate && x.AppliesTo.HasFlag(Scope.ExternalInteractor)) ||
+                        (pTemplate && x.AppliesTo.HasFlag(Scope.Process)) ||
+                        (dsTemplate && x.AppliesTo.HasFlag(Scope.DataStore)) ||
+                        (fTemplate && x.AppliesTo.HasFlag(Scope.DataFlow)) ||
+                        (tbTemplate && x.AppliesTo.HasFlag(Scope.TrustBoundary))) &&
                         !(container.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == x.Id) ?? false))
                     .ToArray();
 

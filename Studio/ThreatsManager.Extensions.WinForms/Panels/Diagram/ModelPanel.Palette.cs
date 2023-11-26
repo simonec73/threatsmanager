@@ -533,13 +533,16 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void ConfigurePanelItemContextMenu()
         {
-            var configuration = new DiagramConfigurationManager(_diagram.Model);
-            if (configuration != null)
+            if (_actions?.Any() ?? false)
             {
-                var extensionId = configuration.MarkerExtension;
-                var factory = ExtensionUtils.GetExtension<IMarkerProviderFactory>(extensionId);
-                PanelItemListForm.SetActions(_actions
-                    .Where(x => factory.ContextScope != Scope.Undefined && x.Scope.HasFlag(factory.ContextScope)));
+                var configuration = new DiagramConfigurationManager(_diagram.Model);
+                if (configuration != null)
+                {
+                    var extensionId = configuration.MarkerExtension;
+                    var factory = ExtensionUtils.GetExtension<IMarkerProviderFactory>(extensionId);
+                    PanelItemListForm.SetActions(_actions
+                        .Where(x => factory.ContextScope != Scope.Undefined && x.Scope.HasFlag(factory.ContextScope)));
+                }
             }
         }
 

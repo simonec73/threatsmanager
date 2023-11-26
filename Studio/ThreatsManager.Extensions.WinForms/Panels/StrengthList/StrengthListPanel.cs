@@ -165,6 +165,7 @@ namespace ThreatsManager.Extensions.Panels.StrengthList
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }
@@ -338,7 +339,7 @@ namespace ThreatsManager.Extensions.Panels.StrengthList
             {
                 if (e.GridCell != null)
                 {
-                    _currentRow = e.GridCell.GridRow;
+                    _currentRow = e.GridCell?.GridRow;
                     ShowCurrentRow();
                 }
             }
@@ -358,7 +359,7 @@ namespace ThreatsManager.Extensions.Panels.StrengthList
 
         private void ShowCurrentRow()
         {
-            ChangeCustomActionStatus?.Invoke("RemoveStrength", _currentRow.Tag is IStrength);
+            ChangeCustomActionStatus?.Invoke("RemoveStrength", _currentRow?.Tag is IStrength);
         }
 
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)

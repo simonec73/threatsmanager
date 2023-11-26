@@ -84,6 +84,10 @@ namespace ThreatsManager
                     MessageBox.Show("TMS failed to run due to an error. It is possible that you downloaded it from the Internet, and that you forgot to Unblock the archive before extracting TMS.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            catch (UnauthorizedAccessException e)
+            {
+                MessageBox.Show($"Access denied opening Extension libraries: {e.Message}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             if (result)
             {
@@ -100,13 +104,13 @@ namespace ThreatsManager
         [Background]
         private void LoadExtensions()
         {
-            var enabledExtensions = Manager.Instance.Configuration.EnabledExtensions;
+            var enabledExtensions = Manager.Instance.Configuration?.EnabledExtensions;
 
             var mres = new Dictionary<int, List<IMainRibbonExtension>>();
      
             #region Load MainRibbonExtensions.
             var mainRibbonExtensions = Manager.Instance.GetExtensionsMetadata<IMainRibbonExtension>()?
-                .Where(x => enabledExtensions.ContainsCaseInsensitive(x.Key.Id))
+                .Where(x => (enabledExtensions?.ContainsCaseInsensitive(x.Key.Id) ?? true))
                 .OrderBy(x => x.Key.Priority).ToArray();
             if (mainRibbonExtensions != null)
             {
@@ -163,7 +167,6 @@ namespace ThreatsManager
             }
             #endregion
 
-            UpdateFormsList();
             RibbonRefresh();
         }
 
@@ -288,10 +291,10 @@ namespace ThreatsManager
                         Add(bar, button);
                         buttonsPerFactory.Add(button);
 
-                        if (string.CompareOrdinal(mainRibbonExtension.PanelsListRibbonAction, action.Name) == 0)
-                        {
-                            AppendFormsList(mainRibbonExtension, button);
-                        }
+                        //if (string.CompareOrdinal(mainRibbonExtension.PanelsListRibbonAction, action.Name) == 0)
+                        //{
+                        //    AppendFormsList(mainRibbonExtension, button);
+                        //}
                     }
                 }
 
@@ -344,6 +347,7 @@ namespace ThreatsManager
             RibbonRefresh();
         }
 
+        [Dispatched]
         private void HandleAsk(IAsker asker, object context, string caption, string text, bool warning, RequestOptions options)
         {
             MessageBoxButtons buttons;
@@ -700,49 +704,43 @@ namespace ThreatsManager
             _ribbon.RecalcLayout();
         }
 
-        [Dispatched]
         private void Button_Click(object sender, EventArgs e)
         {
             if (sender is ButtonItem button)
             {
                 if (button.Tag is IActionDefinition actionDefinition)
                 {
-                    using (var scope = UndoRedoManager.OpenScope(actionDefinition.Label))
-                    { 
-                        if (_mainRibbonExtensions.TryGetValue(actionDefinition.Id, out var extension))
+                    if (_mainRibbonExtensions.TryGetValue(actionDefinition.Id, out var extension))
+                    {
+                        ExceptionlessClient.Default.CreateFeatureUsage(extension.GetExtensionLabel()).Submit();
+                        try
                         {
-                            ExceptionlessClient.Default.CreateFeatureUsage(extension.GetExtensionLabel()).Submit();
-                            try
+                            extension.ExecuteRibbonAction(_model, actionDefinition);
+                        }
+                        catch (Exception exc)
+                        {
+                            exc.ToExceptionless().Submit();
+                        }
+                    }
+                    else
+                    {
+                        var form = FindForm(actionDefinition);
+                        if (form == null)
+                        {
+                            var parentId = _childParentActions[actionDefinition.Id];
+                            if (_mainRibbonExtensions.TryGetValue(parentId, out var parentExtension) &&
+                                parentExtension is IPanelFactory<Form> factory)
                             {
-                                extension.ExecuteRibbonAction(_model, actionDefinition);
-                            }
-                            catch (Exception exc)
-                            {
-                                exc.ToExceptionless().Submit();
+                                ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
+                                var panel = factory.Create(actionDefinition);
+                                if (actionDefinition.Tag is IIdentity identity)
+                                    CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity), identity);
                             }
                         }
                         else
                         {
-                            var form = FindForm(actionDefinition);
-                            if (form == null)
-                            {
-                                var parentId = _childParentActions[actionDefinition.Id];
-                                if (_mainRibbonExtensions.TryGetValue(parentId, out var parentExtension) &&
-                                    parentExtension is IPanelFactory<Form> factory)
-                                {
-                                    ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
-                                    var panel = factory.Create(actionDefinition);
-                                    if (actionDefinition.Tag is IIdentity identity)
-                                        CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity), identity);
-                                }
-                            }
-                            else
-                            {
-                                form.Activate();
-                            }
+                            form.Activate();
                         }
-
-                        scope?.Complete();
                     }
                 }                   
             }
@@ -773,7 +771,7 @@ namespace ThreatsManager
                 }
             }
 
-            var list = extension.GetStartPanelsList(_model)?.ToArray();
+             var list = extension.GetStartPanelsList(_model)?.ToArray();
             if (list?.Any() ?? false)
             {
                 foreach (var item in list)

@@ -85,6 +85,7 @@ namespace ThreatsManager
             _mergeIndex = _ribbon.Items.IndexOf(_title);
 
             await OpenInitialFile();
+            UpdateFormsList();
 
             LoadStatusInfoProviders();
 
@@ -223,6 +224,7 @@ namespace ThreatsManager
                 }
                 else
                 {
+                    Application.UserAppDataRegistry?.SetValue("Consent", false);
                     disableTelemetry = true;
                 }
             }

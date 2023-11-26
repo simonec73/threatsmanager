@@ -159,6 +159,7 @@
             this._quality.Name = "_quality";
             this._quality.Size = new System.Drawing.Size(459, 25);
             this._quality.TabIndex = 1;
+            this._quality.TabStop = false;
             // 
             // _negligible
             // 
@@ -292,6 +293,7 @@
             // 
             // PasswordDialog
             // 
+            this.AcceptButton = this._ok;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;

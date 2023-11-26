@@ -208,7 +208,6 @@
     <None Include="..\ThreatsManager\ThreatsManager.snk">
       <Link>ThreatsManager.snk</Link>
     </None>
-    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

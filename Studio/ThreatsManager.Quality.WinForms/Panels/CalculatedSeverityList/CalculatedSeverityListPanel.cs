@@ -1138,7 +1138,7 @@ namespace ThreatsManager.Quality.Panels.CalculatedSeverityList
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
+                _currentRow = e.NewActiveCell?.GridRow;
                 ShowCurrentRow();
             }
         }

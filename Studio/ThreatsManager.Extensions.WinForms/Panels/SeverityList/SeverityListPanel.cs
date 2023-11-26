@@ -193,6 +193,7 @@ namespace ThreatsManager.Extensions.Panels.SeverityList
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }
@@ -407,7 +408,7 @@ namespace ThreatsManager.Extensions.Panels.SeverityList
         private void ShowCurrentRow()
         {
             if (_promoted)
-                ChangeCustomActionStatus?.Invoke("RemoveSeverity", _currentRow.Tag is ISeverity);
+                ChangeCustomActionStatus?.Invoke("RemoveSeverity", _currentRow?.Tag is ISeverity);
         }
 
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)
