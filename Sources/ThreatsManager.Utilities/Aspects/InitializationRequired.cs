@@ -1,5 +1,7 @@
 ﻿using PostSharp.Aspects;
+using PostSharp.Aspects.Configuration;
 using PostSharp.Aspects.Dependencies;
+using PostSharp.Aspects.Serialization;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Utilities.Aspects.Engine;
@@ -10,6 +12,7 @@ namespace ThreatsManager.Utilities.Aspects
     /// Interface implemented to prevent entering a method if the object is not initialized.
     /// </summary>
     [PSerializable]
+    [OnMethodBoundaryAspectConfiguration(SerializerType = typeof(MsilAspectSerializer))]
     [ProvideAspectRole("Initialization")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, StandardRoles.Validation)]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(SimpleNotifyPropertyChangedAttribute))]

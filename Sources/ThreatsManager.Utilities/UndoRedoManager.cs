@@ -15,10 +15,12 @@ namespace ThreatsManager.Utilities
     /// </summary>
     public static class UndoRedoManager
     {
+        #region Private member variables.
         private static bool _isDirty = RecordingServices.DefaultRecorder.UndoOperations.Count > 0;
         private static bool _isUndoing = false;
         private static bool _isRedoing = false;
         private static Operation _lastOperation;
+        #endregion
 
         static UndoRedoManager()
         {
@@ -179,6 +181,11 @@ namespace ThreatsManager.Utilities
         /// </summary>
         public static void Clear()
         {
+            while (UndoRedoScope.HasPendingRecordingScopes)
+            {
+                System.Threading.Thread.Sleep(100);
+            }
+
             RecordingServices.DefaultRecorder.Clear();
             ResetDirty();
         }
@@ -259,12 +266,12 @@ namespace ThreatsManager.Utilities
         /// </summary>
         /// <param name="name">Name of the scope.</param>
         /// <returns>Scope for the recording.</returns>
-        public static RecordingScope OpenScope([Required] string name)
+        public static UndoRedoScope OpenScope([Required] string name)
         {
             if (IsUndoing || IsRedoing)
                 return null;
             else
-                return RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic);
+                return new UndoRedoScope(RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic));
         }
 
         /// <summary>
@@ -453,4 +460,5 @@ namespace ThreatsManager.Utilities
         }
         #endregion
     }
+
 }

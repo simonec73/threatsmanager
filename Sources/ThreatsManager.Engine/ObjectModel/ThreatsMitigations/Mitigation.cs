@@ -136,8 +136,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _modelId = model.Id,
                     ControlType = ControlType
                 };
-                this.CloneProperties(result);
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

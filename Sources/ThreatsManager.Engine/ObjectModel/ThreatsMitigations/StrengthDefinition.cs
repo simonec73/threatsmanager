@@ -134,8 +134,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _modelId = model.Id,
                     Visible = Visible
                 };
-                this.CloneProperties(result);
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

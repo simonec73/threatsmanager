@@ -270,8 +270,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                     Order = Order,
                     Dpi = Dpi
                 };
-                this.CloneProperties(result);
                 container.Add(result);
+                this.CloneProperties(result);
 
                 var entities = Entities?.ToArray();
                 if (entities?.Any() ?? false)

@@ -269,9 +269,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     SmallImage = SmallImage,
                     BigImage = BigImage
                 };
-                this.CloneProperties(result);
-
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

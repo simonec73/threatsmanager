@@ -58,8 +58,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 Description = description,
                 FlowType = source?.FlowType ?? FlowType.ReadWriteCommand
             };
-            source.CloneProperties(result);
             Add(result);
+            source.CloneProperties(result);
 
             return result;
         }

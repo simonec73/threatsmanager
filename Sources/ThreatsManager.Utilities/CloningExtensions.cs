@@ -24,28 +24,44 @@ namespace ThreatsManager.Utilities
             [NotNull] IPropertiesContainer target)
         {
             var properties = source?.Properties?.ToArray();
-            if ((properties?.Any() ?? false) && 
-                target is IThreatModelChild child &&
-                child.Model is IThreatModel model &&
-                properties.FirstOrDefault()?.Model is IThreatModel sourceModel)
+            if ((properties?.Any() ?? false) &&
+                target is IThreatModelChild child)
             {
-                foreach (var property in properties)
+                if (child.Model is IThreatModel model &&
+                    properties.FirstOrDefault()?.Model is IThreatModel sourceModel)
                 {
-                    if (property.PropertyType is IPropertyType sourcePropertyType &&
-                        sourceModel.GetSchema(sourcePropertyType.SchemaId) is IPropertySchema sourceSchema)
+                    foreach (var property in properties)
                     {
-                        if (model.GetSchema(sourceSchema.Name, sourceSchema.Namespace) is IPropertySchema targetSchema &&
-                            !targetSchema.NotExportable)
+                        if (property.PropertyType is IPropertyType sourcePropertyType &&
+                            sourceModel.GetSchema(sourcePropertyType.SchemaId) is IPropertySchema sourceSchema)
                         {
-                            var propertyType = targetSchema.GetPropertyType(sourcePropertyType.Name);
-                            if (propertyType != null)
+                            if (model.GetSchema(sourceSchema.Name, sourceSchema.Namespace) is IPropertySchema targetSchema &&
+                                (model.Id == sourceModel.Id || !targetSchema.NotExportable))
                             {
-                                var propertyTarget = target.GetProperty(propertyType);
-                                if (propertyTarget == null)
-                                    target.AddProperty(propertyType, property.StringValue);
-                                else
-                                    propertyTarget.StringValue = property.StringValue;
+                                var propertyType = targetSchema.GetPropertyType(sourcePropertyType.Name);
+                                if (propertyType != null)
+                                {
+                                    var propertyTarget = target.GetProperty(propertyType);
+                                    if (propertyTarget == null)
+                                        target.AddProperty(propertyType, property.StringValue);
+                                    else
+                                        propertyTarget.StringValue = property.StringValue;
+                                }
                             }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var property in properties)
+                    {
+                        if (property.PropertyType is IPropertyType propertyType)
+                        {
+                            var propertyTarget = target.GetProperty(propertyType);
+                            if (propertyTarget == null)
+                                target.AddProperty(propertyType, property.StringValue);
+                            else
+                                propertyTarget.StringValue = property.StringValue;
                         }
                     }
                 }

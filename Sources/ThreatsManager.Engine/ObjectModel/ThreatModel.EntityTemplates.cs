@@ -72,8 +72,8 @@ namespace ThreatsManager.Engine.ObjectModel
                 SmallImage = smallImage ?? source.GetImage(ImageSize.Small),
                 EntityType = GetEntityType(source)
             };
-            source.CloneProperties(result);
             Add(result);
+            source.CloneProperties(result);
 
             return result;
         }
