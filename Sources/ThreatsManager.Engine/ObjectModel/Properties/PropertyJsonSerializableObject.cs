@@ -129,12 +129,18 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (value != _value)
                 {
-                    UndoRedoManager.Attach(value, _model);
-                    _value = value;
-
-                    if (value is IThreatModelAware aware)
+                    using (var scope = UndoRedoManager.OpenScope("Set Property Json Serializable Object"))
                     {
-                        aware.ModelId = _modelId;
+                        if (value != null)
+                            UndoRedoManager.Attach(value, _model);
+                        _value = value;
+
+                        if (value is IThreatModelAware aware)
+                        {
+                            aware.ModelId = _modelId;
+                        }
+
+                        scope?.Complete();
                     }
 
                     InvokeChanged();

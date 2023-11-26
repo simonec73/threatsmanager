@@ -114,32 +114,43 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                if (_items?.Any() ?? false)
+                if (PropertyType is IListMultiPropertyType propertyType)
                 {
-                    foreach (var item in _items)
-                    {
-                        UndoRedoManager.Detach(item);
-                    }
-                    _items.Clear();
-                }
-                _values?.Clear();
+                    var existing = _items?.Select(x => x.Value).OrderBy(x => x).TagConcat();
+                    var incoming = value?.Select(x => x.Id).OrderBy(x => x).TagConcat();
 
-                if ((value?.Any() ?? false) && PropertyType is IListMultiPropertyType propertyType)
-                {
-                    foreach (var item in value)
+                    if (string.CompareOrdinal(existing, incoming) != 0)
                     {
-                        if (propertyType.Values.Any(x => string.CompareOrdinal(x.Id, item.Id) == 0))
+                        using (var scope = UndoRedoManager.OpenScope("Set Property List Multi Values"))
                         {
-                            if (_items == null)
-                                _items = new AdvisableCollection<RecordableString>();
+                            if (_items?.Any() ?? false)
+                            {
+                                foreach (var item in _items)
+                                {
+                                    UndoRedoManager.Detach(item);
+                                }
+                                _items.Clear();
+                            }
+                            _values?.Clear();
 
-                            if (_values == null)
-                                _values = new List<IListItem>();
+                            foreach (var item in value)
+                            {
+                                if (propertyType.Values.Any(x => string.CompareOrdinal(x.Id, item.Id) == 0))
+                                {
+                                    if (_items == null)
+                                        _items = new AdvisableCollection<RecordableString>();
 
-                            var newItem = new RecordableString(item.Id);
-                            UndoRedoManager.Attach(newItem, Model);
-                            _items.Add(newItem);
-                            _values.Add(item);
+                                    if (_values == null)
+                                        _values = new List<IListItem>();
+
+                                    var newItem = new RecordableString(item.Id);
+                                    UndoRedoManager.Attach(newItem, Model);
+                                    _items.Add(newItem);
+                                    _values.Add(item);
+                                }
+                            }
+
+                            scope?.Complete();
                         }
                     }
                 }
@@ -163,21 +174,19 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [OnDeserialized]
         public void PostDeserialization(StreamingContext context)
         {
+            if (_legacyItems?.Any() ?? false)
             {
-                if (_legacyItems?.Any() ?? false)
+                if (_items == null)
+                    _items = new AdvisableCollection<RecordableString>();
+
+                foreach (var item in _legacyItems)
                 {
-                    if (_items == null)
-                        _items = new AdvisableCollection<RecordableString>();
-
-                    foreach (var item in _legacyItems)
-                    {
-                        var r = new RecordableString(item);
-                        UndoRedoManager.Attach(r, Model);
-                        _items.Add(r);
-                    }
-
-                    _legacyItems.Clear();
+                    var r = new RecordableString(item);
+                    UndoRedoManager.Attach(r, Model);
+                    _items.Add(r);
                 }
+
+                _legacyItems.Clear();
             }
         }
         #endregion

@@ -90,7 +90,10 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                Value = value?.TagSplit();
+                if (string.CompareOrdinal(StringValue, value) != 0)
+                {
+                    Value = value?.TagSplit();
+                }
             }
         }
 
@@ -106,32 +109,41 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (value?.Any() ?? false)
                 {
-                    if (_items == null)
+                    if ((_items?.Count() ?? 0) != value.Count() || !value.SequenceEqual(_items.Select(x => x.Value)))
                     {
-                        _items = new AdvisableCollection<RecordableString>();
-                    }
-                    else
-                    {
-                        if (_items.Any())
+                        using (var scope = UndoRedoManager.OpenScope("Assign Property Array Value"))
                         {
-                            foreach (var item in _items)
+                            if (_items == null)
                             {
-                                UndoRedoManager.Detach(item);
+                                _items = new AdvisableCollection<RecordableString>();
                             }
-                        }
-                        _items.Clear();
-                    }
+                            else
+                            {
+                                if (_items.Any())
+                                {
+                                    foreach (var item in _items)
+                                    {
+                                        UndoRedoManager.Detach(item);
+                                    }
+                                }
+                                _items.Clear();
+                            }
 
-                    foreach (var item in value)
-                    {
-                        var r = new RecordableString(item);
-                        UndoRedoManager.Attach(r, Model);
-                        _items.Add(r);
+                            foreach (var item in value)
+                            {
+                                var r = new RecordableString(item);
+                                UndoRedoManager.Attach(r, Model);
+                                _items.Add(r);
+                            }
+
+                            scope?.Complete();
+                        }
                     }
                 }
                 else
                 {
-                    _items = null;
+                    if (_items != null)
+                        _items = null;
                 }
                 Changed?.Invoke(this);
             }

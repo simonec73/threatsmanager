@@ -410,7 +410,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\emoticon_straight_face.png" />
   </ItemGroup>

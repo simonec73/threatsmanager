@@ -278,6 +278,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }
@@ -407,7 +408,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 for (int i = 0; i < row.Cells.Count; i++)
                     row.Cells[i].PropertyChanged -= OnThreatTypeCellChanged;
                 ((INotifyPropertyChanged) ttm).PropertyChanged -= OnThreatTypeMitigationPropertyChanged;
-                ((INotifyPropertyChanged) ttm.ThreatType).PropertyChanged -= OnThreatTypePropertyChanged;
+                if (ttm.ThreatType is IThreatType tt)
+                    ((INotifyPropertyChanged) tt).PropertyChanged -= OnThreatTypePropertyChanged;
                 if (ttm is IUndoable undoable && undoable.IsUndoEnabled)
                     undoable.Undone -= ThreatTypeMitigationUndone;
             }
@@ -1173,7 +1175,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         {
             if (!_loading)
             {
-                var row = e.NewActiveCell.GridRow;
+                var row = e.NewActiveCell?.GridRow;
                 if (row != _currentRow)
                 {
                     _currentRow = row;

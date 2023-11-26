@@ -55,8 +55,8 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 Description = description,
             };
-            source.CloneProperties(result);
             Add(result);
+            source.CloneProperties(result);
 
             return result;
         }

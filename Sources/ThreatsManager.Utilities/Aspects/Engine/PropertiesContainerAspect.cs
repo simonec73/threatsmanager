@@ -10,7 +10,9 @@ using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 
@@ -331,39 +333,64 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 15)]
         public void Apply(IPropertySchema schema)
         {
-            if (Instance is IPropertiesContainer container && schema.AppliesTo.HasFlag(container.PropertiesScope))
+            if (Instance is IPropertiesContainer container)
             {
-                using (var scope = UndoRedoManager.OpenScope("Apply Property Schema"))
+                var eiTemplate = false;
+                var pTemplate = false;
+                var dsTemplate = false;
+                var fTemplate = false;
+                var tbTemplate = false;
+                if (container is IEntityTemplate entityTemplate)
                 {
-                    var existingProp = container.Properties?.ToArray();
-                    var schemaProp = schema.PropertyTypes?.ToArray();
-                    var missing = existingProp == null
-                        ? schemaProp
-                        : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
-                    var inExcess = existingProp?.Where(x => x.PropertyType != null &&
-                                                            x.PropertyType.SchemaId == schema.Id &&
-                                                            !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
-                        .Select(x => x.PropertyType).ToArray();
+                    eiTemplate = entityTemplate.EntityType == EntityType.ExternalInteractor;
+                    pTemplate = entityTemplate.EntityType == EntityType.Process;
+                    dsTemplate = entityTemplate.EntityType == EntityType.DataStore;
+                }
+                else
+                {
+                    fTemplate = container is IFlowTemplate;
+                    tbTemplate = container is ITrustBoundaryTemplate;
+                }
 
-                    if (missing?.Any() ?? false)
+                if (schema.AppliesTo.HasFlag(container.PropertiesScope) ||
+                        (eiTemplate && schema.AppliesTo.HasFlag(Scope.ExternalInteractor)) ||
+                        (pTemplate && schema.AppliesTo.HasFlag(Scope.Process)) ||
+                        (dsTemplate && schema.AppliesTo.HasFlag(Scope.DataStore)) ||
+                        (fTemplate && schema.AppliesTo.HasFlag(Scope.DataFlow)) ||
+                        (tbTemplate && schema.AppliesTo.HasFlag(Scope.TrustBoundary)))
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Apply Property Schema"))
                     {
-                        foreach (var item in missing)
-                        {
-                            if (item != null)
-                                container.AddProperty(item, null);
-                        }
-                    }
+                        var existingProp = container.Properties?.ToArray();
+                        var schemaProp = schema.PropertyTypes?.ToArray();
+                        var missing = existingProp == null
+                            ? schemaProp
+                            : schemaProp?.Except(existingProp.Select(x => x.PropertyType)).ToArray();
+                        var inExcess = existingProp?.Where(x => x.PropertyType != null &&
+                                                                x.PropertyType.SchemaId == schema.Id &&
+                                                                !(schemaProp?.Any(y => y.Id == x.PropertyTypeId) ?? false))
+                            .Select(x => x.PropertyType).ToArray();
 
-                    if (inExcess?.Any() ?? false)
-                    {
-                        foreach (var item in inExcess)
+                        if (missing?.Any() ?? false)
                         {
-                            if (item != null)
-                                container.RemoveProperty(item);
+                            foreach (var item in missing)
+                            {
+                                if (item != null)
+                                    container.AddProperty(item, null);
+                            }
                         }
-                    }
 
-                    scope?.Complete();
+                        if (inExcess?.Any() ?? false)
+                        {
+                            foreach (var item in inExcess)
+                            {
+                                if (item != null)
+                                    container.RemoveProperty(item);
+                            }
+                        }
+
+                        scope?.Complete();
+                    }
                 }
             }
         }

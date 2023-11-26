@@ -163,6 +163,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }

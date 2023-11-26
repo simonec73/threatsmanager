@@ -8,6 +8,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -70,7 +71,19 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             {
                 if (ReadOnly)
                     throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
-                _value = Guid.TryParse(value, out var result) ? result : Guid.Empty;
+
+                var newValue = Guid.TryParse(value, out var result) ? result : Guid.Empty;
+                if (newValue != _value)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Set Property Identity Reference"))
+                    {
+                        _value = newValue;
+                        _identity = null;
+
+                        scope?.Complete();
+                    }
+                }
+
                 InvokeChanged();
             }
         }
@@ -95,8 +108,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     if (ReadOnly)
                         throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                    _value = value.Id;
-                    _identity = value;
+                    using (var scope = UndoRedoManager.OpenScope("Set Property Identity Reference"))
+                    {
+                        _value = value.Id;
+                        _identity = value;
+                        scope?.Complete();
+                    }
                     InvokeChanged();
                 }
                 else if (value == null && _value != Guid.Empty)
@@ -104,8 +121,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     if (ReadOnly)
                         throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
 
-                    _value = Guid.Empty;
-                    _identity = null;
+                    using (var scope = UndoRedoManager.OpenScope("Set Property Identity Reference"))
+                    {
+                        _value = Guid.Empty;
+                        _identity = null;
+                        scope?.Complete();
+                    }
                     InvokeChanged();
                 }
             }

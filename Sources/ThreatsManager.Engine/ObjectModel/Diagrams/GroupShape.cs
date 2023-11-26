@@ -183,9 +183,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                     Position = new PointF(Position.X, Position.Y),
                     Size = new SizeF(Size)
                 };
-                this.CloneProperties(result);
-
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

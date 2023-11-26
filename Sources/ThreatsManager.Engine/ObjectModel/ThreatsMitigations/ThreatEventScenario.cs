@@ -213,9 +213,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _threatEventId = _threatEventId,
                     Motivation = Motivation,
                 };
-                this.CloneProperties(result);
-
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

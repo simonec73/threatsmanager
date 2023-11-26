@@ -200,7 +200,7 @@ namespace ThreatsManager.DevOps.Engines
             return MasterParent != null && !string.IsNullOrWhiteSpace(WorkItemType) && WorkItemStateMappings.Any() && WorkItemFieldMappings.Any();
         }
 
-        public string Url => _uri.AbsoluteUri;
+        public string Url => _uri?.AbsoluteUri;
 
         public string Project {get; private set;}
         #endregion

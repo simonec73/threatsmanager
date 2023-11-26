@@ -187,6 +187,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _model = model,
                     _severityId = _severityId
                 };
+                container.Add(result);
                 this.CloneProperties(result);
 
                 if (_mitigations?.Any() ?? false)
@@ -202,8 +203,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         }
                     }
                 }
-
-                container.Add(result);
             }
 
             return result;

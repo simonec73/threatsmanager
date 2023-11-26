@@ -286,13 +286,12 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                             AddGridRow(item, selectedEvents, panel);
                         }
                     }
-
-                    _currentRow = _grid.PrimaryGrid.Rows.OfType<GridRow>().FirstOrDefault();
                 }
             }
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }
@@ -2260,7 +2259,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         {
             if (!_loading)
             {
-                var row = e.NewActiveCell.GridRow;
+                var row = e.NewActiveCell?.GridRow;
                 if (row != _currentRow)
                 {
                     _currentRow = row;

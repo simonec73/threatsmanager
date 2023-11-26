@@ -1,5 +1,4 @@
-﻿using DevComponents.DotNetBar.Controls;
-using PostSharp.Patterns.Contracts;
+﻿using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
 using PostSharp.Patterns.Recording.Operations;
 using System;
@@ -9,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using ThreatsManager.Utilities;
-using static Syncfusion.XlsIO.Parser.Biff_Records.Charts.ChartAIRecord;
 
 namespace ThreatsManager.Extensions.Dialogs
 {
@@ -204,10 +202,10 @@ namespace ThreatsManager.Extensions.Dialogs
         private void _previousUndo_Click(object sender, EventArgs e)
         {
             var current = GetTopLineIndex(_undo);
-            var next = GetPreviousTopLevel(_undo, current);
-            if (next >= 0)
+            var previous = GetPreviousTopLevel(_undo, current);
+            if (previous >= 0)
             {
-                SetTopIndex(_undo, next);
+                SetTopIndex(_undo, previous);
             }
         }
 
@@ -251,89 +249,27 @@ namespace ThreatsManager.Extensions.Dialogs
         {
             textBox.SelectionStart = pos;
             textBox.ScrollToCaret();
-
-            //int top = GetTopLineIndex(textBox);
-
-            //while (top < line)
-            //{
-            //    textBox.SelectionStart = textBox.GetFirstCharIndexFromLine(line + line - top + 1);
-            //    textBox.ScrollToCaret();
-            //    var oldTop = top;
-            //    top = GetTopLineIndex(textBox);
-            //    if (oldTop == top)
-            //        break;
-            //};
         }
 
         private int GetNextTopLevel(RichTextBox textBox, int currentLine)
         {
-            //int result = -1;
-
-            var pos = textBox.GetFirstCharIndexFromLine(currentLine + 3);
-            return textBox.Find("[0]", pos, RichTextBoxFinds.NoHighlight);
-
-            //var lines = textBox.Lines?.ToArray();
-            //if ((lines?.Any() ?? false) && (lines.Count() > currentLine + 1))
-            //{
-            //    bool startChecking = false;
-
-            //    for (int i = currentLine + 1; i < lines.Count(); i++)
-            //    {
-            //        if (!startChecking)
-            //        {
-            //            if (!lines[i].StartsWith("[0]"))
-            //            {
-            //                startChecking = true;
-            //            }
-            //        }
-            //        else if (lines[i].StartsWith("[0]"))
-            //        {
-            //            result = i;
-            //            break;
-            //        }    
-            //    }
-            //}
-
-            //return result;
+            var pos = textBox.GetFirstCharIndexFromLine(currentLine + 1);
+            return textBox.Find("---", pos + 1, RichTextBoxFinds.NoHighlight);
         }
 
         private int GetPreviousTopLevel(RichTextBox textBox, int currentLine)
         {
             int result = -1;
 
-            if (currentLine > 3)
+            if (currentLine > 0)
             {
-                var pos = textBox.GetFirstCharIndexFromLine(currentLine - 3);
-                result = textBox.Find("[0]", pos, RichTextBoxFinds.NoHighlight | RichTextBoxFinds.Reverse);
+                var pos = textBox.GetFirstCharIndexFromLine(currentLine);
+                result = textBox.Find("---", 0, pos - 1, RichTextBoxFinds.NoHighlight | RichTextBoxFinds.Reverse);
+                if (result == -1)
+                    result = 0;
             }
 
             return result;
-
-            //int result = -1;
-
-            //var lines = textBox.Lines?.ToArray();
-            //if (lines?.Any() ?? false)
-            //{
-            //    bool startChecking = false;
-
-            //    for (int i = currentLine - 1; i >= 0; i--)
-            //    {
-            //        if (!startChecking)
-            //        {
-            //            if (!lines[i].StartsWith("[0]"))
-            //            {
-            //                startChecking = true;
-            //            }
-            //        }
-            //        else if (lines[i].StartsWith("[0]"))
-            //        {
-            //            result = i;
-            //            break;
-            //        }
-            //    }
-            //}
-
-            //return result;
         }
     }
 }

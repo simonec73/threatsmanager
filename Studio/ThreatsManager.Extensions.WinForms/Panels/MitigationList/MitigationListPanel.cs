@@ -146,6 +146,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }
@@ -928,7 +929,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
         {
             _properties.Item = _currentRow?.Tag;
 
-            ChangeCustomActionStatus?.Invoke("RemoveThreatEvent", _currentRow.Tag is IThreatEventMitigation);
+            ChangeCustomActionStatus?.Invoke("RemoveThreatEvent", _currentRow?.Tag is IThreatEventMitigation);
             ChangeActionsStatus();
         }
 
@@ -1028,7 +1029,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
         {
             if (!_loading)
             {
-                var row = e.NewActiveCell.GridRow;
+                var row = e.NewActiveCell?.GridRow;
                 if (row != _currentRow)
                 {
                     _currentRow = row;

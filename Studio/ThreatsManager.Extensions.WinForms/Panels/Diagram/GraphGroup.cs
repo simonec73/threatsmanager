@@ -329,7 +329,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         // override to keep _border surrounding the other child objects
         public override void LayoutChildren(GoObject childchanged)
         {
-            if (Initializing) return;
+            if (Initializing || UndoRedoManager.IsUndoing || UndoRedoManager.IsRedoing) return;
             GoObject border = Border;
             GoObject label = Label;
             if (childchanged == border && border != null && label != null)

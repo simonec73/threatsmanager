@@ -287,10 +287,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     _templateId = _templateId,
                     FlowType = FlowType
                 };
+                container.Add(result);
                 this.CloneProperties(result);
                 this.CloneThreatEvents(result);
 
-                container.Add(result);
             }
 
             return result;

@@ -34,7 +34,7 @@ namespace ThreatsManager.Engine.ObjectModel
     [Undoable]
     [TypeLabel("Threat Model")]
     [TypeInitial("M")]
-    public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable
+    public partial class ThreatModel : IThreatModel, IInitializableObject, IDisposable, IPostDeserialization
     {
         #region Constructors.
         public ThreatModel()

@@ -206,8 +206,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _textColor = _textColor,
                     _backColor = _backColor
                 };
-                this.CloneProperties(result);
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

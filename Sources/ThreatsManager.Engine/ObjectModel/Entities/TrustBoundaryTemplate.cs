@@ -169,9 +169,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     _model = model,
                     _modelId = model.Id,
                 };
-                this.CloneProperties(result);
-
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

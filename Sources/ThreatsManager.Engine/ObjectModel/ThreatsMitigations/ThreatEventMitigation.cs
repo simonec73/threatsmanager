@@ -185,8 +185,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     _strengthId = _strengthId,
                     Status = Status,
                 };
-                this.CloneProperties(result);
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

@@ -156,7 +156,6 @@
     <None Include="..\ThreatsManager\ThreatsManager.snk">
       <Link>ThreatsManager.snk</Link>
     </None>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\arrows_merge.png" />
   </ItemGroup>

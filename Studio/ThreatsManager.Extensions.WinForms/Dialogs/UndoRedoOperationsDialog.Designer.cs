@@ -219,21 +219,23 @@
             // 
             this._redo.Location = new System.Drawing.Point(67, 167);
             this._redo.Margin = new System.Windows.Forms.Padding(0);
-            this._redo.Multiline = true;
             this._redo.Name = "_redo";
             this._redo.ReadOnly = true;
             this._redo.Size = new System.Drawing.Size(521, 102);
             this._redo.TabIndex = 7;
+            this._redo.Text = "";
+            this._redo.WordWrap = false;
             // 
             // _undo
             // 
             this._undo.Location = new System.Drawing.Point(67, 25);
             this._undo.Margin = new System.Windows.Forms.Padding(0);
-            this._undo.Multiline = true;
             this._undo.Name = "_undo";
             this._undo.ReadOnly = true;
             this._undo.Size = new System.Drawing.Size(521, 102);
             this._undo.TabIndex = 1;
+            this._undo.Text = "";
+            this._undo.WordWrap = false;
             // 
             // label1
             // 

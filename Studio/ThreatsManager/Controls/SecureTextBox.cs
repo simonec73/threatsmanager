@@ -94,12 +94,14 @@ namespace ThreatsManager.Controls
 
         private void InputBox_KeyPress(object sender, KeyPressEventArgs e)
         {
+            e.Handled = true;
+
             if (e.KeyChar == '\b')
                 ProcessBackspace();
+            else if (e.KeyChar == '\r')
+                e.Handled = false;
             else
                 ProcessNewCharacter(e.KeyChar);
-
-            e.Handled = true;
         }
 
         private void ResetDisplayCharacters(int caretPosition)

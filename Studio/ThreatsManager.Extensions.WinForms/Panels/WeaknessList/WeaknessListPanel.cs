@@ -160,6 +160,7 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
             finally
             {
                 _loading = false;
+                _currentRow = null;
                 _grid.ResumeLayout(true);
             }
         }
@@ -758,7 +759,7 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         {
             if (!_loading)
             {
-                var row = e.NewActiveCell.GridRow;
+                var row = e.NewActiveCell?.GridRow;
                 if (row != _currentRow)
                 {
                     _currentRow = row;

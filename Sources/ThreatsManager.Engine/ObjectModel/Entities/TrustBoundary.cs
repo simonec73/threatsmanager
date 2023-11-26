@@ -214,9 +214,8 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                     _parentId = _parentId,
                     _templateId = _templateId
                 };
-                this.CloneProperties(result);
-
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;

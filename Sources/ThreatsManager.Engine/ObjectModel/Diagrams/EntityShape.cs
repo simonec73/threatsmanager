@@ -161,9 +161,8 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
                     _modelId = model.Id,
                     Position = new PointF(Position.X, Position.Y),
                 };
-                this.CloneProperties(result);
-
                 container.Add(result);
+                this.CloneProperties(result);
             }
 
             return result;
