@@ -75,20 +75,20 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="ThreatsManager.AutoGenRules, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.AutoGenRules.2.1.0\lib\net481\ThreatsManager.AutoGenRules.dll</HintPath>
+    <Reference Include="ThreatsManager.AutoGenRules, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.AutoGenRules.2.1.1\lib\net481\ThreatsManager.AutoGenRules.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.AutoThreatGeneration, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.AutoThreatGeneration.2.1.0\lib\net481\ThreatsManager.AutoThreatGeneration.dll</HintPath>
+    <Reference Include="ThreatsManager.AutoThreatGeneration, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.AutoThreatGeneration.2.1.1\lib\net481\ThreatsManager.AutoThreatGeneration.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Icons, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.1.0\lib\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.2.1.1\lib\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Interfaces.2.1.0\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
+    <Reference Include="ThreatsManager.Interfaces, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Interfaces.2.1.1\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.1.0\lib\net481\ThreatsManager.Utilities.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.2.1.1\lib\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
