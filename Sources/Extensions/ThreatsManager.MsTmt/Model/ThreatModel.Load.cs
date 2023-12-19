@@ -95,6 +95,10 @@ namespace ThreatsManager.MsTmt.Model
                                 }
                             }
                         }
+                        catch (ArgumentException)
+                        {
+                            // We can ignore: the image is not set correctly.
+                        }
                         catch (FormatException)
                         {
                             // We can ignore: the image is not set correctly.
