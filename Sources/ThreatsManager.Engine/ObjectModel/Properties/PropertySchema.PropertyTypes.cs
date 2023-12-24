@@ -61,10 +61,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         UndoRedoManager.Attach(result, Model);
                         _propertyTypes.Add(result);
                         scope?.Complete();
-
-                        PropertyTypeAdded?.Invoke(this, result);
                     }
                 }
+
+                if (result != null)
+                    PropertyTypeAdded?.Invoke(this, result);
             }
 
             return result;
@@ -85,10 +86,10 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                     {
                         UndoRedoManager.Detach(propertyType);
                         scope?.Complete();
-
-                        PropertyTypeRemoved?.Invoke(this, propertyType);
                     }
                 }
+                if (result)
+                    PropertyTypeRemoved?.Invoke(this, propertyType);
             }
 
             return result;

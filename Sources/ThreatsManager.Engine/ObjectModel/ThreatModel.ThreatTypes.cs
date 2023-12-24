@@ -107,9 +107,9 @@ namespace ThreatsManager.Engine.ObjectModel
                     UndoRedoManager.Attach(tt, this);
                     _threatTypes.Add(tt);
                     scope?.Complete();
-
-                    ChildCreated?.Invoke(tt);
                 }
+
+                ChildCreated?.Invoke(tt);
             }
             else
                 throw new ArgumentException(nameof(threatType));
@@ -148,11 +148,13 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(threatType);
                         UnregisterEvents(threatType);
-                        ChildRemoved?.Invoke(threatType);
                     }
 
                     scope?.Complete();
                 }
+
+                if (result)
+                    ChildRemoved?.Invoke(threatType);
             }
 
             return result;

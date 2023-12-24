@@ -111,10 +111,10 @@ namespace ThreatsManager.Engine.Aspects
                     UndoRedoManager.Attach(te, te.Model);
                     threatEvents.Add(te);
                     scope?.Complete();
-
-                    if (Instance is IThreatEventsContainer container)
-                        _threatEventAdded?.Invoke(container, te);
                 }
+
+                if (Instance is IThreatEventsContainer container)
+                    _threatEventAdded?.Invoke(container, te);
             }
             else
                 throw new ArgumentNullException(nameof(threatEvent));
@@ -157,11 +157,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(threatEvent);
                         scope?.Complete();
-
-                        if (Instance is IThreatEventsContainer container)
-                            _threatEventRemoved?.Invoke(container, threatEvent);
                     }
                 }
+
+                if (result && Instance is IThreatEventsContainer container)
+                    _threatEventRemoved?.Invoke(container, threatEvent);
             }
 
             return result;

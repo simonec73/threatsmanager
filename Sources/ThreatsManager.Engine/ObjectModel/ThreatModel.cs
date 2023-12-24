@@ -262,49 +262,53 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public void ExecutePostDeserialization()
         {
-            if (_legacyContributors?.Any() ?? false)
+            using (var scope = UndoRedoManager.OpenScope("Execute Post Deserialization"))
             {
-                if (_contributors == null)
-                    _contributors = new AdvisableCollection<RecordableString>();
-
-                foreach (var contrib in _legacyContributors)
+                if (_legacyContributors?.Any() ?? false)
                 {
-                    var r = new RecordableString(contrib);
-                    UndoRedoManager.Attach(r, this);
-                    _contributors.Add(r);
+                    if (_contributors == null)
+                        _contributors = new AdvisableCollection<RecordableString>();
+
+                    foreach (var contrib in _legacyContributors)
+                    {
+                        var r = new RecordableString(contrib);
+                        UndoRedoManager.Attach(r, this);
+                        _contributors.Add(r);
+                    }
+
+                    _legacyContributors.Clear();
                 }
 
-                _legacyContributors.Clear();
-            }
-
-            if (_legacyAssumptions?.Any() ?? false)
-            {
-                if (_assumptions == null)
-                    _assumptions = new AdvisableCollection<RecordableString>();
-
-                foreach (var assump in _legacyAssumptions)
+                if (_legacyAssumptions?.Any() ?? false)
                 {
-                    var r = new RecordableString(assump);
-                    UndoRedoManager.Attach(r, this);
-                    _assumptions.Add(r);
+                    if (_assumptions == null)
+                        _assumptions = new AdvisableCollection<RecordableString>();
+
+                    foreach (var assump in _legacyAssumptions)
+                    {
+                        var r = new RecordableString(assump);
+                        UndoRedoManager.Attach(r, this);
+                        _assumptions.Add(r);
+                    }
+
+                    _legacyAssumptions.Clear();
                 }
 
-                _legacyAssumptions.Clear();
-            }
-
-            if (_legacyDependencies?.Any() ?? false)
-            {
-                if (_dependencies == null)
-                    _dependencies = new AdvisableCollection<RecordableString>();
-
-                foreach (var depend in _legacyDependencies)
+                if (_legacyDependencies?.Any() ?? false)
                 {
-                    var r = new RecordableString(depend);
-                    UndoRedoManager.Attach(r, this);
-                    _dependencies.Add(r);
-                }
+                    if (_dependencies == null)
+                        _dependencies = new AdvisableCollection<RecordableString>();
 
-                _legacyDependencies.Clear();
+                    foreach (var depend in _legacyDependencies)
+                    {
+                        var r = new RecordableString(depend);
+                        UndoRedoManager.Attach(r, this);
+                        _dependencies.Add(r);
+                    }
+
+                    _legacyDependencies.Clear();
+                }
+                scope?.Complete();
             }
         }
 

@@ -100,9 +100,9 @@ namespace ThreatsManager.Engine.ObjectModel
                     UndoRedoManager.Attach(sd, this);
                     _severities.Add(sd);
                     scope?.Complete();
-
-                    _severityCreated?.Invoke(sd);
                 }
+
+                _severityCreated?.Invoke(sd);
             }
             else
                 throw new ArgumentException(nameof(severity));
@@ -151,11 +151,11 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(definition);
                         scope?.Complete();
-
-                        UnregisterEvents(definition);
-                        _severityRemoved?.Invoke(definition);
                     }
                 }
+
+                UnregisterEvents(definition);
+                _severityRemoved?.Invoke(definition);
             }
 
             return result;

@@ -49,9 +49,9 @@ namespace ThreatsManager.Engine.ObjectModel
                 UndoRedoManager.Attach(entityTemplate, this);
                 _entityTemplates.Add(entityTemplate);
                 scope?.Complete();
-
-                ChildCreated?.Invoke(entityTemplate);
             }
+
+            ChildCreated?.Invoke(entityTemplate);
         }
 
         [InitializationRequired]
@@ -150,10 +150,11 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(template);
                         scope?.Complete();
-
-                        ChildRemoved?.Invoke(template);
                     }
                 }
+
+                if (result)
+                    ChildRemoved?.Invoke(template);
             }
 
             return result;

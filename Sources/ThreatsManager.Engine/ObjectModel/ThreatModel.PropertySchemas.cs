@@ -978,9 +978,11 @@ namespace ThreatsManager.Engine.ObjectModel
                     Add(result);
                     RegisterEvents(result);
                     scope?.Complete();
-                    ChildCreated?.Invoke(result);
                 }
             }
+
+            if (result != null)
+                ChildCreated?.Invoke(result);
 
             return result;
         }
@@ -1028,11 +1030,13 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(s);
                         UnregisterEvents(s);
-                        ChildRemoved?.Invoke(s);
                     }
 
                     scope?.Complete();
                 }
+                
+                if (result)
+                    ChildRemoved?.Invoke(s);
             }
 
             return result;

@@ -107,9 +107,9 @@ namespace ThreatsManager.Engine.ObjectModel
                     UndoRedoManager.Attach(w, this);
                     _weaknesses.Add(w);
                     scope?.Complete();
-
-                    ChildCreated?.Invoke(w);
                 }
+
+                ChildCreated?.Invoke(w);
             }
             else
                 throw new ArgumentException(nameof(weakness));
@@ -148,11 +148,13 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(weakness);
                         UnregisterEvents(weakness);
-                        ChildRemoved?.Invoke(weakness);
                     }
 
                     scope?.Complete();
                 }
+
+                if (result)
+                    ChildRemoved?.Invoke(weakness);
             }
 
             return result;

@@ -144,11 +144,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(scenario);
                         scope?.Complete();
-
-                        if (Instance is IThreatEvent threatEvent)
-                            _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
                     }
                 }
+
+                if (result && Instance is IThreatEvent threatEvent)
+                    _threatEventScenarioRemoved?.Invoke(threatEvent, scenario);
             }
 
             return result;

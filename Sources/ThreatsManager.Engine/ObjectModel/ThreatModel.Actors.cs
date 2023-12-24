@@ -49,9 +49,9 @@ namespace ThreatsManager.Engine.ObjectModel
                     UndoRedoManager.Attach(a, this);
                     _actors.Add(a);
                     scope?.Complete();
-
-                    ChildCreated?.Invoke(a);
                 }
+
+                ChildCreated?.Invoke(a);
             }
             else
                 throw new ArgumentException(nameof(actor));

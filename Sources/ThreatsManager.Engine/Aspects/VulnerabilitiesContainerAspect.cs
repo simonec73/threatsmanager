@@ -111,10 +111,10 @@ namespace ThreatsManager.Engine.Aspects
                     UndoRedoManager.Attach(v, v.Model);
                     vulnerabilities.Add(v);
                     scope?.Complete();
-
-                    if (Instance is IVulnerabilitiesContainer container)
-                        _vulnerabilityAdded?.Invoke(container, v);
                 }
+
+                if (Instance is IVulnerabilitiesContainer container)
+                    _vulnerabilityAdded?.Invoke(container, v);
             }
             else
                 throw new ArgumentNullException(nameof(vulnerability));
@@ -157,11 +157,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(vulnerability);
                         scope?.Complete();
-
-                        if (Instance is IVulnerabilitiesContainer container)
-                            _vulnerabilityRemoved?.Invoke(container, vulnerability);
                     }
                 }
+
+                if (result && Instance is IVulnerabilitiesContainer container)
+                    _vulnerabilityRemoved?.Invoke(container, vulnerability);
             }
 
             return result;
