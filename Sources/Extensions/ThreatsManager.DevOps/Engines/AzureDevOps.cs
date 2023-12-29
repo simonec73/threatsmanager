@@ -660,7 +660,6 @@ namespace ThreatsManager.DevOps.Engines
 
             return result;
         }
-
         #endregion
 
         #region Auxiliary methods.

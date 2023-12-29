@@ -46,7 +46,6 @@ namespace ThreatsManager.DevOps
         /// <summary>
         /// Gets the projects associated to the current connection.
         /// </summary>
-        /// <returns></returns>
         /// <returns>List of Projects that the user can connect to.</returns>
         Task<IEnumerable<string>> GetProjectsAsync();
 

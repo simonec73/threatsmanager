@@ -20,8 +20,11 @@ namespace ThreatsManager.Extensions.Diagrams
         /// Constructor.
         /// </summary>
         /// <param name="name">Name of the item.</param>
-        public PaletteItem([Required] string name)
+        public PaletteItem(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                name = "<Undefined>";
+
             Name = name;
         }
 
