@@ -73,15 +73,7 @@ namespace ThreatsManager.Utilities
         {
             get
             {
-                IEnumerable<string> result = null;
-
-                var fromRegistry = Value as string;
-                if (fromRegistry != null)
-                {
-                    result = fromRegistry.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                }
-
-                return result;
+                return Value as string[];
             }
         }
     }

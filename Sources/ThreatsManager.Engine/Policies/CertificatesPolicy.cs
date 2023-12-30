@@ -20,7 +20,7 @@ namespace ThreatsManager.Engine.Policies
                 if (rows?.Any() ?? false)
                 {
                     List<CertificateConfig> certificates = null;
-                    Regex regex = new Regex("/<certificate thumbprint=\"(?'thumbprint'[^\"]+)\" subject=\"(?'subject'[^\"]+)\" issuer=\"(?'issuer'[^\"]+)\" expiration=\"(?'expiration'[^\"]+)\"/gs");
+                    Regex regex = new Regex(@"<certificate thumbprint=\x22(?'thumbprint'[^\x22]+)\x22 subject=\x22(?'subject'[^\x22]+)\x22 issuer=\x22(?'issuer'[^\x22]+)\x22 expiration=\x22(?'expiration'[^\x22]+)");
                     foreach (var row in rows)
                     {
                         var match = regex.Match(row);
