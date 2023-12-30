@@ -431,7 +431,8 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     if (dataFlow.Source is IEntity source)
                     {
-                        ((INotifyPropertyChanged)source).PropertyChanged -= OnSourcePropertyChanged;
+                        if (source is INotifyPropertyChanged sourceNotifyPropertyChanged)
+                            sourceNotifyPropertyChanged.PropertyChanged -= OnSourcePropertyChanged;
                         source.ImageChanged -= OnSourceImageChanged;
                     }
                     var labelSource = GetControl("Flow", "Source");
@@ -440,7 +441,8 @@ namespace ThreatsManager.Utilities.WinForms
 
                     if (dataFlow.Target is IEntity target)
                     {
-                        ((INotifyPropertyChanged)target).PropertyChanged -= OnTargetPropertyChanged;
+                        if (target is INotifyPropertyChanged targetNotifyPropertyChanged)
+                            targetNotifyPropertyChanged.PropertyChanged -= OnTargetPropertyChanged;
                         target.ImageChanged -= OnTargetImageChanged;
                     }
                     var labelTarget = GetControl("Flow", "Target");
@@ -466,7 +468,8 @@ namespace ThreatsManager.Utilities.WinForms
                     }
                     threatEvent.ThreatEventMitigationAdded -= ThreatEventMitigationAdded;
                     threatEvent.ThreatEventMitigationRemoved -= ThreatEventMitigationRemoved;
-                    ((INotifyPropertyChanged)threatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
+                    if (threatEvent.Parent is INotifyPropertyChanged threatEventParentNotifyPropertyChanged)
+                        threatEventParentNotifyPropertyChanged.PropertyChanged -= OnThreatEventParentPropertyChanged;
                     var labetThreatEvent = GetControl("Threat Event", "Associated To");
                     if (labetThreatEvent != null)
                         _superTooltip.SetSuperTooltip(labetThreatEvent, null);
@@ -484,7 +487,8 @@ namespace ThreatsManager.Utilities.WinForms
                     {
                         mitigationEntity.ImageChanged -= OnThreatEventMitigationImageChanged;
                     }
-                    ((INotifyPropertyChanged)mitigation.ThreatEvent.Parent).PropertyChanged -= OnThreatEventParentPropertyChanged;
+                    if (mitigation.ThreatEvent.Parent is INotifyPropertyChanged mtpNotifyPropertyChanged)
+                        mtpNotifyPropertyChanged.PropertyChanged -= OnThreatEventParentPropertyChanged;
                     var labelThreatEventMitigation = GetControl("Threat Event Mitigation", "Associated To");
                     if (labelThreatEventMitigation != null)
                         _superTooltip.SetSuperTooltip(labelThreatEventMitigation, null);

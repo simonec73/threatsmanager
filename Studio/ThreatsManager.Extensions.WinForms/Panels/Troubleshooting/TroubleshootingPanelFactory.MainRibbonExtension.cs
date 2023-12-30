@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities.Policies;
 
 namespace ThreatsManager.Extensions.Panels.Troubleshooting
 {
@@ -38,16 +39,20 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
             get
             {
                 IEnumerable<IActionDefinition> result = null;
-                
-                var config = ThreatsManager.Engine.ExtensionsConfigurationManager.GetConfigurationSection();
 
-                if (!(config?.DisableHelp ?? false))
+                var policy = new HelpTroubleshootPolicy();
+                if (policy == null || (policy.HelpTroubleshoot ?? true))
                 {
-                    result = new List<IActionDefinition>
+                    var config = ThreatsManager.Engine.ExtensionsConfigurationManager.GetConfigurationSection();
+
+                    if (!(config?.DisableHelp ?? false))
                     {
-                        new ActionDefinition(Id, "CreatePanel", "Troubleshooting", Properties.Resources.lifebelt_big,
-                            Properties.Resources.lifebelt)
-                    };
+                        result = new List<IActionDefinition>
+                        {
+                            new ActionDefinition(Id, "CreatePanel", "Troubleshooting", Properties.Resources.lifebelt_big,
+                                Properties.Resources.lifebelt)
+                        };
+                    }
                 }
 
                 return result;

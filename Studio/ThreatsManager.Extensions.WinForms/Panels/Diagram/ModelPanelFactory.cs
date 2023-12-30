@@ -88,10 +88,14 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (panel.Diagram is IDiagram diagram && panel.Diagram.Model is IThreatModel model)
             {
-                if (model.RemoveDiagram(diagram.Id))
+                using (var scope = UndoRedoManager.OpenScope("Remove Diagram"))
                 {
-                    PanelDeletionRequired?.Invoke(this, panel);
-                    result = true;
+                    if (model.RemoveDiagram(diagram.Id))
+                    {
+                        scope?.Complete();
+                        PanelDeletionRequired?.Invoke(this, panel);
+                        result = true;
+                    }
                 }
             }
 

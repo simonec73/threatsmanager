@@ -36,6 +36,9 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                         new ActionDefinition(Id, "RemoveDataFlow", "Remove Flow",
                             Resources.flow_big_delete,
                             Resources.flow_delete, false),
+                        new ActionDefinition(Id, "RemoveNotInDiagrams", "Remove not in Diagrams",
+                            Properties.Resources.flow_big_sponge,
+                            Properties.Resources.flow_sponge),
                     }),
                     new CommandsBarDefinition("Find", "Find", new IActionDefinition[]
                     {
@@ -92,76 +95,126 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                     case "RemoveDataFlow":
                         if (_currentRow != null)
                         {
-                            if ((selected?.Length ?? 0) > 1)
+                            using (var scope = UndoRedoManager.OpenScope("Remove Flows"))
                             {
-                                var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected.Length} Flows. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Flows,\nNo to remove only the last one you selected, '{_currentRow?.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Flows", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
-                                    MessageBoxDefaultButton.Button3);
-                                switch (outcome)
+                                if ((selected?.Length ?? 0) > 1)
                                 {
-                                    case DialogResult.Yes:
-                                        bool removed = true;
-                                        foreach (var row in selected)
-                                        {
-                                            bool r = false;
-                                            if (row.Tag is IDataFlow flow)
+                                    var outcome = MessageBox.Show(Form.ActiveForm,
+                                        $"You have selected {selected.Length} Flows. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Flows,\nNo to remove only the last one you selected, '{_currentRow?.Tag?.ToString()}'.\nPress Cancel to abort.",
+                                        "Remove Flows", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+                                        MessageBoxDefaultButton.Button3);
+                                    switch (outcome)
+                                    {
+                                        case DialogResult.Yes:
+                                            bool removed = true;
+                                            foreach (var row in selected)
                                             {
-                                                r = _model.RemoveDataFlow(flow.Id);
+                                                bool r = false;
+                                                if (row.Tag is IDataFlow flow)
+                                                {
+                                                    r = _model.RemoveDataFlow(flow.Id);
+                                                }
+
+                                                removed &= r;
+
+                                                if (r && row == _currentRow)
+                                                {
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                }
                                             }
 
-                                            removed &= r;
+                                            scope?.Complete();
 
-                                            if (r && row == _currentRow)
+                                            if (removed)
                                             {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                            }
-                                        }
-
-                                        if (removed)
-                                        {
-                                            text = "Remove Flows";
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "One or more Flows cannot be removed.";
-                                        }
-                                        break;
-                                    case DialogResult.No:
-                                        if (_currentRow != null && _currentRow.Tag is IDataFlow flow2)
-                                        {
-                                            if (_model.RemoveDataFlow(flow2.Id))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Flow";
+                                                text = "Remove Flows";
                                             }
                                             else
                                             {
                                                 warning = true;
-                                                text = "The Flow cannot be removed.";
+                                                text = "One or more Flows cannot be removed.";
                                             }
-                                        }
-                                        break;
+                                            break;
+                                        case DialogResult.No:
+                                            if (_currentRow != null && _currentRow.Tag is IDataFlow flow2)
+                                            {
+                                                if (_model.RemoveDataFlow(flow2.Id))
+                                                {
+                                                    scope?.Complete();
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                    text = "Remove Flow";
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "The Flow cannot be removed.";
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                                else if (_currentRow != null && _currentRow.Tag is IDataFlow dataFlow &&
+                                         MessageBox.Show(Form.ActiveForm,
+                                             $"You are about to remove Flow '{dataFlow.Name}'. Are you sure?",
+                                             "Remove Flow", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                                {
+                                    if (_model.RemoveDataFlow(dataFlow.Id))
+                                    {
+                                        scope?.Complete();
+                                        _properties.Item = null;
+                                        text = "Remove Flow";
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Flow cannot be removed.";
+                                    }
                                 }
                             }
-                            else if (_currentRow != null && _currentRow.Tag is IDataFlow dataFlow &&
-                                     MessageBox.Show(Form.ActiveForm,
-                                         $"You are about to remove Flow '{dataFlow.Name}'. Are you sure?",
-                                         "Remove Flow", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        }
+                        break;
+                    case "RemoveNotInDiagrams":
+                        var diagrams = _model.Diagrams?.ToArray();
+                        var flows = _model.DataFlows?
+                            .Where(x => !(diagrams?.Any(y => y.Links?.Any(z => x.Id == z.AssociatedId) ?? false) ?? false))
+                            .ToArray();
+                        if (flows?.Any() ?? false)
+                        {
+                            if (MessageBox.Show(Form.ActiveForm, 
+                                $"You are about to remove {flows.Count()} Flows that are not associated with any Diagram. Are you sure?",
+                                "Remove Flows not in any Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
-                                if (_model.RemoveDataFlow(dataFlow.Id))
+                                var currentFlow = _currentRow?.Tag as IDataFlow;
+                                if (currentFlow != null && flows.Any(x => x.Id == currentFlow.Id))
                                 {
                                     _properties.Item = null;
-                                    text = "Remove Flow";
+                                    _currentRow = null;
+
                                 }
-                                else
+
+                                using (var scope = UndoRedoManager.OpenScope("Remove Flows Not In Any Diagram"))
                                 {
-                                    warning = true;
-                                    text = "The Flow cannot be removed.";
+                                    var removed = true;
+                                    foreach (var flow in flows)
+                                    {
+                                        removed &= _model.RemoveDataFlow(flow.Id);
+                                    }
+
+                                    if (removed)
+                                    {
+                                        text = "Remove Flows Not In Any Diagram ";
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "One or more Flows cannot be removed.";
+                                    }
+
+                                    scope?.Complete();
                                 }
                             }
                         }
@@ -170,10 +223,10 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
                         bool found = false;
                         if (_currentRow != null && _currentRow.Tag is IDataFlow dataFlow2)
                         {
-                            var diagrams = _model.Diagrams?.ToArray();
-                            if (diagrams?.Any() ?? false)
+                            var diagrams2 = _model.Diagrams?.ToArray();
+                            if (diagrams2?.Any() ?? false)
                             {
-                                foreach (var diagram in diagrams)
+                                foreach (var diagram in diagrams2)
                                 {
                                     var flow = diagram.GetLink(dataFlow2.Id);
                                     if (flow != null)

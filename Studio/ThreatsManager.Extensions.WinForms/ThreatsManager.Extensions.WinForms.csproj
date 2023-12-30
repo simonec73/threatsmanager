@@ -131,6 +131,7 @@
     <Compile Include="..\ThreatsManager\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Actions\AddMissingFlows.cs" />
     <Compile Include="Actions\ApplyPropertySchema.cs" />
     <Compile Include="Actions\ApplySeverityToThreatEvents.cs" />
     <Compile Include="Actions\ApplyStrengthToMitigations.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Actions\CopyThreatEvent.cs" />
     <Compile Include="Actions\DisassociateMitigation.cs" />
     <Compile Include="Actions\AssociateMitigation.cs" />
+    <Compile Include="Actions\DuplicateEntity.cs" />
     <Compile Include="Actions\EditThreatType.cs" />
     <Compile Include="Actions\PanelChangeTemplate.cs" />
     <Compile Include="Actions\PanelRemoveSchema.cs" />
@@ -162,6 +164,12 @@
     </Compile>
     <Compile Include="Dialogs\ChangeTemplateMultipleDialog.Designer.cs">
       <DependentUpon>ChangeTemplateMultipleDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DuplicateConvertDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DuplicateConvertDialog.Designer.cs">
+      <DependentUpon>DuplicateConvertDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\RemoveSchemaMultipleDialog.cs">
       <SubType>Form</SubType>
@@ -347,6 +355,8 @@
     <Compile Include="Panels\DiagramConfiguration\Zoom.cs" />
     <Compile Include="Panels\Diagram\MarkerStatus.cs" />
     <Compile Include="Panels\Diagram\MarkerStatusTrigger.cs" />
+    <Compile Include="Panels\Diagram\PanelItemListFormTrigger.cs" />
+    <Compile Include="Panels\Diagram\PanelsStatus.cs" />
     <Compile Include="Panels\Roadmap\ExcelReportEngine.cs" />
     <Compile Include="Panels\Roadmap\RoadmapFilter.cs" />
     <Compile Include="Dialogs\RoadmapFilterDialog.cs">
@@ -763,6 +773,7 @@
     </Compile>
     <Compile Include="Panels\ThreatModel\ThreatModelPanelFactory.cs" />
     <Compile Include="Panels\ThreatModel\ThreatModelPanelFactory.MainRibbonExtension.cs" />
+    <Compile Include="Policies\RiskNormalizationPolicy.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -793,6 +804,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ChangeTemplateMultipleDialog.resx">
       <DependentUpon>ChangeTemplateMultipleDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DuplicateConvertDialog.resx">
+      <DependentUpon>DuplicateConvertDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\RemoveSchemaMultipleDialog.resx">
       <DependentUpon>RemoveSchemaMultipleDialog.cs</DependentUpon>
@@ -1400,6 +1414,30 @@
     <None Include="Resources\magic_wand_delete.png" />
     <None Include="Resources\magic_wand_huge_delete.png" />
     <None Include="Resources\magic_wand_small_delete.png" />
+    <None Include="Resources\showcubes_small.png" />
+    <None Include="Resources\showcubes.png" />
+    <None Include="Resources\showcubes_big.png" />
+    <None Include="Resources\showcubes_huge.png" />
+    <None Include="Resources\panel_huge.png" />
+    <None Include="Resources\panel_big.png" />
+    <None Include="Resources\panel.png" />
+    <None Include="Resources\panel_small.png" />
+    <None Include="Resources\objects_cube_to_cone_small.png" />
+    <None Include="Resources\objects_cube_to_cone.png" />
+    <None Include="Resources\objects_cube_to_cone_big.png" />
+    <None Include="Resources\objects_cube_to_cone_huge.png" />
+    <None Include="Resources\storage_big_sponge.png" />
+    <None Include="Resources\storage_huge_sponge_big.png" />
+    <None Include="Resources\storage_sponge_small.png" />
+    <None Include="Resources\external_big_sponge.png" />
+    <None Include="Resources\external_huge_sponge_big.png" />
+    <None Include="Resources\external_sponge_small.png" />
+    <None Include="Resources\flow_big_sponge.png" />
+    <None Include="Resources\flow_huge_sponge_big.png" />
+    <None Include="Resources\flow_sponge_small.png" />
+    <None Include="Resources\process_big_sponge.png" />
+    <None Include="Resources\process_huge_sponge_big.png" />
+    <None Include="Resources\process_sponge_small.png" />
     <Content Include="Shortcuts.txt" />
     <Content Include="Colors.txt" />
     <Content Include="Resources\threats_selection_small.png" />

@@ -36,7 +36,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportKnowledgeBaseDialog));
             this._saveFile = new System.Windows.Forms.SaveFileDialog();
             this._wizard = new DevComponents.DotNetBar.Wizard();
@@ -58,9 +57,11 @@
             this._fullyThreatTypes = new System.Windows.Forms.CheckBox();
             this._fullyMitigations = new System.Windows.Forms.CheckBox();
             this._fullyThreatActors = new System.Windows.Forms.CheckBox();
+            this._fullyWeaknesses = new System.Windows.Forms.CheckBox();
             this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem9 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem10 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._pageSchemas = new DevComponents.DotNetBar.WizardPage();
@@ -75,6 +76,10 @@
             this._uncheckAllThreatTypes = new System.Windows.Forms.Button();
             this._checkAllThreatTypes = new System.Windows.Forms.Button();
             this._threatTypes = new System.Windows.Forms.CheckedListBox();
+            this._pageWeaknesses = new DevComponents.DotNetBar.WizardPage();
+            this._uncheckAllWeaknesses = new System.Windows.Forms.Button();
+            this._checkAllWeaknesses = new System.Windows.Forms.Button();
+            this._weaknesses = new System.Windows.Forms.CheckedListBox();
             this._pageMitigations = new DevComponents.DotNetBar.WizardPage();
             this._uncheckAllMitigations = new System.Windows.Forms.Button();
             this._checkAllMitigations = new System.Windows.Forms.Button();
@@ -99,6 +104,7 @@
             this._pageSchemas.SuspendLayout();
             this._pageItemTemplates.SuspendLayout();
             this._pageThreatTypes.SuspendLayout();
+            this._pageWeaknesses.SuspendLayout();
             this._pageMitigations.SuspendLayout();
             this._pageThreatActors.SuspendLayout();
             this._pageFile.SuspendLayout();
@@ -166,6 +172,7 @@
             this._pageSchemas,
             this._pageItemTemplates,
             this._pageThreatTypes,
+            this._pageWeaknesses,
             this._pageMitigations,
             this._pageThreatActors,
             this._pageFile,
@@ -214,7 +221,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(429, 66);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Welcome to the Template Export Wizard";
+            this.label1.Text = "Welcome to the Knowledge Base Export Wizard";
             // 
             // label2
             // 
@@ -249,7 +256,7 @@
             this._pageTMProperties.Controls.Add(this._layoutDetails);
             this._pageTMProperties.Location = new System.Drawing.Point(7, 72);
             this._pageTMProperties.Name = "_pageTMProperties";
-            this._pageTMProperties.PageDescription = "Select the Threat Model Details to be included in the Template.";
+            this._pageTMProperties.PageDescription = "Select the Threat Model Details to be included in the Knowledge Base.";
             this._pageTMProperties.PageTitle = "Select Threat Model Details";
             this._pageTMProperties.Size = new System.Drawing.Size(639, 282);
             // 
@@ -340,7 +347,7 @@
             this._pageFullyInclude.Controls.Add(this._layoutFullyCopy);
             this._pageFullyInclude.Location = new System.Drawing.Point(7, 72);
             this._pageFullyInclude.Name = "_pageFullyInclude";
-            this._pageFullyInclude.PageDescription = "Select the categories that you want to fully include in the Template.";
+            this._pageFullyInclude.PageDescription = "Select the categories that you want to fully include in the Knowledge Base.";
             this._pageFullyInclude.PageTitle = "Select what to fully include";
             this._pageFullyInclude.Size = new System.Drawing.Size(639, 282);
             // 
@@ -383,6 +390,7 @@
             this._layoutFullyCopy.Controls.Add(this._fullyThreatTypes);
             this._layoutFullyCopy.Controls.Add(this._fullyMitigations);
             this._layoutFullyCopy.Controls.Add(this._fullyThreatActors);
+            this._layoutFullyCopy.Controls.Add(this._fullyWeaknesses);
             this._layoutFullyCopy.ForeColor = System.Drawing.Color.Black;
             this._layoutFullyCopy.Location = new System.Drawing.Point(55, 0);
             this._layoutFullyCopy.Name = "_layoutFullyCopy";
@@ -393,6 +401,7 @@
             this.layoutControlItem8,
             this.layoutControlItem9,
             this.layoutControlItem10,
+            this.layoutControlItem1,
             this.layoutControlItem6,
             this.layoutControlItem5});
             this._layoutFullyCopy.Size = new System.Drawing.Size(529, 253);
@@ -445,11 +454,11 @@
             this._fullyMitigations.AutoSize = true;
             this._fullyMitigations.Checked = true;
             this._fullyMitigations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._fullyMitigations.Location = new System.Drawing.Point(4, 79);
+            this._fullyMitigations.Location = new System.Drawing.Point(4, 104);
             this._fullyMitigations.Margin = new System.Windows.Forms.Padding(0);
             this._fullyMitigations.Name = "_fullyMitigations";
             this._fullyMitigations.Size = new System.Drawing.Size(521, 17);
-            this._fullyMitigations.TabIndex = 3;
+            this._fullyMitigations.TabIndex = 4;
             this._fullyMitigations.Text = "Mitigations";
             this._fullyMitigations.UseVisualStyleBackColor = true;
             this._fullyMitigations.CheckedChanged += new System.EventHandler(this._fullyMitigations_CheckedChanged);
@@ -459,14 +468,28 @@
             this._fullyThreatActors.AutoSize = true;
             this._fullyThreatActors.Checked = true;
             this._fullyThreatActors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._fullyThreatActors.Location = new System.Drawing.Point(4, 104);
+            this._fullyThreatActors.Location = new System.Drawing.Point(4, 129);
             this._fullyThreatActors.Margin = new System.Windows.Forms.Padding(0);
             this._fullyThreatActors.Name = "_fullyThreatActors";
             this._fullyThreatActors.Size = new System.Drawing.Size(521, 17);
-            this._fullyThreatActors.TabIndex = 4;
+            this._fullyThreatActors.TabIndex = 5;
             this._fullyThreatActors.Text = "Threat Actors";
             this._fullyThreatActors.UseVisualStyleBackColor = true;
             this._fullyThreatActors.CheckedChanged += new System.EventHandler(this._fullyThreatActors_CheckedChanged);
+            // 
+            // _fullyWeaknesses
+            // 
+            this._fullyWeaknesses.AutoSize = true;
+            this._fullyWeaknesses.Checked = true;
+            this._fullyWeaknesses.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._fullyWeaknesses.Location = new System.Drawing.Point(4, 79);
+            this._fullyWeaknesses.Margin = new System.Windows.Forms.Padding(0);
+            this._fullyWeaknesses.Name = "_fullyWeaknesses";
+            this._fullyWeaknesses.Size = new System.Drawing.Size(521, 17);
+            this._fullyWeaknesses.TabIndex = 3;
+            this._fullyWeaknesses.Text = "Weaknesses";
+            this._fullyWeaknesses.UseVisualStyleBackColor = true;
+            this._fullyWeaknesses.CheckedChanged += new System.EventHandler(this._fullyWeaknesses_CheckedChanged);
             // 
             // layoutControlItem8
             // 
@@ -494,6 +517,14 @@
             this.layoutControlItem10.Name = "layoutControlItem10";
             this.layoutControlItem10.Width = 100;
             this.layoutControlItem10.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem1
+            // 
+            this.layoutControlItem1.Control = this._fullyWeaknesses;
+            this.layoutControlItem1.Height = 25;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Width = 529;
             // 
             // layoutControlItem6
             // 
@@ -524,7 +555,7 @@
             this._pageSchemas.Controls.Add(this._schemas);
             this._pageSchemas.Location = new System.Drawing.Point(7, 72);
             this._pageSchemas.Name = "_pageSchemas";
-            this._pageSchemas.PageDescription = "Select the Schemas to be included in the Template.";
+            this._pageSchemas.PageDescription = "Select the Schemas to be included in the Knowledge Base.";
             this._pageSchemas.PageTitle = "Select Schemas";
             this._pageSchemas.Size = new System.Drawing.Size(639, 282);
             // 
@@ -588,7 +619,7 @@
             this._pageItemTemplates.Controls.Add(this._itemTemplates);
             this._pageItemTemplates.Location = new System.Drawing.Point(7, 72);
             this._pageItemTemplates.Name = "_pageItemTemplates";
-            this._pageItemTemplates.PageDescription = "Select the Item Templates to be included in the Template.";
+            this._pageItemTemplates.PageDescription = "Select the Item Templates to be included in the Knowledge Base.";
             this._pageItemTemplates.PageTitle = "Select Item Templates";
             this._pageItemTemplates.Size = new System.Drawing.Size(639, 282);
             // 
@@ -653,7 +684,7 @@
             this._pageThreatTypes.Controls.Add(this._threatTypes);
             this._pageThreatTypes.Location = new System.Drawing.Point(7, 72);
             this._pageThreatTypes.Name = "_pageThreatTypes";
-            this._pageThreatTypes.PageDescription = "Select the Threat Types to be included in the Template.";
+            this._pageThreatTypes.PageDescription = "Select the Threat Types to be included in the Knowledge Base.";
             this._pageThreatTypes.PageTitle = "Select Threat Types";
             this._pageThreatTypes.Size = new System.Drawing.Size(639, 282);
             // 
@@ -705,6 +736,71 @@
             this._threatTypes.TabIndex = 11;
             this._threatTypes.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._threatTypes_ItemCheck);
             // 
+            // _pageWeaknesses
+            // 
+            this._pageWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._pageWeaknesses.AntiAlias = false;
+            this._pageWeaknesses.BackColor = System.Drawing.Color.White;
+            this._pageWeaknesses.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._pageWeaknesses.Controls.Add(this._uncheckAllWeaknesses);
+            this._pageWeaknesses.Controls.Add(this._checkAllWeaknesses);
+            this._pageWeaknesses.Controls.Add(this._weaknesses);
+            this._pageWeaknesses.Location = new System.Drawing.Point(7, 72);
+            this._pageWeaknesses.Name = "_pageWeaknesses";
+            this._pageWeaknesses.PageDescription = "Select the Weaknesses to be included in the Knowledge Base.";
+            this._pageWeaknesses.PageTitle = "Select Weaknesses";
+            this._pageWeaknesses.Size = new System.Drawing.Size(639, 282);
+            // 
+            // 
+            // 
+            this._pageWeaknesses.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._pageWeaknesses.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._pageWeaknesses.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._pageWeaknesses.TabIndex = 23;
+            // 
+            // _uncheckAllWeaknesses
+            // 
+            this._uncheckAllWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._uncheckAllWeaknesses.Location = new System.Drawing.Point(138, 256);
+            this._uncheckAllWeaknesses.Name = "_uncheckAllWeaknesses";
+            this._uncheckAllWeaknesses.Size = new System.Drawing.Size(75, 23);
+            this._uncheckAllWeaknesses.TabIndex = 16;
+            this._uncheckAllWeaknesses.Text = "Uncheck All";
+            this._uncheckAllWeaknesses.UseVisualStyleBackColor = true;
+            this._uncheckAllWeaknesses.Click += new System.EventHandler(this._uncheckAllWeaknesses_Click);
+            // 
+            // _checkAllWeaknesses
+            // 
+            this._checkAllWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._checkAllWeaknesses.Location = new System.Drawing.Point(57, 256);
+            this._checkAllWeaknesses.Name = "_checkAllWeaknesses";
+            this._checkAllWeaknesses.Size = new System.Drawing.Size(75, 23);
+            this._checkAllWeaknesses.TabIndex = 15;
+            this._checkAllWeaknesses.Text = "Check All";
+            this._checkAllWeaknesses.UseVisualStyleBackColor = true;
+            this._checkAllWeaknesses.Click += new System.EventHandler(this._checkAllWeaknesses_Click);
+            // 
+            // _weaknesses
+            // 
+            this._weaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._weaknesses.FormattingEnabled = true;
+            this._weaknesses.Location = new System.Drawing.Point(57, 0);
+            this._weaknesses.Margin = new System.Windows.Forms.Padding(0);
+            this._weaknesses.Name = "_weaknesses";
+            this._weaknesses.Size = new System.Drawing.Size(526, 244);
+            this._weaknesses.TabIndex = 14;
+            this._weaknesses.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._weaknesses_ItemCheck);
+            // 
             // _pageMitigations
             // 
             this._pageMitigations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -718,7 +814,7 @@
             this._pageMitigations.Controls.Add(this._mitigations);
             this._pageMitigations.Location = new System.Drawing.Point(7, 72);
             this._pageMitigations.Name = "_pageMitigations";
-            this._pageMitigations.PageDescription = "Select the Mitigations to be included in the Template.";
+            this._pageMitigations.PageDescription = "Select the Mitigations to be included in the Knowledge Base.";
             this._pageMitigations.PageTitle = "Select Mitigations";
             this._pageMitigations.Size = new System.Drawing.Size(639, 282);
             // 
@@ -783,7 +879,7 @@
             this._pageThreatActors.Controls.Add(this._threatActors);
             this._pageThreatActors.Location = new System.Drawing.Point(7, 72);
             this._pageThreatActors.Name = "_pageThreatActors";
-            this._pageThreatActors.PageDescription = "Select the Threat Actors to be included in the Template.";
+            this._pageThreatActors.PageDescription = "Select the Threat Actors to be included in the Knowledge Base.";
             this._pageThreatActors.PageTitle = "Select Threat Actors";
             this._pageThreatActors.Size = new System.Drawing.Size(639, 282);
             // 
@@ -848,8 +944,9 @@
             this._pageFile.Location = new System.Drawing.Point(7, 72);
             this._pageFile.Name = "_pageFile";
             this._pageFile.NextButtonEnabled = DevComponents.DotNetBar.eWizardButtonState.False;
-            this._pageFile.PageDescription = "Select where to create the Template and the name of the file to be created.";
-            this._pageFile.PageTitle = "Select Template file";
+            this._pageFile.PageDescription = "Select where to create the Knowledge Base and the name of the file to be created." +
+    "";
+            this._pageFile.PageTitle = "Select Knowledge Base file";
             this._pageFile.Size = new System.Drawing.Size(639, 282);
             // 
             // 
@@ -923,7 +1020,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(429, 66);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Template Export Creation";
+            this.label4.Text = "Knowledge Base Export\r\n";
             // 
             // label5
             // 
@@ -936,7 +1033,7 @@
             this.label5.Size = new System.Drawing.Size(428, 234);
             this.label5.TabIndex = 4;
             this.label5.Text = "The required information has been collected.\r\n\r\nYou may click Finish to confirm t" +
-    "he creation of the new Template, or Cancel to abort it.";
+    "he creation of the new Knowledge Base, or Cancel to abort it.";
             // 
             // _spellAsYouType
             // 
@@ -984,7 +1081,7 @@
             this._spellAsYouType.V2Parser = true;
             this._spellAsYouType.WarnDuplicates = true;
             // 
-            // ExportTemplateDialog
+            // ExportKnowledgeBaseDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -993,11 +1090,11 @@
             this.Controls.Add(this._wizard);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "ExportTemplateDialog";
+            this.Name = "ExportKnowledgeBaseDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Template Export Wizard";
+            this.Text = "Knowledge Base Export Wizard";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExportTemplateDialog_FormClosed);
             this._wizard.ResumeLayout(false);
             this._pageIntro.ResumeLayout(false);
@@ -1011,6 +1108,7 @@
             this._pageSchemas.ResumeLayout(false);
             this._pageItemTemplates.ResumeLayout(false);
             this._pageThreatTypes.ResumeLayout(false);
+            this._pageWeaknesses.ResumeLayout(false);
             this._pageMitigations.ResumeLayout(false);
             this._pageThreatActors.ResumeLayout(false);
             this._pageFile.ResumeLayout(false);
@@ -1073,5 +1171,11 @@
         private System.Windows.Forms.TextBox _fileName;
         private System.Windows.Forms.CheckBox _skipGranularSteps;
         private Keyoti.RapidSpell.RapidSpellAsYouType _spellAsYouType;
+        private System.Windows.Forms.CheckBox _fullyWeaknesses;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem1;
+        private DevComponents.DotNetBar.WizardPage _pageWeaknesses;
+        private System.Windows.Forms.Button _uncheckAllWeaknesses;
+        private System.Windows.Forms.Button _checkAllWeaknesses;
+        private System.Windows.Forms.CheckedListBox _weaknesses;
     }
 }

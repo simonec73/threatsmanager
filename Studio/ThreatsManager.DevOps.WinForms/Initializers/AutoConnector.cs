@@ -42,11 +42,6 @@ namespace ThreatsManager.DevOps.Initializers
                             {
                                 DevOpsManager.Register(connector, model);
                                 Connect.ChangeDisconnectButtonStatus(connector, true);
-
-                                var configManager = new ExtensionConfigurationManager(model, this.GetExtensionId());
-                                configManager.Apply();
-
-                                await DevOpsManager.UpdateAsync(model);
                             }
                         }
                         else

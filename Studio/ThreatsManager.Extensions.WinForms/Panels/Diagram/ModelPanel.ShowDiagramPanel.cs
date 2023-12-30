@@ -34,6 +34,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 _diagram.Model.ChildCreated += OnModelChildCreated;
                 _diagram.Model.ChildRemoved += OnModelChildRemoved;
+                _diagram.LinkAdded += OnLinkAdded;
+                _diagram.EntityShapeAdded += OnEntityShapeAdded;
+                _diagram.GroupShapeAdded += OnGroupShapeAdded;
 
                 var dpi = GetDiagramDpi(diagram);
                 var factor = Dpi.Factor.Height / dpi;
@@ -252,6 +255,21 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     _links.Remove(dataFlow.Id);
                 }
             }
+        }
+
+        private void OnGroupShapeAdded(IGroupShapesContainer container, IGroupShape shape)
+        {
+            AddShape(shape);
+        }
+
+        private void OnEntityShapeAdded(IEntityShapesContainer container, IEntityShape shape)
+        {
+            AddShape(shape);
+        }
+
+        private void OnLinkAdded(ILinksContainer container, ILink link)
+        {
+            AddLink(link);
         }
 
         private void ReparentChildren([NotNull] GraphGroup parent, GraphGroup newParent)

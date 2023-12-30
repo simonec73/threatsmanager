@@ -66,6 +66,10 @@ namespace ThreatsManager.Extensions.Panels.Word
                     _wordFile.Text = wordFile;
                     LoadDocStructure(file);
                 }
+                else
+                {
+                    ShowWarning?.Invoke("The Reference Word File does not exist.");
+                }
             }
         }
 
@@ -130,22 +134,25 @@ namespace ThreatsManager.Extensions.Panels.Word
             return result;
         }
 
-        private static string GetAbsolutePath([Required] string reference, [Required] string relativePath)
+        private static string GetAbsolutePath(string reference, string relativePath)
         {
-            string result;
+            string result = null;
 
-            if (relativePath.StartsWith(@"..\"))
+            if (!string.IsNullOrWhiteSpace(reference) && !string.IsNullOrWhiteSpace(relativePath))
             {
-                relativePath = relativePath.Substring(3);
-                reference = Directory.GetParent(reference).FullName;
-                result = GetAbsolutePath(reference, relativePath);
-            }
-            else
-            {
-                if (!reference.EndsWith(@"\") && (!relativePath.StartsWith(@"\") || !relativePath.StartsWith(@".\")))
-                    reference = reference + @"\";
+                if (relativePath.StartsWith(@"..\"))
+                {
+                    relativePath = relativePath.Substring(3);
+                    reference = Directory.GetParent(reference)?.FullName;
+                    result = GetAbsolutePath(reference, relativePath);
+                }
+                else
+                {
+                    if (!reference.EndsWith(@"\") && (!relativePath.StartsWith(@"\") || !relativePath.StartsWith(@".\")))
+                        reference = reference + @"\";
 
-                result = Path.GetFullPath(reference + relativePath);
+                    result = Path.GetFullPath(reference + relativePath);
+                }
             }
 
             return result;

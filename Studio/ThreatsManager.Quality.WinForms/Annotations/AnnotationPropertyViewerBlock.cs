@@ -66,9 +66,9 @@ namespace ThreatsManager.Quality.Annotations
                     {
                         var schemaManager = new AnnotationsPropertySchemaManager(_model);
                         schemaManager.RemoveAnnotation(_container, topicToBeClarified);
-                        scope?.Complete();
                     }
 
+                    scope?.Complete();
                     result = true;
                 }
                 else if (_annotation is Highlight highlight)
@@ -78,9 +78,9 @@ namespace ThreatsManager.Quality.Annotations
                     {
                         var schemaManager = new AnnotationsPropertySchemaManager(_model);
                         schemaManager.RemoveAnnotation(_container, highlight);
-                        scope?.Complete();
                     }
 
+                    scope?.Complete();
                     result = true;
                 }
                 else if (_annotation is ReviewNote reviewNote)
@@ -90,9 +90,9 @@ namespace ThreatsManager.Quality.Annotations
                     {
                         var schemaManager = new AnnotationsPropertySchemaManager(_model);
                         schemaManager.RemoveAnnotation(_container, reviewNote);
-                        scope?.Complete();
                     }
 
+                    scope?.Complete();
                     result = true;
                 }
             }

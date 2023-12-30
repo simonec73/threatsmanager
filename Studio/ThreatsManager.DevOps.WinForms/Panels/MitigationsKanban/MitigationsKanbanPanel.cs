@@ -209,7 +209,7 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
             try
             {
                 _loading = true;
-                DevOpsManager.SetMitigationsStatusAsync(mitigation, status);
+                DevOpsManager.SetMitigationsStatus(mitigation, status);
                 result = true;
             }
             catch (WorkItemCreationException)

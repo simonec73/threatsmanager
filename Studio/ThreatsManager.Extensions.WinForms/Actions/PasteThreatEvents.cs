@@ -87,34 +87,16 @@ namespace ThreatsManager.Extensions.Actions
 
         private void AddThreatEvent([NotNull] IThreatEvent source, [NotNull] IThreatEventsContainer container)
         {
-            var threatEvent = container.AddThreatEvent(source.ThreatType);
-            threatEvent.Name = source.Name;
-            threatEvent.Description = source.Description;
-            threatEvent.Severity = source.Severity;
-            source.CloneProperties(threatEvent);
-
-            var scenarios = source.Scenarios?.ToArray();
-            if (scenarios?.Any() ?? false)
+            var target = container.AddThreatEvent(source.ThreatType);
+            if (target != null)
             {
-                foreach (var scenario in scenarios)
-                {
-                    var newScenario =
-                        threatEvent.AddScenario(scenario.Actor, scenario.Severity, scenario.Name);
-                    newScenario.Description = scenario.Description;
-                    newScenario.Motivation = scenario.Motivation;
-                    scenario.CloneProperties(newScenario);
-                }
-            }
-
-            var mitigations = source.Mitigations?.ToArray();
-            if (mitigations?.Any() ?? false)
-            {
-                foreach (var mitigation in mitigations)
-                {
-                    var newMitigation = threatEvent.AddMitigation(mitigation.Mitigation, mitigation.Strength,
-                        mitigation.Status, mitigation.Directives);
-                    mitigation.CloneProperties(newMitigation);
-                }
+                target.Name = source.Name;
+                target.Description = source.Description;
+                target.Severity = source.Severity;
+                source.CopyProperties(target);
+                source.CopyThreatEventMitigations(target);
+                source.CopyThreatEventScenarios(target);
+                source.CopyVulnerabilities(target);
             }
         }
     }

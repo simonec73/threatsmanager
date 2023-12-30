@@ -43,6 +43,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 _diagram.Model.ChildCreated -= OnModelChildCreated;
                 _diagram.Model.ChildRemoved -= OnModelChildRemoved;
+                _diagram.LinkAdded -= OnLinkAdded;
+                _diagram.EntityShapeAdded -= OnEntityShapeAdded;
+                _diagram.GroupShapeAdded -= OnGroupShapeAdded;
             }
 
             var shapes = _entities.Values.OfType<GraphEntity>().ToArray();
