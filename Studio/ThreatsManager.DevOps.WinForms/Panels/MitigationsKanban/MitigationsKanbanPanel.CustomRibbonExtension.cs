@@ -79,7 +79,7 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                 switch (action.Name)
                 {
                     case "Sync":
-                        if ((await DevOpsManager.UpdateAsync(_model)) > 0)
+                        if (DevOpsManager.Update(_model) > 0)
                         {
                             LoadModel();
                         }
@@ -96,11 +96,15 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                             var connector = DevOpsManager.GetConnector(_model);
                             var devOpsSchemaManager = new DevOpsPropertySchemaManager(_model);
                             _countdown = new CountdownEvent(mitigations.Length);
+                            ChangeCustomActionStatus?.Invoke("Auto", false);
+
+                            ShowMessage?.Invoke("Automatic Load in progress...");
+
+                            var scope = UndoRedoManager.OpenScope("DevOps Auto Retrieval");
                             foreach (var mitigation in mitigations)
                                 AutoLoad(mitigation, connector, devOpsSchemaManager);
 
-                            ShowMessage?.Invoke("Automatic Load in progress...");
-                            AutomaticLoadCompletion();
+                            AutomaticLoadCompletion(scope);
                         }
                         else
                         {
@@ -138,6 +142,10 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                 //ShowWarning?.Invoke($"An error occurred during the execution of the action.");
                 throw;
             }
+            finally
+            {
+                ChangeCustomActionStatus?.Invoke("Auto", true);
+            }
         }
 
         private async void AutoLoad([NotNull] IMitigation mitigation, [NotNull] IDevOpsConnector connector, 
@@ -167,12 +175,15 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         }
 
         [Background]
-        private void AutomaticLoadCompletion()
+        private void AutomaticLoadCompletion(UndoRedoScope scope)
         {
             if (_countdown.Wait(10000))
                 ShowMessage?.Invoke("Automatic Load done successfully.");
             else
                 ShowMessage?.Invoke("Automatic Load is taking more than expected.");
+
+            scope?.Complete();
+            scope?.Dispose();
 
             LoadModel();
         }

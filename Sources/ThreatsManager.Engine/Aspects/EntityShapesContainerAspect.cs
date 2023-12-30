@@ -195,11 +195,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(es);
                         scope?.Complete();
-
-                        if (es.Identity is IEntity entity && Instance is IEntityShapesContainer container)
-                            _entityShapeRemoved?.Invoke(container, entity);
                     }
                 }
+
+                if (result && es.Identity is IEntity entity && Instance is IEntityShapesContainer container)
+                    _entityShapeRemoved?.Invoke(container, entity);
             }
             else
                 throw new ArgumentNullException(nameof(entityShape));

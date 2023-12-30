@@ -1359,4 +1359,64 @@ Are you sure you want still to get full access rights? </value>
   <data name="magic_wand_small_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\magic_wand_small_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="panel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\panel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="panel_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\panel_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="panel_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\panel_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="panel_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\panel_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="objects_cube_to_cone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objects_cube_to_cone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="objects_cube_to_cone_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objects_cube_to_cone_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="objects_cube_to_cone_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objects_cube_to_cone_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="objects_cube_to_cone_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objects_cube_to_cone_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="external_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\external_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="external_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\external_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="external_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\external_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flow_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\flow_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flow_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\flow_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flow_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\flow_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="process_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\process_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="process_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\process_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="process_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\process_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="storage_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\storage_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="storage_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\storage_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="storage_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\storage_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

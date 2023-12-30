@@ -24,6 +24,7 @@ using Exceptionless.Logging;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Utilities.WinForms;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Policies;
 
 namespace ThreatsManager
 {
@@ -212,25 +213,34 @@ namespace ThreatsManager
         private void InitializeTelemetry()
         {
             bool disableTelemetry = true;
-            var consentString = Application.UserAppDataRegistry?.GetValue("Consent") as string;
-            if (consentString == null)
+
+            var policy = new TelemetryPolicy();
+            if (!policy.IsDefined)
             {
-                if (MessageBox.Show(this, Resources.ConsentMessage,
-                        Resources.ConsentCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
-                        MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                var consentString = Application.UserAppDataRegistry?.GetValue("Consent") as string;
+                if (consentString == null)
                 {
-                    Application.UserAppDataRegistry?.SetValue("Consent", true);
-                    disableTelemetry = false;
+                    if (MessageBox.Show(this, Resources.ConsentMessage,
+                            Resources.ConsentCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+                            MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        Application.UserAppDataRegistry?.SetValue("Consent", true);
+                        disableTelemetry = false;
+                    }
+                    else
+                    {
+                        Application.UserAppDataRegistry?.SetValue("Consent", false);
+                        disableTelemetry = true;
+                    }
                 }
-                else
+                else if (bool.TryParse(consentString, out var consent))
                 {
-                    Application.UserAppDataRegistry?.SetValue("Consent", false);
-                    disableTelemetry = true;
+                    disableTelemetry = !consent;
                 }
             }
-            else if (bool.TryParse(consentString, out var consent))
+            else
             {
-                disableTelemetry = !consent;
+                disableTelemetry = !(policy.Telemetry ?? false);
             }
 
             if (disableTelemetry)
@@ -244,10 +254,10 @@ namespace ThreatsManager
                 ExceptionlessClient.Default.Configuration.ReadFromAttributes();
 #if LOGGING
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-            var logFile = Path.Combine(Program.Folder, "tms_exceptionless.log");
+        var logFile = Path.Combine(Program.Folder, "tms_exceptionless.log");
 #pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
                 
-            ExceptionlessClient.Default.Configuration.UseFileLogger(logFile);
+        ExceptionlessClient.Default.Configuration.UseFileLogger(logFile);
 #endif
                 ExceptionlessClient.Default.Register(false);
                 ExceptionlessClient.Default.SubmittingEvent += OnSubmittingEvent;

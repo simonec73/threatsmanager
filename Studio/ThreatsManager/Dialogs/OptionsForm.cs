@@ -8,11 +8,14 @@ using DevComponents.DotNetBar.Controls;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine;
 using ThreatsManager.Engine.Config;
+using ThreatsManager.Engine.Policies;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Policies;
 using ThreatsManager.Properties;
 using ThreatsManager.Utilities;
+using ThreatsManager.Utilities.Policies;
 
 namespace ThreatsManager.Dialogs
 {
@@ -31,11 +34,23 @@ namespace ThreatsManager.Dialogs
             if (folders?.Any() ?? false)
                 _folders.Items.AddRange(folders);
 
+            var foldersPolicy = new FoldersPolicy();
+            if (foldersPolicy.IsDefined)
+                _layoutFoldersPolicy.Visible = true;
+
             var prefixes = Manager.Instance.Configuration.Prefixes?.ToArray();
             if (prefixes?.Any() ?? false)
             {
                 _prefixes.Items.AddRange(prefixes);
                 _validationPrefix.Checked = true;
+            }
+
+            var prefixesPolicy = new PrefixesPolicy();
+            if (prefixesPolicy.IsDefined)
+            {
+                _layoutPrefixesPolicy.Visible = true;
+                _validationPrefix.Checked = true;
+                _validationPrefix.Enabled = false;
             }
 
             var certificates = Manager.Instance.Configuration.Certificates?.ToArray();
@@ -45,23 +60,68 @@ namespace ThreatsManager.Dialogs
                 _validationCertificates.Checked = true;
             }
 
-            var executionModes = EnumExtensions.GetEnumLabels<ExecutionMode>()?.ToArray();
+            var certificatesPolicy = new CertificatesPolicy();
+            if (certificatesPolicy.IsDefined)
+            {
+                _layoutCertificatesPolicy.Visible = true;
+                _validationCertificates.Checked = true;
+                _validationCertificates.Enabled = false;
+            }
+
+            var executionModePolicy = new MaxExecutionModePolicy();
+            var maxExecutionMode = executionModePolicy.MaxExecutionMode ?? ExecutionMode.Pioneer;
+            if (executionModePolicy.IsDefined)
+                _layoutExecutionModePolicy.Visible = true;
+            var executionModes = Enum.GetValues(typeof(ExecutionMode)).Cast<ExecutionMode>()
+                .Where(x => x >= maxExecutionMode)
+                .Select(x => EnumExtensions.GetEnumLabel(x))
+                .ToArray();
             if (executionModes?.Any() ?? false)
                 _executionMode.Items.AddRange(executionModes);
 
             var config = ExtensionsConfigurationManager.GetConfigurationSection();
-            _executionMode.SelectedItem = config.Mode.GetEnumLabel();
-            _tooltip.SetToolTip(_executionMode, config.Mode.GetEnumDescription());
+            if (!executionModePolicy.IsDefined || config.Mode < maxExecutionMode)
+            {
+                _executionMode.SelectedItem = maxExecutionMode.GetEnumLabel();
+                _tooltip.SetToolTip(_executionMode, maxExecutionMode.GetEnumDescription());
+            }
+            else
+            {
+                _executionMode.SelectedItem = config.Mode.GetEnumLabel();
+                _tooltip.SetToolTip(_executionMode, config.Mode.GetEnumDescription());
+            }
             _enableSmartSave.Checked = config.SmartSave;
             _smartSaveInstances.Value = config.SmartSaveCount;
             _smartSaveAutosave.Value = config.SmartSaveInterval;
             _userDictionary.Text = config.UserDictionary;
-            if ((Application.UserAppDataRegistry?.GetValue("Consent", false) is string consentString) &&
-                    bool.TryParse(consentString, out var consent))
-                _disableTelemetry.Checked = !consent;
-            else
+
+            var telemetryPolicy = new TelemetryPolicy();
+            if (telemetryPolicy.IsDefined && !(telemetryPolicy.Telemetry ?? false))
+            {
                 _disableTelemetry.Checked = true;
-            _disableHelp.Checked = config.DisableHelp;
+                _disableTelemetry.Enabled = false;
+                _layoutTelemetryPolicy.Visible = true;
+            }
+            else
+            {
+                if ((Application.UserAppDataRegistry?.GetValue("Consent", false) is string consentString) &&
+                        bool.TryParse(consentString, out var consent))
+                    _disableTelemetry.Checked = !consent;
+                else
+                    _disableTelemetry.Checked = true;
+            }
+
+            var helpPolicy = new HelpTroubleshootPolicy();
+            if (helpPolicy.IsDefined && !(helpPolicy.HelpTroubleshoot ?? false))
+            {
+                _disableHelp.Checked = true;
+                _disableHelp.Enabled = false;
+                _layoutHelpPolicy.Visible = true;
+            }
+            else
+            {
+                _disableHelp.Checked = config.DisableHelp;
+            }
 
             _loading = false;
         }

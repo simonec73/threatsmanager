@@ -120,5 +120,10 @@ namespace ThreatsManager.Dialogs
             Process.Start(sInfo);
 #pragma warning restore SCS0001 // Command injection possible in {1} argument passed to '{0}'
         }
+
+        private void AboutBox_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

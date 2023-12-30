@@ -108,10 +108,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     {
                         UndoRedoManager.Detach(mitigation);
                         scope?.Complete();
-
-                        _threatTypeMitigationRemoved?.Invoke(this, mitigation);
                     }
                 }
+
+                if (result)
+                    _threatTypeMitigationRemoved?.Invoke(this, mitigation);
             }
 
             return result;

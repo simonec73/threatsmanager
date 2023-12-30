@@ -241,8 +241,8 @@ namespace ThreatsManager.Extensions.Dialogs
                 }
                 else
                 {
-                    _fullyThreatTypes.Enabled = false;
-                    _fullyThreatTypes.CheckState = CheckState.Indeterminate;
+                    _fullyWeaknesses.Enabled = false;
+                    _fullyWeaknesses.CheckState = CheckState.Indeterminate;
                 }
 
                 var mitigations = _template.Mitigations?.OrderBy(x => x.Name).ToArray();

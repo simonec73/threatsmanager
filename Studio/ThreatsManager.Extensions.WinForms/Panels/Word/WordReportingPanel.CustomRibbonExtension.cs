@@ -85,6 +85,10 @@ namespace ThreatsManager.Extensions.Panels.Word
                             {
                                 LoadDocStructure(file);
                             }
+                            else
+                            {
+                                ShowWarning?.Invoke("The Reference Word File does not exist.");
+                            }
                         }
                         else
                         {
@@ -113,29 +117,36 @@ namespace ThreatsManager.Extensions.Panels.Word
             if (!string.IsNullOrWhiteSpace(_wordFile.Text))
             {
                 var originalPath = GetDocumentPath(_model, _wordFile.Text);
-                var fileName = Path.Combine(Path.GetDirectoryName(originalPath),
-                    $"{Path.GetFileNameWithoutExtension(originalPath)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.docx");
-
-                try
+                if (File.Exists(originalPath))
                 {
-                    ShowProgress();
+                    var fileName = Path.Combine(Path.GetDirectoryName(originalPath),
+                        $"{Path.GetFileNameWithoutExtension(originalPath)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.docx");
 
                     try
                     {
-                        var ignoredDictionary = GetPlaceholdersWithIgnoredFields()?
-                            .ToDictionary(x => x, GetIgnoredFields);
-                        result = _reportGenerator.Generate(originalPath, fileName, ignoredDictionary);
+                        ShowProgress();
 
-                        _lastDocument = fileName;
+                        try
+                        {
+                            var ignoredDictionary = GetPlaceholdersWithIgnoredFields()?
+                                .ToDictionary(x => x, GetIgnoredFields);
+                            result = _reportGenerator.Generate(originalPath, fileName, ignoredDictionary);
+
+                            _lastDocument = fileName;
+                        }
+                        catch
+                        {
+                            ShowWarning?.Invoke("Report generation failed.");
+                        }
                     }
-                    catch
+                    finally
                     {
-                        ShowWarning?.Invoke("Report generation failed.");
+                        CloseProgress();
                     }
                 }
-                finally
+                else
                 {
-                    CloseProgress();
+                    ShowWarning?.Invoke("The Reference Word File does not exist.");
                 }
             }
             else

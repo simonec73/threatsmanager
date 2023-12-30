@@ -40,9 +40,9 @@ namespace ThreatsManager.Engine.ObjectModel
                     UndoRedoManager.Attach(tbt, this);
                     _trustBoundaryTemplates.Add(tbt);
                     scope?.Complete();
-
-                    ChildCreated?.Invoke(trustBoundaryTemplate);
                 }
+
+                ChildCreated?.Invoke(trustBoundaryTemplate);
             }
             else
                 throw new ArgumentException(nameof(trustBoundaryTemplate));
@@ -77,10 +77,11 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(template);
                         scope?.Complete();
-
-                        ChildRemoved?.Invoke(template);
                     }
                 }
+
+                if (result)
+                    ChildRemoved?.Invoke(template);
             }
 
             return result;

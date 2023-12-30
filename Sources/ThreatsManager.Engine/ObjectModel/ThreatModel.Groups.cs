@@ -172,11 +172,13 @@ namespace ThreatsManager.Engine.ObjectModel
                         UndoRedoManager.Detach(item);
 
                         UnregisterEvents(item);
-                        ChildRemoved?.Invoke(item);
                     }
 
                     scope?.Complete();
                 }
+
+                if (result)
+                    ChildRemoved?.Invoke(item);
             }
 
             return result;

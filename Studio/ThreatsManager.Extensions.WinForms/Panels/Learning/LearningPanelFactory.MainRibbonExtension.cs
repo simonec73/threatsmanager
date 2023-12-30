@@ -6,6 +6,7 @@ using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
+using ThreatsManager.Utilities.Policies;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
@@ -38,16 +39,20 @@ namespace ThreatsManager.Extensions.Panels.Learning
             get
             {
                 IEnumerable<IActionDefinition> result = null;
-                
-                var config = ThreatsManager.Engine.ExtensionsConfigurationManager.GetConfigurationSection();
 
-                if (!(config?.DisableHelp ?? false))
+                var policy = new HelpTroubleshootPolicy();
+                if (policy == null || (policy.HelpTroubleshoot ?? true))
                 {
-                    result = new List<IActionDefinition>
+                    var config = ThreatsManager.Engine.ExtensionsConfigurationManager.GetConfigurationSection();
+
+                    if (!(config?.DisableHelp ?? false))
+                    {
+                        result = new List<IActionDefinition>
                     {
                         new ActionDefinition(Id, "CreatePanel", "Learning", Properties.Resources.school_big,
                             Properties.Resources.school)
                     };
+                    }
                 }
 
                 return result;

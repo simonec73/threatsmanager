@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI.WebControls.WebParts;
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -51,52 +52,63 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             GoNode result = null;
 
-            GraphGroup parent = null;
-
-            if (shape.Identity is IGroupElement child)
+            if (_entities.ContainsKey(shape.AssociatedId))
             {
-                _groups.TryGetValue(child.ParentId, out parent);
+                result = _entities[shape.AssociatedId];
             }
-
-            if (shape is IEntityShape entityShape)
+            else if (_groups.ContainsKey(shape.AssociatedId))
             {
-                var node = new GraphEntity(entityShape, dpiFactor, _iconSize, _iconCenterSize, _imageSize, _markerSize);
-                if (_actions != null)
-                    node.SetContextAwareActions(_actions);
-                node.SelectedShape += OnSelectedShape;
-                node.SelectedThreatEvent += OnSelectedThreatEvent;
-                node.OpenDiagram += OnOpenDiagram;
-                if (parent == null)
-                    _graph.Doc.Add(node);
-                else
-                    parent.Add(node);
-                _entities.Add(shape.AssociatedId, node);
-
-                node.Validate();
-
-                result = node;
+                result = _groups[shape.AssociatedId];
             }
-            else if (shape is IGroupShape groupShape && !_groups.ContainsKey(groupShape.AssociatedId))
+            else
             {
-                var group = new GraphGroup(groupShape, dpiFactor, _markerSize);
-                if (_actions != null)
-                    group.SetContextAwareActions(_actions);
-                group.SelectedShape += OnSelectedShape;
-                if (parent == null)
-                    _graph.Doc.Add(group);
-                else
-                    parent.Add(group);
-                _groups.Add(shape.AssociatedId, group);
+                GraphGroup parent = null;
 
-                group.Validate();
+                if (shape.Identity is IGroupElement child)
+                {
+                    _groups.TryGetValue(child.ParentId, out parent);
+                }
 
-                result = group;
-            }
+                if (shape is IEntityShape entityShape)
+                {
+                    var node = new GraphEntity(entityShape, dpiFactor, _iconSize, _iconCenterSize, _imageSize, _markerSize);
+                    if (_actions != null)
+                        node.SetContextAwareActions(_actions);
+                    node.SelectedShape += OnSelectedShape;
+                    node.SelectedThreatEvent += OnSelectedThreatEvent;
+                    node.OpenDiagram += OnOpenDiagram;
+                    if (parent == null)
+                        _graph.Doc.Add(node);
+                    else
+                        parent.Add(node);
+                    _entities.Add(shape.AssociatedId, node);
 
-            if (result != null && shape.Identity is IThreatEventsContainer container)
-            {
-                container.ThreatEventAdded += OnThreatEventAddedToShape;
-                container.ThreatEventRemoved += OnThreatEventRemovedFromShape;
+                    node.Validate();
+
+                    result = node;
+                }
+                else if (shape is IGroupShape groupShape && !_groups.ContainsKey(groupShape.AssociatedId))
+                {
+                    var group = new GraphGroup(groupShape, dpiFactor, _markerSize);
+                    if (_actions != null)
+                        group.SetContextAwareActions(_actions);
+                    group.SelectedShape += OnSelectedShape;
+                    if (parent == null)
+                        _graph.Doc.Add(group);
+                    else
+                        parent.Add(group);
+                    _groups.Add(shape.AssociatedId, group);
+
+                    group.Validate();
+
+                    result = group;
+                }
+
+                if (result != null && shape.Identity is IThreatEventsContainer container)
+                {
+                    container.ThreatEventAdded += OnThreatEventAddedToShape;
+                    container.ThreatEventRemoved += OnThreatEventRemovedFromShape;
+                }
             }
 
             return result;

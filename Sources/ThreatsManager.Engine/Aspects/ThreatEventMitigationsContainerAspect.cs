@@ -96,11 +96,11 @@ namespace ThreatsManager.Engine.Aspects
                     UndoRedoManager.Attach(tem, tem.Model);
                     mitigations.Add(tem);
                     scope?.Complete();
+                }
 
-                    if (Instance is IThreatEventMitigationsContainer container)
-                    {
-                        _threatEventMitigationAdded?.Invoke(container, tem);
-                    }
+                if (Instance is IThreatEventMitigationsContainer container)
+                {
+                    _threatEventMitigationAdded?.Invoke(container, tem);
                 }
             }
             else
@@ -144,11 +144,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(mitigation);
                         scope?.Complete();
-
-                        if (Instance is IThreatEventMitigationsContainer container)
-                            _threatEventMitigationRemoved?.Invoke(container, mitigation);
                     }
                 }
+
+                if (result && Instance is IThreatEventMitigationsContainer container)
+                    _threatEventMitigationRemoved?.Invoke(container, mitigation);
             }
 
             return result;

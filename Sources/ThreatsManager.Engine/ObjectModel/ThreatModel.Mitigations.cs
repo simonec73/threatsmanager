@@ -49,9 +49,9 @@ namespace ThreatsManager.Engine.ObjectModel
                     UndoRedoManager.Attach(m, this);
                     _mitigations.Add(m);
                     scope?.Complete();
-
-                    ChildCreated?.Invoke(m);
                 }
+
+                ChildCreated?.Invoke(m);
             }
             else
                 throw new ArgumentException(nameof(mitigation));
@@ -89,11 +89,13 @@ namespace ThreatsManager.Engine.ObjectModel
                     {
                         UndoRedoManager.Detach(mitigation);
                         UnregisterEvents(mitigation);
-                        ChildRemoved?.Invoke(mitigation);
                     }
 
                     scope?.Complete();
                 }
+
+                if (result)
+                    ChildRemoved?.Invoke(mitigation);
             }
 
             return result;

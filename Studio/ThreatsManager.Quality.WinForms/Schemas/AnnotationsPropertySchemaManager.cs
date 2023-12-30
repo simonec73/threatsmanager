@@ -218,7 +218,9 @@ namespace ThreatsManager.Quality.Schemas
             if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
-                result = annotations.Items.Any(x => !(x is Highlight) && !(x is TopicToBeClarified) && !(x is ReviewNote) && !(x is AnnotationAnswer));
+                result = annotations.Items?
+                    .Any(x => !(x is Highlight) && !(x is TopicToBeClarified) && !(x is ReviewNote) && !(x is AnnotationAnswer))
+                    ?? false;
             }
 
             return result;
@@ -232,7 +234,7 @@ namespace ThreatsManager.Quality.Schemas
             if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
-                result = annotations.Items.OfType<TopicToBeClarified>().Any();
+                result = annotations.Items?.OfType<TopicToBeClarified>().Any() ?? false;
             }
 
             return result;
@@ -246,7 +248,7 @@ namespace ThreatsManager.Quality.Schemas
             if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
-                result = annotations.Items.OfType<TopicToBeClarified>().Any(x => !x.Answered);
+                result = annotations.Items?.OfType<TopicToBeClarified>().Any(x => !x.Answered) ?? false;
             }
 
             return result;
@@ -260,7 +262,7 @@ namespace ThreatsManager.Quality.Schemas
             if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
-                result = annotations.Items.OfType<TopicToBeClarified>().Any(x => x.Answered);
+                result = annotations.Items?.OfType<TopicToBeClarified>().Any(x => x.Answered) ?? false;
             }
 
             return result;
@@ -274,7 +276,7 @@ namespace ThreatsManager.Quality.Schemas
             if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
-                result = annotations.Items.OfType<Highlight>().Any();
+                result = annotations.Items?.OfType<Highlight>().Any() ?? false;
             }
 
             return result;
@@ -288,7 +290,7 @@ namespace ThreatsManager.Quality.Schemas
             if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
                 jsonSerializableObject.Value is Annotations.Annotations annotations)
             {
-                result = annotations.Items.OfType<ReviewNote>().Any();
+                result = annotations.Items?.OfType<ReviewNote>().Any() ?? false;
             }
 
             return result;

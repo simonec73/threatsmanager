@@ -170,20 +170,12 @@
     <Compile Include="ExtensionsContainer.cs" />
     <Compile Include="Initializers\AutoConnector.cs" />
     <Compile Include="Initializers\NewInstanceInitializer.cs" />
-    <Compile Include="Initializers\UpdateNotifier.cs" />
     <Compile Include="Panels\CommentsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Panels\CommentsPanel.Designer.cs">
       <DependentUpon>CommentsPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\Configuration\ConfigurationPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Panels\Configuration\ConfigurationPanel.Designer.cs">
-      <DependentUpon>ConfigurationPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Panels\Configuration\ConfigurationPanelFactory.cs" />
     <Compile Include="Panels\GridCellSuperTooltipProvider.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -219,7 +211,6 @@
     </Compile>
     <Compile Include="Panels\RiskTrend\RiskTrendPanelFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ExtensionConfigurationManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -252,9 +243,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\CommentsPanel.resx">
       <DependentUpon>CommentsPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Panels\Configuration\ConfigurationPanel.resx">
-      <DependentUpon>ConfigurationPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\KanbanPanel.resx">
       <DependentUpon>KanbanPanel.cs</DependentUpon>

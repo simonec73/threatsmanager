@@ -7,7 +7,6 @@ using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
-using PostSharp.Patterns.Model;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using ThreatsManager.Interfaces;
@@ -229,11 +228,14 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                     UndoRedoManager.Attach(result, model);
                     properties?.Add(result);
                     scope?.Complete();
-
-                    if (Instance is IPropertiesContainer container)
-                        _propertyAdded?.Invoke(container, result);
-                    result.Changed += OnPropertyChanged;
                 }
+            }
+
+            if (result != null)
+            {
+                if (Instance is IPropertiesContainer container)
+                    _propertyAdded?.Invoke(container, result);
+                result.Changed += OnPropertyChanged;
             }
 
             return result;

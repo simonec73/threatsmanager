@@ -9,25 +9,28 @@ namespace ThreatsManager.Extensions.Panels.Diagram
     {
         private void AddLink([NotNull] ILink link, float dpiFactor = 1.0f)
         {
-            var from = GetEntity(link.DataFlow.Source);
-            var to = GetEntity(link.DataFlow.Target);
-            if (from != null && to != null)
+            if (!_links.ContainsKey(link.AssociatedId))
             {
-                var newLink = new GraphLink(link, dpiFactor, _markerSize)
+                var from = GetEntity(link.DataFlow.Source);
+                var to = GetEntity(link.DataFlow.Target);
+                if (from != null && to != null)
                 {
-                    Loading = true,
-                    FromPort = from.Port,
-                    ToPort = to.Port
-                };
-                if (_actions != null)
-                    newLink.SetContextAwareActions(_actions);
-                _graph.Doc.Add(newLink);
-                _links.Add(link.AssociatedId, newLink);
-                newLink.SelectedLink += OnSelectedLink;
-                newLink.SelectedThreatEvent += OnSelectedThreatEvent;
-       
-                newLink.Loading = false;
-                newLink.UpdateRoute();
+                    var newLink = new GraphLink(link, dpiFactor, _markerSize)
+                    {
+                        Loading = true,
+                        FromPort = from.Port,
+                        ToPort = to.Port
+                    };
+                    if (_actions != null)
+                        newLink.SetContextAwareActions(_actions);
+                    _graph.Doc.Add(newLink);
+                    _links.Add(link.AssociatedId, newLink);
+                    newLink.SelectedLink += OnSelectedLink;
+                    newLink.SelectedThreatEvent += OnSelectedThreatEvent;
+
+                    newLink.Loading = false;
+                    newLink.UpdateRoute();
+                }
             }
         }
 

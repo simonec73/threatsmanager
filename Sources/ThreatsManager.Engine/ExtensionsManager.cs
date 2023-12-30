@@ -12,6 +12,8 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Help;
 using PostSharp.Patterns.Threading;
+using ThreatsManager.Engine.Policies;
+using ThreatsManager.Utilities.Policies;
 
 namespace ThreatsManager.Engine
 {
@@ -36,7 +38,13 @@ namespace ThreatsManager.Engine
 
         public void SetExecutionMode(ExecutionMode executionMode)
         {
-            _executionMode = executionMode;
+            var policy = new MaxExecutionModePolicy();
+            var maxExecutionMode = policy.MaxExecutionMode ?? ExecutionMode.Pioneer;
+
+            if (executionMode > maxExecutionMode)
+                _executionMode = executionMode;
+            else
+                _executionMode = maxExecutionMode;
         }
 
         public void Load(bool loadHelp)
@@ -79,9 +87,7 @@ namespace ThreatsManager.Engine
 
         public IEnumerable<string> GetExtensionIds()
         {
-            return _extensions?
-                    .Where(x => x?.Metadata != null && IsExecutionModeCompliant(x.Metadata.Mode))
-                    .OrderBy(x => x.Metadata.Priority)
+            return GetExtensions()?
                     .Select(x => x.Metadata.Id)
                     .Distinct()
                     .ToArray();
@@ -96,8 +102,7 @@ namespace ThreatsManager.Engine
         {
             string result = null;
 
-            var extension = _extensions?
-                .FirstOrDefault(x => (x.Metadata != null) && string.CompareOrdinal(id, x.Metadata.Id) == 0);
+            var extension = GetExtension(id);
 
             if (extension != null)
             {
@@ -115,39 +120,33 @@ namespace ThreatsManager.Engine
 
         public string GetExtensionAssemblyTitle([Required] string id)
         {
-            return _extensions?
-                .FirstOrDefault(x => (x.Metadata != null) && string.CompareOrdinal(id, x.Metadata.Id) == 0)?
+            return GetExtension(id)?
                 .Value?
                 .GetExtensionAssemblyTitle();
         }
 
         public IExtensionMetadata GetExtensionMetadata([Required] string id)
         {
-            return _extensions?
-                .FirstOrDefault(x => (x.Metadata != null) && string.CompareOrdinal(id, x.Metadata.Id) == 0)?
-                .Metadata;
+            return GetExtension(id)?.Metadata;
         }
 
         public IEnumerable<KeyValuePair<IExtensionMetadata, T>> GetExtensions<T>() where T : class, IExtension
         {
-            return _extensions?
-                    .Where(x => x?.Metadata != null && IsExecutionModeCompliant(x.Metadata.Mode) && x.Value is T)
-                    .OrderBy(x => x.Metadata.Priority)
+            return GetExtensions()?
                     .Distinct(new ExtensionMetadataEqualityComparer<IExtension>())
-                    .Select(x => new KeyValuePair<IExtensionMetadata, T>(x.Metadata, x.Value as T));
+                    .Select(x => new KeyValuePair<IExtensionMetadata, T>(x.Metadata, x.Value as T))
+                    .Where(x => x.Value != null);
         }
 
         public T GetExtension<T>([Required] string id) where T : class, IExtension
         {
-            return _extensions?
-                .FirstOrDefault(x => (x?.Metadata != null) && string.CompareOrdinal(id, x.Metadata.Id) == 0)?
-                .Value as T;
+            return GetExtension(id)?.Value as T;
         }
 
         public T GetExtensionByLabel<T>([Required] string label) where T : class, IExtension
         {
-            return _extensions?
-                .FirstOrDefault(x => (x?.Metadata != null) && string.CompareOrdinal(label, x.Metadata.Label) == 0)?
+            return GetExtensions()?
+                .FirstOrDefault(x => string.CompareOrdinal(label, x.Metadata.Label) == 0)?
                 .Value as T;
         }
 
@@ -163,6 +162,67 @@ namespace ThreatsManager.Engine
                 result = GetExtension<T>(id);
 
             return result;
+        }
+
+        #region Private member functions.
+        private void LoadUniversalIDs()
+        {
+            var extensions = _extensions?.Select(x => x.Value)?.ToArray();
+            if (extensions?.Any() ?? false)
+            {
+                var dict = new Dictionary<string, string>();
+                foreach (var extension in extensions)
+                {
+                    var universalId = extension.GetExtensionUniversalId();
+                    if (!string.IsNullOrWhiteSpace(universalId))
+                    {
+                        dict.Add(universalId, extension.GetExtensionId());
+                    }
+                }
+
+                if (dict.Any())
+                {
+                    _extensionsByUniversalId = dict;
+                }
+            }
+        }
+
+        [Background]
+        private void LoadHelpConfiguration()
+        {
+            var policy = new HelpTroubleshootPolicy();
+            if (policy.HelpTroubleshoot ?? true)
+            {
+                var assemblies = _catalog.Catalogs.OfType<AssemblyCatalog>().Select(x => x.Assembly).ToArray();
+                if (assemblies.Any())
+                {
+                    foreach (var assembly in assemblies)
+                    {
+                        LearningManager.Instance.Add(assembly);
+                        TroubleshootingManager.Instance.Add(assembly);
+                    }
+                    LearningManager.Instance.AnalyzeSources();
+                    TroubleshootingManager.Instance.AnalyzeSources();
+                }
+            }
+        }
+
+        private IEnumerable<Lazy<IExtension, IExtensionMetadata>> GetExtensions()
+        {
+            var policy = new DisabledExtensionsPolicy();
+            var disabled = policy.DisabledExtensions?.ToArray();
+
+            return _extensions?
+                .Where(x => x?.Metadata != null &&
+                    IsExecutionModeCompliant(x.Metadata.Mode) &&
+                    !(disabled?.Any(y => string.CompareOrdinal(y, x.Metadata.Label) == 0) ?? false))
+                .OrderBy(x => x.Metadata.Priority);
+        }
+
+        private Lazy<IExtension, IExtensionMetadata> GetExtension([Required] string id)
+        {
+            return GetExtensions()?
+                .FirstOrDefault(x => string.CompareOrdinal(id, x.Metadata.Id) == 0);
         }
 
         private bool IsExecutionModeCompliant(ExecutionMode requiredMode)
@@ -199,44 +259,6 @@ namespace ThreatsManager.Engine
             return result;
         }
 
-        private void LoadUniversalIDs()
-        {
-            var extensions = _extensions?.Select(x => x.Value)?.ToArray();
-            if (extensions?.Any() ?? false)
-            {
-                var dict = new Dictionary<string, string>();
-                foreach (var extension in extensions)
-                {
-                    var universalId = extension.GetExtensionUniversalId();
-                    if (!string.IsNullOrWhiteSpace(universalId))
-                    {
-                        dict.Add(universalId, extension.GetExtensionId());
-                    }
-                }
-
-                if (dict.Any())
-                {
-                    _extensionsByUniversalId = dict;
-                }
-            }
-        }
-
-        [Background]
-        private void LoadHelpConfiguration()
-        {
-            var assemblies = _catalog.Catalogs.OfType<AssemblyCatalog>().Select(x => x.Assembly).ToArray();
-            if (assemblies.Any())
-            {
-                foreach (var assembly in assemblies)
-                {
-                    LearningManager.Instance.Add(assembly);
-                    TroubleshootingManager.Instance.Add(assembly);
-                }
-                LearningManager.Instance.AnalyzeSources();
-                TroubleshootingManager.Instance.AnalyzeSources();
-            }
-        }
-
         // From https://stackoverflow.com/questions/540749/can-a-c-sharp-class-inherit-attributes-from-its-interface.
         private static IEnumerable<T> GetCustomAttributesIncludingBaseInterfaces<T>(Type type)
         {
@@ -246,5 +268,6 @@ namespace ThreatsManager.Engine
                     SelectMany(interfaceType => interfaceType.GetCustomAttributes(attributeType, true))).
                 Distinct().Cast<T>();
         }
+        #endregion
     }
 }

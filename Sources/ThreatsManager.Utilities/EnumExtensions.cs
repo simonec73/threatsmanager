@@ -130,6 +130,38 @@ namespace ThreatsManager.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Try get the value of the enumeration from a string.
+        /// </summary>
+        /// <typeparam name="T">Type of the enumeration.</typeparam>
+        /// <param name="text">String that needs to be parsed to get the value of the enumeration</param>
+        /// <param name="enumValue">[Out] Value of the enumeration.</param>
+        /// <returns>True if the value has been retrieved correctly, false otherwise.</returns>
+        public static bool TryGetEnumValue<T>([Required] this string text, out T enumValue)
+        {
+            bool result = false;
+
+            enumValue = default(T);
+
+            Type type = typeof(T);
+
+            var fields = type.GetFields();
+            foreach (var field in fields)
+            {
+                var attribs = field.GetCustomAttributes<EnumLabelAttribute>().ToArray();
+
+                if (attribs.Any(x => string.CompareOrdinal(x.Label, text) == 0) ||
+                    string.CompareOrdinal(text, field.Name) == 0)
+                {
+                    enumValue = (T)field.GetValue(type);
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         public static string GetXmlEnumLabel(this Enum value)
         {
             Type type = value.GetType();

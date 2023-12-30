@@ -40,6 +40,9 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                         new ActionDefinition(Id, "RemoveTrustBoundary", "Remove Trust Boundary",
                             Resources.trust_boundary_big_delete,
                             Resources.trust_boundary_delete, false),
+                        new ActionDefinition(Id, "RemoveNotInDiagrams", "Remove not in Diagrams",
+                            Resources.trust_boundary_big_delete,
+                            Resources.trust_boundary_delete, false),
                     }),
                     new CommandsBarDefinition("Find", "Find", new IActionDefinition[]
                     {
@@ -95,84 +98,138 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                 {
                     case "AddTrustBoundary":
                         text = "Add Trust Boundary";
-                        _model.AddGroup<ITrustBoundary>();
+                        using (var scope = UndoRedoManager.OpenScope("Add Trust Boundary"))
+                        {
+                            _model.AddGroup<ITrustBoundary>();
+                            scope?.Complete();
+                        }
                         break;
                     case "RemoveTrustBoundary":
                         if (_currentRow != null)
                         {
-                            if ((selected?.Length ?? 0) > 1)
+                            using (var scope = UndoRedoManager.OpenScope("Remove Trust Boundaries"))
                             {
-                                var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected.Length} Trust Boundaries. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Trust Boundaries,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Trust Boundaries", MessageBoxButtons.YesNoCancel,
-                                    MessageBoxIcon.Warning,
-                                    MessageBoxDefaultButton.Button3);
-                                switch (outcome)
+                                if ((selected?.Length ?? 0) > 1)
                                 {
-                                    case DialogResult.Yes:
-                                        bool removed = true;
-                                        foreach (var row in selected)
-                                        {
-                                            bool r = false;
-                                            if (row.Tag is IGroup group)
+                                    var outcome = MessageBox.Show(Form.ActiveForm,
+                                        $"You have selected {selected.Length} Trust Boundaries. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Trust Boundaries,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
+                                        "Remove Trust Boundaries", MessageBoxButtons.YesNoCancel,
+                                        MessageBoxIcon.Warning,
+                                        MessageBoxDefaultButton.Button3);
+                                    switch (outcome)
+                                    {
+                                        case DialogResult.Yes:
+                                            bool removed = true;
+                                            foreach (var row in selected)
                                             {
-                                                r = _model.RemoveGroup(group.Id);
+                                                bool r = false;
+                                                if (row.Tag is IGroup group)
+                                                {
+                                                    r = _model.RemoveGroup(group.Id);
+                                                }
+
+                                                removed &= r;
+
+                                                if (r && row == _currentRow)
+                                                {
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                }
                                             }
 
-                                            removed &= r;
+                                            scope?.Complete();
 
-                                            if (r && row == _currentRow)
+                                            if (removed)
                                             {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                            }
-                                        }
-
-                                        if (removed)
-                                        {
-                                            text = "Remove Trust Boundaries";
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "One or more Trust Boundaries cannot be removed.";
-                                        }
-
-                                        break;
-                                    case DialogResult.No:
-                                        if (_currentRow != null && _currentRow.Tag is IGroup group2)
-                                        {
-                                            if (_model.RemoveGroup(group2.Id))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Trust Boundary";
+                                                text = "Remove Trust Boundaries";
                                             }
                                             else
                                             {
                                                 warning = true;
-                                                text = "The Trust Boundary cannot be removed.";
+                                                text = "One or more Trust Boundaries cannot be removed.";
                                             }
-                                        }
 
-                                        break;
+                                            break;
+                                        case DialogResult.No:
+                                            if (_currentRow != null && _currentRow.Tag is IGroup group2)
+                                            {
+                                                if (_model.RemoveGroup(group2.Id))
+                                                {
+                                                    scope?.Complete();
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                    text = "Remove Trust Boundary";
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "The Trust Boundary cannot be removed.";
+                                                }
+                                            }
+
+                                            break;
+                                    }
+                                }
+                                else if (_currentRow != null && _currentRow.Tag is ITrustBoundary tb &&
+                                         MessageBox.Show(Form.ActiveForm,
+                                             $"You are about to remove Trust Boundary '{tb.Name}'. Are you sure?",
+                                             "Remove Trust Boundary", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                                {
+                                    if (_model.RemoveGroup(tb.Id))
+                                    {
+                                        scope?.Complete();
+                                        _properties.Item = null;
+                                        text = "Remove Trust Boundary";
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Trust Boundary cannot be removed.";
+                                    }
                                 }
                             }
-                            else if (_currentRow != null && _currentRow.Tag is ITrustBoundary tb &&
-                                     MessageBox.Show(Form.ActiveForm,
-                                         $"You are about to remove Trust Boundary '{tb.Name}'. Are you sure?",
-                                         "Remove Trust Boundary", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        }
+                        break;
+                    case "RemoveNotInDiagrams":
+                        var diagrams = _model.Diagrams?.ToArray();
+                        var trustBoundaries = _model.Entities?
+                            .OfType<ITrustBoundary>()
+                            .Where(x => !(diagrams?.Any(y => y.Entities?.Any(z => x.Id == z.AssociatedId) ?? false) ?? false));
+                        if (trustBoundaries?.Any() ?? false)
+                        {
+                            if (MessageBox.Show(Form.ActiveForm,
+                                $"You are about to remove {trustBoundaries.Count()} Trust Boundaries that are not associated with any Diagram. Are you sure?",
+                                "Remove Trust Boundaries not in any Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                             {
-                                if (_model.RemoveGroup(tb.Id))
+                                var currentTrustBoundary = _currentRow?.Tag as ITrustBoundary;
+                                if (currentTrustBoundary != null && trustBoundaries.Any(x => x.Id == currentTrustBoundary.Id))
                                 {
                                     _properties.Item = null;
-                                    text = "Remove Trust Boundary";
+                                    _currentRow = null;
+
                                 }
-                                else
+
+                                using (var scope = UndoRedoManager.OpenScope("Remove Trust Boundaries Not In Any Diagram"))
                                 {
-                                    warning = true;
-                                    text = "The Trust Boundary cannot be removed.";
+                                    var removed = true;
+                                    foreach (var trustBoundary in trustBoundaries)
+                                    {
+                                        removed &= _model.RemoveEntity(trustBoundary.Id);
+                                    }
+
+                                    if (removed)
+                                    {
+                                        text = "Remove Trust Boundaries Not In Any Diagram ";
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "One or more Trust Boundaries cannot be removed.";
+                                    }
+
+                                    scope?.Complete();
                                 }
                             }
                         }
@@ -181,10 +238,10 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                         bool found = false;
                         if (_currentRow != null && _currentRow.Tag is ITrustBoundary trustBoundary2)
                         {
-                            var diagrams = _model.Diagrams?.ToArray();
-                            if (diagrams?.Any() ?? false)
+                            var diagrams2 = _model.Diagrams?.ToArray();
+                            if (diagrams2?.Any() ?? false)
                             {
-                                foreach (var diagram in diagrams)
+                                foreach (var diagram in diagrams2)
                                 {
                                     var shape = diagram.GetGroupShape(trustBoundary2.Id);
                                     if (shape != null)

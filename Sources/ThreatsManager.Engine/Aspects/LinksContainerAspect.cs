@@ -97,11 +97,11 @@ namespace ThreatsManager.Engine.Aspects
                     UndoRedoManager.Attach(l, l.Model);
                     links.Add(l);
                     scope?.Complete();
+                }
 
-                    if (Instance is ILinksContainer container)
-                    {
-                        _linkAdded?.Invoke(container, l);
-                    }
+                if (Instance is ILinksContainer container)
+                {
+                    _linkAdded?.Invoke(container, l);
                 }
             }
             else
@@ -142,11 +142,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(link);
                         scope?.Complete();
-
-                        if (link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
-                            _linkRemoved?.Invoke(container, flow);
                     }
                 }
+
+                if (result && link.DataFlow is IDataFlow flow && Instance is ILinksContainer container)
+                    _linkRemoved?.Invoke(container, flow);
             }
 
             return result;

@@ -31,8 +31,15 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             _instances.Add(this);
 
             _referenceObject = referenceObject;
+            PanelItemListFormTrigger.PanelStatusUpdated += PanelItemListFormTrigger_PanelStatusUpdated;
         }
-        
+
+        private void PanelItemListFormTrigger_PanelStatusUpdated(PanelsStatus status, Northwoods.Go.GoView view)
+        {
+            if (status == PanelsStatus.Normal)
+                this.Close();
+        }
+
         /// <summary>
         /// Event raised when a panel item is clicked.
         /// </summary>
@@ -239,6 +246,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         protected override void OnClosed(EventArgs e)
         {
+            PanelItemListFormTrigger.PanelStatusUpdated -= PanelItemListFormTrigger_PanelStatusUpdated;
             _instances.Remove(this);
             base.OnClosed(e);
         }
@@ -298,7 +306,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void ThreatEventListForm_Deactivate(object sender, EventArgs e)
         {
-            this.Close();
+            if (PanelItemListFormTrigger.CurrentStatus == PanelsStatus.Normal)
+                this.Close();
         }
 
         private void _panel_Leave(object sender, EventArgs e)

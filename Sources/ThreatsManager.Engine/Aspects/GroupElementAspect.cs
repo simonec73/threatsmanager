@@ -89,11 +89,11 @@ namespace ThreatsManager.Engine.Aspects
                     _parentId.Set(parent?.Id ?? Guid.Empty);
                     _parent.Set(parent);
                     scope?.Complete();
-
-                    if (Instance is IGroupElement groupElement)
-                        _parentChanged?.Invoke(groupElement, oldParent, parent);
                 }
-            }
+ 
+                if (Instance is IGroupElement groupElement)
+                    _parentChanged?.Invoke(groupElement, oldParent, parent);
+           }
         }
         #endregion
     }

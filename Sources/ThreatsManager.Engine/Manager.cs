@@ -5,9 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine.Config;
+using ThreatsManager.Engine.Policies;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -86,6 +88,49 @@ namespace ThreatsManager.Engine
         {
         }
 
+        #region Public members.
+        public static Manager Instance => _instance;
+
+        public ExtensionsConfigurationManager Configuration => _configuration;
+
+        public void LoadExtensions(ExecutionMode mode, Func<Assembly, bool> except = null)
+        {
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_ReflectionOnlyAssemblyResolve;
+
+#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
+            var dir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Extensions");
+            if (Directory.Exists(dir))
+            {
+                var assemblies =
+                    Directory.GetFiles(dir, "ThreatsManager.*.dll");
+                if (assemblies.Any())
+                {
+                    foreach (var assembly in assemblies)
+                    {
+                        _extensionsManager.AddExtensionsAssembly(assembly);
+                    }
+                }
+            }
+#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
+
+            InitializeEngineKnownTypes();
+
+            _configuration = new ExtensionsConfigurationManager();
+            var folders = GetFolders();
+            var prefixes = GetPrefixes();
+            var certificates = GetCertificates();
+            AddAssemblies(folders, prefixes, certificates, except);
+
+            var config = ExtensionsConfigurationManager.GetConfigurationSection();
+            _extensionsManager.Load(!(config?.DisableHelp ?? false));
+            _extensionsManager.SetExecutionMode(mode);
+            _configuration.Initialize(_extensionsManager);
+
+            RegisterContextAwareActionsEventHandlers();
+            RegisterPostLoadProcessorsEventHandlers();
+        }
+        #endregion
+
         #region Extensions loading.
         static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
         {
@@ -111,12 +156,15 @@ namespace ThreatsManager.Engine
             return result;
         }
 
-        private void AddAssemblies(IEnumerable<string> folders, IEnumerable<string> prefixes, 
+        private void AddAssemblies(IEnumerable<string> folders, IEnumerable<string> prefixes,
             IEnumerable<CertificateConfig> certificates, Func<Assembly, bool> except)
         {
             if (folders?.Any() ?? false)
             {
                 var platformVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+                var policy = new DisabledLibrariesPolicy();
+                var disabled = policy.DisabledLibraries?.ToArray();
 
                 foreach (var folder in folders)
                 {
@@ -136,6 +184,17 @@ namespace ThreatsManager.Engine
                                     var assembly = Assembly.ReflectionOnlyLoadFrom(dll);
 
                                     bool skip = false;
+
+                                    var assemblyTitle = CustomAttributeData.GetCustomAttributes(assembly)
+                                        .Where(x => x.AttributeType == typeof(AssemblyTitleAttribute))
+                                        .FirstOrDefault()?
+                                        .ConstructorArguments[0].Value?
+                                        .ToString().Replace("ThreatsManager.", "");
+                                    if (disabled?.Any(x => string.CompareOrdinal(assemblyTitle, x) == 0) ?? false)
+                                    {
+                                        skip = true;
+                                        _showWarning?.Invoke($"Extension library {assembly.FullName} has not been loaded due to a Policy.");
+                                    }
 
                                     if (except != null && except(assembly))
                                     {
@@ -224,27 +283,27 @@ namespace ThreatsManager.Engine
                             switch (attribute.ConstructorArguments.Count)
                             {
                                 case 1:
-                                    attrib = new ExtensionsContainerAttribute((string) attribute.ConstructorArguments[0].Value);
+                                    attrib = new ExtensionsContainerAttribute((string)attribute.ConstructorArguments[0].Value);
                                     break;
                                 case 2:
                                     if (attribute.ConstructorArguments[1].ArgumentType == typeof(string))
                                     {
                                         attrib = new ExtensionsContainerAttribute(
-                                            (string) attribute.ConstructorArguments[0].Value,
-                                            (string) attribute.ConstructorArguments[1].Value);
+                                            (string)attribute.ConstructorArguments[0].Value,
+                                            (string)attribute.ConstructorArguments[1].Value);
                                     }
                                     else
                                     {
                                         attrib = new ExtensionsContainerAttribute(
-                                            (string) attribute.ConstructorArguments[0].Value,
-                                            (uint) attribute.ConstructorArguments[1].Value);
+                                            (string)attribute.ConstructorArguments[0].Value,
+                                            (uint)attribute.ConstructorArguments[1].Value);
                                     }
                                     break;
                                 case 3:
                                     attrib = new ExtensionsContainerAttribute(
-                                        (string) attribute.ConstructorArguments[0].Value,
-                                        (string) attribute.ConstructorArguments[1].Value,
-                                        (uint) attribute.ConstructorArguments[2].Value);
+                                        (string)attribute.ConstructorArguments[0].Value,
+                                        (string)attribute.ConstructorArguments[1].Value,
+                                        (uint)attribute.ConstructorArguments[2].Value);
                                     break;
                             }
 
@@ -330,46 +389,92 @@ namespace ThreatsManager.Engine
         }
         #endregion
 
-        #region Public members.
-        public static Manager Instance => _instance;
-
-        public ExtensionsConfigurationManager Configuration => _configuration;
-
-        public void LoadExtensions(ExecutionMode mode, Func<Assembly, bool> except = null)
+        #region Policies.
+        private IEnumerable<string> GetFolders()
         {
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_ReflectionOnlyAssemblyResolve;
+            IEnumerable<string> result = null;
 
-#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-            var dir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Extensions");
-            if (Directory.Exists(dir))
+            var list = new List<string>();
+            var folders = _configuration.Folders?.ToArray();
+            if (folders?.Any() ?? false)
             {
-                var assemblies =
-                    Directory.GetFiles(dir, "ThreatsManager.*.dll");
-                if (assemblies.Any())
+                list.AddRange(folders);
+            }
+
+            var policy = new FoldersPolicy();
+            var additional = policy.Folders?.ToArray();
+
+            if (additional?.Any() ?? false)
+            {
+                foreach (var item in additional)
                 {
-                    foreach (var assembly in assemblies)
-                    {
-                        _extensionsManager.AddExtensionsAssembly(assembly);
-                    }
+                    if (!list.Any(x => string.CompareOrdinal(item?.ToLower(), x?.ToLower()) == 0))
+                        list.Add(item);
                 }
             }
-#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
 
-            InitializeEngineKnownTypes();
+            if (list.Any())
+                result = list.AsEnumerable();
 
-            _configuration = new ExtensionsConfigurationManager();
-            var folders = _configuration.Folders;
-            var prefixes = _configuration.Prefixes;
-            var certificates = _configuration.Certificates;
-            AddAssemblies(folders, prefixes, certificates, except);
+            return result;
+        }
 
-            var config = ExtensionsConfigurationManager.GetConfigurationSection();
-            _extensionsManager.Load(!(config?.DisableHelp ?? false));
-            _extensionsManager.SetExecutionMode(mode);
-            _configuration.Initialize(_extensionsManager);
+        private IEnumerable<string> GetPrefixes()
+        {
+            IEnumerable<string> result = null;
 
-            RegisterContextAwareActionsEventHandlers();
-            RegisterPostLoadProcessorsEventHandlers();
+            var list = new List<string>();
+            var prefixes = _configuration.Prefixes?.ToArray();
+            if (prefixes?.Any() ?? false)
+            {
+                list.AddRange(prefixes);
+            }
+
+            var policy = new PrefixesPolicy();
+            var additional = policy.Prefixes?.ToArray();
+
+            if (additional?.Any() ?? false)
+            {
+                foreach (var item in additional)
+                {
+                    if (!list.Any(x => string.CompareOrdinal(item?.ToLower(), x?.ToLower()) == 0))
+                        list.Add(item);
+                }
+            }
+
+            if (list.Any())
+                result = list.AsEnumerable();
+
+            return result;
+        }
+
+        private IEnumerable<CertificateConfig> GetCertificates()
+        {
+            IEnumerable<CertificateConfig> result = null;
+
+            var requireCertsPolicy = new RequireCertsPolicy();
+            if (requireCertsPolicy.RequireCerts ?? true)
+            {
+                var list = new List<CertificateConfig>();
+                var certificates = _configuration.Certificates?.ToArray();
+                if (certificates?.Any() ?? false)
+                {
+                    list.AddRange(certificates);
+                }
+
+                var policy = new CertificatesPolicy();
+                var additional = policy.Certificates?.ToArray();
+
+                if (additional?.Any() ?? false)
+                {
+                    list.AddRange(additional);
+                }
+
+                if (list.Any())
+                    result = list.AsEnumerable();
+            }
+
+            return result;
         }
         #endregion
 

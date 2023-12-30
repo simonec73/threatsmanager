@@ -104,7 +104,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 var viewList = new List<IActionDefinition>()
                 {
                     new ActionDefinition(Id, "MarkerToggle", "Toggle Markers",
-                        Properties.Resources.cubes_big, Properties.Resources.cubes, true)
+                        Properties.Resources.cubes_big, Properties.Resources.cubes, true),
+                    new ActionDefinition(Id, "AllPanelsToggle", "Toggle all Panels",
+                        Properties.Resources.panel_big, Properties.Resources.panel, true)
                 };
                 if (_commandsBarContextAwareActions?.Any(x => string.CompareOrdinal("View", x.Key) == 0) ?? false)
                 {
@@ -392,6 +394,19 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             break;
                         case MarkerStatus.Hidden:
                             MarkerStatusTrigger.RaiseMarkerStatusUpdated(MarkerStatus.Full);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    break;
+                case "AllPanelsToggle":
+                    switch (PanelItemListFormTrigger.CurrentStatus)
+                    {
+                        case PanelsStatus.Normal:
+                            PanelItemListFormTrigger.RaiseShowPanels(PanelsStatus.Visible, _graph);
+                            break;
+                        case PanelsStatus.Visible:
+                            PanelItemListFormTrigger.RaiseShowPanels(PanelsStatus.Normal, _graph);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

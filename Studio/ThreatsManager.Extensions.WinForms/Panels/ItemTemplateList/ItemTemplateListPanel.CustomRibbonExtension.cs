@@ -99,13 +99,17 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                         {
                             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                             {
-                                var entityTemplate = _model.AddEntityTemplate(dialog.EntityName,
-                                    dialog.EntityDescription,
-                                    dialog.BigImage,
-                                    dialog.Image,
-                                    dialog.SmallImage,
-                                    dialog.EntityType);
-                                _model.AutoApplySchemas(entityTemplate);
+                                using (var scope = UndoRedoManager.OpenScope("Add Entity Tempate"))
+                                {
+                                    var entityTemplate = _model.AddEntityTemplate(dialog.EntityName,
+                                        dialog.EntityDescription,
+                                        dialog.BigImage,
+                                        dialog.Image,
+                                        dialog.SmallImage,
+                                        dialog.EntityType);
+                                    _model.AutoApplySchemas(entityTemplate);
+                                    scope?.Complete();
+                                }
                                 text = "Add Entity Template";
                             }
                         }
@@ -116,9 +120,13 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                             dialog.IdentityTypeName = "Flow Template";
                             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                             {
-                                var flowTemplate = _model.AddFlowTemplate(dialog.IdentityName,
-                                    dialog.IdentityDescription);
-                                _model.AutoApplySchemas(flowTemplate);
+                                using (var scope = UndoRedoManager.OpenScope("Add Flow Template"))
+                                {
+                                    var flowTemplate = _model.AddFlowTemplate(dialog.IdentityName,
+                                        dialog.IdentityDescription);
+                                    _model.AutoApplySchemas(flowTemplate);
+                                    scope?.Complete();
+                                }
                                 text = "Add Flow Template";
                             }
                         }
@@ -129,9 +137,13 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                             dialog.IdentityTypeName = "Trust Boundary Template";
                             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                             {
-                                var trustBoundaryTemplate = _model.AddTrustBoundaryTemplate(dialog.IdentityName,
-                                    dialog.IdentityDescription);
-                                _model.AutoApplySchemas(trustBoundaryTemplate);
+                                using (var scope = UndoRedoManager.OpenScope("Add Trust Boundary Template"))
+                                {
+                                    var trustBoundaryTemplate = _model.AddTrustBoundaryTemplate(dialog.IdentityName,
+                                        dialog.IdentityDescription);
+                                    _model.AutoApplySchemas(trustBoundaryTemplate);
+                                    scope?.Complete();
+                                }
                                 text = "Add Trust Boundary Template";
                             }
                         }
@@ -139,142 +151,159 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                     case "RemoveItemTemplates":
                         if (_currentRow != null)
                         {
-                            if ((selected?.Length ?? 0) > 1)
+                            using (var scope = UndoRedoManager.OpenScope("Remove Item Templates"))
                             {
-                                var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected.Length} Item Templates. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Item Templates,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                    "Remove Item Templates", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
-                                    MessageBoxDefaultButton.Button3);
-                                switch (outcome)
+                                if ((selected?.Length ?? 0) > 1)
                                 {
-                                    case DialogResult.Yes:
-                                        bool removed = true;
-                                        foreach (var row in selected)
-                                        {
-                                            bool r = false;
-                                            if (row.Tag is IEntityTemplate template)
+                                    var outcome = MessageBox.Show(Form.ActiveForm,
+                                        $"You have selected {selected.Length} Item Templates. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Item Templates,\nNo to remove only the last one you selected, '{_currentRow.Tag?.ToString()}'.\nPress Cancel to abort.",
+                                        "Remove Item Templates", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+                                        MessageBoxDefaultButton.Button3);
+                                    switch (outcome)
+                                    {
+                                        case DialogResult.Yes:
+                                            bool removed = true;
+                                            foreach (var row in selected)
                                             {
-                                                r = _model.RemoveEntityTemplate(template.Id);
-                                            } else if (row.Tag is IFlowTemplate flowTemplate)
-                                            {
-                                                r = _model.RemoveFlowTemplate(flowTemplate.Id);
-                                            } else if (row.Tag is ITrustBoundaryTemplate trustBoundaryTemplate)
-                                            {
-                                                r = _model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id);
+                                                bool r = false;
+                                                if (row.Tag is IEntityTemplate template)
+                                                {
+                                                    r = _model.RemoveEntityTemplate(template.Id);
+                                                }
+                                                else if (row.Tag is IFlowTemplate flowTemplate)
+                                                {
+                                                    r = _model.RemoveFlowTemplate(flowTemplate.Id);
+                                                }
+                                                else if (row.Tag is ITrustBoundaryTemplate trustBoundaryTemplate)
+                                                {
+                                                    r = _model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id);
+                                                }
+
+                                                removed &= r;
+
+                                                if (r && row == _currentRow)
+                                                {
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                }
                                             }
 
-                                            removed &= r;
+                                            scope?.Complete();
 
-                                            if (r && row == _currentRow)
+                                            if (removed)
                                             {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                            }
-                                        }
-
-                                        if (removed)
-                                        {
-                                            text = "Remove Item Templates";
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "One or more Item Templates cannot be removed.";
-                                        }
-
-                                        break;
-                                    case DialogResult.No:
-                                        if (_currentRow?.Tag is IEntityTemplate template2)
-                                        {
-                                            if (_model.RemoveEntityTemplate(template2.Id))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Entity Template";
+                                                text = "Remove Item Templates";
                                             }
                                             else
                                             {
                                                 warning = true;
-                                                text = "The Entity Template cannot be removed.";
+                                                text = "One or more Item Templates cannot be removed.";
                                             }
-                                        } else if (_currentRow?.Tag is IFlowTemplate template3)
-                                        {
-                                            if (_model.RemoveFlowTemplate(template3.Id))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Flow Template";
-                                            }
-                                            else
-                                            {
-                                                warning = true;
-                                                text = "The Flow Template cannot be removed.";
-                                            }
-                                        } else if (_currentRow?.Tag is ITrustBoundaryTemplate template4)
-                                        {
-                                            if (_model.RemoveTrustBoundaryTemplate(template4.Id))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Trust Boundary Template";
-                                            }
-                                            else
-                                            {
-                                                warning = true;
-                                                text = "The Trust Boundary Template cannot be removed.";
-                                            }
-                                        }
 
-                                        break;
+                                            break;
+                                        case DialogResult.No:
+                                            if (_currentRow?.Tag is IEntityTemplate template2)
+                                            {
+                                                if (_model.RemoveEntityTemplate(template2.Id))
+                                                {
+                                                    scope?.Complete();
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                    text = "Remove Entity Template";
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "The Entity Template cannot be removed.";
+                                                }
+                                            }
+                                            else if (_currentRow?.Tag is IFlowTemplate template3)
+                                            {
+                                                if (_model.RemoveFlowTemplate(template3.Id))
+                                                {
+                                                    scope?.Complete();
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                    text = "Remove Flow Template";
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "The Flow Template cannot be removed.";
+                                                }
+                                            }
+                                            else if (_currentRow?.Tag is ITrustBoundaryTemplate template4)
+                                            {
+                                                if (_model.RemoveTrustBoundaryTemplate(template4.Id))
+                                                {
+                                                    scope?.Complete();
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                    text = "Remove Trust Boundary Template";
+                                                }
+                                                else
+                                                {
+                                                    warning = true;
+                                                    text = "The Trust Boundary Template cannot be removed.";
+                                                }
+                                            }
+
+                                            break;
+                                    }
                                 }
-                            }
-                            else if (_currentRow?.Tag is IEntityTemplate template &&
-                                     MessageBox.Show(Form.ActiveForm,
-                                         $"You are about to remove Entity Template '{template.Name}'. Are you sure?",
-                                         "Remove Entity Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                            {
-                                if (_model.RemoveEntityTemplate(template.Id))
+                                else if (_currentRow?.Tag is IEntityTemplate template &&
+                                         MessageBox.Show(Form.ActiveForm,
+                                             $"You are about to remove Entity Template '{template.Name}'. Are you sure?",
+                                             "Remove Entity Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                                 {
-                                    text = "Remove Entity Template";
-                                    _properties.Item = null;
+                                    if (_model.RemoveEntityTemplate(template.Id))
+                                    {
+                                        scope?.Complete();
+                                        text = "Remove Entity Template";
+                                        _properties.Item = null;
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Entity Template cannot be removed.";
+                                    }
                                 }
-                                else
+                                else if (_currentRow?.Tag is IFlowTemplate flowTemplate &&
+                                           MessageBox.Show(Form.ActiveForm,
+                                               $"You are about to remove Flow Template '{flowTemplate.Name}'. Are you sure?",
+                                               "Remove Flow Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                               MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                                 {
-                                    warning = true;
-                                    text = "The Entity Template cannot be removed.";
+                                    if (_model.RemoveFlowTemplate(flowTemplate.Id))
+                                    {
+                                        scope?.Complete();
+                                        text = "Remove Flow Template";
+                                        _properties.Item = null;
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Flow Template cannot be removed.";
+                                    }
                                 }
-                            } else if (_currentRow?.Tag is IFlowTemplate flowTemplate &&
-                                       MessageBox.Show(Form.ActiveForm,
-                                           $"You are about to remove Flow Template '{flowTemplate.Name}'. Are you sure?",
-                                           "Remove Flow Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                           MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                            {
-                                if (_model.RemoveFlowTemplate(flowTemplate.Id))
+                                else if (_currentRow?.Tag is ITrustBoundaryTemplate trustBoundaryTemplate &&
+                                           MessageBox.Show(Form.ActiveForm,
+                                               $"You are about to remove Trust Boundary Template '{trustBoundaryTemplate.Name}'. Are you sure?",
+                                               "Remove Trust Boundary Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                               MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                                 {
-                                    text = "Remove Flow Template";
-                                    _properties.Item = null;
-                                }
-                                else
-                                {
-                                    warning = true;
-                                    text = "The Flow Template cannot be removed.";
-                                }
-                            } else if (_currentRow?.Tag is ITrustBoundaryTemplate trustBoundaryTemplate &&
-                                       MessageBox.Show(Form.ActiveForm,
-                                           $"You are about to remove Trust Boundary Template '{trustBoundaryTemplate.Name}'. Are you sure?",
-                                           "Remove Trust Boundary Template", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                           MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                            {
-                                if (_model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id))
-                                {
-                                    text = "Remove Trust Boundary Template";
-                                    _properties.Item = null;
-                                }
-                                else
-                                {
-                                    warning = true;
-                                    text = "The Trust Boundary Template cannot be removed.";
+                                    if (_model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id))
+                                    {
+                                        scope?.Complete();
+                                        text = "Remove Trust Boundary Template";
+                                        _properties.Item = null;
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "The Trust Boundary Template cannot be removed.";
+                                    }
                                 }
                             }
                         }

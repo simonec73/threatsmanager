@@ -27,6 +27,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Selectable = false;
 
             MarkerStatusTrigger.MarkerStatusUpdated += MarkerStatusTriggerOnMarkerStatusUpdated;
+            PanelItemListFormTrigger.PanelStatusUpdated += PanelItemListFormTrigger_ShowPanels;
         }
 
         public AssociatedPanelItemMarker([NotNull] object referenceObj) : this()
@@ -61,6 +62,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 _markerProvider.StatusUpdated -= MarkerStatusUpdated;
                 _markerProvider.Dispose();
             }
+            PanelItemListFormTrigger.PanelStatusUpdated -= PanelItemListFormTrigger_ShowPanels;
         }
 
         private void MarkerStatusUpdated(IMarkerProvider provider)
@@ -75,6 +77,14 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private void MarkerStatusTriggerOnMarkerStatusUpdated(MarkerStatus status)
         {
             Visible = _visible;
+        }
+
+        private void PanelItemListFormTrigger_ShowPanels(PanelsStatus status, GoView view)
+        {
+            if (status == PanelsStatus.Visible)
+            {
+                ShowPanelItemListForm(view, this.Location);
+            }
         }
 
         /// <summary>

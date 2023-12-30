@@ -106,11 +106,11 @@ namespace ThreatsManager.Engine.Aspects
                     UndoRedoManager.Attach(gs, gs.Model);
                     groups.Add(gs);
                     scope?.Complete();
+                }
 
-                    if (Instance is IGroupShapesContainer container)
-                    {
-                        _groupShapeAdded?.Invoke(container, gs);
-                    }
+                if (Instance is IGroupShapesContainer container)
+                {
+                    _groupShapeAdded?.Invoke(container, gs);
                 }
             }
             else
@@ -194,11 +194,11 @@ namespace ThreatsManager.Engine.Aspects
                     {
                         UndoRedoManager.Detach(gs);
                         scope?.Complete();
-
-                        if (groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
-                            _groupShapeRemoved?.Invoke(container, group);
                     }
                 }
+
+                if (result && groupShape.Identity is IGroup group && Instance is IGroupShapesContainer container)
+                    _groupShapeRemoved?.Invoke(container, group);
             }
             else
                 throw new ArgumentNullException(nameof(groupShape));

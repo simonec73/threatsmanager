@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportTemplateDialog));
             this._wizard = new DevComponents.DotNetBar.Wizard();
             this._pageIntro = new DevComponents.DotNetBar.WizardPage();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,12 +67,12 @@
             this._checkAllEntityTemplates = new System.Windows.Forms.Button();
             this._itemTemplates = new System.Windows.Forms.CheckedListBox();
             this._pageThreatTypes = new DevComponents.DotNetBar.WizardPage();
-            this._pageWeaknesses = new DevComponents.DotNetBar.WizardPage();
             this._uncheckAllThreatTypes = new System.Windows.Forms.Button();
             this._checkAllThreatTypes = new System.Windows.Forms.Button();
+            this._threatTypes = new System.Windows.Forms.CheckedListBox();
+            this._pageWeaknesses = new DevComponents.DotNetBar.WizardPage();
             this._uncheckAllWeaknesses = new System.Windows.Forms.Button();
             this._checkAllWeaknesses = new System.Windows.Forms.Button();
-            this._threatTypes = new System.Windows.Forms.CheckedListBox();
             this._weaknesses = new System.Windows.Forms.CheckedListBox();
             this._pageMitigations = new DevComponents.DotNetBar.WizardPage();
             this._uncheckAllMitigations = new System.Windows.Forms.Button();
@@ -205,7 +206,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(429, 66);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Welcome to the Template Import Wizard";
+            this.label1.Text = "Welcome to the Knowledge Base Import Wizard";
             // 
             // label2
             // 
@@ -217,9 +218,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(428, 234);
             this.label2.TabIndex = 1;
-            this.label2.Text = "This wizard will guide you through the process to import an existing Template int" +
-    "o the current Threat Model.\r\n\r\nYou will be given the option of selecting the par" +
-    "t of the Template you want to import.";
+            this.label2.Text = resources.GetString("label2.Text");
             // 
             // label3
             // 
@@ -244,8 +243,8 @@
             this._pageFile.Location = new System.Drawing.Point(7, 72);
             this._pageFile.Name = "_pageFile";
             this._pageFile.NextButtonEnabled = DevComponents.DotNetBar.eWizardButtonState.False;
-            this._pageFile.PageDescription = "Select the Template file to be imported.";
-            this._pageFile.PageTitle = "Select Template file";
+            this._pageFile.PageDescription = "Select the Knowledge Base file to be imported.";
+            this._pageFile.PageTitle = "Select Knowledge Base file";
             this._pageFile.Size = new System.Drawing.Size(639, 282);
             // 
             // 
@@ -293,8 +292,8 @@
             this._pageTMProperties.Controls.Add(this._layoutDetails);
             this._pageTMProperties.Location = new System.Drawing.Point(7, 72);
             this._pageTMProperties.Name = "_pageTMProperties";
-            this._pageTMProperties.PageDescription = "Select the Threat Model Details to be included in the Template.";
-            this._pageTMProperties.PageTitle = "Select Threat Model Details";
+            this._pageTMProperties.PageDescription = "Show the details of the Knowledge Base being imported.";
+            this._pageTMProperties.PageTitle = "Show Threat Model Details";
             this._pageTMProperties.Size = new System.Drawing.Size(639, 282);
             // 
             // 
@@ -383,7 +382,7 @@
             this._pageFullyInclude.Controls.Add(this._layoutFullyCopy);
             this._pageFullyInclude.Location = new System.Drawing.Point(7, 72);
             this._pageFullyInclude.Name = "_pageFullyInclude";
-            this._pageFullyInclude.PageDescription = "Select the categories that you want to fully include in the Template.";
+            this._pageFullyInclude.PageDescription = "Select the categories that you want to fully include in the Knowledge Base.";
             this._pageFullyInclude.PageTitle = "Select what to fully include";
             this._pageFullyInclude.Size = new System.Drawing.Size(639, 282);
             // 
@@ -494,7 +493,7 @@
             this._fullyWeaknesses.Margin = new System.Windows.Forms.Padding(0);
             this._fullyWeaknesses.Name = "_fullyWeaknesses";
             this._fullyWeaknesses.Size = new System.Drawing.Size(521, 17);
-            this._fullyWeaknesses.TabIndex = 2;
+            this._fullyWeaknesses.TabIndex = 3;
             this._fullyWeaknesses.Text = "Weaknesses";
             this._fullyWeaknesses.UseVisualStyleBackColor = true;
             this._fullyWeaknesses.CheckedChanged += new System.EventHandler(this._fullyWeaknesses_CheckedChanged);
@@ -508,7 +507,7 @@
             this._fullyMitigations.Margin = new System.Windows.Forms.Padding(0);
             this._fullyMitigations.Name = "_fullyMitigations";
             this._fullyMitigations.Size = new System.Drawing.Size(521, 17);
-            this._fullyMitigations.TabIndex = 3;
+            this._fullyMitigations.TabIndex = 4;
             this._fullyMitigations.Text = "Mitigations";
             this._fullyMitigations.UseVisualStyleBackColor = true;
             this._fullyMitigations.CheckedChanged += new System.EventHandler(this._fullyMitigations_CheckedChanged);
@@ -522,7 +521,7 @@
             this._fullyThreatActors.Margin = new System.Windows.Forms.Padding(0);
             this._fullyThreatActors.Name = "_fullyThreatActors";
             this._fullyThreatActors.Size = new System.Drawing.Size(521, 17);
-            this._fullyThreatActors.TabIndex = 4;
+            this._fullyThreatActors.TabIndex = 5;
             this._fullyThreatActors.Text = "Threat Actors";
             this._fullyThreatActors.UseVisualStyleBackColor = true;
             this._fullyThreatActors.CheckedChanged += new System.EventHandler(this._fullyThreatActors_CheckedChanged);
@@ -592,7 +591,7 @@
             this._pageSchemas.Controls.Add(this._schemas);
             this._pageSchemas.Location = new System.Drawing.Point(7, 72);
             this._pageSchemas.Name = "_pageSchemas";
-            this._pageSchemas.PageDescription = "Select the Schemas to be included in the Template.";
+            this._pageSchemas.PageDescription = "Select the Schemas to be included in the Knowledge Base.";
             this._pageSchemas.PageTitle = "Select Schemas";
             this._pageSchemas.Size = new System.Drawing.Size(639, 282);
             // 
@@ -656,7 +655,7 @@
             this._pageItemTemplates.Controls.Add(this._itemTemplates);
             this._pageItemTemplates.Location = new System.Drawing.Point(7, 72);
             this._pageItemTemplates.Name = "_pageItemTemplates";
-            this._pageItemTemplates.PageDescription = "Select the Item Templates to be included in the Template.";
+            this._pageItemTemplates.PageDescription = "Select the Item Templates to be included in the Knowledge Base.";
             this._pageItemTemplates.PageTitle = "Select Item Templates";
             this._pageItemTemplates.Size = new System.Drawing.Size(639, 282);
             // 
@@ -721,7 +720,7 @@
             this._pageThreatTypes.Controls.Add(this._threatTypes);
             this._pageThreatTypes.Location = new System.Drawing.Point(7, 72);
             this._pageThreatTypes.Name = "_pageThreatTypes";
-            this._pageThreatTypes.PageDescription = "Select the Threat Types to be included in the Template.";
+            this._pageThreatTypes.PageDescription = "Select the Threat Types to be included in the Knowledge Base.";
             this._pageThreatTypes.PageTitle = "Select Threat Types";
             this._pageThreatTypes.Size = new System.Drawing.Size(639, 282);
             // 
@@ -775,8 +774,8 @@
             // 
             // _pageWeaknesses
             // 
-            this._pageWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this._pageWeaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._pageWeaknesses.AntiAlias = false;
             this._pageWeaknesses.BackColor = System.Drawing.Color.White;
@@ -827,8 +826,8 @@
             // 
             // _weaknesses
             // 
-            this._weaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this._weaknesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._weaknesses.FormattingEnabled = true;
             this._weaknesses.Location = new System.Drawing.Point(57, 0);
@@ -851,7 +850,7 @@
             this._pageMitigations.Controls.Add(this._mitigations);
             this._pageMitigations.Location = new System.Drawing.Point(7, 72);
             this._pageMitigations.Name = "_pageMitigations";
-            this._pageMitigations.PageDescription = "Select the Mitigations to be included in the Template.";
+            this._pageMitigations.PageDescription = "Select the Mitigations to be included in the Knowledge Base.";
             this._pageMitigations.PageTitle = "Select Mitigations";
             this._pageMitigations.Size = new System.Drawing.Size(639, 282);
             // 
@@ -916,7 +915,7 @@
             this._pageThreatActors.Controls.Add(this._threatActors);
             this._pageThreatActors.Location = new System.Drawing.Point(7, 72);
             this._pageThreatActors.Name = "_pageThreatActors";
-            this._pageThreatActors.PageDescription = "Select the Threat Actors to be included in the Template.";
+            this._pageThreatActors.PageDescription = "Select the Threat Actors to be included in the Knowledge Base.";
             this._pageThreatActors.PageTitle = "Select Threat Actors";
             this._pageThreatActors.Size = new System.Drawing.Size(639, 282);
             // 
@@ -1005,7 +1004,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(429, 66);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Template Import";
+            this.label4.Text = "Knowledge Base Import";
             // 
             // label5
             // 
@@ -1018,14 +1017,14 @@
             this.label5.Size = new System.Drawing.Size(428, 234);
             this.label5.TabIndex = 4;
             this.label5.Text = "The required information has been collected.\r\n\r\nYou may click Finish to confirm i" +
-    "mporting the Template, or Cancel to abort it.";
+    "mporting the Knowledge Base, or Cancel to abort it.";
             // 
             // _openFile
             // 
             this._openFile.DefaultExt = "tmt";
             this._openFile.Filter = "Threat Model Template (*.tmt)|*.tmt|Threat Model Json Template (*.tmk)|*.tmk";
-            this._openFile.Title = "Select the Template file";
             this._openFile.RestoreDirectory = true;
+            this._openFile.Title = "Select the Template file";
             // 
             // ImportTemplateDialog
             // 
@@ -1040,7 +1039,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Template Import Wizard";
+            this.Text = "Knowledge Base Import Wizard";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ImportTemplateDialog_FormClosed);
             this._wizard.ResumeLayout(false);
             this._pageIntro.ResumeLayout(false);

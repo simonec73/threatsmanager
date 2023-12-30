@@ -1460,6 +1460,36 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap external_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("external_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap external_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("external_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap external_sponge {
+            get {
+                object obj = ResourceManager.GetObject("external_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap firewall {
             get {
                 object obj = ResourceManager.GetObject("firewall", resourceCulture);
@@ -1533,6 +1563,36 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap floppy_disk_small {
             get {
                 object obj = ResourceManager.GetObject("floppy_disk_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap flow_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("flow_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap flow_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("flow_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap flow_sponge {
+            get {
+                object obj = ResourceManager.GetObject("flow_sponge", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2482,6 +2542,46 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap objects_cube_to_cone {
+            get {
+                object obj = ResourceManager.GetObject("objects_cube_to_cone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap objects_cube_to_cone_big {
+            get {
+                object obj = ResourceManager.GetObject("objects_cube_to_cone_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap objects_cube_to_cone_huge {
+            get {
+                object obj = ResourceManager.GetObject("objects_cube_to_cone_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap objects_cube_to_cone_small {
+            get {
+                object obj = ResourceManager.GetObject("objects_cube_to_cone_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap odometer {
             get {
                 object obj = ResourceManager.GetObject("odometer", resourceCulture);
@@ -2515,6 +2615,46 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap odometer_small {
             get {
                 object obj = ResourceManager.GetObject("odometer_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap panel {
+            get {
+                object obj = ResourceManager.GetObject("panel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap panel_big {
+            get {
+                object obj = ResourceManager.GetObject("panel_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap panel_huge {
+            get {
+                object obj = ResourceManager.GetObject("panel_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap panel_small {
+            get {
+                object obj = ResourceManager.GetObject("panel_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2644,6 +2784,36 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap presentation_pie_chart_small {
             get {
                 object obj = ResourceManager.GetObject("presentation_pie_chart_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap process_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("process_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap process_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("process_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap process_sponge {
+            get {
+                object obj = ResourceManager.GetObject("process_sponge", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -3535,6 +3705,36 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap signpost_two_small {
             get {
                 object obj = ResourceManager.GetObject("signpost_two_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap storage_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("storage_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap storage_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("storage_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap storage_sponge {
+            get {
+                object obj = ResourceManager.GetObject("storage_sponge", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
