@@ -27,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [EntitiesReadOnlyContainerAspect]
     [GroupsReadOnlyContainerAspect]
     [GroupElementAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Trust Boundary")]
@@ -128,6 +129,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return null;
         }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -152,6 +165,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [Reference]
         [field: NotRecorded]
         private IGroup _parent { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -204,18 +225,26 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             if (container is IThreatModel model)
             {
-                result = new TrustBoundary()
+                using (var scope = UndoRedoManager.OpenScope("Clone Trust Boundary"))
                 {
-                    _modelId = model.Id,
-                    _model = model,
-                    _id = Id,
-                    Name = Name,
-                    Description = Description,
-                    _parentId = _parentId,
-                    _templateId = _templateId
-                };
-                container.Add(result);
-                this.CloneProperties(result);
+                    result = new TrustBoundary()
+                    {
+                        _modelId = model.Id,
+                        _model = model,
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        _parentId = _parentId,
+                        _templateId = _templateId
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

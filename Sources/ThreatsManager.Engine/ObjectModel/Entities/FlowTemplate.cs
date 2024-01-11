@@ -26,6 +26,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
     [PropertiesContainerAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Flow Template")]
@@ -92,6 +93,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public void Unapply(IPropertySchema schema)
         {
         }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -110,6 +123,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [Child]
         [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
         private AdvisableCollection<IProperty> _properties { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -168,17 +189,25 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             if (container is IThreatModel model)
             {
-                result = new FlowTemplate()
+                using (var scope = UndoRedoManager.OpenScope("Clone Flow Template"))
                 {
-                    _id = Id,
-                    Name = Name,
-                    Description = Description,
-                    FlowType = FlowType,
-                    _model = model,
-                    _modelId = model.Id,
-                };
-                container.Add(result);
-                this.CloneProperties(result);
+                    result = new FlowTemplate()
+                    {
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        FlowType = FlowType,
+                        _model = model,
+                        _modelId = model.Id,
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

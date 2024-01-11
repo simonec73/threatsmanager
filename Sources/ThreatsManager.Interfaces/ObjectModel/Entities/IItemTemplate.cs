@@ -5,7 +5,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// <summary>
     /// Interface representing a generic Item Template.
     /// </summary>
-    public interface IItemTemplate : IIdentity, IThreatModelChild, IPropertiesContainer //, ILockable
+    public interface IItemTemplate : IIdentity, IThreatModelChild, IPropertiesContainer, ISourceInfo //, ILockable
     {
     }
 }

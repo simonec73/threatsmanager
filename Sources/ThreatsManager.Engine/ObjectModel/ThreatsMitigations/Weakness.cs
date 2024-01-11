@@ -28,6 +28,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatModelIdChanger]
     [SeverityIdChanger]
     [Recordable(AutoRecord = false)]
+    [SourceInfoAspect]
     [Undoable]
     [TypeLabel("Weakness")]
     public partial class Weakness : IWeakness, IInitializableObject
@@ -94,6 +95,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -113,6 +126,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -179,29 +200,31 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (container is IThreatModel model)
             {
-                result = new Weakness()
+                using (var scope = UndoRedoManager.OpenScope("Clone Weakness"))
                 {
-                    _id = Id,
-                    Name = Name,
-                    Description = Description,
-                    _model = model,
-                    _severityId = _severityId
-                };
-                container.Add(result);
-                this.CloneProperties(result);
-
-                if (_mitigations?.Any() ?? false)
-                {
-                    foreach (var mitigation in _mitigations)
+                    result = new Weakness()
                     {
-                        var m = model.GetMitigation(mitigation.MitigationId);
-                        var s = model.GetStrength(mitigation.StrengthId);
-                        if (m != null && s != null)
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        _model = model,
+                        _severityId = _severityId
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (_mitigations?.Any() ?? false)
+                    {
+                        foreach (var mitigation in _mitigations)
                         {
-                            var newMitigation = result.AddMitigation(m, s);
-                            mitigation.CloneProperties(newMitigation);
+                            mitigation.Clone(result);
                         }
                     }
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
                 }
             }
 

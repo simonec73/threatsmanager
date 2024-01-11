@@ -30,6 +30,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [ThreatModelIdChanger]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Flow")]
@@ -164,6 +165,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return false;
         }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -189,7 +202,15 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
-        #endregion    
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
+        #endregion
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.DataFlow;
@@ -275,22 +296,30 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             if (container is IThreatModel model)
             {
-                result = new DataFlow()
+                using (var scope = UndoRedoManager.OpenScope("Clone Flow"))
                 {
-                    _id = Id,
-                    Name = Name,
-                    Description = Description,
-                    _model = model,
-                    _modelId = model.Id,
-                    _sourceId = _sourceId,
-                    _targetId = _targetId,
-                    _templateId = _templateId,
-                    FlowType = FlowType
-                };
-                container.Add(result);
-                this.CloneProperties(result);
-                this.CloneThreatEvents(result);
+                    result = new DataFlow()
+                    {
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        _model = model,
+                        _modelId = model.Id,
+                        _sourceId = _sourceId,
+                        _targetId = _targetId,
+                        _templateId = _templateId,
+                        FlowType = FlowType
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+                    this.CloneThreatEvents(result);
+                    this.CloneVulnerabilities(result);
 
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

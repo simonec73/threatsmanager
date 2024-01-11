@@ -6,7 +6,8 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface describing a Mitigation Strength.
     /// </summary>
-    public interface IStrength : IPropertiesContainer, IComparable<IStrength>, IComparable, IThreatModelChild
+    public interface IStrength : IPropertiesContainer, IComparable<IStrength>, IComparable, 
+        IThreatModelChild, ISourceInfo
     {
         /// <summary>
         /// Identifier of the Strength.

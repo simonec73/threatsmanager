@@ -27,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
     [PropertiesContainerAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     public class Mitigation : IMitigation, IInitializableObject
@@ -93,6 +94,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -112,6 +125,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: UpdateThreatModelId]
         [field: AutoApplySchemas]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -127,17 +148,25 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (container is IThreatModel model)
             {
-                result = new Mitigation
+                using (var scope = UndoRedoManager.OpenScope("Clone Mitigation"))
                 {
-                    _id = Id, 
-                    Name = Name, 
-                    Description = Description,
-                    _model = model, 
-                    _modelId = model.Id,
-                    ControlType = ControlType
-                };
-                container.Add(result);
-                this.CloneProperties(result);
+                    result = new Mitigation
+                    {
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        _model = model,
+                        _modelId = model.Id,
+                        ControlType = ControlType
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

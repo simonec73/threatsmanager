@@ -10,7 +10,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface describing a mitigation specialized for a target Item Template.
     /// </summary>
-    public interface ISpecializedMitigation
+    public interface ISpecializedMitigation : ISourceInfo
     {
         /// <summary>
         /// The identifier of the target Item Template. 

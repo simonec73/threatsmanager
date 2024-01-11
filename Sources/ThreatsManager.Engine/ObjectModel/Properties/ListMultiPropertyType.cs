@@ -1,7 +1,9 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
@@ -26,23 +28,31 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (container is IPropertySchema schema)
             {
-                result = new ListMultiPropertyType
+                using (var scope = UndoRedoManager.OpenScope("Clone List Multi Property Type"))
                 {
-                    _id = _id,
-                    _schemaId = schema.Id,
-                    _model = schema.Model,
-                    _modelId = schema.Model?.Id ?? Guid.Empty,
-                    Name = Name,
-                    Description = Description,
-                    _listProviderId = _listProviderId,
-                    Context = Context,
-                    _cachedList = _cachedList,
-                    Visible = Visible,
-                    DoNotPrint = DoNotPrint,
-                    ReadOnly = ReadOnly,
-                    Priority = Priority,
-                };
-                container.Add(result);
+                    result = new ListMultiPropertyType
+                    {
+                        _id = _id,
+                        _schemaId = schema.Id,
+                        _model = schema.Model,
+                        _modelId = schema.Model?.Id ?? Guid.Empty,
+                        Name = Name,
+                        Description = Description,
+                        _listProviderId = _listProviderId,
+                        Context = Context,
+                        _cachedList = _cachedList,
+                        Visible = Visible,
+                        DoNotPrint = DoNotPrint,
+                        ReadOnly = ReadOnly,
+                        Priority = Priority,
+                    };
+                    container.Add(result);
+
+                    if ((schema.Model?.Id ?? Guid.Empty) != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
             return result;
         }

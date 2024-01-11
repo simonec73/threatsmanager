@@ -27,6 +27,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [WeaknessIdChanger]
     [PropertiesContainerAspect]
     [Recordable(AutoRecord = false)]
+    [SourceInfoAspect]
     [Undoable]
     public class WeaknessMitigation : IWeaknessMitigation, IInitializableObject
     {
@@ -91,6 +92,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         public void Unapply(IPropertySchema schema)
         {
         }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -104,6 +117,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Child]
         [JsonProperty("properties", ItemTypeNameHandling = TypeNameHandling.Objects)]
         private AdvisableCollection<IProperty> _properties { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.

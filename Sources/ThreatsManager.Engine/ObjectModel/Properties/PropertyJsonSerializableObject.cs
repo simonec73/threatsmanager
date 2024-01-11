@@ -19,6 +19,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
     [PropertyAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [AssociatedPropertyClass("ThreatsManager.Engine.ObjectModel.Properties.ShadowPropertyJsonSerializableObject, ThreatsManager.Engine")]
@@ -47,6 +48,18 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -63,6 +76,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected Guid _propertyTypeId { get; set; }
         [JsonProperty("readOnly")]
         protected bool _readOnly { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.

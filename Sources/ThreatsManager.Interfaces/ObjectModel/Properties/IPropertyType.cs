@@ -5,7 +5,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
     /// <summary>
     /// Property Type, which is the definition of the Property.
     /// </summary>
-    public interface IPropertyType : IIdentity, IThreatModelChild
+    public interface IPropertyType : IIdentity, IThreatModelChild, ISourceInfo
     {
         /// <summary>
         /// Identifier of the Schema to which the Property belongs to.

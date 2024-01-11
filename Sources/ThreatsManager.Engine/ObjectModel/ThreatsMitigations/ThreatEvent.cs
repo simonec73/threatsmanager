@@ -33,6 +33,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatEventScenariosContainerAspect]
     [ThreatEventMitigationsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Threat Event")]
@@ -196,6 +197,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         {
             return false;
         }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -218,6 +231,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Child]
         [JsonProperty("vulnerabilities")]
         private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -361,36 +382,45 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (container is IThreatModelChild child && child.Model is IThreatModel model)
             {
-                result = new ThreatEvent()
+                using (var scope = UndoRedoManager.OpenScope("Clone Threat Event"))
                 {
-                    _id = _id,
-                    _model = model,
-                    _modelId = model.Id,
-                    Name = Name,
-                    Description = Description,
-                    _parentId = _parentId,
-                    _severityId = _severityId,
-                    _threatTypeId = _threatTypeId
-                };
-                container.Add(result);
-                this.CloneProperties(result);
-
-                var scenarios = Scenarios?.ToArray();
-                if (scenarios?.Any() ?? false)
-                {
-                    foreach (var scenario in scenarios)
+                    result = new ThreatEvent()
                     {
-                        scenario.Clone(result);
-                    }
-                }
+                        _id = _id,
+                        _model = model,
+                        _modelId = model.Id,
+                        Name = Name,
+                        Description = Description,
+                        _parentId = _parentId,
+                        _severityId = _severityId,
+                        _threatTypeId = _threatTypeId
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+                    this.CloneVulnerabilities(result);
 
-                var mitigations = Mitigations?.ToArray();
-                if (mitigations?.Any() ?? false)
-                {
-                    foreach (var mitigation in mitigations)
+                    var scenarios = Scenarios?.ToArray();
+                    if (scenarios?.Any() ?? false)
                     {
-                        mitigation.Clone(result);
+                        foreach (var scenario in scenarios)
+                        {
+                            scenario.Clone(result);
+                        }
                     }
+
+                    var mitigations = Mitigations?.ToArray();
+                    if (mitigations?.Any() ?? false)
+                    {
+                        foreach (var mitigation in mitigations)
+                        {
+                            mitigation.Clone(result);
+                        }
+                    }
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
                 }
             }
 
