@@ -5,7 +5,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Diagrams
     /// <summary>
     /// Interface implemented by the Shapes associated to Groups.
     /// </summary>
-    public interface IGroupShape : IShape, ISourceInfo
+    public interface IGroupShape : IShape
     {
         /// <summary>
         /// Size of the Group.

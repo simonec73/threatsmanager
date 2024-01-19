@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface implemented by the Shapes associated to Entities.
     /// </summary>
-    public interface IEntityShape : IShape, ISourceInfo
+    public interface IEntityShape : IShape
     {
         /// <summary>
         /// Creates a duplicate of the current Entity Shape and attaches it to the Container passed as argument.
