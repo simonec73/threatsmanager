@@ -24,12 +24,12 @@ namespace ThreatsManager.Quality.Annotations
         /// <summary>
         /// Enumeration of the Annotations.
         /// </summary>
-        [JsonProperty("annotations")]
+        [JsonProperty("annotations", TypeNameHandling = TypeNameHandling.None, ItemTypeNameHandling = TypeNameHandling.Objects)]
         [Reference]
         [field:NotRecorded]
         private List<Annotation> _legacyAnnotations { get; set; }
 
-        [JsonProperty("items")]
+        [JsonProperty("items", TypeNameHandling = TypeNameHandling.None, ItemTypeNameHandling = TypeNameHandling.Objects)]
         [Child]
         private AdvisableCollection<Annotation> _annotations { get; set; }
 
