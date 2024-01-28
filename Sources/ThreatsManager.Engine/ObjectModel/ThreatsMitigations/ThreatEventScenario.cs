@@ -29,6 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [SeverityIdChanger]
     [ThreatEventIdChanger]
     [ThreatEventChildAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Scenario")]
@@ -104,6 +105,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatEvent ThreatEvent { get; }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -129,6 +142,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: NotRecorded]
         [field: UpdateThreatEventId]
         private IThreatEvent _threatEvent { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -202,19 +223,27 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (container is IThreatModelChild child && child.Model is IThreatModel model)
             {
-                result = new ThreatEventScenario()
+                using (var scope = UndoRedoManager.OpenScope("Clone Scenario"))
                 {
-                    _id = _id,
-                    Name = Name,
-                    Description = Description,
-                    _model = model,
-                    _actorId = _actorId,
-                    _severityId = _severityId,
-                    _threatEventId = _threatEventId,
-                    Motivation = Motivation,
-                };
-                container.Add(result);
-                this.CloneProperties(result);
+                    result = new ThreatEventScenario()
+                    {
+                        _id = _id,
+                        Name = Name,
+                        Description = Description,
+                        _model = model,
+                        _actorId = _actorId,
+                        _severityId = _severityId,
+                        _threatEventId = _threatEventId,
+                        Motivation = Motivation,
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

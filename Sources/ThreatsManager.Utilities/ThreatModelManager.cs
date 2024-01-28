@@ -8,6 +8,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces.Exceptions;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -160,6 +161,10 @@ namespace ThreatsManager.Utilities
                                 }
                             }
                         }
+                    }
+                    catch (JsonSerializationException e)
+                    {
+                        throw new ThreatModelOpeningFailureException("A serialization issue has occurred.", e);
                     }
                     finally
                     {

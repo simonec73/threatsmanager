@@ -18,6 +18,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
     [JsonObject(MemberSerialization.OptIn)]
     [Serializable]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     public class SpecializedMitigation : ISpecializedMitigation
@@ -31,6 +32,32 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             Description = description;
         }
 
+        #region Default implementation.
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
+        #endregion
+
+        #region Additional placeholders required.
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
+        #endregion
+
+        #region Specific implementation.
         [JsonProperty("template")]
         internal Guid _templateId { get; set; }
 
@@ -42,5 +69,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("description")]
         public string Description { get; set; }
+        #endregion
     }
 }

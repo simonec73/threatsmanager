@@ -237,7 +237,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         graphGroup.GroupShape.Identity is IGroup group)
                     {
                             groupElement.SetParent(group);
-                            RecursiveRefreshBorder();
                     }
                     else
                     {
@@ -330,6 +329,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         public override void LayoutChildren(GoObject childchanged)
         {
             if (Initializing || UndoRedoManager.IsUndoing || UndoRedoManager.IsRedoing) return;
+
             GoObject border = Border;
             GoObject label = Label;
             if (childchanged == border && border != null && label != null)
@@ -343,12 +343,21 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 RectangleF rect = ComputeBorder();
                 if (rect != RectangleF.Empty)
                 {
-                    // but don't have the box shrink to minimum size continuously
-                    rect = RectangleF.Union(rect, border.Bounds);
-                    border.Bounds = rect;
-                    if (label != null)
+                    using (var scope = UndoRedoManager.OpenScope("Layout Group Children"))
                     {
-                        Label.SetSpotLocation(BottomLeft, new PointF(rect.X, rect.Y - 2));
+                        // but don't have the box shrink to minimum size continuously
+                        rect = RectangleF.Union(rect, border.Bounds);
+                        border.Bounds = rect;
+                        _shape.Size = new SizeF(border.Bounds.Width, border.Bounds.Height);
+                        var location = Location;
+                        _shape.Position = new PointF(location.X, location.Y);
+
+                        if (label != null)
+                        {
+                            Label.SetSpotLocation(BottomLeft, new PointF(rect.X, rect.Y - 2));
+                        }
+
+                        scope?.Complete();
                     }
                 }
             }
@@ -398,9 +407,16 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     RectangleF rect = ComputeBorder();
                     if (rect != RectangleF.Empty)
                     {
-                        // but don't have the box shrink to minimum size continuously
-                        rect = RectangleF.Union(rect, border.Bounds);
-                        border.Bounds = rect;
+                        using (var scope = UndoRedoManager.OpenScope("Group On Selection Dropped"))
+                        {
+                            // but don't have the box shrink to minimum size continuously
+                            rect = RectangleF.Union(rect, border.Bounds);
+                            border.Bounds = rect;
+                            _shape.Size = new SizeF(border.Bounds.Width, border.Bounds.Height);
+                            var location = Location;
+                            _shape.Position = new PointF(location.X, location.Y);
+                            scope?.Complete();
+                        }
                     }
                 }
                 return true;
@@ -427,35 +443,14 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 newRect = RectangleF.Union(newRect, minRect);
             }
-            // update the bounding rect of the Border
-            Border.Bounds = newRect;
-        }
-
-        public void RefreshBorder()
-        {
-            // compute the minimum rectangle needed to enclose the children except for the Border
-            GoObject border = Border;
-            GoObject label = Label;
-            RectangleF rect = ComputeBorder();
-
-            if (rect != RectangleF.Empty)
+            using (var scope = UndoRedoManager.OpenScope("Group DoResize"))
             {
-                // but don't have the box shrink to minimum size continuously
-                rect = RectangleF.Union(rect, border.Bounds);
-                border.Bounds = rect;
-                if (label != null)
-                {
-                    Label.SetSpotLocation(BottomLeft, new PointF(rect.X, rect.Y - 2));
-                }
-            }
-        }
-
-        public void RecursiveRefreshBorder()
-        {
-            RefreshBorder();
-            if (Parent is GraphGroup parent)
-            {
-                parent.RecursiveRefreshBorder();
+                // update the bounding rect of the Border
+                Border.Bounds = newRect;
+                _shape.Size = new SizeF(newRect.Size.Width, newRect.Size.Height);
+                var location = Location;
+                _shape.Position = new PointF(location.X, location.Y);
+                scope?.Complete();
             }
         }
         #endregion

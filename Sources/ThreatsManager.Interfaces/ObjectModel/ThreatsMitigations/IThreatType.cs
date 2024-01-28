@@ -6,7 +6,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// Interface that defines a Threat Type, that is the definition of a Threat from which Threat Events can be derived.
     /// </summary>
     public interface IThreatType : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IThreatTypeMitigationsContainer, IThreatTypeWeaknessesContainer
+        IThreatTypeMitigationsContainer, IThreatTypeWeaknessesContainer, ISourceInfo
     {
         /// <summary>
         /// Identifier of the Severity.

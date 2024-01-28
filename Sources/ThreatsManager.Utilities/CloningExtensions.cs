@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
@@ -42,9 +43,12 @@ namespace ThreatsManager.Utilities
                                     {
                                         var propertyTarget = target.GetProperty(propertyType);
                                         if (propertyTarget == null)
-                                            target.AddProperty(propertyType, property.StringValue);
+                                            propertyTarget = target.AddProperty(propertyType, property.StringValue);
                                         else
                                             propertyTarget.StringValue = property.StringValue;
+
+                                        if (propertyTarget != null && sourceModel.Id != model.Id)
+                                            propertyTarget.SetSourceInfo(model);
                                     }
                                 }
                             }
@@ -86,6 +90,28 @@ namespace ThreatsManager.Utilities
                     foreach (var threatEvent in threatEvents)
                     {
                         threatEvent.Clone(target);
+                    }
+                    scope?.Complete();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clone Vulnerabilities between Containers.
+        /// </summary>
+        /// <param name="source">Source Container.</param>
+        /// <param name="target">Target Container.</param>
+        public static void CloneVulnerabilities(this IVulnerabilitiesContainer source,
+            [NotNull] IVulnerabilitiesContainer target)
+        {
+            var vulnerabilities = source?.Vulnerabilities?.ToArray();
+            if (vulnerabilities?.Any() ?? false)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Clone Vulnerabilities"))
+                {
+                    foreach (var vulnerability in vulnerabilities)
+                    {
+                        vulnerability.Clone(target);
                     }
                     scope?.Complete();
                 }
@@ -172,7 +198,9 @@ namespace ThreatsManager.Utilities
                                 var targetProperty = target.GetProperty(targetPropertyType);
                                 if (targetProperty == null)
                                 {
-                                    target.AddProperty(targetPropertyType, property.StringValue);
+                                    var newProperty = target.AddProperty(targetPropertyType, property.StringValue);
+                                    if (newProperty != null && sourceModel.Id != targetModel.Id)
+                                        newProperty.SetSourceInfo(sourceModel);
                                 }
                                 else
                                 {

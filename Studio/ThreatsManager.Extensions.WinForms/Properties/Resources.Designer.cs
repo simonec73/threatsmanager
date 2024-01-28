@@ -63,6 +63,46 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap arrow_into {
+            get {
+                object obj = ResourceManager.GetObject("arrow_into", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_into_big {
+            get {
+                object obj = ResourceManager.GetObject("arrow_into_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_into_huge {
+            get {
+                object obj = ResourceManager.GetObject("arrow_into_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_into_small {
+            get {
+                object obj = ResourceManager.GetObject("arrow_into_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrows_join_diagonal {
             get {
                 object obj = ResourceManager.GetObject("arrows_join_diagonal", resourceCulture);
@@ -3765,6 +3805,116 @@ namespace ThreatsManager.Extensions.Properties {
         internal static System.Drawing.Bitmap table_huge {
             get {
                 object obj = ResourceManager.GetObject("table_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_all {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_all", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_all_big {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_all_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_all_huge {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_all_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_all_small {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_all_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row_big {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row_huge {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row_huge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row_small {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_selection_row_sponge_small {
+            get {
+                object obj = ResourceManager.GetObject("table_selection_row_sponge_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

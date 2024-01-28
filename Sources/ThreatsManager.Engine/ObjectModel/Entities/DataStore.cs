@@ -31,6 +31,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [PropertiesContainerAspect]
     [ThreatEventsContainerAspect]
     [VulnerabilitiesContainerAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Data Store")]
@@ -165,6 +166,18 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         {
             return false;
         }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -195,6 +208,14 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [Reference]
         [field: NotRecorded]
         private IGroup _parent { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -312,19 +333,28 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
             if (container is IThreatModel model)
             {
-                result = new DataStore()
+                using (var scope = UndoRedoManager.OpenScope("Clone Data Store"))
                 {
-                    _id = Id,
-                    Name = Name,
-                    Description = Description,
-                    _model = model,
-                    _modelId = model.Id,
-                    _parentId = _parentId,
-                    _templateId = _templateId
-                };
-                container.Add(result);
-                this.CloneProperties(result);
-                this.CloneThreatEvents(result);
+                    result = new DataStore()
+                    {
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        _model = model,
+                        _modelId = model.Id,
+                        _parentId = _parentId,
+                        _templateId = _templateId
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+                    this.CloneThreatEvents(result);
+                    this.CloneVulnerabilities(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Utilities.WinForms.Dialogs
 {
@@ -223,7 +221,17 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
         {
             if (sender is ComboBox comboBox)
             {
-                string filter = comboBox.Text;
+                string filter;
+
+                try
+                {
+                    // In some situations, getting the combo box text fails with an exception.
+                    filter = comboBox.Text;
+                }
+                catch
+                {
+                    filter = null;
+                }
                 comboBox.Items.Clear();
 
                 if (comboBox.Tag is IEnumerable<IMitigation> mitigations)

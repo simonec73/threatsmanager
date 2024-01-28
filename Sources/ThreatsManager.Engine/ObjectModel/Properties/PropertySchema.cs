@@ -22,6 +22,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
     [IdentityAspect]
     [ThreatModelChildAspect]
     [ThreatModelIdChanger]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     public partial class PropertySchema : IPropertySchema
@@ -49,6 +50,18 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [Reference]
         [field: NotRecorded]
         public IThreatModel Model { get; }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -64,6 +77,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         [field: NotRecorded]
         [field: UpdateThreatModelId]
         protected IThreatModel _model { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -99,24 +120,32 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             if (container is IThreatModel model)
             {
-                result = new PropertySchema()
+                using (var scope = UndoRedoManager.OpenScope("Clone Property Schema"))
                 {
-                    _id = Id,
-                    Name = Name,
-                    Description = Description,
-                    _model = model,
-                    _modelId = model.Id,
-                    Namespace = Namespace,
-                    AppliesTo = AppliesTo,
-                    AutoApply = AutoApply,
-                    Priority = Priority,
-                    RequiredExecutionMode = RequiredExecutionMode,
-                    Visible = Visible,
-                    System = System,
-                };
-                this.ClonePropertyTypes(result);
+                    result = new PropertySchema()
+                    {
+                        _id = Id,
+                        Name = Name,
+                        Description = Description,
+                        _model = model,
+                        _modelId = model.Id,
+                        Namespace = Namespace,
+                        AppliesTo = AppliesTo,
+                        AutoApply = AutoApply,
+                        Priority = Priority,
+                        RequiredExecutionMode = RequiredExecutionMode,
+                        Visible = Visible,
+                        System = System,
+                    };
+                    this.ClonePropertyTypes(result);
 
-                container.Add(result);
+                    container.Add(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

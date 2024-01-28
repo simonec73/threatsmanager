@@ -16,7 +16,7 @@ namespace ThreatsManager.Interfaces.ObjectModel
         IThreatTypesContainer, IStrengthsContainer, IMitigationsContainer, 
         IThreatActorsContainer, IEntityTemplatesContainer, IFlowTemplatesContainer,
         ITrustBoundaryTemplatesContainer, IThreatEventsContainer, IThreatEventFinder,
-        IWeaknessesContainer, IVulnerabilitiesContainer, IVulnerabilityFinder
+        IWeaknessesContainer, IVulnerabilitiesContainer, IVulnerabilityFinder, IVersionedObject
     {
         #region Events.
         /// <summary>

@@ -161,7 +161,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                                     if (group.Identity is IGroup groupIdentity)
                                     {
                                         var groupNode = GetGroup(groupIdentity);
-                                        groupNode?.RefreshBorder();
                                     }
                                 }
                             }

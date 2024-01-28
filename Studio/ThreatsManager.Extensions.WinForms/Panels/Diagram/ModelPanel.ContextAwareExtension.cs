@@ -218,7 +218,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             if (Diagram == _diagram)
             {
                 var graphGroup = GetGroup(group);
-                graphGroup?.RefreshBorder();
             }
         }
     }

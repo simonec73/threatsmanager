@@ -7,7 +7,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.Entities
     /// </summary>
     /// <remarks>Trust Boundaries are an example of Groups.</remarks>
     public interface IGroup : IIdentity, IThreatModelChild, IPropertiesContainer, 
-        IEntitiesReadOnlyContainer, IGroupsReadOnlyContainer//, ILockable
+        IEntitiesReadOnlyContainer, IGroupsReadOnlyContainer, ISourceInfo //, ILockable
     {    
         /// <summary>
         /// Creates a duplicate of the current Group and attaches it to the Container passed as argument.

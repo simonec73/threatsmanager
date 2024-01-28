@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Recording;
+using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -83,6 +84,20 @@ namespace ThreatsManager.Extensions.Actions
 
                             foreach (var shape in shapes)
                             {
+                                if (shape is IGroupShape groupShape && groupShape.Identity is IGroup group &&
+                                    diagram.GetShape(group) == null)
+                                {
+                                    result = true;
+
+                                    IdentityAddingRequired?.Invoke(diagram, group,
+                                        new PointF(shape.Position.X - x, shape.Position.Y - y), groupShape.Size);
+
+                                    RecursivelyAddParents(group, groups);
+                                }
+                            }
+
+                            foreach (var shape in shapes)
+                            {
                                 if (shape is IEntityShape && shape.Identity is IEntity entity &&
                                     diagram.GetShape(entity) == null)
                                 {
@@ -92,18 +107,6 @@ namespace ThreatsManager.Extensions.Actions
                                         new PointF(shape.Position.X - x, shape.Position.Y - y), SizeF.Empty);
 
                                     RecursivelyAddParents(entity, groups);
-                                }
-                            }
-
-                            foreach (var shape in shapes)
-                            {
-                                if (shape is IGroupShape groupShape && shape.Identity is IGroup group &&
-                                    !groups.Contains(group))
-                                {
-                                    result = true;
-
-                                    IdentityAddingRequired?.Invoke(diagram, group,
-                                        new PointF(shape.Position.X - x, shape.Position.Y - y), groupShape.Size);
                                 }
                             }
 

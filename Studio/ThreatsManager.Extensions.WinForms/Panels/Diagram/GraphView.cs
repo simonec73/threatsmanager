@@ -132,7 +132,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var effective = actions.Where(x => (x.Scope & Scope.Diagram) != 0).ToArray();
+            var effective = actions
+                .OfType<IIdentityContextAwareAction>()
+                .Where(x => (x.Scope & Scope.Diagram) != 0).ToArray();
             if (effective.Any())
             {
                 _buckets = new List<string>();
@@ -376,8 +378,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (t.Parent is GraphEntity ge)
                         {
                             ge.Left = X;
-                            if (ge.Parent is GraphGroup group)
-                                group.RefreshBorder();
                         }
                     }
                     FinishTransaction("Align Left Sides");
@@ -405,8 +405,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (t.Parent is GraphEntity ge)
                         {
                             ge.Center = new PointF(t.Center.X, Y);
-                            if (ge.Parent is GraphGroup group)
-                                group.RefreshBorder();
                         }
                     }
                     FinishTransaction("Align Vertical Centers");
@@ -434,8 +432,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (t.Parent is GraphEntity ge)
                         {
                             ge.Right = X;
-                            if (ge.Parent is GraphGroup group)
-                                group.RefreshBorder();
                         }
                     }
                     FinishTransaction("Align Right Sides");
@@ -463,8 +459,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (t.Parent is GraphEntity ge)
                         {
                             ge.Top = Y;
-                            if (ge.Parent is GraphGroup group)
-                                group.RefreshBorder();
                         }
                     }
                     FinishTransaction("Align Tops");
@@ -492,8 +486,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (t.Parent is GraphEntity ge)
                         {
                             ge.Center = new PointF(X, t.Center.Y);
-                            if (ge.Parent is GraphGroup group)
-                                group.RefreshBorder();
                         }
                     }
                     FinishTransaction("Align Horizontal Centers");
@@ -521,8 +513,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         if (t.Parent is GraphEntity ge)
                         {
                             ge.Bottom = Y;
-                            if (ge.Parent is GraphGroup group)
-                                group.RefreshBorder();
                         }
                     }
                     FinishTransaction("Align Bottoms");

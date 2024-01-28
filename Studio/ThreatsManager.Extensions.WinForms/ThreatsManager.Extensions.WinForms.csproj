@@ -357,6 +357,22 @@
     <Compile Include="Panels\Diagram\MarkerStatusTrigger.cs" />
     <Compile Include="Panels\Diagram\PanelItemListFormTrigger.cs" />
     <Compile Include="Panels\Diagram\PanelsStatus.cs" />
+    <Compile Include="Panels\ImportedList\ImportedListFilter.cs" />
+    <Compile Include="Panels\ImportedList\ImportedListPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ImportedList\ImportedListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ImportedList\ImportedListPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ImportedList\ImportedListPanel.Designer.cs">
+      <DependentUpon>ImportedListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ImportedList\ImportedListPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ImportedList\ImportedListPanelFactory.cs" />
+    <Compile Include="Panels\ImportedList\ImportedListPanelFactory.MainRibbonExtension.cs" />
     <Compile Include="Panels\Roadmap\ExcelReportEngine.cs" />
     <Compile Include="Panels\Roadmap\RoadmapFilter.cs" />
     <Compile Include="Dialogs\RoadmapFilterDialog.cs">
@@ -889,6 +905,9 @@
     <EmbeddedResource Include="Panels\DiagramConfiguration\DiagramConfigurationPanel.resx">
       <DependentUpon>DiagramConfigurationPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ImportedList\ImportedListPanel.resx">
+      <DependentUpon>ImportedListPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Panels\Learning\LearningPanel.resx">
       <DependentUpon>LearningPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -1360,8 +1379,6 @@
     <None Include="Resources\window_environment_big.png" />
     <None Include="Resources\window_environment_huge.png" />
     <None Include="Resources\window_environment_small.png" />
-    <None Include="Resources\tower_crane_white.png" />
-    <None Include="Resources\tower_crane_black.png" />
     <None Include="Resources\pieces_black.png" />
     <None Include="Resources\pieces_white.png" />
     <None Include="Resources\library_white.png" />
@@ -1378,14 +1395,6 @@
     <None Include="Resources\tools.png" />
     <None Include="Resources\tools_big.png" />
     <None Include="Resources\tools_huge.png" />
-    <None Include="Resources\mouse_huge.png" />
-    <None Include="Resources\mouse_big.png" />
-    <None Include="Resources\mouse.png" />
-    <None Include="Resources\mouse_small.png" />
-    <None Include="Resources\elephant_small.png" />
-    <None Include="Resources\elephant.png" />
-    <None Include="Resources\elephant_big.png" />
-    <None Include="Resources\elephant_huge.png" />
     <None Include="Resources\arrows_spread_diagonal.png" />
     <None Include="Resources\arrows_spread_diagonal_big.png" />
     <None Include="Resources\arrows_spread_diagonal_huge.png" />
@@ -1394,7 +1403,6 @@
     <None Include="Resources\arrows_join_diagonal_huge.png" />
     <None Include="Resources\arrows_join_diagonal_small.png" />
     <None Include="Resources\Azure DevOps_small.png" />
-    <None Include="Resources\Azure DevOps_128.png" />
     <None Include="Resources\Azure DevOps_big.png" />
     <None Include="Resources\Azure DevOps.png" />
     <None Include="Resources\Azure DevOps_huge.png" />
@@ -1408,7 +1416,6 @@
     <None Include="Resources\Azure DevOps_long_term.png" />
     <None Include="Resources\Azure DevOps_mid_term.png" />
     <None Include="Resources\diagram_black.png" />
-    <None Include="Resources\diagram.png" />
     <None Include="Resources\diagram_white.png" />
     <None Include="Resources\magic_wand_big_delete.png" />
     <None Include="Resources\magic_wand_delete.png" />
@@ -1438,6 +1445,21 @@
     <None Include="Resources\process_big_sponge.png" />
     <None Include="Resources\process_huge_sponge_big.png" />
     <None Include="Resources\process_sponge_small.png" />
+    <None Include="Resources\arrow_into_huge.png" />
+    <None Include="Resources\arrow_into_small.png" />
+    <None Include="Resources\arrow_into.png" />
+    <None Include="Resources\arrow_into_big.png" />
+    <None Include="Resources\table_selection_all.png" />
+    <None Include="Resources\table_selection_all_big.png" />
+    <None Include="Resources\table_selection_all_huge.png" />
+    <None Include="Resources\table_selection_all_small.png" />
+    <None Include="Resources\table_selection_row.png" />
+    <None Include="Resources\table_selection_row_big.png" />
+    <None Include="Resources\table_selection_row_huge.png" />
+    <None Include="Resources\table_selection_row_small.png" />
+    <None Include="Resources\table_selection_row_huge_sponge_big.png" />
+    <None Include="Resources\table_selection_row_sponge_small.png" />
+    <None Include="Resources\table_selection_row_big_sponge.png" />
     <Content Include="Shortcuts.txt" />
     <Content Include="Colors.txt" />
     <Content Include="Resources\threats_selection_small.png" />
@@ -1459,28 +1481,28 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2088.41</Version>
+      <Version>1.0.2210.55</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="PostSharp">
-      <Version>2023.0.8</Version>
+      <Version>2024.0.5</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>2023.0.8</Version>
+      <Version>2024.0.5</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>2023.0.8</Version>
+      <Version>2024.0.5</Version>
     </PackageReference>
     <PackageReference Include="Svg">
-      <Version>3.4.4</Version>
+      <Version>3.4.6</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.DocIO.WinForms">
-      <Version>23.1.42</Version>
+      <Version>24.1.45</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.XlsIO.WinForms">
-      <Version>23.1.42</Version>
+      <Version>24.1.45</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -1489,6 +1511,7 @@
       <Name>ThreatsManager.Extensions.Word</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(TargetDir)*.dll" "$(SolutionDir)ThreatsManager\$(OutDir)Extensions" /Y

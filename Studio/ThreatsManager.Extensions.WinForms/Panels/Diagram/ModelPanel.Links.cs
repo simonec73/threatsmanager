@@ -92,6 +92,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     result = _diagram.GetLink(dataFlow.Id);
                     if (result == null)
                     {
+                        _links.Add(dataFlow.Id, glink);
                         result = _diagram.AddLink(dataFlow);
                     }
                 }
@@ -102,6 +103,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
             else
             {
+                _links.Add(dataFlow.Id, glink);
                 result = _diagram.AddLink(dataFlow);
             }
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PostSharp.Patterns.Collections;
@@ -1667,7 +1669,7 @@ namespace ThreatsManager.Engine.ObjectModel
             {
                 foreach (var item in list)
                 {
-                    if (!known.Contains(item.SourceId) || !known.Contains(item.TargetId) || 
+                    if (!known.Contains(item.SourceTMId) || !known.Contains(item.TargetId) || 
                         !Check(known, knownSeverities, item.ThreatEvents))
                     {
                         result = false;
@@ -2308,6 +2310,54 @@ namespace ThreatsManager.Engine.ObjectModel
         [Child]
         [JsonProperty("vulnerabilities", Order = 12)]
         private AdvisableCollection<Vulnerability> _vulnerabilities { get; set; }
+        #endregion
+
+        #region Versioned Object.
+        [Child]
+        [JsonProperty("versions")]
+        [field:NotRecorded]
+        private AdvisableCollection<ObjectVersion> _versions { get; set; }
+
+        public IObjectVersion CurrentVersion => _versions?.LastOrDefault() ?? DefaultVersion; 
+
+        public IEnumerable<IObjectVersion> Versions => _versions?.AsEnumerable();
+
+        public void AddVersion()
+        {
+            if (_versions == null)
+                _versions = new AdvisableCollection<ObjectVersion>();
+
+            _versions.Add(new ObjectVersion());
+        }
+
+        private IObjectVersion DefaultVersion
+        {
+            get
+            {
+                string author;
+                if (!string.IsNullOrWhiteSpace(this.Owner))
+                {
+                    author = Owner;
+                }
+                else
+                {
+                    author = UserName.GetDisplayName();
+                }
+
+                DateTime changedOn;
+                var location = this.GetLocation();
+                if (!string.IsNullOrWhiteSpace(location) && File.Exists(location))
+                {
+                    changedOn = File.GetLastWriteTime(location);
+                }
+                else
+                {
+                    changedOn = DateTime.Now;
+                }
+
+                return new ObjectVersion(author, changedOn);
+            }
+        }
         #endregion
     }
 }

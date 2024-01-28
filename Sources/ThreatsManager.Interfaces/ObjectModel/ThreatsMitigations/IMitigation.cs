@@ -8,7 +8,7 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
     /// <summary>
     /// Interface to define a mitigation.
     /// </summary>
-    public interface IMitigation : IIdentity, IPropertiesContainer, IThreatModelChild
+    public interface IMitigation : IIdentity, IPropertiesContainer, IThreatModelChild, ISourceInfo
     {
         /// <summary>
         /// Type of Security Control.

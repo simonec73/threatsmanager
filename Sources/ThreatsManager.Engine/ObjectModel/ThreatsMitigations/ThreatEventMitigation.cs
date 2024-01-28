@@ -29,6 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [ThreatEventIdChanger]
     [ThreatEventChildAspect]
     [PropertiesContainerAspect]
+    [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
     public class ThreatEventMitigation : IThreatEventMitigation, IInitializableObject
@@ -98,6 +99,18 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [Reference]
         [field: NotRecorded]
         public IThreatEvent ThreatEvent { get; }
+
+        public Guid SourceTMId { get; }
+
+        public string SourceTMName { get; }
+
+        public string VersionId { get; }
+
+        public string VersionAuthor { get; }
+
+        public void SetSourceInfo(IThreatModel source)
+        {
+        }
         #endregion
 
         #region Additional placeholders required.
@@ -117,6 +130,14 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [field: NotRecorded]
         [field: UpdateThreatEventId]
         private IThreatEvent _threatEvent { get; set; }
+        [JsonProperty("sourceTMId")]
+        protected Guid _sourceTMId { get; set; }
+        [JsonProperty("sourceTMName")]
+        protected string _sourceTMName { get; set; }
+        [JsonProperty("versionId")]
+        protected string _versionId { get; set; }
+        [JsonProperty("versionAuthor")]
+        protected string _versionAuthor { get; set; }
         #endregion
 
         #region Specific implementation.
@@ -175,18 +196,26 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (container is IThreatEvent threatEvent && threatEvent.Model is IThreatModel model)
             {
-                result = new ThreatEventMitigation
+                using (var scope = UndoRedoManager.OpenScope("Clone Threat Event Mitigation"))
                 {
-                    _threatEventId = threatEvent.Id,
-                    _mitigationId = MitigationId,
-                    _model = model,
-                    _modelId = model.Id,
-                    Directives = Directives,
-                    _strengthId = _strengthId,
-                    Status = Status,
-                };
-                container.Add(result);
-                this.CloneProperties(result);
+                    result = new ThreatEventMitigation
+                    {
+                        _threatEventId = threatEvent.Id,
+                        _mitigationId = MitigationId,
+                        _model = model,
+                        _modelId = model.Id,
+                        Directives = Directives,
+                        _strengthId = _strengthId,
+                        Status = Status,
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;
