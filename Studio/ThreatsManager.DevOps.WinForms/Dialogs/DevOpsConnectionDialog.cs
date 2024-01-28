@@ -85,32 +85,41 @@ namespace ThreatsManager.DevOps.Dialogs
                 var url = _serverUrl.Text;
                 if (_factories.SelectedItem is IDevOpsConnectorFactory factory && !string.IsNullOrWhiteSpace(url))
                 {
-                    if (_connector?.IsConnected() ?? false)
+                    try
                     {
-                        _connector.Disconnect();
-                    }
-
-                    _connector = factory.Create();
-                    _connector.Connect(url, _accessToken.Text);
-                    var projects = (await _connector.GetProjectsAsync())?.ToArray();
-                    if (projects?.Any() ?? false)
-                    {
-                        _tokenManager.SetSecret(_serverUrl.Text, _accessToken.Text);
-                        _projectList.Items.Clear();
-                        _projectList.Items.AddRange(projects);
-
-                        if (!string.IsNullOrWhiteSpace(_projectName))
+                        if (_connector?.IsConnected() ?? false)
                         {
-                            var index = _projectList.FindStringExact(_projectName);
-                            if (index >= 0)
-                                _projectList.SelectedIndex = index;
+                            _connector.Disconnect();
+                        }
+
+                        _connector = factory.Create();
+                        _connector.Connect(url, _accessToken.Text);
+
+                        var projects = (await _connector.GetProjectsAsync())?.ToArray();
+                        if (projects?.Any() ?? false)
+                        {
+                            _tokenManager.SetSecret(_serverUrl.Text, _accessToken.Text);
+                            _projectList.Items.Clear();
+                            _projectList.Items.AddRange(projects);
+
+                            if (!string.IsNullOrWhiteSpace(_projectName))
+                            {
+                                var index = _projectList.FindStringExact(_projectName);
+                                if (index >= 0)
+                                    _projectList.SelectedIndex = index;
+                            }
+                        }
+                        else
+                        {
+                            _connector.Disconnect();
+                            MessageBox.Show(this, "No Project has been found.\nThis may be caused by a wrong or expired Access Token.", "Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                         }
                     }
-                    else
+                    catch (Exception exc)
                     {
                         _connector.Disconnect();
-                        MessageBox.Show(this, "No Project has been found.", "Error", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
+                        MessageBox.Show(this, exc.Message);
                     }
                 }
             }

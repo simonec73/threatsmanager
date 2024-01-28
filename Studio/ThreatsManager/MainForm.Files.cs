@@ -419,6 +419,8 @@ namespace ThreatsManager
             var packageManagers = Manager.Instance.GetExtensions<IPackageManager>()?
                 .Where(x => x.SupportedLocations.HasFlag(LocationType.FileSystem)).ToArray();
 
+            var done = false;
+
             if (packageManagers?.Any() ?? false)
             {
                 _saveAsFile.Title = "Emergency Save";
@@ -444,16 +446,15 @@ namespace ThreatsManager
 
                     _saveAsFile.FileName = Path.Combine(Path.GetDirectoryName(_currentLocation),
                         $"{Path.GetFileNameWithoutExtension(_currentLocation)}.recover{Path.GetExtension(_currentLocation)}");
-                }
 
-                if (_saveAsFile.ShowDialog(this) == DialogResult.OK)
-                {
-                    var packageManager = packageManagers.ElementAt(_openFile.FilterIndex - 1);
-
-                    Save(packageManager, LocationType.FileSystem, _saveAsFile.FileName);
+                    if (_saveAsFile.ShowDialog(this) == DialogResult.OK)
+                    {
+                        done = Save(_currentPackageManager, LocationType.FileSystem, _saveAsFile.FileName);
+                    }
                 }
             }
-            else
+            
+            if (!done)
             {
                 ShowDesktopAlert("An exception has occurred and Threats Manager Studio needs to close. An issue is also preventing emergency save.", true);
             }

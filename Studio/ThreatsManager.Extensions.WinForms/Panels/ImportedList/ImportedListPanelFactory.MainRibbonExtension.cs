@@ -7,28 +7,34 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 
-namespace ThreatsManager.DevOps.Panels.MitigationsKanban
+namespace ThreatsManager.Extensions.Panels.ImportedList
 {
 #pragma warning disable CS0067
-    public partial class MitigationsKanbanPanelFactory
-    {
+    public partial class ImportedListPanelFactory
+    {     
         public event Action<IMainRibbonExtension, string, bool> ChangeRibbonActionStatus;
+        
         public event Action<IPanelFactory, IIdentity> PanelCreationRequired;
+        
         public event Action<IPanelFactory, IPanel> PanelDeletionRequired;
+        
         public event Action<IPanelFactory, IPanel> PanelShowRequired;
+        
         public event Action<IMainRibbonExtension> IteratePanels;
+        
         public event Action<IMainRibbonExtension> RefreshPanels;
+   
         public event Action<IPanelFactory> ClosePanels;
 
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.Integrate;
-        public string Bar => "DevOps";
+        public Ribbon Ribbon => Ribbon.Import;
+        public string Bar => "Global";
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {
-            new ActionDefinition(Id, "CreatePanel", "Mitigations Kanban", Properties.Resources.kanban_big,
-                Properties.Resources.kanban, false)
+            new ActionDefinition(Id, "CreatePanel", "Imported List", Properties.Resources.arrow_into_big,
+                Properties.Resources.arrow_into)
         };
 
         public string PanelsListRibbonAction => null;
@@ -47,12 +53,6 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
                     PanelCreationRequired?.Invoke(this, action.Tag as IIdentity);
                     break;
             }
-        }
-
-        internal static void ChangeConfigureButtonStatus(bool status)
-        {
-            var extension = ExtensionUtils.GetExtension<MitigationsKanbanPanelFactory>("68D6E6B3-FEE0-4236-AB44-EFCD0C15FBAA");
-            extension?.ChangeRibbonActionStatus?.Invoke(extension, "CreatePanel", status);
         }
     }
 }

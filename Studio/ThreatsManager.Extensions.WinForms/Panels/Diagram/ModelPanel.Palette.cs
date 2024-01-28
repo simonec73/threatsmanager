@@ -348,7 +348,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     while (groups.Count > 0)
                     {
                         var current = groups.Pop();
-                        current.RefreshBorder();
                     }
 
                     scope?.Complete();

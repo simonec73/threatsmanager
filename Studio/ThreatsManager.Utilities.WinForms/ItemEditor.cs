@@ -1234,7 +1234,8 @@ namespace ThreatsManager.Utilities.WinForms
                     Dpi.Factor.Width > 1.5 ? dataFlow.Source.GetImage(ImageSize.Medium) : dataFlow.Source.GetImage(ImageSize.Small));
                 //var source = AddSingleLineLabel(section, "Source", dataFlow.Source.Name,
                 //    Dpi.Factor.Width > 1.5 ? dataFlow.Source.GetImage(ImageSize.Medium) : dataFlow.Source.GetImage(ImageSize.Small));
-                ((INotifyPropertyChanged)dataFlow.Source).PropertyChanged += OnSourcePropertyChanged;
+                if (dataFlow.Source is INotifyPropertyChanged notifyPropertyChanged)
+                    notifyPropertyChanged.PropertyChanged += OnSourcePropertyChanged;
                 _superTooltip.SetSuperTooltip(source, _model.GetSuperTooltipInfo(dataFlow.Source));
                 dataFlow.Source.ImageChanged += OnSourceImageChanged;
             }
@@ -1245,7 +1246,8 @@ namespace ThreatsManager.Utilities.WinForms
                 //var target = AddSingleLineLabel(section, "Target", dataFlow.Target.Name,
                 //    Dpi.Factor.Width > 1.5 ? dataFlow.Target.GetImage(ImageSize.Medium) : dataFlow.Target.GetImage(ImageSize.Small));
                 _superTooltip.SetSuperTooltip(target, _model.GetSuperTooltipInfo(dataFlow.Target));
-                ((INotifyPropertyChanged)dataFlow.Target).PropertyChanged += OnTargetPropertyChanged;
+                if (dataFlow.Target is INotifyPropertyChanged notifyPropertyChanged)
+                    notifyPropertyChanged.PropertyChanged += OnTargetPropertyChanged;
                 dataFlow.Target.ImageChanged += OnTargetImageChanged;
             }
             AddCombo(section, "Flow Type", dataFlow.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
@@ -1379,7 +1381,8 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 entity.ImageChanged += OnThreatEventImageChanged;
             }
-            _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(threatEvent.Parent));
+            if (threatEvent.Parent != null)
+                _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(threatEvent.Parent));
             AddCombo(section, "Severity", threatEvent.Severity?.Name,
                 threatEvent.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
@@ -1401,7 +1404,8 @@ namespace ThreatsManager.Utilities.WinForms
 
             threatEvent.ThreatEventMitigationAdded += ThreatEventMitigationAdded;
             threatEvent.ThreatEventMitigationRemoved += ThreatEventMitigationRemoved;
-            ((INotifyPropertyChanged)threatEvent.Parent).PropertyChanged += OnThreatEventParentPropertyChanged;
+            if (threatEvent.Parent is INotifyPropertyChanged notifyPropertyChanged)
+                notifyPropertyChanged.PropertyChanged += OnThreatEventParentPropertyChanged;
         }
 
         private void ShowItem([NotNull] IVulnerability vulnerability)
@@ -1446,7 +1450,8 @@ namespace ThreatsManager.Utilities.WinForms
 
             vulnerability.VulnerabilityMitigationAdded += VulnerabilityMitigationAdded;
             vulnerability.VulnerabilityMitigationRemoved += VulnerabilityMitigationRemoved;
-            ((INotifyPropertyChanged)vulnerability.Parent).PropertyChanged += OnVulnerabilityParentPropertyChanged;
+            if (vulnerability.Parent is INotifyPropertyChanged notifyPropertyChanged)
+                notifyPropertyChanged.PropertyChanged += OnVulnerabilityParentPropertyChanged;
         }
 
         private void ShowItem([NotNull] IThreatType threatType)
@@ -1634,7 +1639,8 @@ namespace ThreatsManager.Utilities.WinForms
             FinalizeSection(section);
             section.ResumeLayout();
 
-            ((INotifyPropertyChanged)mitigation.ThreatEvent.Parent).PropertyChanged += OnThreatEventParentPropertyChanged;
+            if (mitigation.ThreatEvent.Parent is INotifyPropertyChanged notifyPropertyChanged)
+                notifyPropertyChanged.PropertyChanged += OnThreatEventParentPropertyChanged;
         }
 
         private void ShowItem([NotNull] IVulnerabilityMitigation mitigation)
@@ -1672,7 +1678,8 @@ namespace ThreatsManager.Utilities.WinForms
             FinalizeSection(section);
             section.ResumeLayout();
 
-            ((INotifyPropertyChanged)mitigation.Vulnerability.Parent).PropertyChanged += OnVulnerabilityParentPropertyChanged;
+            if (mitigation.Vulnerability.Parent is INotifyPropertyChanged notifyPropertyChanged)
+                notifyPropertyChanged.PropertyChanged += OnVulnerabilityParentPropertyChanged;
         }
 
         private void OpenSubItem(object source, EventArgs args)

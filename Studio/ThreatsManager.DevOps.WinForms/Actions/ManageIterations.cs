@@ -25,7 +25,7 @@ namespace ThreatsManager.DevOps.Actions
 
         private Guid _id = new Guid();
         public Guid Id => _id;
-        public Ribbon Ribbon => Ribbon.Analyze;
+        public Ribbon Ribbon => Ribbon.Integrate;
         public string Bar => "DevOps";
         public IEnumerable<IActionDefinition> RibbonActions  => new List<IActionDefinition>
         {
