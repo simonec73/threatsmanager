@@ -10,6 +10,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities.Exceptions;
 using ThreatsManager.Utilities;
+using ThreatsManager.Interfaces.Exceptions;
 
 namespace ThreatsManager.Engine
 {
@@ -57,23 +58,30 @@ namespace ThreatsManager.Engine
             IThreatModel result = null;
 
             if (!string.IsNullOrWhiteSpace(json))
-            { 
-                var binder = new KnownTypesBinder();
-
-                using (var textReader = new StringReader(json))
-                using (var reader = new JsonTextReader(textReader))
+            {
+                try
                 {
-                    var serializer = new JsonSerializer
+                    var binder = new KnownTypesBinder();
+
+                    using (var textReader = new StringReader(json))
+                    using (var reader = new JsonTextReader(textReader))
                     {
-                        TypeNameHandling = TypeNameHandling.None,
-                        DefaultValueHandling = DefaultValueHandling.Ignore,
-                        SerializationBinder = binder,
-                        MaxDepth = 128,
-                        MissingMemberHandling = ignoreMissingMembers
-                            ? MissingMemberHandling.Ignore
-                            : MissingMemberHandling.Error
-                    };
-                    result = serializer.Deserialize<ThreatModel>(reader);
+                        var serializer = new JsonSerializer
+                        {
+                            TypeNameHandling = TypeNameHandling.None,
+                            DefaultValueHandling = DefaultValueHandling.Ignore,
+                            SerializationBinder = binder,
+                            MaxDepth = 128,
+                            MissingMemberHandling = ignoreMissingMembers
+                                ? MissingMemberHandling.Ignore
+                                : MissingMemberHandling.Error
+                        };
+                        result = serializer.Deserialize<ThreatModel>(reader);
+                    }
+                }
+                catch (JsonSerializationException e)
+                {
+                    throw new ThreatModelOpeningFailureException("A serialization issue has occurred.", e);
                 }
             }
 
