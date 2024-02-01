@@ -64,11 +64,15 @@ namespace ThreatsManager.Engine.Aspects
                 IGroup result = _parent?.Get();
 
                 var parentId = ParentId;
-                if (result == null && parentId != Guid.Empty && Instance is IThreatModelChild child)
+                if (parentId != Guid.Empty && (result == null || result.Id != parentId) && Instance is IThreatModelChild child)
                 {
                     result = child.Model?.GetGroup(parentId);
                     if (result != null)
                         _parent?.Set(result);
+                }
+                else if (parentId == Guid.Empty && result != null)
+                {
+                    _parent?.Set(null);
                 }
 
                 return result;
