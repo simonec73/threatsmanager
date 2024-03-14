@@ -174,6 +174,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
             return false;
         }
 
+        [Reference]
+        [field: NotRecorded]
+        [IgnoreAutoChangeNotification]
+        public IEnumerable<IVulnerability> Vulnerabilities { get; }
         public IVulnerability GetVulnerability(Guid id)
         {
             return null;
@@ -350,8 +354,6 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
         public IThreatType ThreatType => _threatType ?? (_threatType = Model?.GetThreatType(_threatTypeId));
-
-        public IEnumerable<IVulnerability> Vulnerabilities => throw new NotImplementedException();
 
         public MitigationLevel GetMitigationLevel()
         {
