@@ -245,4 +245,10 @@ Are you sure you want still to get full access rights? </value>
   <data name="PropertyKeywords" xml:space="preserve">
     <value>Keywords associated to the Threat Type or Event. This is used to improve the results while Searching for Threats.</value>
   </data>
+  <data name="PropertyTemplates" xml:space="preserve">
+    <value>Templates</value>
+  </data>
+  <data name="PropertyTemplatesDescription" xml:space="preserve">
+    <value>Templates used to generate Word Reports for the Threat Model.</value>
+  </data>
 </root>

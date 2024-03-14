@@ -19,7 +19,7 @@ namespace ThreatsManager.Extensions.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -326,6 +326,24 @@ namespace ThreatsManager.Extensions.Properties {
         internal static string PropertyPoints {
             get {
                 return ResourceManager.GetString("PropertyPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Templates.
+        /// </summary>
+        internal static string PropertyTemplates {
+            get {
+                return ResourceManager.GetString("PropertyTemplates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Templates used to generate Word Reports for the Threat Model..
+        /// </summary>
+        internal static string PropertyTemplatesDescription {
+            get {
+                return ResourceManager.GetString("PropertyTemplatesDescription", resourceCulture);
             }
         }
         
