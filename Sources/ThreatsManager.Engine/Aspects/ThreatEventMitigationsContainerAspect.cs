@@ -71,7 +71,8 @@ namespace ThreatsManager.Engine.Aspects
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
-        public IEnumerable<IThreatEventMitigation> Mitigations => _mitigations?.Get()?.AsEnumerable();
+        public IEnumerable<IThreatEventMitigation> Mitigations => _mitigations?.Get()?
+            .Where(x => x.Mitigation != null).AsEnumerable();
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 1)]
         public IThreatEventMitigation GetMitigation(Guid mitigationId)

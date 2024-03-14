@@ -1407,85 +1407,85 @@ namespace ThreatsManager.Engine.ObjectModel
                 .Where(x => def.AllStrengths || (def.Strengths?.Contains(x.Id) ?? false))
                 .Select(x => x.Id).ToArray();
 
-            AddIdentities(known, def.AllPropertySchemas, def.PropertySchemas, _schemas);
+            AddIdentities(known, def.AllPropertySchemas, def.PropertySchemas, Schemas);
 
-            if (!Check(known, def.AllProperties, def.Properties, _properties))
+            if (!Check(known, def.AllProperties, def.Properties, Properties))
             {
                 result = false;
                 r.Add("One or more Threat Model Properties are associated to a Property Type which has not been selected.");
             }
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllThreatActors, def.ThreatActors, _actors))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllThreatActors, def.ThreatActors, ThreatActors))
             {
                 result = false;
                 r.Add("One or more Threat Actors are associated to a Property Type which has not been selected.");
             }
-            AddIdentities(known, def.AllThreatActors, def.ThreatActors, _actors);              
+            AddIdentities(known, def.AllThreatActors, def.ThreatActors, ThreatActors);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllMitigations, def.Mitigations, _mitigations))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllMitigations, def.Mitigations, Mitigations))
             {
                 result = false;
                 r.Add("One or more Mitigations are associated to a Property Type which has not been selected.");
             }
-            AddIdentities(known, def.AllMitigations, def.Mitigations, _mitigations);              
+            AddIdentities(known, def.AllMitigations, def.Mitigations, Mitigations);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllThreatTypes, def.ThreatTypes, _threatTypes))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllThreatTypes, def.ThreatTypes, ThreatTypes))
             {
                 result = false;
                 r.Add("One or more Threat Types are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllThreatTypes, def.ThreatTypes, _threatTypes);
+            AddIdentities(known, def.AllThreatTypes, def.ThreatTypes, ThreatTypes);
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllWeaknesses, def.Weaknesses, _weaknesses))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllWeaknesses, def.Weaknesses, Weaknesses))
             {
                 result = false;
                 r.Add("One or more Weaknesses are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllWeaknesses, def.Weaknesses, _weaknesses);
+            AddIdentities(known, def.AllWeaknesses, def.Weaknesses, Weaknesses);
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllGroups, def.Groups, _groups))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllGroups, def.Groups, Groups))
             {
                 result = false;
                 r.Add("One or more Groups are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllGroups, def.Groups, _groups);              
+            AddIdentities(known, def.AllGroups, def.Groups, Groups);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllEntityTemplates, def.EntityTemplates, _entityTemplates))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllEntityTemplates, def.EntityTemplates, EntityTemplates))
             {
                 result = false;
                 r.Add("One or more Entity Templates are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllEntityTemplates, def.EntityTemplates, _entityTemplates);              
+            AddIdentities(known, def.AllEntityTemplates, def.EntityTemplates, EntityTemplates);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllFlowTemplates, def.FlowTemplates, _flowTemplates))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllFlowTemplates, def.FlowTemplates, FlowTemplates))
             {
                 result = false;
                 r.Add("One or more Flow Templates are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllFlowTemplates, def.FlowTemplates, _flowTemplates);              
+            AddIdentities(known, def.AllFlowTemplates, def.FlowTemplates, FlowTemplates);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, _trustBoundaryTemplates))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, TrustBoundaryTemplates))
             {
                 result = false;
                 r.Add("One or more Trust Boundary Templates are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, _trustBoundaryTemplates);              
+            AddIdentities(known, def.AllTrustBoundaryTemplates, def.TrustBoundaryTemplates, TrustBoundaryTemplates);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllEntities, def.Entities, _entities))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllEntities, def.Entities, Entities))
             {
                 result = false;
                 r.Add("One or more Entities are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllEntities, def.Entities, _entities);              
+            AddIdentities(known, def.AllEntities, def.Entities, Entities);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllDataFlows, def.DataFlows, _flows))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllDataFlows, def.DataFlows, DataFlows))
             {
                 result = false;
                 r.Add("One or more Flows are associated to an object which has not been selected.");
             }
-            AddIdentities(known, def.AllDataFlows, def.DataFlows, _flows);              
+            AddIdentities(known, def.AllDataFlows, def.DataFlows, DataFlows);              
 
-            if (!Check(known, knownSeverities, knownStrengths, def.AllDiagrams, def.Diagrams, _diagrams))
+            if (!Check(known, knownSeverities, knownStrengths, def.AllDiagrams, def.Diagrams, Diagrams))
             {
                 result = false;
                 r.Add("One or more Diagrams are associated to an object which has not been selected.");
@@ -1597,7 +1597,9 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             bool result = true;
 
-            var list = mitigations?.ToArray();
+            var list = mitigations?
+                .Where(x => x.Mitigation != null)
+                .ToArray();
             if (list?.Any() ?? false)
             {
                 foreach (var item in list)
@@ -2324,10 +2326,17 @@ namespace ThreatsManager.Engine.ObjectModel
 
         public void AddVersion()
         {
-            if (_versions == null)
-                _versions = new AdvisableCollection<ObjectVersion>();
+            using (var scope = UndoRedoManager.OpenScope("Add new version"))
+            {
+                if (_versions == null)
+                    _versions = new AdvisableCollection<ObjectVersion>();
 
-            _versions.Add(new ObjectVersion());
+                var newVersion = new ObjectVersion();
+                UndoRedoManager.Attach(newVersion, this);
+                _versions.Add(newVersion);
+
+                scope?.Complete();
+            }
         }
 
         private IObjectVersion DefaultVersion

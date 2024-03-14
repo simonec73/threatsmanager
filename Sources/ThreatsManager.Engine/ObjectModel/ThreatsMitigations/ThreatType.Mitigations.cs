@@ -51,7 +51,8 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IEnumerable<IThreatTypeMitigation> Mitigations => _mitigations?.AsEnumerable();
+        public IEnumerable<IThreatTypeMitigation> Mitigations => _mitigations?
+            .Where(x => x.Mitigation != null).AsEnumerable();
 
         [InitializationRequired]
         public IThreatTypeMitigation GetMitigation(Guid mitigationId)
