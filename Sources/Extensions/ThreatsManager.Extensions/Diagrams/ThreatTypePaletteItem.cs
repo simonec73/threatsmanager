@@ -12,6 +12,11 @@ namespace ThreatsManager.Extensions.Diagrams
             TextColor = Color.White;
         }
 
+        public ThreatTypePaletteItem(string name, string description) : this(name)
+        {
+            Tooltip = description;
+        }
+
         public override void Apply(object target)
         {
             if (target is IThreatEventsContainer container && Tag is IThreatType threatType)
