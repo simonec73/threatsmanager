@@ -112,7 +112,7 @@
     <Reference Include="ThreatsManager.Extensions.Client, Version=2.1.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <HintPath>..\packages\ThreatsManager.Extensions.Client.2.1.4\lib\net481\ThreatsManager.Extensions.Client.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Icons, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Icons, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <HintPath>..\packages\ThreatsManager.Utilities.2.1.4\lib\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Interfaces, Version=2.1.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
