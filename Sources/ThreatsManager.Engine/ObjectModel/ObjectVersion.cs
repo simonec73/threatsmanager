@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Recording;
 using System;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
@@ -7,6 +8,7 @@ using ThreatsManager.Utilities;
 namespace ThreatsManager.Engine.ObjectModel
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
+    [Recordable(AutoRecord = false)]
     public class ObjectVersion : IObjectVersion
     {
         private const string DateFormat = "yyyyMMdd.HHmm";

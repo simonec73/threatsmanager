@@ -91,9 +91,14 @@ namespace ThreatsManager.PackageManagers
             bool result = false;
             newLocation = null;
 
-            if (locationType == LocationType.FileSystem && model is IThreatModel tm)
+            if (locationType == LocationType.FileSystem && model != null)
             {
-                var tmSerialized = ThreatModelManager.Serialize(tm);
+                using (var scope = UndoRedoManager.OpenScope("Update Version"))
+                {
+                    model.AddVersion();
+                    scope?.Complete();
+                }
+                var tmSerialized = ThreatModelManager.Serialize(model);
 
                 var alg = _protectionData.Algorithm ?? "AES256";
                 var hmac = _protectionData.HMAC ?? "HMACSHA256";
