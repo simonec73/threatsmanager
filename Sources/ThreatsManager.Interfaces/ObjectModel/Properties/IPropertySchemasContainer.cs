@@ -89,5 +89,12 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// <param name="propertyTypeId">Identifier of the Property Type.</param>
         /// <returns>Property Type if found, otherwise null.</returns>
         IPropertyType GetPropertyType(Guid propertyTypeId);
+
+        /// <summary>
+        /// Verifies if a Property Schema is used anywhere.
+        /// </summary>
+        /// <param name="schemaId">Identifier of the Property Schema.</param>
+        /// <returns>True if the Property Schema is used anywhere, false otherwise.</returns>
+        bool IsSchemaUsed(Guid schemaId);
     }
 }

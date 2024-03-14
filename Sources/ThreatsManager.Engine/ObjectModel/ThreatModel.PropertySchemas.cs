@@ -1042,6 +1042,17 @@ namespace ThreatsManager.Engine.ObjectModel
             return result;
         }
 
+        public bool IsSchemaUsed(Guid schemaId)
+        {
+            bool result = false;
+
+            var schema = GetSchema(schemaId);
+            if (schema != null)
+                result = IsUsed(schema);
+
+            return result;
+        }
+
         private bool IsUsed([NotNull] IPropertySchema propertySchema)
         {
             return (_entities?.Any(x => x.Properties?.Any(y => (y.PropertyType?.SchemaId ?? Guid.Empty) == propertySchema.Id) ?? false) ?? false) ||
