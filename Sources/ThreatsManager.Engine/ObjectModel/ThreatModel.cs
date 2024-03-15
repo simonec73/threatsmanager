@@ -10,6 +10,7 @@ using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
+using ThreatsManager.Engine.ObjectModel.Entities;
 using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Exceptions;
@@ -1924,6 +1925,8 @@ namespace ThreatsManager.Engine.ObjectModel
             else
             {
                 existing.MergePropertyTypes(schema);
+                if ((schema.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(schema.Model);
             }
 
             if (schema.AutoApply)
@@ -1946,14 +1949,22 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void MergeEntityTemplate([NotNull] IEntityTemplate entityTemplate)
         {
-            var existing = EntityTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, entityTemplate.Name) == 0);
+            var existing = EntityTemplates?.FirstOrDefault(x => x.Id == entityTemplate.Id);
             if (existing == null)
             {
                 entityTemplate.Clone(this);
             }
             else
             {
+                existing.Name = entityTemplate.Name;
+                existing.Description = entityTemplate.Description;
+                existing.EntityType = entityTemplate.EntityType;
+                existing.BigImage = (System.Drawing.Bitmap) entityTemplate.BigImage?.Clone();
+                existing.Image = (System.Drawing.Bitmap)entityTemplate.Image?.Clone();
+                existing.SmallImage = (System.Drawing.Bitmap)entityTemplate.SmallImage?.Clone();
                 existing.MergeProperties(entityTemplate);
+                if ((entityTemplate.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(entityTemplate.Model);
             }
         }
 
@@ -1971,14 +1982,19 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void MergeFlowTemplate([NotNull] IFlowTemplate flowTemplate)
         {
-            var existing = FlowTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, flowTemplate.Name) == 0);
+            var existing = FlowTemplates?.FirstOrDefault(x => x.Id == flowTemplate.Id);
             if (existing == null)
             {
                 flowTemplate.Clone(this);
             }
             else
             {
+                existing.Name = flowTemplate.Name;
+                existing.Description = flowTemplate.Description;
+                existing.FlowType = flowTemplate.FlowType;
                 existing.MergeProperties(flowTemplate);
+                if ((flowTemplate.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(flowTemplate.Model);
             }
         }
 
@@ -1996,14 +2012,18 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void MergeTrustBoundaryTemplate([NotNull] ITrustBoundaryTemplate trustBoundaryTemplate)
         {
-            var existing = TrustBoundaryTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, trustBoundaryTemplate.Name) == 0);
+            var existing = TrustBoundaryTemplates?.FirstOrDefault(x => x.Id == trustBoundaryTemplate.Id);
             if (existing == null)
             {
                 trustBoundaryTemplate.Clone(this);
             }
             else
             {
+                existing.Name = trustBoundaryTemplate.Name;
+                existing.Description = trustBoundaryTemplate.Description;
                 existing.MergeProperties(trustBoundaryTemplate);
+                if ((trustBoundaryTemplate.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(trustBoundaryTemplate.Model);
             }
         }
 
@@ -2028,7 +2048,14 @@ namespace ThreatsManager.Engine.ObjectModel
             }
             else
             {
+                existing.Name = severity.Name;
+                existing.Description = severity.Description;
+                existing.BackColor = severity.BackColor;
+                existing.TextColor = severity.TextColor;
+                existing.Visible = severity.Visible;
                 existing.MergeProperties(severity);
+                if ((severity.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(severity.Model);
             }
         }
 
@@ -2053,7 +2080,12 @@ namespace ThreatsManager.Engine.ObjectModel
             }
             else
             {
+                existing.Name = strength.Name;
+                existing.Description = strength.Description;
+                existing.Visible = strength.Visible;
                 existing.MergeProperties(strength);
+                if ((strength.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(strength.Model);
             }
         }
 
@@ -2078,7 +2110,11 @@ namespace ThreatsManager.Engine.ObjectModel
             }
             else
             {
+                existing.Name = threatActor.Name;
+                existing.Description = threatActor.Description;
                 existing.MergeProperties(threatActor);
+                if ((threatActor.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(threatActor.Model);
             }
         }
 
@@ -2096,15 +2132,27 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void MergeMitigation([NotNull] IMitigation mitigation)
         {
-            var existing = Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, mitigation.Name) == 0);
+            var existing = Mitigations?.FirstOrDefault(x => x.Id == mitigation.Id);
             if (existing == null)
             {
                 mitigation.Clone(this);
             }
             else
             {
+                existing.Name = mitigation.Name;
+                existing.Description = mitigation.Description;
+                existing.ControlType = mitigation.ControlType;
+                MergeSpecialized(mitigation, existing);
                 existing.MergeProperties(mitigation);
+                if ((mitigation.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(mitigation.Model);
             }
+        }
+
+        private void MergeSpecialized([NotNull] IMitigation source, [NotNull] IMitigation target)
+        {
+            // TODO: Merge Specialized.
+            var sourceSpecialized = source.Specialized;
         }
 
         private void MergeThreatTypes([NotNull] IThreatModel source, bool all, IEnumerable<Guid> ids)
@@ -2121,32 +2169,63 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void MergeThreatType([NotNull] IThreatType threatType)
         {
-            var existing = ThreatTypes?.FirstOrDefault(x => string.CompareOrdinal(x.Name, threatType.Name) == 0);
+            var existing = ThreatTypes?.FirstOrDefault(x => x.Id == threatType.Id);
             if (existing == null)
             {
                 threatType.Clone(this);
             }
             else
             {
+                existing.Name = threatType.Name;
+                existing.Description = threatType.Description;
+                var severity = GetMappedSeverity(threatType.SeverityId);
+                existing.Severity = severity;
                 existing.MergeProperties(threatType);
+                if ((threatType.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(threatType.Model);
 
-                var mitigations = threatType.Mitigations?.ToArray();
+                var mitigations = threatType.Mitigations?
+                    .Where(x => x.Mitigation != null)
+                    .ToArray();
                 if (mitigations?.Any() ?? false)
                 {
                     foreach (var mitigation in mitigations)
                     {
-                        var m = GetMitigation(mitigation.MitigationId) ??
-                                Mitigations?.FirstOrDefault(x =>
-                                    string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
+                        var m = GetMitigation(mitigation.MitigationId);
+                        if (m == null && mitigation.Mitigation != null)
+                            m = Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
                         var s = GetStrength(mitigation.StrengthId);
                         if (m != null && s != null)
                         {
                             var em = existing.Mitigations?.FirstOrDefault(x => x.MitigationId == m.Id) ?? 
                                      existing.AddMitigation(m, s);
+                            em.Strength = s;
+                            if ((threatType.Model?.Id ?? Guid.Empty) != Id)
+                                em.SetSourceInfo(threatType.Model);
                             em.MergeProperties(mitigation);
                         }
                     }
                 }
+
+                var weaknesses = threatType.Weaknesses?.ToArray();
+                if (weaknesses?.Any() ?? false)
+                {
+                    foreach (var weakness in weaknesses)
+                    {
+                        var w = GetWeakness(weakness.WeaknessId);
+                        if (w == null && weakness.Weakness != null)
+                            w = Weaknesses?.FirstOrDefault(x => string.CompareOrdinal(x.Name, weakness.Weakness.Name) == 0);
+                        if (w != null)
+                        {
+                            var we = existing.Weaknesses?.FirstOrDefault(x => x.WeaknessId == w.Id) ??
+                                existing.AddWeakness(w);
+                            if ((threatType.Model?.Id ?? Guid.Empty) != Id)
+                                we.SetSourceInfo(threatType.Model);
+                            we.MergeProperties(weakness);
+                        }
+                    }
+                }
+
             }
         }
 
@@ -2164,28 +2243,39 @@ namespace ThreatsManager.Engine.ObjectModel
 
         private void MergeWeakness([NotNull] IWeakness weakness)
         {
-            var existing = Weaknesses?.FirstOrDefault(x => string.CompareOrdinal(x.Name, weakness.Name) == 0);
+            var existing = Weaknesses?.FirstOrDefault(x => x.Id == weakness.Id);
             if (existing == null)
             {
                 weakness.Clone(this);
             }
             else
             {
+                existing.Name = weakness.Name;
+                existing.Description = weakness.Description;
+                var severity = GetMappedSeverity(weakness.SeverityId);
+                existing.Severity = severity;
                 existing.MergeProperties(weakness);
+                if ((weakness.Model?.Id ?? Guid.Empty) != Id)
+                    existing.SetSourceInfo(weakness.Model);
 
-                var mitigations = weakness.Mitigations?.ToArray();
+                var mitigations = weakness.Mitigations?
+                    .Where(x => x.Mitigation != null)
+                    .ToArray();
                 if (mitigations?.Any() ?? false)
                 {
                     foreach (var mitigation in mitigations)
                     {
-                        var m = GetMitigation(mitigation.MitigationId) ??
-                                Mitigations?.FirstOrDefault(x =>
-                                    string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
+                        var m = GetMitigation(mitigation.MitigationId);
+                        if (m == null && mitigation.Mitigation != null)
+                            m = Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, mitigation.Mitigation.Name) == 0);
                         var s = GetStrength(mitigation.StrengthId);
                         if (m != null && s != null)
                         {
                             var em = existing.Mitigations?.FirstOrDefault(x => x.MitigationId == m.Id) ??
                                      existing.AddMitigation(m, s);
+                            em.Strength = s;
+                            if ((weakness.Model?.Id ?? Guid.Empty) != Id)
+                                em.SetSourceInfo(weakness.Model);
                             em.MergeProperties(mitigation);
                         }
                     }

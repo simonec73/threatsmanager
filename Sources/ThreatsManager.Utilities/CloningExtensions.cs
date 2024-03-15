@@ -211,6 +211,13 @@ namespace ThreatsManager.Utilities
                                     {
                                         mergeable.Merge(sourceMergeable);
                                     }
+                                    else
+                                    {
+                                        targetProperty.StringValue = property.StringValue;
+                                    }
+
+                                    if (targetProperty != null && sourceModel.Id != targetModel.Id)
+                                        targetProperty.SetSourceInfo(sourceModel);
                                 }
                             }
                         }
