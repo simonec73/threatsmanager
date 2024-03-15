@@ -29,7 +29,7 @@ namespace ThreatsManager.Extensions.Diagrams
             }
             else
             {
-                result = model?.SearchThreatTypes(filter)
+                result = model?.SearchThreatTypes(filter)?
                     .Select(x => new ThreatTypePaletteItem(x.Name, x.Description)
                     {
                         Tag = x
