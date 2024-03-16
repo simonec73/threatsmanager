@@ -8,6 +8,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Engine.Aspects;
@@ -191,14 +192,23 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
             if (container is IThreatModelChild child && child.Model is IThreatModel model)
             {
-                result = new WeaknessMitigation()
+                using (var scope = UndoRedoManager.OpenScope("Clone Weakness Mitigation"))
                 {
-                    _model = model,
-                    _weaknessId = _weaknessId,
-                    _mitigationId = _mitigationId,
-                    _strengthId = _strengthId,
-                };
-                container.Add(result);
+                    result = new WeaknessMitigation()
+                    {
+                        _model = model,
+                        _weaknessId = _weaknessId,
+                        _mitigationId = _mitigationId,
+                        _strengthId = _strengthId,
+                    };
+                    container.Add(result);
+                    this.CloneProperties(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+
+                    scope?.Complete();
+                }
             }
 
             return result;

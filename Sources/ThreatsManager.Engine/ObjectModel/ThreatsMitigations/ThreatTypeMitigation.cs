@@ -204,6 +204,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         _strengthId = _strengthId,
                     };
                     container.Add(result);
+                    this.CloneProperties(result);
 
                     if (model.Id != _modelId)
                         result.SetSourceInfo(Model);
