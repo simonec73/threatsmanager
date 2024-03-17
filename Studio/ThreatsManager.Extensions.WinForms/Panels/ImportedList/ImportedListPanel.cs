@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,18 +8,19 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
-using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
+using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 
 namespace ThreatsManager.Extensions.Panels.ImportedList
 {
     public partial class ImportedListPanel : UserControl, IShowThreatModelPanel<Form>, 
-        ICustomRibbonExtension, IInitializableObject, IContextAwareExtension, 
+        ICustomRibbonExtension, IInitializableObject, 
         IDesktopAlertAwareExtension, IPanelOpenerExtension, IExecutionModeSupport
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -39,9 +39,6 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
  
             _specialFilter.Items.AddRange(EnumExtensions.GetEnumLabels<ImportedListFilter>().ToArray());
             _specialFilter.SelectedIndex = 0;
-
-            UndoRedoManager.Undone += RefreshOnUndoRedo;
-            UndoRedoManager.Redone += RefreshOnUndoRedo;
         }
 
         public event Action<string> ShowMessage;
@@ -56,131 +53,8 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             _model = threatModel;
-            _model.ChildCreated += ModelChildCreated;
-            _model.ChildRemoved += ModelChildRemoved;
-            _model.LinkAdded += LinkAdded;
-            _model.LinkRemoved += LinkRemoved;
-            
-            if (_model is IUndoable undoable && undoable.IsUndoEnabled)
-            {
-                undoable.Undone += ModelUndone;
-            }
 
             LoadModel();
-        }
-
-        private void ModelUndone(object item, bool removed)
-        {
-            if (removed)
-            {
-                this.ParentForm?.Close();
-            }
-            else
-            {
-                if (item is IThreatModel model)
-                {
-                    var flows = model.DataFlows?.ToArray();
-                    var list = new List<IDataFlow>();
-                    if (flows?.Any() ?? false)
-                    {
-                        list.AddRange(flows);
-                    }
-
-                    var grid = _grid.PrimaryGrid;
-                    var rows = grid.Rows.OfType<GridRow>().ToArray();
-                    if (rows.Any())
-                    {
-                        foreach (var row in rows)
-                        {
-                            if (row.Tag is IDataFlow flow)
-                            {
-                                if (model.GetDataFlow(flow.Id) == null)
-                                {
-                                    RemoveEventSubscriptions(row);
-                                    _grid.PrimaryGrid.Rows.Remove(row);
-                                }
-                                else
-                                {
-                                    list.Remove(flow);
-                                }
-                            }
-                        }
-                    }
-
-                    if (list.Any())
-                    {
-                        foreach (var i in list)
-                        {
-                            AddGridRow(i, grid);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ModelChildRemoved(IIdentity identity)
-        {
-            if (identity is IDataFlow dataFlow)
-            {
-                var row = GetRow(dataFlow);
-                if (row != null)
-                {
-                    RemoveEventSubscriptions(row);
-                    _grid.PrimaryGrid.Rows.Remove(row);
-                    ChangeCustomActionStatus?.Invoke("RemoveDataFlow", false);
-                    ChangeCustomActionStatus?.Invoke("FindDataFlow", false);
-                }
-            }
-        }
-
-        private void ModelChildCreated(IIdentity identity)
-        {
-            var filter = _filter.Text;
-            var filterSpecial = EnumExtensions.GetEnumValue<ImportedListFilter>((string)_specialFilter.SelectedItem);
-            if (identity is IDataFlow dataFlow && IsSelected(dataFlow, filter, filterSpecial))
-            {
-                AddGridRow(dataFlow, _grid.PrimaryGrid);
-            }
-        }
-
-        private void LinkAdded(ILinksContainer container, ILink link)
-        {
-            if (link?.DataFlow is IDataFlow dataFlow)
-            {
-                HandleLinkEvent(dataFlow);
-            }
-        }
-
-        private void LinkRemoved(ILinksContainer container, IDataFlow dataFlow)
-        {
-            if (dataFlow != null)
-            {
-                HandleLinkEvent(dataFlow);
-            }
-        }
-
-        private void HandleLinkEvent([NotNull] IDataFlow dataFlow)
-        {
-            var row = GetRow(dataFlow);
-            if (row == null)
-            {
-                var filter = _filter.Text;
-                var filterSpecial = EnumExtensions.GetEnumValue<ImportedListFilter>((string)_specialFilter.SelectedItem);
-                if (IsSelected(dataFlow, filter, filterSpecial))
-                {
-                    AddGridRow(dataFlow, _grid.PrimaryGrid);
-                }
-            }
-            else
-            {
-                var filter = _filter.Text;
-                var filterSpecial = EnumExtensions.GetEnumValue<ImportedListFilter>((string)_specialFilter.SelectedItem);
-                if (!IsSelected(dataFlow, filter, filterSpecial))
-                {
-                    row.GridPanel.Rows.Remove(row);
-                }
-            }
-
         }
         #endregion
 
@@ -213,53 +87,36 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
                     HeaderText = "Name",
                     AutoSizeMode = ColumnAutoSizeMode.Fill,
                     DataType = typeof(string),
-                    EditorType = typeof(GridTextBoxDropDownEditControl),
-                    AllowEdit = true
+                    EditorType = typeof(GridLabelXEditControl),
+                    AllowEdit = false
                 });
-                GridTextBoxDropDownEditControl ddc = panel.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
-                if (ddc != null)
-                {
-                    ddc.ButtonClear.Visible = true;
-                    ddc.ButtonClearClick += DdcButtonClearClick;
-                }
 
-                panel.Columns.Add(new GridColumn("Source")
+                panel.Columns.Add(new GridColumn("SourceName")
                 {
-                    HeaderText = "Source",
+                    HeaderText = "Source Name",
+                    AutoSizeMode = ColumnAutoSizeMode.AllCells,
                     DataType = typeof(string),
-                    AllowEdit = false,
-                    Width = 250
+                    EditorType = typeof(GridLabelXEditControl),
+                    AllowEdit = false
                 });
 
-                panel.Columns.Add(new GridColumn("Target")
+                panel.Columns.Add(new GridColumn("Version")
                 {
-                    HeaderText = "Target",
+                    HeaderText = "Version",
+                    AutoSizeMode = ColumnAutoSizeMode.AllCells,
                     DataType = typeof(string),
-                    AllowEdit = false,
-                    Width = 250
+                    EditorType = typeof(GridLabelXEditControl),
+                    AllowEdit = false
                 });
 
-                panel.Columns.Add(new GridColumn("FlowType")
+                panel.Columns.Add(new GridColumn("Author")
                 {
-                    HeaderText = "Flow Type",
+                    HeaderText = "Author",
+                    AutoSizeMode = ColumnAutoSizeMode.AllCells,
                     DataType = typeof(string),
-                    EditorType = typeof(EnumComboBox),
-                    EditorParams = new object[] { EnumExtensions.GetEnumLabels<FlowType>() },
-                    AllowEdit = true,
-                    Width = 150
+                    EditorType = typeof(GridLabelXEditControl),
+                    AllowEdit = false
                 });
-            }
-        }
-
-        void DdcButtonClearClick(object sender, CancelEventArgs e)
-        {
-            GridTextBoxDropDownEditControl ddc =
-                sender as GridTextBoxDropDownEditControl;
-
-            if (ddc != null)
-            {
-                ddc.Text = null;
-                e.Cancel = true;
             }
         }
 
@@ -269,26 +126,28 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
             {
                 _grid.SuspendLayout();
                 _loading = true;
-                RemoveEventSubscriptions();
                 var panel = _grid.PrimaryGrid;
                 panel.Rows.Clear();
 
-                var items = _model.DataFlows?
-                    .OrderBy(x => x.Name)
-                    .ToArray();
                 var filter = _filter.Text;
                 var filterSpecial = EnumExtensions.GetEnumValue<ImportedListFilter>((string)_specialFilter.SelectedItem);
 
-                if (items != null)
-                {
-                    foreach (var item in items)
-                    {
-                        if (IsSelected(item, filter, filterSpecial))
-                        {
-                            AddGridRow(item, panel);
-                        }
-                    }
-                }
+                LoadItems(_model.Entities?.OfType<IExternalInteractor>(), filter, filterSpecial, panel);
+                LoadItems(_model.Entities?.OfType<IProcess>(), filter, filterSpecial, panel);
+                LoadItems(_model.Entities?.OfType<IDataStore>(), filter, filterSpecial, panel);
+                LoadItems(_model.Groups, filter, filterSpecial, panel);
+                LoadItems(_model.DataFlows, filter, filterSpecial, panel);
+                LoadItems(_model.Diagrams, filter, filterSpecial, panel);
+                LoadItems(_model.Schemas, filter, filterSpecial, panel);
+                LoadItems(_model.EntityTemplates?.Where(x => x.EntityType == EntityType.ExternalInteractor), filter, filterSpecial, panel);
+                LoadItems(_model.EntityTemplates?.Where(x => x.EntityType == EntityType.Process), filter, filterSpecial, panel);
+                LoadItems(_model.EntityTemplates?.Where(x => x.EntityType == EntityType.DataStore), filter, filterSpecial, panel);
+                LoadItems(_model.TrustBoundaryTemplates, filter, filterSpecial, panel);
+                LoadItems(_model.FlowTemplates, filter, filterSpecial, panel);
+                LoadItems(_model.ThreatTypes, filter, filterSpecial, panel);
+                LoadItems(_model.Weaknesses, filter, filterSpecial, panel);
+                LoadItems(_model.Mitigations, filter, filterSpecial, panel);
+                LoadItems(_model.ThreatActors, filter, filterSpecial, panel);
             }
             finally
             {
@@ -298,307 +157,72 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
             }
         }
 
-        private void RefreshOnUndoRedo(string text)
+        private void LoadItems(IEnumerable<IIdentity> items, 
+            string filter, 
+            ImportedListFilter filterSpecial, 
+            GridPanel panel)
         {
-            LoadModel();
-        }
-
-        private void AddGridRow([NotNull] IDataFlow dataFlow, [NotNull] GridPanel panel)
-        {
-            var row = new GridRow(
-                dataFlow.Name,
-                dataFlow.Source?.Name ?? string.Empty,
-                dataFlow.Target?.Name ?? string.Empty,
-                dataFlow.FlowType.GetEnumLabel());
-            ((INotifyPropertyChanged)dataFlow).PropertyChanged += OnFlowPropertyChanged;
-            if (dataFlow.Source != null)
+            if (items?.Any() ?? false)
             {
-                ((INotifyPropertyChanged) dataFlow.Source).PropertyChanged += OnEntityPropertyChanged;
-                dataFlow.Source.ImageChanged += OnImageChanged;
-            }
+                var sorted = items.OrderBy(x => x.Name).ToArray();
 
-            if (dataFlow.Target != null)
-            {
-                ((INotifyPropertyChanged) dataFlow.Target).PropertyChanged += OnEntityPropertyChanged;
-                dataFlow.Target.ImageChanged += OnImageChanged;
-            }
-
-            row.Tag = dataFlow;
-            row.Cells[0].CellStyles.Default.Image = dataFlow.GetImage(ImageSize.Small);
-            row.Cells[1].CellStyles.Default.Image = dataFlow.Source?.GetImage(ImageSize.Small);
-            row.Cells[2].CellStyles.Default.Image = dataFlow.Target?.GetImage(ImageSize.Small);
-            for (int i = 0; i < row.Cells.Count; i++)
-                row.Cells[i].PropertyChanged += OnPropertyChanged;
-            AddSuperTooltipProvider(dataFlow, row.Cells[0]);
-            AddSuperTooltipProvider(dataFlow.Source, row.Cells[1]);
-            AddSuperTooltipProvider(dataFlow.Target, row.Cells[2]);
-
-            panel.Rows.Add(row);
-
-            if (dataFlow is IUndoable undoable && undoable.IsUndoEnabled)
-                undoable.Undone += FlowUndone;
-        }
-
-        private void FlowUndone(object item, bool removed)
-        {
-            if (item is IDataFlow flow)
-            {
-                var row = GetRow(flow);
-                if (row != null)
+                foreach (var item in sorted)
                 {
-                    if (removed)
+                    if (IsSelected(item, filter, filterSpecial))
                     {
-                        RemoveEventSubscriptions(row);
-                        _grid.PrimaryGrid.Rows.Remove(row);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            _loading = true;
-                            row.Cells["Name"].Value = flow.Name;
-                            row.Cells["Source"].Value = flow.Source?.Name ?? string.Empty;
-                            row.Cells["Target"].Value = flow.Target?.Name ?? string.Empty;
-                            row.Cells["FlowType"].Value = flow.FlowType.GetEnumLabel();
-                        }
-                        finally
-                        {
-                            _loading = false;
-                        }
+                        AddGridRow(item, panel);
                     }
                 }
             }
         }
 
-        private void RemoveEventSubscriptions()
+        private void AddGridRow([NotNull] IIdentity identity, [NotNull] GridPanel panel)
         {
-            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
-            foreach (var row in rows)
-                RemoveEventSubscriptions(row);
-        }
+            var name = identity.Name;
 
-        private void RemoveEventSubscriptions(GridRow row)
-        {
-            if (row?.Tag is IDataFlow dataFlow)
+            if (identity is ISourceInfo info)
             {
-                ((INotifyPropertyChanged)dataFlow).PropertyChanged -= OnFlowPropertyChanged;
-                if (dataFlow.Source != null)
-                {
-                    ((INotifyPropertyChanged) dataFlow.Source).PropertyChanged -= OnEntityPropertyChanged;
-                    dataFlow.Source.ImageChanged -= OnImageChanged;
-                }
-                if (dataFlow.Target != null)
-                {
-                    ((INotifyPropertyChanged) dataFlow.Target).PropertyChanged -= OnEntityPropertyChanged;
-                    dataFlow.Target.ImageChanged -= OnImageChanged;
-                }
-                for (int i = 0; i < row.Cells.Count; i++)
-                    row.Cells[i].PropertyChanged -= OnPropertyChanged;
-                if (dataFlow is IUndoable undoable && undoable.IsUndoEnabled)
-                    undoable.Undone -= FlowUndone;
-                RemoveSuperTooltipProvider(row.Cells[0]);
-                RemoveSuperTooltipProvider(row.Cells[1]);
-                RemoveSuperTooltipProvider(row.Cells[2]);
+                var row = new GridRow(
+                    name,
+                    info.SourceTMName,
+                    info.VersionId,
+                    info.VersionAuthor);
+
+                row.Tag = identity;
+                row.Cells[0].CellStyles.Default.Image = identity.GetImage(ImageSize.Small);
+                AddSuperTooltipProvider(identity, row.Cells[0]);
+
+                panel.Rows.Add(row);
             }
         }
 
-        private void OnFlowPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private bool IsSelected([NotNull] IIdentity identity, string filter, ImportedListFilter filterSpecial)
         {
-            if (sender is IDataFlow dataFlow)
-            {
-                var row = GetRow(dataFlow);
-                if (row != null)
-                {
-                    switch (e.PropertyName)
-                    {
-                        case "Name":
-                            row["Name"].Value = dataFlow.Name;
-                            AddSuperTooltipProvider(dataFlow, row["Name"]);
-                            break;
-                        case "FlowType":
-                            row["FlowType"].Value = dataFlow.FlowType.GetEnumLabel();
-                            break;
-                    }
-                }
-            }
-        }
+            bool result = !string.IsNullOrWhiteSpace((identity as ISourceInfo)?.SourceTMName);
 
-        private void OnEntityPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (sender is IEntity entity)
+            if (result)
             {
-                var sourceRows = GetRowsForSource(entity)?.ToArray();
-                if (sourceRows?.Any() ?? false)
+                if (string.IsNullOrWhiteSpace(filter))
+                    result = true;
+                else
                 {
-                    foreach (var row in sourceRows)
+                    result = (!string.IsNullOrWhiteSpace(identity.Name) &&
+                                  identity.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                                 (!string.IsNullOrWhiteSpace(identity.Description) &&
+                                  identity.Description.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (!result && identity is IPropertiesContainer container &&
+                        (container.Properties?.Any() ?? false))
                     {
-                        switch (e.PropertyName)
+                        var properties = container.Properties.ToArray();
+                        foreach (var property in properties)
                         {
-                            case "Name":
-                                row["Source"].Value = entity.Name;
-                                AddSuperTooltipProvider(entity, row["Source"]);
+                            var stringValue = property.StringValue;
+                            if ((!string.IsNullOrWhiteSpace(stringValue) &&
+                                 stringValue.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                result = true;
                                 break;
-                        }
-                    }
-                }
-
-                var targetRows = GetRowsForTarget(entity)?.ToArray();
-                if (targetRows?.Any() ?? false)
-                {
-                    foreach (var row in targetRows)
-                    {
-                        switch (e.PropertyName)
-                        {
-                            case "Name":
-                                row["Target"].Value = entity.Name;
-                                AddSuperTooltipProvider(entity, row["Target"]);
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void OnImageChanged([NotNull] IEntity entity, ImageSize size)
-        {
-            var sourceRows = GetRowsForSource(entity)?.ToArray();
-            if (sourceRows?.Any() ?? false)
-            {
-                foreach (var row in sourceRows)
-                {
-                    row["Source"].CellStyles.Default.Image = entity.GetImage(ImageSize.Small);
-                }
-            }
-
-            var targetRows = GetRowsForTarget(entity)?.ToArray();
-            if (targetRows?.Any() ?? false)
-            {
-                foreach (var row in targetRows)
-                {
-                    row["Target"].CellStyles.Default.Image = entity.GetImage(ImageSize.Small);
-                }
-            }
-        }
-
-        private GridRow GetRow([NotNull] IDataFlow dataFlow)
-        {
-            GridRow result = null;
-
-            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
-            foreach (var row in rows)
-            {
-                if (row.Tag == dataFlow)
-                {
-                    result = row;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        private GridRow GetRow(Point position)
-        {
-            GridRow result = null;
-
-            GridElement item = _grid.GetElementAt(position);
-
-            if (item is GridCell cell)
-                result = cell.GridRow;
-
-            return result;
-        }
-
-        private IEnumerable<GridRow> GetRowsForSource([NotNull] IEntity source)
-        {
-            List<GridRow> result = null;
-
-            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
-            foreach (var row in rows)
-            {
-                if (row.Tag is IDataFlow dataFlow && dataFlow.SourceId == source.Id)
-                {
-                    if (result == null)
-                        result = new List<GridRow>();
-                    result.Add(row);
-                }
-            }
-
-            return result;
-        }
-
-        private IEnumerable<GridRow> GetRowsForTarget([NotNull] IEntity target)
-        {
-            List<GridRow> result = null;
-
-            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
-            foreach (var row in rows)
-            {
-                if (row.Tag is IDataFlow dataFlow && dataFlow.TargetId == target.Id)
-                {
-                    if (result == null)
-                        result = new List<GridRow>();
-                    result.Add(row);
-                }
-            }
-
-            return result;
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-        {
-            var cell = sender as GridCell;
-            var propertyName = propertyChangedEventArgs.PropertyName;
-
-            if (!_loading && cell != null)
-            {
-                try
-                {
-                    _loading = true;
-                    var row = cell.GridRow;
-                    if (row.Tag is IDataFlow dataFlow)
-                    {
-                        switch (cell.GridColumn.Name)
-                        {
-                            case "Name":
-                                dataFlow.Name = (string) cell.Value;
-                                break;
-                            case "FlowType":
-                                dataFlow.FlowType = ((string)cell.Value).GetEnumValue<FlowType>();
-                                break;
-                        }
-                    }
-                }
-                finally
-                {
-                    _loading = false;
-                }
-            }
-        }
-
-        private bool IsSelected([NotNull] IDataFlow item, string filter, ImportedListFilter filterSpecial)
-        {
-            bool result;
-
-            if (string.IsNullOrWhiteSpace(filter))
-                result = true;
-            else
-            {
-                result = (!string.IsNullOrWhiteSpace(item.Name) &&
-                              item.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                             (!string.IsNullOrWhiteSpace(item.Description) &&
-                              item.Description.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
-                if (!result && (item.Properties?.Any() ?? false))
-                {
-                    var properties = item.Properties.ToArray();
-                    foreach (var property in properties)
-                    {
-                        var stringValue = property.StringValue;
-                        if ((!string.IsNullOrWhiteSpace(stringValue) &&
-                             stringValue.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            result = true;
-                            break;
+                            }
                         }
                     }
                 }
@@ -606,18 +230,68 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
             
             if (result)
             {
-                //switch (filterSpecial)
-                //{
-                //    case ImportedListFilter.NoDiagram:
-                //        result = _model.Diagrams?.All(x => x.Links?.All(y => y.AssociatedId != item.Id) ?? true) ?? true;
-                //        break;
-                //    case ImportedListFilter.NoThreatEvents:
-                //        result = !(item.ThreatEvents?.Any() ?? false);
-                //        break;
-                //    case ImportedListFilter.MissingMitigations:
-                //        result = item.ThreatEvents?.Any(x => !(x.Mitigations?.Any() ?? false)) ?? false;
-                //        break;
-                //}
+                switch (filterSpecial)
+                {
+                    case ImportedListFilter.NotApplied:
+                        result = !IsApplied(identity);
+                        break;
+                    case ImportedListFilter.Applied:
+                        result = IsApplied(identity);
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        public bool IsApplied([NotNull] IIdentity identity)
+        {
+            bool result = false;
+
+            if (identity is IEntity || identity is IGroup || identity is IDataFlow || identity is IDiagram)
+                result = true;
+            else if (identity is IPropertySchema schema)
+            {
+                result = _model.IsSchemaUsed(schema.Id);
+            }
+            else if (identity is IEntityTemplate entityTemplate)
+            {
+                result = _model.Entities?
+                    .Where(x => x.Template != null)
+                    .Any(x => x.Template.Id == entityTemplate.Id) ?? false;
+            }
+            else if (identity is ITrustBoundaryTemplate trustBoundaryTemplate)
+            {
+                result = _model.Groups?.OfType<ITrustBoundary>()
+                    .Where(x => x.Template != null)
+                    .Any(x => x.Template.Id == trustBoundaryTemplate.Id) ?? false;
+            }
+            else if (identity is IFlowTemplate flowTemplate)
+            {
+                result = _model.DataFlows?
+                    .Where(x => x.Template != null)
+                    .Any(x => x.Template.Id == flowTemplate.Id) ?? false;
+            }
+            else if (identity is IThreatType threatType)
+            {
+                result = _model.GetThreatEvents()?
+                    .Any(x => x.ThreatTypeId == threatType.Id) ?? false;
+            }
+            else if (identity is IWeakness weakness)
+            {
+                result = _model.GetVulnerabilities()?
+                    .Any(x => x.WeaknessId == weakness.Id) ?? false;
+            }
+            else if (identity is IMitigation mitigation)
+            {
+                result = _model.GetUniqueMitigations()?
+                    .Any(x => x.Id == mitigation.Id) ?? false;
+            }
+            else if (identity is IThreatActor actor)
+            {
+                result = _model.GetThreatEvents()?
+                    .Where(x => x.Scenarios?.Any() ?? false)
+                    .Any(x => x.Scenarios.Any(y => y.ActorId == actor.Id)) ?? false;
             }
 
             return result;
@@ -633,68 +307,54 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
             LoadModel();
         }
 
-        private void _grid_MouseClick(object sender, MouseEventArgs e)
-        {
-            if ((e.Button & MouseButtons.Right) == MouseButtons.Right)
-            {
-                var row = GetRow(e.Location);
-
-                if (row?.Tag != null)
-                {
-                    //MenuDefinition.UpdateVisibility(_contextMenu, row.Tag);
-                    //_contextMenu?.Show(_grid.PointToScreen(e.Location));
-                }
-            }
-        }
-
         private void ShowCurrentRow()
         {
-            if (_currentRow?.Tag is IDataFlow dataFlow)
+            if (_currentRow?.Tag is IIdentity identity)
             {
-                _properties.Item = dataFlow;
-                ChangeCustomActionStatus?.Invoke("RemoveDataFlow", true);
-                ChangeCustomActionStatus?.Invoke("FindDataFlow", true);
-                ChangeActionsStatus(true);
+                _properties.Item = identity;
+                ChangeCustomActionStatus?.Invoke("Remove", true);
+                //ChangeCustomActionStatus?.Invoke("FindDataFlow", true);
+                //ChangeActionsStatus(true);
             }
             else
             {
-                ChangeCustomActionStatus?.Invoke("RemoveDataFlow", false);
-                ChangeCustomActionStatus?.Invoke("FindDataFlow", false);
-                ChangeActionsStatus(false);
+                ChangeCustomActionStatus?.Invoke("Remove", true);
+                //ChangeCustomActionStatus?.Invoke("FindDataFlow", false);
+                //ChangeActionsStatus(false);
             }
         }
 
         private void ChangeActionsStatus(bool newStatus)
         {
-            if (_commandsBarContextAwareActions?.Any() ?? false)
-            {
-                foreach (var definitions in _commandsBarContextAwareActions.Values)
-                {
-                    if (definitions.Any())
-                    {
-                        foreach (var definition in definitions)
-                        {
-                            var actions = definition.Commands?.ToArray();
-                            if (actions?.Any() ?? false)
-                            {
-                                foreach (var action in actions)
-                                {
-                                    if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction &&
-                                        (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
-                                    {
-                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
-                                    }
-                                    else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction &&
-                                        (containersContextAwareAction.Scope & SupportedScopes) != 0)
-                                    {
-                                        ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            //if (_commandsBarContextAwareActions?.Any() ?? false)
+            //{
+            //    foreach (var definitions in _commandsBarContextAwareActions.Values)
+            //    {
+            //        if (definitions.Any())
+            //        {
+            //            foreach (var definition in definitions)
+            //            {
+            //                var actions = definition.Commands?.ToArray();
+            //                if (actions?.Any() ?? false)
+            //                {
+            //                    foreach (var action in actions)
+            //                    {
+            //                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction &&
+            //                            (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
+            //                        {
+            //                            ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+            //                        }
+            //                        else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction &&
+            //                            (containersContextAwareAction.Scope & SupportedScopes) != 0)
+            //                        {
+            //                            ChangeCustomActionStatus?.Invoke(action.Name, newStatus);
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         private void _filter_KeyPress(object sender, KeyPressEventArgs e)

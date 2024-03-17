@@ -46,20 +46,15 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     using (var scope = UndoRedoManager.OpenScope("Resize Group"))
                     {
-                        var shape = group.GroupShape;
-                        var border = group.Border;
+                        SaveGroupData(group);
 
-                        if (shape.Size.Width != border.Size.Width ||
-                            shape.Size.Height != border.Size.Height)
-                            shape.Size = new SizeF(border.Size.Width, border.Size.Height);
-
-                        var location = group.Location;
-                        float centerX = location.X;
-                        float centerY = location.Y + group.Label.Height / 2f;
-
-                        if (centerX != shape.Position.X || centerY != shape.Position.Y)
+                        var groups = group.OfType<GraphGroup>().ToArray();
+                        if (groups?.Any() ?? false)
                         {
-                            shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
+                            foreach (var child in groups)
+                            {
+                                SaveGroupData(child);
+                            }
                         }
 
                         scope?.Complete();
@@ -95,6 +90,25 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         }
                     }
                 }
+            }
+        }
+
+        private static void SaveGroupData([NotNull] GraphGroup group)
+        {
+            var shape = group.GroupShape;
+            var border = group.Border;
+
+            if (shape.Size.Width != border.Size.Width ||
+                shape.Size.Height != border.Size.Height)
+                shape.Size = new SizeF(border.Size.Width, border.Size.Height);
+
+            var location = group.Location;
+            float centerX = location.X;
+            float centerY = location.Y + group.Label.Height / 2f;
+
+            if (centerX != shape.Position.X || centerY != shape.Position.Y)
+            {
+                shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
             }
         }
 

@@ -6,11 +6,11 @@ using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces.Extensions;
-using ThreatsManager.Interfaces.Extensions.Actions;
-using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
@@ -23,7 +23,7 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
 
         public event Action<string, bool> ChangeCustomActionStatus;
 
-        public string TabLabel => "Flow List";
+        public string TabLabel => "Imported List";
 
         public IEnumerable<ICommandsBarDefinition> CommandBars
         {
@@ -33,37 +33,14 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
                 {
                     new CommandsBarDefinition("Remove", "Remove", new IActionDefinition[]
                     {
-                        new ActionDefinition(Id, "RemoveDataFlow", "Remove Flow",
-                            Resources.flow_big_delete,
-                            Resources.flow_delete, false),
-                        new ActionDefinition(Id, "RemoveNotInDiagrams", "Remove not in Diagrams",
-                            Properties.Resources.flow_big_sponge,
-                            Properties.Resources.flow_sponge),
+                        new ActionDefinition(Id, "Remove", "Remove Selected",
+                            Resources.undefined_big_delete,
+                            Resources.undefined_delete, false),
+                        new ActionDefinition(Id, "RemoveNotInUse", "Remove not in Use",
+                            Resources.undefined_big_sponge,
+                            Resources.undefined_sponge_small),
                     }),
-                    new CommandsBarDefinition("Find", "Find", new IActionDefinition[]
-                    {
-                        new ActionDefinition(Id, "FindDataFlow", "Find Flow in Diagrams",
-                            Resources.flow_big_view,
-                            Resources.flow_view, false),
-                    })
                 };
-
-                if (_commandsBarContextAwareActions?.Any() ?? false)
-                {
-                    foreach (var definitions in _commandsBarContextAwareActions.Values)
-                    {
-                        List<IActionDefinition> actions = new List<IActionDefinition>();
-                        foreach (var definition in definitions)
-                        {
-                            foreach (var command in definition.Commands)
-                            {
-                                actions.Add(command);
-                            }
-                        }
-
-                        result.Add(new CommandsBarDefinition(definitions[0].Name, definitions[0].Label, actions));
-                    }
-                }
 
                 result.Add(new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
                 {
@@ -85,222 +62,92 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
 
             try
             {
-                var selected = _grid.GetSelectedCells()?.OfType<GridCell>()
-                    .Select(x => x.GridRow)
-                    .Distinct()
-                    .ToArray();
-
                 switch (action.Name)
                 {
-                    case "RemoveDataFlow":
+                    case "Remove":
                         if (_currentRow != null)
                         {
-                            using (var scope = UndoRedoManager.OpenScope("Remove Flows"))
+                            var selected1 = _grid.GetSelectedCells()?.OfType<GridCell>()
+                               .Select(x => x.GridRow)
+                               .Where(x => (x.Tag is IIdentity identity) && IsSelected(identity, null, ImportedListFilter.NotApplied))
+                               .Distinct()
+                               .ToArray();
+
+                            if (selected1?.Any() ?? false)
                             {
-                                if ((selected?.Length ?? 0) > 1)
+                                var outcome = MessageBox.Show(Form.ActiveForm,
+                                    $"You have selected {selected1.Length} not in use object(s). Do you want to remove them all?",
+                                    "Remove objects not in use", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                    MessageBoxDefaultButton.Button3);
+                                if (outcome == DialogResult.Yes)
                                 {
-                                    var outcome = MessageBox.Show(Form.ActiveForm,
-                                        $"You have selected {selected.Length} Flows. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Flows,\nNo to remove only the last one you selected, '{_currentRow?.Tag?.ToString()}'.\nPress Cancel to abort.",
-                                        "Remove Flows", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
-                                        MessageBoxDefaultButton.Button3);
-                                    switch (outcome)
+                                    bool removed = true;
+                                    using (var scope = UndoRedoManager.OpenScope("Remove objects"))
                                     {
-                                        case DialogResult.Yes:
-                                            bool removed = true;
-                                            foreach (var row in selected)
-                                            {
-                                                bool r = false;
-                                                if (row.Tag is IDataFlow flow)
-                                                {
-                                                    r = _model.RemoveDataFlow(flow.Id);
-                                                }
+                                        foreach (var row in selected1)
+                                        {
+                                            removed &= Remove(row);
+                                        }
 
-                                                removed &= r;
-
-                                                if (r && row == _currentRow)
-                                                {
-                                                    _properties.Item = null;
-                                                    _currentRow = null;
-                                                }
-                                            }
-
-                                            scope?.Complete();
-
-                                            if (removed)
-                                            {
-                                                text = "Remove Flows";
-                                            }
-                                            else
-                                            {
-                                                warning = true;
-                                                text = "One or more Flows cannot be removed.";
-                                            }
-                                            break;
-                                        case DialogResult.No:
-                                            if (_currentRow != null && _currentRow.Tag is IDataFlow flow2)
-                                            {
-                                                if (_model.RemoveDataFlow(flow2.Id))
-                                                {
-                                                    scope?.Complete();
-                                                    _properties.Item = null;
-                                                    _currentRow = null;
-                                                    text = "Remove Flow";
-                                                }
-                                                else
-                                                {
-                                                    warning = true;
-                                                    text = "The Flow cannot be removed.";
-                                                }
-                                            }
-                                            break;
-                                    }
-                                }
-                                else if (_currentRow != null && _currentRow.Tag is IDataFlow dataFlow &&
-                                         MessageBox.Show(Form.ActiveForm,
-                                             $"You are about to remove Flow '{dataFlow.Name}'. Are you sure?",
-                                             "Remove Flow", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                             MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                                {
-                                    if (_model.RemoveDataFlow(dataFlow.Id))
-                                    {
                                         scope?.Complete();
-                                        _properties.Item = null;
-                                        text = "Remove Flow";
-                                    }
-                                    else
-                                    {
-                                        warning = true;
-                                        text = "The Flow cannot be removed.";
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case "RemoveNotInDiagrams":
-                        var diagrams = _model.Diagrams?.ToArray();
-                        var flows = _model.DataFlows?
-                            .Where(x => !(diagrams?.Any(y => y.Links?.Any(z => x.Id == z.AssociatedId) ?? false) ?? false))
-                            .ToArray();
-                        if (flows?.Any() ?? false)
-                        {
-                            if (MessageBox.Show(Form.ActiveForm, 
-                                $"You are about to remove {flows.Count()} Flows that are not associated with any Diagram. Are you sure?",
-                                "Remove Flows not in any Diagram", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                            {
-                                var currentFlow = _currentRow?.Tag as IDataFlow;
-                                if (currentFlow != null && flows.Any(x => x.Id == currentFlow.Id))
-                                {
-                                    _properties.Item = null;
-                                    _currentRow = null;
-
-                                }
-
-                                using (var scope = UndoRedoManager.OpenScope("Remove Flows Not In Any Diagram"))
-                                {
-                                    var removed = true;
-                                    foreach (var flow in flows)
-                                    {
-                                        removed &= _model.RemoveDataFlow(flow.Id);
                                     }
 
                                     if (removed)
                                     {
-                                        text = "Remove Flows Not In Any Diagram ";
+                                        text = "Remove objects";
                                     }
                                     else
                                     {
                                         warning = true;
-                                        text = "One or more Flows cannot be removed.";
+                                        text = "One or more objects cannot be removed.";
+                                    }
+
+                                    LoadModel();
+                                }
+                            }
+                        }
+                        break;
+                    case "RemoveNotInUse":
+                        var list = new List<GridRow>();
+                        var selected2 = _grid.PrimaryGrid.Rows.OfType<GridRow>()
+                           .Where(x => (x.Tag is IIdentity identity) && IsSelected(identity, null, ImportedListFilter.NotApplied))
+                           .Distinct()
+                           .ToArray();
+
+                        if (selected2?.Any() ?? false)
+                        {
+                            if (MessageBox.Show(Form.ActiveForm, 
+                                $"You are about to remove {selected2.Count()} objects that are not in use. Are you sure?",
+                                "Remove objects not in use", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                            {
+                                using (var scope = UndoRedoManager.OpenScope("Remove Flows Not In Any Diagram"))
+                                {
+                                    bool removed = true;
+                                    foreach (var row in selected2)
+                                    {
+                                        removed &= Remove(row);
                                     }
 
                                     scope?.Complete();
+
+                                    if (removed)
+                                    {
+                                        text = "Remove objects not in use";
+                                    }
+                                    else
+                                    {
+                                        warning = true;
+                                        text = "One or more objects not in use cannot be removed.";
+                                    }
                                 }
+
+                                LoadModel();
                             }
                         }
                         break;
-                    case "FindDataFlow":
-                        bool found = false;
-                        if (_currentRow != null && _currentRow.Tag is IDataFlow dataFlow2)
-                        {
-                            var diagrams2 = _model.Diagrams?.ToArray();
-                            if (diagrams2?.Any() ?? false)
-                            {
-                                foreach (var diagram in diagrams2)
-                                {
-                                    var flow = diagram.GetLink(dataFlow2.Id);
-                                    if (flow != null)
-                                    {
-                                        found = true;
-                                        var factory = ExtensionUtils.GetExtensionByLabel<IPanelFactory>("Diagram");
-                                        if (factory != null)
-                                            OpenPanel?.Invoke(factory, diagram);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!found)
-                        {
-                            warning = true;
-                            text = "The Flow has not been found in any Diagram.";
-                        }
-                        break;  
                     case "Refresh":
                         LoadModel();
-                        break;
-                    default:
-                        if (action.Tag is IIdentitiesContextAwareAction identitiesContextAwareAction)
-                        {
-                            if ((selected?.Any() ?? false) &&
-                                (identitiesContextAwareAction.Scope & SupportedScopes) != 0)
-                            {
-                                var identities = selected.Select(x => x.Tag as IIdentity)
-                                    .Where(x => x != null)
-                                    .ToArray();
-
-                                if (identities.Any())
-                                {
-                                    if (identitiesContextAwareAction.Execute(identities))
-                                    {
-                                        text = identitiesContextAwareAction.Label;
-                                        _properties.Item = null;
-                                        _properties.Item = _currentRow?.Tag;
-                                    }
-                                    else
-                                    {
-                                        text = $"{identitiesContextAwareAction.Label} failed.";
-                                        warning = true;
-                                    }
-                                }
-                            }
-                        }
-                        else if (action.Tag is IPropertiesContainersContextAwareAction containersContextAwareAction)
-                        {
-                            if ((selected?.Any() ?? false) &&
-                                (containersContextAwareAction.Scope & SupportedScopes) != 0)
-                            {
-                                var containers = selected.Select(x => x.Tag as IPropertiesContainer)
-                                    .Where(x => x != null)
-                                    .ToArray();
-
-                                if (containers.Any())
-                                {
-                                    if (containersContextAwareAction.Execute(containers))
-                                    {
-                                        text = containersContextAwareAction.Label;
-                                        _properties.Item = null;
-                                        _properties.Item = _currentRow?.Tag;
-                                    }
-                                    else
-                                    {
-                                        text = $"{containersContextAwareAction.Label} failed.";
-                                        warning = true;
-                                    }
-                                }
-                            }
-                        }
                         break;
                 }
 
@@ -314,6 +161,68 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
                 ShowWarning?.Invoke($"An error occurred during the execution of the action.");
                 throw;
             }
+        }
+
+        private bool Remove([NotNull] GridRow row)
+        {
+            bool result = false;
+
+            if (row.Tag is IEntity entity)
+            {
+                result = _model.RemoveEntity(entity.Id);
+            }
+            else if (row.Tag is IGroup group)
+            {
+                result = _model.RemoveGroup(group.Id);
+            }
+            else if (row.Tag is IDataFlow flow)
+            {
+                result = _model.RemoveDataFlow(flow.Id);
+            }
+            else if (row.Tag is IDiagram diagram)
+            {
+                result = _model.RemoveDiagram(diagram.Id);
+            }
+            else if (row.Tag is IPropertySchema schema)
+            {
+                result = _model.RemoveSchema(schema.Id);
+            }
+            else if (row.Tag is IEntityTemplate entityTemplate)
+            {
+                result = _model.RemoveEntityTemplate(entityTemplate.Id);
+            }
+            else if (row.Tag is ITrustBoundaryTemplate trustBoundaryTemplate)
+            {
+                result = _model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id);
+            }
+            else if (row.Tag is IFlowTemplate flowTemplate)
+            {
+                result = _model.RemoveFlowTemplate(flowTemplate.Id);
+            }
+            else if (row.Tag is IThreatType threatType)
+            {
+                result = _model.RemoveThreatType(threatType.Id);
+            }
+            else if (row.Tag is IWeakness weakness)
+            {
+                result = _model.RemoveWeakness(weakness.Id);
+            }
+            else if (row.Tag is IMitigation mitigation)
+            {
+                result = _model.RemoveMitigation(mitigation.Id);
+            }
+            else if (row.Tag is IThreatActor actor)
+            {
+                result = _model.RemoveThreatActor(actor.Id);
+            }
+
+            if (result && row == _currentRow)
+            {
+                _properties.Item = null;
+                _currentRow = null;
+            }
+
+            return result;
         }
     }
 }

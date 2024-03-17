@@ -9,9 +9,9 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.ImportedList
 {
-    //[Extension("D38BE3E2-0809-4DEC-8F3A-EA9FBDE9FF2A", "Imported List", 1, ExecutionMode.Expert)]
-    public partial class ImportedListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, 
-        IContextAwareExtension, IPanelFactoryActionsRequestor
+    [Extension("D38BE3E2-0809-4DEC-8F3A-EA9FBDE9FF2A", "Imported List", 0, ExecutionMode.Expert)]
+    public partial class ImportedListPanelFactory : IPanelFactory<Form>, IMainRibbonExtension,
+        IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.
         /// <summary>
@@ -22,10 +22,9 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
         public IPanel<Form> Create(IIdentity identity, out IActionDefinition action)
         {
             var result = new ImportedListPanel();
-            if (_actions != null)
-                result.SetContextAwareActions(_actions);
 
-            action = new ActionDefinition(result.Id, "ImportedList", "Imported\nList", Properties.Resources.arrow_into_big,
+            action = new ActionDefinition(result.Id, "ImportedList", "Imported\nList", 
+                Properties.Resources.arrow_into_big,
                 Properties.Resources.arrow_into);
 
             return result;
@@ -33,10 +32,7 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
 
         public IPanel<Form> Create([NotNull] IActionDefinition action)
         {
-            var result = new ImportedListPanel();
-            if (_actions != null)
-                result.SetContextAwareActions(_actions);
-            return result;
+            return new ImportedListPanel();
         }
         #endregion
     }

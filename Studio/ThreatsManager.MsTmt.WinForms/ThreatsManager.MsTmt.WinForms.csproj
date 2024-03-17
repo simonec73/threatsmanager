@@ -80,14 +80,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ThreatsManager.Interfaces, Version=2.1.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Interfaces, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.MsTmt">
       <HintPath>..\..\Build\repo\net481\ThreatsManager.MsTmt.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=2.1.4.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Utilities, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>

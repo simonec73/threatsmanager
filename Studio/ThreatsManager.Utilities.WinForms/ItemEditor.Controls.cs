@@ -16,7 +16,6 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.WinForms.Dialogs;
-using static System.Net.Mime.MediaTypeNames;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
 using MarkupLinkClickEventArgs = DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs;
 using Padding = System.Windows.Forms.Padding;
@@ -30,6 +29,12 @@ namespace ThreatsManager.Utilities.WinForms
         #region Label.
         private static Label AddSingleLineLabel([NotNull] LayoutControl container,
             string label, string text, Bitmap image = null)
+        {
+            return AddSingleLineLabel(container, label, text, 101, image);
+        }
+
+        private static Label AddSingleLineLabel([NotNull] LayoutControl container,
+            string label, string text, int widthPerc, Bitmap image = null)
         {
             int height = (int) (21 * Dpi.Factor.Height);
             if (image != null)
@@ -53,7 +58,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Control = control,
                 Height = height,
                 HeightType = eLayoutSizeType.Absolute,
-                Width = 101,
+                Width = widthPerc,
                 WidthType = eLayoutSizeType.Percent,
                 Padding = new Padding(4)
             };
@@ -484,7 +489,8 @@ namespace ThreatsManager.Utilities.WinForms
         {
             var control = new TokenEditor()
             {
-                Tag = property
+                Tag = property,
+                ReadOnly = readOnly
             };
             control.EditTextBox.KeyPress += OnKeywordsKeyPress;
             var values = property?.Value?.ToArray();

@@ -2,8 +2,6 @@
 using Northwoods.Go;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Diagrams;
-using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Diagram
 {
@@ -25,7 +23,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 FontSize = 9
             };
             Shape.BrushColor = paletteItem.BackColor;
-            ToolTipText = paletteItem.Name;
+            ToolTipText = paletteItem.Tooltip;
         }
 
         public PaletteItem Item { get; }

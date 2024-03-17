@@ -698,7 +698,7 @@ namespace ThreatsManager
             {
                 _ribbon.SelectFirstVisibleRibbonTab();
             }
-            _ribbon.SelectedRibbonTabItem.Panel.LayoutRibbons();
+            _ribbon.SelectedRibbonTabItem?.Panel.LayoutRibbons();
             _ribbon.ResumeLayout();
 
             _ribbon.RecalcLayout();

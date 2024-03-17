@@ -37,16 +37,16 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             float height = 0;
             var ei = CreateNode("ExternalInteractor", "External Interactor", 
                 EntityType.ExternalInteractor.GetEntityImage(_imageSize),
-                ref width, ref height);
+                null, ref width, ref height);
             var p = CreateNode("Process", "Process",
                 EntityType.Process.GetEntityImage(_imageSize),
-                ref width, ref height);
+                null, ref width, ref height);
             var ds = CreateNode("DataStore", "Data Store",
                 EntityType.DataStore.GetEntityImage(_imageSize),
-                ref width, ref height);
+                null, ref width, ref height);
             var tb = CreateNode("TrustBoundary", "Trust Boundary",
                 ImageExtensions.GetTrustBoundaryImage(_imageSize),
-                ref width, ref height);
+                null, ref width, ref height);
 
             ei.Position = CalculatePosition(ei, 0, width, height);
             _standardPalette.Document.Add(ei);
@@ -62,7 +62,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         }
 
         private GoSimpleNode CreateNode([Required] string name,
-            string label, [NotNull] Bitmap image, ref float width, ref float height)
+            string label, [NotNull] Bitmap image, string tooltip, ref float width, ref float height)
         {
             var result = new GoSimpleNode()
             {
@@ -72,8 +72,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     Image = image,
                     Size = new SizeF(_iconSize, _iconSize),
-                    Selectable = false
+                    Selectable = false,
                 },
+                ToolTipText = tooltip
             };
             width = Math.Max(width, result.Width);
             height = Math.Max(height, result.Height);
@@ -305,7 +306,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 foreach (var template in toShow)
                 {
                     nodes.Add(CreateNode(template.Id.ToString(), template.Name, 
-                        template.GetImage(_imageSize), ref width, ref height));
+                        template.GetImage(_imageSize), template.Description, ref width, ref height));
                 }
 
                 for (int i = 0; i < nodes.Count; i++)
@@ -500,7 +501,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 foreach (var entity in toShow)
                 {
                     nodes.Add(CreateNode(entity.Id.ToString(), entity.Name, 
-                        entity.GetImage(_imageSize), ref width, ref height));
+                        entity.GetImage(_imageSize), entity.Description, ref width, ref height));
                 }
 
                 for (int i = 0; i < nodes.Count; i++)

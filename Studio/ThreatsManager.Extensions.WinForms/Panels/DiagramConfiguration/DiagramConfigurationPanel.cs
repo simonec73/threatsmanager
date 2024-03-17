@@ -13,7 +13,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
 {
-    public partial class DiagramConfigurationPanel : UserControl, IConfigurationPanel<Form>
+    public partial class DiagramConfigurationPanel : UserControl, IConfigurationPanel<Form>, IDesktopAlertAwareExtension
     {
         private DiagramConfigurationManager _configuration;
 
@@ -23,6 +23,10 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
         }
 
         private readonly Guid _id = Guid.NewGuid();
+
+        public event Action<string> ShowMessage;
+        public event Action<string> ShowWarning;
+
         public Guid Id => _id;
 
         public Form PanelContainer { get; set; }
@@ -153,7 +157,14 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
 
         public void Apply()
         {
-            _configuration.Apply();
+            try
+            {
+                _configuration.Apply();
+            }
+            catch (Exception ex)
+            {
+                ShowWarning?.Invoke(ex.Message);
+            }
         }
 
         public string Label => "Diagrams";

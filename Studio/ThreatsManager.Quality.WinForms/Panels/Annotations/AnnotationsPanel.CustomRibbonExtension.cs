@@ -79,7 +79,13 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         new ActionDefinition(Id, "ExportOpen", "Export Open Topics",
                             Properties.Resources.xlsx_big,
                             Properties.Resources.xlsx),
-                        new ActionDefinition(Id, "ExportAll", "Export All Topics",
+                        new ActionDefinition(Id, "ExportAll", "Export All Annotations",
+                            Properties.Resources.xlsx_big,
+                            Properties.Resources.xlsx),
+                    }),
+                    new CommandsBarDefinition("Import", "Import", new IActionDefinition[]
+                    {
+                        new ActionDefinition(Id, "Import", "Import Annotations",
                             Properties.Resources.xlsx_big,
                             Properties.Resources.xlsx),
                     }),
@@ -194,14 +200,14 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         CheckFileExists = false,
                         CheckPathExists = true,
                         RestoreDirectory = true,
-                        DefaultExt = "csv",
-                        Filter = "CSV file (*.csv)|*.csv|Excel file (*.xlsx)|*.xlsx",
+                        DefaultExt = "xlsx",
+                        Filter = "Excel file (*.xlsx)|*.xlsx|CSV file (*.csv)|*.csv",
                         Title = "Create a file with open Topics",
                         ValidateNames = true
                     };
                     if (saveFileDialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        ExportCsv(saveFileDialog.FileName, true);
+                        ExportAnnotations(saveFileDialog.FileName, true);
                     }
                     break;
                 case "ExportAll":
@@ -212,14 +218,33 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         CheckFileExists = false,
                         CheckPathExists = true,
                         RestoreDirectory = true,
-                        DefaultExt = "csv",
-                        Filter = "CSV file (*.csv)|*.csv|Excel file (*.xlsx)|*.xlsx",
-                        Title = "Create a file with all Topics",
+                        DefaultExt = "xlsx",
+                        Filter = "Excel file (*.xlsx)|*.xlsx|CSV file (*.csv)|*.csv",
+                        Title = "Create a file with all Annotations",
                         ValidateNames = true
                     };
                     if (saveFileDialog2.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                     {
-                        ExportCsv(saveFileDialog2.FileName, false);
+                        ExportAnnotations(saveFileDialog2.FileName, false);
+                    }
+                    break;
+                case "Import":
+                    var openFileDialog = new OpenFileDialog()
+                    {
+                        AddExtension = true,
+                        AutoUpgradeEnabled = true,
+                        CheckFileExists = false,
+                        CheckPathExists = true,
+                        RestoreDirectory = true,
+                        DefaultExt = "xlsx",
+                        ValidateNames = true,
+                        ShowReadOnly = false,
+                        Filter = "Excel file (*.xlsx)|*.xlsx|CSV file (*.csv)|*.csv",
+                        Title = "Import a file with Annotations",
+                    };
+                    if (openFileDialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                    {
+                        ImportAnnotations(openFileDialog.FileName);
                     }
                     break;
                 case "Refresh":
@@ -230,7 +255,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
             _right.ResumeLayout();
         }
 
-        private void ExportCsv([Required] string fileName, bool openOnly)
+        private void ExportAnnotations([Required] string fileName, bool openOnly)
         {
             var list = new List<IPropertiesContainer>();
             Add(list, _model.GetExternalInteractors(_schemaManager, _propertyType, null, openOnly));
@@ -247,39 +272,49 @@ namespace ThreatsManager.Quality.Panels.Annotations
             Add(list, _model.GetFlowTemplates(_schemaManager, _propertyType, null, openOnly));
             Add(list, _model.GetTrustBoundaryTemplates(_schemaManager, _propertyType, null, openOnly));
             Add(list, _model.GetDiagrams(_schemaManager, _propertyType, null, openOnly));
+            list.Add(_model);
 
             if (list.Any())
             {
                 using (var engine = new ExcelReportEngine())
                 {
                     var page = engine.AddPage("Report");
-                    List<string> fields = new List<string> {"Object Type", "Name", "Context", "Annotation Type",
-                        "Annotation Text", "Asked By", "Asked On", "Asked Via", "Answered", "Answer"};
+                    List<string> fields = new List<string> {"ID", "Object Type", "Name", "Additional Info", 
+                        "Annotation Type", "Annotation Text", "Asked By", "Asked On", "Asked Via", 
+                        "Answered", "Recorded Answers", "New Answer", "New Answer By", "New Answer On"};
                     engine.AddHeader(page, fields.ToArray());
 
                     foreach (var item in list)
                     {
+                        string id = null;
                         string objectType = null;
                         string name = null;
                         string context = null;
                         if (item is IIdentity identity)
                         {
+                            id = identity.Id.ToString("N");
                             objectType = _model.GetIdentityTypeName(identity);
                             name = identity.Name;
                         }
                         else if (item is IThreatEventMitigation threatEventMitigation)
                         {
+                            string teId = threatEventMitigation.ThreatEvent.Id.ToString("N");
+                            string mId = threatEventMitigation.MitigationId.ToString("N");
+                            id = $"TE_{teId}_{mId}";
                             objectType = "Threat Event Mitigation";
                             name = threatEventMitigation.Mitigation.Name;
                             context =
-                                $"'{threatEventMitigation.ThreatEvent.Name}' on '{threatEventMitigation.ThreatEvent.Parent.Name}'";
+                                $"Threat Event '{threatEventMitigation.ThreatEvent.Name}' on '{threatEventMitigation.ThreatEvent.Parent.Name}'";
                         }
                         else if (item is IThreatTypeMitigation threatTypeMitigation)
                         {
+                            string ttId = threatTypeMitigation.ThreatTypeId.ToString("N");
+                            string mId = threatTypeMitigation.MitigationId.ToString("N");
+                            id = $"TT_{ttId}_{mId}";
                             objectType = "Threat Type Mitigation";
                             name = threatTypeMitigation.Mitigation.Name;
                             context =
-                                $"{threatTypeMitigation.ThreatType.Name}";
+                                $"Threat Type '{threatTypeMitigation.ThreatType.Name}'";
                         }
 
                         var annotations = _schemaManager.GetAnnotations(item)?.ToArray();
@@ -322,7 +357,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                                     if (annotationType != null)
                                         engine.AddRow(page, new[]
                                         {
-                                            objectType, name, context, annotationType,
+                                            id, objectType, name, context, annotationType,
                                             text, askedBy, askedOn, askedVia, answered, answers
                                         });
                                 }
@@ -344,6 +379,58 @@ namespace ThreatsManager.Quality.Panels.Annotations
             else
             {
                 ShowWarning?.Invoke("The file has not been created because it would be empty.");
+            }
+        }
+
+        private void ImportAnnotations([Required] string fileName)
+        {
+            using (var engine = new ExcelReaderEngine(fileName))
+            {
+                var lines = engine.ReadLines()?
+                    .Where(x => x.IsValid && x.IsTopic && x.HasNewAnswer).ToArray();
+                if (lines?.Any() ?? false)
+                {
+                    var threatTypes = _model.ThreatTypes?.ToArray();
+                    var threatEvents = _model.GetThreatEvents()?.ToArray();
+                    IPropertiesContainer container;
+
+                    using (var scope = UndoRedoManager.OpenScope("Import Annotations"))
+                    {
+                        foreach (var line in lines)
+                        {
+                            container = null;
+
+                            switch (line.ObjectType)
+                            {
+                                case "Threat Type Mitigation":
+                                    var threatType = threatTypes?.FirstOrDefault(x => x.Id == line.Id0);
+                                    if (threatType != null)
+                                    {
+                                        container = threatType.GetMitigation(line.Id1);
+                                    }
+                                    break;
+                                case "Threat Event Mitigation":
+                                    var threatEvent = threatEvents?.FirstOrDefault(x => x.Id == line.Id0);
+                                    if (threatEvent != null)
+                                    {
+                                        container = threatEvent.GetMitigation(line.Id1);
+                                    }
+                                    break;
+                                default:
+                                    container = _model.GetIdentity(line.Id0) as IPropertiesContainer;
+                                    break;
+                            }
+
+                            if (container != null)
+                                AddAnswer(container, line.AnnotationText,
+                                    line.NewAnswer, line.NewAnswerBy, line.NewAnswerOn);
+                        }
+
+                        scope?.Complete();
+                    }
+
+                    ShowMessage?.Invoke("Annotations imported successfully.");
+                }
             }
         }
 
@@ -376,6 +463,30 @@ namespace ThreatsManager.Quality.Panels.Annotations
             {
                 list.AddRange(items);
             }
+        }
+
+        private bool AddAnswer(IPropertiesContainer container, string question, 
+            string answerText, string answeredBy, DateTime answeredOn)
+        {
+            bool result = false;
+
+            var annotation = _schemaManager.GetAnnotations(container)?
+                .OfType<TopicToBeClarified>()
+                .FirstOrDefault(x => string.CompareOrdinal(x.Text, question) == 0);
+            if (annotation != null)
+            {
+                var answer = annotation.Answers?.FirstOrDefault(x => string.CompareOrdinal(x.Text, answerText) == 0);
+                if (answer == null) 
+                {
+                    answer = annotation.AddAnswer();
+                    answer.Text = answerText;
+                    answer.AnsweredBy = answeredBy;
+                    answer.AnsweredOn = answeredOn;
+                    answer.AnsweredVia = "Excel";
+                }
+            }
+
+            return result;
         }
     }
 }

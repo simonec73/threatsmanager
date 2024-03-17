@@ -109,9 +109,9 @@
     <Reference Include="ThreatsManager.Extensions.Client">
       <HintPath>..\..\Build\repo\net481\ThreatsManager.Extensions.Client.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Icons, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Icons, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\..\Build\repo\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Interfaces, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -358,9 +358,6 @@
     <Compile Include="Panels\Diagram\PanelItemListFormTrigger.cs" />
     <Compile Include="Panels\Diagram\PanelsStatus.cs" />
     <Compile Include="Panels\ImportedList\ImportedListFilter.cs" />
-    <Compile Include="Panels\ImportedList\ImportedListPanel.ContextAwareExtension.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Panels\ImportedList\ImportedListPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -370,7 +367,6 @@
     <Compile Include="Panels\ImportedList\ImportedListPanel.Designer.cs">
       <DependentUpon>ImportedListPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\ImportedList\ImportedListPanelFactory.ContextAwareExtension.cs" />
     <Compile Include="Panels\ImportedList\ImportedListPanelFactory.cs" />
     <Compile Include="Panels\ImportedList\ImportedListPanelFactory.MainRibbonExtension.cs" />
     <Compile Include="Panels\Roadmap\ExcelReportEngine.cs" />

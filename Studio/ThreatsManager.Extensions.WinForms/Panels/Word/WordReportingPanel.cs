@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,20 +18,22 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Word
 {
-    public partial class WordReportingPanel : UserControl, IShowThreatModelPanel<Form>, IDesktopAlertAwareExtension,
-        ICustomRibbonExtension
+    public partial class WordReportingPanel : UserControl, IShowThreatModelPanel<Form>, 
+        IDesktopAlertAwareExtension, ICustomRibbonExtension
     {
         #region Private member variables.
         private readonly Guid _id = Guid.NewGuid();
         private IThreatModel _model;
         private ReportGenerator _reportGenerator;
         private bool _loading;
+        private GridRow _currentRow;
         #endregion
 
         public WordReportingPanel()
         {
             InitializeComponent();
-            InitializeGrid();
+            InitializeTemplatesGrid();
+            InitializePlaceholdersGrid();
         }
 
         public event Action<string> ShowMessage;
@@ -56,21 +59,26 @@ namespace ThreatsManager.Extensions.Panels.Word
             _reportGenerator.ProgressUpdated += ReportGeneratorOnProgressUpdated;
             _reportGenerator.ShowMessage += ReportGeneratorOnShowMessage;
             _reportGenerator.ShowWarning += ReportGeneratorOnShowWarning;
-            
-            var wordFile = WordFile;
-            if (!string.IsNullOrWhiteSpace(wordFile))
+
+            InitializeWordFile();
+            RefreshThreatModel();
+        }
+
+        private void RefreshThreatModel()
+        {
+            _currentRow = null;
+            _grid.PrimaryGrid.Rows.Clear();
+            _docStructure.PrimaryGrid.Rows.Clear();
+
+            var definitions = ReportDefinitions?.ToArray();
+            if (definitions?.Any() ?? false)
             {
-                var file = GetDocumentPath(threatModel, wordFile);
-                if (File.Exists(file))
+                foreach (var definition in definitions)
                 {
-                    _wordFile.Text = wordFile;
-                    LoadDocStructure(file);
-                }
-                else
-                {
-                    ShowWarning?.Invoke("The Reference Word File does not exist.");
+                    AddTemplateToGrid(definition);
                 }
             }
+            AddTemplateToGrid();
         }
 
         private void ReportGeneratorOnShowWarning(string text)
@@ -89,24 +97,237 @@ namespace ThreatsManager.Extensions.Panels.Word
         }
         #endregion
 
-        #region Word file management.
-        private void _browse_Click(object sender, EventArgs e)
+        #region Templates Grid management.
+        private void InitializeTemplatesGrid()
         {
-            if (_openFile.ShowDialog(this) == DialogResult.OK)
+            lock (_grid)
             {
-                string path;
-                var modelPath = _model?.GetLocation();
-                if (modelPath == null)
-                    path = _openFile.FileName;
-                else
-                    path = GetRelativePath(modelPath, _openFile.FileName);
+                GridPanel panel = _grid.PrimaryGrid;
+                panel.ShowTreeButtons = false;
+                panel.ShowTreeLines = false;
+                panel.AllowRowDelete = false;
+                panel.AllowRowInsert = false;
+                panel.AllowRowResize = false;
+                panel.ShowRowDirtyMarker = false;
+                panel.ShowRowHeaders = false;
+                panel.InitialActiveRow = RelativeRow.None;
 
-                WordFile = _wordFile.Text = path;
-                _docStructure.PrimaryGrid.Rows.Clear();
-                LoadDocStructure(_openFile.FileName);
+                panel.Columns.Add(new GridColumn("Name")
+                {
+                    HeaderText = "Report Name",
+                    AutoSizeMode = ColumnAutoSizeMode.AllCells,
+                    DataType = typeof(string),
+                    EditorType = typeof(GridTextBoxXEditControl),
+                    AllowEdit = true
+                });
+
+                panel.Columns.Add(new GridColumn("Path")
+                {
+                    HeaderText = "Report Template Path",
+                    AutoSizeMode = ColumnAutoSizeMode.Fill,
+                    DataType = typeof(string),
+                    EditorType = typeof(GridLabelEditControl),
+                    AllowEdit = false
+                });
+
+                panel.Columns.Add(new GridColumn("Browse")
+                {
+                    HeaderText = "Browse...",
+                    DataType = typeof(string),
+                    Width = 60,
+                    EditorType = typeof(GridButtonXEditControl)
+                });
+                var browse = panel.Columns["Browse"].EditControl as GridButtonXEditControl;
+                if (browse != null)
+                {
+                    browse.Click += OnBrowse;
+                }
+
+                panel.Columns.Add(new GridColumn("Remove")
+                {
+                    HeaderText = "Remove",
+                    DataType = typeof(string),
+                    Width = 60,
+                    EditorType = typeof(GridButtonXEditControl)
+                });
+                var remove = panel.Columns["Remove"].EditControl as GridButtonXEditControl;
+                if (remove != null)
+                {
+                    remove.Click += OnRemove;
+                }
             }
         }
 
+        private void OnBrowse(object sender, EventArgs e)
+        {
+            if (sender is GridButtonXEditControl bc)
+            {
+                var row = bc.EditorCell.GridRow;
+
+                WordReportDefinition reportDefinition = null;
+                bool newRD;
+                if (row.Tag is WordReportDefinition def)
+                {
+                    reportDefinition = def;
+                    newRD = false;
+                }
+                else
+                {
+                    var name = row.Cells[0].Value as string;
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        name = "Report";
+                        row.Cells[0].Value = name;
+                    }
+                    reportDefinition = new WordReportDefinition(name, null);
+                    newRD = true;
+                }
+
+                _openFile.FileName = reportDefinition.Path;
+                if (_openFile.ShowDialog(this) == DialogResult.OK)
+                {
+                    var modelPath = _model?.GetLocation();
+                    if (modelPath == null)
+                        reportDefinition.Path = _openFile.FileName;
+                    else
+                        reportDefinition.Path = GetRelativePath(modelPath, _openFile.FileName);
+                    row.Cells[1].Value = reportDefinition.Path;
+
+                    if (newRD)
+                    {
+                        row.Tag = reportDefinition;
+                        AddReportDefinition(reportDefinition);
+                        AddTemplateToGrid();
+                    }
+
+                    _docStructure.PrimaryGrid.Rows.Clear();
+                    LoadDocStructure(_openFile.FileName);
+                }
+            }
+        }
+
+        private void OnRemove(object sender, EventArgs e)
+        {
+            if (sender is GridButtonXEditControl bc)
+            {
+                var row = bc.EditorCell.GridRow;
+
+                if (row.Tag is WordReportDefinition def)
+                {
+                    if (MessageBox.Show(this, $"Do you confirm removing report '{def.Name}'?", 
+                        "Report removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        RemoveReportDefinition(def);
+                        _grid.PrimaryGrid.Rows.Remove(row);
+                    }
+                }
+            }
+        }
+
+        private void AddTemplateToGrid(WordReportDefinition reportDefinition = null)
+        {
+            GridRow row;
+
+            if (reportDefinition != null)
+            {
+                var name = reportDefinition.Name;
+                if (string.IsNullOrWhiteSpace(name))
+                    name = "Report";
+                row = new GridRow(name, reportDefinition.Path, "Browse", "Remove")
+                {
+                    Tag = reportDefinition
+                };
+            }
+            else
+            {
+                var name = "Report";
+                row = new GridRow(name, null, "Browse", "Remove");
+            }
+            row.Cells[0].PropertyChanged += OnTemplateNameChanged;
+            _grid.PrimaryGrid.Rows.Add(row);
+        }
+
+        private void OnTemplateNameChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var cell = sender as GridCell;
+
+            if (!_loading && cell != null)
+            {
+                try
+                {
+                    _loading = true;
+                    var row = cell.GridRow;
+                    if (row.Tag is WordReportDefinition definition)
+                    {
+                        switch (cell.GridColumn.Name)
+                        {
+                            case "Name":
+                                definition.Name = (string)cell.Value;
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+
+        private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
+        {
+            if (!_loading)
+            {
+                var row = e.NewActiveCell?.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    if (row.Tag is WordReportDefinition definition)
+                    {
+                        LoadDocStructure(GetDocumentPath(_model, definition.Path));
+                    }
+                    else
+                    {
+                        ClearDocStructure();
+                    }
+                }
+            }
+        }
+
+        private void _grid_RowActivated(object sender, GridRowActivatedEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (e.NewActiveRow is GridRow gridRow && _currentRow != gridRow)
+                {
+                    _currentRow = gridRow;
+                    if (gridRow.Tag is WordReportDefinition definition)
+                    {
+                        LoadDocStructure(GetDocumentPath(_model, definition.Path));
+                    }
+                    else
+                    {
+                        ClearDocStructure();
+                    }
+                }
+            }
+        }
+
+        private void _grid_SelectionChanged(object sender, GridEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (!e.GridPanel.SelectedCells.OfType<GridCell>().Any() &&
+                    !e.GridPanel.SelectedRows.OfType<GridRow>().Any())
+                {
+                    _currentRow = null;
+                    ClearDocStructure();
+                }
+            }
+        }
+        #endregion
+
+        #region Word file management.
         private static string GetRelativePath([Required] string relativeTo, [Required] string path)
         {
             var uri = new Uri(relativeTo);
@@ -158,43 +379,52 @@ namespace ThreatsManager.Extensions.Panels.Word
             return result;
         }
 
-        private string WordFile
+        private void InitializeWordFile()
+        {
+            using (var scope = UndoRedoManager.OpenScope("Initialize Word File"))
+            {
+                var schema = (new ReportingConfigPropertySchemaManager(_model)).GetSchema();
+                var propertyType = schema?.GetPropertyType("WordDocumentPath");
+                if (propertyType != null)
+                {
+                    var property = _model.GetProperty(propertyType);
+                    if (property is IPropertySingleLineString propertyString &&
+                        !string.IsNullOrWhiteSpace(propertyString.StringValue))
+                    {
+                        AddReportDefinition(new WordReportDefinition("Report", propertyString.StringValue));
+                        _model.RemoveProperty(propertyType);
+                    }
+
+                    scope?.Complete();
+                }
+            }
+        }
+
+        private IEnumerable<WordReportDefinition> ReportDefinitions
         {
             get
             {
-                string result = null;
-
-                var schema = (new ReportingConfigPropertySchemaManager(_model)).GetSchema();
-                var propertyType = schema?.GetPropertyType("WordDocumentPath");
-                if (propertyType != null)
-                {
-                    var property = _model.GetProperty(propertyType);
-                    if (property is IPropertySingleLineString propertyString)
-                        result = propertyString.StringValue;
-                }
-
-                return result;
+                return (new ReportingConfigPropertySchemaManager(_model)).GetWordReportDefinitions();
             }
+        }
 
-            set
-            {
-                var schema = (new ReportingConfigPropertySchemaManager(_model)).GetSchema();
-                var propertyType = schema?.GetPropertyType("WordDocumentPath");
-                if (propertyType != null)
-                {
-                    var property = _model.GetProperty(propertyType);
-                    if (property == null)
-                        _model.AddProperty(propertyType, value);
-                    else
-                    {
-                        property.StringValue = value;
-                    }
-                }
-            }
+        private void AddReportDefinition([NotNull] WordReportDefinition definition)
+        {
+            (new ReportingConfigPropertySchemaManager(_model)).StoreWordReportDefinition(definition);
+        }
+
+        private void RemoveReportDefinition([NotNull] WordReportDefinition definition)
+        {
+            (new ReportingConfigPropertySchemaManager(_model)).RemoveWordReportDefinition(definition);
         }
         #endregion
 
         #region Load document structure.
+        private void ClearDocStructure()
+        {
+            _docStructure.PrimaryGrid.Rows.Clear();
+        }
+
         private bool LoadDocStructure([Required] string fileName)
         {
             bool result = false;
@@ -202,17 +432,26 @@ namespace ThreatsManager.Extensions.Panels.Word
 
             try
             {
-                var structure = _reportGenerator.LoadStructure(fileName)?.ToArray();
+                ClearDocStructure();
 
-                if (structure?.Any() ?? false)
+                if (File.Exists(fileName))
                 {
-                    CreatePlaceholderPanel(PlaceholderSection.Model, structure);
-                    CreatePlaceholderPanel(PlaceholderSection.Counter, structure);
-                    CreatePlaceholderPanel(PlaceholderSection.Chart, structure);
-                    CreatePlaceholderPanel(PlaceholderSection.List, structure);
-                    CreatePlaceholderPanel(PlaceholderSection.Table, structure);
+                    var structure = _reportGenerator.LoadStructure(fileName)?.ToArray();
 
-                    result = true;
+                    if (structure?.Any() ?? false)
+                    {
+                        CreatePlaceholderPanel(PlaceholderSection.Model, structure);
+                        CreatePlaceholderPanel(PlaceholderSection.Counter, structure);
+                        CreatePlaceholderPanel(PlaceholderSection.Chart, structure);
+                        CreatePlaceholderPanel(PlaceholderSection.List, structure);
+                        CreatePlaceholderPanel(PlaceholderSection.Table, structure);
+
+                        result = true;
+                    }
+                }
+                else
+                {
+                    ShowWarning?.Invoke($"File '{fileName}' does not exist.");
                 }
             }
             catch
@@ -261,7 +500,7 @@ namespace ThreatsManager.Extensions.Panels.Word
             }
         }
 
-        private void InitializeGrid()
+        private void InitializePlaceholdersGrid()
         {
             GridPanel panel = _docStructure.PrimaryGrid;
             panel.ShowTreeButtons = true;
