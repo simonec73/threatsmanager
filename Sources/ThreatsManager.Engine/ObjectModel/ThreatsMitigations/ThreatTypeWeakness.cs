@@ -175,6 +175,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                         _weaknessId = _weaknessId
                     };
                     container.Add(result);
+                    this.CloneProperties(result);
 
                     if (model.Id != _modelId)
                         result.SetSourceInfo(Model);

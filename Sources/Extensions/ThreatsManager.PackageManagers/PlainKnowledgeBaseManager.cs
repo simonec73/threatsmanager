@@ -63,6 +63,7 @@ namespace ThreatsManager.PackageManagers
 
                 var newModel = model.Duplicate(name, definition);
                 newModel.Description = description;
+                newModel.AddVersion();
                 var serialization = ThreatModelManager.Serialize(newModel);
 
                 var package = Package.Create(location);

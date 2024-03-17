@@ -100,6 +100,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     Resizable = true;
                     Copyable = false;
                     Initializing = false;
+                    Visible = true;                   
                     //LayoutChildren(_border);
 
                     UpdateParameters(markerSize, dpiFactor);
@@ -429,30 +430,30 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         //Allow the user to interactively resize the border;
         // this ensures that the border surrounds all of the children.
-        public override void DoResize(GoView view, RectangleF origRect, PointF newPoint, int whichHandle,
-            GoInputState evttype, SizeF min, SizeF max)
-        {
-            // compute rectangle for normal resizing
-            RectangleF newRect = ComputeResize(origRect, newPoint, whichHandle, min, max, true);
-            // account for the height of the Label
-            newRect.Y += Label.Height + 2;
-            newRect.Height -= Label.Height + 2;
-            // compute rectangle required by the child objects
-            RectangleF minRect = ComputeBorder();
-            if (minRect != RectangleF.Empty)
-            {
-                newRect = RectangleF.Union(newRect, minRect);
-            }
-            using (var scope = UndoRedoManager.OpenScope("Group DoResize"))
-            {
-                // update the bounding rect of the Border
-                Border.Bounds = newRect;
-                _shape.Size = new SizeF(newRect.Size.Width, newRect.Size.Height);
-                var location = Location;
-                _shape.Position = new PointF(location.X, location.Y);
-                scope?.Complete();
-            }
-        }
+        //public override void DoResize(GoView view, RectangleF origRect, PointF newPoint, int whichHandle,
+        //    GoInputState evttype, SizeF min, SizeF max)
+        //{
+        //    // compute rectangle for normal resizing
+        //    RectangleF newRect = ComputeResize(origRect, newPoint, whichHandle, min, max, true);
+        //    // account for the height of the Label
+        //    newRect.Y += Label.Height + 2;
+        //    newRect.Height -= Label.Height + 2;
+        //    // compute rectangle required by the child objects
+        //    RectangleF minRect = ComputeBorder();
+        //    if (minRect != RectangleF.Empty)
+        //    {
+        //        newRect = RectangleF.Union(newRect, minRect);
+        //    }
+        //    using (var scope = UndoRedoManager.OpenScope("Group DoResize"))
+        //    {
+        //        // update the bounding rect of the Border
+        //        Border.Bounds = newRect;
+        //        _shape.Size = new SizeF(newRect.Size.Width, newRect.Size.Height);
+        //        var location = Location;
+        //        _shape.Position = new PointF(location.X, location.Y);
+        //        scope?.Complete();
+        //    }
+        //}
         #endregion
 
         #region Context menu.

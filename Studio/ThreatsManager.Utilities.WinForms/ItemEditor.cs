@@ -1328,6 +1328,8 @@ namespace ThreatsManager.Utilities.WinForms
 
             var section = AddSection("Threat Model");
             section.SuspendLayout();
+            AddSingleLineLabel(section, "Version", model.CurrentVersion?.VersionId ?? "<not defined>", 50);
+            AddSingleLineLabel(section, "Version Author", model.CurrentVersion?.VersionAuthor ?? "<not defined>", 50);
             AddSingleLineText(section, "Owner", model.Owner, ChangeOwner, null, _readonly);
             var contribList = AddList(section, "Contributors", model.Contributors, _readonly);
             contribList.Tag = new Actions()

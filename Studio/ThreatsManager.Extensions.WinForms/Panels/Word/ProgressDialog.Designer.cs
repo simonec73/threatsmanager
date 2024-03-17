@@ -35,11 +35,12 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(15, 11);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(164, 13);
+            this.label1.Size = new System.Drawing.Size(290, 20);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Export Word Report in progress...";
+            this.label1.Text = "Export Word Report(s) is in progress...";
             // 
             // _progress
             // 
@@ -49,23 +50,25 @@
             // 
             // 
             this._progress.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._progress.Location = new System.Drawing.Point(15, 36);
+            this._progress.Location = new System.Drawing.Point(19, 45);
+            this._progress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._progress.Name = "_progress";
-            this._progress.Size = new System.Drawing.Size(428, 23);
+            this._progress.Size = new System.Drawing.Size(535, 29);
             this._progress.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._progress.TabIndex = 1;
             this._progress.Text = "progressBarX1";
             // 
             // ProgressDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(455, 71);
+            this.ClientSize = new System.Drawing.Size(569, 89);
             this.ControlBox = false;
             this.Controls.Add(this._progress);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProgressDialog";

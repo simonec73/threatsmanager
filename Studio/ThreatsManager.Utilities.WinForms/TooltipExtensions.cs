@@ -80,7 +80,15 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 footer = builder.ToString();
             }
-            return new SuperTooltipInfo($"[{model.GetIdentityTypeInitial(identity)}] {identity.Name}", 
+
+            string start = null;
+            var initial = model.GetIdentityTypeInitial(identity);
+            if (!string.IsNullOrWhiteSpace(initial))
+            {
+                start = $"[{initial}] ";
+            }
+
+            return new SuperTooltipInfo($"{start}{identity.Name}", 
                 footer, body, identity.GetImage(ImageSize.Big), null, eTooltipColor.Office2003);
         }
 

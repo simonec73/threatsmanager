@@ -393,6 +393,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                 });
 
                 var mitigations = threatType.Mitigations?
+                    .Where(x => x.Mitigation != null)
                     .OrderBy(x => x.Mitigation.Name)
                     .ToArray();
 

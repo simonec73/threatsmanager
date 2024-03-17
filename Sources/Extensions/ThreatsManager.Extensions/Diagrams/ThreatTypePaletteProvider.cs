@@ -22,15 +22,15 @@ namespace ThreatsManager.Extensions.Diagrams
             {
                 result = model?.ThreatTypes?
                     .OrderBy(x => x.Name)
-                    .Select(x => new ThreatTypePaletteItem(x.Name)
+                    .Select(x => new ThreatTypePaletteItem(x.Name, x.Description)
                     {
                         Tag = x
                     });
             }
             else
             {
-                result = model?.SearchThreatTypes(filter)
-                    .Select(x => new ThreatTypePaletteItem(x.Name)
+                result = model?.SearchThreatTypes(filter)?
+                    .Select(x => new ThreatTypePaletteItem(x.Name, x.Description)
                     {
                         Tag = x
                     });

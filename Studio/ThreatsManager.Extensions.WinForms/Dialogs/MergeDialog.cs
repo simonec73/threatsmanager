@@ -2340,6 +2340,14 @@ namespace ThreatsManager.Extensions.Dialogs
             {
                 entityTemplate.Clone(_model);
             }
+            else if (source is IFlowTemplate flowTemplate)
+            {
+                flowTemplate.Clone(_model);
+            }
+            else if (source is ITrustBoundaryTemplate trustBoundaryTemplate)
+            {
+                trustBoundaryTemplate.Clone(_model);
+            }
             else if (source is IPropertySchema propertySchema)
             {
                 propertySchema.Clone(_model);
@@ -2387,6 +2395,14 @@ namespace ThreatsManager.Extensions.Dialogs
             else if (target is IEntityTemplate entityTemplate)
             {
                 _model.RemoveEntityTemplate(entityTemplate.Id);
+            }
+            else if (target is IFlowTemplate flowTemplate)
+            {
+                _model.RemoveFlowTemplate(flowTemplate.Id);
+            }
+            else if (target is ITrustBoundaryTemplate trustBoundaryTemplate)
+            {
+                _model.RemoveTrustBoundaryTemplate(trustBoundaryTemplate.Id);
             }
             else if (target is IPropertySchema propertySchema)
             {
@@ -2484,6 +2500,17 @@ namespace ThreatsManager.Extensions.Dialogs
                 if (sourceET.EntityType != targetET.EntityType)
                     targetET.EntityType = sourceET.EntityType;
             }
+            else if (source is IFlowTemplate sourceFT && target is IFlowTemplate targetFT)
+            {
+                ApplyIdentity(sourceFT, targetFT);
+                targetFT.FlowType = sourceFT.FlowType;
+                ApplyProperties(sourceFT, targetFT);
+            }
+            else if (source is ITrustBoundaryTemplate sourceTBT && target is ITrustBoundaryTemplate targetTBT)
+            {
+                ApplyIdentity(sourceTBT, targetTBT);
+                ApplyProperties(sourceTBT, targetTBT);
+            }
             else if (source is IPropertySchema sourcePS && target is IPropertySchema targetPS)
             {
                 ApplyPropertySchemas(sourcePS, targetPS);
@@ -2517,6 +2544,9 @@ namespace ThreatsManager.Extensions.Dialogs
                 if (sourceS.Visible != targetS.Visible)
                     targetS.Visible = sourceS.Visible;
             }
+
+            if (target is ISourceInfo targetSI && source is IThreatModelChild child)
+                targetSI.SetSourceInfo(child.Model);
         }
 
         private void ApplyIdentity([NotNull] IIdentity source, [NotNull] IIdentity target)

@@ -18,6 +18,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private int _iconSize;
         private int _iconCenterSize;
         private int _markerSize;
+        private int _zoomFactor;
         private ImageSize _imageSize;
 
         public Form PanelContainer { get; set; }
@@ -32,21 +33,24 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (_diagram != null)
             {
-                _diagram.Model.ChildCreated += OnModelChildCreated;
-                _diagram.Model.ChildRemoved += OnModelChildRemoved;
-                _diagram.LinkAdded += OnLinkAdded;
-                _diagram.EntityShapeAdded += OnEntityShapeAdded;
-                _diagram.GroupShapeAdded += OnGroupShapeAdded;
+                using (var scope = UndoRedoManager.OpenScope("Set Diagram in ModelPanel"))
+                {
+                    _diagram.Model.ChildCreated += OnModelChildCreated;
+                    _diagram.Model.ChildRemoved += OnModelChildRemoved;
+                    _diagram.LinkAdded += OnLinkAdded;
+                    _diagram.EntityShapeAdded += OnEntityShapeAdded;
+                    _diagram.GroupShapeAdded += OnGroupShapeAdded;
 
-                var dpi = GetDiagramDpi(diagram);
-                var factor = Dpi.Factor.Height / dpi;
+                    var dpi = GetDiagramDpi(diagram);
+                    var factor = Dpi.Factor.Height / dpi;
 
-                _graph.Initialize(_diagram);
+                    _graph.Initialize(_diagram);
 
-                SetDiagram(factor);
+                    SetDiagram(factor);
 
-                AddPalettes();
-                ConfigurePanelItemContextMenu();
+                    AddPalettes();
+                    ConfigurePanelItemContextMenu();
+                }
             }
         }
 
@@ -54,49 +58,53 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             _loading = true;
 
-            var configuration = new DiagramConfigurationManager(_diagram.Model);
-            _iconSize = configuration.DiagramIconSize;
-            _iconCenterSize = configuration.DiagramIconCenterSize;
-            _markerSize = configuration.DiagramMarkerSize;
-            switch (_iconSize)
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
             {
-                case 32:
-                    _imageSize = ImageSize.Medium;
-                    break;
-                case 64:
-                case 96:
-                case 128:
-                case 256:
-                    _imageSize = ImageSize.Big;
-                    break;
-                default:
-                    if (Dpi.Factor.Height >= 8)
-                    {
-                        configuration.DiagramIconSize = 256;
-                        _imageSize = ImageSize.Big;
-                    }
-                    else if (Dpi.Factor.Height >= 4)
-                    {
-                        configuration.DiagramIconSize = 128;
-                        _imageSize = ImageSize.Big;
-                    }
-                    else if (Dpi.Factor.Height >= 3)
-                    {
-                        configuration.DiagramIconSize = 96;
-                        _imageSize = ImageSize.Big;
-                    }
-                    else if (Dpi.Factor.Height >= 2)
-                    {
-                        configuration.DiagramIconSize = 64;
-                        _imageSize = ImageSize.Big;
-                    }
-                    else
-                    {
-                        configuration.DiagramIconSize = 32;
+                var configuration = new DiagramConfigurationManager(_diagram.Model);
+                _iconSize = configuration.DiagramIconSize;
+                _iconCenterSize = configuration.DiagramIconCenterSize;
+                _markerSize = configuration.DiagramMarkerSize;
+                _zoomFactor = configuration.DiagramZoomFactor;
+                switch (_iconSize)
+                {
+                    case 32:
                         _imageSize = ImageSize.Medium;
-                    }
-                    configuration.Apply();
-                    break;
+                        break;
+                    case 64:
+                    case 96:
+                    case 128:
+                    case 256:
+                        _imageSize = ImageSize.Big;
+                        break;
+                    default:
+                        if (Dpi.Factor.Height >= 8)
+                        {
+                            configuration.DiagramIconSize = 256;
+                            _imageSize = ImageSize.Big;
+                        }
+                        else if (Dpi.Factor.Height >= 4)
+                        {
+                            configuration.DiagramIconSize = 128;
+                            _imageSize = ImageSize.Big;
+                        }
+                        else if (Dpi.Factor.Height >= 3)
+                        {
+                            configuration.DiagramIconSize = 96;
+                            _imageSize = ImageSize.Big;
+                        }
+                        else if (Dpi.Factor.Height >= 2)
+                        {
+                            configuration.DiagramIconSize = 64;
+                            _imageSize = ImageSize.Big;
+                        }
+                        else
+                        {
+                            configuration.DiagramIconSize = 32;
+                            _imageSize = ImageSize.Medium;
+                        }
+                        configuration.Apply();
+                        break;
+                }
             }
 
             LoadStandardPalette();
@@ -116,7 +124,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                         doc.Clear();
 
-                        _graph.Zoom(((float)configuration.DiagramZoomFactor) / 100f);
+                        _graph.Zoom(((float)_zoomFactor) / 100f);
 
                         _entities.Clear();
                         _groups.Clear();
@@ -183,6 +191,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         _loading = false;
                         doc.FinishTransaction($"Set Diagram {_diagram.Name}");
+                        _graph.Refresh();
                     }
                 }
             }
@@ -211,7 +220,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void SetDiagramDpi([NotNull] IDiagram diagram)
         {
-            diagram.Dpi = (int) (Dpi.Factor.Height * 100);
+            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
+                diagram.Dpi = (int) (Dpi.Factor.Height * 100);
         }
 
         private void OnModelChildCreated(IIdentity identity)

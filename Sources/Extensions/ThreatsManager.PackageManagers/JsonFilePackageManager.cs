@@ -55,9 +55,14 @@ namespace ThreatsManager.PackageManagers
             bool result = false;
             newLocation = null;
 
-            if (model is IThreatModel tm)
+            if (model != null)
             {
-                var tmSerialized = ThreatModelManager.Serialize(tm);
+                using (var scope = UndoRedoManager.OpenScope("Update Version"))
+                {
+                    model.AddVersion();
+                    scope?.Complete();
+                }
+                var tmSerialized = ThreatModelManager.Serialize(model);
 
                 newLocation = autoAddDateTime
                     ? Path.Combine(Path.GetDirectoryName(location),

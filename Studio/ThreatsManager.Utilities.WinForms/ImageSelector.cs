@@ -287,84 +287,87 @@ namespace ThreatsManager.Utilities.WinForms
 
             var bitmap = svg.Draw(0, referenceHeight);
 
-            int fullHeight = bitmap.Height;
-            int fullWidth = bitmap.Width;
-
-            int? leftEmpty = null;
-            int? rightEmpty = null;
-            int? topEmpty = null;
-            int? bottomEmpty = null;
-
-            for (int y = 0; y < fullHeight; y++)
+            if (bitmap != null)
             {
-                for (int x = 0; x < fullWidth; x++)
+                int fullHeight = bitmap.Height;
+                int fullWidth = bitmap.Width;
+
+                int? leftEmpty = null;
+                int? rightEmpty = null;
+                int? topEmpty = null;
+                int? bottomEmpty = null;
+
+                for (int y = 0; y < fullHeight; y++)
                 {
-                    var color = bitmap.GetPixel(x, y);
-                    if (color != Color.White && !color.A.Equals(0))
+                    for (int x = 0; x < fullWidth; x++)
                     {
-                        if (!leftEmpty.HasValue || leftEmpty.Value > x)
-                            leftEmpty = x;
-                        if (!rightEmpty.HasValue || rightEmpty.Value < x)
-                            rightEmpty = x;
-                        if (!topEmpty.HasValue || topEmpty.Value > y)
-                            topEmpty = y;
-                        if (!bottomEmpty.HasValue || bottomEmpty.Value < y)
-                            bottomEmpty = y;
-                    }
-                }
-            }
-
-            if (leftEmpty.HasValue && rightEmpty.HasValue && topEmpty.HasValue && bottomEmpty.HasValue)
-            {
-                if (topEmpty.Value > pixelMargin && bottomEmpty.Value < fullHeight - pixelMargin)
-                {
-                    top = topEmpty.Value - pixelMargin;
-                    bottom = fullHeight - bottomEmpty.Value - pixelMargin;
-                }
-                else
-                {
-                    top = topEmpty.Value;
-                    bottom = fullHeight - bottomEmpty.Value;
-                }
-
-                if (leftEmpty.Value > pixelMargin && rightEmpty.Value < fullWidth - pixelMargin)
-                {
-                    left = leftEmpty.Value - pixelMargin;
-                    right = fullWidth - rightEmpty.Value - pixelMargin;
-                }
-                else
-                {
-                    left = leftEmpty.Value;
-                    right = fullWidth - rightEmpty.Value;
-                }
-
-                var netHeight = fullHeight - bottom - top + 1;
-                var netWidth = fullWidth - right - left + 1;
-
-                if (netHeight > netWidth)
-                {
-                    var deltaWidth = netHeight - netWidth;
-
-                    if (netWidth + deltaWidth <= fullWidth)
-                    {
-                        // Expand Width to square.
-                        left = left - (deltaWidth / 2);
-                        right = right - (deltaWidth / 2);
-                    }
-                }
-                else if (netHeight < netWidth)
-                {
-                    var deltaHeight = netWidth - netHeight;
-
-                    if (netHeight + deltaHeight <= fullHeight)
-                    {
-                        // Expand Height to square.
-                        top = top - (deltaHeight / 2);
-                        bottom = bottom - (deltaHeight / 2);
+                        var color = bitmap.GetPixel(x, y);
+                        if (color != Color.White && !color.A.Equals(0))
+                        {
+                            if (!leftEmpty.HasValue || leftEmpty.Value > x)
+                                leftEmpty = x;
+                            if (!rightEmpty.HasValue || rightEmpty.Value < x)
+                                rightEmpty = x;
+                            if (!topEmpty.HasValue || topEmpty.Value > y)
+                                topEmpty = y;
+                            if (!bottomEmpty.HasValue || bottomEmpty.Value < y)
+                                bottomEmpty = y;
+                        }
                     }
                 }
 
-                result = true;
+                if (leftEmpty.HasValue && rightEmpty.HasValue && topEmpty.HasValue && bottomEmpty.HasValue)
+                {
+                    if (topEmpty.Value > pixelMargin && bottomEmpty.Value < fullHeight - pixelMargin)
+                    {
+                        top = topEmpty.Value - pixelMargin;
+                        bottom = fullHeight - bottomEmpty.Value - pixelMargin;
+                    }
+                    else
+                    {
+                        top = topEmpty.Value;
+                        bottom = fullHeight - bottomEmpty.Value;
+                    }
+
+                    if (leftEmpty.Value > pixelMargin && rightEmpty.Value < fullWidth - pixelMargin)
+                    {
+                        left = leftEmpty.Value - pixelMargin;
+                        right = fullWidth - rightEmpty.Value - pixelMargin;
+                    }
+                    else
+                    {
+                        left = leftEmpty.Value;
+                        right = fullWidth - rightEmpty.Value;
+                    }
+
+                    var netHeight = fullHeight - bottom - top + 1;
+                    var netWidth = fullWidth - right - left + 1;
+
+                    if (netHeight > netWidth)
+                    {
+                        var deltaWidth = netHeight - netWidth;
+
+                        if (netWidth + deltaWidth <= fullWidth)
+                        {
+                            // Expand Width to square.
+                            left = left - (deltaWidth / 2);
+                            right = right - (deltaWidth / 2);
+                        }
+                    }
+                    else if (netHeight < netWidth)
+                    {
+                        var deltaHeight = netWidth - netHeight;
+
+                        if (netHeight + deltaHeight <= fullHeight)
+                        {
+                            // Expand Height to square.
+                            top = top - (deltaHeight / 2);
+                            bottom = bottom - (deltaHeight / 2);
+                        }
+                    }
+
+                    result = true;
+                }
             }
 
             return result;

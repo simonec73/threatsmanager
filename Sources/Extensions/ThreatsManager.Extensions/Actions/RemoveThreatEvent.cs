@@ -45,10 +45,10 @@ namespace ThreatsManager.Extensions.Actions
 
         public bool Execute([NotNull] IIdentity identity)
         {
-            if (identity is IThreatEvent threatEvent)
+            if (identity is IThreatEvent threatEvent && threatEvent.Parent is IIdentity parent)
             {
                 Ask?.Invoke(this, threatEvent, "Remove Threat Event",
-                    $"You are about to remove Threat Event '{threatEvent.Name}' associated to '{threatEvent.Parent.Name}'. Are you sure?",
+                    $"You are about to remove Threat Event '{threatEvent.Name}' associated to '{parent.Name}'. Are you sure?",
                     false, RequestOptions.YesNo);
             }
 

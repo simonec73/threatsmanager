@@ -12,6 +12,8 @@ namespace ThreatsManager.Extensions.Initializers
         {
             KnownTypesBinder.AddKnownType(typeof(ResidualRiskEstimatorConfiguration));
             KnownTypesBinder.AddKnownType(typeof(ResidualRiskEstimatorParameter));
+            KnownTypesBinder.AddKnownType(typeof(WordReportDefinition));
+            KnownTypesBinder.AddKnownType(typeof(WordReportDefinitions));
         }
     }
 }

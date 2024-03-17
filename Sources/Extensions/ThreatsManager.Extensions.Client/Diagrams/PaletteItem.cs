@@ -1,10 +1,4 @@
-﻿using PostSharp.Patterns.Contracts;
-using System.ComponentModel;
-using System.Drawing;
-using System.Xml.Linq;
-using ThreatsManager.Interfaces.ObjectModel.Entities;
-using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
-using ThreatsManager.Utilities;
+﻿using System.Drawing;
 
 namespace ThreatsManager.Extensions.Diagrams
 {
@@ -76,6 +70,11 @@ namespace ThreatsManager.Extensions.Diagrams
         /// Tag associated with the palette item.
         /// </summary>
         public object Tag { get; set; }
+
+        /// <summary>
+        /// Tooltip to be shown with the object.
+        /// </summary>
+        public string Tooltip { get; set; }
 
         /// <summary>
         /// Apply the item to a target.

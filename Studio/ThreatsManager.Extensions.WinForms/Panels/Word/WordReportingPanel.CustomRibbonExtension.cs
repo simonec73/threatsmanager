@@ -10,6 +10,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Icons;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
+using ThreatsManager.Extensions.Schemas;
 
 namespace ThreatsManager.Extensions.Panels.Word
 {
@@ -18,6 +19,8 @@ namespace ThreatsManager.Extensions.Panels.Word
     {
         private string _lastDocument;
         private ProgressDialog _progress;
+        private int _index;
+        private int _count;
 
         public event Action<string, bool> ChangeCustomActionStatus;
 
@@ -31,7 +34,10 @@ namespace ThreatsManager.Extensions.Panels.Word
                 {
                     new CommandsBarDefinition("Export", "Export", new IActionDefinition[]
                     {
-                        new ActionDefinition(Id, "Full", "Generate Document",
+                        new ActionDefinition(Id, "GenAll", "Generate All Documents",
+                            Properties.Resources.docx_big,
+                            Properties.Resources.docx),
+                        new ActionDefinition(Id, "GenCurrent", "Generate Current Document",
                             Properties.Resources.docx_big,
                             Properties.Resources.docx),
                     }),
@@ -64,9 +70,15 @@ namespace ThreatsManager.Extensions.Panels.Word
             {
                 switch (action.Name)
                 {
-                    case "Full":
-                        if (SaveFull())
-                            text = "Document Generation";
+                    case "GenAll":
+                        if (GenerateAll())
+                            text = "All Documents Generation";
+                        break;
+                    case "GenCurrent":
+                        _index = 0;
+                        _count = 1;
+                        if (_currentRow?.Tag is WordReportDefinition definition && Generate(definition))
+                            text = $"'{definition.Name}' Document Generation";
                         break;
                     case "Open":
                         if (!string.IsNullOrWhiteSpace(_lastDocument) && File.Exists(_lastDocument) &&
@@ -77,23 +89,7 @@ namespace ThreatsManager.Extensions.Panels.Word
                         }
                         break;
                     case "Refresh":
-                        _docStructure.PrimaryGrid.Rows.Clear();
-                        if (!string.IsNullOrWhiteSpace(_wordFile.Text))
-                        {
-                            var file = GetDocumentPath(_model, _wordFile.Text);
-                            if (File.Exists(file))
-                            {
-                                LoadDocStructure(file);
-                            }
-                            else
-                            {
-                                ShowWarning?.Invoke("The Reference Word File does not exist.");
-                            }
-                        }
-                        else
-                        {
-                            ShowWarning?.Invoke($"No Reference Word file has been selected.");
-                        }
+                        RefreshThreatModel();
                         break;
                 }
 
@@ -110,38 +106,73 @@ namespace ThreatsManager.Extensions.Panels.Word
         }
 
         #region Full Save.
-        private bool SaveFull()
+        private bool GenerateAll()
+        {
+            bool result = false;
+
+            var definitions = ReportDefinitions?.ToArray();
+            if (definitions?.Any() ?? false)
+            {
+                _index = 0;
+                _count = definitions.Length;
+                string name = null;
+                try
+                {
+                    foreach (var definition in definitions)
+                    {
+                        name = definition.Name;
+                        Generate(definition);
+                        _index++;
+                        ShowMessage?.Invoke($"Generated report '{name}'.");
+                    }
+                    result = true;
+                }
+                catch (Exception exc)
+                {
+                    ShowWarning?.Invoke($"Generation of report '{name}' failed with error '{exc.Message}'.");
+                }
+            }
+
+            return result;
+        }
+
+        private bool Generate([NotNull] WordReportDefinition definition)
         {
             var result = false;
 
-            if (!string.IsNullOrWhiteSpace(_wordFile.Text))
+            var fileName = definition.Path;
+            if (!string.IsNullOrWhiteSpace(fileName))
             {
-                var originalPath = GetDocumentPath(_model, _wordFile.Text);
+                var originalPath = GetDocumentPath(_model, fileName);
                 if (File.Exists(originalPath))
                 {
-                    var fileName = Path.Combine(Path.GetDirectoryName(originalPath),
+                    var newFileName = Path.Combine(Path.GetDirectoryName(originalPath),
                         $"{Path.GetFileNameWithoutExtension(originalPath)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.docx");
 
                     try
                     {
-                        ShowProgress();
+                        if (_index == 0)
+                            ShowProgress();
 
                         try
                         {
                             var ignoredDictionary = GetPlaceholdersWithIgnoredFields()?
                                 .ToDictionary(x => x, GetIgnoredFields);
-                            result = _reportGenerator.Generate(originalPath, fileName, ignoredDictionary);
+                            result = _reportGenerator.Generate(originalPath, newFileName, ignoredDictionary);
 
-                            _lastDocument = fileName;
+                            _lastDocument = newFileName;
                         }
-                        catch
+                        catch (Exception exc)
                         {
-                            ShowWarning?.Invoke("Report generation failed.");
+                            ShowWarning?.Invoke($"Generation of report '{definition.Name}' failed with error '{exc.Message}'.");
                         }
                     }
                     finally
                     {
-                        CloseProgress();
+                        if (_index + 1 == _count)
+                        {                           
+                            CloseProgress();
+                        }
                     }
                 }
                 else
@@ -166,7 +197,7 @@ namespace ThreatsManager.Extensions.Panels.Word
         private void UpdateProgress(int percentage)
         {
             if (_progress != null)
-                _progress.Value = percentage;
+                _progress.Value = (int) (((percentage / (_count * 100f) + ((float)_index) / _count)) * 100);
         }
 
         private void CloseProgress()

@@ -1,4 +1,8 @@
 ﻿using PostSharp.Patterns.Contracts;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -53,5 +57,124 @@ namespace ThreatsManager.Extensions.Schemas
 
             return result;
         }
+
+        #region Multiple documents generation support.
+        public IPropertyType GetPropertyTypeTemplates()
+        {
+            IPropertyType result = null;
+
+            using (var scope = UndoRedoManager.OpenScope("Get Templates property type"))
+            {
+                var schema = GetSchema();
+                if (schema != null)
+                {
+                    result = schema.GetPropertyType(Properties.Resources.PropertyTemplates) ??
+                             schema.AddPropertyType(Properties.Resources.PropertyTemplates, PropertyValueType.JsonSerializableObject);
+                    result.Visible = false;
+                    result.DoNotPrint = true;
+                    result.Description = Properties.Resources.PropertyTemplatesDescription;
+                    scope?.Complete();
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<WordReportDefinition> GetWordReportDefinitions()
+        {
+            IEnumerable<WordReportDefinition> result = null;
+
+            var propertyType = GetPropertyTypeTemplates();
+            if (propertyType != null)
+            {
+                var property = _model.GetProperty(propertyType);
+                if (property is IPropertyJsonSerializableObject jsonSerializableObject &&
+                    jsonSerializableObject.Value is WordReportDefinitions collection)
+                {
+                    result = collection.Reports;
+                }
+            }
+
+            return result;
+        }
+
+        public void StoreWordReportDefinition(WordReportDefinition definition)
+        {
+            var propertyType = GetPropertyTypeTemplates();
+            if (propertyType != null)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Set Word Report Definition"))
+                {
+                    if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is WordReportDefinitions collection)
+                    {
+                        collection.AddReport(definition); 
+                    }
+                    else
+                    {
+                        collection = new WordReportDefinitions();
+                        collection.AddReport(definition);
+                        var property = _model.AddProperty(propertyType, null);
+                        if (property is IPropertyJsonSerializableObject jsonObject)
+                        {
+                            jsonObject.Value = collection;
+                        }
+                    }
+
+                    scope?.Complete();
+                }
+            }
+        }
+
+        public void StoreWordReportDefinitions(IEnumerable<WordReportDefinition> definitions)
+        {
+            var propertyType = GetPropertyTypeTemplates();
+            if (propertyType != null)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Set Word Report Definitions"))
+                {
+                    if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is WordReportDefinitions collection)
+                    {
+                        collection.AddReports(definitions);
+                    }
+                    else
+                    {
+                        collection = new WordReportDefinitions();
+                        collection.AddReports(definitions);
+                        var property = _model.AddProperty(propertyType, null);
+                        if (property is IPropertyJsonSerializableObject jsonObject)
+                        {
+                            jsonObject.Value = collection;
+                        }
+                    }
+
+                    scope?.Complete();
+                }
+            }
+        }
+
+        public bool RemoveWordReportDefinition(WordReportDefinition definition)
+        {
+            bool result = false;
+
+            var propertyType = GetPropertyTypeTemplates();
+            if (propertyType != null)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Remove Word Report Definition"))
+                {
+                    if (_model.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is WordReportDefinitions collection)
+                    {
+                        result = collection.RemoveReport(definition);
+                    }
+
+                    scope?.Complete();
+                }
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

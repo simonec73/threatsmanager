@@ -453,9 +453,16 @@ namespace ThreatsManager.Utilities
 
         private static void SaveGlobalConfiguration([Required] string extensionId, [Required] string folder, ExtensionConfigurationData config)
         {
-            if (!Directory.Exists(folder))
+            try
             {
-                Directory.CreateDirectory(folder);
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                throw new UnauthorizedAccessException($"Folder '{folder}' cannot be created. Access Denied.");
             }
 
             var pathName = Path.Combine(folder, $"{extensionId}.tmg");
@@ -470,22 +477,24 @@ namespace ThreatsManager.Utilities
                     StringBuilder sb = new StringBuilder();
                     StringWriter sw = new StringWriter(sb);
 
-                    using(JsonWriter jtw = new JsonTextWriter(sw))
+                    using (JsonWriter jtw = new JsonTextWriter(sw))
                     {
-                        var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto,
+                        var serializer = new JsonSerializer
+                        {
+                            TypeNameHandling = TypeNameHandling.Auto,
                             DefaultValueHandling = DefaultValueHandling.Ignore,
-                            Formatting = Formatting.Indented};
+                            Formatting = Formatting.Indented
+                        };
                         serializer.Serialize(jtw, config);
                     }
 
                     var serialization = Encoding.Unicode.GetBytes(sb.ToString());
-                    
+
                     writer.Write((byte)0xFF);
                     writer.Write((byte)0xFE);
                     writer.Write(serialization);
                 }
             }
-
         }
         #endregion
 

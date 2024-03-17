@@ -775,10 +775,10 @@ namespace ThreatsManager
                 {
                     var button = new ButtonItem()
                     {
-                        Text = Path.GetFileNameWithoutExtension(document.Path),
+                        Text = Path.GetFileNameWithoutExtension(document.Path).Replace("&", "&&"),
                         AutoExpand = false,
                         Tag = document,
-                        Tooltip = document.Path
+                        Tooltip = document.Path.Replace("&", "&&")
                     };
                     button.Click += KnownDocumentClick;
                     _recentDocuments.SubItems.Add(button);
@@ -869,9 +869,9 @@ namespace ThreatsManager
 
                 var button = new ButtonItem()
                 {
-                    Text = Path.GetFileNameWithoutExtension(location),
+                    Text = Path.GetFileNameWithoutExtension(location).Replace("&", "&&"),
                     Tag = document,
-                    Tooltip = location
+                    Tooltip = location.Replace("&", "&&")
                 };
                 button.Click += KnownDocumentClick;
                 _recentDocuments.SubItems.Add(button);

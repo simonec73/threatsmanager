@@ -13,7 +13,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Configuration
 {
-    public partial class ConfigurationPanel : UserControl, IConfigurationPanel<Form>
+    public partial class ConfigurationPanel : UserControl, IConfigurationPanel<Form>, IDesktopAlertAwareExtension
     {
         private ExtensionConfigurationManager _configuration;
 
@@ -23,6 +23,10 @@ namespace ThreatsManager.Extensions.Panels.Configuration
         }
 
         private readonly Guid _id = Guid.NewGuid();
+
+        public event Action<string> ShowMessage;
+        public event Action<string> ShowWarning;
+
         public Guid Id => _id;
 
         public Form PanelContainer { get; set; }
@@ -37,7 +41,14 @@ namespace ThreatsManager.Extensions.Panels.Configuration
 
         public void Apply()
         {
-            _configuration.Apply();
+            try
+            {
+                _configuration.Apply();
+            }
+            catch (Exception ex)
+            {
+                ShowWarning?.Invoke(ex.Message);
+            }
         }
 
         public string Label => "Main Extensions";

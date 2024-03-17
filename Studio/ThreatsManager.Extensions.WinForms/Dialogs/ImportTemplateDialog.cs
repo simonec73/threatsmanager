@@ -168,7 +168,7 @@ namespace ThreatsManager.Extensions.Dialogs
             var kbManagers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?.ToArray();
             var kbManager = kbManagers?
                 .FirstOrDefault(x => x.CanHandle(LocationType.FileSystem, fileName));
-            _template = kbManager.Load(LocationType.FileSystem, fileName, false);
+            _template = kbManager?.Load(LocationType.FileSystem, fileName, false);
 
             if (_template != null)
             {

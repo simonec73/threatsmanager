@@ -113,9 +113,9 @@
     <Reference Include="ThreatsManager.Extensions.Client">
       <HintPath>..\..\Build\repo\net481\ThreatsManager.Extensions.Client.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Icons, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+    <Reference Include="ThreatsManager.Icons, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\..\Build\repo\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Interfaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -210,7 +210,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\arrow_from.png" />
   </ItemGroup>
