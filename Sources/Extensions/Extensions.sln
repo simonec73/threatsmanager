@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30413.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.AutoThreatGeneration", "ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj", "{C96D95AE-1081-4BD8-9004-0D34574FDC9B}"
 EndProject
@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Extensions.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Mitre", "ThreatsManager.Mitre\ThreatsManager.Mitre.csproj", "{07906AC4-4A74-4778-8D3E-103A146A6656}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.QuantitativeRisk", "ThreatsManager.QuantitativeRisk\ThreatsManager.QuantitativeRisk.csproj", "{4E741278-7437-4A5E-850B-BB08AD5569A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.QuantitativeRisk", "ThreatsManager.QuantitativeRisk\ThreatsManager.QuantitativeRisk.csproj", "{4E741278-7437-4A5E-850B-BB08AD5569A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.AIAssistant", "ThreatsManager.AIAssistant\ThreatsManager.AIAssistant.csproj", "{7E09402D-889A-4332-9A66-DA96DFE092D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E741278-7437-4A5E-850B-BB08AD5569A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
