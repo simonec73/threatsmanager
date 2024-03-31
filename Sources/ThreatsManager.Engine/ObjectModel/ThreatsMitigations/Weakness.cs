@@ -31,7 +31,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [SourceInfoAspect]
     [Undoable]
     [TypeLabel("Weakness")]
-    public partial class Weakness : IWeakness, IInitializableObject
+    public partial class Weakness : IWeakness, IInitializableObject, IForceSetId
     {
         public Weakness()
         {
@@ -138,6 +138,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Weakness;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("severity")]
         private int _severityId { get; set; }

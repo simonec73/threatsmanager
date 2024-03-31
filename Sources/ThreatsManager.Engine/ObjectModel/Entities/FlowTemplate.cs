@@ -30,7 +30,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Flow Template")]
-    public class FlowTemplate : IFlowTemplate, IInitializableObject
+    public class FlowTemplate : IFlowTemplate, IInitializableObject, IForceSetId
     {
         public FlowTemplate()
         {
@@ -135,6 +135,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.FlowTemplate;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("flowType")]
         [JsonConverter(typeof(StringEnumConverter))]

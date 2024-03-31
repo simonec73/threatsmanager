@@ -31,7 +31,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Threat Type")]
-    public partial class ThreatType : IThreatType, IInitializableObject
+    public partial class ThreatType : IThreatType, IInitializableObject, IForceSetId
     {
         public ThreatType()
         {
@@ -138,6 +138,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatType;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("severity")]
         private int _severityId { get; set; }

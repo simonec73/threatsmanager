@@ -32,7 +32,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Entity Template")]
-    public class EntityTemplate : IEntityTemplate, IInitializableObject
+    public class EntityTemplate : IEntityTemplate, IInitializableObject, IForceSetId
     {
         public EntityTemplate()
         {
@@ -137,6 +137,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.EntityTemplate;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         public override string ToString()
         {

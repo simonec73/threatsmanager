@@ -32,7 +32,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Undoable]
     [TypeLabel("Trust Boundary")]
     [TypeInitial("T")]
-    public class TrustBoundary : ITrustBoundary, IInitializableObject
+    public class TrustBoundary : ITrustBoundary, IInitializableObject, IForceSetId
     {
         public TrustBoundary()
         {
@@ -177,6 +177,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.TrustBoundary;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("template")]
         internal Guid _templateId { get; set; }

@@ -33,7 +33,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Scenario")]
-    public class ThreatEventScenario : IThreatEventScenario, IInitializableObject
+    public class ThreatEventScenario : IThreatEventScenario, IInitializableObject, IForceSetId
     {
         public ThreatEventScenario()
         {
@@ -154,6 +154,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatEventScenario;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [NotRecorded]
         [JsonProperty("severity")]

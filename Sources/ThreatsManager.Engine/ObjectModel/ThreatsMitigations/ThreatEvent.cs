@@ -37,7 +37,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Threat Event")]
-    public class ThreatEvent : IThreatEvent, IInitializableObject
+    public class ThreatEvent : IThreatEvent, IInitializableObject, IForceSetId
     {
         public ThreatEvent()
         {
@@ -252,6 +252,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
         private Guid _id { get; set; }
 
         public Guid Id => _id;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("name")] 
         private string _name { get; set; }

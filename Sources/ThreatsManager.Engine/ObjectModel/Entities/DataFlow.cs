@@ -35,7 +35,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Undoable]
     [TypeLabel("Flow")]
     [TypeInitial("F")]
-    public class DataFlow : IDataFlow, IInitializableObject
+    public class DataFlow : IDataFlow, IInitializableObject, IForceSetId
     {
         public DataFlow()
         {
@@ -234,6 +234,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
         public IEntity Target => Model.GetEntity(_targetId);
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("flowType")]
         [JsonConverter(typeof(StringEnumConverter))]

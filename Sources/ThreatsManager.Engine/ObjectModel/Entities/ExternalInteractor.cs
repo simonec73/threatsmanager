@@ -38,7 +38,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Undoable]
     [TypeLabel("External Interactor")]
     [TypeInitial("E")]
-    public class ExternalInteractor : IExternalInteractor, IInitializableObject
+    public class ExternalInteractor : IExternalInteractor, IInitializableObject, IForceSetId
     {
         public ExternalInteractor()
         {
@@ -222,6 +222,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ExternalInteractor;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         public override string ToString()
         {
