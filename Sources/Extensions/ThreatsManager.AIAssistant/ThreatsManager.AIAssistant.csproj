@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.9" />
-    <PackageReference Include="PostSharp" Version="2024.0.5" />
+    <PackageReference Include="PostSharp" Version="2024.0.6" />
   </ItemGroup>
 
   <ItemGroup>

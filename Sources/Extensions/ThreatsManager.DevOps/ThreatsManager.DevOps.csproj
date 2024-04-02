@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.205.1" />
-    <PackageReference Include="PostSharp" Version="2024.0.5" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.225.1" />
+    <PackageReference Include="PostSharp" Version="2024.0.6" />
   </ItemGroup>
 
   <ItemGroup>
