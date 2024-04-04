@@ -30,7 +30,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
-    public class Mitigation : IMitigation, IInitializableObject
+    public class Mitigation : IMitigation, IInitializableObject, IForceSetId
     {
         public Mitigation()
         {
@@ -137,6 +137,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Mitigation;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("controlType")]
         [JsonConverter(typeof(StringEnumConverter))]

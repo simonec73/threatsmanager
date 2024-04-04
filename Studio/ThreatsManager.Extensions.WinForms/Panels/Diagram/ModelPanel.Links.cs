@@ -15,7 +15,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 var to = GetEntity(link.DataFlow.Target);
                 if (from != null && to != null)
                 {
-                    var newLink = new GraphLink(link, dpiFactor, _markerSize)
+                    var newLink = new GraphLink(link, dpiFactor, _markerSize, _flowWrapWidth)
                     {
                         Loading = true,
                         FromPort = from.Port,

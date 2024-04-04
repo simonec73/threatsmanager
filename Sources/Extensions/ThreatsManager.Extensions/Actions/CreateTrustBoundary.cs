@@ -47,7 +47,7 @@ namespace ThreatsManager.Extensions.Actions
                 if (identity is IDiagram diagram)
                 {
                     var trustBoundary = diagram.Model?.AddGroup<ITrustBoundary>();
-                    IdentityAddingRequired?.Invoke(diagram, trustBoundary, PointF.Empty, new SizeF(600, 300));
+                    IdentityAddingRequired?.Invoke(diagram, trustBoundary, PointF.Empty, new SizeF(400, 200));
                     result = true;
                 }
                 else if (identity is IThreatModel threatModel)

@@ -29,7 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Trust Boundary Template")]
-    public class TrustBoundaryTemplate : ITrustBoundaryTemplate, IInitializableObject
+    public class TrustBoundaryTemplate : ITrustBoundaryTemplate, IInitializableObject, IForceSetId
     {
         public TrustBoundaryTemplate()
         {
@@ -134,6 +134,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.TrustBoundaryTemplate;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         public override string ToString()
         {

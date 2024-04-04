@@ -60,6 +60,19 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     RemoveEventSubscriptions(row);
             }
 
+            if (_menuScenario != null)
+                _menuScenario.MenuClicked -= OnScenarioMenuClicked;
+            if (_menuThreatEventMitigation != null)
+                _menuThreatEventMitigation.MenuClicked -= OnThreatEventMitigationMenuClicked;
+            if (_menuThreatEvents != null)
+                _menuThreatEvents.MenuClicked -= OnThreatEventMenuClicked;
+            if (_menuThreatTypes != null)
+                _menuThreatTypes.MenuClicked -= OnThreatTypeMenuClicked;
+            if (_menuVulnerability != null)
+                _menuVulnerability.MenuClicked -= OnVulnerabilityMenuClicked;
+            if (_menuVulnerabilityMitigation != null)
+                _menuVulnerabilityMitigation.MenuClicked -= OnVulnerabilityMitigationMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

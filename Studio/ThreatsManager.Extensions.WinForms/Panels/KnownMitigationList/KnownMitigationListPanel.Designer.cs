@@ -66,6 +66,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             _grid.RowActivated -= _grid_RowActivated;
             _grid.MouseClick -= _grid_MouseClick;
 
+            if (_menuMitigation != null)
+                _menuMitigation.MenuClicked -= OnMitigationMenuClicked;
+            if (_menuThreatTypeMitigation != null)
+                _menuThreatTypeMitigation.MenuClicked -= OnThreatTypeMitigationMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

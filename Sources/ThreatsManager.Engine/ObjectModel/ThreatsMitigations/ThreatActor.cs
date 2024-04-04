@@ -29,7 +29,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeLabel("Threat Actor")]
-    public class ThreatActor : IThreatActor, IInitializableObject
+    public class ThreatActor : IThreatActor, IInitializableObject, IForceSetId
     {
         public ThreatActor()
         {
@@ -145,6 +145,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.ThreatActor;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("actor")]
         [JsonConverter(typeof(StringEnumConverter))]

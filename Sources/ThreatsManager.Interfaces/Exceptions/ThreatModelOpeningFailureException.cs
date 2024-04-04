@@ -9,11 +9,19 @@ namespace ThreatsManager.Interfaces.Exceptions
     [Serializable]
     public class ThreatModelOpeningFailureException : Exception
     {
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public ThreatModelOpeningFailureException()
         {
 
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="message">Message to be shown.</param>
+        /// <param name="innerException">Inner exception.</param>
         public ThreatModelOpeningFailureException(string message, Exception innerException) : base(message, innerException)
         {
         }

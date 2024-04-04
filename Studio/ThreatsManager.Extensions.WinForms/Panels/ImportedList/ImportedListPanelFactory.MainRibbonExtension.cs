@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {
-            new ActionDefinition(Id, "CreatePanel", "Imported List", Properties.Resources.arrow_into_big,
+            new ActionDefinition(Id, "CreatePanel", "Imported\nList", Properties.Resources.arrow_into_big,
                 Properties.Resources.arrow_into)
         };
 

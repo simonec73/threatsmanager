@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
@@ -14,49 +13,32 @@ namespace ThreatsManager.Quality.Schemas
     public class CalculatedSeverityPropertySchemaManager : IInitializableObject
     {
         private readonly IThreatModel _model;
+        private readonly QualityConfigurationManager _config;
         private static string SchemaName = "Calculated Severity";
         private static string PropertyName = "CalculatedSeverity";
 
         public CalculatedSeverityPropertySchemaManager([NotNull] IThreatModel model)
         {
             _model = model;
+            _config = QualityConfigurationManager.GetInstance(model);
         }
 
         public bool IsInitialized => _model != null;
 
-        [InitializationRequired]
-        public bool IsCalculatedSeverityEnabled => _model.Schemas?
-            .Any(x => string.CompareOrdinal(x.Name, SchemaName) == 0 &&
-                      string.CompareOrdinal(x.Namespace,
-                          Properties.Resources.DefaultNamespace) == 0) ?? false;
+        public bool IsCalculatedSeverityEnabled => _config?.EnableCalculatedSeverity ?? false;
 
         [InitializationRequired]
-        public bool AddSupport()
+        public void AddSupport()
         {
-            var result = false;
-
-            if (!IsCalculatedSeverityEnabled)
-            {
-                var schema = GetSchema();
-                _model.ApplySchema(schema.Id);
-                result = true;
-            }
-
-            return result;
+            var schema = GetSchema();
+            _model.ApplySchema(schema.Id);
         }
 
         [InitializationRequired]
-        public bool RemoveSupport()
+        public void RemoveSupport()
         {
-            var result = false;
-
-            if (IsCalculatedSeverityEnabled)
-            {
-                var schema = GetSchema();
-                result = _model.RemoveSchema(schema.Id, true);
-            }
-
-            return result;
+            var schema = GetSchema();
+            _model.RemoveSchema(schema.Id, true);
         }
 
         [InitializationRequired]

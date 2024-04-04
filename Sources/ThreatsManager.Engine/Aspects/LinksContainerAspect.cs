@@ -5,7 +5,6 @@ using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Collections;
-using PostSharp.Patterns.Model;
 using PostSharp.Serialization;
 using ThreatsManager.Engine.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
@@ -137,7 +136,15 @@ namespace ThreatsManager.Engine.Aspects
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove link for Flow"))
                 {
-                    result = _links?.Get()?.Remove(link) ?? false;
+                    try
+                    {
+                        result = _links?.Get()?.Remove(link) ?? false;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        result = false;
+                    }
+
                     if (result)
                     {
                         UndoRedoManager.Detach(link);

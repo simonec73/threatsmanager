@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities.Exceptions;
 using ThreatsManager.Utilities;
 using ThreatsManager.Interfaces.Exceptions;
+using System.Linq;
 
 namespace ThreatsManager.Engine
 {
@@ -39,14 +40,12 @@ namespace ThreatsManager.Engine
         #region Initializers.
         private void ApplyInitializers()
         {
-            var extensions = Instance.Configuration.EnabledExtensions;
-
-            foreach (var id in extensions)
+            var initializers = GetExtensions<IInitializer>();
+            if (initializers?.Any() ?? false)
             {
-                var metadata = GetExtensionMetadata(id);
-                if (metadata != null)
+                foreach (var initializer in initializers)
                 {
-                    GetExtension<IInitializer>(id)?.Initialize(_model);
+                    initializer.Initialize(_model);
                 }
             }
         }

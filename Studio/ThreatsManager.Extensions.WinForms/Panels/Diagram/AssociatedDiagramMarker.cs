@@ -26,6 +26,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Deletable = false;
             Copyable = false;
             Selectable = false;
+            AutoRescales = false;
             Image = Resources.model_big;
 
             MarkerStatusTrigger.MarkerStatusUpdated += MarkerStatusTriggerOnMarkerStatusUpdated;

@@ -34,7 +34,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
     [SourceInfoAspect]
     [Recordable(AutoRecord = false)]
     [Undoable]
-    public class Diagram : IDiagram, IInitializableObject
+    public class Diagram : IDiagram, IInitializableObject, IForceSetId
     {
         public Diagram()
         {
@@ -262,6 +262,11 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Diagram;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         [JsonProperty("order")]
         public int Order { get; set; }

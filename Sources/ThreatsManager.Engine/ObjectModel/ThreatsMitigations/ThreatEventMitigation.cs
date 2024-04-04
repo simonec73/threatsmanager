@@ -33,7 +33,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     [Recordable(AutoRecord = false)]
     [Undoable]
     public class ThreatEventMitigation : IThreatEventMitigation, IInitializableObject
-    {
+    { 
         public ThreatEventMitigation()
         {
 

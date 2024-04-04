@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Threading;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
@@ -15,14 +16,15 @@ namespace ThreatsManager.Extensions.Panels.ProcessList
     {
         private ContextMenuStrip _contextMenu;
         private IEnumerable<IContextAwareAction> _actions;
+        private MenuDefinition _menu;
 
         public Scope SupportedScopes => Scope.Process;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menu = new MenuDefinition(actions, SupportedScopes);
-            _contextMenu = menu.CreateMenu();
-            menu.MenuClicked += OnMenuClicked;
+            _menu = new MenuDefinition(actions, SupportedScopes);
+            _contextMenu = _menu.CreateMenu();
+            _menu.MenuClicked += OnMenuClicked;
 
             _actions = actions?.ToArray();
 

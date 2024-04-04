@@ -174,7 +174,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         if (graphGroup?.GroupShape?.Identity is IGroup group)
                             trustBoundary.SetParent(group);
-                        var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                        var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(400, 200)));
                         if (node != null)
                         {
                             _graph.Selection.Clear();
@@ -223,7 +223,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                             var trustBoundary = tbTemplate.CreateTrustBoundary(tbTemplate.Name);
                             if (graphGroup?.GroupShape?.Identity is IGroup group)
                                 trustBoundary.SetParent(group);
-                            var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(600, 300)));
+                            var node = AddShape(_diagram.AddShape(trustBoundary, point, new SizeF(400, 200)));
                             if (node != null)
                             {
                                 _graph.Selection.Clear();
@@ -395,7 +395,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         RecurseExistingGroups(trustBoundary.Parent, parentGroup, groups);
                 }
 
-                var shape = _diagram.AddShape(trustBoundary, point, new SizeF(600, 300));
+                var shape = _diagram.AddShape(trustBoundary, point, new SizeF(400, 200));
                 if (shape != null && AddShape(shape) is GraphGroup currentGroup)
                     groups.Push(currentGroup);
 

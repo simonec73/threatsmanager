@@ -21,6 +21,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
 
     // TODO: Implementation must be completely revised!
 
+    /// <summary>
+    /// Aspect used to implement the ability to lock an object, preventing any change.
+    /// </summary>
     [PSerializable]
     public class LockableAspect : InstanceLevelAspect
     {

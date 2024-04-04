@@ -71,7 +71,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                 if (shape is IEntityShape entityShape)
                 {
-                    var node = new GraphEntity(entityShape, dpiFactor, _iconSize, _iconCenterSize, _imageSize, _markerSize);
+                    var node = new GraphEntity(entityShape, dpiFactor, _iconSize, 
+                        _iconCenterSize, _imageSize, _markerSize, _entityWrapWidth);
                     if (_actions != null)
                         node.SetContextAwareActions(_actions);
                     node.SelectedShape += OnSelectedShape;

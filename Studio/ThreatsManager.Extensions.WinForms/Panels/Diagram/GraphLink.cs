@@ -46,11 +46,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Selectable = true;
             DragsNode = false;
             Relinkable = false;
+            AutoRescales = false;
             PenWidth = 1.5f * Dpi.Factor.Width;
 
             var textControl = new GraphText(this);
             textControl.Movable = false;
             textControl.Copyable = true;
+            textControl.Wrapping = true;
             textControl.AddObserver(this);
             MidLabel = textControl;
 
@@ -71,8 +73,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             AddObserver(this);
         }
 
-        public GraphLink([NotNull] ILink link, [StrictlyPositive] float dpiFactor, [Range(8, 128)] int markerSize) : this()
+        public GraphLink([NotNull] ILink link, [StrictlyPositive] float dpiFactor, [Range(8, 128)] int markerSize,
+            [Range(100, 400)] int wrapWidth) : this()
         {
+            if (MidLabel is GraphText text)
+            {
+                text.WrappingWidth = wrapWidth;
+            }
             AssignLink(link, markerSize, dpiFactor);
         }
 

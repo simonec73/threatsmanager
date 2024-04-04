@@ -54,6 +54,11 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             _properties.OpenDiagram -= OpenDiagram;
             _properties.Item = null;
 
+            if (_menuMitigation != null)
+                _menuMitigation.MenuClicked -= OnMitigationMenuClicked;
+            if (_menuThreatEventMitigation != null)
+                _menuThreatEventMitigation.MenuClicked -= OnThreatEventMitigationMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

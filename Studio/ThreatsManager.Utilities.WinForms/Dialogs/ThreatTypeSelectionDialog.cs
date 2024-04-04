@@ -142,24 +142,27 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
         {
             if (sender is ComboBox comboBox)
             {
-                string filter = comboBox.Text;
-                comboBox.Items.Clear();
-
-                if (comboBox.Tag is IEnumerable<IThreatType> threatTypes)
+                if (comboBox.Items.Count > 0)
                 {
-                    var selected = GetFilteredItems(filter, threatTypes)?.ToArray();
-                    if (selected?.Any() ?? false)
-                    {
-                        comboBox.Items.AddRange(selected);
-                    }
-                }
+                    string filter = comboBox.Text;
+                    comboBox.Items.Clear();
 
-                comboBox.DroppedDown = true;
-                comboBox.IntegralHeight = true;
-                comboBox.SelectedIndex = -1;
-                comboBox.Text = filter;
-                comboBox.SelectionStart = filter.Length;
-                comboBox.SelectionLength = 0;
+                    if (comboBox.Tag is IEnumerable<IThreatType> threatTypes)
+                    {
+                        var selected = GetFilteredItems(filter, threatTypes)?.ToArray();
+                        if (selected?.Any() ?? false)
+                        {
+                            comboBox.Items.AddRange(selected);
+                        }
+                    }
+
+                    comboBox.DroppedDown = true;
+                    comboBox.IntegralHeight = true;
+                    comboBox.SelectedIndex = -1;
+                    comboBox.Text = filter;
+                    comboBox.SelectionStart = filter.Length;
+                    comboBox.SelectionLength = 0;
+                }
             }
         }
 

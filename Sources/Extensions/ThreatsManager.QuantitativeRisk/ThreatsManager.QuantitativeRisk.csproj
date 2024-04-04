@@ -3,15 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>net481</TargetFrameworks>
     <Description>Threats Manager Platform Quantitative Risk Extensions library.</Description>
-    <AssemblyVersion>2.1.4.0</AssemblyVersion>
+    <AssemblyVersion>2.1.5.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
-    <Copyright>Copyright © Simone Curzi, 2018-2023. All Rights Reserved.</Copyright>
+    <Copyright>Copyright © Simone Curzi, 2018-2024. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
-    <FileVersion>2.1.4.0</FileVersion>
-    <Version>2.1.4</Version>
+    <FileVersion>2.1.5.0</FileVersion>
+    <Version>2.1.5</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);NU1505</NoWarn>
@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics.Signed" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="PostSharp" Version="2024.0.5" />
+    <PackageReference Include="PostSharp" Version="2024.0.6" />
   </ItemGroup>
 
   <ItemGroup>

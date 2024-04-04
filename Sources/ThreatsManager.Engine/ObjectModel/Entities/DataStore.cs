@@ -36,7 +36,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Undoable]
     [TypeLabel("Data Store")]
     [TypeInitial("D")]
-    public class DataStore : IDataStore, IInitializableObject
+    public class DataStore : IDataStore, IInitializableObject, IForceSetId
     {
         public DataStore()
         {
@@ -220,6 +220,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.DataStore;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         public override string ToString()
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
@@ -168,7 +167,8 @@ namespace ThreatsManager.Utilities.WinForms
             bool result = false;
 
             if ((scope & (Scope.Entity | Scope.DataFlow | Scope.Group | Scope.Diagram | Scope.ItemTemplate | 
-                          Scope.Threats | Scope.Mitigation | Scope.ThreatModel | Scope.ThreatActor | Scope.PropertySchema)) != 0)
+                          Scope.Threats | Scope.Mitigation | Scope.ThreatModel | Scope.ThreatActor | 
+                          Scope.PropertySchema)) != 0)
                 result = action is IIdentityContextAwareAction;
             if (!result && (scope & Scope.Link) != 0)
                 result = action is ILinkContextAwareAction;
@@ -180,6 +180,10 @@ namespace ThreatsManager.Utilities.WinForms
                 result = action is IThreatEventMitigationContextAwareAction;
             if (!result && (scope & Scope.ThreatTypeMitigation) != 0)
                 result = action is IThreatTypeMitigationContextAwareAction;
+            if (!result && (scope & Scope.WeaknessMitigation) != 0)
+                result = action is IWeaknessMitigationContextAwareAction;
+            if (!result && (scope & Scope.VulnerabilityMitigation) != 0)
+                result = action is IVulnerabilityMitigationContextAwareAction;
 
             return result;
         }

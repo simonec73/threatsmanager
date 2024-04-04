@@ -58,7 +58,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         #region Initialization.
         public GraphEntity([NotNull] IEntityShape shape,
             [StrictlyPositive] float dpiFactor, [Range(32, 256)] int iconSize,
-            [Range(8, 248)] int iconCenterSize, ImageSize sourceSize, [Range(8, 128)] int markerSize) : base()
+            [Range(8, 248)] int iconCenterSize, ImageSize sourceSize, [Range(8, 128)] int markerSize,
+            [Range(100, 400)] int wrapWidth) : base()
         {
             _shape = shape;
             var identity = shape.Identity;
@@ -75,8 +76,12 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 //OutPort.IsValidDuplicateLinks = false;
 
                 Icon.Resizable = false;
+                Icon.AutoRescales = false;
                 Reshapable = false;
                 Copyable = false;
+                Resizable = false;
+                Label.Wrapping = true;
+                Label.WrappingWidth = wrapWidth;
 
                 _panelItemMarker = new AssociatedPanelItemMarker(entity);
                 _panelItemMarker.PanelItemClicked += OnPanelItemClicked;
@@ -283,20 +288,20 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     }
                 }
 
-                if (observed.Equals(this) && subhint == ChangedBounds)
-                {
-                    float centerX = newRect.X + (newRect.Width / 2f);
-                    float centerY = newRect.Y + (newRect.Height / 2f);
+                //if (observed.Equals(this) && subhint == ChangedBounds)
+                //{
+                //    float centerX = newRect.X + (newRect.Width / 2f);
+                //    float centerY = newRect.Y + (newRect.Height / 2f);
 
-                    if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
-                    {
-                        using (var scope = UndoRedoManager.OpenScope("Reposition Entity"))
-                        {
-                            _shape.Position = new PointF(centerX, centerY);
-                            scope?.Complete();
-                        }
-                    }
-                }
+                //    if (centerX != _shape.Position.X || centerY != _shape.Position.Y)
+                //    {
+                //        using (var scope = UndoRedoManager.OpenScope("Reposition Entity"))
+                //        {
+                //            _shape.Position = new PointF(centerX, centerY);
+                //            scope?.Complete();
+                //        }
+                //    }
+                //}
             }
         }
 

@@ -1307,11 +1307,9 @@ namespace ThreatsManager.Utilities.WinForms
         #endregion
 
         #region Property Viewer.
-        private void AddPropertyViewer([NotNull] LayoutControl container, IPropertyViewer viewer, bool readOnly)
+        private void AddPropertyViewerBlocks([NotNull] LayoutControl container, 
+            [NotNull] IEnumerable<IPropertyViewerBlock> blocks, bool readOnly)
         {
-            container.Tag = viewer;
-
-            var blocks = viewer?.Blocks?.ToArray();
             if (blocks?.Any() ?? false)
             {
                 Control control;
@@ -1452,7 +1450,13 @@ namespace ThreatsManager.Utilities.WinForms
                     layoutControl.SuspendLayout();
                     layoutControl.Controls.Clear();
                     layoutControl.RootGroup.Items.Clear();
-                    AddPropertyViewer(layoutControl, viewer, _readonly);
+
+                    var blocks = viewer.Blocks;
+                    if (blocks?.Any() ?? false)
+                    {
+                        AddPropertyViewerBlocks(layoutControl, blocks, _readonly);
+                    }
+
                     FinalizeSection(layoutControl);
                     layoutControl.ResumeLayout();
                 }

@@ -16,18 +16,20 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
         private ContextMenuStrip _mitigationMenu;
         private ContextMenuStrip _threatEventMitigationMenu;
         private IEnumerable<IContextAwareAction> _actions;
+        private MenuDefinition _menuMitigation;
+        private MenuDefinition _menuThreatEventMitigation;
 
         public Scope SupportedScopes => Scope.Mitigation | Scope.ThreatEventMitigation;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menuMitigation = new MenuDefinition(actions, Scope.Mitigation);
-            _mitigationMenu = menuMitigation.CreateMenu();
-            menuMitigation.MenuClicked += OnMitigationMenuClicked;
+            _menuMitigation = new MenuDefinition(actions, Scope.Mitigation);
+            _mitigationMenu = _menuMitigation.CreateMenu();
+            _menuMitigation.MenuClicked += OnMitigationMenuClicked;
 
-            var menuThreatEventMitigation = new MenuDefinition(actions, Scope.ThreatEventMitigation);
-            _threatEventMitigationMenu = menuThreatEventMitigation.CreateMenu();
-            menuThreatEventMitigation.MenuClicked += OnThreatEventMitigationMenuClicked;
+            _menuThreatEventMitigation = new MenuDefinition(actions, Scope.ThreatEventMitigation);
+            _threatEventMitigationMenu = _menuThreatEventMitigation.CreateMenu();
+            _menuThreatEventMitigation.MenuClicked += OnThreatEventMitigationMenuClicked;
 
             _actions = actions?.ToArray();
 

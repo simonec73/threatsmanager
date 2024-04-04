@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -83,6 +84,12 @@ namespace ThreatsManager.Dialogs
                         _fileName.Text = dialog.FileName;
                         Certificate = new CertificateConfig(certificate);
                     }
+                }
+                catch (FileLoadException exc)
+                {
+                    MessageBox.Show(
+                        $"The file cannot be loaded due to the following error: '{exc.Message}'.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (BadImageFormatException)
                 {

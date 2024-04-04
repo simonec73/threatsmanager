@@ -16,18 +16,19 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         private ContextMenuStrip _threatTypeMenu;
         private ContextMenuStrip _threatTypeMitigationMenu;
         private IEnumerable<IContextAwareAction> _actions;
-
+        private MenuDefinition _menuThreatTypes;
+        private MenuDefinition _menuThreatTypeMitigation;
         public Scope SupportedScopes => Scope.ThreatType | Scope.ThreatTypeMitigation;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menuThreatTypes = new MenuDefinition(actions, Scope.ThreatType);
-            _threatTypeMenu = menuThreatTypes.CreateMenu();
-            menuThreatTypes.MenuClicked += OnThreatTypeMenuClicked;
+            _menuThreatTypes = new MenuDefinition(actions, Scope.ThreatType);
+            _threatTypeMenu = _menuThreatTypes.CreateMenu();
+            _menuThreatTypes.MenuClicked += OnThreatTypeMenuClicked;
 
-            var menuThreatTypeMitigation = new MenuDefinition(actions, Scope.ThreatTypeMitigation);
-            _threatTypeMitigationMenu = menuThreatTypeMitigation.CreateMenu();
-            menuThreatTypeMitigation.MenuClicked += OnThreatTypeMitigationMenuClicked;
+            _menuThreatTypeMitigation = new MenuDefinition(actions, Scope.ThreatTypeMitigation);
+            _threatTypeMitigationMenu = _menuThreatTypeMitigation.CreateMenu();
+            _menuThreatTypeMitigation.MenuClicked += OnThreatTypeMitigationMenuClicked;
 
             _actions = actions?.ToArray();
 

@@ -2220,32 +2220,37 @@ namespace ThreatsManager.Extensions.Dialogs
             if (MessageBox.Show("The selected merge actions are about to be performed.\nPlease confirm.",
                 "Merge", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
             {
-                if (_tabPropertySchemas.Visible)
-                    MergeGrid(_gridPropertySchemas);
-                if (_tabSeverities.Visible)
-                    MergeGrid(_gridSeverities);
-                if (_tabStrengths.Visible)
-                    MergeGrid(_gridStrengths);
-                if (_tabThreatActors.Visible)
-                    MergeGrid(_gridThreatActors);
-                if (_tabMitigations.Visible)
-                    MergeGrid(_gridMitigations);
-                if (_tabThreatTypes.Visible)
-                    MergeGrid(_gridThreatTypes);
-                if (_tabItemTemplates.Visible)
-                    MergeGrid(_gridItemTemplates);
-                if (_tabTrustBoundaries.Visible)
-                    MergeGrid(_gridTrustBoundaries);
-                if (_tabExternalInteractors.Visible)
-                    MergeGrid(_gridExternalInteractors);
-                if (_tabProcesses.Visible)
-                    MergeGrid(_gridProcesses);
-                if (_tabDataStores.Visible)
-                    MergeGrid(_gridDataStores);
-                if (_tabFlows.Visible)
-                    MergeGrid(_gridFlows);
-                if (_tabDiagrams.Visible)
-                    MergeGrid(_gridDiagrams);
+                using (var scope = UndoRedoManager.OpenScope("Merge"))
+                {
+                    if (_tabPropertySchemas.Visible)
+                        MergeGrid(_gridPropertySchemas);
+                    if (_tabSeverities.Visible)
+                        MergeGrid(_gridSeverities);
+                    if (_tabStrengths.Visible)
+                        MergeGrid(_gridStrengths);
+                    if (_tabThreatActors.Visible)
+                        MergeGrid(_gridThreatActors);
+                    if (_tabMitigations.Visible)
+                        MergeGrid(_gridMitigations);
+                    if (_tabThreatTypes.Visible)
+                        MergeGrid(_gridThreatTypes);
+                    if (_tabItemTemplates.Visible)
+                        MergeGrid(_gridItemTemplates);
+                    if (_tabTrustBoundaries.Visible)
+                        MergeGrid(_gridTrustBoundaries);
+                    if (_tabExternalInteractors.Visible)
+                        MergeGrid(_gridExternalInteractors);
+                    if (_tabProcesses.Visible)
+                        MergeGrid(_gridProcesses);
+                    if (_tabDataStores.Visible)
+                        MergeGrid(_gridDataStores);
+                    if (_tabFlows.Visible)
+                        MergeGrid(_gridFlows);
+                    if (_tabDiagrams.Visible)
+                        MergeGrid(_gridDiagrams);
+
+                    scope?.Complete();
+                }
             }
             else
             {
@@ -2592,94 +2597,73 @@ namespace ThreatsManager.Extensions.Dialogs
         private void ApplyProperties([NotNull] IPropertiesContainer source, [NotNull] IPropertiesContainer target)
         {
             var sourceList = source.Properties?.ToArray();
-            var targetList = target.Properties?.ToArray();
+            var targetList = target.Properties?.Select(x => x.PropertyTypeId).ToArray();
             if (sourceList?.Any() ?? false)
             {
+                List<Guid> toBeRemoved = null;
                 if (targetList?.Any() ?? false)
                 {
-                    // Merge of the two lists.
-                    var toBeRemoved = new List<IProperty>(targetList);
-                    foreach (var prop in sourceList)
-                    {
-                        var t = targetList.FirstOrDefault(x => x.PropertyTypeId == prop.PropertyTypeId);
-                        if (t != null)
-                        {
-                            ApplyProperty(prop, t);
-                            toBeRemoved.Remove(t);
-                        }
-                        else
-                        {
-                            AddProperty(target, prop);
-                        }
-                    }
+                    toBeRemoved = new List<Guid>(targetList);
+                }
 
-                    if (toBeRemoved.Any())
+                foreach (var prop in sourceList)
+                {
+                    var sourcePropertyType = prop.PropertyType;
+                    if (sourcePropertyType != null)
                     {
-                        foreach (var item in toBeRemoved)
+                        var sourceSchema = _comparison.GetSchema(sourcePropertyType.SchemaId);
+                        if (sourceSchema != null)
                         {
-                            target.RemoveProperty(item.PropertyTypeId);
+                            var targetSchema = _model.GetSchema(sourceSchema.Name, sourceSchema.Namespace);
+                            if (targetSchema != null)
+                            {
+                                var targetPropertyType = targetSchema.GetPropertyType(sourcePropertyType.Name);
+                                if (targetPropertyType != null)
+                                {
+                                    toBeRemoved?.Remove(targetPropertyType.Id);
+                                    var property = target.GetProperty(targetPropertyType);
+                                    if (property == null)
+                                    {
+                                        property = target.AddProperty(targetPropertyType, prop.StringValue);
+                                    }
+                                    else
+                                    {
+
+                                        property.StringValue = prop.StringValue;
+                                    }
+                                }
+                                else
+                                {
+                                    targetPropertyType = sourcePropertyType.Clone(targetSchema);
+                                    target.AddProperty(targetPropertyType, prop.StringValue);
+                                }
+                            }
+                            else
+                            {
+                                targetSchema = sourceSchema.Clone(_model);
+                                var targetPropertyType = targetSchema.GetPropertyType(sourcePropertyType.Name);
+                                target.AddProperty(targetPropertyType, prop.StringValue);
+                            }
                         }
                     }
                 }
-                else
+
+                if (toBeRemoved.Any())
                 {
-                    // All properties in sourceList must be added.
-                    foreach (var prop in sourceList)
+                    foreach (var propTypeId in toBeRemoved)
                     {
-                        AddProperty(target, prop);
+                        target.RemoveProperty(propTypeId);
                     }
                 }
             }
             else if (targetList?.Any() ?? false)
             {
                 // All properties in targetList must be removed.
-                foreach (var prop in targetList)
+                foreach (var propTypeId in targetList)
                 {
-                    target.RemoveProperty(prop.PropertyTypeId);
+                    target.RemoveProperty(propTypeId);
                 }
             }
-        }
-
-        private void AddProperty(IPropertiesContainer target, IProperty prop)
-        {
-            var propertyType = _model.GetPropertyType(prop.PropertyTypeId);
-            if (propertyType == null)
-            {
-                var schemaId = prop.PropertyType?.SchemaId;
-                IPropertySchema targetSchema = null;
-                if (schemaId.HasValue)
-                {
-                    var sourceSchema = _comparison.GetSchema(schemaId.Value);
-                    targetSchema = _model.GetSchema(schemaId.Value);
-                    if (sourceSchema != null)
-                    {
-                        if (targetSchema != null)
-                        {
-                            ApplyPropertyTypesContainer(sourceSchema, targetSchema);
-                        }
-                        else
-                        {
-                            targetSchema = sourceSchema.Clone(_model);
-                        }
-                    }
-                }
-
-                if (targetSchema != null)
-                {
-                    propertyType = prop.PropertyType?.Clone(targetSchema);
-                }
-            }
-
-            if (propertyType != null)
-                target.AddProperty(propertyType, prop.StringValue);
-        }
-
-        private void ApplyProperty([NotNull] IProperty source, [NotNull] IProperty target)
-        {
-            if (string.CompareOrdinal(source.StringValue, target.StringValue) != 0)
-                target.StringValue = source.StringValue;
-            if (source.ReadOnly != target.ReadOnly)
-                target.ReadOnly = source.ReadOnly;
         }
 
         private void ApplyThreatEventsContainer([NotNull] IThreatEventsContainer source,

@@ -153,6 +153,32 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
                 var selected = _configuration.MarkerExtension;
                 _marker.SelectedItem = extensions.FirstOrDefault(x => string.CompareOrdinal(x.GetExtensionId(), selected) == 0);
             }
+
+            var entityWrapWidth = _configuration.EntityWrappingWidth;
+            if (entityWrapWidth < _entityWrap.Minimum)
+            {
+                _configuration.EntityWrappingWidth = entityWrapWidth = _entityWrap.Minimum;
+                _configuration.Apply();
+            }
+            else if (entityWrapWidth > _entityWrap.Maximum)
+            {
+                _configuration.EntityWrappingWidth = entityWrapWidth = _entityWrap.Maximum;
+                _configuration.Apply();
+            }
+            _entityWrap.Value = entityWrapWidth;
+
+            var flowWrapWidth = _configuration.FlowWrappingWidth;
+            if (flowWrapWidth < _flowWrap.Minimum)
+            {
+                _configuration.FlowWrappingWidth = flowWrapWidth = _flowWrap.Minimum;
+                _configuration.Apply();
+            }
+            else if (flowWrapWidth > _flowWrap.Maximum)
+            {
+                _configuration.EntityWrappingWidth = flowWrapWidth = _flowWrap.Maximum;
+                _configuration.Apply();
+            }
+            _flowWrap.Value = flowWrapWidth;
         }
 
         public void Apply()
@@ -317,6 +343,28 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
             if (_marker.SelectedItem is IMarkerProviderFactory factory)
             {
                 _configuration.MarkerExtension = factory.GetExtensionId();
+            }
+        }
+
+        private void _entityWrap_ValueChanged(object sender, EventArgs e)
+        {
+            var size = _entityWrap.Value;
+
+            if (size > 0)
+            {
+                _entityWrapText.Text = $"{size} pixels";
+                _configuration.EntityWrappingWidth = size;
+            }
+        }
+
+        private void _flowWrap_ValueChanged(object sender, EventArgs e)
+        {
+            var size = _flowWrap.Value;
+
+            if (size > 0)
+            {
+                _flowWrapText.Text = $"{size} pixels";
+                _configuration.FlowWrappingWidth = size;
             }
         }
     }

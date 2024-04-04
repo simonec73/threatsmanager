@@ -36,7 +36,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
     [Recordable(AutoRecord = false)]
     [Undoable]
     [TypeInitial("P")]
-    public class Process : IProcess, IInitializableObject
+    public class Process : IProcess, IInitializableObject, IForceSetId
     {
         public Process()
         {
@@ -225,6 +225,11 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Process;
+
+        public void SetId(Guid id)
+        {
+            _id = id;
+        }
 
         public override string ToString()
         {

@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
-using ThreatsManager.Engine.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -260,8 +259,11 @@ namespace ThreatsManager.Extensions.Dialogs
 
         private void _wizard_FinishButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var definition = GetDuplicationDefinition();
-            _model.Merge(_template, definition);
+            if (_template != null)
+            {
+                var definition = GetDuplicationDefinition();
+                _model.Merge(_template, definition);
+            }
 
             DialogResult = DialogResult.OK;
             Close();
@@ -300,7 +302,7 @@ namespace ThreatsManager.Extensions.Dialogs
             if (_fullyThreatActors.Checked)
             {
                 definition.AllThreatActors = true;
-                AddSchemas(schemas, _template.ThreatActors?.Select(x => x.Properties));
+                AddSchemas(schemas, _template?.ThreatActors?.Select(x => x.Properties));
             }
             else
             {
@@ -318,7 +320,7 @@ namespace ThreatsManager.Extensions.Dialogs
             [NotNull] List<int> strengths, [NotNull] List<Guid> schemas)
         {
             definition.Strengths = strengths;
-            AddSchemas(schemas, _template.Strengths?
+            AddSchemas(schemas, _template?.Strengths?
                 .Where(x => strengths?.Contains(x.Id) ?? false)
                 .Select(x => x.Properties));
         }
@@ -328,7 +330,7 @@ namespace ThreatsManager.Extensions.Dialogs
             [NotNull] List<int> severities, [NotNull] List<Guid> schemas)
         {
             definition.Severities = severities;
-            AddSchemas(schemas, _template.Severities?
+            AddSchemas(schemas, _template?.Severities?
                 .Where(x => severities?.Contains(x.Id) ?? false)
                 .Select(x => x.Properties));
         }
@@ -339,10 +341,10 @@ namespace ThreatsManager.Extensions.Dialogs
             if (_fullyThreatTypes.Checked)
             {
                 definition.AllThreatTypes = true;
-                AddMitigations(mitigations, _template.ThreatTypes);
-                AddSeverities(severities, _template.ThreatTypes);
-                AddStrengths(strengths, _template.ThreatTypes);
-                AddSchemas(schemas, _template.ThreatTypes?.Select(x => x.Properties));
+                AddMitigations(mitigations, _template?.ThreatTypes);
+                AddSeverities(severities, _template?.ThreatTypes);
+                AddStrengths(strengths, _template?.ThreatTypes);
+                AddSchemas(schemas, _template?.ThreatTypes?.Select(x => x.Properties));
             }
             else
             {
@@ -365,10 +367,10 @@ namespace ThreatsManager.Extensions.Dialogs
             if (_fullyWeaknesses.Checked)
             {
                 definition.AllWeaknesses = true;
-                AddMitigations(mitigations, _template.Weaknesses);
-                AddSeverities(severities, _template.Weaknesses);
-                AddStrengths(strengths, _template.Weaknesses);
-                AddSchemas(schemas, _template.Weaknesses?.Select(x => x.Properties));
+                AddMitigations(mitigations, _template?.Weaknesses);
+                AddSeverities(severities, _template?.Weaknesses);
+                AddStrengths(strengths, _template?.Weaknesses);
+                AddSchemas(schemas, _template?.Weaknesses?.Select(x => x.Properties));
             }
             else
             {
@@ -392,7 +394,7 @@ namespace ThreatsManager.Extensions.Dialogs
             if (_fullyMitigations.Checked)
             {
                 definition.AllMitigations = true;
-                AddSchemas(schemas, _template.Mitigations?.Select(x => x.Properties));
+                AddSchemas(schemas, _template?.Mitigations?.Select(x => x.Properties));
             }
             else
             {
@@ -412,7 +414,7 @@ namespace ThreatsManager.Extensions.Dialogs
                 }
 
                 definition.Mitigations = mitigationIds;
-                AddSchemas(schemas, _template.Mitigations
+                AddSchemas(schemas, _template?.Mitigations
                     .Where(x => mitigationIds?.Contains(x.Id) ?? false)
                     .Select(x => x.Properties));
             }
@@ -425,9 +427,9 @@ namespace ThreatsManager.Extensions.Dialogs
                 definition.AllEntityTemplates = true;
                 definition.AllFlowTemplates = true;
                 definition.AllTrustBoundaryTemplates = true;
-                AddSchemas(schemas, _template.EntityTemplates?.Select(x => x.Properties));
-                AddSchemas(schemas, _template.FlowTemplates?.Select(x => x.Properties));
-                AddSchemas(schemas, _template.TrustBoundaryTemplates?.Select(x => x.Properties));
+                AddSchemas(schemas, _template?.EntityTemplates?.Select(x => x.Properties));
+                AddSchemas(schemas, _template?.FlowTemplates?.Select(x => x.Properties));
+                AddSchemas(schemas, _template?.TrustBoundaryTemplates?.Select(x => x.Properties));
             }
             else
             {
@@ -459,7 +461,7 @@ namespace ThreatsManager.Extensions.Dialogs
             IEnumerable<Guid> additional;
             if (_fullySchemas.Checked)
             {
-                additional = _template.Schemas?.Where(x => !x.System).Select(x => x.Id).ToArray();
+                additional = _template?.Schemas?.Where(x => !x.System).Select(x => x.Id).ToArray();
             }
             else
             {
@@ -597,7 +599,7 @@ namespace ThreatsManager.Extensions.Dialogs
                     {
                         foreach (var prop in props)
                         {
-                            var propertyType = _template.GetPropertyType(prop.PropertyTypeId);
+                            var propertyType = _template?.GetPropertyType(prop.PropertyTypeId);
                             if (!schemas.Contains(propertyType.SchemaId))
                                 schemas.Add(propertyType.SchemaId);
 

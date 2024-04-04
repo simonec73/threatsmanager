@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Extensions.Panels.Excel;
+using ThreatsManager.Extensions.Reporting;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
@@ -59,15 +61,9 @@ namespace ThreatsManager.Extensions.Actions
                         dialog.RestoreDirectory = true;
                         if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            var threats = AnalyzeThreatModel(threatModel);
-                            if (threats?.Any() ?? false)
+                            if (CreateReport(dialog.FileName, threatModel))
                             {
-                                if (CreateReport(dialog.FileName, threats))
-                                    ShowMessage?.Invoke("Summary Excel Report generation succeeded.");
-                            }
-                            else
-                            {
-                                ShowWarning?.Invoke("Summary Excel Report failed because no Threat Events are defined.");
+                                ShowMessage?.Invoke("Summary Excel Report generation succeeded.");
                             }
                         }
                         break;
@@ -77,6 +73,72 @@ namespace ThreatsManager.Extensions.Actions
             {
                 ShowWarning?.Invoke("Summary Excel Report failed.");
             }
+        }
+
+        private void AddThreatEvents(IEnumerable<IThreatEvent> threatEvents,
+            ref Dictionary<IThreatType, List<IThreatEvent>> dict)
+        {
+            var tes = threatEvents?.ToArray();
+            if (tes?.Any() ?? false)
+            {
+                foreach (var te in tes)
+                {
+                    if (dict == null)
+                        dict = new Dictionary<IThreatType, List<IThreatEvent>>();
+
+                    if (!dict.TryGetValue(te.ThreatType, out var teList))
+                    {
+                        teList = new List<IThreatEvent>();
+                        dict.Add(te.ThreatType, teList);
+                    }
+
+                    teList.Add(te);
+                }
+            }
+        }
+
+        private bool CreateReport([Required] string fileName, [NotNull] IThreatModel model)
+        {
+            var result = false;
+
+            var threats = AnalyzeThreatModel(model);
+
+            using (var engine = new ExcelReportEngine())
+            {
+                if (threats?.Any() ?? false)
+                {
+                    AddStandardSheets(engine, threats);
+                    result = true;
+                }
+
+                var providers = ExtensionUtils.GetExtensions<ISummarySheetProvider>()?.ToArray();
+                if (providers?.Any() ?? false)
+                {
+                    foreach (var provider in providers)
+                    {
+                        result |= AddProviderSheet(engine, model, provider);
+                    }
+                }
+
+                if (result)
+                {
+                    try
+                    {
+                        engine.Save(fileName);
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        result = false;
+                        ShowWarning?.Invoke(e.Message);
+                    }
+                }
+                else
+                {
+                    ShowWarning?.Invoke("Summary Excel Report has not been generated because it is empty.");
+                }
+            }
+
+            return result;
         }
 
         private Dictionary<IThreatType, List<IThreatEvent>> AnalyzeThreatModel([NotNull] IThreatModel model)
@@ -106,103 +168,119 @@ namespace ThreatsManager.Extensions.Actions
             return result;
         }
 
-        private void AddThreatEvents(IEnumerable<IThreatEvent> threatEvents,
-            ref Dictionary<IThreatType, List<IThreatEvent>> dict)
+        private void AddStandardSheets([NotNull] ExcelReportEngine engine, 
+            [NotNull] Dictionary<IThreatType, List<IThreatEvent>> threats)
         {
-            var tes = threatEvents?.ToArray();
-            if (tes?.Any() ?? false)
+            var page = engine.AddPage("Report");
+            List<string> fields = new List<string> { "Name", "Severity", "Description", "Affected Objects" };
+            var existing = HasMitigations(threats, MitigationStatus.Existing);
+            if (existing)
+                fields.Add("Existing Mitigations");
+            var approved = HasMitigations(threats, MitigationStatus.Approved);
+            if (approved)
+                fields.Add("Approved Mitigations");
+            var planned = HasMitigations(threats, MitigationStatus.Planned);
+            if (planned)
+                fields.Add("Planned Mitigations");
+            var implemented = HasMitigations(threats, MitigationStatus.Implemented);
+            if (implemented)
+                fields.Add("Implemented Mitigations");
+            var proposed = HasMitigations(threats, MitigationStatus.Proposed);
+            if (proposed)
+                fields.Add("Proposed Mitigations");
+            engine.AddHeader(page, fields.ToArray());
+
+            var sorted = threats.OrderByDescending(x => GetTopSeverity(x.Value), new SeverityComparer())
+                .ThenBy(x => x.Key.Name);
+            List<object> values = new List<object>();
+            foreach (var threat in sorted)
             {
-                foreach (var te in tes)
+                values.Clear();
+                values.Add(threat.Key.Name);
+                var severity = GetTopSeverity(threat.Value);
+                values.Add(severity?.ToString() ?? string.Empty);
+                values.Add(threat.Key.Description);
+                values.Add(GetAffectedObjects(threat.Value));
+                if (existing && threat.Value.Any())
                 {
-                    if (dict == null)
-                        dict = new Dictionary<IThreatType, List<IThreatEvent>>();
-
-                    if (!dict.TryGetValue(te.ThreatType, out var teList))
-                    {
-                        teList = new List<IThreatEvent>();
-                        dict.Add(te.ThreatType, teList);
-                    }
-
-                    teList.Add(te);
+                    values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Existing) ?? string.Empty);
                 }
+
+                if (approved && threat.Value.Any())
+                {
+                    values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Approved) ?? string.Empty);
+                }
+
+                if (planned && threat.Value.Any())
+                {
+                    values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Planned) ?? string.Empty);
+                }
+
+                if (implemented && threat.Value.Any())
+                {
+                    values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Implemented) ??
+                               string.Empty);
+                }
+
+                if (proposed && threat.Value.Any())
+                {
+                    values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Proposed) ?? string.Empty);
+                }
+
+                var row = engine.AddRow(page, values.ToArray());
+                engine.ColorCell(page, row, 2, Color.FromKnownColor(severity.TextColor),
+                    Color.FromKnownColor(severity.BackColor));
             }
         }
 
-        private bool CreateReport([Required] string fileName, [NotNull] Dictionary<IThreatType, List<IThreatEvent>> threats)
+        private bool AddProviderSheet([NotNull] ExcelReportEngine engine, [NotNull] IThreatModel model,
+            [NotNull] ISummarySheetProvider provider)
+        {
+            bool result = false;
+
+            var rows = provider.GetRows(model)?.ToArray();
+            if (CheckRows(rows))
+            {
+                result = true;
+
+                var page = engine.AddPage(provider.Name);
+                bool first = true;
+
+                foreach (var row in rows)
+                {
+                    if (first)
+                    {
+                        engine.AddHeader(page, row.ToArray());
+                        first = false;
+                    }
+                    else
+                    {
+                        engine.AddRow(page, row.ToArray());
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+        private bool CheckRows(IEnumerable<string>[] rows)
         {
             var result = false;
 
-            using (var engine = new ExcelReportEngine())
+            if ((rows?.Count() ?? 0) > 1)
             {
-                var page = engine.AddPage("Report");
-                List<string> fields = new List<string> {"Name", "Severity", "Description", "Affected Objects"};
-                var existing = HasMitigations(threats, MitigationStatus.Existing);
-                if (existing)
-                    fields.Add("Existing Mitigations");
-                var approved = HasMitigations(threats, MitigationStatus.Approved);
-                if (approved)
-                    fields.Add("Approved Mitigations");
-                var planned = HasMitigations(threats, MitigationStatus.Planned);
-                if (planned)
-                    fields.Add("Planned Mitigations");
-                var implemented = HasMitigations(threats, MitigationStatus.Implemented);
-                if (implemented)
-                    fields.Add("Implemented Mitigations");
-                var proposed = HasMitigations(threats, MitigationStatus.Proposed);
-                if (proposed)
-                    fields.Add("Proposed Mitigations");
-                engine.AddHeader(page, fields.ToArray());
+                int count = 0;
+                result = true;
 
-                var sorted = threats.OrderByDescending(x => GetTopSeverity(x.Value), new SeverityComparer())
-                    .ThenBy(x => x.Key.Name);
-                List<object> values = new List<object>();
-                foreach (var threat in sorted)
+                foreach (var row in rows)
                 {
-                    values.Clear();
-                    values.Add(threat.Key.Name);
-                    var severity = GetTopSeverity(threat.Value);
-                    values.Add(severity?.ToString() ?? string.Empty);
-                    values.Add(threat.Key.Description);
-                    values.Add(GetAffectedObjects(threat.Value));
-                    if (existing && threat.Value.Any())
+                    if (count == 0)
+                        count = row.Count();
+                    else if (count != row.Count())
                     {
-                        values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Existing) ?? string.Empty);
+                        result = false;
+                        break;
                     }
-
-                    if (approved && threat.Value.Any())
-                    {
-                        values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Approved) ?? string.Empty);
-                    }
-
-                    if (planned && threat.Value.Any())
-                    {
-                        values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Planned) ?? string.Empty);
-                    }
-
-                    if (implemented && threat.Value.Any())
-                    {
-                        values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Implemented) ??
-                                   string.Empty);
-                    }
-
-                    if (proposed && threat.Value.Any())
-                    {
-                        values.Add(ConcatenateMitigations(threat, values, MitigationStatus.Proposed) ?? string.Empty);
-                    }
-
-                    var row = engine.AddRow(page, values.ToArray());
-                    engine.ColorCell(page, row, 2, Color.FromKnownColor(severity.TextColor),
-                        Color.FromKnownColor(severity.BackColor));
-                }
-
-                try
-                {
-                    engine.Save(fileName);
-                    result = true;
-                }
-                catch (System.IO.IOException e)
-                {
-                    ShowWarning?.Invoke(e.Message);
                 }
             }
 
