@@ -30,7 +30,7 @@ namespace ThreatsManager.Quality.Panels.Configuration
 
         public void Initialize([NotNull] IThreatModel model)
         {
-            _configuration = new QualityConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId());
+            _configuration = QualityConfigurationManager.GetInstance(model);
 
             _enableCalculatedSeveritySupport.Checked = _configuration.EnableCalculatedSeverity;
         }

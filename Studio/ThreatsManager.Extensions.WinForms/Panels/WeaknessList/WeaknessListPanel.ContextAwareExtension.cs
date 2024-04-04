@@ -16,18 +16,20 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
         private ContextMenuStrip _weaknessMenu;
         private ContextMenuStrip _weaknessMitigationMenu;
         private IEnumerable<IContextAwareAction> _actions;
+        private MenuDefinition _menuWeakness;
+        private MenuDefinition _menuWeaknessMitigation;
 
         public Scope SupportedScopes => Scope.Weakness | Scope.WeaknessMitigation;
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menuWeakness = new MenuDefinition(actions, Scope.Weakness);
-            _weaknessMenu = menuWeakness.CreateMenu();
-            menuWeakness.MenuClicked += OnWeaknessMenuClicked;
+            _menuWeakness = new MenuDefinition(actions, Scope.Weakness);
+            _weaknessMenu = _menuWeakness.CreateMenu();
+            _menuWeakness.MenuClicked += OnWeaknessMenuClicked;
 
-            var menuWeaknessMitigation = new MenuDefinition(actions, Scope.WeaknessMitigation);
-            _weaknessMitigationMenu = menuWeaknessMitigation.CreateMenu();
-            menuWeaknessMitigation.MenuClicked += OnWeaknessMitigationMenuClicked;
+            _menuWeaknessMitigation = new MenuDefinition(actions, Scope.WeaknessMitigation);
+            _weaknessMitigationMenu = _menuWeaknessMitigation.CreateMenu();
+            _menuWeaknessMitigation.MenuClicked += OnWeaknessMitigationMenuClicked;
 
             _actions = actions?.ToArray();
 

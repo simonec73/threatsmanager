@@ -324,12 +324,12 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     CheckRefresh();
                     break;
                 case "CreateTrustBoundary":
-                    var p4 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(600, 300), hFloat, vFloat);
+                    var p4 = GetFreePoint(new PointF(hFloat, vFloat), new SizeF(400, 200), hFloat, vFloat);
 
                     using (var scope = UndoRedoManager.OpenScope("Create Trust Boundary"))
                     {
                         var trustBoundary = _diagram.Model?.AddGroup<ITrustBoundary>();
-                        AddShape(_diagram.AddShape(trustBoundary, p4, new SizeF(600, 300)));
+                        AddShape(_diagram.AddShape(trustBoundary, p4, new SizeF(400, 200)));
                         scope?.Complete();
                     }
 

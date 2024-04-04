@@ -14,14 +14,15 @@ namespace ThreatsManager.Extensions.Panels.DataFlowList
     {
         private ContextMenuStrip _contextMenu;
         private IEnumerable<IContextAwareAction> _actions;
+        private MenuDefinition _menu;
 
         public Scope SupportedScopes => Scope.DataFlow;
 
         public void SetContextAwareActions(IEnumerable<IContextAwareAction> actions)
         {
-            var menu = new MenuDefinition(actions, SupportedScopes);
-            _contextMenu = menu.CreateMenu();
-            menu.MenuClicked += OnMenuClicked;
+            _menu = new MenuDefinition(actions, SupportedScopes);
+            _contextMenu = _menu.CreateMenu();
+            _menu.MenuClicked += OnMenuClicked;
 
             _actions = actions?.ToArray();
 

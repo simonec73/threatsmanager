@@ -32,12 +32,9 @@ namespace ThreatsManager.Quality.Panels.CalculatedSeverityList
                 if (_executionMode != ExecutionMode.Management)
                 {
                     var addRemove = new List<IActionDefinition>();
-                    addRemove.Add(new ActionDefinition(Id, "AddMitigation", "Add Mitigation",
-                        Resources.mitigations_big_new,
-                        Resources.mitigations_new, false));
-                    addRemove.Add(new ActionDefinition(Id, "RemoveMitigation", "Remove Selected Mitigation",
-                        Resources.mitigations_big_delete,
-                        Resources.mitigations_delete, false));
+                    addRemove.Add(new ActionDefinition(Id, "Clear", "Clear Calculated Severity",
+                        Resources.undefined_big_sponge,
+                        Resources.undefined_sponge_small, false));
 
                     result.Add(new CommandsBarDefinition("AddRemove", "Add/Remove", addRemove));
 
@@ -85,111 +82,25 @@ namespace ThreatsManager.Quality.Panels.CalculatedSeverityList
 
             try
             {
+                var schemaManager = new CalculatedSeverityPropertySchemaManager(_model);
+
                 switch (action.Name)
                 {
-                    case "AddMitigation":
-                        if (_properties.Item is IThreatEvent threatEvent2)
+                    case "Clear":
+                        if (MessageBox.Show("Are you sure you want to remove all Calculated Severity metadata?",
+                            "Remove Calculated Severity", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
-                            using (var dialog = new ThreatEventMitigationSelectionDialog(threatEvent2))
-                            {
-                                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-                                {
-                                    text = "Mitigation creation";
-                                }
-                            }
-                        }
-                        break;
-                    case "RemoveMitigation":
-                        var selected2 = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
-                            .Select(x => x.GridRow)
-                            .Where(x => x.Tag is IThreatEventMitigation)
-                            .Distinct()
-                            .ToArray();
+                            schemaManager.RemoveSupport();
 
-                        if (_currentRow != null)
-                        {
-                            if ((selected2?.Length ?? 0) > 1)
-                            {
-                                var name = (_currentRow.Tag as IThreatEventMitigation)?.Mitigation.Name;
-                                var outcome = MessageBox.Show(Form.ActiveForm,
-                                    $"You have selected {selected2.Length} Mitigation associations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Mitigation associations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
-                                    "Remove Mitigation association", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
-                                    MessageBoxDefaultButton.Button3);
-                                switch (outcome)
-                                {
-                                    case DialogResult.Yes:
-                                        bool removed = true;
-                                        foreach (var row in selected2)
-                                        {
-                                            bool r = false;
-                                            if (row.Tag is IThreatEventMitigation m)
-                                            {
-                                                r = m.ThreatEvent.RemoveMitigation(m.MitigationId);
-                                            }
-
-                                            removed &= r;
-
-                                            if (r && row == _currentRow)
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                            }
-                                        }
-
-                                        if (removed)
-                                        {
-                                            text = "Remove Mitigation association";
-                                        }
-                                        else
-                                        {
-                                            warning = true;
-                                            text = "One or more Mitigation associations cannot be removed.";
-                                        }
-
-                                        break;
-                                    case DialogResult.No:
-                                        if (_currentRow != null && _currentRow.Tag is IThreatEventMitigation m2)
-                                        {
-                                            if (m2.ThreatEvent.RemoveMitigation(m2.MitigationId))
-                                            {
-                                                _properties.Item = null;
-                                                _currentRow = null;
-                                                text = "Remove Mitigation association";
-                                            }
-                                            else
-                                            {
-                                                warning = true;
-                                                text = "The Mitigation association cannot be removed.";
-                                            }
-                                        }
-
-                                        break;
-                                }
-                            }
-                            else if (_currentRow?.Tag is IThreatEventMitigation mitigation &&
-                                     MessageBox.Show(Form.ActiveForm,
-                                         $"You are about to remove mitigation '{mitigation.Mitigation.Name}' from the current Threat Event. Are you sure?",
-                                         "Remove Mitigation association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                            {
-                                if (mitigation.ThreatEvent.RemoveMitigation(mitigation.MitigationId))
-                                {
-                                    text = "Remove Mitigation association";
-                                    _properties.Item = null;
-                                }
-                                else
-                                {
-                                    warning = true;
-                                    text = "The Mitigation association cannot be removed.";
-                                }
-                            }
+                            var config = QualityConfigurationManager.GetInstance(_model);
+                            if (config?.EnableCalculatedSeverity ?? false)
+                                schemaManager.AddSupport();
                         }
                         break;
                     case "ApplyCalculated":
                         if (_grid.PrimaryGrid.Rows.Count > 0 && MessageBox.Show("All the listed Threat Events will be updated with the calculated severity.\nAre you sure?",
                             "Apply Calculated Severity", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
-                            var schemaManager = new CalculatedSeverityPropertySchemaManager(_model);
                             var threatEventList = _model.Entities?.Select(x => x.ThreatEvents?
                                 .Where(y => SeverityDoesNotMatchCalculated(y, schemaManager))).ToArray();
                             if (threatEventList?.Any() ?? false)

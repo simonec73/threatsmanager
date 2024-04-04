@@ -57,6 +57,9 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
                     RemoveEventSubscriptions(row);
             }
 
+            if (_menu != null)
+                _menu.MenuClicked -= OnMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

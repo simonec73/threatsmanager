@@ -12,7 +12,7 @@ using ThreatsManager.Utilities;
 namespace ThreatsManager.Extensions.Actions
 {
 #pragma warning disable CS0067
-    [Extension("8C93144F-3F6A-4023-A0BB-10298B6FC931", "Merge with Threat Model or Template", 15, ExecutionMode.Simplified)]
+    [Extension("8C93144F-3F6A-4023-A0BB-10298B6FC931", "Merge with Threat Model or KBs", 15, ExecutionMode.Simplified)]
     public class Merge : IMainRibbonExtension, IStatusInfoProviderUpdateRequestor, 
         IDesktopAlertAwareExtension, IExecutionModeSupport
     {
@@ -34,7 +34,7 @@ namespace ThreatsManager.Extensions.Actions
 
         public IEnumerable<IActionDefinition> RibbonActions => new List<IActionDefinition>
         {
-            new ActionDefinition(Id, "Merge", "Merge Threat Models and Templates", Properties.Resources.arrows_merge_big,
+            new ActionDefinition(Id, "Merge", "Merge Threat Models and Knowledge Bases", Properties.Resources.arrows_merge_big,
                 Properties.Resources.arrows_merge)
         };
 

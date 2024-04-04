@@ -19,6 +19,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private int _iconCenterSize;
         private int _markerSize;
         private int _zoomFactor;
+        private int _entityWrapWidth;
+        private int _flowWrapWidth;
         private ImageSize _imageSize;
 
         public Form PanelContainer { get; set; }
@@ -65,6 +67,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 _iconCenterSize = configuration.DiagramIconCenterSize;
                 _markerSize = configuration.DiagramMarkerSize;
                 _zoomFactor = configuration.DiagramZoomFactor;
+                _entityWrapWidth = configuration.EntityWrappingWidth;
+                _flowWrapWidth = configuration.FlowWrappingWidth;
                 switch (_iconSize)
                 {
                     case 32:

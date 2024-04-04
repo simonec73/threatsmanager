@@ -53,6 +53,9 @@ namespace ThreatsManager.Extensions.Panels.TrustBoundaryList
                     RemoveEventSubscriptions(row);
             }
 
+            if (_menu != null)
+                _menu.MenuClicked -= OnMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

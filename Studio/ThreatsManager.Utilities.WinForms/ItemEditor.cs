@@ -1005,6 +1005,16 @@ namespace ThreatsManager.Utilities.WinForms
                     AddSingleLineLabel(infoSection, "Template", itemTemplate.Name);
                 }
 
+                if ((_executionMode == ExecutionMode.Pioneer || _executionMode == ExecutionMode.Expert) && identity is ISourceInfo sourceInfo)
+                {
+                    if (!string.IsNullOrWhiteSpace(sourceInfo.VersionAuthor))
+                        AddSingleLineLabel(infoSection, "Author", sourceInfo.VersionAuthor);
+                    if (!string.IsNullOrWhiteSpace(sourceInfo.VersionId))
+                        AddSingleLineLabel(infoSection, "Version", sourceInfo.VersionId);
+                    if (!string.IsNullOrWhiteSpace(sourceInfo.SourceTMName))
+                        AddSingleLineLabel(infoSection, "Source TM", sourceInfo.SourceTMName);
+                }
+
                 FinalizeSection(infoSection);
 
                 infoSection.ResumeLayout();
@@ -1054,8 +1064,7 @@ namespace ThreatsManager.Utilities.WinForms
                     .ToArray();
                 if (properties?.Any() ?? false)
                 {
-                    var section = AddSection(schema.Name);
-                    section.SuspendLayout();
+                    LayoutControl section = null;
 
                     foreach (var property in properties)
                     {
@@ -1071,41 +1080,92 @@ namespace ThreatsManager.Utilities.WinForms
                                 var viewer = factory.CreatePropertyViewer(container, property);
                                 if (viewer != null)
                                 {
-                                    AddPropertyViewer(section, viewer, ro);
+                                    var blocks = viewer.Blocks;
+                                    if (blocks?.Any() ?? false)
+                                    {
+                                        if (section == null)
+                                        {
+                                            section = AddSection(schema.Name);
+                                            section.SuspendLayout();
+                                        }
+
+                                        section.Tag = viewer;
+                                        AddPropertyViewerBlocks(section, blocks, ro);
+                                    }
                                 }
                             }
                         } else if (property is IPropertySingleLineString propertySingleLineString)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             var text = AddSingleLineText(section, propertySingleLineString, ro);
                             AddSpellCheck(text);
                         }
                         else if (property is IPropertyString propertyString)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             var richTextBox = AddText(section, propertyString, ro);
                             AddSpellCheck(richTextBox);
                         }
                         else if (property is IPropertyBool propertyBool)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddBool(section, propertyBool, ro);
                         }
                         else if (property is IPropertyTokens propertyTokens)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddTokens(section, propertyTokens, ro);
                         }
                         else if (property is IPropertyArray propertyArray)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddList(section, propertyArray, ro);
                         }
                         else if (property is IPropertyDecimal propertyDecimal)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddDecimal(section, propertyDecimal, ro);
                         }
                         else if (property is IPropertyInteger propertyInteger)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddInteger(section, propertyInteger, ro);
                         }
                         else if (property is IPropertyIdentityReference propertyIdentityReference)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             var identity = propertyIdentityReference.Value;
 
                             AddSingleLineLabel(section, property.PropertyType.Name,
@@ -1116,30 +1176,53 @@ namespace ThreatsManager.Utilities.WinForms
                         }
                         else if (property is IPropertyJsonSerializableObject)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             // TODO: add control to show this property. For now, it is not shown.
                             AddSingleLineLabel(section, property.PropertyType.Name,
                                 "<Property is a Json Serializable Object, which is not supported by the Item Editor, yet>");
                         }
                         else if (property is IPropertyList propertyList)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddCombo(section, propertyList, ro);
                             //AddSingleLineLabel(section, property.PropertyType.Name, property.StringValue);
                         }
                         else if (property is IPropertyListMulti)
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             // TODO: add control to show this property. For now, it is not shown.
                             AddSingleLineLabel(section, property.PropertyType.Name, property.StringValue);
                         }
                         else
                         {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
                             AddSingleLineLabel(section, property.PropertyType.Name,
                                 "<Property type is not supported by the Item Editor, yet>");
                         }
                     }
 
-                    FinalizeSection(section);
+                    if (section != null)
+                    {
+                        FinalizeSection(section);
 
-                    section.ResumeLayout();
+                        section.ResumeLayout();
+                    }
                 }
             }
         }

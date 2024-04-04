@@ -25,6 +25,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Deletable = false;
             Copyable = false;
             Selectable = false;
+            AutoRescales = false;
 
             MarkerStatusTrigger.MarkerStatusUpdated += MarkerStatusTriggerOnMarkerStatusUpdated;
             PanelItemListFormTrigger.PanelStatusUpdated += PanelItemListFormTrigger_ShowPanels;

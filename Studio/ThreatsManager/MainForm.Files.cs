@@ -126,152 +126,160 @@ namespace ThreatsManager
             OpenOutcome result = OpenOutcome.KO;
 
             IThreatModel model = null;
-
             var oldMissingTypes = new List<string>(_missingTypes);
             var oldErrorsOnLoading = _errorsOnLoading;
-            _missingTypes.Clear();
-            _errorsOnLoading = false;
-            _protectionData = null;
             bool messageRaised = false;
 
-            try
+            if (locationType == LocationType.Cloud ||
+                (locationType == LocationType.FileSystem && File.Exists(location)))
             {
-                var enabledExtensions = Manager.Instance.Configuration.EnabledExtensions
-                    .Select(x => Manager.Instance.GetExtensionMetadata(x));
+                _missingTypes.Clear();
+                _errorsOnLoading = false;
+                _protectionData = null;
 
-                var latest = packageManager.GetLatest(locationType, location, out var dateTime);
-
-                if (locationType == LocationType.FileSystem)
+                try
                 {
-                    var output = await AcquireLockAsync(location, latest);
-                    var outcome = output?.Outcome ?? OpenOutcome.KO;
-                    if (outcome == OpenOutcome.OK)
-                    {
-                        location = output.Location;
-                        latest = output.Latest;
-                    }
-                    else
-                    {
-                        return outcome;
-                    }
-                }
+                    var enabledExtensions = Manager.Instance.Configuration.EnabledExtensions
+                        .Select(x => Manager.Instance.GetExtensionMetadata(x));
 
-                if (latest != null)
-                {
-                    location = latest;
-                }
+                    var latest = packageManager.GetLatest(locationType, location, out var dateTime);
 
-                if (packageManager is ISecurePackageManager securePM)
-                {
-                    if (securePM.RequiredProtection.HasFlag(ProtectionType.Password))
+                    if (locationType == LocationType.FileSystem)
                     {
-                        if (GetPassword(out var password))
+                        var output = await AcquireLockAsync(location, latest);
+                        var outcome = output?.Outcome ?? OpenOutcome.KO;
+                        if (outcome == OpenOutcome.OK)
                         {
-                            if (password != null)
-                            {
-                                _protectionData = new PasswordProtectionData(password);
-                                securePM.SetProtectionData(_protectionData);
-                            }
+                            location = output.Location;
+                            latest = output.Latest;
                         }
                         else
-                            return OpenOutcome.KO;
+                        {
+                            return outcome;
+                        }
                     }
+
+                    if (latest != null)
+                    {
+                        location = latest;
+                    }
+
+                    if (packageManager is ISecurePackageManager securePM)
+                    {
+                        if (securePM.RequiredProtection.HasFlag(ProtectionType.Password))
+                        {
+                            if (GetPassword(out var password))
+                            {
+                                if (password != null)
+                                {
+                                    _protectionData = new PasswordProtectionData(password);
+                                    securePM.SetProtectionData(_protectionData);
+                                }
+                            }
+                            else
+                                return OpenOutcome.KO;
+                        }
+                    }
+
+                    model = packageManager.Load(locationType, location, enabledExtensions, false);
+
+                    if (!(model?.Strengths?.Any() ?? false))
+                        model?.InitializeStandardStrengths();
+                    if (!(model?.Severities?.Any() ?? false))
+                        model?.InitializeStandardSeverities();
                 }
-
-                model = packageManager.Load(locationType, location, enabledExtensions, false);
-
-                if (!(model?.Strengths?.Any() ?? false))
-                    model?.InitializeStandardStrengths();
-                if (!(model?.Severities?.Any() ?? false))
-                    model?.InitializeStandardSeverities();
-            }
-            catch (ThreatModelOpeningFailureException exc)
-            {
-                exc.ToExceptionless().Submit();
-                model = null;
-                using (var dialog = new ErrorDialog
+                catch (ThreatModelOpeningFailureException exc)
                 {
-                    Title = "Threat Model Opening failure",
-                    Description = exc.Message
-                })
-                {
-                    dialog.ShowDialog(this);
+                    exc.ToExceptionless().Submit();
+                    model = null;
+                    using (var dialog = new ErrorDialog
+                    {
+                        Title = "Threat Model Opening failure",
+                        Description = exc.Message
+                    })
+                    {
+                        dialog.ShowDialog(this);
+                    }
+
+                    messageRaised = true;
                 }
-
-                messageRaised = true;
+                catch (ExistingModelException)
+                {
+                    ShowDesktopAlert("The model is already open.\nClose it if you want to load it again.", true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (FileNotFoundException)
+                {
+                    ShowDesktopAlert("File has not been found.", true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    ShowDesktopAlert("Directory has not been found.", true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    ShowDesktopAlert("The model cannot be opened because you do now have the required rights.", true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (IOException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (FileFormatException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (EncryptionRequiredException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (FileEncryptedException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (FileNotEncryptedException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (InvalidHMACException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (UnsupportedEncryptionException e)
+                {
+                    ShowDesktopAlert(e.Message, true);
+                    model = null;
+                    messageRaised = true;
+                }
+                catch (Exception e)
+                {
+                    ShowDesktopAlert($"An exception occurred loading the Threat Model:\n{e.Message}", true);
+                    e.ToExceptionless().Submit();
+                    model = null;
+                    messageRaised = true;
+                }
             }
-            catch (ExistingModelException)
+            else
             {
-                ShowDesktopAlert("The model is already open.\nClose it if you want to load it again.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (FileNotFoundException)
-            {
-                ShowDesktopAlert("File has not been found.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                ShowDesktopAlert("Directory has not been found.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                ShowDesktopAlert("The model cannot be opened because you do now have the required rights.", true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (IOException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (FileFormatException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (EncryptionRequiredException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (FileEncryptedException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (FileNotEncryptedException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (InvalidHMACException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (UnsupportedEncryptionException e)
-            {
-                ShowDesktopAlert(e.Message, true);
-                model = null;
-                messageRaised = true;
-            }
-            catch (Exception e)
-            {
-                ShowDesktopAlert($"An exception occurred loading the Threat Model:\n{e.Message}", true);
-                e.ToExceptionless().Submit();
-                model = null;
-                messageRaised = true;
+                ShowDesktopAlert($"Threat Model '{location}' does not exist.", true);
             }
 
             if (model != null)

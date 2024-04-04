@@ -13,6 +13,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Deletable = false;
             Copyable = false;
             Selectable = false;
+            AutoRescales = false;
             Image = Properties.Resources.report_problem_big;
             Size = new SizeF(32.0f, 32.0f);
             Visible = false;

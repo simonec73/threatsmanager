@@ -10,11 +10,11 @@ using DevComponents.DotNetBar;
 using Northwoods.Go;
 using Northwoods.Go.Layout;
 using PostSharp.Patterns.Contracts;
-using PostSharp.Patterns.Recording;
 using ThreatsManager.Extensions.Schemas;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.ObjectModel.Diagrams;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 
@@ -46,6 +46,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     using (var scope = UndoRedoManager.OpenScope("Resize Group"))
                     {
+                        group.LayoutChildren();
+
                         SaveGroupData(group);
 
                         var groups = group.OfType<GraphGroup>().ToArray();
@@ -104,11 +106,22 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             var location = group.Location;
             float centerX = location.X;
-            float centerY = location.Y + group.Label.Height / 2f;
+            float centerY = location.Y + group.Label.Height / 2f - 8.0f * Dpi.Factor.Height;
 
             if (centerX != shape.Position.X || centerY != shape.Position.Y)
             {
-                shape.Position = new PointF(centerX, centerY - 8.0f * Dpi.Factor.Height);
+                shape.Position = new PointF(centerX, centerY);
+            }
+        }
+
+        private static void SaveEntityData([NotNull] GraphEntity entity)
+        {
+            var shape = entity.EntityShape;
+            var location = entity.Location;
+
+            if (location.X != shape.Position.X || location.Y != shape.Position.Y)
+            {
+                shape.Position = new PointF(location.X, location.Y);
             }
         }
 
@@ -262,67 +275,116 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (Selection.Primary is GoSimpleNode simpleNode)
             {
-                var parent = GetParentGroup(point);
-                simpleNode.Remove();
-                switch (simpleNode.Text)
+                using (var scope = UndoRedoManager.OpenScope("Dropped a new standard item to the Diagram"))
                 {
-                    case "ExternalInteractor":
-                        CreateExternalInteractor?.Invoke(point, parent);
-                        break;
-                    case "Process":
-                        CreateProcess?.Invoke(point, parent);
-                        break;
-                    case "DataStore":
-                        CreateDataStore?.Invoke(point, parent);
-                        break;
-                    case "TrustBoundary":
-                        CreateTrustBoundary?.Invoke(point, parent);
-                        break;
-                    default:
-                        if (Guid.TryParse(simpleNode.Text, out Guid id))
-                        {
-                            CreateIdentity?.Invoke(id, point, parent);
-                        }
-                        break;
+                    var parent = GetParentGroup(point);
+                    simpleNode.Remove();
+                    switch (simpleNode.Text)
+                    {
+                        case "ExternalInteractor":
+                            CreateExternalInteractor?.Invoke(point, parent);
+                            break;
+                        case "Process":
+                            CreateProcess?.Invoke(point, parent);
+                            break;
+                        case "DataStore":
+                            CreateDataStore?.Invoke(point, parent);
+                            break;
+                        case "TrustBoundary":
+                            CreateTrustBoundary?.Invoke(point, parent);
+                            break;
+                        default:
+                            if (Guid.TryParse(simpleNode.Text, out Guid id))
+                            {
+                                CreateIdentity?.Invoke(id, point, parent);
+
+                                var entity = _diagram.Model?.GetEntity(id);
+                                IGroup p = null;
+                                if (entity != null)
+                                {
+                                    p = entity.Parent;
+                                }
+                                else
+                                {
+                                    var group = _diagram.Model?.GetGroup(id);
+                                    if (group is IGroupElement element)
+                                    {
+                                        p = element.Parent;
+                                    }
+                                }
+
+                                if (p != null)
+                                {
+                                    parent = Doc.GetGroup(p.Id);
+                                }
+                            }
+                            break;
+                    }
+
+                    RecurseLayoutParent(parent);
+
+                    scope?.Complete();
                 }
             } 
             else if (Selection.Primary is GraphPaletteItemNode paletteItemNode)
             {
-                var item = paletteItemNode.Item;
-                paletteItemNode.Remove();
-
-                var nodes = Document.PickObjects(point, false, null, 100);
-                foreach (var node in nodes)
+                using (var scope = UndoRedoManager.OpenScope("Added an advanced item to the Diagram"))
                 {
-                    var parent = node?.ParentNode;
-                    if (parent is GraphEntity gnode)
-                    {
-                        var entity = _diagram.Model?.GetEntity(gnode.EntityShape.AssociatedId);
-                        if (entity != null)
-                        {
-                            item.Apply(entity);
-                            gnode.ShowThreats(this);
-                        }
-                    }
-                    else if (parent is GraphLink glink)
-                    {
-                        var dataFlow = _diagram.Model?.GetDataFlow(glink.Link.AssociatedId);
-                        if (dataFlow != null)
-                        {
-                            item.Apply(dataFlow);
+                    var item = paletteItemNode.Item;
+                    paletteItemNode.Remove();
 
-                            glink.ShowThreats(this, point);
-                        }
-                    }
-                    else if (parent is GraphGroup ggroup)
+                    var nodes = Document.PickObjects(point, false, null, 100);
+                    foreach (var node in nodes)
                     {
-                        var group = _diagram.Model?.GetGroup(ggroup.GroupShape.AssociatedId);
-                        if (group != null)
+                        var parentNode = node?.ParentNode;
+                        if (parentNode is GraphEntity gnode)
                         {
-                            item.Apply(group);
-                            //ggroup.ShowThreats(this);
+                            var entity = _diagram.Model?.GetEntity(gnode.EntityShape.AssociatedId);
+                            if (entity != null)
+                            {
+                                item.Apply(entity);
+                                gnode.ShowThreats(this);
+                            }
+                        }
+                        else if (parentNode is GraphLink glink)
+                        {
+                            var dataFlow = _diagram.Model?.GetDataFlow(glink.Link.AssociatedId);
+                            if (dataFlow != null)
+                            {
+                                item.Apply(dataFlow);
+
+                                glink.ShowThreats(this, point);
+                            }
+                        }
+                        else if (parentNode is GraphGroup ggroup)
+                        {
+                            var group = _diagram.Model?.GetGroup(ggroup.GroupShape.AssociatedId);
+                            if (group != null)
+                            {
+                                item.Apply(group);
+                                //ggroup.ShowThreats(this);
+                                ggroup.LayoutChildren();
+                            }
                         }
                     }
+
+                    scope?.Complete();
+                }
+            }
+            else
+            {
+            }
+        }
+
+        private void RecurseLayoutParent(GraphGroup group)
+        {
+            if (group != null)
+            {
+                group.LayoutChildren();
+
+                if (group.Parent is GraphGroup parent)
+                {
+                    RecurseLayoutParent(parent);
                 }
             }
         }
@@ -340,6 +402,34 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         protected override void DoInternalDrop(DragEventArgs evt)
         {
             base.DoInternalDrop(evt);
+
+            var groups = Doc.GetGroups();
+            if (groups?.Any() ?? false)
+            {
+                foreach (var group in groups)
+                {
+                    group.LayoutChildren();
+                    SaveGroupData(group);
+                }
+            }
+
+            var entities = Doc.GetEntities();
+            if (entities?.Any() ?? false)
+            {
+                foreach (var entity in entities)
+                {
+                    SaveEntityData(entity);
+                }
+            }
+
+            //var groups = Doc.OfType<GraphGroup>();
+            //if (groups?.Any() ?? false)
+            //{
+            //    foreach (var group in groups)
+            //    {
+            //        group.LayoutChildren();
+            //    }
+            //}
 
             _moveScope?.Complete();
             _moveScope = null;
@@ -757,5 +847,12 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             return new Metafile(new MemoryStream(data, false));
         }
         #endregion
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            this.ResumeLayout(false);
+
+        }
     }
 }

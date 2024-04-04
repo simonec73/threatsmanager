@@ -77,8 +77,16 @@ namespace ThreatsManager.Extensions.Panels.Word
                     case "GenCurrent":
                         _index = 0;
                         _count = 1;
-                        if (_currentRow?.Tag is WordReportDefinition definition && Generate(definition))
-                            text = $"'{definition.Name}' Document Generation";
+                        if (_currentRow?.Tag is WordReportDefinition definition)
+                        {
+                            if (Generate(definition))
+                                text = $"'{definition.Name}' Document Generation";
+                        }
+                        else
+                        {
+                            text = "No document is selected.";
+                            warning = true;
+                        }
                         break;
                     case "Open":
                         if (!string.IsNullOrWhiteSpace(_lastDocument) && File.Exists(_lastDocument) &&

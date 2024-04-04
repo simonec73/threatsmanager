@@ -43,6 +43,11 @@ namespace ThreatsManager.Extensions.Panels.WeaknessList
                     RemoveEventSubscriptions(row);
             }
 
+            if (_menuWeakness != null)
+                _menuWeakness.MenuClicked -= OnWeaknessMenuClicked;
+            if (_menuWeaknessMitigation != null)
+                _menuWeaknessMitigation.MenuClicked -= OnWeaknessMitigationMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

@@ -2237,6 +2237,16 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     MenuDefinition.UpdateVisibility(_threatEventMitigationMenu, row.Tag);
                     _threatEventMitigationMenu?.Show(_grid.PointToScreen(e.Location));
                 }
+                if (row?.Tag is IVulnerability)
+                {
+                    MenuDefinition.UpdateVisibility(_vulnerabilityMenu, row.Tag);
+                    _vulnerabilityMenu?.Show(_grid.PointToScreen(e.Location));
+                }
+                if (row?.Tag is IVulnerabilityMitigation)
+                {
+                    MenuDefinition.UpdateVisibility(_vulnerabilityMitigationMenu, row.Tag);
+                    _vulnerabilityMitigationMenu?.Show(_grid.PointToScreen(e.Location));
+                }
             }
         }
         #endregion

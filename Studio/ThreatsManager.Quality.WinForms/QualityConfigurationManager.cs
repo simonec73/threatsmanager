@@ -2,6 +2,7 @@
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Quality.Panels.Configuration;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
 
@@ -21,6 +22,11 @@ namespace ThreatsManager.Quality
             _configuration = model.GetExtensionConfiguration(extensionId);
         }
 
+        public static QualityConfigurationManager GetInstance([NotNull] IThreatModel model)
+        {
+            return new QualityConfigurationManager(model, (new ConfigurationPanelFactory()).GetExtensionId());
+        }
+
         public void Apply()
         {
             if (_dirty)
@@ -30,10 +36,6 @@ namespace ThreatsManager.Quality
             if (EnableCalculatedSeverity)
             {
                 schemaManager.AddSupport();
-            }
-            else
-            {
-                schemaManager.RemoveSupport();
             }
         }
 

@@ -100,7 +100,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     Resizable = true;
                     Copyable = false;
                     Initializing = false;
-                    Visible = true;                   
+                    Visible = true;
+                    AutoRescales = false;
                     //LayoutChildren(_border);
 
                     UpdateParameters(markerSize, dpiFactor);
@@ -204,19 +205,30 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
         }
         
-        public override void DoMove(GoView view, PointF origLoc, PointF newLoc)
-        {
-            base.DoMove(view, origLoc, newLoc);
+        //public override void DoMove(GoView view, PointF origLoc, PointF newLoc)
+        //{
+        //    base.DoMove(view, origLoc, newLoc);
 
-            if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
-            {
-                using (var scope = UndoRedoManager.OpenScope("Move Group"))
-                {
-                    _shape.Position = new PointF(newLoc.X, newLoc.Y);
-                    scope?.Complete();
-                }
-            }
-        }
+        //    if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
+        //    {
+        //        using (var scope = UndoRedoManager.OpenScope("Move Group"))
+        //        {
+        //            _shape.Position = new PointF(newLoc.X, newLoc.Y);
+
+        //            var children = this.OfType<GraphGroup>().ToArray();
+        //            if (children?.Any() ?? false)
+        //            {
+        //                foreach (var child in children)
+        //                {
+        //                    child.DoMove(view, origLoc, newLoc);
+        //                }
+        //            }
+
+        //            scope?.Complete();
+        //        }
+        //    }
+        //}
+
 
         public override void OnGotSelection(GoSelection sel)
         {
@@ -340,26 +352,34 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             }
             else if (!AllowDragInOut)
             {
-                // compute the minimum rectangle needed to enclose the children except for the Border
-                RectangleF rect = ComputeBorder();
-                if (rect != RectangleF.Empty)
+                LayoutChildren();
+            }
+        }
+
+        public void LayoutChildren()
+        {
+            GoObject border = Border;
+            GoObject label = Label;
+
+            // compute the minimum rectangle needed to enclose the children except for the Border
+            RectangleF rect = ComputeBorder();
+            if (rect != RectangleF.Empty)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Force Layout Group Child"))
                 {
-                    using (var scope = UndoRedoManager.OpenScope("Layout Group Children"))
+                    // but don't have the box shrink to minimum size continuously
+                    rect = RectangleF.Union(rect, border.Bounds);
+                    border.Bounds = rect;
+                    _shape.Size = new SizeF(border.Bounds.Width, border.Bounds.Height);
+                    var location = Location;
+                    _shape.Position = new PointF(location.X, location.Y);
+
+                    if (label != null)
                     {
-                        // but don't have the box shrink to minimum size continuously
-                        rect = RectangleF.Union(rect, border.Bounds);
-                        border.Bounds = rect;
-                        _shape.Size = new SizeF(border.Bounds.Width, border.Bounds.Height);
-                        var location = Location;
-                        _shape.Position = new PointF(location.X, location.Y);
-
-                        if (label != null)
-                        {
-                            Label.SetSpotLocation(BottomLeft, new PointF(rect.X, rect.Y - 2));
-                        }
-
-                        scope?.Complete();
+                        Label.SetSpotLocation(BottomLeft, new PointF(rect.X, rect.Y - 2));
                     }
+
+                    scope?.Complete();
                 }
             }
         }
@@ -401,25 +421,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                 // add all selected objects to this BoxArea
                 view.Selection.AddRange(AddCollection(view.Selection, false));
-                // update the border to include all selected objects in case the selection crosses the border
-                GoObject border = Border;
-                if (border != null)
-                {
-                    RectangleF rect = ComputeBorder();
-                    if (rect != RectangleF.Empty)
-                    {
-                        using (var scope = UndoRedoManager.OpenScope("Group On Selection Dropped"))
-                        {
-                            // but don't have the box shrink to minimum size continuously
-                            rect = RectangleF.Union(rect, border.Bounds);
-                            border.Bounds = rect;
-                            _shape.Size = new SizeF(border.Bounds.Width, border.Bounds.Height);
-                            var location = Location;
-                            _shape.Position = new PointF(location.X, location.Y);
-                            scope?.Complete();
-                        }
-                    }
-                }
                 return true;
             }
             else
@@ -427,33 +428,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 return false;
             }
         }
-
-        //Allow the user to interactively resize the border;
-        // this ensures that the border surrounds all of the children.
-        //public override void DoResize(GoView view, RectangleF origRect, PointF newPoint, int whichHandle,
-        //    GoInputState evttype, SizeF min, SizeF max)
-        //{
-        //    // compute rectangle for normal resizing
-        //    RectangleF newRect = ComputeResize(origRect, newPoint, whichHandle, min, max, true);
-        //    // account for the height of the Label
-        //    newRect.Y += Label.Height + 2;
-        //    newRect.Height -= Label.Height + 2;
-        //    // compute rectangle required by the child objects
-        //    RectangleF minRect = ComputeBorder();
-        //    if (minRect != RectangleF.Empty)
-        //    {
-        //        newRect = RectangleF.Union(newRect, minRect);
-        //    }
-        //    using (var scope = UndoRedoManager.OpenScope("Group DoResize"))
-        //    {
-        //        // update the bounding rect of the Border
-        //        Border.Bounds = newRect;
-        //        _shape.Size = new SizeF(newRect.Size.Width, newRect.Size.Height);
-        //        var location = Location;
-        //        _shape.Position = new PointF(location.X, location.Y);
-        //        scope?.Complete();
-        //    }
-        //}
         #endregion
 
         #region Context menu.

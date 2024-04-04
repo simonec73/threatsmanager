@@ -210,5 +210,49 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
                 _dirty = true;
             }
         }
+        
+        public int FlowWrappingWidth
+        {
+            get
+            {
+                int result;
+
+                var value = _configuration?.GlobalGet<int>("fWrap");
+                if ((value ?? 0) == 0)
+                    result = 150;
+                else
+                    result = value.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("fWrap", value);
+                _dirty = true;
+            }
+        }
+
+        public int EntityWrappingWidth
+        {
+            get
+            {
+                int result;
+
+                var value = _configuration?.GlobalGet<int>("eWrap");
+                if ((value ?? 0) == 0)
+                    result = 150;
+                else
+                    result = value.Value;
+
+                return result;
+            }
+
+            set
+            {
+                _configuration?.GlobalSet<int>("eWrap", value);
+                _dirty = true;
+            }
+        }
     }
 }

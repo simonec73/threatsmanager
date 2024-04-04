@@ -43,6 +43,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                     RemoveEventSubscriptions(row);
             }
 
+            if (_menuThreatTypes != null)
+                _menuThreatTypes.MenuClicked -= OnThreatTypeMenuClicked;
+            if (_menuThreatTypeMitigation != null)
+                _menuThreatTypeMitigation.MenuClicked -= OnThreatTypeMitigationMenuClicked;
+
             if (disposing && (components != null))
             {
                 components.Dispose();

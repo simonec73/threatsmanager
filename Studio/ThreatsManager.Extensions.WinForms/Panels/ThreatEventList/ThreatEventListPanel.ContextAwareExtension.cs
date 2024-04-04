@@ -20,6 +20,12 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
         private ContextMenuStrip _vulnerabilityMenu;
         private ContextMenuStrip _vulnerabilityMitigationMenu;
         private IEnumerable<IContextAwareAction> _actions;
+        private MenuDefinition _menuThreatEvents;
+        private MenuDefinition _menuThreatTypes;
+        private MenuDefinition _menuScenario;
+        private MenuDefinition _menuThreatEventMitigation;
+        private MenuDefinition _menuVulnerability;
+        private MenuDefinition _menuVulnerabilityMitigation;
 
         public Scope SupportedScopes => Scope.ThreatEvent | Scope.ThreatType | 
             Scope.ThreatEventScenario | Scope.ThreatEventMitigation |
@@ -27,29 +33,29 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
 
         public void SetContextAwareActions([NotNull] IEnumerable<IContextAwareAction> actions)
         {
-            var menuThreatEvents = new MenuDefinition(actions, Scope.ThreatEvent);
-            _threatEventMenu = menuThreatEvents.CreateMenu();
-            menuThreatEvents.MenuClicked += OnThreatEventMenuClicked;
+            _menuThreatEvents = new MenuDefinition(actions, Scope.ThreatEvent);
+            _threatEventMenu = _menuThreatEvents.CreateMenu();
+            _menuThreatEvents.MenuClicked += OnThreatEventMenuClicked;
 
-            var menuThreatTypes = new MenuDefinition(actions, Scope.ThreatType);
-            _threatTypeMenu = menuThreatTypes.CreateMenu();
-            menuThreatTypes.MenuClicked += OnThreatTypeMenuClicked;
+            _menuThreatTypes = new MenuDefinition(actions, Scope.ThreatType);
+            _threatTypeMenu = _menuThreatTypes.CreateMenu();
+            _menuThreatTypes.MenuClicked += OnThreatTypeMenuClicked;
 
-            var menuScenario = new MenuDefinition(actions, Scope.ThreatEventScenario);
-            _scenarioMenu = menuScenario.CreateMenu();
-            menuScenario.MenuClicked += OnScenarioMenuClicked;
+            _menuScenario = new MenuDefinition(actions, Scope.ThreatEventScenario);
+            _scenarioMenu = _menuScenario.CreateMenu();
+            _menuScenario.MenuClicked += OnScenarioMenuClicked;
  
-            var menuThreatEventMitigation = new MenuDefinition(actions, Scope.ThreatEventMitigation);
-            _threatEventMitigationMenu = menuThreatEventMitigation.CreateMenu();
-            menuThreatEventMitigation.MenuClicked += OnThreatEventMitigationMenuClicked;
+            _menuThreatEventMitigation = new MenuDefinition(actions, Scope.ThreatEventMitigation);
+            _threatEventMitigationMenu = _menuThreatEventMitigation.CreateMenu();
+            _menuThreatEventMitigation.MenuClicked += OnThreatEventMitigationMenuClicked;
 
-            var menuVulnerability = new MenuDefinition(actions, Scope.Vulnerability);
-            _vulnerabilityMenu = menuVulnerability.CreateMenu();
-            menuVulnerability.MenuClicked += OnVulnerabilityMenuClicked;
+            _menuVulnerability = new MenuDefinition(actions, Scope.Vulnerability);
+            _vulnerabilityMenu = _menuVulnerability.CreateMenu();
+            _menuVulnerability.MenuClicked += OnVulnerabilityMenuClicked;
 
-            var menuVulnerabilityMitigation = new MenuDefinition(actions, Scope.VulnerabilityMitigation);
-            _vulnerabilityMitigationMenu = menuVulnerabilityMitigation.CreateMenu();
-            menuVulnerabilityMitigation.MenuClicked += OnVulnerabilityMitigationMenuClicked;
+            _menuVulnerabilityMitigation = new MenuDefinition(actions, Scope.VulnerabilityMitigation);
+            _vulnerabilityMitigationMenu = _menuVulnerabilityMitigation.CreateMenu();
+            _menuVulnerabilityMitigation.MenuClicked += OnVulnerabilityMitigationMenuClicked;
 
             _actions = actions?.ToArray();
 
