@@ -61,6 +61,15 @@ namespace ThreatsManager.Extensions.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IDs of the Mitigations that are known alternatives to the current one..
+        /// </summary>
+        internal static string Alernatives {
+            get {
+                return ResourceManager.GetString("Alernatives", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifier of the Diagram associated to the Entity..
         /// </summary>
         internal static string AssociatedDiagram {
@@ -120,6 +129,15 @@ namespace ThreatsManager.Extensions.Properties {
         internal static string CapecPropertySchemaDescription {
             get {
                 return ResourceManager.GetString("CapecPropertySchemaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IDs of the Mitigations that are complementary to the current one..
+        /// </summary>
+        internal static string Complementary {
+            get {
+                return ResourceManager.GetString("Complementary", resourceCulture);
             }
         }
         
@@ -371,6 +389,15 @@ namespace ThreatsManager.Extensions.Properties {
         internal static string PropertyWordSections {
             get {
                 return ResourceManager.GetString("PropertyWordSections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property Schema that collects all the Mitigations in relationship with the current Mitigation..
+        /// </summary>
+        internal static string RelationshipSchemaDescription {
+            get {
+                return ResourceManager.GetString("RelationshipSchemaDescription", resourceCulture);
             }
         }
         
