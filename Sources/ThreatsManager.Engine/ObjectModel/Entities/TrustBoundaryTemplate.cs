@@ -175,7 +175,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 if (trustBoundary is TrustBoundary internalTb)
                 {
                     internalTb._templateId = Id;
-                    internalTb._template = this;
                 }
                 scope?.Complete();
             }

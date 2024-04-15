@@ -239,7 +239,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         public event Action<IEntity, ImageSize> ImageChanged;
 
         [Reference]
-        [NotRecorded]
         [JsonProperty("bigImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _bigImage { get; set; }
@@ -259,7 +258,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [Reference]
-        [NotRecorded]
         [JsonProperty("image")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _image { get; set; }
@@ -279,7 +277,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         }
 
         [Reference]
-        [NotRecorded]
         [JsonProperty("smallImage")] 
         [JsonConverter(typeof(ImageConverter))]
         private Bitmap _smallImage { get; set; }
@@ -301,24 +298,9 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId { get; set; }
 
-        [Reference]
-        [property: NotRecorded]
-        internal IEntityTemplate _template { get; set; }
-
         [property: NotRecorded]
         [IgnoreAutoChangeNotification]
-        public IEntityTemplate Template
-        {
-            get
-            {
-                if (_template == null && _templateId != Guid.Empty)
-                {
-                    _template = Model?.GetEntityTemplate(_templateId);
-                }
-
-                return _template;
-            }
-        }
+        public IEntityTemplate Template => Model?.GetEntityTemplate(_templateId);
 
         public void ResetTemplate()
         {
@@ -331,7 +313,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 Model?.AutoApplySchemas(this);
 
                 _templateId = Guid.Empty;
-                _template = null;
 
                 scope?.Complete();
             }

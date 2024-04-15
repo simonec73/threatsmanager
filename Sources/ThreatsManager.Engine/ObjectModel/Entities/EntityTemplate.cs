@@ -261,15 +261,12 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 {
                     case ExternalInteractor externalInteractor:
                         externalInteractor._templateId = Id;
-                        externalInteractor._template = this;
                         break;
                     case Process process:
                         process._templateId = Id;
-                        process._template = this;
                         break;
                     case DataStore dataStore:
                         dataStore._templateId = Id;
-                        dataStore._template = this;
                         break;
                 }
 

@@ -186,24 +186,9 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
         [JsonProperty("template")]
         internal Guid _templateId { get; set; }
 
-        [Reference]
-        [property: NotRecorded]
-        internal ITrustBoundaryTemplate _template { get; set; }
-
         [property: NotRecorded]
         [IgnoreAutoChangeNotification]
-        public ITrustBoundaryTemplate Template
-        {
-            get
-            {
-                if (_template == null && _templateId != Guid.Empty)
-                {
-                    _template = Model?.GetTrustBoundaryTemplate(_templateId);
-                }
-
-                return _template;
-            }
-        }
+        public ITrustBoundaryTemplate Template => Model?.GetTrustBoundaryTemplate(_templateId);
 
         public void ResetTemplate()
         {
@@ -213,7 +198,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 Model?.AutoApplySchemas(this);
 
                 _templateId = Guid.Empty;
-                _template = null;
 
                 scope?.Complete();
             }
