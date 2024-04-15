@@ -25,14 +25,19 @@ namespace ThreatsManager.Extensions.Relationships
 
         public bool AddMitigation([NotNull] IMitigation mitigation)
         {
+            return AddMitigation(mitigation.Id);
+        }
+
+        public bool AddMitigation(Guid mitigationId)
+        {
             bool result = false;
 
-            if (!(_mitigationIds?.Any(x => mitigation.Id == x.Value) ?? false))
+            if (!(_mitigationIds?.Any(x => mitigationId == x.Value) ?? false))
             {
                 if (_mitigationIds == null)
                     _mitigationIds = new AdvisableCollection<RecordableGuid>();
 
-                _mitigationIds.Add(new RecordableGuid(mitigation.Id));
+                _mitigationIds.Add(new RecordableGuid(mitigationId));
                 result = true;
             }
 

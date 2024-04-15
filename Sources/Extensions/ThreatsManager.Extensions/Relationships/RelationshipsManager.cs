@@ -24,7 +24,7 @@ namespace ThreatsManager.Extensions.Relationships
             _schemaManager = new RelationshipSchemaManager(referenceMitigation.Model);
         }
 
-        public bool IsInitialized => _model != null;
+        public bool IsInitialized => _model != null && _schemaManager != null;
 
         public bool IsMainAlternative
         {
@@ -43,102 +43,221 @@ namespace ThreatsManager.Extensions.Relationships
         }
 
         [InitializationRequired]
+        public Guid GetMainAlternativeId()
+        {
+            return _schemaManager.GetAlternatives(_reference)?.Main ?? Guid.Empty;
+        }
+
+        [InitializationRequired]
         public IMitigation GetMainAlternative()
         {
-            var mainId = _schemaManager.GetAlternatives(_reference)?.Main ?? Guid.Empty;
-            return _model.GetMitigation(mainId);
+            IMitigation result = null;
+
+            var mainId = GetMainAlternativeId();
+            if (mainId != Guid.Empty)
+            {
+                result = _model.GetMitigation(mainId);
+            }
+
+            return result;
         }
 
         [InitializationRequired]
         public bool SetMainAlternative()
         {
-            return SetAlternative(_reference, true);
+            return AddAlternative(_reference, true);
+        }
+
+        public bool SetMainAlternative(IMitigation mitigation)
+        {
+            return AddAlternative(mitigation, true);
+        }
+
+        public bool SetMainAlternative(Guid mitigationId)
+        {
+            return AddAlternative(mitigationId, true);
         }
 
         [InitializationRequired]
-        public bool SetMainAlternative(IMitigation mitigation)
+        public bool ResetMainAlternative()
         {
-            return SetAlternative(mitigation, true);
+            bool result = false;
+
+            using (var scope = UndoRedoManager.OpenScope("Reset main alternative"))
+            {
+                var alternatives = _schemaManager.GetAlternatives(_reference);
+                if (alternatives != null)
+                {
+                    alternatives.Main = Guid.Empty;
+                    scope?.Complete();
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        [InitializationRequired]
+        public Guid GetMainComplementaryId()
+        {
+            return _schemaManager.GetComplementary(_reference)?.Main ?? Guid.Empty;
         }
 
         [InitializationRequired]
         public IMitigation GetMainComplementary()
         {
-            var mainId = _schemaManager.GetComplementary(_reference)?.Main ?? Guid.Empty;
-            return _model.GetMitigation(mainId);
+            IMitigation result = null;
+
+            var mainId = GetMainComplementaryId();
+            if (mainId != Guid.Empty)
+            {
+                result = _model.GetMitigation(mainId);
+            }
+
+            return result;
         }
 
         [InitializationRequired]
         public bool SetMainComplementary()
         {
-            return SetComplementary(_reference, true);
+            return AddComplementary(_reference, true);
+        }
+
+        public bool SetMainComplementary(IMitigation mitigation)
+        {
+            return AddComplementary(mitigation, true);
+        }
+
+        public bool SetMainComplementary(Guid mitigationId)
+        {
+            return AddComplementary(mitigationId, true);
         }
 
         [InitializationRequired]
-        public bool SetMainComplementary(IMitigation mitigation)
+        public bool ResetMainComplementary()
         {
-            return SetComplementary(mitigation, true);
+            bool result = false;
+
+            using (var scope = UndoRedoManager.OpenScope("Reset main complementary"))
+            {
+                var complementary = _schemaManager.GetComplementary(_reference);
+                if (complementary != null)
+                {
+                    complementary.Main = Guid.Empty;
+                    scope?.Complete();
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        [InitializationRequired]
+        public IEnumerable<Guid> GetAlternativeIDs()
+        {
+            return _schemaManager.GetAlternatives(_reference)?.MitigationIds;
         }
 
         [InitializationRequired]
         public IEnumerable<IMitigation> GetAlternatives()
         {
-            return _schemaManager.GetAlternatives(_reference)?.MitigationIds?
+            return GetAlternativeIDs()?
                 .Select(x => _model.GetMitigation(x))
                 .Where(x => x != null);
+        }
+
+        [InitializationRequired]
+        public IEnumerable<Guid> GetComplementaryIDs()
+        {
+            return _schemaManager.GetComplementary(_reference)?.MitigationIds;
         }
 
         [InitializationRequired]
         public IEnumerable<IMitigation> GetComplementary()
         {
-            return _schemaManager.GetAlternatives(_reference)?.MitigationIds?
+            return GetComplementaryIDs()?
                 .Select(x => _model.GetMitigation(x))
                 .Where(x => x != null);
         }
 
+        public bool AddAlternative(IMitigation mitigation, bool isMain = false) 
+        {
+            return AddAlternative(mitigation.Id, isMain);
+        }
+
         [InitializationRequired]
-        public bool SetAlternative(IMitigation mitigation, bool isMain = false) 
+        public bool AddAlternative(Guid mitigationId, bool isMain = false)
         {
             bool result = true;
 
-            using (var scope = UndoRedoManager.OpenScope("Set Alternative"))
+            using (var scope = UndoRedoManager.OpenScope("Add Alternative"))
             {
                 var alternatives = _schemaManager.GetAlternatives(_reference);
 
-                if (!alternatives.MitigationIds.Contains(mitigation.Id))
+                if (alternatives == null)
                 {
-                    if (!alternatives.AddMitigation(mitigation))
+                    alternatives = new RelationshipDetails();
+
+                    if (!alternatives.AddMitigation(mitigationId))
                     {
-                        return false;
+                        result = false;
                     }
+
+                    if (result)
+                        _schemaManager.SetAlternatives(_reference, alternatives);
                 }
-
-                if (isMain)
-                    alternatives.Main = mitigation.Id;
-
-                var otherMitigations = alternatives.MitigationIds?
-                    .Where(x => x != mitigation.Id)
-                    .Select(x => _model.GetMitigation(x))
-                    .Where(x => x != null).ToArray();
-
-                if (otherMitigations?.Any() ?? false)
+                else
                 {
-                    foreach (var om in otherMitigations)
-                    {
-                        var omAlt = _schemaManager.GetAlternatives(om);
-                        if (omAlt != null)
-                        {
-                            if (!omAlt.MitigationIds.Contains(mitigation.Id))
-                            {
-                                if (!omAlt.AddMitigation(mitigation))
-                                    return false;
-                            }
+                    var otherMitigations = Add(alternatives, mitigationId, isMain);
 
-                            if (isMain)
-                                omAlt.Main = mitigation.Id;
+                    if (otherMitigations?.Any() ?? false)
+                    {
+                        foreach (var om in otherMitigations)
+                        {
+                            var omAlt = _schemaManager.GetAlternatives(om);
+                            if (omAlt != null)
+                            {
+                                if (!omAlt.MitigationIds.Contains(mitigationId))
+                                {
+                                    if (!omAlt.AddMitigation(mitigationId))
+                                    {
+                                        result = false;
+                                        break;
+                                    }
+                                }
+
+                                if (isMain)
+                                    omAlt.Main = mitigationId;
+                            }
                         }
                     }
                 }
+
+                if (result)
+                    scope?.Complete();
+            }
+
+            return result;
+        }
+
+        public bool RemoveAlternative(IMitigation mitigation)
+        {
+            return RemoveAlternative(mitigation.Id);
+        }
+
+        [InitializationRequired]
+        public bool RemoveAlternative(Guid mitigationId)
+        {
+            bool result = false;
+
+            using (var scope = UndoRedoManager.OpenScope("Remove Alternative"))
+            {
+                var alternatives = _schemaManager.GetAlternatives(_reference);
+
+                result = alternatives?.RemoveMitigation(mitigationId) ?? false;
+
+                if (alternatives.Main == mitigationId)
+                    alternatives.Main = Guid.Empty;
 
                 scope?.Complete();
             }
@@ -146,54 +265,108 @@ namespace ThreatsManager.Extensions.Relationships
             return result;
         }
 
+        public bool AddComplementary(IMitigation mitigation, bool isMain = false)
+        {
+            return AddComplementary(mitigation.Id, isMain);
+        }
+
         [InitializationRequired]
-        public bool SetComplementary(IMitigation mitigation, bool isMain = false)
+        public bool AddComplementary(Guid mitigationId, bool isMain = false)
         {
             bool result = true;
 
-            using (var scope = UndoRedoManager.OpenScope("Set Main Alternative"))
+            using (var scope = UndoRedoManager.OpenScope("Add Complementary"))
             {
-                var alternatives = _schemaManager.GetAlternatives(_reference);
+                var complementary = _schemaManager.GetComplementary(_reference);
 
-                if (!alternatives.MitigationIds.Contains(mitigation.Id))
+                if (complementary == null)
                 {
-                    if (!alternatives.AddMitigation(mitigation))
+                    complementary = new RelationshipDetails();
+
+                    if (!complementary.AddMitigation(mitigationId))
                     {
-                        return false;
+                        result = false;
                     }
+
+                    if (result)
+                        _schemaManager.SetComplementary(_reference, complementary);
                 }
-
-                if (isMain)
-                    alternatives.Main = mitigation.Id;
-
-                var otherMitigations = alternatives.MitigationIds?
-                    .Where(x => x != mitigation.Id)
-                    .Select(x => _model.GetMitigation(x))
-                    .Where(x => x != null).ToArray();
-
-                if (otherMitigations?.Any() ?? false)
+                else
                 {
-                    foreach (var om in otherMitigations)
-                    {
-                        var omAlt = _schemaManager.GetAlternatives(om);
-                        if (omAlt != null)
-                        {
-                            if (!omAlt.MitigationIds.Contains(mitigation.Id))
-                            {
-                                if (!omAlt.AddMitigation(mitigation))
-                                    return false;
-                            }
+                    var otherMitigations = Add(complementary, mitigationId, isMain);
 
-                            if (isMain)
-                                omAlt.Main = mitigation.Id;
+                    if (otherMitigations?.Any() ?? false)
+                    {
+                        foreach (var om in otherMitigations)
+                        {
+                            var omAlt = _schemaManager.GetComplementary(om);
+                            if (omAlt != null)
+                            {
+                                if (!omAlt.MitigationIds.Contains(mitigationId))
+                                {
+                                    if (!omAlt.AddMitigation(mitigationId))
+                                    {
+                                        result = false;
+                                        break;
+                                    }
+                                }
+
+                                if (isMain)
+                                    omAlt.Main = mitigationId;
+                            }
                         }
                     }
                 }
+
+                if (result)
+                    scope?.Complete();
+            }
+
+            return result;
+        }
+
+        public bool RemoveComplementary(IMitigation mitigation)
+        {
+            return RemoveComplementary(mitigation.Id);
+        }
+
+        [InitializationRequired]
+        public bool RemoveComplementary(Guid mitigationId)
+        {
+            bool result = false;
+
+            using (var scope = UndoRedoManager.OpenScope("Remove Complementary"))
+            {
+                var complementary = _schemaManager.GetComplementary(_reference);
+
+                result = complementary?.RemoveMitigation(mitigationId) ?? false;
+
+                if (complementary.Main == mitigationId)
+                    complementary.Main = Guid.Empty;
 
                 scope?.Complete();
             }
 
             return result;
+        }
+
+        private IMitigation[] Add([NotNull] RelationshipDetails details, Guid mitigationId, bool isMain)
+        {
+            if (!details.MitigationIds.Contains(mitigationId))
+            {
+                if (!details.AddMitigation(mitigationId))
+                {
+                    return null;
+                }
+            }
+
+            if (isMain)
+                details.Main = mitigationId;
+
+            return details.MitigationIds?
+                .Where(x => x != mitigationId)
+                .Select(x => _model.GetMitigation(x))
+                .Where(x => x != null).ToArray();
         }
     }
 }
