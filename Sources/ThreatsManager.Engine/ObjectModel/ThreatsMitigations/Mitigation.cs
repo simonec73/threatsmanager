@@ -234,23 +234,43 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public string GetName(IIdentity identity)
         {
-            string result = _name;
+            string result = _name ?? "<Undefined>";
 
-            if (identity is IEntity entity && entity.Template is IItemTemplate template)
+            IItemTemplate template = null;
+            if (identity is IEntity entity)
             {
-                var specialized = GetSpecializedMitigation(template);
-                if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Name))
-                {
-                    result = specialized.Name;
-                }
+                template = entity.Template;
             }
+            else if (identity is IDataFlow flow)
+            {
+                template = flow.Template;
+            }
+
+            var specialized = GetSpecializedMitigation(template);
+            if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Name))
+            {
+                result = specialized.Name;
+            }
+
+            return result;
+        }
+
+        public string GetName(Guid identityId)
+        {
+            string result = null;
+
+            IIdentity identity = Model?.GetEntity(identityId);
+            if (identity == null)
+                identity = Model?.GetDataFlow(identityId);
+            if (identity != null)
+                result = GetName(identity);
 
             return result;
         }
 
         public string GetDescription(IIdentity identity)
         {
-            string result = _description;
+            string result = _description ?? "<Undefined>";
 
             if (identity is IEntity entity && entity.Template is IItemTemplate template)
             {
@@ -260,6 +280,19 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     result = specialized.Description;
                 }
             }
+
+            return result;
+        }
+
+        public string GetDescription(Guid identityId)
+        {
+            string result = null;
+
+            IIdentity identity = Model?.GetEntity(identityId);
+            if (identity == null)
+                identity = Model?.GetDataFlow(identityId);
+            if (identity != null)
+                result = GetDescription(identity);
 
             return result;
         }

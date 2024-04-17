@@ -14,6 +14,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Utilities.Aspects.Engine;
 using PostSharp.Patterns.Collections;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -156,6 +157,53 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [IgnoreAutoChangeNotification]
         public IMitigation Mitigation => _mitigation ?? (_mitigation = Model?.GetMitigation(_mitigationId));
+
+        [JsonProperty("refId")]
+        public Guid ReferenceId { get; set; }
+
+        public string Name
+        {
+            get
+            {
+                string result;
+
+                if (ReferenceId != Guid.Empty)
+                {
+                    result = Mitigation?.GetName(ReferenceId);
+                }
+                else
+                {
+                    result = Mitigation?.GetName(ThreatEvent?.Parent);
+                }
+
+                if (result == null)
+                    result = "<Undefined>";
+
+                return result;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                string result;
+
+                if (ReferenceId != Guid.Empty)
+                {
+                    result = Mitigation?.GetDescription(ReferenceId);
+                }
+                else
+                {
+                    result = Mitigation?.GetDescription(ThreatEvent?.Parent);
+                }
+
+                if (result == null)
+                    result = "<Undefined>";
+
+                return result;
+            }
+        }
 
         [JsonProperty("directives")]
         public string Directives { get; set; }
