@@ -3,6 +3,8 @@ using PostSharp.Aspects.Configuration;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Aspects.Serialization;
 using PostSharp.Serialization;
+using System;
+using System.Reflection;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Utilities.Aspects.Engine;
 
@@ -53,7 +55,25 @@ namespace ThreatsManager.Utilities.Aspects
             if (args.Instance is IInitializableObject initializableObject && !initializableObject.IsInitialized)
             {
                 if (_isDefaultValueInitalized)
+                {
                     args.ReturnValue = _defaultValue;
+                }
+                else
+                {
+                    var info = args.Method as MethodInfo;
+                    if (info != null)
+                    {
+                        var type = info.ReturnType;
+                        if (type?.IsValueType ?? false)
+                        {
+                            args.ReturnValue = Activator.CreateInstance(type);
+                        }
+                        else
+                        {
+                            args.ReturnValue = null;
+                        }
+                    }
+                }
 
                 args.FlowBehavior = FlowBehavior.Return;
             }
