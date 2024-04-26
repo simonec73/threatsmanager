@@ -2442,6 +2442,11 @@ namespace ThreatsManager.Engine.ObjectModel
                 {
                     author = UserName.GetDisplayName();
                 }
+                
+                if (string.IsNullOrWhiteSpace(author))
+                {
+                    author = "<Unknown>";
+                }
 
                 DateTime changedOn;
                 var location = this.GetLocation();
