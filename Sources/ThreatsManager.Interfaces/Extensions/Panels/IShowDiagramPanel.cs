@@ -9,11 +9,6 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
     public interface IShowDiagramPanel<T> : IPanel<T>
     {
         /// <summary>
-        /// Diagram associated to the Panel.
-        /// </summary>
-        IDiagram Diagram { get; }
-
-        /// <summary>
         /// Method to initialize the Diagram associated to the Panel.
         /// </summary>
         /// <param name="diagram">Diagram to be shown in the Panel.</param>
