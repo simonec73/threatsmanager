@@ -41,7 +41,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public EntityShape([NotNull] IEntity entity) : this()
         {
             _model = entity.Model;
-            _associated = entity;
+            _associatedId = entity.Id;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -132,11 +132,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #region Specific implementation.
         public Scope PropertiesScope => Scope.EntityShape;
 
-        [Reference]
-        [field: NotRecorded]
-        [field: UpdateAssociatedId]
-        private IEntity _associated { get; set; }
-
         [JsonProperty("id")]
         private Guid _associatedId { get; set; }
 
@@ -144,7 +139,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IIdentity Identity => _associated ?? (_associated = Model.GetEntity(_associatedId));
+        public IIdentity Identity => Model.GetEntity(_associatedId);
 
         [Child]
         private RecordablePointF _recordablePosition { get; set; }

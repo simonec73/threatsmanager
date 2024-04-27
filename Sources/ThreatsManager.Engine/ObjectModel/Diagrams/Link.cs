@@ -39,7 +39,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public Link([NotNull] IDataFlow dataFlow) : this()
         {
             _model = dataFlow.Model;
-            _associated = dataFlow;
+            _associatedId = dataFlow.Id;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -128,11 +128,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #region Specific implementation.
         public Scope PropertiesScope => Scope.Link;
 
-        [Reference]
-        [field: NotRecorded]
-        [field: UpdateAssociatedId]
-        private IDataFlow _associated;
-
         [JsonProperty("id")]
         private Guid _associatedId { get; set; }
 
@@ -140,7 +135,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IDataFlow DataFlow => _associated ?? (_associated = Model?.GetDataFlow(_associatedId));
+        public IDataFlow DataFlow => Model?.GetDataFlow(_associatedId);
 
         public ILink Clone(ILinksContainer container)
         {
