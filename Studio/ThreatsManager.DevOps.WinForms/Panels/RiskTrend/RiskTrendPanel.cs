@@ -95,6 +95,8 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         private ChartXy Chart => _chart.ChartPanel.ChartContainers.FirstOrDefault() as ChartXy;
 
         private float AcceptableRisk

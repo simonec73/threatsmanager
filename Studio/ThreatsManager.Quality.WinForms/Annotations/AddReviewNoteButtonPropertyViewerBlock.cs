@@ -31,7 +31,7 @@ namespace ThreatsManager.Quality.Annotations
         {
             bool result = false;
 
-            var dialog = new AnnotationDialog(_model, _container , new ReviewNote());
+            var dialog = new AnnotationDialog(_container , new ReviewNote());
             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
             {
                 using (var scope = UndoRedoManager.OpenScope("Add Review Note"))

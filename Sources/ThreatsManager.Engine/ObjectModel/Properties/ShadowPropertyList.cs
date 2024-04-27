@@ -5,6 +5,7 @@ using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Exceptions;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
@@ -65,7 +66,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 if (Original is IPropertyList originalProperty)
                 {

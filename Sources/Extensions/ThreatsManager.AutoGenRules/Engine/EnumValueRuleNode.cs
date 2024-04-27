@@ -138,7 +138,6 @@ namespace ThreatsManager.AutoGenRules.Engine
 
             if (string.IsNullOrWhiteSpace(schemaNs) && string.IsNullOrWhiteSpace(schemaName))
             {
-                var model = context as IThreatModel ?? (context as IThreatModelChild)?.Model;
                 switch (propertyName)
                 {
                     case "Flow Type":
@@ -148,7 +147,7 @@ namespace ThreatsManager.AutoGenRules.Engine
                     case "Object Type":
                         if (context is IIdentity identity)
                         {
-                            value = model?.GetIdentityTypeName(identity);
+                            value = identity.GetIdentityTypeName();
                             result = true;
                         }
                         else if (context is IThreatTypeMitigation)

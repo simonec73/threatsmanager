@@ -7,6 +7,7 @@ using DevComponents.AdvTree;
 using Microsoft.Web.WebView2.Core;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
+using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Help;
 
@@ -40,6 +41,8 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
         public Guid Id => _id;
 
         public Form PanelContainer { get; set; }
+
+        public IIdentity ReferenceObject => null;
 
         public void SetAction(string parameter)
         {

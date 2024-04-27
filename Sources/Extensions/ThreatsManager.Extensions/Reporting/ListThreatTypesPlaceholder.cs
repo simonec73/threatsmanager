@@ -120,9 +120,9 @@ namespace ThreatsManager.Extensions.Reporting
                         items.Add(new TextRow("Description", threatType.Description));
                         items.Add(new ListRow("Affected Objects", 
                             threatEvents.Select(x => 
-                                new Line($"{x.Parent.Name}", 
-                                    $"[{model.GetIdentityTypeInitial(x.Parent)}] ",
-                                    $" ({x.Severity.Name})",
+                                new Line($"{x.Parent?.Name}", 
+                                    $"[{x.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] ",
+                                    $" ({x.Severity?.Name})",
                                     new [] {x.ParentId}))));
                         items.Add(new TableRow("Approved Mitigations", new[]
                         {
@@ -225,7 +225,7 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var item in list)
                 {
                     cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
-                        $"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] ",
+                        $"[{item.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] ",
                         null,
                         new[]
                         {item.ThreatEvent.ParentId}));
@@ -251,17 +251,20 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    var property = item.GetProperty(propertyType);
-                    if (property != null)
+                    if (item.Parent != null)
                     {
-                        var cell = Cell.Create(item, property);
-                        if (cell != null)
+                        var property = item.GetProperty(propertyType);
+                        if (property != null)
                         {
-                            cells.Add(new Cell($"{item.Parent.Name}",
-                                $"[{item.Model.GetIdentityTypeInitial(item.Parent)}] ",
-                                null,
-                                new[] {item.ParentId}));
-                            cells.Add(cell);
+                            var cell = Cell.Create(item, property);
+                            if (cell != null)
+                            {
+                                cells.Add(new Cell($"{item.Parent.Name}",
+                                    $"[{item.Parent.GetIdentityTypeInitial()}] ",
+                                    null,
+                                    new[] { item.ParentId }));
+                                cells.Add(cell);
+                            }
                         }
                     }
                 }

@@ -2,6 +2,10 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
+    <ApplicationHighDpiMode>DpiUnawareGdiScaled</ApplicationHighDpiMode>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{DCC0DD34-B991-48C7-90CD-DEB5BF9DE934}</ProjectGuid>
@@ -18,8 +22,6 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
-    <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
-    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -133,6 +135,8 @@
     <Compile Include="..\ThreatsManager\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Actions\ManageComplementaryMitigations.cs" />
+    <Compile Include="Actions\ManageAlternativeMitigations.cs" />
     <Compile Include="Actions\AddMissingFlows.cs" />
     <Compile Include="Actions\ApplyPropertySchema.cs" />
     <Compile Include="Actions\ApplySeverityToThreatEvents.cs" />
@@ -155,6 +159,13 @@
     <Compile Include="Actions\ToggleTextLocation.cs" />
     <Compile Include="Dialogs\ActionType.cs" />
     <Compile Include="Dialogs\AdjustFactorParams.cs" />
+    <Compile Include="Dialogs\ManageMitigationsRelationshipsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ManageMitigationsRelationshipsDialog.Designer.cs">
+      <DependentUpon>ManageMitigationsRelationshipsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AssociationType.cs" />
     <Compile Include="Dialogs\ChangeEntityTypeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -325,6 +336,12 @@
     </Compile>
     <Compile Include="Dialogs\SelectSeverityDialog.Designer.cs">
       <DependentUpon>SelectSeverityDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AddSpecializedMitigationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AddSpecializedMitigationDialog.Designer.cs">
+      <DependentUpon>AddSpecializedMitigationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\SelectStrengthDialog.cs">
       <SubType>Form</SubType>
@@ -813,6 +830,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\ManageMitigationsRelationshipsDialog.resx">
+      <DependentUpon>ManageMitigationsRelationshipsDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ChangeEntityTypeDialog.resx">
       <DependentUpon>ChangeEntityTypeDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -887,6 +907,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\SelectSeverityDialog.resx">
       <DependentUpon>SelectSeverityDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AddSpecializedMitigationDialog.resx">
+      <DependentUpon>AddSpecializedMitigationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\SelectStrengthDialog.resx">
       <DependentUpon>SelectStrengthDialog.cs</DependentUpon>
@@ -1461,6 +1484,12 @@
     <None Include="Resources\table_selection_row_huge_sponge_big.png" />
     <None Include="Resources\table_selection_row_sponge_small.png" />
     <None Include="Resources\table_selection_row_big_sponge.png" />
+    <None Include="Resources\standard_mitigations_huge_process_big.png" />
+    <None Include="Resources\standard_mitigations_big_process.png" />
+    <None Include="Resources\standard_mitigations_process_small.png" />
+    <None Include="Resources\standard_mitigations_big_process_delete.png" />
+    <None Include="Resources\standard_mitigations_process_small_delete.png" />
+    <None Include="Resources\standard_mitigations_huge_process_big_delete.png" />
     <Content Include="Shortcuts.txt" />
     <Content Include="Colors.txt" />
     <Content Include="Resources\threats_selection_small.png" />
@@ -1488,13 +1517,13 @@
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="PostSharp">
-      <Version>2024.0.6</Version>
+      <Version>2024.0.8</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>2024.0.6</Version>
+      <Version>2024.0.8</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>2024.0.6</Version>
+      <Version>2024.0.8</Version>
     </PackageReference>
     <PackageReference Include="Svg">
       <Version>3.4.7</Version>

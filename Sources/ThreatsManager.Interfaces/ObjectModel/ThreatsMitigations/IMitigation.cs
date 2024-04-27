@@ -26,19 +26,22 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <param name="template">Item Template that is associated to the specialized mitigation.</param>
         /// <param name="name">Name of the specialized mitigation.</param>
         /// <param name="description">Description of the specialized mitigations.</param>
-        void AddSpecializedMitigation(IItemTemplate template, string name, string description);
+        /// <returns>True if the Specialized Mitigation has been added successfully. False otherwise.</returns>
+        bool AddSpecializedMitigation(IItemTemplate template, string name, string description);
 
         /// <summary>
         /// Remove the specialized mitigation associated to a specific Item Template.
         /// </summary>
         /// <param name="template">Item Template associated to the specialized mitigation to be removed.</param>
-        void RemoveSpecializedMitigation(IItemTemplate template);
+        /// <returns>True if the Specialized Mitigation has been removed successfully. False otherwise.</returns>
+        bool RemoveSpecializedMitigation(IItemTemplate template);
 
         /// <summary>
         /// Remove the specialized mitigation associated to a specific Item Template identifier.
         /// </summary>
         /// <param name="templateId">Identifier of the Item Template associated to the specialized mitigation to be removed.</param>
-        void RemoveSpecializedMitigation(Guid templateId);
+        /// <returns>True if the Specialized Mitigation has been removed successfully. False otherwise.</returns>
+        bool RemoveSpecializedMitigation(Guid templateId);
 
         /// <summary>
         /// Get the specialized mitigation associated to a given Item Template.
@@ -65,6 +68,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         string GetName(IIdentity identity);
 
         /// <summary>
+        /// Get the name of the Mitigation to be shown for the current object.
+        /// </summary>
+        /// <param name="identityId">Identifier of the reference object.</param>
+        /// <returns>The name to be shown.</returns>
+        /// <remarks>If the object is associated to an Item Template that has a Specialized Mitigation associated to it,
+        /// then the name of such Specialized Mitigation is used. 
+        /// Otherwise, the function returns the name of the Mitigation.</remarks>
+        string GetName(Guid identityId);
+
+        /// <summary>
         /// Get the description of the Mitigation to be shown for the current object.
         /// </summary>
         /// <param name="identity">Reference object.</param>
@@ -73,6 +86,16 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// then the description of such Specialized Mitigation is used. 
         /// Otherwise, the function returns the description of the Mitigation.</remarks>
         string GetDescription(IIdentity identity);
+
+        /// <summary>
+        /// Get the description of the Mitigation to be shown for the current object.
+        /// </summary>
+        /// <param name="identityId">Identifier of the reference object.</param>
+        /// <returns>The description to be shown.</returns>
+        /// <remarks>If the object is associated to an Item Template that has a Specialized Mitigation associated to it,
+        /// then the description of such Specialized Mitigation is used. 
+        /// Otherwise, the function returns the description of the Mitigation.</remarks>
+        string GetDescription(Guid identityId);
 
         /// <summary>
         /// Creates a duplicate of the current Mitigation and attaches it to the Container passed as argument.

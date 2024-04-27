@@ -25,6 +25,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => _diagram;
+
         public IDiagram Diagram => _diagram;
 
         public void SetDiagram([NotNull] IDiagram diagram)

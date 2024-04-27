@@ -14,6 +14,19 @@ namespace ThreatsManager.Quality.Dialogs
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            try
+            {
+                _spellAsYouType.RemoveAllTextComponents();
+            }
+            catch
+            {
+            }
+
+            if (_spellReason != null)
+            {
+                _spellReason.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -56,18 +69,20 @@ namespace ThreatsManager.Quality.Dialogs
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 206);
+            this.panel1.Location = new System.Drawing.Point(0, 397);
+            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(541, 46);
+            this.panel1.Size = new System.Drawing.Size(1082, 88);
             this.panel1.TabIndex = 3;
             // 
             // _cancel
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(273, 11);
+            this._cancel.Location = new System.Drawing.Point(546, 21);
+            this._cancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(75, 23);
+            this._cancel.Size = new System.Drawing.Size(150, 44);
             this._cancel.TabIndex = 1;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -77,9 +92,10 @@ namespace ThreatsManager.Quality.Dialogs
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
             this._ok.Enabled = false;
-            this._ok.Location = new System.Drawing.Point(192, 11);
+            this._ok.Location = new System.Drawing.Point(384, 21);
+            this._ok.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(75, 23);
+            this._ok.Size = new System.Drawing.Size(150, 44);
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
@@ -87,13 +103,16 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             // layoutControl1
             // 
+            this.layoutControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.layoutControl1.Controls.Add(this._points);
             this.layoutControl1.Controls.Add(this._reason);
             this.layoutControl1.Controls.Add(this._adjustment);
             this.layoutControl1.Controls.Add(this._threatEventName);
             this.layoutControl1.Controls.Add(this._associatedTo);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -104,7 +123,7 @@ namespace ThreatsManager.Quality.Dialogs
             this.layoutControlItem1,
             this.layoutControlItem2,
             this._reasonContainer});
-            this.layoutControl1.Size = new System.Drawing.Size(541, 206);
+            this.layoutControl1.Size = new System.Drawing.Size(1082, 397);
             this.layoutControl1.TabIndex = 4;
             // 
             // _points
@@ -115,22 +134,22 @@ namespace ThreatsManager.Quality.Dialogs
             this._points.BackgroundStyle.Class = "DateTimeInputBackground";
             this._points.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._points.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this._points.Location = new System.Drawing.Point(445, 56);
+            this._points.Location = new System.Drawing.Point(879, 107);
             this._points.Margin = new System.Windows.Forms.Padding(0);
             this._points.MaxValue = 1000;
             this._points.MinValue = -1000;
             this._points.Name = "_points";
             this._points.ShowUpDown = true;
-            this._points.Size = new System.Drawing.Size(92, 20);
+            this._points.Size = new System.Drawing.Size(195, 31);
             this._points.TabIndex = 3;
             this._points.ValueChanged += new System.EventHandler(this._points_ValueChanged);
             // 
             // _reason
             // 
-            this._reason.Location = new System.Drawing.Point(83, 85);
+            this._reason.Location = new System.Drawing.Point(155, 163);
             this._reason.Margin = new System.Windows.Forms.Padding(0);
             this._reason.Name = "_reason";
-            this._reason.Size = new System.Drawing.Size(454, 117);
+            this._reason.Size = new System.Drawing.Size(919, 227);
             this._reason.TabIndex = 4;
             this._reason.Text = "";
             this._reason.TextChanged += new System.EventHandler(this._reason_TextChanged);
@@ -139,10 +158,10 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             this._adjustment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._adjustment.FormattingEnabled = true;
-            this._adjustment.Location = new System.Drawing.Point(83, 56);
+            this._adjustment.Location = new System.Drawing.Point(155, 107);
             this._adjustment.Margin = new System.Windows.Forms.Padding(0);
             this._adjustment.Name = "_adjustment";
-            this._adjustment.Size = new System.Drawing.Size(275, 21);
+            this._adjustment.Size = new System.Drawing.Size(561, 33);
             this._adjustment.TabIndex = 2;
             this._adjustment.SelectedIndexChanged += new System.EventHandler(this._adjustment_SelectedIndexChanged);
             // 
@@ -150,10 +169,10 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             this._threatEventName.AutoSize = true;
             this._threatEventName.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this._threatEventName.Location = new System.Drawing.Point(83, 4);
+            this._threatEventName.Location = new System.Drawing.Point(155, 7);
             this._threatEventName.Margin = new System.Windows.Forms.Padding(0);
             this._threatEventName.Name = "_threatEventName";
-            this._threatEventName.Size = new System.Drawing.Size(454, 18);
+            this._threatEventName.Size = new System.Drawing.Size(919, 36);
             this._threatEventName.TabIndex = 0;
             this._threatEventName.Text = "label1";
             this._threatEventName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -162,10 +181,10 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             this._associatedTo.AutoSize = true;
             this._associatedTo.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this._associatedTo.Location = new System.Drawing.Point(83, 30);
+            this._associatedTo.Location = new System.Drawing.Point(155, 57);
             this._associatedTo.Margin = new System.Windows.Forms.Padding(0);
             this._associatedTo.Name = "_associatedTo";
-            this._associatedTo.Size = new System.Drawing.Size(454, 18);
+            this._associatedTo.Size = new System.Drawing.Size(919, 36);
             this._associatedTo.TabIndex = 1;
             this._associatedTo.Text = "label1";
             this._associatedTo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -173,9 +192,10 @@ namespace ThreatsManager.Quality.Dialogs
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._threatEventName;
-            this.layoutControlItem3.Height = 26;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem3.Height = 50;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem3.Text = "Threat Event";
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -183,9 +203,10 @@ namespace ThreatsManager.Quality.Dialogs
             // layoutControlItem4
             // 
             this.layoutControlItem4.Control = this._associatedTo;
-            this.layoutControlItem4.Height = 26;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem4.Height = 50;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem4.Name = "layoutControlItem4";
+            this.layoutControlItem4.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem4.Text = "Associated To";
             this.layoutControlItem4.Width = 100;
             this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -193,9 +214,10 @@ namespace ThreatsManager.Quality.Dialogs
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._adjustment;
-            this.layoutControlItem1.Height = 29;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem1.Height = 56;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem1.Text = "Adjustment";
             this.layoutControlItem1.Width = 67;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -203,9 +225,10 @@ namespace ThreatsManager.Quality.Dialogs
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._points;
-            this.layoutControlItem2.Height = 28;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem2.Height = 54;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem2.Text = "Points";
             this.layoutControlItem2.Width = 33;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -215,8 +238,9 @@ namespace ThreatsManager.Quality.Dialogs
             this._reasonContainer.Control = this._reason;
             this._reasonContainer.Height = 100;
             this._reasonContainer.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this._reasonContainer.MinSize = new System.Drawing.Size(120, 0);
+            this._reasonContainer.MinSize = new System.Drawing.Size(240, 0);
             this._reasonContainer.Name = "_reasonContainer";
+            this._reasonContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._reasonContainer.Text = "<a href=\"Reason\">Reason</a>";
             this._reasonContainer.Width = 100;
             this._reasonContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -270,12 +294,13 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             // AdjustSeverityDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(541, 252);
+            this.ClientSize = new System.Drawing.Size(1082, 485);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.panel1);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AdjustSeverityDialog";

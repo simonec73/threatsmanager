@@ -42,9 +42,19 @@ namespace ThreatsManager.Utilities
         {
             if (_scope != null)
             {
-                _scopes.Remove(_scope);
-                _scope.Dispose();
-                _scope = null;
+                try
+                {
+                    _scopes.Remove(_scope);
+                    _scope.Dispose();
+                }
+                catch (NotSupportedException)
+                {
+                    // Ignore eventual not supported exceptions.
+                }
+                finally
+                {
+                    _scope = null;
+                }
             }
         }
     }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
@@ -116,6 +118,8 @@ namespace ThreatsManager.Utilities.WinForms
         private MenuDefinition _weaknessMitigationMenuDefinition;
         private IThreatTypeMitigation _menuThreatTypeMitigation;
         private IWeaknessMitigation _menuWeaknessMitigation;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
+        private readonly List<RichTextBoxSpellAsYouTypeAdapter> _spellAdapters = new List<RichTextBoxSpellAsYouTypeAdapter>();
         #endregion
 
         public event Action<Guid> OpenDiagram;
@@ -137,33 +141,13 @@ namespace ThreatsManager.Utilities.WinForms
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_itemDescription);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_itemDescription);
 
             EventsDispatcher.Register("ItemChanged", ItemChangedHandler);
             EventsDispatcher.Register("DeletingItem", DeletingItemHandler);
 
             UndoRedoManager.Undone += RefreshOnUndoRedo;
             UndoRedoManager.Redone += RefreshOnUndoRedo;
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox,
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
         }
 
         public void SetExecutionMode(ExecutionMode mode)
@@ -389,8 +373,12 @@ namespace ThreatsManager.Utilities.WinForms
         {
             if (_item != null)
             {
-                _spellAsYouType.RemoveAllTextComponents();
-                AddSpellCheck(_itemDescription);
+                if (_spellAdapters.Any())
+                {
+                    foreach (var adapter in _spellAdapters)
+                        adapter.Dispose();
+                    _spellAdapters.Clear();
+                }
 
                 if (_item is INotifyPropertyChanged notifyPropertyChanged)
                     notifyPropertyChanged.PropertyChanged -= OnPropertyChanged;
@@ -566,29 +554,16 @@ namespace ThreatsManager.Utilities.WinForms
                 _model.ChildPropertyRemoved -= ChildPropertyRemoved;
             }
 
-            var expandablePanels = _dynamicLayout.Controls.OfType<ExpandablePanel>().ToArray();
-            if (expandablePanels.Any())
+            var releasers = _releasers.ToArray();
+            if (releasers.Any())
             {
-                foreach (var expandablePanel in expandablePanels)
+                foreach (var releaser in releasers)
                 {
-                    var layoutControls = expandablePanel.Controls.OfType<LayoutControl>().ToArray();
-                    if (layoutControls.Any())
-                    {
-                        foreach (var layoutControl in layoutControls)
-                        {
-                            var layoutControlItems =
-                                layoutControl.RootGroup.Items.OfType<LayoutControlItem>().ToArray();
-                            if (layoutControlItems.Any())
-                            {
-                                foreach (var layoutControlItem in layoutControlItems)
-                                {
-                                    RemoveEvents(layoutControlItem);
-                                }
-                            }
-                        }
-                    }
+                    releaser.Release();
                 }
             }
+
+            _releasers.Clear();
         }
 
         private void ClearEventInvocations([NotNull] object item, [Required] string eventName)
@@ -801,9 +776,10 @@ namespace ThreatsManager.Utilities.WinForms
             }
             else if (eventMitigation != null)
             {
-                identity = eventMitigation.Mitigation;
                 _itemName.ReadOnly = true;
                 _itemDescription.ReadOnly = true;
+                _itemName.Text = eventMitigation.Name;
+                _itemDescription.Text = eventMitigation.Description;
             }
             else if (weaknessMitigation != null)
             {
@@ -951,22 +927,14 @@ namespace ThreatsManager.Utilities.WinForms
 
             if (identity != null)
                 AddInformationSection(identity);
+            else if (eventMitigation != null) 
+                AddInformationSection(eventMitigation);
 
             ResumeLayout();
         }
 
         private void ClearDynamicLayout()
         {
-            //try
-            //{
-            //    _spellAsYouType.RemoveAllTextComponents();
-            //    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(_itemDescription, 
-            //        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-            //}
-            //catch
-            //{
-            //}
-
             _dynamicLayout.Controls.Clear();
         }
 
@@ -1002,7 +970,9 @@ namespace ThreatsManager.Utilities.WinForms
 
                 if (itemTemplate != null)
                 {
-                    AddSingleLineLabel(infoSection, "Template", itemTemplate.Name);
+                    var template = AddHyperlink(infoSection, "Template", itemTemplate,
+                        Dpi.Factor.Width > 1.5 ? itemTemplate.GetImage(ImageSize.Medium) : itemTemplate.GetImage(ImageSize.Small));
+                    _superTooltip.SetSuperTooltip(template, _model.GetSuperTooltipInfo(itemTemplate));
                 }
 
                 if ((_executionMode == ExecutionMode.Pioneer || _executionMode == ExecutionMode.Expert) && identity is ISourceInfo sourceInfo)
@@ -1014,6 +984,26 @@ namespace ThreatsManager.Utilities.WinForms
                     if (!string.IsNullOrWhiteSpace(sourceInfo.SourceTMName))
                         AddSingleLineLabel(infoSection, "Source TM", sourceInfo.SourceTMName);
                 }
+
+                FinalizeSection(infoSection);
+
+                infoSection.ResumeLayout();
+            }
+        }
+
+        private void AddInformationSection([NotNull] IThreatEventMitigation eventMitigation)
+        {
+            if (_executionMode == ExecutionMode.Pioneer || _executionMode == ExecutionMode.Expert)
+            {
+                var infoSection = AddSection("Information");
+                infoSection.SuspendLayout();
+                AddSingleLineLabel(infoSection, "Threat Model", eventMitigation.Model?.Name);
+                if (!string.IsNullOrWhiteSpace(eventMitigation.VersionAuthor))
+                    AddSingleLineLabel(infoSection, "Author", eventMitigation.VersionAuthor);
+                if (!string.IsNullOrWhiteSpace(eventMitigation.VersionId))
+                    AddSingleLineLabel(infoSection, "Version", eventMitigation.VersionId);
+                if (!string.IsNullOrWhiteSpace(eventMitigation.SourceTMName))
+                    AddSingleLineLabel(infoSection, "Source TM", eventMitigation.SourceTMName);
 
                 FinalizeSection(infoSection);
 
@@ -1102,7 +1092,9 @@ namespace ThreatsManager.Utilities.WinForms
                                 section.SuspendLayout();
                             }
                             var text = AddSingleLineText(section, propertySingleLineString, ro);
-                            AddSpellCheck(text);
+                            var spell = _spellAsYouType.AddSpellCheck(text);
+                            if (spell != null)
+                                _spellAdapters.Add(spell);
                         }
                         else if (property is IPropertyString propertyString)
                         {
@@ -1112,7 +1104,9 @@ namespace ThreatsManager.Utilities.WinForms
                                 section.SuspendLayout();
                             }
                             var richTextBox = AddText(section, propertyString, ro);
-                            AddSpellCheck(richTextBox);
+                            var spell = _spellAsYouType.AddSpellCheck(richTextBox);
+                            if (spell != null)
+                                _spellAdapters.Add(spell);
                         }
                         else if (property is IPropertyBool propertyBool)
                         {

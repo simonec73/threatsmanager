@@ -24,6 +24,7 @@ namespace ThreatsManager.Extensions.Dialogs
         public AssociateMitigationsDialog()
         {
             InitializeComponent();
+            _grid.VScrollBar.Width = 20;
         }
 
         public void Initialize([NotNull] IThreatType threatType)

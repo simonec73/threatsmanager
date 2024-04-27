@@ -25,6 +25,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Utilities.WinForms;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Policies;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace ThreatsManager
 {
@@ -861,8 +862,7 @@ namespace ThreatsManager
         private void RefreshCaption()
         {
             var modelName = _model?.Name;
-            var currentChild = ActiveMdiChild?.Text.Replace("\n", " ");
-            var titleText = GetTitleText(modelName, currentChild);
+            var titleText = GetTitleText(modelName);
 
             if (!CheckCaptionWidth(titleText))
             {
@@ -870,7 +870,7 @@ namespace ThreatsManager
                 if ((modelName?.Length ?? 0) > 40)
                 {
                     modelName = modelName.Substring(0, 39) + "…";
-                    titleText = GetTitleText(modelName, currentChild);
+                    titleText = GetTitleText(modelName);
                     found = CheckCaptionWidth(titleText);
                 }
 
@@ -879,21 +879,14 @@ namespace ThreatsManager
                     if ((modelName?.Length ?? 0) > 20)
                     {
                         modelName = modelName.Substring(0, 19) + "…";
-                        titleText = GetTitleText(modelName, currentChild);
+                        titleText = GetTitleText(modelName);
                         found = CheckCaptionWidth(titleText);
                     }
                 }
 
                 if (!found)
                 {
-                    if (!string.IsNullOrWhiteSpace(currentChild))
-                    {
-                        titleText = $"{(UndoRedoManager.IsDirty ? "*" : "")}[{currentChild}]";
-                        if (!CheckCaptionWidth(titleText))
-                            titleText = string.Empty;
-                    }
-                    else
-                        titleText = string.Empty;
+                    titleText = string.Empty;
                 }
             }
 
@@ -910,10 +903,9 @@ namespace ThreatsManager
 
         }
 
-        private string GetTitleText(string modelName, string currentChild)
+        private string GetTitleText(string modelName)
         {
-            var text = $@"{(UndoRedoManager.IsDirty ? "*" : "")}{modelName}";
-            return string.IsNullOrWhiteSpace(currentChild) ? text : $"{text} - [{currentChild}]";
+            return $@"{(UndoRedoManager.IsDirty ? "*" : "")}{modelName}";
         }
 
         private bool CheckCaptionWidth(string caption)
@@ -932,63 +924,6 @@ namespace ThreatsManager
             {
                 RefreshCaption();
             }
-        }
-        #endregion
-
-        #region PanelContainerForm event handlers.
-        private void OnPanelContainerFormCreated(PanelContainerForm form)
-        {
-            bool isDiagram = form.Controls.OfType<IShowDiagramPanel<Form>>().Any();
-
-            var button = new ButtonItem()
-            {
-                Text = form.Text,
-                Tag = form,
-                Image = isDiagram ? Icons.Resources.model : Properties.Resources.window,
-                ImageSmall = Properties.Resources.window_small,
-                ImagePosition = eImagePosition.Left,
-                ButtonStyle = eButtonStyle.ImageAndText
-            };
-            button.Click += OnWindowButtonClicked;
-            _windows.SubItems.Add(button);
-        }
-
-        private void OnWindowButtonClicked(object sender, EventArgs e)
-        {
-            if (sender is ButtonItem button && button.Tag is PanelContainerForm form)
-            {
-                form.Activate();
-            }
-        }
-
-        private void OnPanelContainerFormClosed(PanelContainerForm form)
-        {
-            var button = _windows.SubItems.OfType<ButtonItem>()
-                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
-            if (button != null)
-            {
-                _windows.SubItems.Remove(button);
-            }
-
-            GcCollect();
-        }
-
-        private void OnPanelContainerFormTextChanged(PanelContainerForm form)
-        {
-            var button = _windows.SubItems.OfType<ButtonItem>()
-                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
-            if (button != null)
-            {
-                button.Text = form.Text;
-            }
-        }
-
-        [Background]
-        private void GcCollect()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
         }
         #endregion
     }

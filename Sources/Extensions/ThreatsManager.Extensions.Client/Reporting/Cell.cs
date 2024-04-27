@@ -75,10 +75,10 @@ namespace ThreatsManager.Extensions.Reporting
 
             if (property is IPropertyIdentityReference propertyIdentityReference)
             {
-                if (propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
+                if (propertyIdentityReference.Value is IIdentity identity)
                 {
                     result = new Cell($"{identity.Name}", 
-                        $"[{child.Model.GetIdentityTypeInitial(identity)}] ", null, 
+                        $"[{identity.GetIdentityTypeInitial()}] ", null, 
                         new[] { identity.Id });
                 }
             }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThreatsManager.Engine
+namespace ThreatsManager.Interfaces
 {
     /// <summary>
     /// Attribute used to add labels to classes.

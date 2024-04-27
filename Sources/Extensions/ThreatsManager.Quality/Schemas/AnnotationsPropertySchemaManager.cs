@@ -72,10 +72,14 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (propertyType != null)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = container.GetProperty(propertyType) != null;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    result = container.GetProperty(propertyType) != null;
+                }
             }
 
             return result;
@@ -210,17 +214,45 @@ namespace ThreatsManager.Quality.Schemas
             }
         }
 
+        public bool HasAnnotations([NotNull] IPropertiesContainer container)
+        {
+            bool result = false;
+
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
+            {
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?.Any() ?? false;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public bool HasNotes([NotNull] IPropertiesContainer container)
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
-                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = annotations.Items?
-                    .Any(x => !(x is Highlight) && !(x is TopicToBeClarified) && !(x is ReviewNote) && !(x is AnnotationAnswer))
-                    ?? false;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?
+                            .Any(x => !(x is Highlight) && !(x is TopicToBeClarified) && !(x is ReviewNote) && !(x is AnnotationAnswer))
+                            ?? false;
+                    }
+                }
             }
 
             return result;
@@ -230,11 +262,18 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
-                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = annotations.Items?.OfType<TopicToBeClarified>().Any() ?? false;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?.OfType<TopicToBeClarified>().Any() ?? false;
+                    }
+                }
             }
 
             return result;
@@ -244,11 +283,18 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
-                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = annotations.Items?.OfType<TopicToBeClarified>().Any(x => !x.Answered) ?? false;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?.OfType<TopicToBeClarified>().Any(x => !x.Answered) ?? false;
+                    }
+                }
             }
 
             return result;
@@ -258,11 +304,18 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
-                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = annotations.Items?.OfType<TopicToBeClarified>().Any(x => x.Answered) ?? false;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?.OfType<TopicToBeClarified>().Any(x => x.Answered) ?? false;
+                    }
+                }
             }
 
             return result;
@@ -272,11 +325,18 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
-                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = annotations.Items?.OfType<Highlight>().Any() ?? false;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?.OfType<Highlight>().Any() ?? false;
+                    }
+                }
             }
 
             return result;
@@ -286,11 +346,18 @@ namespace ThreatsManager.Quality.Schemas
         {
             bool result = false;
 
-            var propertyType = GetAnnotationsPropertyType();
-            if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
-                jsonSerializableObject.Value is Annotations.Annotations annotations)
+            var schema = _model.GetSchema(Annotations, Resources.DefaultNamespace);
+            if (schema != null)
             {
-                result = annotations.Items?.OfType<ReviewNote>().Any() ?? false;
+                var propertyType = schema.GetPropertyType(Annotations);
+                if (propertyType != null)
+                {
+                    if (container.GetProperty(propertyType) is IPropertyJsonSerializableObject jsonSerializableObject &&
+                        jsonSerializableObject.Value is Annotations.Annotations annotations)
+                    {
+                        result = annotations.Items?.OfType<ReviewNote>().Any() ?? false;
+                    }
+                }
             }
 
             return result;

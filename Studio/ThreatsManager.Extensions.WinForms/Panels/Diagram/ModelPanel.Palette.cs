@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Controls;
@@ -67,7 +68,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             var result = new GoSimpleNode()
             {
                 Text = name,
-                Label = new GoText() {Text = label, Selectable = false},
+                Label = new GoText() {Text = label, Selectable = false, 
+                    Wrapping = true, WrappingWidth = 120, Alignment = GoText.TopCenter},
                 Icon = new GoImage()
                 {
                     Image = image,
@@ -498,10 +500,30 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             if (toShow.Any())
             {
+                var diagrams = _diagram.Model?.Diagrams?.ToArray();
+
                 foreach (var entity in toShow)
                 {
+                    var builder = new StringBuilder();
+                    builder.Append(entity.Description);
+                    IEnumerable<IDiagram> selected = null;
+                    if (entity is IEntity e)
+                    {
+                        selected = diagrams?.Where(x => x.Entities?.Any(y => y.AssociatedId == e.Id) ?? false);
+                    }
+                    else if (entity is ITrustBoundary b)
+                    {
+                        selected = diagrams?.Where(x => x.Groups?.Any(y => y.AssociatedId == b.Id) ?? false);
+                    }
+                    builder.AppendLine();
+                    builder.AppendLine("--- Included in the following Diagrams ---");
+                    foreach (var d in selected)
+                    {
+                        builder.AppendLine(d.Name);
+                    }
+
                     nodes.Add(CreateNode(entity.Id.ToString(), entity.Name, 
-                        entity.GetImage(_imageSize), entity.Description, ref width, ref height));
+                        entity.GetImage(_imageSize), builder.ToString(), ref width, ref height));
                 }
 
                 for (int i = 0; i < nodes.Count; i++)

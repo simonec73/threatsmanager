@@ -46,10 +46,10 @@ namespace ThreatsManager.Extensions.Dialogs
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 297);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6);
+            this.panel1.Location = new System.Drawing.Point(0, 571);
+            this.panel1.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(558, 63);
+            this.panel1.Size = new System.Drawing.Size(1116, 121);
             this.panel1.TabIndex = 3;
             this.panel1.TabStop = true;
             // 
@@ -57,10 +57,10 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(285, 25);
-            this._cancel.Margin = new System.Windows.Forms.Padding(6);
+            this._cancel.Location = new System.Drawing.Point(570, 48);
+            this._cancel.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(75, 23);
+            this._cancel.Size = new System.Drawing.Size(150, 44);
             this._cancel.TabIndex = 1;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -69,20 +69,23 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this._ok.Location = new System.Drawing.Point(198, 25);
-            this._ok.Margin = new System.Windows.Forms.Padding(6);
+            this._ok.Location = new System.Drawing.Point(396, 48);
+            this._ok.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(75, 23);
+            this._ok.Size = new System.Drawing.Size(150, 44);
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
             // 
             // _container
             // 
+            this._container.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this._container.Controls.Add(this._filters);
             this._container.Controls.Add(this._operator);
             this._container.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._container.ForeColor = System.Drawing.Color.Black;
             this._container.Location = new System.Drawing.Point(0, 0);
+            this._container.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._container.Name = "_container";
             // 
             // 
@@ -90,16 +93,16 @@ namespace ThreatsManager.Extensions.Dialogs
             this._container.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem2,
             this.layoutControlItem1});
-            this._container.Size = new System.Drawing.Size(558, 297);
+            this._container.Size = new System.Drawing.Size(1116, 571);
             this._container.TabIndex = 4;
             // 
             // _filters
             // 
             this._filters.FormattingEnabled = true;
-            this._filters.Location = new System.Drawing.Point(91, 4);
+            this._filters.Location = new System.Drawing.Point(172, 7);
             this._filters.Margin = new System.Windows.Forms.Padding(0);
             this._filters.Name = "_filters";
-            this._filters.Size = new System.Drawing.Size(463, 244);
+            this._filters.Size = new System.Drawing.Size(936, 480);
             this._filters.TabIndex = 0;
             this._filters.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._filters_ItemCheck);
             // 
@@ -109,12 +112,12 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             // 
             this._operator.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._operator.Location = new System.Drawing.Point(91, 268);
+            this._operator.Location = new System.Drawing.Point(172, 514);
             this._operator.Margin = new System.Windows.Forms.Padding(0);
             this._operator.Name = "_operator";
             this._operator.OffText = "AND";
             this._operator.OnText = "OR";
-            this._operator.Size = new System.Drawing.Size(105, 22);
+            this._operator.Size = new System.Drawing.Size(220, 44);
             this._operator.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._operator.TabIndex = 1;
             this._operator.ValueChanged += new System.EventHandler(this._operator_ValueChanged);
@@ -124,8 +127,9 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem2.Control = this._filters;
             this.layoutControlItem2.Height = 99;
             this.layoutControlItem2.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem2.Text = "Available Filters";
             this.layoutControlItem2.Width = 101;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -133,20 +137,22 @@ namespace ThreatsManager.Extensions.Dialogs
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._operator;
-            this.layoutControlItem1.Height = 30;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem1.Height = 58;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem1.Text = "Operator";
-            this.layoutControlItem1.Width = 200;
+            this.layoutControlItem1.Width = 400;
             // 
             // RoadmapFilterDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(558, 360);
+            this.ClientSize = new System.Drawing.Size(1116, 692);
             this.Controls.Add(this._container);
             this.Controls.Add(this.panel1);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "RoadmapFilterDialog";

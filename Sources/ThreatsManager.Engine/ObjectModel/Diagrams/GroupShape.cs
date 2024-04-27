@@ -40,7 +40,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         public GroupShape([NotNull] IGroup group) : this()
         {
             _model = group.Model;
-            _associated = group;
+            _associatedId = group.Id;
         }
 
         public bool IsInitialized => Model != null && _associatedId != Guid.Empty;
@@ -129,11 +129,6 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         #region Specific implementation.
         public Scope PropertiesScope => Scope.GroupShape;
 
-        [Reference]
-        [field: NotRecorded]
-        [field: UpdateAssociatedId]
-        private IGroup _associated { get; set; }
-
         [JsonProperty("id")]
         private Guid _associatedId { get; set; }
 
@@ -141,7 +136,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         [InitializationRequired]
         [IgnoreAutoChangeNotification]
-        public IIdentity Identity => _associated ?? (_associated = Model?.GetGroup(_associatedId));
+        public IIdentity Identity => Model?.GetGroup(_associatedId);
 
         [Child]
         private RecordablePointF _recordablePosition;

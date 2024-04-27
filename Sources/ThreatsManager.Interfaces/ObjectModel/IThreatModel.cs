@@ -115,20 +115,6 @@ namespace ThreatsManager.Interfaces.ObjectModel
 
         #region Advanced functions to handle Identities.
         /// <summary>
-        /// Returns the standard display Type Name for the Identity.
-        /// </summary>
-        /// <param name="identity">Identity to be evaluated.</param>
-        /// <returns>Display Type name for the Identity.</returns>
-        string GetIdentityTypeName(IIdentity identity);
-
-        /// <summary>
-        /// Returns the standard initial for the Identity.
-        /// </summary>
-        /// <param name="identity">Identity to be evaluated.</param>
-        /// <returns>Initial for the Identity.</returns>
-        string GetIdentityTypeInitial(IIdentity identity);
-
-        /// <summary>
         /// Returns the Identity registered within the Threat Model having the given Id.
         /// </summary>
         /// <param name="id">Identifier of the searched Identity.</param>

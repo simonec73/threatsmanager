@@ -91,11 +91,14 @@ namespace ThreatsManager.Extensions.Reporting
                         threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, true, true, 75));
                     items.Add(new TextRow("Threat Type", threatEvent.ThreatType.Name, null, null, new [] {threatEvent.ThreatTypeId}));
                     items.Add(new TextRow("Description", threatEvent.Description));
-                    items.Add(new TextRow("Associated To", 
-                        $"{threatEvent.Parent.Name}",
-                        $"[{model.GetIdentityTypeInitial(threatEvent.Parent)}] ",
-                        null,
-                        new [] {threatEvent.ParentId}));
+                    if (threatEvent.Parent != null)
+                    {
+                        items.Add(new TextRow("Associated To",
+                            $"{threatEvent.Parent.Name}",
+                            $"[{threatEvent.Parent.GetIdentityTypeInitial()}] ",
+                            null,
+                            new[] { threatEvent.ParentId }));
+                    }
                     items.Add(new TableRow("Approved Mitigations", new []
                     {
                         new TableColumn("Mitigation", 350),

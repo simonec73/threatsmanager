@@ -1,4 +1,5 @@
 ﻿using System;
+using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Interfaces.Extensions.Panels
 {
@@ -11,6 +12,13 @@ namespace ThreatsManager.Interfaces.Extensions.Panels
         /// Identifier of the Panel.
         /// </summary>
         Guid Id { get; }
+
+        /// <summary>
+        /// Reference object for the Panel.
+        /// </summary>
+        /// <remarks>It is passed by the Factory at panel creation, depending on how the Panel has been created.
+        /// It can be null.</remarks>
+        IIdentity ReferenceObject { get; }
     }
 
     /// <summary>

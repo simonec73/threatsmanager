@@ -31,7 +31,7 @@ namespace ThreatsManager.Quality.Annotations
         {
             bool result = false;
 
-            var dialog = new AnnotationDialog(_model, _container, new TopicToBeClarified());
+            var dialog = new AnnotationDialog(_container, new TopicToBeClarified());
             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
             {
                 using (var scope = UndoRedoManager.OpenScope("Add Topic to Be Clarified"))

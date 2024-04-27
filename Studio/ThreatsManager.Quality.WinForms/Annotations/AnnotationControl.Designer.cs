@@ -14,6 +14,19 @@ namespace ThreatsManager.Quality.Annotations
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            try
+            {
+                _spellAsYouType.RemoveAllTextComponents();
+            }
+            catch
+            {
+            }
+
+            if (_spellText != null)
+            {
+                _spellText.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -80,6 +93,7 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -96,23 +110,24 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControlItem5,
             this.layoutControlItem6,
             this.layoutControlItem7});
-            this.layoutControl1.Size = new System.Drawing.Size(737, 480);
+            this.layoutControl1.Size = new System.Drawing.Size(1474, 923);
             this.layoutControl1.TabIndex = 0;
             // 
             // _objectName
             // 
             this._objectName.AutoSize = true;
             this._objectName.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this._objectName.Location = new System.Drawing.Point(42, 4);
+            this._objectName.Location = new System.Drawing.Point(78, 7);
             this._objectName.Margin = new System.Windows.Forms.Padding(0);
             this._objectName.Name = "_objectName";
-            this._objectName.Size = new System.Drawing.Size(691, 18);
+            this._objectName.Size = new System.Drawing.Size(1388, 36);
             this._objectName.TabIndex = 0;
             this._objectName.Text = "label1";
             this._objectName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // _askedBy
             // 
+            this._askedBy.BackColor = System.Drawing.Color.White;
             // 
             // 
             // 
@@ -120,11 +135,13 @@ namespace ThreatsManager.Quality.Annotations
             this._askedBy.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._askedBy.ButtonCustom.Symbol = "";
             this._askedBy.ButtonCustom.Visible = true;
-            this._askedBy.Location = new System.Drawing.Point(72, 209);
+            this._askedBy.DisabledBackColor = System.Drawing.Color.White;
+            this._askedBy.ForeColor = System.Drawing.Color.Black;
+            this._askedBy.Location = new System.Drawing.Point(135, 238);
             this._askedBy.Margin = new System.Windows.Forms.Padding(0);
             this._askedBy.Name = "_askedBy";
             this._askedBy.PreventEnterBeep = true;
-            this._askedBy.Size = new System.Drawing.Size(218, 20);
+            this._askedBy.Size = new System.Drawing.Size(446, 31);
             this._askedBy.TabIndex = 3;
             this._askedBy.ButtonCustomClick += new System.EventHandler(this._askedBy_ButtonCustomClick);
             this._askedBy.TextChanged += new System.EventHandler(this._askedBy_TextChanged);
@@ -132,10 +149,10 @@ namespace ThreatsManager.Quality.Annotations
             // _answered
             // 
             this._answered.AutoSize = true;
-            this._answered.Location = new System.Drawing.Point(4, 416);
+            this._answered.Location = new System.Drawing.Point(8, 802);
             this._answered.Margin = new System.Windows.Forms.Padding(0);
             this._answered.Name = "_answered";
-            this._answered.Size = new System.Drawing.Size(729, 17);
+            this._answered.Size = new System.Drawing.Size(1458, 34);
             this._answered.TabIndex = 7;
             this._answered.Text = "Has been fully answered";
             this._answered.UseVisualStyleBackColor = true;
@@ -153,7 +170,7 @@ namespace ThreatsManager.Quality.Annotations
             this._askedOn.ButtonDropDown.Shortcut = DevComponents.DotNetBar.eShortcut.AltDown;
             this._askedOn.ButtonDropDown.Visible = true;
             this._askedOn.IsPopupCalendarOpen = false;
-            this._askedOn.Location = new System.Drawing.Point(366, 209);
+            this._askedOn.Location = new System.Drawing.Point(724, 238);
             this._askedOn.Margin = new System.Windows.Forms.Padding(0);
             // 
             // 
@@ -184,7 +201,7 @@ namespace ThreatsManager.Quality.Annotations
             this._askedOn.MonthCalendar.NavigationBackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._askedOn.MonthCalendar.TodayButtonVisible = true;
             this._askedOn.Name = "_askedOn";
-            this._askedOn.Size = new System.Drawing.Size(145, 20);
+            this._askedOn.Size = new System.Drawing.Size(299, 31);
             this._askedOn.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._askedOn.TabIndex = 4;
             this._askedOn.ValueChanged += new System.EventHandler(this._askedOn_ValueChanged);
@@ -192,6 +209,7 @@ namespace ThreatsManager.Quality.Annotations
             // 
             // _askedVia
             // 
+            this._askedVia.BackColor = System.Drawing.Color.White;
             // 
             // 
             // 
@@ -201,10 +219,12 @@ namespace ThreatsManager.Quality.Annotations
             this._askedVia.ButtonCustom.Visible = true;
             this._askedVia.ButtonCustom2.Symbol = "";
             this._askedVia.ButtonCustom2.Visible = true;
-            this._askedVia.Location = new System.Drawing.Point(587, 209);
+            this._askedVia.DisabledBackColor = System.Drawing.Color.White;
+            this._askedVia.ForeColor = System.Drawing.Color.Black;
+            this._askedVia.Location = new System.Drawing.Point(1166, 238);
             this._askedVia.Margin = new System.Windows.Forms.Padding(0);
             this._askedVia.Name = "_askedVia";
-            this._askedVia.Size = new System.Drawing.Size(146, 20);
+            this._askedVia.Size = new System.Drawing.Size(300, 31);
             this._askedVia.TabIndex = 5;
             this._askedVia.ButtonCustomClick += new System.EventHandler(this._askedVia_ButtonCustomClick);
             this._askedVia.ButtonCustom2Click += new System.EventHandler(this._askedVia_ButtonCustom2Click);
@@ -213,50 +233,50 @@ namespace ThreatsManager.Quality.Annotations
             // _modifiedOn
             // 
             this._modifiedOn.AutoSize = true;
-            this._modifiedOn.Location = new System.Drawing.Point(440, 462);
+            this._modifiedOn.Location = new System.Drawing.Point(872, 890);
             this._modifiedOn.Margin = new System.Windows.Forms.Padding(0);
             this._modifiedOn.Name = "_modifiedOn";
-            this._modifiedOn.Size = new System.Drawing.Size(293, 13);
+            this._modifiedOn.Size = new System.Drawing.Size(594, 26);
             this._modifiedOn.TabIndex = 11;
             this._modifiedOn.Text = "label4";
             // 
             // _modifiedBy
             // 
             this._modifiedBy.AutoSize = true;
-            this._modifiedBy.Location = new System.Drawing.Point(72, 462);
+            this._modifiedBy.Location = new System.Drawing.Point(135, 890);
             this._modifiedBy.Margin = new System.Windows.Forms.Padding(0);
             this._modifiedBy.Name = "_modifiedBy";
-            this._modifiedBy.Size = new System.Drawing.Size(292, 13);
+            this._modifiedBy.Size = new System.Drawing.Size(594, 26);
             this._modifiedBy.TabIndex = 10;
             this._modifiedBy.Text = "label3";
             // 
             // _createdOn
             // 
             this._createdOn.AutoSize = true;
-            this._createdOn.Location = new System.Drawing.Point(440, 441);
+            this._createdOn.Location = new System.Drawing.Point(872, 850);
             this._createdOn.Margin = new System.Windows.Forms.Padding(0);
             this._createdOn.Name = "_createdOn";
-            this._createdOn.Size = new System.Drawing.Size(293, 13);
+            this._createdOn.Size = new System.Drawing.Size(594, 26);
             this._createdOn.TabIndex = 9;
             this._createdOn.Text = "label2";
             // 
             // _createdBy
             // 
             this._createdBy.AutoSize = true;
-            this._createdBy.Location = new System.Drawing.Point(72, 441);
+            this._createdBy.Location = new System.Drawing.Point(135, 850);
             this._createdBy.Margin = new System.Windows.Forms.Padding(0);
             this._createdBy.Name = "_createdBy";
-            this._createdBy.Size = new System.Drawing.Size(292, 13);
+            this._createdBy.Size = new System.Drawing.Size(594, 26);
             this._createdBy.TabIndex = 8;
             this._createdBy.Text = "label1";
             // 
             // _text
             // 
             this._text.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this._text.Location = new System.Drawing.Point(72, 30);
+            this._text.Location = new System.Drawing.Point(135, 68);
             this._text.Margin = new System.Windows.Forms.Padding(0);
             this._text.Name = "_text";
-            this._text.Size = new System.Drawing.Size(661, 171);
+            this._text.Size = new System.Drawing.Size(1331, 156);
             this._text.TabIndex = 2;
             this._text.Text = "";
             this._text.TextChanged += new System.EventHandler(this._text_TextChanged);
@@ -282,13 +302,13 @@ namespace ThreatsManager.Quality.Annotations
             this._answers.ControlBox.CloseBox});
             this._answers.Controls.Add(this.superTabControlPanel1);
             this._answers.ForeColor = System.Drawing.Color.Black;
-            this._answers.Location = new System.Drawing.Point(72, 237);
+            this._answers.Location = new System.Drawing.Point(135, 292);
             this._answers.Margin = new System.Windows.Forms.Padding(0);
             this._answers.Name = "_answers";
             this._answers.ReorderTabsEnabled = false;
             this._answers.SelectedTabFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this._answers.SelectedTabIndex = 0;
-            this._answers.Size = new System.Drawing.Size(661, 171);
+            this._answers.Size = new System.Drawing.Size(1331, 496);
             this._answers.TabFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._answers.TabIndex = 6;
             this._answers.Tabs.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -300,8 +320,9 @@ namespace ThreatsManager.Quality.Annotations
             // 
             this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel1.Location = new System.Drawing.Point(0, 0);
+            this.superTabControlPanel1.Margin = new System.Windows.Forms.Padding(6);
             this.superTabControlPanel1.Name = "superTabControlPanel1";
-            this.superTabControlPanel1.Size = new System.Drawing.Size(661, 171);
+            this.superTabControlPanel1.Size = new System.Drawing.Size(1331, 496);
             this.superTabControlPanel1.TabIndex = 1;
             // 
             // _addAnswer
@@ -317,10 +338,10 @@ namespace ThreatsManager.Quality.Annotations
             // 
             // layoutGroup1
             // 
-            this.layoutGroup1.Height = 26;
+            this.layoutGroup1.Height = 61;
             this.layoutGroup1.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this._objectContainer});
-            this.layoutGroup1.MinSize = new System.Drawing.Size(120, 32);
+            this.layoutGroup1.MinSize = new System.Drawing.Size(240, 61);
             this.layoutGroup1.Name = "layoutGroup1";
             this.layoutGroup1.Padding = new System.Windows.Forms.Padding(0);
             this.layoutGroup1.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
@@ -330,9 +351,10 @@ namespace ThreatsManager.Quality.Annotations
             // _objectContainer
             // 
             this._objectContainer.Control = this._objectName;
-            this._objectContainer.Height = 26;
-            this._objectContainer.MinSize = new System.Drawing.Size(64, 18);
+            this._objectContainer.Height = 50;
+            this._objectContainer.MinSize = new System.Drawing.Size(128, 34);
             this._objectContainer.Name = "_objectContainer";
+            this._objectContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._objectContainer.Text = "Label:";
             this._objectContainer.TextLineAlignment = DevComponents.DotNetBar.Layout.eTextLineAlignment.Middle;
             this._objectContainer.Width = 100;
@@ -341,10 +363,11 @@ namespace ThreatsManager.Quality.Annotations
             // _textContainer
             // 
             this._textContainer.Control = this._text;
-            this._textContainer.Height = 50;
+            this._textContainer.Height = 25;
             this._textContainer.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this._textContainer.MinSize = new System.Drawing.Size(120, 0);
+            this._textContainer.MinSize = new System.Drawing.Size(240, 0);
             this._textContainer.Name = "_textContainer";
+            this._textContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._textContainer.Text = "<a href=\"Text\">Text</a>";
             this._textContainer.Width = 100;
             this._textContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -353,9 +376,10 @@ namespace ThreatsManager.Quality.Annotations
             // _askedByContainer
             // 
             this._askedByContainer.Control = this._askedBy;
-            this._askedByContainer.Height = 28;
-            this._askedByContainer.MinSize = new System.Drawing.Size(120, 0);
+            this._askedByContainer.Height = 54;
+            this._askedByContainer.MinSize = new System.Drawing.Size(240, 0);
             this._askedByContainer.Name = "_askedByContainer";
+            this._askedByContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._askedByContainer.Text = "Asked By";
             this._askedByContainer.Width = 40;
             this._askedByContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -363,9 +387,10 @@ namespace ThreatsManager.Quality.Annotations
             // _askedOnContainer
             // 
             this._askedOnContainer.Control = this._askedOn;
-            this._askedOnContainer.Height = 28;
-            this._askedOnContainer.MinSize = new System.Drawing.Size(64, 18);
+            this._askedOnContainer.Height = 54;
+            this._askedOnContainer.MinSize = new System.Drawing.Size(128, 34);
             this._askedOnContainer.Name = "_askedOnContainer";
+            this._askedOnContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._askedOnContainer.Text = "Asked On";
             this._askedOnContainer.Width = 30;
             this._askedOnContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -373,9 +398,10 @@ namespace ThreatsManager.Quality.Annotations
             // _askedViaContainer
             // 
             this._askedViaContainer.Control = this._askedVia;
-            this._askedViaContainer.Height = 28;
-            this._askedViaContainer.MinSize = new System.Drawing.Size(120, 0);
+            this._askedViaContainer.Height = 54;
+            this._askedViaContainer.MinSize = new System.Drawing.Size(240, 0);
             this._askedViaContainer.Name = "_askedViaContainer";
+            this._askedViaContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._askedViaContainer.Text = "Asked Via";
             this._askedViaContainer.Width = 30;
             this._askedViaContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -383,10 +409,11 @@ namespace ThreatsManager.Quality.Annotations
             // _answersContainer
             // 
             this._answersContainer.Control = this._answers;
-            this._answersContainer.Height = 50;
+            this._answersContainer.Height = 75;
             this._answersContainer.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this._answersContainer.MinSize = new System.Drawing.Size(64, 18);
+            this._answersContainer.MinSize = new System.Drawing.Size(128, 34);
             this._answersContainer.Name = "_answersContainer";
+            this._answersContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._answersContainer.Text = "Answers";
             this._answersContainer.Width = 100;
             this._answersContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -394,18 +421,20 @@ namespace ThreatsManager.Quality.Annotations
             // _answeredContainer
             // 
             this._answeredContainer.Control = this._answered;
-            this._answeredContainer.Height = 25;
-            this._answeredContainer.MinSize = new System.Drawing.Size(32, 20);
+            this._answeredContainer.Height = 48;
+            this._answeredContainer.MinSize = new System.Drawing.Size(64, 38);
             this._answeredContainer.Name = "_answeredContainer";
+            this._answeredContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this._answeredContainer.Width = 100;
             this._answeredContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem4
             // 
             this.layoutControlItem4.Control = this._createdBy;
-            this.layoutControlItem4.Height = 21;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem4.Height = 40;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem4.Name = "layoutControlItem4";
+            this.layoutControlItem4.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem4.Text = "Created By";
             this.layoutControlItem4.Width = 50;
             this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -413,9 +442,10 @@ namespace ThreatsManager.Quality.Annotations
             // layoutControlItem5
             // 
             this.layoutControlItem5.Control = this._createdOn;
-            this.layoutControlItem5.Height = 21;
-            this.layoutControlItem5.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem5.Height = 40;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem5.Text = "Created On";
             this.layoutControlItem5.Width = 50;
             this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -423,9 +453,10 @@ namespace ThreatsManager.Quality.Annotations
             // layoutControlItem6
             // 
             this.layoutControlItem6.Control = this._modifiedBy;
-            this.layoutControlItem6.Height = 21;
-            this.layoutControlItem6.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem6.Height = 40;
+            this.layoutControlItem6.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem6.Name = "layoutControlItem6";
+            this.layoutControlItem6.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem6.Text = "Modified By";
             this.layoutControlItem6.Width = 50;
             this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -433,9 +464,10 @@ namespace ThreatsManager.Quality.Annotations
             // layoutControlItem7
             // 
             this.layoutControlItem7.Control = this._modifiedOn;
-            this.layoutControlItem7.Height = 21;
-            this.layoutControlItem7.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem7.Height = 40;
+            this.layoutControlItem7.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem7.Name = "layoutControlItem7";
+            this.layoutControlItem7.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem7.Text = "Modified On";
             this.layoutControlItem7.Width = 50;
             this.layoutControlItem7.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -488,12 +520,13 @@ namespace ThreatsManager.Quality.Annotations
             // 
             // AnnotationControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.layoutControl1);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "AnnotationControl";
-            this.Size = new System.Drawing.Size(737, 480);
+            this.Size = new System.Drawing.Size(1474, 923);
             this.layoutControl1.ResumeLayout(false);
             this.layoutControl1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._askedOn)).EndInit();

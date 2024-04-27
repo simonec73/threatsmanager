@@ -92,35 +92,42 @@ namespace ThreatsManager
 
                 if (!string.IsNullOrWhiteSpace(_fileName))
                 {
-                    var lastWrite = File.GetLastWriteTime(_fileName);
-                    if ((lastWrite.Year == 1601 || _lastWrite < lastWrite))
+                    try
                     {
-                        lockFile = await LockFile.LoadAsync(_fileName);
-                        if (lockFile != null)
+                        var lastWrite = File.GetLastWriteTime(_fileName);
+                        if ((lastWrite.Year == 1601 || _lastWrite < lastWrite))
                         {
-                            if (_owned)
+                            lockFile = await LockFile.LoadAsync(_fileName);
+                            if (lockFile != null)
                             {
-                                if (lockFile.IsOwned && (lockFile.Requests?.Any() ?? false))
-                                {
-                                    var first = lockFile.Requests.FirstOrDefault();
-                                    if (first != null)
-                                        OwnershipRequested?.Invoke(first.User, first.Machine, first.Timestamp,
-                                            lockFile.Requests.Count());
-                                }
-                            }
-                            else
-                            {
-                                _owned = lockFile.IsOwned;
                                 if (_owned)
                                 {
-                                    OwnershipObtained?.Invoke(Path.GetFileNameWithoutExtension(_fileName));
+                                    if (lockFile.IsOwned && (lockFile.Requests?.Any() ?? false))
+                                    {
+                                        var first = lockFile.Requests.FirstOrDefault();
+                                        if (first != null)
+                                            OwnershipRequested?.Invoke(first.User, first.Machine, first.Timestamp,
+                                                lockFile.Requests.Count());
+                                    }
+                                }
+                                else
+                                {
+                                    _owned = lockFile.IsOwned;
+                                    if (_owned)
+                                    {
+                                        OwnershipObtained?.Invoke(Path.GetFileNameWithoutExtension(_fileName));
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if (lastWrite.Year != 1601)
-                        _lastWrite = lastWrite;
+                        if (lastWrite.Year != 1601)
+                            _lastWrite = lastWrite;
+                    }
+                    catch 
+                    {
+                        // Ignore eventual exceptions.
+                    }
                 }
 
                 if (cancellation.IsCancellationRequested)

@@ -60,7 +60,9 @@ namespace ThreatsManager.Extensions.Panels.Configuration
             this.layoutControl1.Controls.Add(this._normalizationReference);
             this.layoutControl1.Controls.Add(this._enableEffortSupport);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -68,7 +70,7 @@ namespace ThreatsManager.Extensions.Panels.Configuration
             this.layoutControl1.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem1,
             this.layoutControlItem2});
-            this.layoutControl1.Size = new System.Drawing.Size(683, 466);
+            this.layoutControl1.Size = new System.Drawing.Size(1366, 896);
             this.layoutControl1.TabIndex = 0;
             // 
             // _normalizationReference
@@ -79,12 +81,12 @@ namespace ThreatsManager.Extensions.Panels.Configuration
             this._normalizationReference.BackgroundStyle.Class = "DateTimeInputBackground";
             this._normalizationReference.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._normalizationReference.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this._normalizationReference.Location = new System.Drawing.Point(272, 29);
+            this._normalizationReference.Location = new System.Drawing.Point(517, 55);
             this._normalizationReference.Margin = new System.Windows.Forms.Padding(0);
             this._normalizationReference.MinValue = 0;
             this._normalizationReference.Name = "_normalizationReference";
             this._normalizationReference.ShowUpDown = true;
-            this._normalizationReference.Size = new System.Drawing.Size(124, 20);
+            this._normalizationReference.Size = new System.Drawing.Size(275, 31);
             this._normalizationReference.TabIndex = 1;
             this._tooltip.SetToolTip(this._normalizationReference, resources.GetString("_normalizationReference.ToolTip"));
             this._normalizationReference.ValueChanged += new System.EventHandler(this._normalizationReference_ValueChanged);
@@ -92,10 +94,10 @@ namespace ThreatsManager.Extensions.Panels.Configuration
             // _enableEffortSupport
             // 
             this._enableEffortSupport.AutoSize = true;
-            this._enableEffortSupport.Location = new System.Drawing.Point(4, 4);
+            this._enableEffortSupport.Location = new System.Drawing.Point(8, 7);
             this._enableEffortSupport.Margin = new System.Windows.Forms.Padding(0);
             this._enableEffortSupport.Name = "_enableEffortSupport";
-            this._enableEffortSupport.Size = new System.Drawing.Size(675, 17);
+            this._enableEffortSupport.Size = new System.Drawing.Size(1350, 34);
             this._enableEffortSupport.TabIndex = 0;
             this._enableEffortSupport.Text = "Enable support for Effort";
             this._tooltip.SetToolTip(this._enableEffortSupport, "By enabling support for Effort, an additional property is added to Mitigations, t" +
@@ -107,20 +109,22 @@ namespace ThreatsManager.Extensions.Panels.Configuration
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._enableEffortSupport;
-            this.layoutControlItem1.Height = 25;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem1.Height = 48;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 38);
             this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._normalizationReference;
-            this.layoutControlItem2.Height = 28;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem2.Height = 54;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem2.Text = "Roadmap Acceptable Risk Normalization Reference";
-            this.layoutControlItem2.Width = 400;
+            this.layoutControlItem2.Width = 800;
             // 
             // layoutControlItem3
             // 
@@ -245,11 +249,12 @@ namespace ThreatsManager.Extensions.Panels.Configuration
             // 
             // ConfigurationPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.layoutControl1);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "ConfigurationPanel";
-            this.Size = new System.Drawing.Size(683, 466);
+            this.Size = new System.Drawing.Size(1366, 896);
             this.layoutControl1.ResumeLayout(false);
             this.layoutControl1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._normalizationReference)).EndInit();

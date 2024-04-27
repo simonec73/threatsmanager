@@ -99,7 +99,7 @@ namespace ThreatsManager.Extensions.Panels.ItemTemplateList
                         {
                             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                             {
-                                using (var scope = UndoRedoManager.OpenScope("Add Entity Tempate"))
+                                using (var scope = UndoRedoManager.OpenScope("Add Entity Template"))
                                 {
                                     var entityTemplate = _model.AddEntityTemplate(dialog.EntityName,
                                         dialog.EntityDescription,

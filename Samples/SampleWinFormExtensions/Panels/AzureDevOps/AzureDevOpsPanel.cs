@@ -26,6 +26,8 @@ namespace ThreatsManager.SampleWinFormExtensions.Panels.AzureDevOps
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel(IThreatModel model)
         {
             if (model != null)

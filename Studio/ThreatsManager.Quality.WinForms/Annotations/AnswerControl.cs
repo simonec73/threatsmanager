@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.Layout;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Utilities.WinForms;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 
@@ -10,12 +9,24 @@ namespace ThreatsManager.Quality.Annotations
     public partial class AnswerControl : UserControl
     {
         private AnnotationAnswer _answer;
+        private RichTextBoxSpellAsYouTypeAdapter _spellText;
 
         public AnswerControl()
         {
             InitializeComponent();
 
-            AddSpellCheck(_text);
+            try
+            {
+                _spellAsYouType.UserDictionaryFile = SpellCheckConfig.UserDictionary;
+            }
+            catch
+            {
+                // User Dictionary File is optional. If it is not possible to create it, then let's simply block it.
+                _spellAsYouType.UserDictionaryFile = null;
+            }
+
+            _spellText = _spellAsYouType.AddSpellCheck(_text);
+            _spellAsYouType.SetRepaintTimer(500);
         }
 
         public AnnotationAnswer Answer
@@ -69,25 +80,6 @@ namespace ThreatsManager.Quality.Annotations
         private void _answeredVia_ButtonCustom2Click(object sender, EventArgs e)
         {
             _answeredVia.Text = "Call";
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
         }
 
         private void layoutControlItem3_MarkupLinkClick(object sender, DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs e)

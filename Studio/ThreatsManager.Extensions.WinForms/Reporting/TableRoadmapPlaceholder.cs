@@ -117,9 +117,10 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var tem in threatEventMitigations)
                 {
-                    list.Add(new Line(tem.ThreatEvent.Name, 
-                        $"[{model.GetIdentityTypeInitial(tem.ThreatEvent.Parent)}] {tem.ThreatEvent.Parent.Name}: ",
-                        null, new []{tem.ThreatEvent.Id, tem.ThreatEvent.ThreatTypeId}, tem.Status.ToString()));    
+                    if (tem.ThreatEvent?.Parent != null)
+                        list.Add(new Line(tem.ThreatEvent.Name, 
+                            $"[{tem.ThreatEvent.Parent.GetIdentityTypeInitial()}] {tem.ThreatEvent.Parent.Name}: ",
+                            null, new []{tem.ThreatEvent.Id, tem.ThreatEvent.ThreatTypeId}, tem.Status.ToString()));    
                 }
 
                 result = list;

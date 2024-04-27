@@ -48,9 +48,10 @@ namespace ThreatsManager.Extensions.Dialogs
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 170);
+            this.panel1.Location = new System.Drawing.Point(0, 327);
+            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(513, 48);
+            this.panel1.Size = new System.Drawing.Size(1026, 92);
             this.panel1.TabIndex = 2;
             this.panel1.TabStop = true;
             // 
@@ -58,9 +59,10 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(259, 13);
+            this._cancel.Location = new System.Drawing.Point(518, 25);
+            this._cancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(75, 23);
+            this._cancel.Size = new System.Drawing.Size(150, 44);
             this._cancel.TabIndex = 1;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -69,9 +71,10 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this._ok.Location = new System.Drawing.Point(178, 13);
+            this._ok.Location = new System.Drawing.Point(356, 25);
+            this._ok.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(75, 23);
+            this._ok.Size = new System.Drawing.Size(150, 44);
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
@@ -83,7 +86,9 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControl1.Controls.Add(this._containersCount);
             this.layoutControl1.Controls.Add(this._schemas);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -92,26 +97,26 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem3,
             this.layoutControlItem2,
             this.layoutControlItem1});
-            this.layoutControl1.Size = new System.Drawing.Size(513, 170);
+            this.layoutControl1.Size = new System.Drawing.Size(1026, 327);
             this.layoutControl1.TabIndex = 3;
             // 
             // _description
             // 
             this._description.AutoSize = true;
-            this._description.Location = new System.Drawing.Point(100, 54);
+            this._description.Location = new System.Drawing.Point(188, 103);
             this._description.Margin = new System.Windows.Forms.Padding(0);
             this._description.Name = "_description";
-            this._description.Size = new System.Drawing.Size(409, 110);
+            this._description.Size = new System.Drawing.Size(830, 214);
             this._description.TabIndex = 2;
             // 
             // _containersCount
             // 
             this._containersCount.AutoSize = true;
             this._containersCount.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this._containersCount.Location = new System.Drawing.Point(100, 4);
+            this._containersCount.Location = new System.Drawing.Point(188, 7);
             this._containersCount.Margin = new System.Windows.Forms.Padding(0);
             this._containersCount.Name = "_containersCount";
-            this._containersCount.Size = new System.Drawing.Size(409, 13);
+            this._containersCount.Size = new System.Drawing.Size(830, 26);
             this._containersCount.TabIndex = 0;
             this._containersCount.Text = "container";
             // 
@@ -119,19 +124,20 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._schemas.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._schemas.FormattingEnabled = true;
-            this._schemas.Location = new System.Drawing.Point(100, 25);
+            this._schemas.Location = new System.Drawing.Point(188, 47);
             this._schemas.Margin = new System.Windows.Forms.Padding(0);
             this._schemas.Name = "_schemas";
-            this._schemas.Size = new System.Drawing.Size(409, 21);
+            this._schemas.Size = new System.Drawing.Size(830, 33);
             this._schemas.TabIndex = 1;
             this._schemas.SelectedIndexChanged += new System.EventHandler(this._schemas_SelectedIndexChanged);
             // 
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._containersCount;
-            this.layoutControlItem3.Height = 21;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem3.Height = 40;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem3.Text = "# affected objects";
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -139,9 +145,10 @@ namespace ThreatsManager.Extensions.Dialogs
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._schemas;
-            this.layoutControlItem2.Height = 29;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem2.Height = 56;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem2.Text = "Schema";
             this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -151,21 +158,23 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem1.Control = this._description;
             this.layoutControlItem1.Height = 99;
             this.layoutControlItem1.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(128, 34);
             this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.layoutControlItem1.Text = "Description";
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // ApplySchemaMultipleDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(513, 218);
+            this.ClientSize = new System.Drawing.Size(1026, 419);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.panel1);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ApplySchemaMultipleDialog";

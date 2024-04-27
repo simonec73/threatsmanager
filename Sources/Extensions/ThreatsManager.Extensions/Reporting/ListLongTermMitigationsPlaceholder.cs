@@ -138,12 +138,15 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}", 
-                        $"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] ", null, new [] {item.ThreatEvent.ParentId}));
-                    cells.Add(new Cell(item.ThreatEvent.Name, null, null, 
-                        new [] {item.ThreatEvent.Id, item.ThreatEvent.ThreatTypeId}));
-                    cells.Add(new Cell(item.Strength.Name ?? DefaultStrength.Average.GetEnumLabel()));
-                    cells.Add(new Cell(item.Status.GetEnumLabel()));
+                    if (item.ThreatEvent?.Parent != null)
+                    {
+                        cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
+                            $"[{item.ThreatEvent.Parent.GetIdentityTypeInitial()}] ", null, new[] { item.ThreatEvent.ParentId }));
+                        cells.Add(new Cell(item.ThreatEvent.Name, null, null,
+                            new[] { item.ThreatEvent.Id, item.ThreatEvent.ThreatTypeId }));
+                        cells.Add(new Cell(item.Strength.Name ?? DefaultStrength.Average.GetEnumLabel()));
+                        cells.Add(new Cell(item.Status.GetEnumLabel()));
+                    }
                 }
 
                 result = cells;
@@ -167,11 +170,14 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}", 
-                        $"[{item.Model.GetIdentityTypeInitial(item.ThreatEvent.Parent)}] ",
-                        null,
-                        new[] {item.ThreatEvent.ParentId}));
-                    cells.Add(new Cell(item.Directives));
+                    if (item.ThreatEvent?.Parent != null)
+                    {
+                        cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
+                            $"[{item.ThreatEvent.Parent.GetIdentityTypeInitial()}] ",
+                            null,
+                            new[] { item.ThreatEvent.ParentId }));
+                        cells.Add(new Cell(item.Directives));
+                    }
                 }
 
                 result = cells;

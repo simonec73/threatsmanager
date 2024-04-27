@@ -31,8 +31,14 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             {
                 var result = new List<ICommandsBarDefinition>();
 
-                if (_executionMode != ExecutionMode.Management)
+                if (_executionMode < ExecutionMode.Management)
                 {
+                    result.Add(new CommandsBarDefinition("Add", "Add", new IActionDefinition[]
+                    {
+                        new ActionDefinition(Id, "AddThreatEvent", "Associate Threat Event", 
+                            Resources.threat_event_big_new, 
+                            Resources.threat_event_new, false),
+                    }));
                     result.Add(new CommandsBarDefinition("Remove", "Remove", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "RemoveThreatEvent", "Disassociate Selected Threat Event",

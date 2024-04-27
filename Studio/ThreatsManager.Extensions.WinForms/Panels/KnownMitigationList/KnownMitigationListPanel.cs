@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using PostSharp.Patterns.Formatters;
 using PostSharp.Patterns.Threading;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
@@ -13,6 +14,7 @@ using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
@@ -47,6 +49,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         public Guid Id => _id;
 
         public Form PanelContainer { get; set; }
+
+        public IIdentity ReferenceObject => null;
 
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
@@ -209,6 +213,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 panel.ShowRowDirtyMarker = false;
                 panel.ShowRowHeaders = false;
                 panel.InitialActiveRow = RelativeRow.None;
+                panel.ReadOnly = _executionMode > ExecutionMode.Simplified;
+                panel.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
                 panel.Columns.Add(new GridColumn("Name")
                 {
@@ -305,6 +311,13 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 if (subPanel2 != null)
                     row.Rows.Add(subPanel2);
             }
+
+            //if (_executionMode < ExecutionMode.Simplified)
+            //{
+            //    var subPanel3 = CreateSpecializedContainersPanel(mitigation);
+            //    if (subPanel3 != null)
+            //        row.Rows.Add(subPanel3);
+            //}
 
             if (mitigation is IUndoable undoable && undoable.IsUndoEnabled)
                 undoable.Undone += MitigationUndone;
@@ -413,6 +426,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 if (ttm is IUndoable undoable && undoable.IsUndoEnabled)
                     undoable.Undone -= ThreatTypeMitigationUndone;
             }
+            else if (row?.Tag is ISpecializedMitigation sm)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged -= OnSpecializedMitigationCellChanged;
+            }
         }
 
         [Dispatched]
@@ -454,8 +472,10 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                     ShowTreeButtons = false,
                     ShowTreeLines = false,
                     ShowRowHeaders = false,
-                    InitialSelection = RelativeSelection.None
+                    InitialSelection = RelativeSelection.None,
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
+                result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
                 result.Columns.Add(new GridColumn("Name")
                 {
@@ -686,8 +706,10 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                     ShowTreeButtons = false,
                     ShowTreeLines = false,
                     ShowRowHeaders = false,
-                    InitialSelection = RelativeSelection.None
+                    InitialSelection = RelativeSelection.None,
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
+                result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
                 result.Columns.Add(new GridColumn("Name")
                 {
@@ -901,6 +923,132 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         }
         #endregion
 
+        #region Specialized Mitigations Container.
+        private GridPanel CreateSpecializedContainersPanel([NotNull] IMitigation mitigation)
+        {
+            GridPanel result = null;
+
+            if (!string.IsNullOrWhiteSpace(mitigation.Name))
+            {
+                result = new GridPanel
+                {
+                    Name = "Specialized Mitigations",
+                    AllowRowDelete = false,
+                    AllowRowInsert = false,
+                    AllowRowResize = true,
+                    ShowRowDirtyMarker = false,
+                    ShowTreeButtons = false,
+                    ShowTreeLines = false,
+                    ShowRowHeaders = false,
+                    InitialSelection = RelativeSelection.None,
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
+                };
+                result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
+
+                result.Columns.Add(new GridColumn("Name")
+                {
+                    HeaderText = "Specialized Mitigation Name",
+                    AutoSizeMode = ColumnAutoSizeMode.AllCells,
+                    DataType = typeof(string),
+                    EditorType = typeof(GridTextBoxDropDownEditControl),
+                    AllowEdit = true
+                });
+                GridTextBoxDropDownEditControl ddc = result.Columns["Name"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClear.Visible = true;
+                    ddc.ButtonClearClick += DdcButtonClearClick;
+                }
+
+                result.Columns.Add(new GridColumn("Description")
+                {
+                    HeaderText = "Description",
+                    AutoSizeMode = ColumnAutoSizeMode.Fill,
+                    DataType = typeof(string),
+                    EditorType = typeof(GridTextBoxDropDownEditControl),
+                    AllowEdit = true
+                });
+                GridTextBoxDropDownEditControl ddc2 = result.Columns["Description"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc2 != null)
+                {
+                    ddc2.ButtonClear.Visible = true;
+                    ddc2.ButtonClearClick += DdcButtonClearClick;
+                }
+
+                result.Columns.Add(new GridColumn("Item Template")
+                {
+                    HeaderText = "Associated To Template",
+                    AutoSizeMode = ColumnAutoSizeMode.AllCells,
+                    DataType = typeof(string),
+                    AllowEdit = false
+                });
+
+                var sms = mitigation.Specialized;
+                if (sms?.Any() ?? false)
+                {
+                    foreach (var sm in sms)
+                    {
+                        AddGridRow(sm, result);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void AddGridRow([NotNull] ISpecializedMitigation mitigation, [NotNull] GridPanel panel)
+        {
+            IItemTemplate template = _model.GetEntityTemplate(mitigation.TargetId);
+            if (template == null)
+                template = _model.GetFlowTemplate(mitigation.TargetId);
+            if (template == null)
+                template = _model.GetTrustBoundaryTemplate(mitigation.TargetId);
+
+            if (template != null)
+            {
+                GridRow row = new GridRow(
+                    mitigation.Name ?? string.Empty,
+                    mitigation.Description ?? string.Empty,
+                    template.Name)
+                {
+                    Tag = mitigation
+                };
+                row.Cells[2].CellStyles.Default.Image = template.GetImage(ImageSize.Small);
+
+                for (int i = 0; i < row.Cells.Count; i++)
+                    row.Cells[i].PropertyChanged += OnSpecializedMitigationCellChanged;
+                panel.Rows.Add(row);
+            }
+        }
+
+        private void OnSpecializedMitigationCellChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (!_loading && sender is GridCell cell)
+            {
+                try
+                {
+                    _loading = true;
+                    if (cell.GridRow.Tag is IMitigation mitigation)
+                    {
+                        switch (cell.GridColumn.Name)
+                        {
+                            case "Name":
+                                mitigation.Name = (string)cell.Value;
+                                break;
+                            case "Description":
+                                mitigation.Description = (string)cell.Value;
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    _loading = false;
+                }
+            }
+        }
+        #endregion
+
         #region Auxiliary private members.
         private GridRow GetRow([NotNull] IMitigation mitigation)
         {
@@ -1043,7 +1191,9 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
 
             ChangeCustomActionStatus?.Invoke("RemoveMitigation", _currentRow?.Tag is IMitigation);
             ChangeCustomActionStatus?.Invoke("AddThreatType", _currentRow?.Tag is IMitigation);
-            ChangeCustomActionStatus?.Invoke("RemoveThreatType", !(_currentRow?.Tag is IMitigation));
+            ChangeCustomActionStatus?.Invoke("RemoveThreatType", _currentRow?.Tag is IThreatTypeMitigation);
+            //ChangeCustomActionStatus?.Invoke("AddSpecialized", _currentRow?.Tag is IMitigation);
+            //ChangeCustomActionStatus?.Invoke("RemoveSpecialized", _currentRow?.Tag is ISpecializedMitigation);
             ChangeActionsStatus();
         }
 

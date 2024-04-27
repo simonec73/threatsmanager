@@ -12,6 +12,7 @@ namespace ThreatsManager.Dialogs
     public partial class PanelContainerForm : Form
     {
         private ICustomRibbonExtension _extension;
+        private RibbonControl _ribbon;
         private readonly List<RibbonBar> _ribbonBars = new List<RibbonBar>();
 
         public PanelContainerForm()
@@ -43,8 +44,10 @@ namespace ThreatsManager.Dialogs
             }
         }
 
-        public void InitializeRibbon([NotNull] ICustomRibbonExtension extension, int mergeIndex)
+        public void InitializeRibbon([NotNull] RibbonControl ribbon, 
+            [NotNull] ICustomRibbonExtension extension, int mergeIndex)
         {
+            _ribbon = ribbon;
             _extension = extension;
             _ribbonMerge.MergeRibbonTabItemIndex = mergeIndex;
             extension.ChangeCustomActionStatus += PerformActionStatusChange;
@@ -131,11 +134,6 @@ namespace ThreatsManager.Dialogs
         private void PanelContainerForm_TextChanged(object sender, EventArgs e)
         {
             InstanceTextChanged?.Invoke(this);
-        }
-
-        private void PanelContainerForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            InstanceClosed?.Invoke(this);
         }
 
         private void PanelContainerForm_Load(object sender, EventArgs e)

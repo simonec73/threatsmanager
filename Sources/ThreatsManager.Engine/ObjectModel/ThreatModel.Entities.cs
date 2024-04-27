@@ -211,7 +211,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             _lastProcess += 1;
 
-            string result = $"{GetIdentityTypeName(typeof(Process))} {_lastProcess}";
+            string result = $"{typeof(Process).GetIdentityTypeName()} {_lastProcess}";
 
             var process = _entities?.OfType<IProcess>().FirstOrDefault(x => string.CompareOrdinal(result, x.Name) == 0);
             if (process != null)
@@ -226,7 +226,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             _lastExternalInteractor += 1;
 
-            string result = $"{GetIdentityTypeName(typeof(ExternalInteractor))} {_lastExternalInteractor}";
+            string result = $"{typeof(ExternalInteractor).GetIdentityTypeName()} {_lastExternalInteractor}";
 
             var externalInteractor = _entities?.OfType<IExternalInteractor>().FirstOrDefault(x => string.CompareOrdinal(result, x.Name) == 0);
             if (externalInteractor != null)
@@ -241,7 +241,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             _lastDataStore += 1;
 
-            string result = $"{GetIdentityTypeName(typeof(DataStore))} {_lastDataStore}";
+            string result = $"{typeof(DataStore).GetIdentityTypeName()} {_lastDataStore}";
 
             var dataStore = _entities?.OfType<IDataStore>().FirstOrDefault(x => string.CompareOrdinal(result, x.Name) == 0);
             if (dataStore != null)

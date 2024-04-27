@@ -37,6 +37,11 @@
             {
             }
 
+            if (_spellDescription != null)
+            {
+                _spellDescription.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();

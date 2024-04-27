@@ -21,6 +21,11 @@
             {
             }
 
+            if (_spellText != null)
+            {
+                _spellText.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -218,7 +223,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Text Editor";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TextEditorDialog_FormClosed);
             this.Load += new System.EventHandler(this.TextEditorDialog_Load);
             this.LocationChanged += new System.EventHandler(this.TextEditorDialog_LocationChanged);
             this.SizeChanged += new System.EventHandler(this.TextEditorDialog_SizeChanged);

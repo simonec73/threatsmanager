@@ -29,6 +29,8 @@ namespace ThreatsManager.SampleWinFormExtensions.Panels.Definitions
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel(IThreatModel model)
         {
             try

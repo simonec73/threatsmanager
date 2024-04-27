@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Layout;
 using PostSharp.Patterns.Contracts;
@@ -18,6 +19,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
         private static FormWindowState _windowState = FormWindowState.Normal;
         private static Size _persistentSize;
         private static Point _persistentLocation;
+        private RichTextBoxSpellAsYouTypeAdapter _spellText;
 
         public TextEditorDialog()
         {
@@ -48,7 +50,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_text);
+            _spellText = _spellAsYouType.AddSpellCheck(_text);
             _spellAsYouType.SetRepaintTimer(500);
 
             _loading = false;
@@ -149,25 +151,6 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 _persistentSize = Size;
         }
 
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
         private void _text_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             try
@@ -185,11 +168,6 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             {
                 // Ignore the error because the link is simply not trusted.
             }
-        }
-
-        private void TextEditorDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

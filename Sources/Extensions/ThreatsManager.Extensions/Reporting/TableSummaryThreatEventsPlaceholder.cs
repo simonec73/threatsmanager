@@ -56,15 +56,18 @@ namespace ThreatsManager.Extensions.Reporting
 
             foreach (var threatEvent in threatEvents)
             {
-                result.Add(new Cell(threatEvent.Name, null, 
-                    $" on [{threatEvent.Model.GetIdentityTypeInitial(threatEvent.Parent)}] {threatEvent.Parent.Name}", 
-                    new []{threatEvent.Id, threatEvent.ThreatTypeId}));
-                result.Add(new Cell(threatEvent.Severity.Name, threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, false, true));
-                result.Add(new Cell(threatEvent.Mitigations?
-                    .OrderBy(x => x.ThreatEvent.Parent.Name)
-                    .ThenBy(x => x.Mitigation.Name)
-                    .Select(x =>
-                        new Line(x.Mitigation.Name, null, null, new[] {x.MitigationId}, x.Status.ToString()))));
+                if (threatEvent.Parent != null)
+                {
+                    result.Add(new Cell(threatEvent.Name, null,
+                        $" on [{threatEvent.Parent.GetIdentityTypeInitial()}] {threatEvent.Parent.Name}",
+                        new[] { threatEvent.Id, threatEvent.ThreatTypeId }));
+                    result.Add(new Cell(threatEvent.Severity.Name, threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, false, true));
+                    result.Add(new Cell(threatEvent.Mitigations?
+                        .OrderBy(x => x.ThreatEvent.Parent.Name)
+                        .ThenBy(x => x.Mitigation.Name)
+                        .Select(x =>
+                            new Line(x.Mitigation.Name, null, null, new[] { x.MitigationId }, x.Status.ToString()))));
+                }
             }
 
             return result;

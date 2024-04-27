@@ -61,7 +61,7 @@ namespace ThreatsManager.Quality.Annotations
             {
                 if (_annotation is TopicToBeClarified topicToBeClarified)
                 {
-                    var dialog = new AnnotationDialog(_model, _container, topicToBeClarified, true);
+                    var dialog = new AnnotationDialog(_container, topicToBeClarified, true);
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
                     {
                         var schemaManager = new AnnotationsPropertySchemaManager(_model);
@@ -73,7 +73,7 @@ namespace ThreatsManager.Quality.Annotations
                 }
                 else if (_annotation is Highlight highlight)
                 {
-                    var dialog = new AnnotationDialog(_model, _container, highlight, true);
+                    var dialog = new AnnotationDialog(_container, highlight, true);
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
                     {
                         var schemaManager = new AnnotationsPropertySchemaManager(_model);
@@ -85,7 +85,7 @@ namespace ThreatsManager.Quality.Annotations
                 }
                 else if (_annotation is ReviewNote reviewNote)
                 {
-                    var dialog = new AnnotationDialog(_model, _container, reviewNote, true);
+                    var dialog = new AnnotationDialog(_container, reviewNote, true);
                     if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.Abort)
                     {
                         var schemaManager = new AnnotationsPropertySchemaManager(_model);

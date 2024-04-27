@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Extensions.Dialogs;
 using ThreatsManager.Icons;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -42,12 +43,18 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                             Resources.threat_type_big_new,
                             Resources.threat_type_new,
                             false),
+                        //new ActionDefinition(Id, "AddSpecialized", "Add Specialized Mitigation",
+                        //    Properties.Resources.standard_mitigations_big_process,
+                        //    Properties.Resources.standard_mitigations_process_small, false),
                         new ActionDefinition(Id, "RemoveMitigation", "Remove Mitigations",
                             Resources.standard_mitigations_big_delete,
                             Resources.standard_mitigations_delete, false),
                         new ActionDefinition(Id, "RemoveThreatType", "Remove Threat Type associations",
                             Resources.threat_type_big_delete,
                             Resources.threat_type_delete, false),
+                        //new ActionDefinition(Id, "RemoveSpecialized", "Remove Specialized Mitigations",
+                        //    Properties.Resources.standard_mitigations_big_process_delete,
+                        //    Properties.Resources.standard_mitigations_process_small_delete, false),
                     }),
                     new CommandsBarDefinition("Outlining", "Outlining", new IActionDefinition[]
                     {
@@ -130,6 +137,19 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                                 if (dialog2.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                                 {
                                     dialog2.ThreatType?.AddMitigation(mitigation2, dialog2.Strength);
+                                }
+                            }
+                        }
+
+                        break;
+                    case "AddSpecialized":
+                        if (_currentRow != null && _currentRow.Tag is IMitigation mitigation4)
+                        {
+                            using (var dialog3 = new AddSpecializedMitigationDialog(mitigation4))
+                            {
+                                if (dialog3.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                                {
+                                    //dialog3.ThreatType?.AddMitigation(mitigation2, dialog2.Strength);
                                 }
                             }
                         }
@@ -252,6 +272,98 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                                             {
                                                 _properties.Item = null;
                                                 _currentRow = null;
+                                            }
+                                        }
+
+                                        if (removed)
+                                        {
+                                            text = "Remove Threat Type associations";
+                                        }
+                                        else
+                                        {
+                                            warning = true;
+                                            text = "One or more Threat Type associations cannot be removed.";
+                                        }
+                                        break;
+                                    case DialogResult.No:
+                                        if (_currentRow != null && _currentRow.Tag is IThreatTypeMitigation m2 &&
+                                            m2.ThreatType is IThreatType m2ThreatType)
+                                        {
+                                            if (m2ThreatType.RemoveMitigation(m2.MitigationId))
+                                            {
+                                                _properties.Item = null;
+                                                _currentRow = null;
+                                                text = "Remove Threat Type association";
+                                            }
+                                            else
+                                            {
+                                                warning = true;
+                                                text = "The Threat Type association cannot be removed.";
+                                            }
+                                        }
+
+                                        break;
+                                }
+                            }
+                            else if (_currentRow != null &&
+                                     _currentRow.Tag is IThreatTypeMitigation threatTypeMitigation &&
+                                     MessageBox.Show(Form.ActiveForm,
+                                         $"You are about to remove '{threatTypeMitigation.Mitigation.Name}' as Standard Mitigation from Threat Type '{threatTypeMitigation.ThreatType.Name}'. Are you sure?",
+                                         "Remove Threat Type association", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                            {
+                                if (threatTypeMitigation.ThreatType.RemoveMitigation(threatTypeMitigation.MitigationId))
+                                {
+                                    text = "Remove Threat Type association";
+                                    _properties.Item = null;
+                                }
+                                else
+                                {
+                                    warning = true;
+                                    text = "The Threat Type association cannot be removed.";
+                                }
+                            }
+                        }
+                        break;
+                    case "RemoveSpecialized":
+                        var selected3 = _currentRow?.GridPanel?.SelectedCells?.OfType<GridCell>()
+                            .Select(x => x.GridRow)
+                            .Where(x => x.Tag is ISpecializedMitigation)
+                            .Distinct()
+                            .ToArray();
+
+                        if (_currentRow != null)
+                        {
+                            if ((selected3?.Length ?? 0) > 1)
+                            {
+                                var name = (_currentRow.Tag as ISpecializedMitigation)?.Name;
+                                var outcome = MessageBox.Show(Form.ActiveForm,
+                                    $"You have selected {selected3.Length} Specialized Mitigations. Do you want to remove them all?\nPlease click 'Yes' to remove all selected Specialized Mitigations,\nNo to remove only the last one you selected, '{name}'.\nPress Cancel to abort.",
+                                    "Remove Specialized Mitigations", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+                                    MessageBoxDefaultButton.Button3);
+                                switch (outcome)
+                                {
+                                    case DialogResult.Yes:
+                                        bool removed = true;
+                                        var parent = (_currentRow.GridPanel.Parent as GridRow)?.Tag as IMitigation;
+                                        if (parent != null)
+                                        {
+                                            foreach (var row in selected3)
+                                            {
+                                                bool r = false;
+
+                                                if (row.Tag is ISpecializedMitigation sm)
+                                                {
+                                                    r = parent.RemoveSpecializedMitigation(sm.TargetId);
+                                                }
+
+                                                removed &= r;
+
+                                                if (r && row == _currentRow)
+                                                {
+                                                    _properties.Item = null;
+                                                    _currentRow = null;
+                                                }
                                             }
                                         }
 

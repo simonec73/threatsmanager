@@ -36,18 +36,20 @@ namespace ThreatsManager.DevOps.Panels
             // 
             this._browser.Dock = System.Windows.Forms.DockStyle.Fill;
             this._browser.Location = new System.Drawing.Point(0, 0);
-            this._browser.MinimumSize = new System.Drawing.Size(20, 20);
+            this._browser.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._browser.MinimumSize = new System.Drawing.Size(40, 38);
             this._browser.Name = "_browser";
-            this._browser.Size = new System.Drawing.Size(528, 413);
+            this._browser.Size = new System.Drawing.Size(1056, 794);
             this._browser.TabIndex = 0;
             // 
             // CommentsPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this._browser);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "CommentsPanel";
-            this.Size = new System.Drawing.Size(528, 413);
+            this.Size = new System.Drawing.Size(1056, 794);
             this.ResumeLayout(false);
 
         }

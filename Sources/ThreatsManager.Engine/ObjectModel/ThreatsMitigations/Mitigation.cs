@@ -189,8 +189,10 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public IEnumerable<ISpecializedMitigation> Specialized => _specialized.AsEnumerable();
 
-        public void AddSpecializedMitigation([NotNull] IItemTemplate template, string name, string description)
+        public bool AddSpecializedMitigation([NotNull] IItemTemplate template, string name, string description)
         {
+            bool result = false;
+
             if (!(_specialized?.Any(x => x.TargetId == template.Id) ?? false))
             {
                 using (var scope = UndoRedoManager.OpenScope("Add Specialized Mitigation"))
@@ -200,26 +202,34 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
                     _specialized.Add(new SpecializedMitigation(template, name, description));
                     scope?.Complete();
+
+                    result = true;
                 }
             }
+
+            return result;
         }
 
-        public void RemoveSpecializedMitigation(IItemTemplate template)
+        public bool RemoveSpecializedMitigation(IItemTemplate template)
         {
-            RemoveSpecializedMitigation(template.Id);
+            return RemoveSpecializedMitigation(template.Id);
         }
 
-        public void RemoveSpecializedMitigation(Guid templateId)
+        public bool RemoveSpecializedMitigation(Guid templateId)
         {
+            bool result = false;
+
             var item = _specialized?.FirstOrDefault(x => x.TargetId == templateId);
             if (item != null)
             {
                 using (var scope = UndoRedoManager.OpenScope("Remove Specialized Mitigation"))
                 {
-                    _specialized.Remove(item);
+                    result = _specialized.Remove(item);
                     scope?.Complete();
                 }
             }
+
+            return result;
         }
 
         public ISpecializedMitigation GetSpecializedMitigation(IItemTemplate template)
@@ -234,23 +244,43 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public string GetName(IIdentity identity)
         {
-            string result = _name;
+            string result = _name ?? "<Undefined>";
 
-            if (identity is IEntity entity && entity.Template is IItemTemplate template)
+            IItemTemplate template = null;
+            if (identity is IEntity entity)
             {
-                var specialized = GetSpecializedMitigation(template);
-                if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Name))
-                {
-                    result = specialized.Name;
-                }
+                template = entity.Template;
             }
+            else if (identity is IDataFlow flow)
+            {
+                template = flow.Template;
+            }
+
+            var specialized = GetSpecializedMitigation(template);
+            if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Name))
+            {
+                result = specialized.Name;
+            }
+
+            return result;
+        }
+
+        public string GetName(Guid identityId)
+        {
+            string result = null;
+
+            IIdentity identity = Model?.GetEntity(identityId);
+            if (identity == null)
+                identity = Model?.GetDataFlow(identityId);
+            if (identity != null)
+                result = GetName(identity);
 
             return result;
         }
 
         public string GetDescription(IIdentity identity)
         {
-            string result = _description;
+            string result = _description ?? "<Undefined>";
 
             if (identity is IEntity entity && entity.Template is IItemTemplate template)
             {
@@ -260,6 +290,19 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     result = specialized.Description;
                 }
             }
+
+            return result;
+        }
+
+        public string GetDescription(Guid identityId)
+        {
+            string result = null;
+
+            IIdentity identity = Model?.GetEntity(identityId);
+            if (identity == null)
+                identity = Model?.GetDataFlow(identityId);
+            if (identity != null)
+                result = GetDescription(identity);
 
             return result;
         }

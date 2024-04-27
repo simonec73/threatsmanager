@@ -289,12 +289,12 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
                         if (identity is IDataFlow flow)
                         {
                             text =
-                                $"Flow from {_model.GetIdentityTypeName(flow.Source)} '{flow.Source.Name}' to {_model.GetIdentityTypeName(flow.Target)} '{flow.Target.Name}'.";
+                                $"Flow from {flow.Source?.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{flow.Source.Name}' to {flow.Target.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{flow.Target.Name}'.";
                         }
-                        else if (identity is IThreatEvent threatEvent)
+                        else if (identity is IThreatEvent threatEvent && threatEvent.Parent != null)
                         {
                             text =
-                                $"Threat Event applied to {_model.GetIdentityTypeName(threatEvent.Parent)} '{threatEvent.Parent.Name}'.";
+                                $"Threat Event applied to {threatEvent.Parent.GetIdentityTypeName()} '{threatEvent.Parent.Name}'.";
                         }
                     }
                     else
@@ -335,21 +335,21 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
             {
                 if (container is IDataFlow flow)
                 {
-                    objectType = _model.GetIdentityTypeName(flow);
+                    objectType = flow.GetIdentityTypeName();
                     name = flow.Name;
-                    text = $"From {_model.GetIdentityTypeName(flow.Source)} '{flow.Source.Name}' to {_model.GetIdentityTypeName(flow.Target)} '{flow.Target.Name}'";
+                    text = $"From {flow.Source?.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{flow.Source?.Name ?? ThreatModelManager.Unknown}' to {flow.Target?.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{flow.Target?.Name ?? ThreatModelManager.Unknown}'";
                     image = flow.GetImage(ImageSize.Medium);
                 }
                 else if (container is IThreatEvent threatEvent)
                 {
-                    objectType = _model.GetIdentityTypeName(threatEvent);
+                    objectType = threatEvent.GetIdentityTypeName();
                     name = threatEvent.Name;
-                    text = $"Applied to {_model.GetIdentityTypeName(threatEvent.Parent)} '{threatEvent.Parent.Name}'";
+                    text = $"Applied to {threatEvent.Parent.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{threatEvent.Parent?.Name ?? ThreatModelManager.Unknown}'";
                     image = threatEvent.GetImage(ImageSize.Medium);
                 }
                 else if (container is IIdentity identity)
                 {
-                    objectType = _model.GetIdentityTypeName(identity);
+                    objectType = identity.GetIdentityTypeName();
                     name = identity.Name;
                     text = null;
                     image = identity.GetImage(ImageSize.Medium);
@@ -585,11 +585,11 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
                     {
                         if (identity is IDataFlow flow)
                         {
-                            text = $"Flow from {_model.GetIdentityTypeName(flow.Source)} '{flow.Source.Name}' to {_model.GetIdentityTypeName(flow.Target)} '{flow.Target.Name}'.";
+                            text = $"Flow from {flow.Source?.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{flow.Source?.Name ?? ThreatModelManager.Unknown}' to {flow.Target.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{flow.Target?.Name ?? ThreatModelManager.Unknown}'.";
                         }
                         else if (identity is IThreatEvent threatEvent)
                         {
-                            text = $"Threat Event applied to {_model.GetIdentityTypeName(threatEvent.Parent)} '{threatEvent.Parent.Name}'.";
+                            text = $"Threat Event applied to {threatEvent.Parent?.GetIdentityTypeName() ?? ThreatModelManager.Unknown} '{threatEvent.Parent?.Name ?? ThreatModelManager.Unknown}'.";
                         }
                         else
                         {
@@ -597,7 +597,7 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
                         }
 
                         engine.AddRow(p, 
-                            _model.GetIdentityTypeName(identity),
+                            identity.GetIdentityTypeName(),
                             identity.Name, text);
                     }
                     else

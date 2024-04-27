@@ -23,6 +23,8 @@ namespace ThreatsManager.Extensions.Dialogs
     {
         private readonly IThreatModel _model;
         private static readonly IEnumerable<IPropertySchemasExtractor> _extractors;
+        private RichTextBoxSpellAsYouTypeAdapter _spellName;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
 
         static ExportKnowledgeBaseDialog()
         {
@@ -45,8 +47,8 @@ namespace ThreatsManager.Extensions.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_name);
-            AddSpellCheck(_description);
+            _spellName = _spellAsYouType.AddSpellCheck(_name);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_description);
             _spellAsYouType.SetRepaintTimer(500);
         }
 
@@ -988,30 +990,6 @@ namespace ThreatsManager.Extensions.Dialogs
             {
                 // Ignore the error because the link is simply not trusted.
             }
-        }
-        
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void ExportTemplateDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

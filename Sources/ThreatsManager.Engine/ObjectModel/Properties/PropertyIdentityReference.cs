@@ -91,7 +91,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 var newValue = Guid.TryParse(value, out var result) ? result : Guid.Empty;
                 if (newValue != _value)
@@ -127,7 +127,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (value != null && (value.Id != _value))
                 {
                     if (ReadOnly)
-                        throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                        throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                     using (var scope = UndoRedoManager.OpenScope("Set Property Identity Reference"))
                     {
@@ -140,7 +140,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 else if (value == null && _value != Guid.Empty)
                 {
                     if (ReadOnly)
-                        throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                        throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                     using (var scope = UndoRedoManager.OpenScope("Set Property Identity Reference"))
                     {

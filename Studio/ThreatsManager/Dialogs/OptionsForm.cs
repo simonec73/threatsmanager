@@ -80,7 +80,7 @@ namespace ThreatsManager.Dialogs
                 _executionMode.Items.AddRange(executionModes);
 
             var config = ExtensionsConfigurationManager.GetConfigurationSection();
-            if (!executionModePolicy.IsDefined || config.Mode < maxExecutionMode)
+            if (executionModePolicy.IsDefined && config.Mode < maxExecutionMode)
             {
                 _executionMode.SelectedItem = maxExecutionMode.GetEnumLabel();
                 _tooltip.SetToolTip(_executionMode, maxExecutionMode.GetEnumDescription());

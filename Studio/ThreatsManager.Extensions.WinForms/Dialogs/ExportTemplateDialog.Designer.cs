@@ -21,6 +21,16 @@
             {
             }
 
+            if (_spellName != null)
+            {
+                _spellName.Dispose();
+            }
+
+            if (_spellDescription != null)
+            {
+                _spellDescription.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -1095,7 +1105,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Knowledge Base Export Wizard";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExportTemplateDialog_FormClosed);
             this._wizard.ResumeLayout(false);
             this._pageIntro.ResumeLayout(false);
             this._pageTMProperties.ResumeLayout(false);

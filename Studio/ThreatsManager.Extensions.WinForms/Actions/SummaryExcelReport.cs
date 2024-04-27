@@ -300,7 +300,8 @@ namespace ThreatsManager.Extensions.Actions
                 {
                     foreach (var threat in threats)
                     {
-                        builder.AppendLine($"[{model.GetIdentityTypeInitial(threat.Parent)}] {threat.Parent.Name} ({threat.Severity.ToString()})");
+                        if (threat.Parent != null)
+                            builder.AppendLine($"[{threat.Parent.GetIdentityTypeInitial()}] {threat.Parent.Name} ({threat.Severity?.ToString() ?? ThreatModelManager.Unknown})");
                     }
 
                     result = builder.ToString();
@@ -346,7 +347,8 @@ namespace ThreatsManager.Extensions.Actions
                     {
                         foreach (var m in ms)
                         {
-                            builder.AppendLine($"[{model.GetIdentityTypeInitial(m.ThreatEvent.Parent)}] {m.ThreatEvent.Parent}: {m.Mitigation.Name}");
+                            if (m.ThreatEvent?.Parent != null)
+                                builder.AppendLine($"[{m.ThreatEvent.Parent.GetIdentityTypeInitial()}] {m.ThreatEvent.Parent}: {m.Mitigation.Name}");
                         }
                     }
                 }

@@ -13,8 +13,10 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
     public partial class ThreatEventScenarioCreationDialog : Form, IInitializableObject
     {
         private IThreatEvent _event;
-
         private IThreatEventScenario _scenario;
+        private RichTextBoxSpellAsYouTypeAdapter _spellName;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
+        private RichTextBoxSpellAsYouTypeAdapter _spellMotivation;
 
         public ThreatEventScenarioCreationDialog()
         {
@@ -30,9 +32,9 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_name);
-            AddSpellCheck(_description);
-            AddSpellCheck(_motivation);
+            _spellName = _spellAsYouType.AddSpellCheck(_name);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_description);
+            _spellMotivation = _spellAsYouType.AddSpellCheck(_motivation);
             _spellAsYouType.SetRepaintTimer(500);
         }
 
@@ -145,30 +147,6 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             {
                 //_spellAsYouType.CheckAsYouType = true;
             }
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void ThreatEventScenarioCreationDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

@@ -251,4 +251,13 @@ Are you sure you want still to get full access rights? </value>
   <data name="PropertyTemplatesDescription" xml:space="preserve">
     <value>Templates used to generate Word Reports for the Threat Model.</value>
   </data>
+  <data name="Alernatives" xml:space="preserve">
+    <value>IDs of the Mitigations that are known alternatives to the current one.</value>
+  </data>
+  <data name="Complementary" xml:space="preserve">
+    <value>IDs of the Mitigations that are complementary to the current one.</value>
+  </data>
+  <data name="RelationshipSchemaDescription" xml:space="preserve">
+    <value>Property Schema that collects all the Mitigations in relationship with the current Mitigation.</value>
+  </data>
 </root>

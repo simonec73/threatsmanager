@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
@@ -9,6 +10,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Quality.Annotations;
+using ThreatsManager.Quality.Dialogs;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
@@ -58,6 +60,25 @@ namespace ThreatsManager.Quality.Panels.Annotations
                             Properties.Resources.marker_big_delete,
                             Properties.Resources.marker_delete,
                             false, Shortcut.None),
+                        new ActionDefinition(Id, "RemoveAllNotes", "Remove All Notes",
+                            Properties.Resources.note_text_big_sponge,
+                            Properties.Resources.note_text_sponge_small,
+                            true, Shortcut.None),
+                        new ActionDefinition(Id, "RemoveAllTopics", "Remove All Topics to be Clarified",
+                            Properties.Resources.speech_balloon_question_big_sponge,
+                            Properties.Resources.speech_balloon_question_sponge_small,
+                            true, Shortcut.None),
+                        new ActionDefinition(Id, "RemoveAllHighlights", "Remove All Highlights",
+                            Properties.Resources.marker_big_sponge,
+                            Properties.Resources.marker_sponge_small,
+                            true, Shortcut.None),
+                    }),
+                    new CommandsBarDefinition("Set", "Set", new IActionDefinition[]
+                    {
+                        new ActionDefinition(Id, "SetOpenTopics", "Set Open Topics",
+                            Properties.Resources.note_text_big_clock,
+                            Properties.Resources.note_text_clock,
+                            true, Shortcut.None),
                     }),
                     new CommandsBarDefinition("Filter", "Filter", new IActionDefinition[]
                     {
@@ -168,6 +189,88 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         RemoveButton(highlight);
                     }
                     break;
+                case "RemoveAllNotes":
+                    if (MessageBox.Show("You are about to remove every Note. Do you confirm?",
+                            "Remove All Notes", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                            MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        using (var scope = UndoRedoManager.OpenScope("Remove All Notes"))
+                        {
+                            RemoveNotes(_model.Entities);
+                            RemoveNotes(_model.DataFlows);
+                            RemoveNotes(_model.Groups);
+                            RemoveNotes(_model.GetThreatEvents());
+                            RemoveNotes(_model.GetThreatEventMitigations());
+                            RemoveNotes(_model.ThreatTypes);
+                            RemoveNotes(_model.Mitigations);
+                            RemoveNotes(_model.GetThreatTypeMitigations());
+                            RemoveNotes(_model.EntityTemplates);
+                            RemoveNotes(_model.FlowTemplates);
+                            RemoveNotes(_model.TrustBoundaryTemplates);
+                            RemoveNotes(_model.Diagrams);
+                            RemoveNotes(_model);
+                            scope?.Complete();
+                        }
+
+                        LoadModel();
+                    }
+                    break;
+                case "RemoveAllTopics":
+                    if (MessageBox.Show("You are about to remove every Topic. Do you confirm?",
+                        "Remove Topic", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                        MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        using (var scope = UndoRedoManager.OpenScope("Remove All Notes"))
+                        {
+                            RemoveTopics(_model.Entities);
+                            RemoveTopics(_model.DataFlows);
+                            RemoveTopics(_model.Groups);
+                            RemoveTopics(_model.GetThreatEvents());
+                            RemoveTopics(_model.GetThreatEventMitigations());
+                            RemoveTopics(_model.ThreatTypes);
+                            RemoveTopics(_model.Mitigations);
+                            RemoveTopics(_model.GetThreatTypeMitigations());
+                            RemoveTopics(_model.EntityTemplates);
+                            RemoveTopics(_model.FlowTemplates);
+                            RemoveTopics(_model.TrustBoundaryTemplates);
+                            RemoveTopics(_model.Diagrams);
+                            RemoveTopics(_model);
+                            scope?.Complete();
+                        }
+
+                        LoadModel();
+                    }
+                    break;
+                case "RemoveAllHighlights":
+                    if (MessageBox.Show("You are about to remove every Highlight. Do you confirm?",
+                            "Remove Highlight", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                            MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        using (var scope = UndoRedoManager.OpenScope("Remove All Notes"))
+                        {
+                            RemoveHighlights(_model.Entities);
+                            RemoveHighlights(_model.DataFlows);
+                            RemoveHighlights(_model.Groups);
+                            RemoveHighlights(_model.GetThreatEvents());
+                            RemoveHighlights(_model.GetThreatEventMitigations());
+                            RemoveHighlights(_model.ThreatTypes);
+                            RemoveHighlights(_model.Mitigations);
+                            RemoveHighlights(_model.GetThreatTypeMitigations());
+                            RemoveHighlights(_model.EntityTemplates);
+                            RemoveHighlights(_model.FlowTemplates);
+                            RemoveHighlights(_model.TrustBoundaryTemplates);
+                            RemoveHighlights(_model.Diagrams);
+                            RemoveHighlights(_model);
+                            scope?.Complete();
+                        }
+
+                        LoadModel();
+                    }
+                    break;
+                case "SetOpenTopics":
+                    var dialog = new SetOpenTopicsDialog(_model);
+                    dialog.ShowDialog(Form.ActiveForm);
+                break;
                 case "ShowOpenTopics":
                     _show = WhatToShow.OpenTopicsOnly;
                     LoadModel();
@@ -293,7 +396,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         if (item is IIdentity identity)
                         {
                             id = identity.Id.ToString("N");
-                            objectType = _model.GetIdentityTypeName(identity);
+                            objectType = identity.GetIdentityTypeName();
                             name = identity.Name;
                         }
                         else if (item is IThreatEventMitigation threatEventMitigation)
@@ -487,6 +590,85 @@ namespace ThreatsManager.Quality.Panels.Annotations
             }
 
             return result;
+        }
+
+        private void RemoveNotes(IEnumerable<IPropertiesContainer> containers)
+        {
+            var array = containers?.ToArray();
+            if (array?.Any() ?? false)
+            {
+                foreach (var container in array)
+                {
+                    RemoveNotes(container);
+                }
+            }
+        }
+
+        private void RemoveNotes(IPropertiesContainer container)
+        {
+            var notes = _schemaManager.GetAnnotations(container)?
+                .OfType<Annotation>()
+                .Where(x => !(x is TopicToBeClarified) && !(x is Highlight) && !(x is ReviewNote))
+                .ToArray();
+            if (notes?.Any() ?? false)
+            {
+                foreach (var note in notes)
+                {
+                    _schemaManager.RemoveAnnotation(container, note);
+                }
+            }
+        }
+
+        private void RemoveTopics(IEnumerable<IPropertiesContainer> containers)
+        {
+            var array = containers?.ToArray();
+            if (array?.Any() ?? false)
+            {
+                foreach (var container in array)
+                {
+                    RemoveTopics(container);
+                }
+            }
+        }
+
+        private void RemoveTopics(IPropertiesContainer container)
+        {
+            var topics = _schemaManager.GetAnnotations(container)?
+                .OfType<TopicToBeClarified>()
+                .ToArray();
+            if (topics?.Any() ?? false)
+            {
+                foreach (var topic in topics)
+                {
+                    _schemaManager.RemoveAnnotation(container, topic);
+                }
+            }
+        }
+
+        private void RemoveHighlights(IEnumerable<IPropertiesContainer> containers)
+        {
+            var array = containers?.ToArray();
+            if (array?.Any() ?? false)
+            {
+                foreach (var container in array)
+                {
+                    RemoveHighlights(container);
+                }
+            }
+        }
+
+        private void RemoveHighlights(IPropertiesContainer container)
+        {
+            var highlights = _schemaManager.GetAnnotations(container)?
+                .OfType<Highlight>()
+                .ToArray();
+            if (highlights?.Any() ?? false)
+            {
+                foreach (var highlight in highlights)
+                {
+                    _schemaManager.RemoveAnnotation(container, highlight);
+                }
+            }
         }
     }
 }

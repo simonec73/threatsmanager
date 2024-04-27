@@ -182,7 +182,6 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
                 if (flow is DataFlow internalFlow)
                 {
                     internalFlow._templateId = Id;
-                    internalFlow._template = this;
                 }
                 scope?.Complete();
             }

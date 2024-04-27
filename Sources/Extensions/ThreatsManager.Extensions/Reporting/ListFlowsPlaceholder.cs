@@ -82,10 +82,10 @@ namespace ThreatsManager.Extensions.Reporting
                     var items = new List<ItemRow>();
                     items.Add(new TextRow("Description", flow.Description));
                     if (flow.Source != null)
-                        items.Add(new TextRow("Source", $"[{flow.Model.GetIdentityTypeInitial(flow.Source)}] {flow.Source.Name}", 
+                        items.Add(new TextRow("Source", $"[{flow.Source.GetIdentityTypeInitial()}] {flow.Source.Name}", 
                             null, null, new []{flow.SourceId}));
                     if (flow.Target != null)
-                        items.Add(new TextRow("Target", $"[{flow.Model.GetIdentityTypeInitial(flow.Target)}] {flow.Target.Name}",
+                        items.Add(new TextRow("Target", $"[{flow.Target.GetIdentityTypeInitial()}] {flow.Target.Name}",
                             null, null, new []{flow.TargetId}));
                     items.Add(new TextRow("Flow Type", flow.FlowType.GetEnumLabel()));
                     var itemRows = flow.GetItemRows()?.ToArray();
