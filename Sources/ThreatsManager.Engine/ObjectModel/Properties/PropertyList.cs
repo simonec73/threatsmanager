@@ -105,7 +105,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 if (PropertyType is IListPropertyType propertyType)
                 {
@@ -137,7 +137,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 if (PropertyType is IListPropertyType listPropertyType)
                 {

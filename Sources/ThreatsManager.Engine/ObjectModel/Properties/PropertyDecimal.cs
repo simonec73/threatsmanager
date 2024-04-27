@@ -8,6 +8,7 @@ using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -91,7 +92,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 if (decimal.TryParse(value, out var result))
                 {
@@ -116,7 +117,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (value != _value)
                 {
                     if (ReadOnly)
-                        throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                        throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                     _value = value;
                     InvokeChanged();

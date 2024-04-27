@@ -48,7 +48,7 @@ namespace ThreatsManager.Utilities
                     return attributes[0].DisplayName;
             }
 
-            return "Unknown";
+            return ThreatModelManager.Unknown;
         }
     }
 }

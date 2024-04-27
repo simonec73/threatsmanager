@@ -109,7 +109,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 if (string.CompareOrdinal(StringValue, value) != 0)
                 {
@@ -126,7 +126,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 if (value?.Any() ?? false)
                 {

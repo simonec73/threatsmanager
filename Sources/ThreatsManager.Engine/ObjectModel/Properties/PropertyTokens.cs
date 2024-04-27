@@ -100,7 +100,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 Value = value?.TagSplit();
             }
@@ -123,7 +123,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             set
             {
                 if (ReadOnly)
-                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? "<unknown>");
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
                 var existing = _values?.Select(x => x.Value).OrderBy(x => x).TagConcat();
                 var incoming = value?.OrderBy(x => x).TagConcat();
