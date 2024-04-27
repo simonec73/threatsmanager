@@ -26,19 +26,22 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <param name="template">Item Template that is associated to the specialized mitigation.</param>
         /// <param name="name">Name of the specialized mitigation.</param>
         /// <param name="description">Description of the specialized mitigations.</param>
-        void AddSpecializedMitigation(IItemTemplate template, string name, string description);
+        /// <returns>True if the Specialized Mitigation has been added successfully. False otherwise.</returns>
+        bool AddSpecializedMitigation(IItemTemplate template, string name, string description);
 
         /// <summary>
         /// Remove the specialized mitigation associated to a specific Item Template.
         /// </summary>
         /// <param name="template">Item Template associated to the specialized mitigation to be removed.</param>
-        void RemoveSpecializedMitigation(IItemTemplate template);
+        /// <returns>True if the Specialized Mitigation has been removed successfully. False otherwise.</returns>
+        bool RemoveSpecializedMitigation(IItemTemplate template);
 
         /// <summary>
         /// Remove the specialized mitigation associated to a specific Item Template identifier.
         /// </summary>
         /// <param name="templateId">Identifier of the Item Template associated to the specialized mitigation to be removed.</param>
-        void RemoveSpecializedMitigation(Guid templateId);
+        /// <returns>True if the Specialized Mitigation has been removed successfully. False otherwise.</returns>
+        bool RemoveSpecializedMitigation(Guid templateId);
 
         /// <summary>
         /// Get the specialized mitigation associated to a given Item Template.
