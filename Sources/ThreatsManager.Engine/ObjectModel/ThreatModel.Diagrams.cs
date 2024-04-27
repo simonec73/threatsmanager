@@ -198,7 +198,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             _lastDiagram += 1;
 
-            string result = $"{GetIdentityTypeName(typeof(Diagram))} {_lastDiagram}";
+            string result = $"{typeof(Diagram).GetIdentityTypeName()} {_lastDiagram}";
 
             var diagrams = GetDiagrams(result);
             if (diagrams?.Any() ?? false)

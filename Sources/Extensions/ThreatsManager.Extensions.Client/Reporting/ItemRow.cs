@@ -50,11 +50,11 @@ namespace ThreatsManager.Extensions.Reporting
                 result = new ListRow(propertyType.Name, propertyArray.Value?.Select(x => new Line(x?.TrimEnd(' ', '\r', '\n'))));
             } else if (property is IPropertyIdentityReference propertyIdentityReference)
             {
-                if (propertyIdentityReference.Value is IIdentity identity && identity is IThreatModelChild child)
+                if (propertyIdentityReference.Value is IIdentity identity)
                 {
                     result = new TextRow(propertyType.Name,
                         $"{identity.Name}",
-                        $"[{child.Model.GetIdentityTypeInitial(identity)}] ", null, new[] {identity.Id});
+                        $"[{identity.GetIdentityTypeInitial()}] ", null, new[] {identity.Id});
                 }
                 else
                 {

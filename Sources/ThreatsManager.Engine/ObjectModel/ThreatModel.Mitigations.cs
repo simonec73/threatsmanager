@@ -105,7 +105,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             _lastMitigation += 1;
 
-            string result = $"{GetIdentityTypeName(typeof(Mitigation))} {_lastMitigation}";
+            string result = $"{typeof(Mitigation).GetIdentityTypeName()} {_lastMitigation}";
 
             var mitigations = GetMitigations(result);
             if (mitigations?.Any() ?? false)

@@ -125,7 +125,7 @@ namespace ThreatsManager.Engine.ObjectModel
         {
             _lastTrustBoundary += 1;
 
-            string result = $"{GetIdentityTypeName(typeof(TrustBoundary))} {_lastTrustBoundary}";
+            string result = $"{typeof(TrustBoundary).GetIdentityTypeName()} {_lastTrustBoundary}";
 
             var trustBoundary = _groups?.OfType<ITrustBoundary>().FirstOrDefault(x => string.CompareOrdinal(result, x.Name) == 0);
             if (trustBoundary != null)

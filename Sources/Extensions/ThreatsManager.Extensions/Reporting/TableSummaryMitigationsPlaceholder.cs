@@ -7,6 +7,7 @@ using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Reporting
 {
@@ -56,11 +57,11 @@ namespace ThreatsManager.Extensions.Reporting
                 var model = mitigation.Model;
                 var tems = model.GetThreatEventMitigations(mitigation)?.ToArray();
                 result.Add(new Cell(tems?
-                    .OrderBy(x => x.ThreatEvent.Parent.Name)
-                    .ThenBy(x => x.ThreatEvent.Name)
+                    .OrderBy(x => x.ThreatEvent?.Parent?.Name)
+                    .ThenBy(x => x.ThreatEvent?.Name)
                     .Select(x =>
-                        new Line(x.ThreatEvent.Name, $"[{model.GetIdentityTypeInitial(x.ThreatEvent.Parent)}] {x.ThreatEvent.Parent.Name}: ", 
-                            null, new[] {x.ThreatEvent.Id, x.ThreatEvent.ThreatTypeId}, x.Status.ToString()))));
+                        new Line(x.ThreatEvent.Name, $"[{x.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {x.ThreatEvent?.Parent?.Name ?? ThreatModelManager.Unknown}: ", 
+                            null, new[] {x.ThreatEvent?.Id ?? Guid.Empty, x.ThreatEvent?.ThreatTypeId ?? Guid.Empty}, x.Status.ToString()))));
             }
 
             return result;

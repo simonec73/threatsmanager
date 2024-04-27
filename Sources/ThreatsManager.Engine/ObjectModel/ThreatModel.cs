@@ -315,32 +315,6 @@ namespace ThreatsManager.Engine.ObjectModel
             }
         }
 
-        public string GetIdentityTypeName([NotNull] IIdentity identity)
-        {
-            return GetIdentityTypeName(identity.GetType());
-        }
-
-        private string GetIdentityTypeName(Type type)
-        {
-            TypeLabelAttribute[] attribs = type.GetCustomAttributes(
-                typeof(TypeLabelAttribute), false) as TypeLabelAttribute[];
-
-            return attribs?.Length > 0 ? attribs[0].Label : type.Name;
-        }
-
-        public string GetIdentityTypeInitial([NotNull] IIdentity identity)
-        {
-            return GetIdentityTypeInitial(identity.GetType());
-        }
-
-        private string GetIdentityTypeInitial(Type type)
-        {
-            TypeInitialAttribute[] attribs = type.GetCustomAttributes(
-                typeof(TypeInitialAttribute), false) as TypeInitialAttribute[];
-
-            return attribs?.Length > 0 ? attribs[0].Initial : null;
-        }
-
         public IIdentity GetIdentity(Guid id)
         {
             IIdentity result = null;
@@ -2445,7 +2419,7 @@ namespace ThreatsManager.Engine.ObjectModel
                 
                 if (string.IsNullOrWhiteSpace(author))
                 {
-                    author = "<Unknown>";
+                    author = ThreatModelManager.Unknown;
                 }
 
                 DateTime changedOn;

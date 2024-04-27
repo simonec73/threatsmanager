@@ -71,7 +71,7 @@ namespace ThreatsManager.Extensions.Reporting
                         .OrderBy(x => x.ThreatEvent.Parent.Name)
                         .ThenBy(x => x.Mitigation.Name)
                         .Select(x =>
-                            new Line(x.Mitigation.Name, $"[{model.GetIdentityTypeInitial(x.ThreatEvent.Parent)}] {x.ThreatEvent.Parent.Name}: ", 
+                            new Line(x.Mitigation.Name, $"[{x.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {x.ThreatEvent.Parent.Name}: ", 
                                 null, new[] {x.MitigationId}, x.Status.ToString()))));
                 }
             }
