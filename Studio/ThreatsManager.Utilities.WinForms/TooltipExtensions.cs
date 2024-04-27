@@ -27,13 +27,13 @@ namespace ThreatsManager.Utilities.WinForms
                 var suffixBuilder = new StringBuilder();
                 if (!string.IsNullOrEmpty(dataFlow.Source?.Name))
                     suffixBuilder.Append(
-                        $"Source: <b>[{model.GetIdentityTypeInitial(dataFlow.Source)}] {dataFlow.Source.Name}</b>");
+                        $"Source: <b>[{dataFlow.Source?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {dataFlow.Source.Name}</b>");
                 if (!string.IsNullOrEmpty(dataFlow.Target?.Name))
                 {
                     if (suffixBuilder.Length > 0)
                         suffixBuilder.Append("<br/>");
                     suffixBuilder.Append(
-                        $"Target: <b>[{model.GetIdentityTypeInitial(dataFlow.Target)}] {dataFlow.Target.Name}</b>");
+                        $"Target: <b>[{dataFlow.Target?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {dataFlow.Target.Name}</b>");
                 }
 
                 suffix = suffixBuilder.ToString();
@@ -82,7 +82,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
 
             string start = null;
-            var initial = model.GetIdentityTypeInitial(identity);
+            var initial = identity.GetIdentityTypeInitial();
             if (!string.IsNullOrWhiteSpace(initial))
             {
                 start = $"[{initial}] ";

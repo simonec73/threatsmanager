@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
+using ThreatsManager.Interfaces.ObjectModel;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
@@ -35,6 +36,8 @@ namespace ThreatsManager.Extensions.Panels.Learning
         public Guid Id => _id;
 
         public Form PanelContainer { get; set; }
+
+        public IIdentity ReferenceObject => null;
 
         public void SetAction(string parameter)
         {

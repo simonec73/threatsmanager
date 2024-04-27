@@ -25,13 +25,17 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _model = child.Model;
             }
+            else if (container is IThreatModel model)
+            {
+                _model = model;
+            }
         }
 
         public bool Execute()
         {
             bool result = false;
 
-            var dialog = new AnnotationDialog(_model, _container, new Annotation());
+            var dialog = new AnnotationDialog(_container, new Annotation());
             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
             {
                 using (var scope = UndoRedoManager.OpenScope("Add Notes"))

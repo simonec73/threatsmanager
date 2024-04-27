@@ -21,6 +21,16 @@
             {
             }
 
+            if (_spellName != null)
+            {
+                _spellName.Dispose();
+            }
+
+            if (_spellDescription != null)
+            {
+                _spellDescription.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -509,7 +519,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Associate a Mitigation to the Weakness";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ThreatTypeMitigationSelectionDialog_FormClosed);
             this.panel1.ResumeLayout(false);
             this._layout.ResumeLayout(false);
             this._layout.PerformLayout();

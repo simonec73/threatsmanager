@@ -57,6 +57,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             _model = threatModel;
@@ -225,7 +227,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                 panel.ShowRowHeaders = false;
                 panel.InitialActiveRow = RelativeRow.None;
                 panel.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
-                panel.ReadOnly = _executionMode == ExecutionMode.Management;
+                panel.ReadOnly = _executionMode > ExecutionMode.Simplified;
 
                 panel.Columns.Add(new GridColumn("Name")
                 {
@@ -287,6 +289,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                         }
                     }
                 }
+            }
+            catch (InvalidOperationException)
+            {
+                ShowWarning?.Invoke("An error occurred while loading the Threat Events. The Panel will be closed now. Please, try again.");
+                this.PanelContainer?.Close();
             }
             finally
             {
@@ -405,7 +412,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     ShowTreeLines = true,
                     ShowRowHeaders = false,
                     InitialSelection = RelativeSelection.None,
-                    ReadOnly = _executionMode == ExecutionMode.Management
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
                 result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
@@ -919,7 +926,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     ShowRowDirtyMarker = false,
                     ShowRowHeaders = false,
                     InitialSelection = RelativeSelection.None,
-                    ReadOnly = _executionMode == ExecutionMode.Management
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
                 result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
@@ -1089,7 +1096,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     ShowRowDirtyMarker = false,
                     ShowRowHeaders = false,
                     InitialSelection = RelativeSelection.None,
-                    ReadOnly = _executionMode == ExecutionMode.Management
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
                 result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
@@ -1260,7 +1267,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     ShowRowDirtyMarker = false,
                     ShowRowHeaders = false,
                     InitialSelection = RelativeSelection.None,
-                    ReadOnly = _executionMode == ExecutionMode.Management
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
                 result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 
@@ -1473,7 +1480,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatEventList
                     ShowRowDirtyMarker = false,
                     ShowRowHeaders = false,
                     InitialSelection = RelativeSelection.None,
-                    ReadOnly = _executionMode == ExecutionMode.Management
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
                 result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 

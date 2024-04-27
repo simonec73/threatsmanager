@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnnotationsDescription" xml:space="preserve">
-    <value>Annotations to objects.</value>
-  </data>
-  <data name="AnnotationsPropertySchemaDescription" xml:space="preserve">
-    <value>Property Schema that collects properties related to the Quality Extension annotations functionality.</value>
-  </data>
   <data name="ApplyTopicsAutoGenRules_Caption" xml:space="preserve">
     <value>Auto Topic to be Clarified Generation confirmation</value>
   </data>
@@ -306,6 +300,9 @@ Do you confirm?</value>
   <data name="marker_big_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\marker_big_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="marker_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\marker_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="marker_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\marker_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -318,6 +315,9 @@ Do you confirm?</value>
   <data name="marker_huge_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\marker_huge_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="marker_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\marker_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="marker_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\marker_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -329,6 +329,9 @@ Do you confirm?</value>
   </data>
   <data name="marker_small_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\marker_small_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="marker_sponge_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\marker_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -348,11 +351,20 @@ Do you confirm?</value>
   <data name="note_text_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="note_text_big_clock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_big_clock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="note_text_big_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_big_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_text_big_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_big_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_text_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_text_clock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_clock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_text_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -360,11 +372,17 @@ Do you confirm?</value>
   <data name="note_text_huge" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_huge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="note_text_huge_clock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_huge_clock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="note_text_huge_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_huge_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_text_huge_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_huge_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_text_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_text_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -372,11 +390,17 @@ Do you confirm?</value>
   <data name="note_text_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="note_text_small_clock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_small_clock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="note_text_small_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_small_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_text_small_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_text_small_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_text_sponge_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_text_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="pdf" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pdf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -429,6 +453,9 @@ Do you confirm?</value>
   <data name="speech_balloon_question_big_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speech_balloon_question_big_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="speech_balloon_question_big_sponge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\speech_balloon_question_big_sponge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="speech_balloon_question_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speech_balloon_question_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -447,6 +474,9 @@ Do you confirm?</value>
   <data name="speech_balloon_question_huge_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speech_balloon_question_huge_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="speech_balloon_question_huge_sponge_big" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\speech_balloon_question_huge_sponge_big.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="speech_balloon_question_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speech_balloon_question_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -461,6 +491,9 @@ Do you confirm?</value>
   </data>
   <data name="speech_balloon_question_small_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speech_balloon_question_small_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="speech_balloon_question_sponge_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\speech_balloon_question_sponge_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="threat_event_big_sum" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\threat_event_big_sum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

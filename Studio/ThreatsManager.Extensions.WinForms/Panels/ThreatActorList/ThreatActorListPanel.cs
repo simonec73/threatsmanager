@@ -43,6 +43,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             _model = threatModel;

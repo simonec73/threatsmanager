@@ -42,6 +42,7 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
             // 
             // _chart
             // 
+            this._chart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             chartXy1.AxisX.MajorGridLines.GridLinesVisualStyle.LineColor = System.Drawing.Color.Gainsboro;
             chartXy1.AxisX.MinorGridLines.GridLinesVisualStyle.LineColor = System.Drawing.Color.WhiteSmoke;
             chartXy1.AxisX.MinorGridLines.Visible = false;
@@ -95,19 +96,22 @@ namespace ThreatsManager.DevOps.Panels.RiskTrend
             this._chart.ChartPanel.Legend.Visible = false;
             this._chart.ChartPanel.Name = "PrimaryPanel";
             this._chart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._chart.ForeColor = System.Drawing.Color.Black;
             this._chart.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._chart.Location = new System.Drawing.Point(0, 0);
+            this._chart.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._chart.Name = "_chart";
-            this._chart.Size = new System.Drawing.Size(896, 560);
+            this._chart.Size = new System.Drawing.Size(1792, 1077);
             this._chart.TabIndex = 0;
             // 
             // RiskTrendPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this._chart);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "RiskTrendPanel";
-            this.Size = new System.Drawing.Size(896, 560);
+            this.Size = new System.Drawing.Size(1792, 1077);
             this.ResumeLayout(false);
 
         }

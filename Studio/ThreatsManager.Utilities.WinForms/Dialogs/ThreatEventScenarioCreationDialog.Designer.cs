@@ -21,6 +21,21 @@
             {
             }
 
+            if (_spellName != null)
+            {
+                _spellName.Dispose();
+            }
+
+            if (_spellDescription != null)
+            {
+                _spellDescription.Dispose();
+            }
+
+            if (_spellMotivation != null)
+            {
+                _spellMotivation.Dispose();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -282,7 +297,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Threat Event Scenario creation";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ThreatEventScenarioCreationDialog_FormClosed);
             this.panel1.ResumeLayout(false);
             this._layout.ResumeLayout(false);
             this._layout.PerformLayout();

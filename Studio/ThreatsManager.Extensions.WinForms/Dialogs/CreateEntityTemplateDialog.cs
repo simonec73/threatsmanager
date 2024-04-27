@@ -14,6 +14,8 @@ namespace ThreatsManager.Extensions.Dialogs
     public partial class CreateEntityTemplateDialog : Form
     {
         private IEntity _entity;
+        private RichTextBoxSpellAsYouTypeAdapter _spellName;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
 
         public CreateEntityTemplateDialog()
         {
@@ -32,8 +34,8 @@ namespace ThreatsManager.Extensions.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_name);
-            AddSpellCheck(_description);
+            _spellName = _spellAsYouType.AddSpellCheck(_name);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_description);
             _spellAsYouType.SetRepaintTimer(500);
         }
 
@@ -102,30 +104,6 @@ namespace ThreatsManager.Extensions.Dialogs
             {
                 //_spellAsYouType.CheckAsYouType = true;
             }
-        }
-        
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void CreateEntityTemplateDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

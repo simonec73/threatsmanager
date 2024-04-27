@@ -23,6 +23,8 @@ namespace ThreatsManager.SampleWinFormExtensions.Panels.Validate
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel(IThreatModel model)
         {
             if (model != null)

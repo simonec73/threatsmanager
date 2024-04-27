@@ -38,6 +38,8 @@ namespace ThreatsManager.Extensions.Panels.Excel
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             _model = threatModel;
@@ -593,7 +595,7 @@ namespace ThreatsManager.Extensions.Panels.Excel
                     var row = new GridRow(
                         threatEvent.Name,
                         threatEvent.Description,
-                        threatEvent.Parent != null ? _model.GetIdentityTypeName(threatEvent.Parent) : string.Empty,
+                        threatEvent.Parent != null ? threatEvent.Parent.GetIdentityTypeName() : string.Empty,
                         threatEvent.Parent?.Name ?? string.Empty,
                         threatEvent.Severity)
                     {
@@ -636,7 +638,7 @@ namespace ThreatsManager.Extensions.Panels.Excel
                         mitigation.Mitigation.Description,
                         mitigation.Mitigation.ControlType.ToString(),
                         mitigation.ThreatEvent.Name,
-                        mitigation.ThreatEvent.Parent != null ? _model.GetIdentityTypeName(mitigation.ThreatEvent.Parent) : string.Empty,
+                        mitigation.ThreatEvent.Parent != null ? mitigation.ThreatEvent.Parent.GetIdentityTypeName() : string.Empty,
                         mitigation.ThreatEvent.Parent?.Name ?? string.Empty,
                         mitigation.Strength,
                         mitigation.Status.ToString(),

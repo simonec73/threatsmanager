@@ -71,7 +71,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                 if (shape is IEntityShape entityShape)
                 {
-                    var node = new GraphEntity(entityShape, dpiFactor, _iconSize, 
+                    var node = new GraphEntity(entityShape, dpiFactor, _iconSize,
                         _iconCenterSize, _imageSize, _markerSize, _entityWrapWidth);
                     if (_actions != null)
                         node.SetContextAwareActions(_actions);
@@ -88,7 +88,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                     result = node;
                 }
-                else if (shape is IGroupShape groupShape && !_groups.ContainsKey(groupShape.AssociatedId))
+                else if (shape is IGroupShape groupShape && groupShape.Identity != null &&
+                    !_groups.ContainsKey(groupShape.AssociatedId))
                 {
                     var group = new GraphGroup(groupShape, dpiFactor, _markerSize);
                     if (_actions != null)

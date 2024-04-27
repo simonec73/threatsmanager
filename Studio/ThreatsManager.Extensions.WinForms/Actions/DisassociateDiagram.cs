@@ -68,7 +68,7 @@ namespace ThreatsManager.Extensions.Actions
 
             if (identity is IEntity entity && entity.Model is IThreatModel model &&
                 MessageBox.Show(Form.ActiveForm, 
-                $"You are about to disassociate the associated diagram from {model.GetIdentityTypeName(entity)} '{entity.Name}'. Are you sure?",
+                $"You are about to disassociate the associated diagram from {entity.GetIdentityTypeName()} '{entity.Name}'. Are you sure?",
                 "Disassociate Diagram", 
                 MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Information, 

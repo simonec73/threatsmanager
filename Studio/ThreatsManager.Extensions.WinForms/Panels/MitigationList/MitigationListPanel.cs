@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Web.UI.WebControls;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
@@ -54,6 +55,8 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             _model = threatModel;
@@ -93,7 +96,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                 panel.ShowRowHeaders = false;
                 panel.InitialActiveRow = RelativeRow.None;
                 panel.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
-                panel.ReadOnly = _executionMode == ExecutionMode.Management;
+                panel.ReadOnly = _executionMode > ExecutionMode.Simplified;
 
                 panel.Columns.Add(new GridColumn("Name")
                 {
@@ -382,6 +385,14 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
             foreach (var row in rows)
                 RemoveEventSubscriptions(row);
 
+            var panels = _grid.PrimaryGrid.Rows.OfType<GridPanel>().ToArray();
+            foreach (var panel in panels)
+            {
+                var panelRows = panel.Rows.OfType<GridRow>().ToArray();
+                foreach (var row in panelRows)
+                    RemoveEventSubscriptions(row);
+            }
+
             List<IThreatEvent> threatEvents = new List<IThreatEvent>();
             AddThreatEvents(threatEvents, _model.Entities?.Select(x => x.ThreatEvents).ToArray());
             AddThreatEvents(threatEvents, _model.DataFlows?.Select(x => x.ThreatEvents).ToArray());
@@ -523,7 +534,7 @@ namespace ThreatsManager.Extensions.Panels.MitigationList
                     ShowTreeLines = false,
                     ShowRowHeaders = false,
                     InitialSelection = RelativeSelection.None,
-                    ReadOnly = _executionMode == ExecutionMode.Management
+                    ReadOnly = _executionMode > ExecutionMode.Simplified
                 };
                 result.DefaultVisualStyles.CellStyles.ReadOnly.TextColor = Color.Black;
 

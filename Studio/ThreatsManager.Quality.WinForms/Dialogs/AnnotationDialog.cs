@@ -14,9 +14,9 @@ namespace ThreatsManager.Quality.Dialogs
             InitializeComponent();
         }
 
-        public AnnotationDialog([NotNull] IThreatModel model, [NotNull] object obj, [NotNull] Annotation annotation, bool editMode = false) : this()
+        public AnnotationDialog([NotNull] object obj, [NotNull] Annotation annotation, bool editMode = false) : this()
         {
-            _annotation.SetObject(model, obj);
+            _annotation.SetObject(obj);
             _annotation.Annotation = annotation;
             _editMode = editMode;
 

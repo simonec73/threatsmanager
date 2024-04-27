@@ -31,6 +31,8 @@ namespace ThreatsManager.Extensions.Panels.Configuration
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void Initialize([NotNull] IThreatModel model)
         {
             _configuration = new ExtensionConfigurationManager(model);

@@ -14,6 +14,8 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
     {
         private IThreatModel _model;
         private IWeakness _weakness;
+        private RichTextBoxSpellAsYouTypeAdapter _spellName;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
 
         public WeaknessSelectionDialog()
         {
@@ -29,8 +31,8 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_name);
-            AddSpellCheck(_description);
+            _spellName = _spellAsYouType.AddSpellCheck(_name);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_description);
             _spellAsYouType.SetRepaintTimer(500);
         }
 
@@ -204,25 +206,6 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             }
         }
 
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
         private void _weaknesses_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
@@ -238,11 +221,6 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                     OnComboBoxTextUpdate(_weaknesses, null);
                 }
             }
-        }
-
-        private void ThreatTypeSelectionDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

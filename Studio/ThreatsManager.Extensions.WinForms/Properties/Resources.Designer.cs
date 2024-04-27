@@ -3752,6 +3752,66 @@ namespace ThreatsManager.Extensions.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap standard_mitigations_big_process {
+            get {
+                object obj = ResourceManager.GetObject("standard_mitigations_big_process", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap standard_mitigations_big_process_delete {
+            get {
+                object obj = ResourceManager.GetObject("standard_mitigations_big_process_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap standard_mitigations_huge_process_big {
+            get {
+                object obj = ResourceManager.GetObject("standard_mitigations_huge_process_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap standard_mitigations_huge_process_big_delete {
+            get {
+                object obj = ResourceManager.GetObject("standard_mitigations_huge_process_big_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap standard_mitigations_process_small {
+            get {
+                object obj = ResourceManager.GetObject("standard_mitigations_process_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap standard_mitigations_process_small_delete {
+            get {
+                object obj = ResourceManager.GetObject("standard_mitigations_process_small_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap storage_big_sponge {
             get {
                 object obj = ResourceManager.GetObject("storage_big_sponge", resourceCulture);

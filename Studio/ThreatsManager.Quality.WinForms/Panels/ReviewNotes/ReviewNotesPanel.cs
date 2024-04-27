@@ -36,6 +36,8 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
         #region Implementation of interface IShowThreatModelPanel.
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel model)
         {
             _model = model;
@@ -403,7 +405,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
                 button.FlatAppearance.BorderColor = ThreatsManager.Utilities.ThreatModelManager.StandardColor;
                 button.FlatAppearance.BorderSize = 2;
 
-                _annotation.SetObject(_model, _selected);
+                _annotation.SetObject(_selected);
                 _annotation.Annotation = annotation;
                 _annotationLayoutControlItem.Visible = true;
 

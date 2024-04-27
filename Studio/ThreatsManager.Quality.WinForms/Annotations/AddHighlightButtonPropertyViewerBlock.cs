@@ -32,7 +32,7 @@ namespace ThreatsManager.Quality.Annotations
         {
             bool result = false;
 
-            var dialog = new AnnotationDialog(_model, _container, new Highlight());
+            var dialog = new AnnotationDialog(_container, new Highlight());
             if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
             {
                 using (var scope = UndoRedoManager.OpenScope("Add Highlight"))

@@ -45,6 +45,8 @@ namespace ThreatsManager.Extensions.Panels.Word
 
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             if (_model != null)

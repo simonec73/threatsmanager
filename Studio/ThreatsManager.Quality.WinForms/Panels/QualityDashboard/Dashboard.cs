@@ -33,6 +33,8 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
         #region Implementation of interface IShowThreatModelPanel.
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel model)
         {
             _model = model;

@@ -30,6 +30,8 @@ namespace ThreatsManager.DevOps.Panels.MitigationsKanban
         #region Implementation of interface IShowThreatModelPanel.
         public Form PanelContainer { get; set; }
 
+        public IIdentity ReferenceObject => null;
+
         public void SetThreatModel([NotNull] IThreatModel threatModel)
         {
             _model = threatModel;

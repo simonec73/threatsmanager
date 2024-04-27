@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using PostSharp.Patterns.Contracts;
 using ThreatsManager.Utilities.WinForms;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 
@@ -9,6 +8,9 @@ namespace ThreatsManager.Extensions.Dialogs
     // ReSharper disable CoVariantArrayConversion
     public partial class PropertySchemaCreationDialog : Form
     {
+        private RichTextBoxSpellAsYouTypeAdapter _spellName;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
+
         public PropertySchemaCreationDialog()
         {
             InitializeComponent();
@@ -23,8 +25,8 @@ namespace ThreatsManager.Extensions.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_name);
-            AddSpellCheck(_description);
+            _spellName = _spellAsYouType.AddSpellCheck(_name);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_description);
             _spellAsYouType.SetRepaintTimer(500);
         }
 
@@ -71,30 +73,6 @@ namespace ThreatsManager.Extensions.Dialogs
             {
                 //_spellAsYouType.CheckAsYouType = true;
             }
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void PropertySchemaCreationDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using Keyoti.RapidSpell;
 
 namespace ThreatsManager.Utilities.WinForms
 {
-    public class RichTextBoxSpellAsYouTypeAdapter : RichTextBoxIAYTAdapter
+    public class RichTextBoxSpellAsYouTypeAdapter : RichTextBoxIAYTAdapter, IDisposable
     {
         private RichTextBox _textBox;
 
@@ -16,6 +17,11 @@ namespace ThreatsManager.Utilities.WinForms
         public override int GetBaselineOffsetAtCharIndex(int i)
         {
             return (int)(base.GetBaselineOffsetAtCharIndex(i) * Dpi.Factor.Height);
+        }
+
+        public void Dispose()
+        {
+            RemoveEventHandlers();
         }
 
         public RichTextBox TextBox => _textBox;

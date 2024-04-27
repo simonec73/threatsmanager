@@ -279,43 +279,46 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private void HandleDelete([NotNull] GoObject item)
         {
-            if (item is GraphEntity node)
+            using (var scope = UndoRedoManager.OpenScope("Delete objects from the Diagram"))
             {
-                RemoveRegisteredEvents(node);
+                if (item is GraphEntity node)
+                {
+                    RemoveRegisteredEvents(node);
 
-                var id = node.EntityShape.AssociatedId;
-                node.Deactivated = true;
-                RemoveRelatedLinks(id);
-                _entities.Remove(id);
-                _diagram.RemoveEntityShape(id);
+                    var id = node.EntityShape.AssociatedId;
+                    node.Deactivated = true;
+                    RemoveRelatedLinks(id);
+                    _entities.Remove(id);
+                    _diagram.RemoveEntityShape(id);
+                    scope?.Complete();
 
-                CheckRefresh();
-            }
+                    CheckRefresh();
+                } else if (item is GraphGroup group)
+                {
+                    group.SelectedShape -= OnSelectedShape;
 
-            if (item is GraphGroup group)
-            {
-                group.SelectedShape -= OnSelectedShape;
-  
-                //if (group.GroupShape?.Identity is IThreatEventsContainer container)
-                //{
-                //    container.ThreatEventAdded -= OnThreatEventAddedToShape;
-                //    container.ThreatEventRemoved -= OnThreatEventRemovedFromShape;
-                //}
+                    //if (group.GroupShape?.Identity is IThreatEventsContainer container)
+                    //{
+                    //    container.ThreatEventAdded -= OnThreatEventAddedToShape;
+                    //    container.ThreatEventRemoved -= OnThreatEventRemovedFromShape;
+                    //}
 
-                var id = group.GroupShape.AssociatedId;
-                group.Deactivated = true;
-                RemoveChildShapes(id);
-                group.Dispose();
-                _groups.Remove(id);
-                _diagram.RemoveGroupShape(id);
-            }
-
-            if (item is GraphLink link)
-            {
-                RemoveRegisteredEvents(link);
-                var id = link.Link.AssociatedId;
-                _links.Remove(id);
-                _diagram.RemoveLink(id);
+                    var id = group.GroupShape.AssociatedId;
+                    group.Deactivated = true;
+                    RemoveChildShapes(id);
+                    group.Dispose();
+                    _groups.Remove(id);
+                    _diagram.RemoveGroupShape(id);
+                    scope?.Complete();
+                }
+                else if (item is GraphLink link)
+                {
+                    RemoveRegisteredEvents(link);
+                    var id = link.Link.AssociatedId;
+                    _links.Remove(id);
+                    _diagram.RemoveLink(id);
+                    scope?.Complete();
+                }
             }
         }
 

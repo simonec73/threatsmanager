@@ -16,6 +16,23 @@ namespace ThreatsManager.Dialogs
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            if (_ribbon != null)
+            {
+                try
+                {
+                    _ribbonMerge.RemoveMergedRibbonBars(_ribbon);
+                    if (_ribbon.SelectedRibbonTabItem == null)
+                    {
+                        _ribbon.SelectFirstVisibleRibbonTab();
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            InstanceClosed?.Invoke(this);
+
             foreach (var bar in _ribbonBars)
             {
                 var buttons = bar.Items.OfType<ButtonItem>().ToArray();
@@ -87,7 +104,6 @@ namespace ThreatsManager.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "PanelContainerForm";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PanelContainerForm_FormClosed);
             this.Load += new System.EventHandler(this.PanelContainerForm_Load);
             this.TextChanged += new System.EventHandler(this.PanelContainerForm_TextChanged);
             this.ResumeLayout(false);

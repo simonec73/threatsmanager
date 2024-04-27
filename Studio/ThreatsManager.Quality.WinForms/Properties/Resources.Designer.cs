@@ -61,24 +61,6 @@ namespace ThreatsManager.Quality.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Annotations to objects..
-        /// </summary>
-        internal static string AnnotationsDescription {
-            get {
-                return ResourceManager.GetString("AnnotationsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Property Schema that collects properties related to the Quality Extension annotations functionality..
-        /// </summary>
-        internal static string AnnotationsPropertySchemaDescription {
-            get {
-                return ResourceManager.GetString("AnnotationsPropertySchemaDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Auto Topic to be Clarified Generation confirmation.
         /// </summary>
         internal static string ApplyTopicsAutoGenRules_Caption {
@@ -678,6 +660,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap marker_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("marker_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap marker_delete {
             get {
                 object obj = ResourceManager.GetObject("marker_delete", resourceCulture);
@@ -718,6 +710,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap marker_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("marker_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap marker_new {
             get {
                 object obj = ResourceManager.GetObject("marker_new", resourceCulture);
@@ -751,6 +753,16 @@ namespace ThreatsManager.Quality.Properties {
         internal static System.Drawing.Bitmap marker_small_new {
             get {
                 object obj = ResourceManager.GetObject("marker_small_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap marker_sponge_small {
+            get {
+                object obj = ResourceManager.GetObject("marker_sponge_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -818,6 +830,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap note_text_big_clock {
+            get {
+                object obj = ResourceManager.GetObject("note_text_big_clock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap note_text_big_delete {
             get {
                 object obj = ResourceManager.GetObject("note_text_big_delete", resourceCulture);
@@ -831,6 +853,26 @@ namespace ThreatsManager.Quality.Properties {
         internal static System.Drawing.Bitmap note_text_big_new {
             get {
                 object obj = ResourceManager.GetObject("note_text_big_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_text_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("note_text_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_text_clock {
+            get {
+                object obj = ResourceManager.GetObject("note_text_clock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -858,6 +900,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap note_text_huge_clock {
+            get {
+                object obj = ResourceManager.GetObject("note_text_huge_clock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap note_text_huge_delete {
             get {
                 object obj = ResourceManager.GetObject("note_text_huge_delete", resourceCulture);
@@ -871,6 +923,16 @@ namespace ThreatsManager.Quality.Properties {
         internal static System.Drawing.Bitmap note_text_huge_new {
             get {
                 object obj = ResourceManager.GetObject("note_text_huge_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_text_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("note_text_huge_sponge_big", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -898,6 +960,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap note_text_small_clock {
+            get {
+                object obj = ResourceManager.GetObject("note_text_small_clock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap note_text_small_delete {
             get {
                 object obj = ResourceManager.GetObject("note_text_small_delete", resourceCulture);
@@ -911,6 +983,16 @@ namespace ThreatsManager.Quality.Properties {
         internal static System.Drawing.Bitmap note_text_small_new {
             get {
                 object obj = ResourceManager.GetObject("note_text_small_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_text_sponge_small {
+            get {
+                object obj = ResourceManager.GetObject("note_text_sponge_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1088,6 +1170,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap speech_balloon_question_big_sponge {
+            get {
+                object obj = ResourceManager.GetObject("speech_balloon_question_big_sponge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap speech_balloon_question_delete {
             get {
                 object obj = ResourceManager.GetObject("speech_balloon_question_delete", resourceCulture);
@@ -1148,6 +1240,16 @@ namespace ThreatsManager.Quality.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap speech_balloon_question_huge_sponge_big {
+            get {
+                object obj = ResourceManager.GetObject("speech_balloon_question_huge_sponge_big", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap speech_balloon_question_new {
             get {
                 object obj = ResourceManager.GetObject("speech_balloon_question_new", resourceCulture);
@@ -1191,6 +1293,16 @@ namespace ThreatsManager.Quality.Properties {
         internal static System.Drawing.Bitmap speech_balloon_question_small_new {
             get {
                 object obj = ResourceManager.GetObject("speech_balloon_question_small_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap speech_balloon_question_sponge_small {
+            get {
+                object obj = ResourceManager.GetObject("speech_balloon_question_sponge_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

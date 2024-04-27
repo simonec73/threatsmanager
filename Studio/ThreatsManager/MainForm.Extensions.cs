@@ -833,7 +833,7 @@ namespace ThreatsManager
 
                 if (panel is IShowDiagramPanel<Form> showDiagram)
                 {
-                    if (showDiagram.Diagram == null)
+                    if (showDiagram.ReferenceObject == null)
                     {
                         var diagram = _model?.AddDiagram();
                         if (diagram != null)
@@ -853,8 +853,8 @@ namespace ThreatsManager
                     }
                     else
                     {
-                        result.Text = showDiagram.Diagram.Name;
-                        ((INotifyPropertyChanged)showDiagram.Diagram).PropertyChanged += OnDiagramNameChanged;
+                        result.Text = showDiagram.ReferenceObject.Name;
+                        ((INotifyPropertyChanged)showDiagram.ReferenceObject).PropertyChanged += OnDiagramNameChanged;
 
                         if (factory is IMainRibbonExtension mainRibbonExtension && 
                             AddChildButton(mainRibbonExtension, action) != null)
@@ -862,7 +862,7 @@ namespace ThreatsManager
                             MinimalLoadMainRibbonExtension(mainRibbonExtension);
                         }
 
-                        result.FormId = GetFormId(factory, showDiagram.Diagram);
+                        result.FormId = GetFormId(factory, showDiagram.ReferenceObject);
                     }
                 }
 
@@ -895,7 +895,7 @@ namespace ThreatsManager
 
                 if (panel is ICustomRibbonExtension ribbonExtension)
                 {
-                    result.InitializeRibbon(ribbonExtension, _mergeIndex);
+                    result.InitializeRibbon(_ribbon, ribbonExtension, _mergeIndex);
                 }
                 else
                 {
@@ -937,7 +937,7 @@ namespace ThreatsManager
                 {
                     if (form is PanelContainerForm containerForm &&
                         containerForm.Panel is IShowDiagramPanel<Form> diagramPanel &&
-                        diagramPanel.Diagram == diagram &&
+                        diagramPanel.ReferenceObject == diagram &&
                         string.CompareOrdinal(form.Text, diagram.Name) != 0)
                     {
                         _titleUpdates.Enqueue(new TitleUpdate
@@ -1049,6 +1049,87 @@ namespace ThreatsManager
                     form.Close();
                 }
             }
+        }
+        #endregion
+
+        #region PanelContainerForm event handlers.
+        private void OnPanelContainerFormCreated(PanelContainerForm form)
+        {
+            bool isDiagram = form.Controls.OfType<IShowDiagramPanel<Form>>().Any();
+
+            var button = new ButtonItem()
+            {
+                Text = form.Text,
+                Tag = form,
+                Image = isDiagram ? Icons.Resources.model : Properties.Resources.window,
+                ImageSmall = Properties.Resources.window_small,
+                ImagePosition = eImagePosition.Left,
+                ButtonStyle = eButtonStyle.ImageAndText
+            };
+            button.Click += OnWindowButtonClicked;
+            _windows.SubItems.Add(button);
+        }
+
+        private void OnWindowButtonClicked(object sender, EventArgs e)
+        {
+            if (sender is ButtonItem button && button.Tag is PanelContainerForm form)
+            {
+                form.Activate();
+            }
+        }
+
+        private void OnPanelContainerFormClosed(PanelContainerForm form)
+        {
+            var button = _windows.SubItems.OfType<ButtonItem>()
+                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
+            if (button != null)
+            {
+                _windows.SubItems.Remove(button);
+            }
+
+            if (form.Tag is IPanelFactory factory)
+            {
+                var factoryId = factory.GetExtensionId();
+                if (_instances.TryGetValue(factoryId, out var instances))
+                {
+                    switch (factory.Behavior)
+                    {
+                        case InstanceMode.Single:
+                            if (instances.Count > 0)
+                            {
+                                instances.Clear();
+                            }
+                            break;
+                        default:
+                            var reference = form.Panel?.ReferenceObject;
+                            if (reference != null)
+                            {
+                                instances.Remove(reference.Id);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            GcCollect();
+        }
+
+        private void OnPanelContainerFormTextChanged(PanelContainerForm form)
+        {
+            var button = _windows.SubItems.OfType<ButtonItem>()
+                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
+            if (button != null)
+            {
+                button.Text = form.Text;
+            }
+        }
+
+        [Background]
+        private void GcCollect()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
         #endregion
 

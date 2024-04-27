@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Controls;
@@ -25,6 +26,57 @@ namespace ThreatsManager.Utilities.WinForms
     public partial class ItemEditor
     {
         private Dictionary<Control, EventHandler> _changeActions = new Dictionary<Control, EventHandler>();
+
+        #region Resource releasing.
+        private interface IResourceReleaser
+        {
+            void Release();
+        }
+
+        private class ResourceReleaser<T> : IResourceReleaser where T : class
+        {
+            private Action<T> _action;
+            private T _value;
+            private Action<T, EventHandler> _eventHandlerAction;
+            private EventHandler _handler;
+
+            public ResourceReleaser([NotNull] Action<T> action, [NotNull] T value) 
+            {
+                _action = action;
+                _value = value;
+            }
+
+            public ResourceReleaser([NotNull] Action<T, EventHandler> action, [NotNull] T value,
+                [NotNull] EventHandler handler)
+            {
+                _eventHandlerAction = action;
+                _value = value;
+                _handler = handler;
+            }
+
+            public void Release()
+            {
+                if (_value != null)
+                {
+                    if (_action != null)
+                    {
+                        _action.Invoke(_value);
+                    }
+                    else if (_eventHandlerAction != null && _handler != null)
+                    {
+                        _eventHandlerAction.Invoke(_value, _handler);
+                    }
+                }
+
+                _action = null;
+                _value = null;
+                _eventHandlerAction = null;
+                _handler = null;
+            }
+        }
+
+        private readonly List<IResourceReleaser> _releasers = new List<IResourceReleaser>();
+        #endregion
 
         #region Label.
         private static Label AddSingleLineLabel([NotNull] LayoutControl container,
@@ -125,7 +177,8 @@ namespace ThreatsManager.Utilities.WinForms
                 ImageAlign = ContentAlignment.TopLeft,
                 Tag = identity
             };
-           control.LinkClicked += OnHyperlinkClicked;
+            control.LinkClicked += OnHyperlinkClicked;
+            _releasers.Add(new ResourceReleaser<LinkLabel>(ReleaseLinkClicked, control));
 
             var item = new LayoutControlItem()
             {
@@ -153,6 +206,11 @@ namespace ThreatsManager.Utilities.WinForms
                 dialog.Item = identity;
                 dialog.ShowDialog(Form.ActiveForm);
             }
+        }
+
+        private void ReleaseLinkClicked(LinkLabel control)
+        {
+            control.LinkClicked -= OnHyperlinkClicked;
         }
         #endregion
 
@@ -186,9 +244,13 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(control, handler);
                 control.TextChanged += handler;
+                _releasers.Add(new ResourceReleaser<TextBox>(ReleaseTextChanged, control, handler));
             }
             else
+            {
                 control.TextChanged += TextPropertyChanged;
+                _releasers.Add(new ResourceReleaser<TextBox>(ReleaseTextChanged, control, TextPropertyChanged));
+            }
             var item = new LayoutControlItem()
             {
                 Text = $"<a href=\"SingleLineText\">{name?.Replace("&", "&&")}</a>",
@@ -201,6 +263,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Padding = new Padding(4)
             };
             item.MarkupLinkClick += OnMarkupLinkClick;
+            _releasers.Add(new ResourceReleaser<LayoutControlItem>(ReleaseMarkupLinkClick, item));
             container.Controls.Add(control);
             container.RootGroup.Items.Add(item);
 
@@ -284,9 +347,13 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(control, handler);
                 control.TextChanged += handler;
+                _releasers.Add(new ResourceReleaser<RichTextBox>(ReleaseTextChanged, control, handler));
             }
             else
+            {
                 control.TextChanged += TextPropertyChanged;
+                _releasers.Add(new ResourceReleaser<RichTextBox>(ReleaseTextChanged, control, TextPropertyChanged));
+            }
             var item = new LayoutControlItem()
             {
                 Text = $"<a href=\"Text\">{name?.Replace("&", "&&")}</a>",
@@ -298,6 +365,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Tooltip = tooltip
             };
             item.MarkupLinkClick += OnMarkupLinkClick;
+            _releasers.Add(new ResourceReleaser<LayoutControlItem>(ReleaseMarkupLinkClick, item));
             container.Controls.Add(control);
             container.RootGroup.Items.Add(item);
 
@@ -322,6 +390,21 @@ namespace ThreatsManager.Utilities.WinForms
                 propertyViewerBlock2.Text = textBox4.Text;
             }
         }
+
+        private void ReleaseTextChanged(TextBox control, EventHandler handler)
+        {
+            control.TextChanged -= handler;
+        }
+
+        private void ReleaseTextChanged(RichTextBox control, EventHandler handler)
+        {
+            control.TextChanged -= handler;
+        }
+
+        private void ReleaseMarkupLinkClick(LayoutControlItem item)
+        {
+            item.MarkupLinkClick -= OnMarkupLinkClick;
+        }
         #endregion
 
         #region Boolean properties.
@@ -339,9 +422,13 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(control, handler);
                 control.ValueChanged += handler;
+                _releasers.Add(new ResourceReleaser<SwitchButton>(ReleaseValueChanged, control, handler));
             }
             else
+            {
                 control.ValueChanged += BoolPropertyChanged;
+                _releasers.Add(new ResourceReleaser<SwitchButton>(ReleaseValueChanged, control, BoolPropertyChanged));
+            }
             var item = new LayoutControlItem()
             {
                 Text = label?.Replace("&", "&&"),
@@ -375,6 +462,11 @@ namespace ThreatsManager.Utilities.WinForms
                 property.Value = switchButton.Value;
             }
         }
+
+        private void ReleaseValueChanged(SwitchButton control, EventHandler handler)
+        {
+            control.ValueChanged -= handler;
+        }
         #endregion
 
         #region Integer properties.
@@ -392,9 +484,13 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(control, handler);
                 control.ValueChanged += handler;
+                _releasers.Add(new ResourceReleaser<IntegerInput>(ReleaseValueChanged, control, handler));
             }
             else
+            {
                 control.ValueChanged += IntegerPropertyChanged;
+                _releasers.Add(new ResourceReleaser<IntegerInput>(ReleaseValueChanged, control, IntegerPropertyChanged));
+            }
             var item = new LayoutControlItem()
             {
                 Text = label?.Replace("&", "&&"),
@@ -428,6 +524,11 @@ namespace ThreatsManager.Utilities.WinForms
                 property.Value = control.Value;
             }
         }
+
+        private void ReleaseValueChanged(IntegerInput control, EventHandler handler)
+        {
+            control.ValueChanged -= handler;
+        }
         #endregion
 
         #region Decimal properties.
@@ -445,9 +546,13 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(control, handler);
                 control.ValueChanged += handler;
+                _releasers.Add(new ResourceReleaser<DoubleInput>(ReleaseValueChanged, control, handler));
             }
             else
+            {
                 control.ValueChanged += DecimalPropertyChanged;
+                _releasers.Add(new ResourceReleaser<DoubleInput>(ReleaseValueChanged, control, DecimalPropertyChanged));
+            }
             var item = new LayoutControlItem()
             {
                 Text = label?.Replace("&", "&&"),
@@ -481,10 +586,15 @@ namespace ThreatsManager.Utilities.WinForms
                 property.Value = Convert.ToDecimal(control.Value);
             }
         }
+
+        private void ReleaseValueChanged(DoubleInput control, EventHandler handler)
+        {
+            control.ValueChanged -= handler;
+        }
         #endregion
 
         #region Tokens properties.
-        private static TokenEditor AddTokens([NotNull] LayoutControl container,
+        private TokenEditor AddTokens([NotNull] LayoutControl container,
             IPropertyTokens property, bool readOnly)
         {
             var control = new TokenEditor()
@@ -493,6 +603,7 @@ namespace ThreatsManager.Utilities.WinForms
                 ReadOnly = readOnly
             };
             control.EditTextBox.KeyPress += OnKeywordsKeyPress;
+            _releasers.Add(new ResourceReleaser<TokenEditor>(ReleaseKeyPress, control));
             var values = property?.Value?.ToArray();
             if (values != null)
             {
@@ -504,6 +615,7 @@ namespace ThreatsManager.Utilities.WinForms
                 }
             }
             control.SelectedTokensChanged += TokensPropertyChanged;
+            _releasers.Add(new ResourceReleaser<TokenEditor>(ReleaseSelectedTokensChanged, control));
 
             var item = new LayoutControlItem()
             {
@@ -539,10 +651,20 @@ namespace ThreatsManager.Utilities.WinForms
                 e.KeyChar = ';';
             }
         }
+
+        private static void ReleaseKeyPress(TokenEditor control)
+        {
+            control.EditTextBox.KeyPress -= OnKeywordsKeyPress;
+        }
+
+        private static void ReleaseSelectedTokensChanged(TokenEditor control)
+        {
+            control.SelectedTokensChanged -= TokensPropertyChanged;
+        }
         #endregion
 
         #region Combo Box properties.
-        private static ComboBox AddCombo([NotNull] LayoutControl container,
+        private ComboBox AddCombo([NotNull] LayoutControl container,
             IPropertyList property, bool readOnly)
         {
             ComboBox control = null;
@@ -565,6 +687,7 @@ namespace ThreatsManager.Utilities.WinForms
                         .FirstOrDefault(x => string.CompareOrdinal(x.Id, property.Value?.Id) == 0);
                     control.SelectedItem = selected;
                     control.SelectedIndexChanged += ComboPropertyChanged;
+                    _releasers.Add(new ResourceReleaser<ComboBox>(ReleaseSelectedIndexChanged, control, ComboPropertyChanged));
 
                     var item = new LayoutControlItem()
                     {
@@ -614,6 +737,7 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(control, handler);
                 control.SelectedIndexChanged += handler;
+                _releasers.Add(new ResourceReleaser<ComboBox>(ReleaseSelectedIndexChanged, control, handler));
             }
             var item = new LayoutControlItem()
             {
@@ -628,6 +752,11 @@ namespace ThreatsManager.Utilities.WinForms
             container.RootGroup.Items.Add(item);
 
             return control;
+        }
+
+        private void ReleaseSelectedIndexChanged(ComboBox control, EventHandler handler)
+        {
+            control.SelectedIndexChanged -= handler;
         }
         #endregion
 
@@ -671,6 +800,7 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     _changeActions.Add(addButton, addItemEventHandler);
                     addButton.Click += addItemEventHandler;
+                    _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, addButton, addItemEventHandler));
                 }
 
                 var addButtonItem = new LayoutControlItem()
@@ -690,6 +820,7 @@ namespace ThreatsManager.Utilities.WinForms
                     Tag = control
                 };
                 removeButton.Click += ClickedListBoxRemove;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, removeButton, ClickedListBoxRemove));
                 var removeButtonItem = new LayoutControlItem()
                 {
                     Control = removeButton,
@@ -707,6 +838,7 @@ namespace ThreatsManager.Utilities.WinForms
                     Tag = control
                 };
                 clearButton.Click += ClickedListBoxClear;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, clearButton, ClickedListBoxClear));
                 var clearButtonItem = new LayoutControlItem()
                 {
                     Control = clearButton,
@@ -861,6 +993,11 @@ namespace ThreatsManager.Utilities.WinForms
                 }
             }
         }
+
+        private void ReleaseClick(Button control, EventHandler handler)
+        {
+            control.Click -= handler;
+        }
         #endregion
 
         #region List View.
@@ -898,6 +1035,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
             control.MouseDoubleClick += OnListViewDoubleClick;
+            _releasers.Add(new ResourceReleaser<ListView>(ReleaseMouseDoubleClick, control));
 
             var item = new LayoutControlItem()
             {
@@ -957,6 +1095,7 @@ namespace ThreatsManager.Utilities.WinForms
                 control.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
             control.MouseDoubleClick += OnListViewDoubleClick;
+            _releasers.Add(new ResourceReleaser<ListView>(ReleaseMouseDoubleClick, control));
 
             var item = new LayoutControlItem()
             {
@@ -994,6 +1133,11 @@ namespace ThreatsManager.Utilities.WinForms
                 }
             }
         }
+
+        private void ReleaseMouseDoubleClick(ListView control)
+        {
+            control.MouseDoubleClick -= OnListViewDoubleClick;
+        }
         #endregion
 
         #region List properties.
@@ -1009,7 +1153,10 @@ namespace ThreatsManager.Utilities.WinForms
             };
 
             if (property != null)
+            {
                 property.Changed += PropertyChanged;
+                _releasers.Add(new ResourceReleaser<IPropertyArray>(ReleaseChanged, property));
+            }
 
             return control;
 
@@ -1156,6 +1303,7 @@ namespace ThreatsManager.Utilities.WinForms
                     Tag = control
                 };
                 addButton.Click += ClickedListAdd;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, addButton, ClickedListAdd));
 
                 var addButtonItem = new LayoutControlItem()
                 {
@@ -1174,6 +1322,8 @@ namespace ThreatsManager.Utilities.WinForms
                     Tag = control
                 };
                 removeButton.Click += ClickedListRemove;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, removeButton, ClickedListRemove));
+
                 var removeButtonItem = new LayoutControlItem()
                 {
                     Control = removeButton,
@@ -1191,6 +1341,8 @@ namespace ThreatsManager.Utilities.WinForms
                     Tag = control
                 };
                 clearButton.Click += ClickedListClear;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, clearButton, ClickedListClear));
+
                 var clearButtonItem = new LayoutControlItem()
                 {
                     Control = clearButton,
@@ -1304,6 +1456,11 @@ namespace ThreatsManager.Utilities.WinForms
                 actions.RaiseCreated(grid, "New");
             }
         }
+
+        private void ReleaseChanged(IPropertyArray property)
+        {
+            property.Changed -= PropertyChanged;
+        }
         #endregion
 
         #region Property Viewer.
@@ -1379,10 +1536,12 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(result, handler);
                 result.Click += handler;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, result, handler));
             }
             else
             {
                 result.Click += ButtonClicked;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, result, ButtonClicked));
             }
             var item = new LayoutControlItem()
             {
@@ -1418,10 +1577,12 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(result, handler);
                 result.Click += handler;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, result, handler));
             }
             else
             {
                 result.Click += ButtonClicked;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, result, ButtonClicked));
             }
             var item = new LayoutControlItem()
             {
@@ -1480,10 +1641,12 @@ namespace ThreatsManager.Utilities.WinForms
                 }
                 _changeActions.Add(result, handler);
                 result.ValueChanged += handler;
+                _releasers.Add(new ResourceReleaser<DateTimePicker>(ReleaseValueChanged, result, handler));
             }
             else
             {
                 result.ValueChanged += DateTimePickerValueChanged;
+                _releasers.Add(new ResourceReleaser<DateTimePicker>(ReleaseValueChanged, result, DateTimePickerValueChanged));
             }
             var item = new LayoutControlItem()
             {
@@ -1508,131 +1671,10 @@ namespace ThreatsManager.Utilities.WinForms
                 block.Text = picker.Value.ToString();
             }
         }
-        #endregion
 
-        #region Remove Events.
-        private void RemoveEvents([NotNull] LayoutControlItem item)
+        private void ReleaseValueChanged(DateTimePicker control, EventHandler handler)
         {
-            var control = item.Control;
-
-            if (control is TextBox textBox)
-            {
-                textBox.TextChanged -= TextPropertyChanged;
-                item.MarkupLinkClick -= OnMarkupLinkClick;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    textBox.TextChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is RichTextBox richTextBox)
-            {
-                richTextBox.TextChanged -= TextPropertyChanged;
-                item.MarkupLinkClick -= OnMarkupLinkClick;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    richTextBox.TextChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is SwitchButton switchButton)
-            {
-                switchButton.ValueChanged -= BoolPropertyChanged;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    switchButton.ValueChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            } 
-            else if (control is IntegerInput integerInput)
-            {
-                integerInput.ValueChanged -= IntegerPropertyChanged;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    integerInput.ValueChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is DoubleInput doubleInput)
-            {
-                doubleInput.ValueChanged -= DecimalPropertyChanged;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    doubleInput.ValueChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is TokenEditor tokenEditor)
-            {
-                tokenEditor.EditTextBox.KeyPress -= OnKeywordsKeyPress;
-                tokenEditor.SelectedTokensChanged -= TokensPropertyChanged;
-            }
-            else if (control is ComboBox comboBox)
-            {
-                comboBox.SelectedIndexChanged -= ComboPropertyChanged;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    comboBox.SelectedIndexChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is ListBox listBox)
-            {
-            }
-            else if (control is Button button)
-            {
-                button.Click -= ClickedListBoxRemove;
-                button.Click -= ClickedListBoxClear;
-                button.Click -= ClickedListAdd;
-                button.Click -= ClickedListRemove;
-                button.Click -= ClickedListClear;
-                button.Click -= ButtonClicked;
-                _superTooltip.SetSuperTooltip(button, null);
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    button.Click -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is DateTimePicker dateTimePicker)
-            {
-                dateTimePicker.ValueChanged -= DateTimePickerValueChanged;
-
-                if (_changeActions.ContainsKey(control))
-                {
-                    var handler = _changeActions[control];
-                    dateTimePicker.ValueChanged -= handler;
-                    _changeActions.Remove(control);
-                }
-            }
-            else if (control is LinkLabel linkLabel)
-            {
-                linkLabel.LinkClicked -= OnHyperlinkClicked;
-            }
-            else if (control is ListView listView)
-            {
-                listView.MouseDoubleClick -= OnListViewDoubleClick;
-            }
-
-            if (control.Tag is IActions actions)
-            {
-                actions.Dispose();
-                control.Tag = null;
-            }
+            control.ValueChanged -= handler;
         }
         #endregion
     }

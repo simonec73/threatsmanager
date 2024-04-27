@@ -187,7 +187,7 @@ namespace ThreatsManager.Quality.Panels.ReviewNotes
                             string context = null;
                             if (item is IIdentity identity)
                             {
-                                objectType = _model.GetIdentityTypeName(identity);
+                                objectType = identity.GetIdentityTypeName();
                                 name = identity.Name;
                             }
                             else if (item is IThreatEventMitigation threatEventMitigation)

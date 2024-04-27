@@ -19,23 +19,35 @@ namespace ThreatsManager.Quality.Annotations
     {
         private Annotation _annotation;
         private bool _loading;
+        private RichTextBoxSpellAsYouTypeAdapter _spellText;
 
         public AnnotationControl()
         {
             InitializeComponent();
 
-            AddSpellCheck(_text);
+            try
+            {
+                _spellAsYouType.UserDictionaryFile = SpellCheckConfig.UserDictionary;
+            }
+            catch
+            {
+                // User Dictionary File is optional. If it is not possible to create it, then let's simply block it.
+                _spellAsYouType.UserDictionaryFile = null;
+            }
+
+            _spellText = _spellAsYouType.AddSpellCheck(_text);
+            _spellAsYouType.SetRepaintTimer(500);
         }
 
         public event Action AnnotationUpdated;
 
         public bool IsInitialized => _annotation != null;
 
-        public void SetObject([NotNull] IThreatModel model, [NotNull] object obj)
+        public void SetObject([NotNull] object obj)
         {
             if (obj is IIdentity identity)
             {
-                _objectContainer.Text = model.GetIdentityTypeName(identity);
+                _objectContainer.Text = identity.GetIdentityTypeName();
                 _objectName.Text = "      " + identity.Name;
                 _objectName.Image = identity.GetImage(ImageSize.Small);
             } else if (obj is IThreatEventMitigation threatEventMitigation)
@@ -260,25 +272,6 @@ namespace ThreatsManager.Quality.Annotations
         private void _askedVia_ButtonCustom2Click(object sender, EventArgs e)
         {
             _askedVia.Text = "Call";
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
         }
 
         private void _textContainer_MarkupLinkClick(object sender, DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs e)

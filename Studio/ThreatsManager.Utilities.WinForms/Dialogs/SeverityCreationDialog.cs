@@ -13,6 +13,8 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
     {
         private IThreatModel _threatModel;
         private ISeverity _severity;
+        private RichTextBoxSpellAsYouTypeAdapter _spellName;
+        private RichTextBoxSpellAsYouTypeAdapter _spellDescription;
 
         public SeverityCreationDialog()
         {
@@ -28,8 +30,8 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 _spellAsYouType.UserDictionaryFile = null;
             }
 
-            AddSpellCheck(_name);
-            AddSpellCheck(_description);
+            _spellName = _spellAsYouType.AddSpellCheck(_name);
+            _spellDescription = _spellAsYouType.AddSpellCheck(_description);
             _spellAsYouType.SetRepaintTimer(500);
        }
 
@@ -121,30 +123,6 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             {
                 //_spellAsYouType.CheckAsYouType = true;
             }
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox, 
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void SeverityCreationDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _spellAsYouType.RemoveAllTextComponents();
         }
     }
 }

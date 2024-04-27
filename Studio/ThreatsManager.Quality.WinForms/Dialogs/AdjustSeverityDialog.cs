@@ -18,12 +18,24 @@ namespace ThreatsManager.Quality.Dialogs
     {
         private IThreatEvent _threatEvent;
         private bool _adjusting;
+        private RichTextBoxSpellAsYouTypeAdapter _spellReason;
 
         public AdjustSeverityDialog()
         {
             InitializeComponent();
 
-            AddSpellCheck(_reason);
+            try
+            {
+                _spellAsYouType.UserDictionaryFile = SpellCheckConfig.UserDictionary;
+            }
+            catch
+            {
+                // User Dictionary File is optional. If it is not possible to create it, then let's simply block it.
+                _spellAsYouType.UserDictionaryFile = null;
+            }
+
+            _spellReason = _spellAsYouType.AddSpellCheck(_reason);
+            _spellAsYouType.SetRepaintTimer(500);
 
             var values = EnumExtensions.GetEnumLabels<DeltaValue>()?.ToArray();
             if (values?.Any() ?? false)
@@ -52,25 +64,6 @@ namespace ThreatsManager.Quality.Dialogs
                     _reason.Text = config.DeltaReason;
                     _ok.Enabled = !string.IsNullOrWhiteSpace(_reason.Text);
                 }
-            }
-        }
-
-        private void AddSpellCheck([NotNull] TextBoxBase control)
-        {
-            try
-            {
-                if (control is RichTextBox richTextBox)
-                {
-                    _spellAsYouType.AddTextComponent(new RichTextBoxSpellAsYouTypeAdapter(richTextBox,
-                        _spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase));
-                }
-                else
-                {
-                    _spellAsYouType.AddTextBoxBase(control);
-                }
-            }
-            catch
-            {
             }
         }
 
