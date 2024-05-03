@@ -64,7 +64,7 @@ namespace ThreatsManager.Utilities.Aspects
                     if (info != null)
                     {
                         var type = info.ReturnType;
-                        if (type?.IsValueType ?? false)
+                        if ((type?.IsValueType ?? false) && (type != typeof(void)))
                         {
                             args.ReturnValue = Activator.CreateInstance(type);
                         }
