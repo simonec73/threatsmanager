@@ -179,7 +179,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Name ?? "<undefined>";
+            return Name ?? ThreatModelManager.Undefined;
         }
 
         #region Specialized Mitigations.
@@ -189,9 +189,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public IEnumerable<ISpecializedMitigation> Specialized => _specialized.AsEnumerable();
 
-        public bool AddSpecializedMitigation([NotNull] IItemTemplate template, string name, string description)
+        public ISpecializedMitigation AddSpecializedMitigation([NotNull] IItemTemplate template, string name, string description)
         {
-            bool result = false;
+            SpecializedMitigation result = null;
 
             if (!(_specialized?.Any(x => x.TargetId == template.Id) ?? false))
             {
@@ -200,10 +200,9 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                     if (_specialized == null)
                         _specialized = new AdvisableCollection<SpecializedMitigation>();
 
-                    _specialized.Add(new SpecializedMitigation(template, name, description));
+                    result = new SpecializedMitigation(template, name, description);
+                    _specialized.Add(result);
                     scope?.Complete();
-
-                    result = true;
                 }
             }
 
@@ -244,7 +243,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public string GetName(IIdentity identity)
         {
-            string result = _name ?? "<Undefined>";
+            string result = _name ?? ThreatModelManager.Unknown;
 
             IItemTemplate template = null;
             if (identity is IEntity entity)
@@ -280,15 +279,22 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public string GetDescription(IIdentity identity)
         {
-            string result = _description ?? "<Undefined>";
+            string result = _description ?? ThreatModelManager.Undefined;
 
-            if (identity is IEntity entity && entity.Template is IItemTemplate template)
+            IItemTemplate template = null;
+            if (identity is IEntity entity)
             {
-                var specialized = GetSpecializedMitigation(template);
-                if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Description))
-                {
-                    result = specialized.Description;
-                }
+                template = entity.Template;
+            }
+            else if (identity is IDataFlow flow)
+            {
+                template = flow.Template;
+            }
+
+            var specialized = GetSpecializedMitigation(template);
+            if (specialized != null && !string.IsNullOrWhiteSpace(specialized.Description))
+            {
+                result = specialized.Description;
             }
 
             return result;
