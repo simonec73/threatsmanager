@@ -25,7 +25,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
     {
         public SpecializedMitigation() { }
 
-        public SpecializedMitigation([NotNull] IItemTemplate template, [Required] string name, string description) 
+        public SpecializedMitigation([NotNull] IItemTemplate template, string name, string description) 
         {
             _templateId = template.Id;
             Name = name;
