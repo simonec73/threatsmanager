@@ -233,7 +233,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public ISpecializedMitigation GetSpecializedMitigation(IItemTemplate template)
         {
-            return GetSpecializedMitigation(template.Id);
+            return GetSpecializedMitigation(template?.Id ?? Guid.Empty);
         }
 
         public ISpecializedMitigation GetSpecializedMitigation(Guid templateId)
