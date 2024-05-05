@@ -50,9 +50,18 @@
     <AssemblyOriginatorKeyFile>..\ThreatsManager\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
-    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
-    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar.Layout.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar.SuperGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar2.dll</HintPath>
+    </Reference>
     <Reference Include="ExCSS, Version=4.2.5.0, Culture=neutral, PublicKeyToken=bdbe16be9b936b9a, processorArchitecture=MSIL">
       <HintPath>..\packages\ExCSS.4.2.5\lib\net48\ExCSS.dll</HintPath>
     </Reference>
@@ -109,29 +118,29 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="ThreatsManager.AutoGenRules">
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.AutoGenRules.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.AutoGenRules.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.AutoThreatGeneration">
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.AutoThreatGeneration.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.AutoThreatGeneration.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Extensions.Client">
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.Extensions.Client.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.Extensions.Client.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Icons, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Interfaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Interfaces.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Utilities, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Utilities.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Utilities.WinForms, Version2.0.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
+      <HintPath>..\build\repo\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

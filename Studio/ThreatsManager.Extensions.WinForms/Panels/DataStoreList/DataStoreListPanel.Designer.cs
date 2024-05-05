@@ -22,7 +22,7 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             UndoRedoManager.Undone -= RefreshOnUndoRedo;
             UndoRedoManager.Redone -= RefreshOnUndoRedo;
 
-            _grid.CellActivated -= this._grid_CellActivated;
+            _grid.CellClick -= this._grid_CellClick;
             _grid.CellMouseDown -= this._grid_CellMouseDown;
             _grid.CellMouseLeave -= this._grid_CellMouseLeave;
             _grid.CellMouseMove -= this._grid_CellMouseMove;
@@ -242,7 +242,7 @@ namespace ThreatsManager.Extensions.Panels.DataStoreList
             this._grid.Size = new System.Drawing.Size(519, 476);
             this._grid.TabIndex = 3;
             this._grid.Text = "superGridControl1";
-            this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
+            this._grid.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this._grid_CellClick);
             this._grid.CellMouseDown += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseDown);
             this._grid.CellMouseLeave += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellEventArgs>(this._grid_CellMouseLeave);
             this._grid.CellMouseMove += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseMove);

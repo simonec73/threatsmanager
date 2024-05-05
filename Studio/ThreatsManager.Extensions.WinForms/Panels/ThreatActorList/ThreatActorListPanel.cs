@@ -357,11 +357,11 @@ namespace ThreatsManager.Extensions.Panels.ThreatActorList
             }
         }
 
-        private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
+        private void _grid_CellClick(object sender, GridCellClickEventArgs e)
         {
             if (!_loading)
             {
-                var row = e.NewActiveCell?.GridRow;
+                var row = e.GridCell?.GridRow;
                 if (row != _currentRow)
                 {
                     _currentRow = row;

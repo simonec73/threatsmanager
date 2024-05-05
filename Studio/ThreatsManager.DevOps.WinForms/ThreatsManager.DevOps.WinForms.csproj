@@ -53,10 +53,22 @@
     <AssemblyOriginatorKeyFile>..\ThreatsManager\ThreatsManager.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevComponents.DotNetBar.Charts, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
-    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
-    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
-    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="DevComponents.DotNetBar.Charts, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar.Charts.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar.Layout, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar.Layout.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar.SuperGrid, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar.SuperGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.35, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\DevComponents.DotNetBar2.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -97,26 +109,26 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="ThreatsManager.DevOps">
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.DevOps.dll</HintPath>
+      <HintPath>..\Build\repo\net481\ThreatsManager.DevOps.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Extensions.Client">
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.Extensions.Client.dll</HintPath>
+      <HintPath>..\Build\repo\net481\ThreatsManager.Extensions.Client.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Icons, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\repo\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\Build\repo\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Interfaces, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Interfaces.dll</HintPath>
+      <HintPath>..\Build\repo\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Utilities, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Utilities.dll</HintPath>
+      <HintPath>..\Build\repo\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Utilities.WinForms, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Build\nuget\bin\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
+      <HintPath>..\Build\repo\net481\ThreatsManager.Utilities.WinForms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

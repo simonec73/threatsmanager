@@ -231,22 +231,20 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
                 _configuration.DiagramIconSize = size;
 
                 var value = size - 8;
+                _iconCenterSize.Maximum = value;
                 if (_iconCenterSize.Value > value)
                 {
                     _iconCenterSize.Value = value;
                     _configuration.DiagramIconCenterSize = value;
-
                 }
-                _iconCenterSize.Maximum = value;
 
                 value = size / 2;
+                _markerSize.Maximum = value;
                 if (_markerSize.Value > value)
                 {
                     _markerSize.Value = value;
                     _configuration.DiagramMarkerSize = value;
-
                 }
-                _markerSize.Maximum = size / 2;
             }
         }
 

@@ -16,6 +16,7 @@
             _reportGenerator.ProgressUpdated -= ReportGeneratorOnProgressUpdated;
             _reportGenerator.ShowMessage -= ReportGeneratorOnShowMessage;
             _reportGenerator.ShowWarning -= ReportGeneratorOnShowWarning;
+            _grid.CellClick -= _grid_CellClick;
 
             if (disposing && (components != null))
             {
@@ -89,7 +90,7 @@
             this._grid.Size = new System.Drawing.Size(1027, 111);
             this._grid.TabIndex = 0;
             this._grid.Text = "superGridControl1";
-            this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
+            this._grid.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this._grid_CellClick);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
             this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             // 

@@ -43,6 +43,11 @@ namespace ThreatsManager.Utilities
         public static string Unknown = "<unknown>";
 
         /// <summary>
+        /// Constant used to express an undefined item.
+        /// </summary>
+        public static string Undefined = "<undefined>";
+
+        /// <summary>
         /// Creates a new Default Instance of the Threat Model.
         /// </summary>
         /// <returns>Threat Model created.</returns>

@@ -147,7 +147,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public override string ToString()
         {
-            return Name ?? "<undefined>";
+            return Name ?? ThreatModelManager.Undefined;
         }
 
         [InitializationRequired]

@@ -20,6 +20,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
         protected override void Dispose(bool disposing)
         {
             _properties.Item = null;
+            _grid.CellClick -= _grid_CellClick;
 
             UndoRedoManager.Undone -= RefreshOnUndoRedo;
             UndoRedoManager.Redone -= RefreshOnUndoRedo;
@@ -228,7 +229,7 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
             this._grid.Size = new System.Drawing.Size(519, 476);
             this._grid.TabIndex = 3;
             this._grid.Text = "superGridControl1";
-            this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
+            this._grid.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this._grid_CellClick);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
             this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);

@@ -26,8 +26,8 @@ namespace ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations
         /// <param name="template">Item Template that is associated to the specialized mitigation.</param>
         /// <param name="name">Name of the specialized mitigation.</param>
         /// <param name="description">Description of the specialized mitigations.</param>
-        /// <returns>True if the Specialized Mitigation has been added successfully. False otherwise.</returns>
-        bool AddSpecializedMitigation(IItemTemplate template, string name, string description);
+        /// <returns>The Specialized Mitigation that has been just created, or null in case of failure.</returns>
+        ISpecializedMitigation AddSpecializedMitigation(IItemTemplate template, string name, string description);
 
         /// <summary>
         /// Remove the specialized mitigation associated to a specific Item Template.

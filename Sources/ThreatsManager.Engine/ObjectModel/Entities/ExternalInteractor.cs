@@ -230,7 +230,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public override string ToString()
         {
-            return Name ?? "<undefined>";
+            return Name ?? ThreatModelManager.Undefined;
         }
 
         public event Action<IEntity, ImageSize> ImageChanged;

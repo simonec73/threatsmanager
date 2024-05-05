@@ -385,6 +385,17 @@ namespace ThreatsManager
 
                 Application.Exit();
             }
+            catch (InvalidOperationException exc)
+            {
+                if (exc.HResult == -2146233079 && exc.StackTrace.Contains("System.Collections.ArrayList.ArrayListEnumeratorSimple.MoveNext()"))
+                {
+                    // Ignore: this is a known issue and it does not affect the application.
+                }
+                else
+                {
+                    exc.ToExceptionless().AddTags("Handled").Submit();
+                }
+            }
             catch (Exception exception)
             {
                 exception.ToExceptionless().AddTags("Handled").Submit();

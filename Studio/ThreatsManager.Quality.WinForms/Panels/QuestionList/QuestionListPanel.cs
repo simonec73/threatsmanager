@@ -320,11 +320,11 @@ namespace ThreatsManager.Quality.Panels.QuestionList
             }
         }
 
-        private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
+        private void _grid_CellClick(object sender, GridCellClickEventArgs e)
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell.GridRow;
+                _currentRow = e.GridCell.GridRow;
                 ChangeCustomActionStatus?.Invoke("RemoveQuestion", true);
             }
         }

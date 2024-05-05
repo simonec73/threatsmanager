@@ -206,10 +206,12 @@ namespace ThreatsManager.Extensions.Panels.Overview
             }
         }
 
-        private void OnCellActivated(object sender, GridCellActivatedEventArgs e)
+        private void OnCellClick(object sender, GridCellClickEventArgs e)
         {
             if (!_loading)
-                _itemEditor.Item = e.NewActiveCell.GridRow.Tag;
+            {
+                _itemEditor.Item = e.GridCell.GridRow.Tag;
+            }
         }
 
         private void OnRowActivated(object sender, GridRowActivatedEventArgs e)

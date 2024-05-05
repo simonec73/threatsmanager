@@ -177,7 +177,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 }
 
                 if (result == null)
-                    result = "<Undefined>";
+                    result = ThreatModelManager.Undefined;
 
                 return result;
             }
@@ -199,7 +199,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
                 }
 
                 if (result == null)
-                    result = "<Undefined>";
+                    result = ThreatModelManager.Undefined;
 
                 return result;
             }
@@ -271,7 +271,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Mitigation.Name ?? "<undefined>";
+            return Name ?? ThreatModelManager.Undefined;
         }
         #endregion
     }

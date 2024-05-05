@@ -312,12 +312,12 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                     row.Rows.Add(subPanel2);
             }
 
-            //if (_executionMode < ExecutionMode.Simplified)
-            //{
-            //    var subPanel3 = CreateSpecializedContainersPanel(mitigation);
-            //    if (subPanel3 != null)
-            //        row.Rows.Add(subPanel3);
-            //}
+            if (_executionMode < ExecutionMode.Simplified)
+            {
+                var subPanel3 = CreateSpecializedContainersPanel(mitigation);
+                if (subPanel3 != null)
+                    row.Rows.Add(subPanel3);
+            }
 
             if (mitigation is IUndoable undoable && undoable.IsUndoEnabled)
                 undoable.Undone += MitigationUndone;
@@ -1028,7 +1028,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 try
                 {
                     _loading = true;
-                    if (cell.GridRow.Tag is IMitigation mitigation)
+                    if (cell.GridRow.Tag is ISpecializedMitigation mitigation)
                     {
                         switch (cell.GridColumn.Name)
                         {
@@ -1192,8 +1192,8 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             ChangeCustomActionStatus?.Invoke("RemoveMitigation", _currentRow?.Tag is IMitigation);
             ChangeCustomActionStatus?.Invoke("AddThreatType", _currentRow?.Tag is IMitigation);
             ChangeCustomActionStatus?.Invoke("RemoveThreatType", _currentRow?.Tag is IThreatTypeMitigation);
-            //ChangeCustomActionStatus?.Invoke("AddSpecialized", _currentRow?.Tag is IMitigation);
-            //ChangeCustomActionStatus?.Invoke("RemoveSpecialized", _currentRow?.Tag is ISpecializedMitigation);
+            ChangeCustomActionStatus?.Invoke("AddSpecialized", _currentRow?.Tag is IMitigation);
+            ChangeCustomActionStatus?.Invoke("RemoveSpecialized", _currentRow?.Tag is ISpecializedMitigation);
             ChangeActionsStatus();
         }
 
@@ -1321,19 +1321,6 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         }
         #endregion
 
-        private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
-        {
-            if (!_loading)
-            {
-                var row = e.NewActiveCell?.GridRow;
-                if (row != _currentRow)
-                {
-                    _currentRow = row;
-                    ShowCurrentRow();
-                }
-            }
-        }
-
         private void _grid_RowActivated(object sender, GridRowActivatedEventArgs e)
         {
             if (!_loading)
@@ -1363,6 +1350,19 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
         {
             _properties.SetExecutionMode(mode);
             _executionMode = mode;
+        }
+
+        private void _grid_CellClick(object sender, GridCellClickEventArgs e)
+        {
+            if (!_loading)
+            {
+                var row = e.GridCell?.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
+            }
         }
     }
 }
