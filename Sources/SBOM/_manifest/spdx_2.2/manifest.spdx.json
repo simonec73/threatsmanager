@@ -2,37 +2,73 @@
   "files": [],
   "packages": [
     {
-      "name": "PostSharp.Patterns.Common.Redist",
-      "SPDXID": "SPDXRef-Package-490397CA5E7A67CC7226926418351663AEC1B56062EE0469D8461D7DBAD4A0FC",
+      "name": "MathNet.Numerics.Signed",
+      "SPDXID": "SPDXRef-Package-681B78A232303686681BD818B0D190BE6C105857B1F5C087E2FC1952A264EA58",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "2024.0.8",
+      "versionInfo": "5.0.0",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Common.Redist@2024.0.8"
+          "referenceLocator": "pkg:nuget/MathNet.Numerics.Signed@5.0.0"
         }
       ],
       "supplier": "NOASSERTION"
     },
     {
-      "name": "PostSharp.Patterns.Common",
-      "SPDXID": "SPDXRef-Package-3036FA4AA4AA8E25839A015031B16C7C68F673BE21CD50A5A3E074465C383F13",
+      "name": "System.Drawing.Common",
+      "SPDXID": "SPDXRef-Package-D104A2A6563DC14DADA50A43307C03A5E7249D23141336EB3B6D9B635DFEB482",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "2024.0.8",
+      "versionInfo": "8.0.4",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Common@2024.0.8"
+          "referenceLocator": "pkg:nuget/System.Drawing.Common@8.0.4"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.IdentityModel.Tokens",
+      "SPDXID": "SPDXRef-Package-1F6868692BA92B8833FB7BDD49335660B27070F01FE640B02ABF3CF85E9E917F",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "6.30.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Tokens@6.30.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.Bcl.AsyncInterfaces",
+      "SPDXID": "SPDXRef-Package-1B079B578C50036D5A0DC1B1E3E5A7F7B045B06EE48E5EE8C59B29861C0863FC",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "1.1.0",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Bcl.AsyncInterfaces@1.1.0"
         }
       ],
       "supplier": "NOASSERTION"
@@ -74,80 +110,8 @@
       "supplier": "NOASSERTION"
     },
     {
-      "name": "Microsoft.VisualStudio.Services.InteractiveClient",
-      "SPDXID": "SPDXRef-Package-8425361196B240DBA621FD99DF72107E5EF7AD21887F5BF85084C6D81043C05D",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "19.225.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.VisualStudio.Services.InteractiveClient@19.225.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.AspNet.WebApi.WebHost",
-      "SPDXID": "SPDXRef-Package-B6EB77607AF75F718E21D28F4BA0EE84239C8DE9830FF9719907EE090332AADF",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "5.2.7",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.AspNet.WebApi.WebHost@5.2.7"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Azure.Core",
-      "SPDXID": "SPDXRef-Package-B627A9A962CA4EC270A6BB33055B6D932D9140ED98F117C25A3ACCD02894A5DE",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "1.35.0",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Azure.Core@1.35.0"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "System.Memory",
-      "SPDXID": "SPDXRef-Package-BA5D8D1B5043A468B09DDBF48DCFC7DDD44949EE05A23A14F02AE8AA5183745C",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "4.5.4",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.Memory@4.5.4"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "PostSharp.Patterns.Aggregation",
-      "SPDXID": "SPDXRef-Package-7A132B5887E2748F11F31E4E55F7095F2134380DE1C42F92CADE24226E2C9DF8",
+      "name": "PostSharp.Patterns.Model.Redist",
+      "SPDXID": "SPDXRef-Package-99B484564D51CC13C9CFEAEF3B587B994347C43EBCE51E4A30F1AD0AB53F6F1A",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
@@ -158,7 +122,61 @@
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Aggregation@2024.0.8"
+          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Model.Redist@2024.0.8"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "PostSharp.Patterns.Common",
+      "SPDXID": "SPDXRef-Package-3036FA4AA4AA8E25839A015031B16C7C68F673BE21CD50A5A3E074465C383F13",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "2024.0.8",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Common@2024.0.8"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "HtmlAgilityPack",
+      "SPDXID": "SPDXRef-Package-69A986D6F543ED157CF60B09C3CDD7A4405DF633256C00FEFBC53DA1956B1EE5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "1.11.60",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/HtmlAgilityPack@1.11.60"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Azure.AI.OpenAI",
+      "SPDXID": "SPDXRef-Package-862E9A22FAE549CD97CBE81F8E67DB96A1FAFA78EA6B24BFD39C34B067014678",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "1.0.0-beta.9",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Azure.AI.OpenAI@1.0.0-beta.9"
         }
       ],
       "supplier": "NOASSERTION"
@@ -182,37 +200,37 @@
       "supplier": "NOASSERTION"
     },
     {
-      "name": "System.ValueTuple",
-      "SPDXID": "SPDXRef-Package-C1475C5380732C85127A15B8BADF74D2619786E90578875B650082AE4497BC14",
+      "name": "Microsoft.IdentityModel.Logging",
+      "SPDXID": "SPDXRef-Package-B5E9DFA3EF880DFD63E464878A4D9F62FD34E8760F0877C125CEF609A459E577",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "4.5.0",
+      "versionInfo": "6.30.1",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.ValueTuple@4.5.0"
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Logging@6.30.1"
         }
       ],
       "supplier": "NOASSERTION"
     },
     {
-      "name": "Microsoft.Identity.Client.Extensions.Msal",
-      "SPDXID": "SPDXRef-Package-F1A6940BF5D403F3E064202A7FC4F6D1AE1534716BF53B2F46B0DF5AA70197D2",
+      "name": "System.Memory",
+      "SPDXID": "SPDXRef-Package-BA5D8D1B5043A468B09DDBF48DCFC7DDD44949EE05A23A14F02AE8AA5183745C",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "2.23.0",
+      "versionInfo": "4.5.4",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.Identity.Client.Extensions.Msal@2.23.0"
+          "referenceLocator": "pkg:nuget/System.Memory@4.5.4"
         }
       ],
       "supplier": "NOASSERTION"
@@ -236,73 +254,37 @@
       "supplier": "NOASSERTION"
     },
     {
-      "name": "Microsoft.IdentityModel.Abstractions",
-      "SPDXID": "SPDXRef-Package-ED6E8FB997A6D78D08443EC95BD284BFE932248A440D142BCB8557A36DC4A5A2",
+      "name": "Microsoft.VisualStudio.Services.Client",
+      "SPDXID": "SPDXRef-Package-22082FD72E8CF130874BE5C4C34DAF5C0760879E4935A27DAD871E64F0280929",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "6.30.1",
+      "versionInfo": "19.225.1",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Abstractions@6.30.1"
+          "referenceLocator": "pkg:nuget/Microsoft.VisualStudio.Services.Client@19.225.1"
         }
       ],
       "supplier": "NOASSERTION"
     },
     {
-      "name": "Microsoft.Identity.Client",
-      "SPDXID": "SPDXRef-Package-4AEC43C47D6DFEEF0C68C67CD0D82CB712910D99C8D539F8E2CF18F97E4B8F59",
+      "name": "Microsoft.Identity.Client.Extensions.Msal",
+      "SPDXID": "SPDXRef-Package-F1A6940BF5D403F3E064202A7FC4F6D1AE1534716BF53B2F46B0DF5AA70197D2",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "4.54.1",
+      "versionInfo": "2.23.0",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.Identity.Client@4.54.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.Bcl.AsyncInterfaces",
-      "SPDXID": "SPDXRef-Package-6B6117AB3417AA50C1DF8B47DB834F43608FA2A493BD063B0DCD0310BE1691FC",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "1.1.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.Bcl.AsyncInterfaces@1.1.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.AspNet.WebApi.Client",
-      "SPDXID": "SPDXRef-Package-FB8EF87A04ABBDDE238C1B9302C41D39A089FDC8A755C4F352B2784CD890726B",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "5.2.7",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.AspNet.WebApi.Client@5.2.7"
+          "referenceLocator": "pkg:nuget/Microsoft.Identity.Client.Extensions.Msal@2.23.0"
         }
       ],
       "supplier": "NOASSERTION"
@@ -344,8 +326,80 @@
       "supplier": "NOASSERTION"
     },
     {
-      "name": "System.Security.Cryptography.ProtectedData",
-      "SPDXID": "SPDXRef-Package-01FBE39297615D5615DCAF2AB4E213D489A90F4CC6E7CAA4E1F22CC76BA02C6A",
+      "name": "System.ValueTuple",
+      "SPDXID": "SPDXRef-Package-C1475C5380732C85127A15B8BADF74D2619786E90578875B650082AE4497BC14",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "4.5.0",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.ValueTuple@4.5.0"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.Identity.Client",
+      "SPDXID": "SPDXRef-Package-4AEC43C47D6DFEEF0C68C67CD0D82CB712910D99C8D539F8E2CF18F97E4B8F59",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "4.54.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Identity.Client@4.54.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.IdentityModel.Abstractions",
+      "SPDXID": "SPDXRef-Package-ED6E8FB997A6D78D08443EC95BD284BFE932248A440D142BCB8557A36DC4A5A2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "6.30.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Abstractions@6.30.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Azure.Core",
+      "SPDXID": "SPDXRef-Package-B627A9A962CA4EC270A6BB33055B6D932D9140ED98F117C25A3ACCD02894A5DE",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "1.35.0",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Azure.Core@1.35.0"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "System.ComponentModel.Composition",
+      "SPDXID": "SPDXRef-Package-45F18602780C4D414694A3E1A8C6A21F6860CAA639E4A56E1C0498902B5457CC",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
@@ -356,7 +410,79 @@
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.Security.Cryptography.ProtectedData@8.0.0"
+          "referenceLocator": "pkg:nuget/System.ComponentModel.Composition@8.0.0"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.AspNet.WebApi.Client",
+      "SPDXID": "SPDXRef-Package-FB8EF87A04ABBDDE238C1B9302C41D39A089FDC8A755C4F352B2784CD890726B",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "5.2.7",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.AspNet.WebApi.Client@5.2.7"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "PostSharp.Patterns.Aggregation",
+      "SPDXID": "SPDXRef-Package-7A132B5887E2748F11F31E4E55F7095F2134380DE1C42F92CADE24226E2C9DF8",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "2024.0.8",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Aggregation@2024.0.8"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "System.Memory.Data",
+      "SPDXID": "SPDXRef-Package-836302A10D83B34AB15735A3BD20F9E5195E5C19F576DD54B2A803F042B4449F",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "1.0.2",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.Memory.Data@1.0.2"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "PostSharp.Redist",
+      "SPDXID": "SPDXRef-Package-F8DE50729125DAC360E3A686403D3A2C3DC10909D104DA633FFA3EB999037C4F",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "2024.0.8",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/PostSharp.Redist@2024.0.8"
         }
       ],
       "supplier": "NOASSERTION"
@@ -375,6 +501,186 @@
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
           "referenceLocator": "pkg:nuget/PostSharp.Patterns.Threading@2024.0.8"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "System.IdentityModel.Tokens.Jwt",
+      "SPDXID": "SPDXRef-Package-A51161C96823E35F18ECB01793B545733228CEB78738651BD5BF03B9683AE351",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "6.30.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.IdentityModel.Tokens.Jwt@6.30.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.AspNet.WebApi.Core",
+      "SPDXID": "SPDXRef-Package-0036185CFC5D903DD9210D1FA4BAF6EACE18C961FBCA96B55969F2D0ADD1006E",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "5.2.7",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.AspNet.WebApi.Core@5.2.7"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.TeamFoundation.DistributedTask.Common.Contracts",
+      "SPDXID": "SPDXRef-Package-5E8B61B595E583BBEF7ADCA095CBE2B5B173E786C455120EF6B9C37A13089A6E",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "19.225.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.TeamFoundation.DistributedTask.Common.Contracts@19.225.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.Bcl.AsyncInterfaces",
+      "SPDXID": "SPDXRef-Package-6B6117AB3417AA50C1DF8B47DB834F43608FA2A493BD063B0DCD0310BE1691FC",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "1.1.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Bcl.AsyncInterfaces@1.1.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "PostSharp.Patterns.Threading.Redist",
+      "SPDXID": "SPDXRef-Package-D5F937CDC86CBC13B5803898689C63EA3744103C3CA6BA564224AFB751812E7E",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "2024.0.8",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Threading.Redist@2024.0.8"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "PostSharp.Patterns.Common.Redist",
+      "SPDXID": "SPDXRef-Package-490397CA5E7A67CC7226926418351663AEC1B56062EE0469D8461D7DBAD4A0FC",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "2024.0.8",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Common.Redist@2024.0.8"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.VisualStudio.Services.InteractiveClient",
+      "SPDXID": "SPDXRef-Package-8425361196B240DBA621FD99DF72107E5EF7AD21887F5BF85084C6D81043C05D",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "19.225.1",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.VisualStudio.Services.InteractiveClient@19.225.1"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "Microsoft.AspNet.WebApi.WebHost",
+      "SPDXID": "SPDXRef-Package-B6EB77607AF75F718E21D28F4BA0EE84239C8DE9830FF9719907EE090332AADF",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "5.2.7",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.AspNet.WebApi.WebHost@5.2.7"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "System.Security.Cryptography.ProtectedData",
+      "SPDXID": "SPDXRef-Package-01FBE39297615D5615DCAF2AB4E213D489A90F4CC6E7CAA4E1F22CC76BA02C6A",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "8.0.0",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.Security.Cryptography.ProtectedData@8.0.0"
+        }
+      ],
+      "supplier": "NOASSERTION"
+    },
+    {
+      "name": "System.Runtime.CompilerServices.Unsafe",
+      "SPDXID": "SPDXRef-Package-1B140F7FA3F784DD56CC7A8B4145E9AD58D8CDD4C249A0F27F2262E47C9B41AF",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "versionInfo": "6.0.0",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.Runtime.CompilerServices.Unsafe@6.0.0"
         }
       ],
       "supplier": "NOASSERTION"
@@ -452,19 +758,19 @@
       "supplier": "NOASSERTION"
     },
     {
-      "name": "System.Runtime.CompilerServices.Unsafe",
-      "SPDXID": "SPDXRef-Package-1B140F7FA3F784DD56CC7A8B4145E9AD58D8CDD4C249A0F27F2262E47C9B41AF",
+      "name": "PostSharp.Patterns.Model",
+      "SPDXID": "SPDXRef-Package-ECE93C9EE20F13DBEB21733C05EB3B862E623EB3E2898ABCDEF42D50D83E6815",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "6.0.0",
+      "versionInfo": "2024.0.8",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.Runtime.CompilerServices.Unsafe@6.0.0"
+          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Model@2024.0.8"
         }
       ],
       "supplier": "NOASSERTION"
@@ -488,312 +794,6 @@
       "supplier": "NOASSERTION"
     },
     {
-      "name": "System.Drawing.Common",
-      "SPDXID": "SPDXRef-Package-D104A2A6563DC14DADA50A43307C03A5E7249D23141336EB3B6D9B635DFEB482",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "8.0.4",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.Drawing.Common@8.0.4"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.IdentityModel.Tokens",
-      "SPDXID": "SPDXRef-Package-1F6868692BA92B8833FB7BDD49335660B27070F01FE640B02ABF3CF85E9E917F",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "6.30.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Tokens@6.30.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.Bcl.AsyncInterfaces",
-      "SPDXID": "SPDXRef-Package-1B079B578C50036D5A0DC1B1E3E5A7F7B045B06EE48E5EE8C59B29861C0863FC",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "1.1.0",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.Bcl.AsyncInterfaces@1.1.0"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "System.Memory.Data",
-      "SPDXID": "SPDXRef-Package-836302A10D83B34AB15735A3BD20F9E5195E5C19F576DD54B2A803F042B4449F",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "1.0.2",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.Memory.Data@1.0.2"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "PostSharp.Patterns.Model",
-      "SPDXID": "SPDXRef-Package-ECE93C9EE20F13DBEB21733C05EB3B862E623EB3E2898ABCDEF42D50D83E6815",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "2024.0.8",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Model@2024.0.8"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "MathNet.Numerics.Signed",
-      "SPDXID": "SPDXRef-Package-681B78A232303686681BD818B0D190BE6C105857B1F5C087E2FC1952A264EA58",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "5.0.0",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/MathNet.Numerics.Signed@5.0.0"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "PostSharp.Redist",
-      "SPDXID": "SPDXRef-Package-F8DE50729125DAC360E3A686403D3A2C3DC10909D104DA633FFA3EB999037C4F",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "2024.0.8",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Redist@2024.0.8"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "System.IdentityModel.Tokens.Jwt",
-      "SPDXID": "SPDXRef-Package-A51161C96823E35F18ECB01793B545733228CEB78738651BD5BF03B9683AE351",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "6.30.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.IdentityModel.Tokens.Jwt@6.30.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.AspNet.WebApi.Core",
-      "SPDXID": "SPDXRef-Package-0036185CFC5D903DD9210D1FA4BAF6EACE18C961FBCA96B55969F2D0ADD1006E",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "5.2.7",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.AspNet.WebApi.Core@5.2.7"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.TeamFoundation.DistributedTask.Common.Contracts",
-      "SPDXID": "SPDXRef-Package-5E8B61B595E583BBEF7ADCA095CBE2B5B173E786C455120EF6B9C37A13089A6E",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "19.225.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.TeamFoundation.DistributedTask.Common.Contracts@19.225.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "PostSharp.Patterns.Model.Redist",
-      "SPDXID": "SPDXRef-Package-99B484564D51CC13C9CFEAEF3B587B994347C43EBCE51E4A30F1AD0AB53F6F1A",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "2024.0.8",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Model.Redist@2024.0.8"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "PostSharp.Patterns.Threading.Redist",
-      "SPDXID": "SPDXRef-Package-D5F937CDC86CBC13B5803898689C63EA3744103C3CA6BA564224AFB751812E7E",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "2024.0.8",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/PostSharp.Patterns.Threading.Redist@2024.0.8"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "HtmlAgilityPack",
-      "SPDXID": "SPDXRef-Package-69A986D6F543ED157CF60B09C3CDD7A4405DF633256C00FEFBC53DA1956B1EE5",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "1.11.60",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/HtmlAgilityPack@1.11.60"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.IdentityModel.Logging",
-      "SPDXID": "SPDXRef-Package-B5E9DFA3EF880DFD63E464878A4D9F62FD34E8760F0877C125CEF609A459E577",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "6.30.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Logging@6.30.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Microsoft.VisualStudio.Services.Client",
-      "SPDXID": "SPDXRef-Package-22082FD72E8CF130874BE5C4C34DAF5C0760879E4935A27DAD871E64F0280929",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "19.225.1",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Microsoft.VisualStudio.Services.Client@19.225.1"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "Azure.AI.OpenAI",
-      "SPDXID": "SPDXRef-Package-862E9A22FAE549CD97CBE81F8E67DB96A1FAFA78EA6B24BFD39C34B067014678",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "1.0.0-beta.9",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/Azure.AI.OpenAI@1.0.0-beta.9"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
-      "name": "System.ComponentModel.Composition",
-      "SPDXID": "SPDXRef-Package-45F18602780C4D414694A3E1A8C6A21F6860CAA639E4A56E1C0498902B5457CC",
-      "downloadLocation": "NOASSERTION",
-      "filesAnalyzed": false,
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "versionInfo": "8.0.0",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceType": "purl",
-          "referenceLocator": "pkg:nuget/System.ComponentModel.Composition@8.0.0"
-        }
-      ],
-      "supplier": "NOASSERTION"
-    },
-    {
       "name": "Threats Manager Platform",
       "SPDXID": "SPDXRef-RootPackage",
       "downloadLocation": "NOASSERTION",
@@ -807,12 +807,12 @@
       ],
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "versionInfo": "2.0.0",
+      "versionInfo": "2.2.1",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:swid/Simone%20Curzi/github.com/Threats%20Manager%20Platform@2.0.0?tag_id=567b4dff-f201-4bf0-a0ed-56355379606c"
+          "referenceLocator": "pkg:swid/Simone%20Curzi/github.com/Threats%20Manager%20Platform@2.2.1?tag_id=ee66066d-38d7-4536-b35d-63c00f872921"
         }
       ],
       "supplier": "Organization: Simone Curzi",
@@ -822,38 +822,13 @@
   "externalDocumentRefs": [],
   "relationships": [
     {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-55FBA99B1D65EDB6759C80CCBDCE0996BC6490650FA4CA8E6FA9DE29866D0DAC",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-B3D5F30C6F4C897DA31933117BFB391A9177287CC31D26072129972E47E06996",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-4AEC43C47D6DFEEF0C68C67CD0D82CB712910D99C8D539F8E2CF18F97E4B8F59",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
       "relationshipType": "DESCRIBES",
       "relatedSpdxElement": "SPDXRef-RootPackage",
       "spdxElementId": "SPDXRef-DOCUMENT"
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-F1A6940BF5D403F3E064202A7FC4F6D1AE1534716BF53B2F46B0DF5AA70197D2",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-BA5D8D1B5043A468B09DDBF48DCFC7DDD44949EE05A23A14F02AE8AA5183745C",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-B886264C88915A93892AFBE3D28CD5B3C8B7990F0C6A47AD506184440C46436E",
+      "relatedSpdxElement": "SPDXRef-Package-1B140F7FA3F784DD56CC7A8B4145E9AD58D8CDD4C249A0F27F2262E47C9B41AF",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -863,47 +838,17 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-FB8EF87A04ABBDDE238C1B9302C41D39A089FDC8A755C4F352B2784CD890726B",
+      "relatedSpdxElement": "SPDXRef-Package-B6EB77607AF75F718E21D28F4BA0EE84239C8DE9830FF9719907EE090332AADF",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-ED6E8FB997A6D78D08443EC95BD284BFE932248A440D142BCB8557A36DC4A5A2",
+      "relatedSpdxElement": "SPDXRef-Package-8425361196B240DBA621FD99DF72107E5EF7AD21887F5BF85084C6D81043C05D",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-C1475C5380732C85127A15B8BADF74D2619786E90578875B650082AE4497BC14",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-3036FA4AA4AA8E25839A015031B16C7C68F673BE21CD50A5A3E074465C383F13",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-ECE93C9EE20F13DBEB21733C05EB3B862E623EB3E2898ABCDEF42D50D83E6815",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-836302A10D83B34AB15735A3BD20F9E5195E5C19F576DD54B2A803F042B4449F",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-1B079B578C50036D5A0DC1B1E3E5A7F7B045B06EE48E5EE8C59B29861C0863FC",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-1F6868692BA92B8833FB7BDD49335660B27070F01FE640B02ABF3CF85E9E917F",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-D104A2A6563DC14DADA50A43307C03A5E7249D23141336EB3B6D9B635DFEB482",
+      "relatedSpdxElement": "SPDXRef-Package-490397CA5E7A67CC7226926418351663AEC1B56062EE0469D8461D7DBAD4A0FC",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -913,7 +858,7 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-1B140F7FA3F784DD56CC7A8B4145E9AD58D8CDD4C249A0F27F2262E47C9B41AF",
+      "relatedSpdxElement": "SPDXRef-Package-ECE93C9EE20F13DBEB21733C05EB3B862E623EB3E2898ABCDEF42D50D83E6815",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -938,7 +883,87 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-836302A10D83B34AB15735A3BD20F9E5195E5C19F576DD54B2A803F042B4449F",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-FB8EF87A04ABBDDE238C1B9302C41D39A089FDC8A755C4F352B2784CD890726B",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-ED6E8FB997A6D78D08443EC95BD284BFE932248A440D142BCB8557A36DC4A5A2",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-C1475C5380732C85127A15B8BADF74D2619786E90578875B650082AE4497BC14",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-3036FA4AA4AA8E25839A015031B16C7C68F673BE21CD50A5A3E074465C383F13",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-D5F937CDC86CBC13B5803898689C63EA3744103C3CA6BA564224AFB751812E7E",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-6B6117AB3417AA50C1DF8B47DB834F43608FA2A493BD063B0DCD0310BE1691FC",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-5E8B61B595E583BBEF7ADCA095CBE2B5B173E786C455120EF6B9C37A13089A6E",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-0036185CFC5D903DD9210D1FA4BAF6EACE18C961FBCA96B55969F2D0ADD1006E",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-A51161C96823E35F18ECB01793B545733228CEB78738651BD5BF03B9683AE351",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-F8DE50729125DAC360E3A686403D3A2C3DC10909D104DA633FFA3EB999037C4F",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-55FBA99B1D65EDB6759C80CCBDCE0996BC6490650FA4CA8E6FA9DE29866D0DAC",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
       "relatedSpdxElement": "SPDXRef-Package-7A132B5887E2748F11F31E4E55F7095F2134380DE1C42F92CADE24226E2C9DF8",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-4AEC43C47D6DFEEF0C68C67CD0D82CB712910D99C8D539F8E2CF18F97E4B8F59",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-F1A6940BF5D403F3E064202A7FC4F6D1AE1534716BF53B2F46B0DF5AA70197D2",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-BA5D8D1B5043A468B09DDBF48DCFC7DDD44949EE05A23A14F02AE8AA5183745C",
+      "spdxElementId": "SPDXRef-RootPackage"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-B886264C88915A93892AFBE3D28CD5B3C8B7990F0C6A47AD506184440C46436E",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -948,27 +973,7 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-B6EB77607AF75F718E21D28F4BA0EE84239C8DE9830FF9719907EE090332AADF",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-8425361196B240DBA621FD99DF72107E5EF7AD21887F5BF85084C6D81043C05D",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-490397CA5E7A67CC7226926418351663AEC1B56062EE0469D8461D7DBAD4A0FC",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-6379CCB25AF5E1D2D13BBCF25714BF668FEFAF783E34D1CF18559CCD8F256B56",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-6B6117AB3417AA50C1DF8B47DB834F43608FA2A493BD063B0DCD0310BE1691FC",
+      "relatedSpdxElement": "SPDXRef-Package-B3D5F30C6F4C897DA31933117BFB391A9177287CC31D26072129972E47E06996",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -993,7 +998,7 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-862E9A22FAE549CD97CBE81F8E67DB96A1FAFA78EA6B24BFD39C34B067014678",
+      "relatedSpdxElement": "SPDXRef-Package-6379CCB25AF5E1D2D13BBCF25714BF668FEFAF783E34D1CF18559CCD8F256B56",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -1018,7 +1023,7 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-D5F937CDC86CBC13B5803898689C63EA3744103C3CA6BA564224AFB751812E7E",
+      "relatedSpdxElement": "SPDXRef-Package-862E9A22FAE549CD97CBE81F8E67DB96A1FAFA78EA6B24BFD39C34B067014678",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
@@ -1028,32 +1033,27 @@
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-5E8B61B595E583BBEF7ADCA095CBE2B5B173E786C455120EF6B9C37A13089A6E",
+      "relatedSpdxElement": "SPDXRef-Package-1B079B578C50036D5A0DC1B1E3E5A7F7B045B06EE48E5EE8C59B29861C0863FC",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-0036185CFC5D903DD9210D1FA4BAF6EACE18C961FBCA96B55969F2D0ADD1006E",
+      "relatedSpdxElement": "SPDXRef-Package-1F6868692BA92B8833FB7BDD49335660B27070F01FE640B02ABF3CF85E9E917F",
       "spdxElementId": "SPDXRef-RootPackage"
     },
     {
       "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-A51161C96823E35F18ECB01793B545733228CEB78738651BD5BF03B9683AE351",
-      "spdxElementId": "SPDXRef-RootPackage"
-    },
-    {
-      "relationshipType": "DEPENDS_ON",
-      "relatedSpdxElement": "SPDXRef-Package-F8DE50729125DAC360E3A686403D3A2C3DC10909D104DA633FFA3EB999037C4F",
+      "relatedSpdxElement": "SPDXRef-Package-D104A2A6563DC14DADA50A43307C03A5E7249D23141336EB3B6D9B635DFEB482",
       "spdxElementId": "SPDXRef-RootPackage"
     }
   ],
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "name": "Threats Manager Platform 2.0.0",
-  "documentNamespace": "https://github.com/simonec73/threatsmanager/Threats%20Manager%20Platform/2.0.0/sM9jEzQgp0udNQvurVQtLQ",
+  "name": "Threats Manager Platform 2.2.1",
+  "documentNamespace": "https://github.com/simonec73/threatsmanager/Threats%20Manager%20Platform/2.2.1/__PBXz8xYEOx004o00Etqg",
   "creationInfo": {
-    "created": "2024-04-27T14:02:18Z",
+    "created": "2024-05-05T10:40:34Z",
     "creators": [
       "Organization: Simone Curzi",
       "Tool: Microsoft.SBOMTool-2.2.4"
