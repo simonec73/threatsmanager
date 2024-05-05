@@ -22,7 +22,7 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
             _properties.OpenDiagram -= OpenDiagram;
             if (_model != null)
             {
-                _grid.CellActivated -= _grid_CellActivated;
+                _grid.CellClick -= _grid_CellClick;
                 _grid.CellMouseDown -= _grid_CellMouseDown;
                 _grid.CellMouseLeave -= _grid_CellMouseLeave;
                 _grid.CellMouseMove -= _grid_CellMouseMove;
@@ -213,7 +213,7 @@ namespace ThreatsManager.Extensions.Panels.ImportedList
             this._grid.Size = new System.Drawing.Size(519, 476);
             this._grid.TabIndex = 3;
             this._grid.Text = "superGridControl1";
-            this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
+            this._grid.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this._grid_CellClick);
             this._grid.CellMouseDown += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseDown);
             this._grid.CellMouseLeave += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellEventArgs>(this._grid_CellMouseLeave);
             this._grid.CellMouseMove += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellMouseEventArgs>(this._grid_CellMouseMove);

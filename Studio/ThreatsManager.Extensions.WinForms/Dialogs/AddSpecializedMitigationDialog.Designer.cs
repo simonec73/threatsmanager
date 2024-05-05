@@ -29,18 +29,20 @@ namespace ThreatsManager.Extensions.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this._cancel = new System.Windows.Forms.Button();
             this._ok = new System.Windows.Forms.Button();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this._description = new System.Windows.Forms.RichTextBox();
+            this._name = new System.Windows.Forms.TextBox();
             this._mitigationName = new System.Windows.Forms.Label();
             this._templates = new ThreatsManager.Extensions.Dialogs.ImagedComboBox();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._layoutDescription = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._spellAsYouType = new Keyoti.RapidSpell.RapidSpellAsYouType(this.components);
             this.panel1.SuspendLayout();
             this.layoutControl1.SuspendLayout();
             this.SuspendLayout();
@@ -50,7 +52,7 @@ namespace ThreatsManager.Extensions.Dialogs
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 230);
+            this.panel1.Location = new System.Drawing.Point(0, 405);
             this.panel1.Margin = new System.Windows.Forms.Padding(6);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(964, 96);
@@ -81,11 +83,12 @@ namespace ThreatsManager.Extensions.Dialogs
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
+            this._ok.Click += new System.EventHandler(this._ok_Click);
             // 
             // layoutControl1
             // 
-            this.layoutControl1.Controls.Add(this.textBox2);
-            this.layoutControl1.Controls.Add(this.textBox1);
+            this.layoutControl1.Controls.Add(this._description);
+            this.layoutControl1.Controls.Add(this._name);
             this.layoutControl1.Controls.Add(this._mitigationName);
             this.layoutControl1.Controls.Add(this._templates);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -99,33 +102,36 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem1,
             this.layoutControlItem5,
             this.layoutControlItem3,
-            this.layoutControlItem4});
-            this.layoutControl1.Size = new System.Drawing.Size(964, 230);
+            this._layoutDescription});
+            this.layoutControl1.Size = new System.Drawing.Size(964, 405);
             this.layoutControl1.TabIndex = 3;
             // 
-            // textBox2
+            // _description
             // 
-            this.textBox2.Location = new System.Drawing.Point(123, 162);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(837, 31);
-            this.textBox2.TabIndex = 3;
+            this._description.Location = new System.Drawing.Point(113, 162);
+            this._description.Margin = new System.Windows.Forms.Padding(0);
+            this._description.Name = "_description";
+            this._description.Size = new System.Drawing.Size(847, 239);
+            this._description.TabIndex = 3;
+            this._description.Text = "";
+            this._description.TextChanged += new System.EventHandler(this._description_TextChanged);
             // 
-            // textBox1
+            // _name
             // 
-            this.textBox1.Location = new System.Drawing.Point(123, 112);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(837, 31);
-            this.textBox1.TabIndex = 2;
+            this._name.Location = new System.Drawing.Point(113, 112);
+            this._name.Margin = new System.Windows.Forms.Padding(0);
+            this._name.Name = "_name";
+            this._name.Size = new System.Drawing.Size(847, 31);
+            this._name.TabIndex = 2;
+            this._name.TextChanged += new System.EventHandler(this._name_TextChanged);
             // 
             // _mitigationName
             // 
             this._mitigationName.AutoSize = true;
-            this._mitigationName.Location = new System.Drawing.Point(127, 8);
+            this._mitigationName.Location = new System.Drawing.Point(117, 8);
             this._mitigationName.Margin = new System.Windows.Forms.Padding(0);
             this._mitigationName.Name = "_mitigationName";
-            this._mitigationName.Size = new System.Drawing.Size(829, 34);
+            this._mitigationName.Size = new System.Drawing.Size(839, 34);
             this._mitigationName.TabIndex = 0;
             this._mitigationName.Text = "label1";
             // 
@@ -137,11 +143,12 @@ namespace ThreatsManager.Extensions.Dialogs
             this._templates.ForeColor = System.Drawing.Color.Black;
             this._templates.FormattingEnabled = true;
             this._templates.ItemHeight = 16;
-            this._templates.Location = new System.Drawing.Point(123, 54);
+            this._templates.Location = new System.Drawing.Point(113, 54);
             this._templates.Margin = new System.Windows.Forms.Padding(0);
             this._templates.Name = "_templates";
-            this._templates.Size = new System.Drawing.Size(837, 22);
+            this._templates.Size = new System.Drawing.Size(847, 22);
             this._templates.TabIndex = 1;
+            this._templates.SelectedIndexChanged += new System.EventHandler(this._templates_SelectedIndexChanged);
             // 
             // layoutControlItem1
             // 
@@ -166,7 +173,7 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             // layoutControlItem3
             // 
-            this.layoutControlItem3.Control = this.textBox1;
+            this.layoutControlItem3.Control = this._name;
             this.layoutControlItem3.Height = 50;
             this.layoutControlItem3.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
@@ -174,15 +181,63 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // layoutControlItem4
+            // _layoutDescription
             // 
-            this.layoutControlItem4.Control = this.textBox2;
-            this.layoutControlItem4.Height = 50;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem4.Name = "layoutControlItem4";
-            this.layoutControlItem4.Text = "Description";
-            this.layoutControlItem4.Width = 100;
-            this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this._layoutDescription.Control = this._description;
+            this._layoutDescription.Height = 100;
+            this._layoutDescription.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this._layoutDescription.MinSize = new System.Drawing.Size(120, 0);
+            this._layoutDescription.Name = "_layoutDescription";
+            this._layoutDescription.Text = "<a href=\"Description\">Description</a>";
+            this._layoutDescription.Width = 100;
+            this._layoutDescription.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            this._layoutDescription.MarkupLinkClick += new DevComponents.DotNetBar.Layout.MarkupLinkClickEventHandler(this._layoutDescription_MarkupLinkClick);
+            // 
+            // _spellAsYouType
+            // 
+            this._spellAsYouType.AddMenuText = "Add";
+            this._spellAsYouType.AllowAnyCase = false;
+            this._spellAsYouType.AllowMixedCase = true;
+            this._spellAsYouType.AutoCorrectEnabled = true;
+            this._spellAsYouType.CheckAsYouType = true;
+            this._spellAsYouType.CheckCompoundWords = false;
+            this._spellAsYouType.CheckDisabledTextBoxes = false;
+            this._spellAsYouType.CheckReadOnlyTextBoxes = false;
+            this._spellAsYouType.ConsiderationRange = 300;
+            this._spellAsYouType.ContextMenuStripEnabled = true;
+            this._spellAsYouType.DictFilePath = null;
+            this._spellAsYouType.FindCapitalizedSuggestions = true;
+            this._spellAsYouType.GUILanguage = Keyoti.RapidSpell.LanguageType.ENGLISH;
+            this._spellAsYouType.IgnoreAllMenuText = "Ignore All";
+            this._spellAsYouType.IgnoreCapitalizedWords = false;
+            this._spellAsYouType.IgnoreIncorrectSentenceCapitalization = false;
+            this._spellAsYouType.IgnoreInEnglishLowerCaseI = false;
+            this._spellAsYouType.IgnoreMenuText = "Ignore";
+            this._spellAsYouType.IgnoreURLsAndEmailAddresses = true;
+            this._spellAsYouType.IgnoreWordsWithDigits = true;
+            this._spellAsYouType.IgnoreXML = false;
+            this._spellAsYouType.IncludeUserDictionaryInSuggestions = false;
+            this._spellAsYouType.LanguageParser = Keyoti.RapidSpell.LanguageType.ENGLISH;
+            this._spellAsYouType.LookIntoHyphenatedText = true;
+            this._spellAsYouType.OptionsEnabled = true;
+            this._spellAsYouType.OptionsFileName = "ThreatsManagerPlatform_Spell.xml";
+            this._spellAsYouType.OptionsStorageLocation = Keyoti.RapidSpell.Options.UserOptions.StorageType.IsolatedStorage;
+            this._spellAsYouType.RemoveDuplicateWordText = "Remove duplicate word";
+            this._spellAsYouType.SeparateHyphenWords = false;
+            this._spellAsYouType.ShowAddMenuOption = true;
+            this._spellAsYouType.ShowCutCopyPasteMenuOnTextBoxBase = true;
+            this._spellAsYouType.ShowSuggestionsContextMenu = true;
+            this._spellAsYouType.ShowSuggestionsWhenTextIsSelected = false;
+            this._spellAsYouType.SuggestionsMethod = Keyoti.RapidSpell.SuggestionsMethodType.HashingSuggestions;
+            this._spellAsYouType.SuggestSplitWords = true;
+            this._spellAsYouType.TextBoxBase = null;
+            this._spellAsYouType.TextComponent = null;
+            this._spellAsYouType.UnderlineColor = System.Drawing.Color.Red;
+            this._spellAsYouType.UnderlineStyle = Keyoti.RapidSpell.UnderlineStyle.Wavy;
+            this._spellAsYouType.UpdateAllTextBoxes = true;
+            this._spellAsYouType.UserDictionaryFile = null;
+            this._spellAsYouType.V2Parser = true;
+            this._spellAsYouType.WarnDuplicates = true;
             // 
             // AddSpecializedMitigationDialog
             // 
@@ -190,7 +245,7 @@ namespace ThreatsManager.Extensions.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(964, 326);
+            this.ClientSize = new System.Drawing.Size(964, 501);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(6);
@@ -216,11 +271,12 @@ namespace ThreatsManager.Extensions.Dialogs
         private DevComponents.DotNetBar.Layout.LayoutControl layoutControl1;
         private System.Windows.Forms.Label _mitigationName;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.RichTextBox _description;
+        private System.Windows.Forms.TextBox _name;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem3;
-        private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem4;
+        private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutDescription;
         private ImagedComboBox _templates;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem5;
+        private Keyoti.RapidSpell.RapidSpellAsYouType _spellAsYouType;
     }
 }

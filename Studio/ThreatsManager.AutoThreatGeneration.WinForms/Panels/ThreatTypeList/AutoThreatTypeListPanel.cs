@@ -772,12 +772,16 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
         #endregion
 
         #region Private members to handle events.
-        private void _grid_CellActivated(object sender, GridCellActivatedEventArgs e)
+        private void _grid_CellClick(object sender, GridCellClickEventArgs e)
         {
             if (!_loading)
             {
-                _currentRow = e.NewActiveCell?.GridRow;
-                ShowCurrentRow();
+                var row = e.GridCell?.GridRow;
+                if (row != _currentRow)
+                {
+                    _currentRow = row;
+                    ShowCurrentRow();
+                }
             }
         }
 

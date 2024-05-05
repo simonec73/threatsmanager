@@ -43,18 +43,18 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                             Resources.threat_type_big_new,
                             Resources.threat_type_new,
                             false),
-                        //new ActionDefinition(Id, "AddSpecialized", "Add Specialized Mitigation",
-                        //    Properties.Resources.standard_mitigations_big_process,
-                        //    Properties.Resources.standard_mitigations_process_small, false),
+                        new ActionDefinition(Id, "AddSpecialized", "Add Specialized Mitigation",
+                            Properties.Resources.standard_mitigations_big_process,
+                            Properties.Resources.standard_mitigations_process_small, false),
                         new ActionDefinition(Id, "RemoveMitigation", "Remove Mitigations",
                             Resources.standard_mitigations_big_delete,
                             Resources.standard_mitigations_delete, false),
                         new ActionDefinition(Id, "RemoveThreatType", "Remove Threat Type associations",
                             Resources.threat_type_big_delete,
                             Resources.threat_type_delete, false),
-                        //new ActionDefinition(Id, "RemoveSpecialized", "Remove Specialized Mitigations",
-                        //    Properties.Resources.standard_mitigations_big_process_delete,
-                        //    Properties.Resources.standard_mitigations_process_small_delete, false),
+                        new ActionDefinition(Id, "RemoveSpecialized", "Remove Specialized Mitigations",
+                            Properties.Resources.standard_mitigations_big_process_delete,
+                            Properties.Resources.standard_mitigations_process_small_delete, false),
                     }),
                     new CommandsBarDefinition("Outlining", "Outlining", new IActionDefinition[]
                     {
@@ -149,7 +149,12 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                             {
                                 if (dialog3.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                                 {
-                                    //dialog3.ThreatType?.AddMitigation(mitigation2, dialog2.Strength);
+                                    var panel = _currentRow.Rows.OfType<GridPanel>()
+                                        .FirstOrDefault(x => string.CompareOrdinal(x.Name, "Specialized Mitigations") == 0);
+                                    if (panel != null)
+                                    {
+                                        AddGridRow(dialog3.SpecializedMitigation, panel);
+                                    }
                                 }
                             }
                         }

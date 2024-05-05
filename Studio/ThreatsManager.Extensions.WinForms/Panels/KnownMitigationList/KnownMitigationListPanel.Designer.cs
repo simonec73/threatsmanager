@@ -22,7 +22,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             UndoRedoManager.Undone -= RefreshOnUndoRedo;
             UndoRedoManager.Redone -= RefreshOnUndoRedo;
 
-            _grid.CellActivated -= _grid_CellActivated;
+            _grid.CellClick -= _grid_CellClick;
             _grid.RowActivated -= _grid_RowActivated;
             _grid.MouseClick -= _grid_MouseClick;
 
@@ -62,7 +62,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
                 }
             }
 
-            _grid.CellActivated -= _grid_CellActivated;
+            _grid.CellClick -= _grid_CellClick;
             _grid.RowActivated -= _grid_RowActivated;
             _grid.MouseClick -= _grid_MouseClick;
 
@@ -104,10 +104,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             this._properties.BackColor = System.Drawing.Color.White;
             this._properties.Dock = System.Windows.Forms.DockStyle.Right;
             this._properties.Item = null;
-            this._properties.Location = new System.Drawing.Point(525, 0);
+            this._properties.Location = new System.Drawing.Point(1050, 0);
+            this._properties.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
             this._properties.Name = "_properties";
             this._properties.ReadOnly = false;
-            this._properties.Size = new System.Drawing.Size(309, 512);
+            this._properties.Size = new System.Drawing.Size(618, 1024);
             this._properties.TabIndex = 0;
             // 
             // expandableSplitter1
@@ -139,9 +140,10 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             this.expandableSplitter1.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this.expandableSplitter1.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
             this.expandableSplitter1.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this.expandableSplitter1.Location = new System.Drawing.Point(519, 0);
+            this.expandableSplitter1.Location = new System.Drawing.Point(1038, 0);
+            this.expandableSplitter1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.expandableSplitter1.Name = "expandableSplitter1";
-            this.expandableSplitter1.Size = new System.Drawing.Size(6, 512);
+            this.expandableSplitter1.Size = new System.Drawing.Size(12, 1024);
             this.expandableSplitter1.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
             this.expandableSplitter1.TabIndex = 1;
             this.expandableSplitter1.TabStop = false;
@@ -155,6 +157,7 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             this._topLeftPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this._topLeftPanel.ForeColor = System.Drawing.Color.Black;
             this._topLeftPanel.Location = new System.Drawing.Point(0, 0);
+            this._topLeftPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._topLeftPanel.Name = "_topLeftPanel";
             // 
             // 
@@ -163,25 +166,25 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             this.layoutControlItem1,
             this.layoutControlItem3,
             this.layoutControlItem2});
-            this._topLeftPanel.Size = new System.Drawing.Size(519, 36);
+            this._topLeftPanel.Size = new System.Drawing.Size(1038, 72);
             this._topLeftPanel.TabIndex = 2;
             // 
             // _specialFilter
             // 
             this._specialFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._specialFilter.FormattingEnabled = true;
-            this._specialFilter.Location = new System.Drawing.Point(222, 4);
+            this._specialFilter.Location = new System.Drawing.Point(444, 8);
             this._specialFilter.Margin = new System.Windows.Forms.Padding(0);
             this._specialFilter.Name = "_specialFilter";
-            this._specialFilter.Size = new System.Drawing.Size(205, 21);
+            this._specialFilter.Size = new System.Drawing.Size(411, 33);
             this._specialFilter.TabIndex = 1;
             // 
             // _apply
             // 
-            this._apply.Location = new System.Drawing.Point(435, 4);
+            this._apply.Location = new System.Drawing.Point(871, 8);
             this._apply.Margin = new System.Windows.Forms.Padding(0);
             this._apply.Name = "_apply";
-            this._apply.Size = new System.Drawing.Size(75, 23);
+            this._apply.Size = new System.Drawing.Size(150, 46);
             this._apply.TabIndex = 2;
             this._apply.Text = "Apply";
             this._apply.UseVisualStyleBackColor = true;
@@ -201,11 +204,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             this._filter.ButtonCustom.Visible = true;
             this._filter.DisabledBackColor = System.Drawing.Color.White;
             this._filter.ForeColor = System.Drawing.Color.Black;
-            this._filter.Location = new System.Drawing.Point(36, 4);
+            this._filter.Location = new System.Drawing.Point(67, 8);
             this._filter.Margin = new System.Windows.Forms.Padding(0);
             this._filter.Name = "_filter";
             this._filter.PreventEnterBeep = true;
-            this._filter.Size = new System.Drawing.Size(178, 20);
+            this._filter.Size = new System.Drawing.Size(361, 31);
             this._filter.TabIndex = 0;
             this._filter.ButtonCustomClick += new System.EventHandler(this._filter_ButtonCustomClick);
             this._filter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this._filter_KeyPress);
@@ -213,9 +216,10 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._filter;
-            this.layoutControlItem1.Height = 31;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem1.Height = 62;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(240, 0);
             this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
             this.layoutControlItem1.Text = "Filter";
             this.layoutControlItem1.Width = 50;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -223,9 +227,10 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._specialFilter;
-            this.layoutControlItem3.Height = 29;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem3.Height = 58;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(128, 36);
             this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
             this.layoutControlItem3.Text = "Label:";
             this.layoutControlItem3.TextVisible = false;
             this.layoutControlItem3.Width = 49;
@@ -234,10 +239,11 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._apply;
-            this.layoutControlItem2.Height = 31;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem2.Height = 62;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 40);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Width = 83;
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.layoutControlItem2.Width = 166;
             // 
             // _grid
             // 
@@ -246,26 +252,28 @@ namespace ThreatsManager.Extensions.Panels.KnownMitigationList
             this._grid.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
             this._grid.ForeColor = System.Drawing.Color.Black;
             this._grid.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._grid.Location = new System.Drawing.Point(0, 36);
+            this._grid.Location = new System.Drawing.Point(0, 72);
+            this._grid.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._grid.Name = "_grid";
-            this._grid.Size = new System.Drawing.Size(519, 476);
+            this._grid.Size = new System.Drawing.Size(1038, 952);
             this._grid.TabIndex = 3;
             this._grid.Text = "superGridControl1";
-            this._grid.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this._grid_CellActivated);
+            this._grid.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this._grid_CellClick);
             this._grid.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this._grid_RowActivated);
             this._grid.SelectionChanged += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridEventArgs>(this._grid_SelectionChanged);
             this._grid.MouseClick += new System.Windows.Forms.MouseEventHandler(this._grid_MouseClick);
             // 
             // KnownMitigationListPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this._grid);
             this.Controls.Add(this._topLeftPanel);
             this.Controls.Add(this.expandableSplitter1);
             this.Controls.Add(this._properties);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "KnownMitigationListPanel";
-            this.Size = new System.Drawing.Size(834, 512);
+            this.Size = new System.Drawing.Size(1668, 1024);
             this._topLeftPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 

@@ -169,7 +169,7 @@ namespace ThreatsManager.Extensions.Panels.Overview
             this._roadmapDetails.Size = new System.Drawing.Size(285, 219);
             this._roadmapDetails.TabIndex = 4;
             this._roadmapDetails.Text = "superGridControl1";
-            this._roadmapDetails.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this.OnCellActivated);
+            this._roadmapDetails.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this.OnCellClick);
             this._roadmapDetails.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this.OnRowActivated);
             // 
             // gridColumn7
@@ -212,7 +212,7 @@ namespace ThreatsManager.Extensions.Panels.Overview
             this._lowestRisks.Size = new System.Drawing.Size(285, 95);
             this._lowestRisks.TabIndex = 10002;
             this._lowestRisks.Text = "superGridControl1";
-            this._lowestRisks.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this.OnCellActivated);
+            this._lowestRisks.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this.OnCellClick);
             this._lowestRisks.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this.OnRowActivated);
             // 
             // gridColumn1
@@ -287,7 +287,7 @@ namespace ThreatsManager.Extensions.Panels.Overview
             this._topRisks.Size = new System.Drawing.Size(285, 95);
             this._topRisks.TabIndex = 10001;
             this._topRisks.Text = "superGridControl1";
-            this._topRisks.CellActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellActivatedEventArgs>(this.OnCellActivated);
+            this._topRisks.CellClick += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridCellClickEventArgs>(this.OnCellClick);
             this._topRisks.RowActivated += new System.EventHandler<DevComponents.DotNetBar.SuperGrid.GridRowActivatedEventArgs>(this.OnRowActivated);
             // 
             // gridColumn4
