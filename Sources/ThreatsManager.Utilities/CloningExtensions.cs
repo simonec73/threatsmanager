@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.Properties;
@@ -261,6 +262,14 @@ namespace ThreatsManager.Utilities
                                 result = model.AddEntity<IDataStore>(newName, template);
                                 break;
                         }
+
+                        if (result != null)
+                        {
+                            result.Description = template.Description;
+                            result.BigImage = template.GetImage(ImageSize.Big);
+                            result.Image = template.GetImage(ImageSize.Medium);
+                            result.SmallImage = template.GetImage(ImageSize.Small);
+                        }
                     }
                     else
                     {
@@ -280,16 +289,28 @@ namespace ThreatsManager.Utilities
                                 result = model.AddEntity<IDataStore>(newName, existingTemplate);
                                 break;
                         }
+
+                        if (result != null)
+                        {
+                            result.Description = existingTemplate.Description;
+                            result.BigImage = existingTemplate.GetImage(ImageSize.Big);
+                            result.Image = existingTemplate.GetImage(ImageSize.Medium);
+                            result.SmallImage = existingTemplate.GetImage(ImageSize.Small);
+                        }
                     }
 
                     if (result != null)
                     {
-                        result.Description = source.Description;
+                        if (string.IsNullOrWhiteSpace(source.Description))
+                            result.Description = source.Description;
                         if (source.Parent != null)
                             result.SetParent(source.Parent);
-                        result.BigImage = source.BigImage;
-                        result.Image = source.Image;
-                        result.SmallImage = source.SmallImage;
+                        if (source.BigImage != null && result.BigImage == null)
+                            result.BigImage = source.BigImage;
+                        if (source.Image != null && result.Image == null)
+                            result.Image = source.Image;
+                        if (source.SmallImage != null && result.SmallImage == null)
+                            result.SmallImage = source.SmallImage;
                         source.CopyProperties(result);
                         source.CopyThreatEvents(result);
                         source.CopyVulnerabilities(result);
