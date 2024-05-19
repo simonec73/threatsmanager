@@ -2,7 +2,7 @@
   "profiles": {
     "ThreatsManager.Interfaces": {
       "commandName": "Executable",
-      "executablePath": "C:\\src\\Threats Manager Platform\\Dev\\ThreatsManager\\bin\\Debug\\ThreatsManager.exe"
+      "executablePath": "C:\\src\\repos\\TMS\\ThreatsManager\\bin\\Debug\\ThreatsManager.exe"
     }
   }
 }
