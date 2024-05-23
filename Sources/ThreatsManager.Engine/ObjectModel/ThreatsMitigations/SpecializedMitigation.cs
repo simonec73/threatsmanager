@@ -12,6 +12,7 @@ using ThreatsManager.Engine.Aspects;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
@@ -69,6 +70,11 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         [JsonProperty("description")]
         public string Description { get; set; }
+
+        public override string ToString()
+        {
+            return string.IsNullOrWhiteSpace(Name) ? ThreatModelManager.Undefined : Name;
+        }
         #endregion
     }
 }

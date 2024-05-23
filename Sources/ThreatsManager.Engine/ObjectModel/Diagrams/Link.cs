@@ -162,6 +162,12 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
             return result;
         }
+
+        public override string ToString()
+        {
+            string text = DataFlow?.ToString();
+            return string.IsNullOrWhiteSpace(text) ? ThreatModelManager.Undefined : text;
+        }
         #endregion
     }
 }

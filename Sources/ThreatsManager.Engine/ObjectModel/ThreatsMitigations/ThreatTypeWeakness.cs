@@ -189,7 +189,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Weakness?.Name;
+            return Weakness == null ? ThreatModelManager.Undefined : Weakness.ToString();
         }
         #endregion
     }

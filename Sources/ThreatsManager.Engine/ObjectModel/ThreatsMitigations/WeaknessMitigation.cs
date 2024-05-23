@@ -216,7 +216,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Mitigation.Name;
+            return Mitigation == null ? ThreatModelManager.Undefined : Mitigation.ToString();
         }
         #endregion
     }

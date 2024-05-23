@@ -13,6 +13,7 @@ using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Engine.Aspects;
 using PostSharp.Patterns.Collections;
 using ThreatsManager.Utilities;
+using System.Xml.Linq;
 
 namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 {
@@ -218,7 +219,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Mitigation.Name;
+            return Mitigation == null ? ThreatModelManager.Undefined : Mitigation.ToString();
         }
         #endregion
     }

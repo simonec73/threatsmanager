@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Contracts;
@@ -212,6 +213,12 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
             }
 
             return result;
+        }
+
+        public override string ToString()
+        {
+            var text = Identity?.ToString();
+            return  string.IsNullOrWhiteSpace(text) ? ThreatModelManager.Undefined : text;
         }
         #endregion
     }

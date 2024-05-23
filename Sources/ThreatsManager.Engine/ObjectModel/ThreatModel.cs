@@ -363,7 +363,7 @@ namespace ThreatsManager.Engine.ObjectModel
         
         public override string ToString()
         {
-            return Name;
+            return string.IsNullOrWhiteSpace(Name) ? ThreatModelManager.Undefined : Name;
         }
 
         public IVulnerability FindVulnerability(Guid id)
