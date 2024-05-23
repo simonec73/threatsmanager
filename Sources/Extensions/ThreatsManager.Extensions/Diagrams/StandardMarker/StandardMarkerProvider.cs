@@ -130,7 +130,7 @@ namespace ThreatsManager.Extensions.Diagrams.StandardMarker
                     }
                 }
 
-                if (result.Width != size)
+                if (result != null && result.Width != size)
                 {
                     try
                     {
