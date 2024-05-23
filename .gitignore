@@ -360,4 +360,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Threats Manager specific folders
-/KnowledgeBases/Build/Azure
+/KnowledgeBases/Build/
