@@ -94,17 +94,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ThreatsManager.Engine, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Engine.2.2.1\lib\net481\ThreatsManager.Engine.dll</HintPath>
+    <Reference Include="ThreatsManager.Engine, Version=2.2.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Engine.2.2.2\lib\net481\ThreatsManager.Engine.dll</HintPath>
     </Reference>
     <Reference Include="ThreatsManager.Icons, Version=2.1.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.2.1\lib\net481\ThreatsManager.Icons.dll</HintPath>
+      <HintPath>..\packages\ThreatsManager.Utilities.2.2.2\lib\net481\ThreatsManager.Icons.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Interfaces, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Interfaces.2.2.1\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
+    <Reference Include="ThreatsManager.Interfaces, Version=2.2.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Interfaces.2.2.2\lib\net481\ThreatsManager.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ThreatsManager.Utilities, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ThreatsManager.Utilities.2.2.1\lib\net481\ThreatsManager.Utilities.dll</HintPath>
+    <Reference Include="ThreatsManager.Utilities, Version=2.2.2.0, Culture=neutral, PublicKeyToken=e345404a827fb4c3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ThreatsManager.Utilities.2.2.2\lib\net481\ThreatsManager.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
