@@ -34,8 +34,8 @@ namespace ThreatsManager.Extensions.Reporting
 
             var threatEvents = model.GetThreatEvents()?
                 .OrderByDescending(x => x.Severity, new SeverityComparer())
-                .ThenBy(x => x.Parent.Name)
-                .ThenBy(x => x.Name)
+                .ThenBy(x => x.Parent.ToString())
+                .ThenBy(x => x.ToString())
                 .ToArray();
             if (threatEvents?.Any() ?? false)
             {
@@ -58,15 +58,15 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 if (threatEvent.Parent != null)
                 {
-                    result.Add(new Cell(threatEvent.Name, null,
-                        $" on [{threatEvent.Parent.GetIdentityTypeInitial()}] {threatEvent.Parent.Name}",
+                    result.Add(new Cell(threatEvent.ToString(), null,
+                        $" on [{threatEvent.Parent.GetIdentityTypeInitial()}] {threatEvent.Parent.ToString()}",
                         new[] { threatEvent.Id, threatEvent.ThreatTypeId }));
-                    result.Add(new Cell(threatEvent.Severity.Name, threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, false, true));
+                    result.Add(new Cell(threatEvent.Severity.ToString(), threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, false, true));
                     result.Add(new Cell(threatEvent.Mitigations?
-                        .OrderBy(x => x.ThreatEvent.Parent.Name)
-                        .ThenBy(x => x.Mitigation.Name)
+                        .OrderBy(x => x.ThreatEvent.Parent.ToString())
+                        .ThenBy(x => x.Mitigation.ToString())
                         .Select(x =>
-                            new Line(x.Mitigation.Name, null, null, new[] { x.MitigationId }, x.Status.ToString()))));
+                            new Line(x.Mitigation.ToString(), null, null, new[] { x.MitigationId }, x.Status.ToString()))));
                 }
             }
 

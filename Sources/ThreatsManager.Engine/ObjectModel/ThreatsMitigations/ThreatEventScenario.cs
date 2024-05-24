@@ -257,7 +257,7 @@ namespace ThreatsManager.Engine.ObjectModel.ThreatsMitigations
 
         public override string ToString()
         {
-            return Name ?? ThreatModelManager.Undefined;
+            return string.IsNullOrWhiteSpace(Name) ? ThreatModelManager.Undefined : Name;
         }
         #endregion
     }

@@ -73,7 +73,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             return mitigations
                 .Where(x => x.GetStatus() == status)
-                .OrderBy(x => x.Name);
+                .OrderBy(x => x.ToString());
         }
 
         private IEnumerable<Cell> GetCells([NotNull] IEnumerable<IMitigation> mitigations, RoadmapStatus status)
@@ -89,7 +89,7 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var mitigation in mitigations)
                 {
-                    list.Add(new Cell(mitigation.Name, null, null, new [] {mitigation.Id}));
+                    list.Add(new Cell(mitigation.ToString(), null, null, new [] {mitigation.Id}));
                     list.Add(new Cell(GetLines(mitigation)));
                 }
 
@@ -107,8 +107,8 @@ namespace ThreatsManager.Extensions.Reporting
             var threatEventMitigations = model.GetThreatEventMitigations(mitigation)?
                 .Where(x => x.Status != MitigationStatus.Existing && x.Status != MitigationStatus.Implemented && x.Status != MitigationStatus.Undefined)
                 .OrderBy(x => x.Status.ToString())
-                .ThenBy(x => x.ThreatEvent.Parent.Name)
-                .ThenBy(x => x.ThreatEvent.Name)
+                .ThenBy(x => x.ThreatEvent.Parent.ToString())
+                .ThenBy(x => x.ThreatEvent.ToString())
                 .ToArray();
 
             if (threatEventMitigations?.Any() ?? false)
@@ -118,8 +118,8 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var tem in threatEventMitigations)
                 {
                     if (tem.ThreatEvent?.Parent != null)
-                        list.Add(new Line(tem.ThreatEvent.Name, 
-                            $"[{tem.ThreatEvent.Parent.GetIdentityTypeInitial()}] {tem.ThreatEvent.Parent.Name}: ",
+                        list.Add(new Line(tem.ThreatEvent.ToString(), 
+                            $"[{tem.ThreatEvent.Parent.GetIdentityTypeInitial()}] {tem.ThreatEvent.Parent.ToString()}: ",
                             null, new []{tem.ThreatEvent.Id, tem.ThreatEvent.ThreatTypeId}, tem.Status.ToString()));    
                 }
 

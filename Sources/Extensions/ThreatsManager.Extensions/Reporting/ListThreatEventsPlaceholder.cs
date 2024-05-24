@@ -76,8 +76,8 @@ namespace ThreatsManager.Extensions.Reporting
 
             var threatEvents = model.GetThreatEvents()?
                 .OrderByDescending(x => x.Severity, new SeverityComparer())
-                .ThenBy(x => x.Name)
-                .ThenBy(x => x.Parent.Name)
+                .ThenBy(x => x.ToString())
+                .ThenBy(x => x.Parent.ToString())
                 .ToArray();
 
             if (threatEvents?.Any() ?? false)
@@ -87,14 +87,14 @@ namespace ThreatsManager.Extensions.Reporting
                 foreach (var threatEvent in threatEvents)
                 {
                     var items = new List<ItemRow>();
-                    items.Add(new TextRow("Severity", threatEvent.Severity.Name,
+                    items.Add(new TextRow("Severity", threatEvent.Severity.ToString(),
                         threatEvent.Severity.TextColor, threatEvent.Severity.BackColor, true, true, 75));
-                    items.Add(new TextRow("Threat Type", threatEvent.ThreatType.Name, null, null, new [] {threatEvent.ThreatTypeId}));
+                    items.Add(new TextRow("Threat Type", threatEvent.ThreatType.ToString(), null, null, new [] {threatEvent.ThreatTypeId}));
                     items.Add(new TextRow("Description", threatEvent.Description));
                     if (threatEvent.Parent != null)
                     {
                         items.Add(new TextRow("Associated To",
-                            $"{threatEvent.Parent.Name}",
+                            $"{threatEvent.Parent.ToString()}",
                             $"[{threatEvent.Parent.GetIdentityTypeInitial()}] ",
                             null,
                             new[] { threatEvent.ParentId }));
@@ -134,7 +134,7 @@ namespace ThreatsManager.Extensions.Reporting
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
 
-                    list.Add(new ListItem(threatEvent.Name, threatEvent.Id, items));
+                    list.Add(new ListItem(threatEvent.ToString(), threatEvent.Id, items));
                 }
 
                 result = list;
@@ -154,9 +154,9 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell(item.Mitigation.Name, null, null, new [] {item.MitigationId}));
-                    cells.Add(new Cell(item.ThreatEvent.Severity.Name, item.ThreatEvent.Severity.TextColor, item.ThreatEvent.Severity.BackColor, false, true));
-                    cells.Add(new Cell(item.Strength.Name));
+                    cells.Add(new Cell(item.Mitigation.ToString(), null, null, new [] {item.MitigationId}));
+                    cells.Add(new Cell(item.ThreatEvent.Severity.ToString(), item.ThreatEvent.Severity.TextColor, item.ThreatEvent.Severity.BackColor, false, true));
+                    cells.Add(new Cell(item.Strength.ToString()));
                 }
 
                 result = cells;

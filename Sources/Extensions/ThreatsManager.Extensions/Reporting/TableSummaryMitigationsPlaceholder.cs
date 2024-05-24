@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Reporting
             TableItem result = null;
 
             var mitigations = model.GetUniqueMitigations()?
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.ToString())
                 .ToArray();
             if (mitigations?.Any() ?? false)
             {
@@ -53,14 +53,14 @@ namespace ThreatsManager.Extensions.Reporting
 
             foreach (var mitigation in mitigations)
             {
-                result.Add(new Cell(mitigation.Name, null, null, new []{mitigation.Id}));
+                result.Add(new Cell(mitigation.ToString(), null, null, new []{mitigation.Id}));
                 var model = mitigation.Model;
                 var tems = model.GetThreatEventMitigations(mitigation)?.ToArray();
                 result.Add(new Cell(tems?
-                    .OrderBy(x => x.ThreatEvent?.Parent?.Name)
-                    .ThenBy(x => x.ThreatEvent?.Name)
+                    .OrderBy(x => x.ThreatEvent?.Parent?.ToString())
+                    .ThenBy(x => x.ThreatEvent?.ToString())
                     .Select(x =>
-                        new Line(x.ThreatEvent.Name, $"[{x.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {x.ThreatEvent?.Parent?.Name ?? ThreatModelManager.Unknown}: ", 
+                        new Line(x.ThreatEvent.ToString(), $"[{x.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {x.ThreatEvent?.Parent?.ToString() ?? ThreatModelManager.Unknown}: ", 
                             null, new[] {x.ThreatEvent?.Id ?? Guid.Empty, x.ThreatEvent?.ThreatTypeId ?? Guid.Empty}, x.Status.ToString()))));
             }
 

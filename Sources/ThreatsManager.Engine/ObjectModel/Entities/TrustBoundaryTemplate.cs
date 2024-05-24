@@ -142,7 +142,7 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
 
         public override string ToString()
         {
-            return Name ?? ThreatModelManager.Undefined;
+            return string.IsNullOrWhiteSpace(Name) ? ThreatModelManager.Undefined : Name;
         }
 
         [InitializationRequired]

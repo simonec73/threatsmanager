@@ -1,4 +1,6 @@
 ﻿using PostSharp.Patterns.Contracts;
+using System.Xml.Linq;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps
 {
@@ -20,7 +22,7 @@ namespace ThreatsManager.DevOps
 
         public override string ToString()
         {
-            return Label;
+            return string.IsNullOrWhiteSpace(Label) ? ThreatModelManager.Undefined : Label;
         }
     }
 }

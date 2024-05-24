@@ -98,7 +98,7 @@ namespace ThreatsManager.Quality.Annotations
                         _askedViaContainer.Visible = true;
                         _answeredContainer.Visible = true;
                         _answersContainer.Visible = true;
-                        _textContainer.Height = 50;
+                        _textContainer.Height = 25;
                     }
                     else
                     {

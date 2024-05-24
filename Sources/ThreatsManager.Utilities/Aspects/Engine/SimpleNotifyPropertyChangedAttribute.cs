@@ -4,6 +4,7 @@ using PostSharp.Aspects.Dependencies;
 using PostSharp.Patterns.Model;
 using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
+using System;
 using System.ComponentModel;
 using static PostSharp.Patterns.Recording.RecordableAttribute;
 
@@ -27,7 +28,15 @@ namespace ThreatsManager.Utilities.Aspects.Engine
             var oldValue = args.GetCurrentValue();
             var newValue = args.Value;
 
-            base.OnSetValue(args);
+            try
+            {
+                base.OnSetValue(args);
+            }
+            catch (InvalidOperationException exc)
+            {
+                if (string.CompareOrdinal(exc.Message, "It is forbidden to modify the recorded state during an Undo or Redo operation.") != 0)
+                    throw;
+            }
 
             if (args.Instance is INotifyPropertyChangedInvoker invoker &&
                 ((newValue == null && oldValue != null) || 

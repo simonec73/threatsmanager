@@ -276,7 +276,7 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
 
         public override string ToString()
         {
-            return Name;
+            return string.IsNullOrWhiteSpace(Name) ? ThreatModelManager.Undefined : Name;
         }
 
         [InitializationRequired]

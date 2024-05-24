@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<KeyValuePair<string, IPropertyType>> result = null;
 
-            var trustBoundaries = model.Groups?.OfType<ITrustBoundary>().OrderBy(x => x.Name).ToArray();
+            var trustBoundaries = model.Groups?.OfType<ITrustBoundary>().OrderBy(x => x.ToString()).ToArray();
 
             if (trustBoundaries?.Any() ?? false)
             {
@@ -71,7 +71,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<ListItem> result = null;
 
-            var boundaries = model.Groups?.OfType<ITrustBoundary>().OrderBy(x => x.Name).ToArray();
+            var boundaries = model.Groups?.OfType<ITrustBoundary>().OrderBy(x => x.ToString()).ToArray();
 
             if (boundaries?.Any() ?? false)
             {
@@ -85,7 +85,7 @@ namespace ThreatsManager.Extensions.Reporting
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
 
-                    list.Add(new ListItem(boundary.Name, boundary.Id, items));
+                    list.Add(new ListItem(boundary.ToString(), boundary.Id, items));
                 }
 
                 result = list;

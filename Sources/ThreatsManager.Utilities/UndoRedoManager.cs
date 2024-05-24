@@ -268,10 +268,30 @@ namespace ThreatsManager.Utilities
         /// <returns>Scope for the recording.</returns>
         public static UndoRedoScope OpenScope([Required] string name)
         {
-            if (IsUndoing || IsRedoing)
-                return null;
-            else
-                return new UndoRedoScope(RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic));
+            UndoRedoScope result = null;
+
+            if (!IsUndoing && !IsRedoing)
+            {
+                try
+                {
+                    result = new UndoRedoScope(RecordingServices.DefaultRecorder.OpenScope(name, RecordingScopeOption.Atomic));
+                }
+                catch (NotSupportedException exc)
+                {
+                    result = null;
+
+                    if (string.CompareOrdinal("Cannot start explicit operation while tracking is disabled", exc.Message) == 0)
+                    {
+                        // Ignore the error and work without the scope.
+                    }
+                    else
+                    {
+                        ErrorRaised?.Invoke(exc.Message);
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

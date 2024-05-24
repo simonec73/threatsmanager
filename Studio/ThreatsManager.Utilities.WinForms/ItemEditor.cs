@@ -405,6 +405,15 @@ namespace ThreatsManager.Utilities.WinForms
                         _threatEventMenuDefinition.MenuClicked -= OnThreatEventMenuClicked;
                 }
 
+                if (_item is IVulnerabilitiesContainer vulnerabilitiesContainer)
+                {
+                    vulnerabilitiesContainer.VulnerabilityAdded -= VulnerabilityAdded;
+                    vulnerabilitiesContainer.VulnerabilityRemoved -= VulnerabilityRemoved;
+
+                    if (_vulnerabilityMenuDefinition != null)
+                        _vulnerabilityMenuDefinition.MenuClicked -= OnVulnerabilityMenuClicked;
+                }
+
                 if (_item is IThreatModel model)
                 {
                     model.ContributorAdded -= ContributorAdded;

@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Utilities;
 
 namespace ThreatsManager.DevOps
 {
@@ -78,7 +79,7 @@ namespace ThreatsManager.DevOps
 
        public override string ToString()
         {
-            return Name;
+            return string.IsNullOrWhiteSpace(Name) ? ThreatModelManager.Undefined : Name;
         }
     }
 }

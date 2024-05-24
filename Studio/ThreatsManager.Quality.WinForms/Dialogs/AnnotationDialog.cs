@@ -56,6 +56,8 @@ namespace ThreatsManager.Quality.Dialogs
                 _cancel.Text = "Delete";
                 _ok.Text = "Close";
             }
+
+            _annotation.Refresh();
         }
 
         public Annotation Annotation => _annotation.Annotation;

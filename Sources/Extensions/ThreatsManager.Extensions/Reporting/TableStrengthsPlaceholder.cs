@@ -51,7 +51,7 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 foreach (var strength in strengths)
                 {
-                    result.Add(new Cell(strength.Name));
+                    result.Add(new Cell(strength.ToString()));
                     result.Add(new Cell(strength.Description));
                 }
             }

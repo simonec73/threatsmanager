@@ -37,7 +37,7 @@ namespace ThreatsManager.Extensions.Reporting
             var schema = new RoadmapPropertySchemaManager(model);
             var mitigations = model.GetUniqueMitigations()?
                 .Where(x => schema.GetStatus(x) == RoadmapStatus.ShortTerm)
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.ToString())
                 .ToArray();
 
             if (mitigations?.Any() ?? false)
@@ -79,7 +79,7 @@ namespace ThreatsManager.Extensions.Reporting
             var schema = new RoadmapPropertySchemaManager(model);
             var mitigations = model.GetUniqueMitigations()?
                 .Where(x => schema.GetStatus(x) == RoadmapStatus.ShortTerm)
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.ToString())
                 .ToArray();
 
             if (mitigations?.Any() ?? false)
@@ -101,7 +101,7 @@ namespace ThreatsManager.Extensions.Reporting
                         if (itemRows?.Any() ?? false)
                             items.AddRange(itemRows);
 
-                        list.Add(new ListItem(mitigation.Name, mitigation.Id, items));
+                        list.Add(new ListItem(mitigation.ToString(), mitigation.Id, items));
                     }
                 }
 

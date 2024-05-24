@@ -51,7 +51,7 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 foreach (var severity in severities)
                 {
-                    result.Add(new Cell(severity.Name, severity.TextColor, severity.BackColor, false, true));
+                    result.Add(new Cell(severity.ToString(), severity.TextColor, severity.BackColor, false, true));
                     result.Add(new Cell(severity.Description));
                 }
             }

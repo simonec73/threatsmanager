@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<KeyValuePair<string, IPropertyType>> result = null;
 
-            var dataStores = model.Entities?.OfType<IDataStore>().OrderBy(x => x.Name).ToArray();
+            var dataStores = model.Entities?.OfType<IDataStore>().OrderBy(x => x.ToString()).ToArray();
 
             if (dataStores?.Any() ?? false)
             {
@@ -71,7 +71,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<ListItem> result = null;
 
-            var entities = model.Entities?.OfType<IDataStore>().OrderBy(x => x.Name).ToArray();
+            var entities = model.Entities?.OfType<IDataStore>().OrderBy(x => x.ToString()).ToArray();
 
             if (entities?.Any() ?? false)
             {
@@ -85,7 +85,7 @@ namespace ThreatsManager.Extensions.Reporting
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
 
-                    list.Add(new ListItem(entity.Name, entity.Id, items));
+                    list.Add(new ListItem(entity.ToString(), entity.Id, items));
                 }
 
                 result = list;

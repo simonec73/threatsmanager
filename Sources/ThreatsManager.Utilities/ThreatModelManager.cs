@@ -111,7 +111,7 @@ namespace ThreatsManager.Utilities
         /// <param name="newThreatModelId">Optional identifier to be used for the Threat Model replacing its configured one.</param>
         /// <returns>The deserialized Threat Model.</returns>
         public static IThreatModel Deserialize([NotNull] byte[] json, 
-            bool ignoreMissingMembers = false, Guid? newThreatModelId = null)//, bool addToKnownInstances = true)
+            bool ignoreMissingMembers = false, Guid? newThreatModelId = null)
         {
             IThreatModel result = null;
 
@@ -139,46 +139,30 @@ namespace ThreatsManager.Utilities
 
                 if (result != null)
                 {
-                    try
+                    if (_instances.Any(x => x.Id == result.Id))
                     {
-                        //if (!binder.HasUnknownTypes)
-                        //    result.ResetDirty();
+                        throw new ExistingModelException(result);
+                    }
+                    else
+                    {
+                        result.Cleanup();
+                        result.PropertySchemasNormalization();
 
-                        //result.SuspendDirty();
+                        _instances.Add(result);
 
-                        if (_instances.Any(x => x.Id == result.Id))
+                        var method = result.GetType()
+                            .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] { }, null);
+                        if (method != null)
+                            method.Invoke(result, null);
+
+                        var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
+                        if (processors?.Any() ?? false)
                         {
-                            throw new ExistingModelException(result);
-                        }
-                        else
-                        {
-                            result.Cleanup();
-                            result.PropertySchemasNormalization();
-
-                            _instances.Add(result);
-
-                            var method = result.GetType()
-                                .GetMethod("RegisterEvents", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, new Type[] { }, null);
-                            if (method != null)
-                                method.Invoke(result, null);
-
-                            var processors = ExtensionUtils.GetExtensions<IPostLoadProcessor>()?.ToArray();
-                            if (processors?.Any() ?? false)
+                            foreach (var processor in processors)
                             {
-                                foreach (var processor in processors)
-                                {
-                                    processor.Process(result);
-                                }
+                                processor.Process(result);
                             }
                         }
-                    }
-                    catch (JsonSerializationException e)
-                    {
-                        throw new ThreatModelOpeningFailureException("A serialization issue has occurred.", e);
-                    }
-                    finally
-                    {
-                        //result.ResumeDirty();
                     }
                 }
             }

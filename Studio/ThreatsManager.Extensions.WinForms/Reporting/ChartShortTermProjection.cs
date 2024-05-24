@@ -64,7 +64,7 @@ namespace ThreatsManager.Extensions.Reporting
                 selectedMitigations.AddRange(toBeAdded);
         }
 
-        public IEnumerable<ChartItem> GetChart([NotNull] IThreatModel model, [NotNull] IDictionary<Guid, int> projectedSeverities)
+        private IEnumerable<ChartItem> GetChart([NotNull] IThreatModel model, [NotNull] IDictionary<Guid, int> projectedSeverities)
         {
             IEnumerable<ChartItem> result = null;
 

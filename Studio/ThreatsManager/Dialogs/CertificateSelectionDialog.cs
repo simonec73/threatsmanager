@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 using ThreatsManager.Engine.Config;
@@ -38,24 +39,45 @@ namespace ThreatsManager.Dialogs
 
         private void _selectFromStore_Click(object sender, EventArgs e)
         {
-            if (Enum.TryParse<StoreName>((string) _storeName.SelectedItem, out var storeName) &&
-                Enum.TryParse<StoreLocation>((string) _storeLocation.SelectedItem, out var storeLocation))
+            if (Enum.TryParse<StoreName>((string)_storeName.SelectedItem, out var storeName) &&
+                Enum.TryParse<StoreLocation>((string)_storeLocation.SelectedItem, out var storeLocation))
             {
-                X509Store store = new X509Store(storeName, storeLocation);
-                store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+                X509Store store = null;
 
-                X509Certificate2Collection found = store.Certificates
-                        .Find(X509FindType.FindByApplicationPolicy, "1.3.6.1.5.5.7.3.3", false)
-                        .Find(X509FindType.FindByKeyUsage, X509KeyUsageFlags.DigitalSignature, false)
-                        .Find(X509FindType.FindByTimeValid, DateTime.Now, false);
-                X509Certificate2Collection selected = X509Certificate2UI.SelectFromCollection(found,
-                    "Certificate to be trusted",
-                    "Select a certificate from the following list, to trust the Extensions signed with that certificate.",
-                    X509SelectionFlag.SingleSelection);
+                try
+                {
+                    store = new X509Store(storeName, storeLocation);
+                    store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+                }
+                catch (CryptographicException)
+                {
+                    MessageBox.Show(this, "The selected store cannot be opened. Please select a different store.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    store = null;
+                }
 
-                var certificate = selected.OfType<X509Certificate2>().FirstOrDefault();
-                if (certificate != null)
-                    Certificate = new CertificateConfig(certificate);
+                if (store != null)
+                {
+                    try
+                    {
+                        X509Certificate2Collection found = store.Certificates
+                                .Find(X509FindType.FindByApplicationPolicy, "1.3.6.1.5.5.7.3.3", false)
+                                .Find(X509FindType.FindByKeyUsage, X509KeyUsageFlags.DigitalSignature, false)
+                                .Find(X509FindType.FindByTimeValid, DateTime.Now, false);
+                        X509Certificate2Collection selected = X509Certificate2UI.SelectFromCollection(found,
+                            "Certificate to be trusted",
+                            "Select a certificate from the following list, to trust the Extensions signed with that certificate.",
+                            X509SelectionFlag.SingleSelection);
+
+                        var certificate = selected.OfType<X509Certificate2>().FirstOrDefault();
+                        if (certificate != null)
+                            Certificate = new CertificateConfig(certificate);
+                    }
+                    finally
+                    {
+                        store.Close();
+                    }
+                }
             }
         }
 

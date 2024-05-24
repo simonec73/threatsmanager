@@ -92,7 +92,7 @@ namespace ThreatsManager.Extensions.Reporting
 
             var threatTypes = model.ThreatTypes?
                 .OrderByDescending(x => model.GetThreatEvents(x)?.Select(y => y.Severity).OrderByDescending(y => y, comparer).FirstOrDefault(), comparer)
-                .ThenBy(x => x.Name)
+                .ThenBy(x => x.ToString())
                 .ToArray();
 
             if (threatTypes?.Any() ?? false)
@@ -115,14 +115,14 @@ namespace ThreatsManager.Extensions.Reporting
 
                         var severity = threatEvents.Select(x => x.Severity)
                             .OrderByDescending(x => x, comparer).FirstOrDefault();
-                        items.Add(new TextRow("Severity", severity.Name,
+                        items.Add(new TextRow("Severity", severity.ToString(),
                             severity.TextColor, severity.BackColor, true, true, 75));
                         items.Add(new TextRow("Description", threatType.Description));
                         items.Add(new ListRow("Affected Objects", 
                             threatEvents.Select(x => 
-                                new Line($"{x.Parent?.Name}", 
+                                new Line($"{x.Parent?.ToString()}", 
                                     $"[{x.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] ",
-                                    $" ({x.Severity?.Name})",
+                                    $" ({x.Severity?.ToString()})",
                                     new [] {x.ParentId}))));
                         items.Add(new TableRow("Approved Mitigations", new[]
                         {
@@ -177,7 +177,7 @@ namespace ThreatsManager.Extensions.Reporting
                             }
                         }
 
-                        list.Add(new ListItem(threatType.Name, threatType.Id, items));
+                        list.Add(new ListItem(threatType.ToString(), threatType.Id, items));
                     }
                 }
 
@@ -206,8 +206,8 @@ namespace ThreatsManager.Extensions.Reporting
                 }
 
                 result = mitigations
-                    .OrderBy(x => x.ThreatEvent.Parent.Name)
-                    .ThenBy(x => x.Mitigation.Name);
+                    .OrderBy(x => x.ThreatEvent.Parent?.ToString() ?? ThreatModelManager.Unknown)
+                    .ThenBy(x => x.Mitigation.ToString());
             }
 
             return result;
@@ -224,14 +224,14 @@ namespace ThreatsManager.Extensions.Reporting
 
                 foreach (var item in list)
                 {
-                    cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
+                    cells.Add(new Cell($"{item.ThreatEvent.Parent.ToString()}",
                         $"[{item.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] ",
                         null,
                         new[]
                         {item.ThreatEvent.ParentId}));
-                    cells.Add(new Cell(item.Mitigation.Name, null, null, new [] {item.MitigationId}));
-                    cells.Add(new Cell(item.ThreatEvent.Severity.Name, item.ThreatEvent.Severity.TextColor, item.ThreatEvent.Severity.BackColor, false, true));
-                    cells.Add(new Cell(item.Strength.Name));
+                    cells.Add(new Cell(item.Mitigation.ToString(), null, null, new [] {item.MitigationId}));
+                    cells.Add(new Cell(item.ThreatEvent.Severity.ToString(), item.ThreatEvent.Severity.TextColor, item.ThreatEvent.Severity.BackColor, false, true));
+                    cells.Add(new Cell(item.Strength.ToString()));
                 }
 
                 result = cells;
@@ -259,7 +259,7 @@ namespace ThreatsManager.Extensions.Reporting
                             var cell = Cell.Create(item, property);
                             if (cell != null)
                             {
-                                cells.Add(new Cell($"{item.Parent.Name}",
+                                cells.Add(new Cell($"{item.Parent.ToString()}",
                                     $"[{item.Parent.GetIdentityTypeInitial()}] ",
                                     null,
                                     new[] { item.ParentId }));

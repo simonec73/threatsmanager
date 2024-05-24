@@ -135,7 +135,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             var entities = model.EntityTemplates?
                 .Where(x => x.EntityType == entityType)
-                .OrderBy(x => x.Name).ToArray();
+                .OrderBy(x => x.ToString()).ToArray();
             if (entities?.Any() ?? false)
             {
                 foreach (var entity in entities)
@@ -146,7 +146,7 @@ namespace ThreatsManager.Extensions.Reporting
                     var itemRows = entity.GetItemRows()?.ToArray();
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
-                    list.Add(new ListItem(entity.Name, entity.Id, items));
+                    list.Add(new ListItem(entity.ToString(), entity.Id, items));
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace ThreatsManager.Extensions.Reporting
         private void AddFlowTemplates([NotNull] List<ListItem> list, [NotNull] IThreatModel model)
         {
             var flows = model.FlowTemplates?
-                .OrderBy(x => x.Name).ToArray();
+                .OrderBy(x => x.ToString()).ToArray();
             if (flows?.Any() ?? false)
             {
                 foreach (var flow in flows)
@@ -165,7 +165,7 @@ namespace ThreatsManager.Extensions.Reporting
                     var itemRows = flow.GetItemRows()?.ToArray();
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
-                    list.Add(new ListItem(flow.Name, flow.Id, items));
+                    list.Add(new ListItem(flow.ToString(), flow.Id, items));
                 }
             }
         }
@@ -173,7 +173,7 @@ namespace ThreatsManager.Extensions.Reporting
         private void AddTrustBoundaryTemplates([NotNull] List<ListItem> list, [NotNull] IThreatModel model)
         {
             var trustBoundaries = model.TrustBoundaryTemplates?
-                .OrderBy(x => x.Name).ToArray();
+                .OrderBy(x => x.ToString()).ToArray();
             if (trustBoundaries?.Any() ?? false)
             {
                 foreach (var trustBoundary in trustBoundaries)
@@ -183,7 +183,7 @@ namespace ThreatsManager.Extensions.Reporting
                     var itemRows = trustBoundary.GetItemRows()?.ToArray();
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
-                    list.Add(new ListItem(trustBoundary.Name, trustBoundary.Id, items));
+                    list.Add(new ListItem(trustBoundary.ToString(), trustBoundary.Id, items));
                 }
             }
         }

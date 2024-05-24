@@ -235,7 +235,6 @@
             this._pageFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._pageFile.AntiAlias = false;
             this._pageFile.BackColor = System.Drawing.Color.White;
             this._pageFile.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._pageFile.Controls.Add(this._browse);

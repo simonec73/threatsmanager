@@ -54,6 +54,10 @@ namespace ThreatsManager.Extensions.Reporting
                     if (shortTermMitigations.Any())
                         selectedMitigations.AddRange(shortTermMitigations);
                     var shortTerm = estimator.Estimate(model, selectedMitigations, out var shortTermMin, out var shortTermMax) * 100f / currentRisk;
+                    if (float.IsNaN(shortTerm) || shortTerm > current)
+                        shortTerm = 100f;
+                    else if (shortTerm < 0f)
+                        shortTerm = 0f;
 
                     var midTermMitigations = mitigations
                         .Where(x => x.GetStatus() == RoadmapStatus.MidTerm)
@@ -62,6 +66,10 @@ namespace ThreatsManager.Extensions.Reporting
                     if (midTermMitigations.Any())
                         selectedMitigations.AddRange(midTermMitigations);
                     var midTerm = estimator.Estimate(model, selectedMitigations, out var midTermMin, out var midTermMax) * 100f / currentRisk;
+                    if (float.IsNaN(midTerm) || midTerm > current)
+                        midTerm = 100f;
+                    else if (midTerm < 0f)
+                        midTerm = 0f;
 
                     var longTermMitigations = mitigations
                         .Where(x => x.GetStatus() == RoadmapStatus.LongTerm)
@@ -70,6 +78,10 @@ namespace ThreatsManager.Extensions.Reporting
                     if (longTermMitigations.Any())
                         selectedMitigations.AddRange(longTermMitigations);
                     var longTerm = estimator.Estimate(model, selectedMitigations, out var longTermMin, out var longTermMax) * 100f / currentRisk;
+                    if (float.IsNaN(longTerm) || longTerm > current)
+                        longTerm = 100f;
+                    else if (longTerm < 0f)
+                        longTerm = 0f;
 
                     float acceptableRisk;
                     var parameters = schemaManager.Parameters?.ToArray();

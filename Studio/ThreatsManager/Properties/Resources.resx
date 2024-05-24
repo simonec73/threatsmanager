@@ -420,7 +420,9 @@ and this is even more true for constructive criticism.</value>
     <value>It is not possible to write the User Dictionary. If you have configured Ransomware Protection, please mark the Threats Manager Studio as trusted.</value>
   </data>
   <data name="ResourcesGuard_ThresholdReached" xml:space="preserve">
-    <value>Threats Manager Studio is reaching the maximum amount of available system resources.\nTo avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.\nThis message will not be repeated.</value>
+    <value>Threats Manager Studio is reaching the maximum amount of available system resources.
+To avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.
+This message will not be repeated.</value>
   </data>
   <data name="redo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\redo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

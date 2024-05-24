@@ -110,7 +110,7 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControlItem5,
             this.layoutControlItem6,
             this.layoutControlItem7});
-            this.layoutControl1.Size = new System.Drawing.Size(1474, 923);
+            this.layoutControl1.Size = new System.Drawing.Size(1145, 701);
             this.layoutControl1.TabIndex = 0;
             // 
             // _objectName
@@ -120,7 +120,7 @@ namespace ThreatsManager.Quality.Annotations
             this._objectName.Location = new System.Drawing.Point(78, 7);
             this._objectName.Margin = new System.Windows.Forms.Padding(0);
             this._objectName.Name = "_objectName";
-            this._objectName.Size = new System.Drawing.Size(1388, 36);
+            this._objectName.Size = new System.Drawing.Size(1059, 36);
             this._objectName.TabIndex = 0;
             this._objectName.Text = "label1";
             this._objectName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -137,11 +137,11 @@ namespace ThreatsManager.Quality.Annotations
             this._askedBy.ButtonCustom.Visible = true;
             this._askedBy.DisabledBackColor = System.Drawing.Color.White;
             this._askedBy.ForeColor = System.Drawing.Color.Black;
-            this._askedBy.Location = new System.Drawing.Point(135, 238);
+            this._askedBy.Location = new System.Drawing.Point(135, 182);
             this._askedBy.Margin = new System.Windows.Forms.Padding(0);
             this._askedBy.Name = "_askedBy";
             this._askedBy.PreventEnterBeep = true;
-            this._askedBy.Size = new System.Drawing.Size(446, 31);
+            this._askedBy.Size = new System.Drawing.Size(315, 31);
             this._askedBy.TabIndex = 3;
             this._askedBy.ButtonCustomClick += new System.EventHandler(this._askedBy_ButtonCustomClick);
             this._askedBy.TextChanged += new System.EventHandler(this._askedBy_TextChanged);
@@ -149,10 +149,10 @@ namespace ThreatsManager.Quality.Annotations
             // _answered
             // 
             this._answered.AutoSize = true;
-            this._answered.Location = new System.Drawing.Point(8, 802);
+            this._answered.Location = new System.Drawing.Point(8, 579);
             this._answered.Margin = new System.Windows.Forms.Padding(0);
             this._answered.Name = "_answered";
-            this._answered.Size = new System.Drawing.Size(1458, 34);
+            this._answered.Size = new System.Drawing.Size(1129, 34);
             this._answered.TabIndex = 7;
             this._answered.Text = "Has been fully answered";
             this._answered.UseVisualStyleBackColor = true;
@@ -170,7 +170,7 @@ namespace ThreatsManager.Quality.Annotations
             this._askedOn.ButtonDropDown.Shortcut = DevComponents.DotNetBar.eShortcut.AltDown;
             this._askedOn.ButtonDropDown.Visible = true;
             this._askedOn.IsPopupCalendarOpen = false;
-            this._askedOn.Location = new System.Drawing.Point(724, 238);
+            this._askedOn.Location = new System.Drawing.Point(593, 182);
             this._askedOn.Margin = new System.Windows.Forms.Padding(0);
             // 
             // 
@@ -201,7 +201,7 @@ namespace ThreatsManager.Quality.Annotations
             this._askedOn.MonthCalendar.NavigationBackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._askedOn.MonthCalendar.TodayButtonVisible = true;
             this._askedOn.Name = "_askedOn";
-            this._askedOn.Size = new System.Drawing.Size(299, 31);
+            this._askedOn.Size = new System.Drawing.Size(200, 31);
             this._askedOn.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._askedOn.TabIndex = 4;
             this._askedOn.ValueChanged += new System.EventHandler(this._askedOn_ValueChanged);
@@ -221,10 +221,10 @@ namespace ThreatsManager.Quality.Annotations
             this._askedVia.ButtonCustom2.Visible = true;
             this._askedVia.DisabledBackColor = System.Drawing.Color.White;
             this._askedVia.ForeColor = System.Drawing.Color.Black;
-            this._askedVia.Location = new System.Drawing.Point(1166, 238);
+            this._askedVia.Location = new System.Drawing.Point(936, 182);
             this._askedVia.Margin = new System.Windows.Forms.Padding(0);
             this._askedVia.Name = "_askedVia";
-            this._askedVia.Size = new System.Drawing.Size(300, 31);
+            this._askedVia.Size = new System.Drawing.Size(201, 31);
             this._askedVia.TabIndex = 5;
             this._askedVia.ButtonCustomClick += new System.EventHandler(this._askedVia_ButtonCustomClick);
             this._askedVia.ButtonCustom2Click += new System.EventHandler(this._askedVia_ButtonCustom2Click);
@@ -233,40 +233,40 @@ namespace ThreatsManager.Quality.Annotations
             // _modifiedOn
             // 
             this._modifiedOn.AutoSize = true;
-            this._modifiedOn.Location = new System.Drawing.Point(872, 890);
+            this._modifiedOn.Location = new System.Drawing.Point(707, 667);
             this._modifiedOn.Margin = new System.Windows.Forms.Padding(0);
             this._modifiedOn.Name = "_modifiedOn";
-            this._modifiedOn.Size = new System.Drawing.Size(594, 26);
+            this._modifiedOn.Size = new System.Drawing.Size(430, 26);
             this._modifiedOn.TabIndex = 11;
             this._modifiedOn.Text = "label4";
             // 
             // _modifiedBy
             // 
             this._modifiedBy.AutoSize = true;
-            this._modifiedBy.Location = new System.Drawing.Point(135, 890);
+            this._modifiedBy.Location = new System.Drawing.Point(135, 667);
             this._modifiedBy.Margin = new System.Windows.Forms.Padding(0);
             this._modifiedBy.Name = "_modifiedBy";
-            this._modifiedBy.Size = new System.Drawing.Size(594, 26);
+            this._modifiedBy.Size = new System.Drawing.Size(429, 26);
             this._modifiedBy.TabIndex = 10;
             this._modifiedBy.Text = "label3";
             // 
             // _createdOn
             // 
             this._createdOn.AutoSize = true;
-            this._createdOn.Location = new System.Drawing.Point(872, 850);
+            this._createdOn.Location = new System.Drawing.Point(707, 627);
             this._createdOn.Margin = new System.Windows.Forms.Padding(0);
             this._createdOn.Name = "_createdOn";
-            this._createdOn.Size = new System.Drawing.Size(594, 26);
+            this._createdOn.Size = new System.Drawing.Size(430, 26);
             this._createdOn.TabIndex = 9;
             this._createdOn.Text = "label2";
             // 
             // _createdBy
             // 
             this._createdBy.AutoSize = true;
-            this._createdBy.Location = new System.Drawing.Point(135, 850);
+            this._createdBy.Location = new System.Drawing.Point(135, 627);
             this._createdBy.Margin = new System.Windows.Forms.Padding(0);
             this._createdBy.Name = "_createdBy";
-            this._createdBy.Size = new System.Drawing.Size(594, 26);
+            this._createdBy.Size = new System.Drawing.Size(429, 26);
             this._createdBy.TabIndex = 8;
             this._createdBy.Text = "label1";
             // 
@@ -276,7 +276,7 @@ namespace ThreatsManager.Quality.Annotations
             this._text.Location = new System.Drawing.Point(135, 68);
             this._text.Margin = new System.Windows.Forms.Padding(0);
             this._text.Name = "_text";
-            this._text.Size = new System.Drawing.Size(1331, 156);
+            this._text.Size = new System.Drawing.Size(1002, 100);
             this._text.TabIndex = 2;
             this._text.Text = "";
             this._text.TextChanged += new System.EventHandler(this._text_TextChanged);
@@ -302,13 +302,13 @@ namespace ThreatsManager.Quality.Annotations
             this._answers.ControlBox.CloseBox});
             this._answers.Controls.Add(this.superTabControlPanel1);
             this._answers.ForeColor = System.Drawing.Color.Black;
-            this._answers.Location = new System.Drawing.Point(135, 292);
+            this._answers.Location = new System.Drawing.Point(135, 236);
             this._answers.Margin = new System.Windows.Forms.Padding(0);
             this._answers.Name = "_answers";
             this._answers.ReorderTabsEnabled = false;
             this._answers.SelectedTabFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this._answers.SelectedTabIndex = 0;
-            this._answers.Size = new System.Drawing.Size(1331, 496);
+            this._answers.Size = new System.Drawing.Size(1002, 329);
             this._answers.TabFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._answers.TabIndex = 6;
             this._answers.Tabs.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -322,7 +322,7 @@ namespace ThreatsManager.Quality.Annotations
             this.superTabControlPanel1.Location = new System.Drawing.Point(0, 0);
             this.superTabControlPanel1.Margin = new System.Windows.Forms.Padding(6);
             this.superTabControlPanel1.Name = "superTabControlPanel1";
-            this.superTabControlPanel1.Size = new System.Drawing.Size(1331, 496);
+            this.superTabControlPanel1.Size = new System.Drawing.Size(1002, 329);
             this.superTabControlPanel1.TabIndex = 1;
             // 
             // _addAnswer
@@ -526,7 +526,7 @@ namespace ThreatsManager.Quality.Annotations
             this.Controls.Add(this.layoutControl1);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "AnnotationControl";
-            this.Size = new System.Drawing.Size(1474, 923);
+            this.Size = new System.Drawing.Size(1145, 701);
             this.layoutControl1.ResumeLayout(false);
             this.layoutControl1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._askedOn)).EndInit();

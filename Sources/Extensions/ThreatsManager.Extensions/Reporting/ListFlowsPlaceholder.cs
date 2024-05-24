@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<KeyValuePair<string, IPropertyType>> result = null;
 
-            var flows = model.DataFlows?.OrderBy(x => x.Name).ToArray();
+            var flows = model.DataFlows?.OrderBy(x => x.ToString()).ToArray();
 
             if (flows?.Any() ?? false)
             {
@@ -71,7 +71,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             IEnumerable<ListItem> result = null;
 
-            var flows = model.DataFlows?.OrderBy(x => x.Name).ToArray();
+            var flows = model.DataFlows?.OrderBy(x => x.ToString()).ToArray();
 
             if (flows?.Any() ?? false)
             {
@@ -82,17 +82,17 @@ namespace ThreatsManager.Extensions.Reporting
                     var items = new List<ItemRow>();
                     items.Add(new TextRow("Description", flow.Description));
                     if (flow.Source != null)
-                        items.Add(new TextRow("Source", $"[{flow.Source.GetIdentityTypeInitial()}] {flow.Source.Name}", 
+                        items.Add(new TextRow("Source", $"[{flow.Source.GetIdentityTypeInitial()}] {flow.Source.ToString()}", 
                             null, null, new []{flow.SourceId}));
                     if (flow.Target != null)
-                        items.Add(new TextRow("Target", $"[{flow.Target.GetIdentityTypeInitial()}] {flow.Target.Name}",
+                        items.Add(new TextRow("Target", $"[{flow.Target.GetIdentityTypeInitial()}] {flow.Target.ToString()}",
                             null, null, new []{flow.TargetId}));
                     items.Add(new TextRow("Flow Type", flow.FlowType.GetEnumLabel()));
                     var itemRows = flow.GetItemRows()?.ToArray();
                     if (itemRows?.Any() ?? false)
                         items.AddRange(itemRows);
 
-                    list.Add(new ListItem(flow.Name, flow.Id, items));
+                    list.Add(new ListItem(flow.ToString(), flow.Id, items));
                 }
 
                 result = list;
