@@ -38,7 +38,7 @@ namespace ThreatsManager.Extensions.Reporting
             var schema = new RoadmapPropertySchemaManager(model);
             var mitigations = model.GetUniqueMitigations()?
                 .Where(x => schema.GetStatus(x) == RoadmapStatus.LongTerm)
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.ToString())
                 .ToArray();
 
             if (mitigations?.Any() ?? false)
@@ -80,7 +80,7 @@ namespace ThreatsManager.Extensions.Reporting
             var schema = new RoadmapPropertySchemaManager(model);
             var mitigations = model.GetUniqueMitigations()?
                 .Where(x => schema.GetStatus(x) == RoadmapStatus.LongTerm)
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.ToString())
                 .ToArray();
 
             if (mitigations?.Any() ?? false)
@@ -114,7 +114,7 @@ namespace ThreatsManager.Extensions.Reporting
                         if (itemRows?.Any() ?? false)
                             items.AddRange(itemRows);
 
-                        list.Add(new ListItem(mitigation.Name, mitigation.Id, items));
+                        list.Add(new ListItem(mitigation.ToString(), mitigation.Id, items));
                     }
                 }
 
@@ -130,8 +130,8 @@ namespace ThreatsManager.Extensions.Reporting
 
             var list = mitigations?
                 .OrderByDescending(x => x.Strength, new StrengthComparer())
-                .ThenBy(x => x.ThreatEvent.Parent.Name)
-                .ThenBy(x => x.ThreatEvent.Name).ToArray();
+                .ThenBy(x => x.ThreatEvent.Parent.ToString())
+                .ThenBy(x => x.ThreatEvent.ToString()).ToArray();
             if (list?.Any() ?? false)
             {
                 var cells = new List<Cell>();
@@ -140,11 +140,11 @@ namespace ThreatsManager.Extensions.Reporting
                 {
                     if (item.ThreatEvent?.Parent != null)
                     {
-                        cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
+                        cells.Add(new Cell($"{item.ThreatEvent.Parent.ToString()}",
                             $"[{item.ThreatEvent.Parent.GetIdentityTypeInitial()}] ", null, new[] { item.ThreatEvent.ParentId }));
-                        cells.Add(new Cell(item.ThreatEvent.Name, null, null,
+                        cells.Add(new Cell(item.ThreatEvent.ToString(), null, null,
                             new[] { item.ThreatEvent.Id, item.ThreatEvent.ThreatTypeId }));
-                        cells.Add(new Cell(item.Strength.Name ?? DefaultStrength.Average.GetEnumLabel()));
+                        cells.Add(new Cell(item.Strength.ToString() ?? DefaultStrength.Average.GetEnumLabel()));
                         cells.Add(new Cell(item.Status.GetEnumLabel()));
                     }
                 }
@@ -162,8 +162,8 @@ namespace ThreatsManager.Extensions.Reporting
             var list = mitigations?
                 .Where(x => !string.IsNullOrWhiteSpace(x.Directives))
                 .OrderByDescending(x => x.Strength, new StrengthComparer())
-                .ThenBy(x => x.ThreatEvent.Parent.Name)
-                .ThenBy(x => x.ThreatEvent.Name).ToArray();
+                .ThenBy(x => x.ThreatEvent.Parent.ToString())
+                .ThenBy(x => x.ThreatEvent.ToString()).ToArray();
             if (list?.Any() ?? false)
             {
                 var cells = new List<Cell>();
@@ -172,7 +172,7 @@ namespace ThreatsManager.Extensions.Reporting
                 {
                     if (item.ThreatEvent?.Parent != null)
                     {
-                        cells.Add(new Cell($"{item.ThreatEvent.Parent.Name}",
+                        cells.Add(new Cell($"{item.ThreatEvent.Parent.ToString()}",
                             $"[{item.ThreatEvent.Parent.GetIdentityTypeInitial()}] ",
                             null,
                             new[] { item.ThreatEvent.ParentId }));

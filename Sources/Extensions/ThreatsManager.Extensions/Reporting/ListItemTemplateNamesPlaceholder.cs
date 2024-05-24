@@ -36,38 +36,38 @@ namespace ThreatsManager.Extensions.Reporting
 
             var externalInteractors = model.EntityTemplates?
                 .Where(x => x.EntityType == EntityType.ExternalInteractor)
-                .OrderBy(x => x.Name)
-                .Select(x => x.Name)
+                .OrderBy(x => x.ToString())
+                .Select(x => x.ToString())
                 .ToArray();
             if (externalInteractors?.Any() ?? false)
                 list.AddRange(externalInteractors);
 
             var processes = model.EntityTemplates?
                 .Where(x => x.EntityType == EntityType.Process)
-                .OrderBy(x => x.Name)
-                .Select(x => x.Name)
+                .OrderBy(x => x.ToString())
+                .Select(x => x.ToString())
                 .ToArray();
             if (processes?.Any() ?? false)
                 list.AddRange(processes);
 
             var dataStores = model.EntityTemplates?
                 .Where(x => x.EntityType == EntityType.DataStore)
-                .OrderBy(x => x.Name)
-                .Select(x => x.Name)
+                .OrderBy(x => x.ToString())
+                .Select(x => x.ToString())
                 .ToArray();
             if (dataStores?.Any() ?? false)
                 list.AddRange(dataStores);
 
             var flows = model.FlowTemplates?
-                .OrderBy(x => x.Name)
-                .Select(x => x.Name)
+                .OrderBy(x => x.ToString())
+                .Select(x => x.ToString())
                 .ToArray();
             if (flows?.Any() ?? false)
                 list.AddRange(flows);
 
             var trustBoundaries = model.TrustBoundaryTemplates?
-                .OrderBy(x => x.Name)
-                .Select(x => x.Name)
+                .OrderBy(x => x.ToString())
+                .Select(x => x.ToString())
                 .ToArray();
             if (trustBoundaries?.Any() ?? false)
                 list.AddRange(trustBoundaries);

@@ -29,7 +29,7 @@ namespace ThreatsManager.Extensions.Reporting
         {
             TableItem result = null;
 
-            var threatActors = model.ThreatActors?.OrderBy(x => x.Name).ToArray();
+            var threatActors = model.ThreatActors?.OrderBy(x => x.ToString()).ToArray();
             if (threatActors?.Any() ?? false)
             {
                 result = new TableItem(Name, new[]
@@ -51,7 +51,7 @@ namespace ThreatsManager.Extensions.Reporting
             {
                 foreach (var threatActor in threatActors)
                 {
-                    result.Add(new Cell(threatActor.Name));
+                    result.Add(new Cell(threatActor.ToString()));
                     result.Add(new Cell(threatActor.Description));
                 }
             }

@@ -57,21 +57,21 @@ namespace ThreatsManager.Extensions.Reporting
 
                 var threatTypes = threatEvents.Select(x => x.ThreatType).Distinct()
                     .OrderByDescending(x => x.GetTopSeverity(), new SeverityComparer())
-                    .ThenBy(x => x.Name)
+                    .ThenBy(x => x.ToString())
                     .ToArray();
 
                 foreach (var threatType in threatTypes)
                 {
                     var mitigations = threatEventMitigations.Where(x => x.ThreatEvent.ThreatTypeId == threatType.Id).ToArray();
 
-                    result.Add(new Cell(threatType.Name, null, null, new[] {threatType.Id}));
+                    result.Add(new Cell(threatType.ToString(), null, null, new[] {threatType.Id}));
                     var topSeverity = threatType.GetTopSeverity() ?? threatType.Severity;
-                    result.Add(new Cell(topSeverity.Name, topSeverity.TextColor, topSeverity.BackColor, false, true));
+                    result.Add(new Cell(topSeverity.ToString(), topSeverity.TextColor, topSeverity.BackColor, false, true));
                     result.Add(new Cell(mitigations
-                        .OrderBy(x => x.ThreatEvent.Parent.Name)
-                        .ThenBy(x => x.Mitigation.Name)
+                        .OrderBy(x => x.ThreatEvent.Parent.ToString())
+                        .ThenBy(x => x.Mitigation.ToString())
                         .Select(x =>
-                            new Line(x.Mitigation.Name, $"[{x.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {x.ThreatEvent.Parent.Name}: ", 
+                            new Line(x.Mitigation.ToString(), $"[{x.ThreatEvent?.Parent?.GetIdentityTypeInitial() ?? ThreatModelManager.Unknown}] {x.ThreatEvent.Parent.ToString()}: ", 
                                 null, new[] {x.MitigationId}, x.Status.ToString()))));
                 }
             }
