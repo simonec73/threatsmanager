@@ -599,7 +599,9 @@ namespace ThreatsManager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Threats Manager Studio is reaching the maximum amount of available system resources.\nTo avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.\nThis message will not be repeated..
+        ///   Looks up a localized string similar to Threats Manager Studio is reaching the maximum amount of available system resources.
+        ///To avoid crashes, it is recommended to save the document, close Threats Manager Studio and open a new instance.
+        ///This message will not be repeated..
         /// </summary>
         internal static string ResourcesGuard_ThresholdReached {
             get {

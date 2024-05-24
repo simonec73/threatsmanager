@@ -51,12 +51,16 @@ namespace ThreatsManager.Extensions.Reporting
                 {
                     foreach (var diagram in diagrams)
                     {
-                        var panel = new ModelPanel();
-                        panel.SetDiagram(diagram);
-                        var imageRow = new ImageRow("Diagram", panel.GetMetafile(), $"The '{diagram.Name}' scenario.");
-                        var textRow = new TextRow("Description", diagram.Description);
+                        if ((diagram.Entities?.Any() ?? false) ||
+                            (diagram.Groups?.Any() ?? false))
+                        {
+                            var panel = new ModelPanel();
+                            panel.SetDiagram(diagram);
+                            var imageRow = new ImageRow("Diagram", panel.GetMetafile(), $"The '{diagram.Name}' scenario.");
+                            var textRow = new TextRow("Description", diagram.Description);
 
-                        list.Add(new ListItem(diagram.Name, diagram.Id, new ItemRow[]{imageRow, textRow}));
+                            list.Add(new ListItem(diagram.ToString(), diagram.Id, new ItemRow[] { imageRow, textRow }));
+                        }
                     }
 
                 }

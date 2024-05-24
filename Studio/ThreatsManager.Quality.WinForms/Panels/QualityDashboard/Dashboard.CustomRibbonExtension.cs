@@ -433,10 +433,13 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
             }
         }
 
-        private SizeF WriteText([NotNull] PdfPage page, [Required] string text, 
+        private SizeF WriteText([NotNull] PdfPage page, string text, 
             PdfStandardFont font, float x, float y, PdfBrush brush = null, 
             bool alignRight = false, float maxWidth = 0, bool wordWrap = true)
         {
+            if (string.IsNullOrWhiteSpace(text))
+                return SizeF.Empty;
+
             if (maxWidth == 0)
                 maxWidth = page.Graphics.ClientSize.Width;
             var format = new PdfStringFormat();

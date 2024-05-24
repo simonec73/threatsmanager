@@ -260,7 +260,6 @@
             this._pageTMProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._pageTMProperties.AntiAlias = false;
             this._pageTMProperties.BackColor = System.Drawing.Color.White;
             this._pageTMProperties.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._pageTMProperties.Controls.Add(this._layoutDetails);

@@ -150,27 +150,27 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     {
                         case ImageSize.Small:
                             if (entity.SmallImage != null)
-                                icon.Image = entity.SmallImage;
+                                icon.Image = entity.GetImage(ImageSize.Small);
                             else if (entity.Image != null)
-                                icon.Image = entity.Image;
+                                icon.Image = entity.GetImage(ImageSize.Medium);
                             else if (entity.BigImage != null)
-                                icon.Image = entity.BigImage;
+                                icon.Image = entity.GetImage(ImageSize.Big);
                             break;
                         case ImageSize.Medium:
                             if (entity.Image != null)
-                                icon.Image = entity.Image;
+                                icon.Image = entity.GetImage(ImageSize.Medium);
                             else if (entity.BigImage != null)
-                                icon.Image = entity.BigImage;
+                                icon.Image = entity.GetImage(ImageSize.Big);
                             else if (entity.SmallImage != null)
-                                icon.Image = entity.SmallImage;
+                                icon.Image = entity.GetImage(ImageSize.Small);
                             break;
                         case ImageSize.Big:
                             if (entity.BigImage != null)
-                                icon.Image = entity.BigImage;
+                                icon.Image = entity.GetImage(ImageSize.Big);
                             else if (entity.Image != null)
-                                icon.Image = entity.Image;
+                                icon.Image = entity.GetImage(ImageSize.Medium);
                             else if (entity.SmallImage != null)
-                                icon.Image = entity.SmallImage;
+                                icon.Image = entity.GetImage(ImageSize.Small);
                             break;
                     }
                 }

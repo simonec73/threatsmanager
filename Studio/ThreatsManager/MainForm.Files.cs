@@ -766,7 +766,7 @@ namespace ThreatsManager
             {
                 _missingTypes.Add(name);
                 var parts = typeName.Split('.');
-                ShowDesktopAlert($"Document uses type {parts.Last()} from {assemblyName}, which is unknown.\nThe document will be loaded but some information may be missing.", true);
+                ShowDesktopAlert($"Document uses type {parts.Last()} from {assemblyName}, which is unknown.<br/>The document will be loaded but some information may be lost.<br/><br/><b>IMPORTANT: if you save the file, the missing information might be lost forever!</b>", true);
             }
         }
         #endregion
