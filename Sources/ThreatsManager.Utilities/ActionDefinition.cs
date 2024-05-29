@@ -66,7 +66,7 @@ namespace ThreatsManager.Utilities
         /// <summary>
         /// Inital status for the action.
         /// </summary>
-        public bool Enabled { get; }
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// Shortcut for the action.
