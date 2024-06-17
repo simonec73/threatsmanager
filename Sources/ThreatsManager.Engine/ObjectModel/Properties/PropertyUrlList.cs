@@ -162,6 +162,23 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             StringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
         }
 
+        public void SetUrl([Required] string originalLabel, [Required] string newLabel, [Required] string url)
+        {
+            var values = Values?.ToList() ?? new List<IUrl>();
+            var urlItem = values.FirstOrDefault(x => string.CompareOrdinal(x.Label, originalLabel) == 0);
+            if (urlItem != null)
+            {
+                urlItem.Label = newLabel;
+                urlItem.Url = url;
+            }
+            else
+            {
+                values.Add(new UrlItem(newLabel, url));
+            }
+
+            StringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+        }
+
         public bool DeleteUrl([Required] string label)
         {
             bool result = false;

@@ -80,6 +80,29 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         [EnumType("ThreatsManager.Interfaces.ObjectModel.Properties.IIdentityReferencePropertyType, ThreatsManager.Interfaces")]
         [EnumLabel("Reference to another object")]
         [UiHidden]
-        IdentityReference
+        IdentityReference,
+
+
+        /// <summary>
+        /// Property contains a Url.
+        /// </summary>
+        [EnumType("ThreatsManager.Interfaces.ObjectModel.Properties.IUrlPropertyType, ThreatsManager.Interfaces")]
+        [EnumLabel("Hyperlink")]
+        Url,
+
+        /// <summary>
+        /// Property contains a List of Urls.
+        /// </summary>
+        [EnumType("ThreatsManager.Interfaces.ObjectModel.Properties.IUrlListPropertyType, ThreatsManager.Interfaces")]
+        [EnumLabel("List of Hyperlinks")]
+        [UiHidden]
+        UrlList,
+
+        /// <summary>
+        /// Property contains a Date.
+        /// </summary>
+        [EnumType("ThreatsManager.Interfaces.ObjectModel.Properties.IDatePropertyType, ThreatsManager.Interfaces")]
+        Date
+
     }
 }

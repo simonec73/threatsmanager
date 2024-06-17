@@ -27,6 +27,14 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         void SetUrl(string label, string url);
 
         /// <summary>
+        /// Set a Url into the list.
+        /// </summary>
+        /// <param name="originalLabel">Original label of the Url.</param>
+        /// <param name="newLabel">New label of the Url.</param>
+        /// <param name="url">Url.</param>
+        void SetUrl(string originalLabel, string newLabel, string url);
+
+        /// <summary>
         /// Remove a Url from the list.
         /// </summary>
         /// <param name="label">Label of the Url.</param>

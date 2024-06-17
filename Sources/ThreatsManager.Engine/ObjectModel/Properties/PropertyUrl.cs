@@ -111,11 +111,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             {
                 string result = null;
 
-                var regex = new Regex(@"(?'label'[^\(]+) \((?'url'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))\)");
-                var match = regex.Match(_value);
-                if (match.Success)
+                if (_value != null)
                 {
-                    result = match.Groups["url"].Value;
+                    var regex = new Regex(@"(?'label'[^\(]+) \((?'url'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))\)");
+                    var match = regex.Match(_value);
+                    if (match.Success)
+                    {
+                        result = match.Groups["url"].Value;
+                    }
                 }
 
                 return result;
@@ -134,11 +137,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             {
                 string result = null;
 
-                var regex = new Regex(@"(?'label'[^\(]+) \((?'url'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))\)");
-                var match = regex.Match(_value);
-                if (match.Success)
+                if (_value != null)
                 {
-                    result = match.Groups["label"].Value;
+                    var regex = new Regex(@"(?'label'[^\(]+) \((?'url'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))\)");
+                    var match = regex.Match(_value);
+                    if (match.Success)
+                    {
+                        result = match.Groups["label"].Value;
+                    }
                 }
 
                 return result;
