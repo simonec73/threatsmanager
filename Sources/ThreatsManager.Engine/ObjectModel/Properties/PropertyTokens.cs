@@ -152,9 +152,10 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                         }
 
                         scope?.Complete();
+
+                        InvokeChanged();
                     }
                 }
-                Changed?.Invoke(this);
             }
         }
 

@@ -85,7 +85,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         #region Specific implementation.
         [JsonProperty("value")]
-        [NotRecorded]
+        [field: NotRecorded]
         private string _value { get; set; }
 
         public virtual string StringValue
@@ -99,6 +99,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (string.CompareOrdinal(value, _value) != 0)
                 {
                     _value = value;
+                    InvokeChanged();
                 }
             }
         }

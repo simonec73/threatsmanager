@@ -103,6 +103,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         private AdvisableCollection<RecordableString> _items { get; set; }
 
         [InitializationRequired]
+        [property:NotRecorded]
         public string StringValue
         {
             get => Value?.TagConcat();
@@ -114,12 +115,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 if (string.CompareOrdinal(StringValue, value) != 0)
                 {
                     Value = value?.TagSplit();
+                    InvokeChanged();
                 }
             }
         }
 
         [InitializationRequired]
-        [property:NotRecorded]
         public virtual IEnumerable<string> Value
         {
             get => _items?.Select(x => x.Value).AsEnumerable();

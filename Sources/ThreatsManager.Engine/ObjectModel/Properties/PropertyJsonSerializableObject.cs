@@ -137,7 +137,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         [Reference]
         [JsonProperty("value", TypeNameHandling = TypeNameHandling.Objects)]
-        [NotRecorded]
+        [field: NotRecorded]
         private object _value { get; set; }
 
         public virtual object Value

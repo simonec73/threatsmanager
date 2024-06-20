@@ -85,6 +85,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
+        [property:NotRecorded]
         public string StringValue
         {
             get => _value.ToString("N");
@@ -110,14 +111,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         }
 
         [JsonProperty("value")]
-        [NotRecorded]
+        [field:NotRecorded]
         private Guid _value { get; set; }
 
         public virtual Guid ValueId => _value;
 
         [Reference]
-        [NotRecorded]
-        private IIdentity _identity;
+        [field: NotRecorded]
+        private IIdentity _identity { get; set; }
 
         public virtual IIdentity Value
         {
