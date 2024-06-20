@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
+using Newtonsoft.Json.Linq;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -89,9 +90,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         #region Specific implementation.
         [JsonProperty("value")]
-        [NotRecorded]
         private string _value { get; set; }
 
+        [property: NotRecorded]
         public virtual string StringValue
         {
             get => _value;
@@ -150,6 +151,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         public void SetUrl([Required] string label, [Required] string url)
         {
+            if (ReadOnly)
+                throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
+
             var values = Values?.ToList() ?? new List<IUrl>();
             var urlItem = values.FirstOrDefault(x => string.CompareOrdinal(x.Label, label) == 0);
             if (urlItem != null)
@@ -159,11 +163,19 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 values.Add(new UrlItem(label, url));
             }
 
-            StringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+            var stringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+            if (string.CompareOrdinal(stringValue, _value) != 0)
+            {
+                _value = stringValue;
+                InvokeChanged();
+            }
         }
 
         public void SetUrl([Required] string originalLabel, [Required] string newLabel, [Required] string url)
         {
+            if (ReadOnly)
+                throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
+
             var values = Values?.ToList() ?? new List<IUrl>();
             var urlItem = values.FirstOrDefault(x => string.CompareOrdinal(x.Label, originalLabel) == 0);
             if (urlItem != null)
@@ -176,21 +188,30 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
                 values.Add(new UrlItem(newLabel, url));
             }
 
-            StringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+            var stringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+            if (string.CompareOrdinal(stringValue, _value) != 0)
+            {
+                _value = stringValue;
+                InvokeChanged();
+            }
         }
 
         public bool DeleteUrl([Required] string label)
         {
+            if (ReadOnly)
+                throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
+
             bool result = false;
 
             var values = Values?.ToList();
             var found = values?.Any(x => string.CompareOrdinal(x.Label, label) == 0) ?? false;
             if (found)
             {
-                StringValue = values
+                _value = values
                     .Select(x => string.CompareOrdinal(x.Label, label) != 0 ? null : x.ToString())
                     .Aggregate((x, y) => $"{x}\r\n{y}");
                 result = true;
+                InvokeChanged();
             }
 
             return result;
@@ -198,7 +219,14 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         public void ClearUrls()
         {
-            StringValue = null;
+            if (ReadOnly)
+                throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
+
+            if (_value != null)
+            {
+                _value = null;
+                InvokeChanged();
+            }
         }
         #endregion
 

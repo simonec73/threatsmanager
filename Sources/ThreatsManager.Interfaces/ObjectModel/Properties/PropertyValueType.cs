@@ -95,7 +95,6 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// </summary>
         [EnumType("ThreatsManager.Interfaces.ObjectModel.Properties.IUrlListPropertyType, ThreatsManager.Interfaces")]
         [EnumLabel("List of Hyperlinks")]
-        [UiHidden]
         UrlList,
 
         /// <summary>
@@ -103,6 +102,5 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// </summary>
         [EnumType("ThreatsManager.Interfaces.ObjectModel.Properties.IDatePropertyType, ThreatsManager.Interfaces")]
         Date
-
     }
 }

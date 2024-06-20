@@ -86,7 +86,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         #region Specific implementation.
         [JsonProperty("value")]
-        [NotRecorded]
+        [field: NotRecorded]
         private string _value { get; set; }
 
         public virtual string StringValue
@@ -99,12 +99,27 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
                 if (string.CompareOrdinal(value, _value) != 0)
                 {
-                    _value = value;
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        var regex = new Regex(@"(?'label'[^\(]+) \((?'url'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))\)");
+                        var match = regex.Match(value);
+                        if (match.Success)
+                        {
+                            _value = value;
+                            InvokeChanged();
+                        }
+                        else
+                            throw new ArgumentException($"'{value}' is invalid: it must be in the format 'label (url)'.");
+                    }
+                    else
+                    {
+                        _value = null;
+                        InvokeChanged();
+                    }
                 }
             }
         }
 
-        [NotRecorded]
         public string Url
         {
             get
@@ -126,11 +141,18 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             set
             {
-                StringValue = $"{Label} ({value})";
+                if (ReadOnly)
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
+
+                var stringValue = $"{Label ?? ThreatModelManager.Undefined} ({value})";
+                if (string.CompareOrdinal(stringValue, _value) != 0)
+                {
+                    _value = stringValue;
+                    InvokeChanged();
+                }
             }
         }
 
-        [NotRecorded]
         public string Label
         {
             get
@@ -152,7 +174,15 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
             set
             {
-                StringValue = $"{value} ({Url})";
+                if (ReadOnly)
+                    throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
+
+                var stringValue = $"{value} ({Url ?? "https://www.threatsmanager.com"})";
+                if (string.CompareOrdinal(stringValue, _value) != 0)
+                {
+                    _value = stringValue;
+                    InvokeChanged();
+                }
             }
         }
 

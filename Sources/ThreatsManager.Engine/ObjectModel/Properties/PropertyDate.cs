@@ -86,7 +86,6 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         #endregion
 
         #region Specific implementation.
-        [JsonProperty("value")]
         [property: NotRecorded]
         public string StringValue
         {
