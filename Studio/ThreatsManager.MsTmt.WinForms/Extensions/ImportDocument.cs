@@ -88,7 +88,7 @@ namespace ThreatsManager.MsTmt.Extensions
                                 using (var scope = UndoRedoManager.OpenScope("Import TMT Document"))
                                 {
                                     var importer = new Importer();
-                                    importer.Import(threatModel, dialog.FileName, Dpi.Factor.Height, HandleUnassignedThreat,
+                                    importer.Import(threatModel, dialog.FileName, 1f, HandleUnassignedThreat,
                                         out diagrams, out externalInteractors, out processes, out dataStores,
                                         out flows, out trustBoundaries, out entityTypes, out threatTypes,
                                         out customThreatTypes, out threats, out missingThreats);

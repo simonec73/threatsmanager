@@ -90,6 +90,31 @@ namespace ThreatsManager.Quality.Actions
                     }
                 }
             }
+            else
+            {
+                model = containers?.OfType<IThreatModel>().FirstOrDefault();
+                if (model != null)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Disable Annotations on Models"))
+                    {
+                        var sm = new AnnotationsPropertySchemaManager(model);
+
+                        result = true;
+
+                        try
+                        {
+                            sm.DisableAnnotations(model);
+                        }
+                        catch
+                        {
+                            result = false;
+                        }
+
+                        if (result)
+                            scope?.Complete();
+                    }
+                }
+            }
 
             return result;
         }

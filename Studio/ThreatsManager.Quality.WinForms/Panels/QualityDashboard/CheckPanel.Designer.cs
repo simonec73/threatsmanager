@@ -31,14 +31,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DevComponents.Instrumentation.GradientFillColor gradientFillColor1 = new DevComponents.Instrumentation.GradientFillColor();
-            DevComponents.Instrumentation.GradientFillColor gradientFillColor2 = new DevComponents.Instrumentation.GradientFillColor();
-            DevComponents.Instrumentation.GaugeLinearScale gaugeLinearScale1 = new DevComponents.Instrumentation.GaugeLinearScale();
+            DevComponents.Instrumentation.GradientFillColor gradientFillColor7 = new DevComponents.Instrumentation.GradientFillColor();
+            DevComponents.Instrumentation.GradientFillColor gradientFillColor8 = new DevComponents.Instrumentation.GradientFillColor();
+            DevComponents.Instrumentation.GaugeLinearScale gaugeLinearScale4 = new DevComponents.Instrumentation.GaugeLinearScale();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CheckPanel));
-            DevComponents.Instrumentation.GaugePointer gaugePointer1 = new DevComponents.Instrumentation.GaugePointer();
-            DevComponents.Instrumentation.GaugeSection gaugeSection1 = new DevComponents.Instrumentation.GaugeSection();
-            DevComponents.Instrumentation.GaugeSection gaugeSection2 = new DevComponents.Instrumentation.GaugeSection();
-            DevComponents.Instrumentation.GaugeSection gaugeSection3 = new DevComponents.Instrumentation.GaugeSection();
+            DevComponents.Instrumentation.GaugePointer gaugePointer4 = new DevComponents.Instrumentation.GaugePointer();
+            DevComponents.Instrumentation.GaugeSection gaugeSection10 = new DevComponents.Instrumentation.GaugeSection();
+            DevComponents.Instrumentation.GaugeSection gaugeSection11 = new DevComponents.Instrumentation.GaugeSection();
+            DevComponents.Instrumentation.GaugeSection gaugeSection12 = new DevComponents.Instrumentation.GaugeSection();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
             this._gauge = new DevComponents.Instrumentation.GaugeControl();
             this._grid = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
@@ -58,6 +58,7 @@
             this.layoutControl1.Controls.Add(this._gauge);
             this.layoutControl1.Controls.Add(this._grid);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -72,58 +73,58 @@
             // 
             // _gauge
             // 
-            gradientFillColor1.Color1 = System.Drawing.Color.Gainsboro;
-            gradientFillColor1.Color2 = System.Drawing.Color.DarkGray;
-            this._gauge.Frame.BackColor = gradientFillColor1;
-            gradientFillColor2.BorderColor = System.Drawing.Color.Gainsboro;
-            gradientFillColor2.BorderWidth = 1;
-            gradientFillColor2.Color1 = System.Drawing.Color.White;
-            gradientFillColor2.Color2 = System.Drawing.Color.DimGray;
-            this._gauge.Frame.FrameColor = gradientFillColor2;
+            gradientFillColor7.Color1 = System.Drawing.Color.Gainsboro;
+            gradientFillColor7.Color2 = System.Drawing.Color.DarkGray;
+            this._gauge.Frame.BackColor = gradientFillColor7;
+            gradientFillColor8.BorderColor = System.Drawing.Color.Gainsboro;
+            gradientFillColor8.BorderWidth = 1;
+            gradientFillColor8.Color1 = System.Drawing.Color.White;
+            gradientFillColor8.Color2 = System.Drawing.Color.DimGray;
+            this._gauge.Frame.FrameColor = gradientFillColor8;
             this._gauge.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            gaugeLinearScale1.Labels.Visible = false;
-            gaugeLinearScale1.Location = ((System.Drawing.PointF)(resources.GetObject("gaugeLinearScale1.Location")));
-            gaugeLinearScale1.MajorTickMarks.Visible = false;
-            gaugeLinearScale1.MaxPin.Name = "MaxPin";
-            gaugeLinearScale1.MinorTickMarks.Visible = false;
-            gaugeLinearScale1.MinPin.Name = "MinPin";
-            gaugeLinearScale1.Name = "MainScale";
-            gaugePointer1.CapFillColor.BorderColor = System.Drawing.Color.DimGray;
-            gaugePointer1.CapFillColor.BorderWidth = 1;
-            gaugePointer1.CapFillColor.Color1 = System.Drawing.Color.WhiteSmoke;
-            gaugePointer1.CapFillColor.Color2 = System.Drawing.Color.DimGray;
-            gaugePointer1.FillColor.BorderColor = System.Drawing.Color.White;
-            gaugePointer1.FillColor.Color1 = System.Drawing.Color.Black;
-            gaugePointer1.FillColor.Color2 = System.Drawing.Color.Black;
-            gaugePointer1.Length = 0.5F;
-            gaugePointer1.MarkerStyle = DevComponents.Instrumentation.GaugeMarkerStyle.Circle;
-            gaugePointer1.Name = "Pointer1";
-            gaugePointer1.ThermoBackColor.BorderColor = System.Drawing.Color.Black;
-            gaugePointer1.ThermoBackColor.BorderWidth = 1;
-            gaugePointer1.ThermoBackColor.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            gaugePointer1.Value = 40D;
-            gaugePointer1.Width = 0.5F;
-            gaugeLinearScale1.Pointers.AddRange(new DevComponents.Instrumentation.GaugePointer[] {
-            gaugePointer1});
-            gaugeSection1.EndValue = 100D;
-            gaugeSection1.FillColor.Color1 = System.Drawing.Color.Red;
-            gaugeSection1.Name = "Red";
-            gaugeSection1.StartValue = 68D;
-            gaugeSection2.EndValue = 67D;
-            gaugeSection2.FillColor.Color1 = System.Drawing.Color.Yellow;
-            gaugeSection2.Name = "Yellow";
-            gaugeSection2.StartValue = 34D;
-            gaugeSection3.EndValue = 33D;
-            gaugeSection3.FillColor.Color1 = System.Drawing.Color.Lime;
-            gaugeSection3.Name = "Green";
-            gaugeSection3.StartValue = 0D;
-            gaugeLinearScale1.Sections.AddRange(new DevComponents.Instrumentation.GaugeSection[] {
-            gaugeSection1,
-            gaugeSection2,
-            gaugeSection3});
-            gaugeLinearScale1.Width = 0.75F;
+            gaugeLinearScale4.Labels.Visible = false;
+            gaugeLinearScale4.Location = ((System.Drawing.PointF)(resources.GetObject("gaugeLinearScale4.Location")));
+            gaugeLinearScale4.MajorTickMarks.Visible = false;
+            gaugeLinearScale4.MaxPin.Name = "MaxPin";
+            gaugeLinearScale4.MinorTickMarks.Visible = false;
+            gaugeLinearScale4.MinPin.Name = "MinPin";
+            gaugeLinearScale4.Name = "MainScale";
+            gaugePointer4.CapFillColor.BorderColor = System.Drawing.Color.DimGray;
+            gaugePointer4.CapFillColor.BorderWidth = 1;
+            gaugePointer4.CapFillColor.Color1 = System.Drawing.Color.WhiteSmoke;
+            gaugePointer4.CapFillColor.Color2 = System.Drawing.Color.DimGray;
+            gaugePointer4.FillColor.BorderColor = System.Drawing.Color.White;
+            gaugePointer4.FillColor.Color1 = System.Drawing.Color.Black;
+            gaugePointer4.FillColor.Color2 = System.Drawing.Color.Black;
+            gaugePointer4.Length = 0.5F;
+            gaugePointer4.MarkerStyle = DevComponents.Instrumentation.GaugeMarkerStyle.Circle;
+            gaugePointer4.Name = "Pointer1";
+            gaugePointer4.ThermoBackColor.BorderColor = System.Drawing.Color.Black;
+            gaugePointer4.ThermoBackColor.BorderWidth = 1;
+            gaugePointer4.ThermoBackColor.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            gaugePointer4.Value = 40D;
+            gaugePointer4.Width = 0.5F;
+            gaugeLinearScale4.Pointers.AddRange(new DevComponents.Instrumentation.GaugePointer[] {
+            gaugePointer4});
+            gaugeSection10.EndValue = 100D;
+            gaugeSection10.FillColor.Color1 = System.Drawing.Color.Red;
+            gaugeSection10.Name = "Red";
+            gaugeSection10.StartValue = 68D;
+            gaugeSection11.EndValue = 67D;
+            gaugeSection11.FillColor.Color1 = System.Drawing.Color.Yellow;
+            gaugeSection11.Name = "Yellow";
+            gaugeSection11.StartValue = 34D;
+            gaugeSection12.EndValue = 33D;
+            gaugeSection12.FillColor.Color1 = System.Drawing.Color.Lime;
+            gaugeSection12.Name = "Green";
+            gaugeSection12.StartValue = 0D;
+            gaugeLinearScale4.Sections.AddRange(new DevComponents.Instrumentation.GaugeSection[] {
+            gaugeSection10,
+            gaugeSection11,
+            gaugeSection12});
+            gaugeLinearScale4.Width = 0.75F;
             this._gauge.LinearScales.AddRange(new DevComponents.Instrumentation.GaugeLinearScale[] {
-            gaugeLinearScale1});
+            gaugeLinearScale4});
             this._gauge.Location = new System.Drawing.Point(0, 24);
             this._gauge.Margin = new System.Windows.Forms.Padding(0);
             this._gauge.Name = "_gauge";
@@ -133,7 +134,9 @@
             // 
             // _grid
             // 
+            this._grid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this._grid.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
+            this._grid.ForeColor = System.Drawing.Color.Black;
             this._grid.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._grid.Location = new System.Drawing.Point(4, 60);
             this._grid.Margin = new System.Windows.Forms.Padding(0);
@@ -216,8 +219,8 @@
             // 
             // CheckPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.layoutControl1);
             this.Name = "CheckPanel";
             this.Size = new System.Drawing.Size(259, 334);

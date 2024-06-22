@@ -46,10 +46,9 @@ namespace ThreatsManager.DevOps.Dialogs
             this.panel1.Controls.Add(this._ok);
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 89);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.panel1.Location = new System.Drawing.Point(0, 44);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1124, 88);
+            this.panel1.Size = new System.Drawing.Size(562, 44);
             this.panel1.TabIndex = 1;
             // 
             // _ok
@@ -57,10 +56,9 @@ namespace ThreatsManager.DevOps.Dialogs
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
             this._ok.Enabled = false;
-            this._ok.Location = new System.Drawing.Point(406, 21);
-            this._ok.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._ok.Location = new System.Drawing.Point(203, 10);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(150, 44);
+            this._ok.Size = new System.Drawing.Size(75, 22);
             this._ok.TabIndex = 1;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
@@ -70,10 +68,9 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(568, 21);
-            this._cancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._cancel.Location = new System.Drawing.Point(284, 10);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(150, 44);
+            this._cancel.Size = new System.Drawing.Size(75, 22);
             this._cancel.TabIndex = 2;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -86,7 +83,6 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -94,15 +90,15 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControl1.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem1,
             this.layoutControlItem2});
-            this.layoutControl1.Size = new System.Drawing.Size(1124, 89);
+            this.layoutControl1.Size = new System.Drawing.Size(562, 44);
             this.layoutControl1.TabIndex = 2;
             // 
             // _add
             // 
-            this._add.Location = new System.Drawing.Point(966, 7);
+            this._add.Location = new System.Drawing.Point(483, 3);
             this._add.Margin = new System.Windows.Forms.Padding(0);
             this._add.Name = "_add";
-            this._add.Size = new System.Drawing.Size(150, 46);
+            this._add.Size = new System.Drawing.Size(75, 24);
             this._add.TabIndex = 1;
             this._add.Text = "Add New";
             this._add.UseVisualStyleBackColor = true;
@@ -112,20 +108,20 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             this._iterations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._iterations.FormattingEnabled = true;
-            this._iterations.Location = new System.Drawing.Point(97, 7);
+            this._iterations.Location = new System.Drawing.Point(52, 3);
             this._iterations.Margin = new System.Windows.Forms.Padding(0);
             this._iterations.Name = "_iterations";
-            this._iterations.Size = new System.Drawing.Size(853, 33);
+            this._iterations.Size = new System.Drawing.Size(423, 21);
             this._iterations.TabIndex = 0;
             this._iterations.SelectedIndexChanged += new System.EventHandler(this._iterations_SelectedIndexChanged);
             // 
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._iterations;
-            this.layoutControlItem1.Height = 56;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem1.Height = 28;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem1.Text = "Iteration";
             this.layoutControlItem1.Width = 99;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -133,22 +129,21 @@ namespace ThreatsManager.DevOps.Dialogs
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._add;
-            this.layoutControlItem2.Height = 60;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem2.Height = 30;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
-            this.layoutControlItem2.Width = 166;
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.layoutControlItem2.Width = 83;
             // 
             // DevOpsIterationAssignmentDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(1124, 177);
+            this.ClientSize = new System.Drawing.Size(562, 88);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DevOpsIterationAssignmentDialog";

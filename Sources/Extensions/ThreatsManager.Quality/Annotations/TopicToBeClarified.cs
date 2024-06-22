@@ -24,6 +24,9 @@ namespace ThreatsManager.Quality.Annotations
         [JsonProperty("modelId")]
         private Guid _modelId { get; set; }
 
+        [JsonProperty("rationale")]
+        public string Rationale { get; set; }
+
         [JsonProperty("askedOn")]
         private DateTime _askedOn { get; set; }
 

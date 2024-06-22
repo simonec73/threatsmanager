@@ -108,6 +108,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         private List<IListItem> _values { get; set; }
 
         [InitializationRequired]
+        [property:NotRecorded]
         public string StringValue
         {
             get => _items?.Select(x => x.Value).TagConcat();

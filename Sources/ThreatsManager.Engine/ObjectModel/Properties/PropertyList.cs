@@ -91,11 +91,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         #region Specific implementation.
         [JsonProperty("item")]
-        [NotRecorded]
+        [field: NotRecorded]
         private string _item { get; set; }
 
         [Reference]
-        private IListItem _value;
+        [field: NotRecorded]
+        private IListItem _value { get; set; }
 
         [InitializationRequired]
         [property: NotRecorded]

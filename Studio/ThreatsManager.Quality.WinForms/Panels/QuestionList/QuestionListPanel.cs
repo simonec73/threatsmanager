@@ -11,6 +11,7 @@ using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 using ThreatsManager.Quality.Annotations;
 using ThreatsManager.Quality.Schemas;
 using ThreatsManager.Utilities;
@@ -80,7 +81,22 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                     ddc.ButtonClear.Visible = true;
                     ddc.ButtonClearClick += DdcButtonClearClick;
                 }
- 
+
+                panel.Columns.Add(new GridColumn("Rationale")
+                {
+                    HeaderText = "Rationale",
+                    AutoSizeMode = ColumnAutoSizeMode.Fill,
+                    DataType = typeof(string),
+                    EditorType = typeof(GridTextBoxDropDownEditControl),
+                    AllowEdit = true
+                });
+                ddc = panel.Columns["Rationale"].EditControl as GridTextBoxDropDownEditControl;
+                if (ddc != null)
+                {
+                    ddc.ButtonClear.Visible = true;
+                    ddc.ButtonClearClick += DdcButtonClearClick;
+                }
+
                 panel.Columns.Add(new GridColumn("AutoGenRule")
                 {
                     HeaderText = "Automatic Generation Rule",
@@ -111,7 +127,7 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                         question.Rule = dialog.Rule;
                         var row = bc.EditorCell.GridRow;
                         if (row != null)
-                            row.Cells[1].Value = HasSelectionRule(question) ? "Edit Rule" : "Create Rule";
+                            row.Cells["AutoGenRule"].Value = HasSelectionRule(question) ? "Edit Rule" : "Create Rule";
                     }
                 }
             }
@@ -154,12 +170,20 @@ namespace ThreatsManager.Quality.Panels.QuestionList
 
             var row = new GridRow(
                 question.Text,
+                question.Rationale,
                 rule ? "Edit Rule" : "Create Rule");
             row.Tag = question;
             panel.Rows.Add(row);
             row.Cells[0].PropertyChanged += OnQuestionCellChanged;
+            row.Cells[1].PropertyChanged += OnQuestionCellChanged;
 
             return row;
+        }
+
+        private void RemoveEventSubscriptions(GridRow row)
+        {
+            row.Cells[0].PropertyChanged -= OnQuestionCellChanged;
+            row.Cells[1].PropertyChanged -= OnQuestionCellChanged;
         }
 
         private void OnQuestionCellChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -175,6 +199,9 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                         {
                             case "Question":
                                 question.Text = (string) cell.Value;
+                                break;
+                            case "Rationale":
+                                question.Rationale = (string) cell.Value;
                                 break;
                         }
                     }

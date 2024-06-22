@@ -16,7 +16,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         public override int GetBaselineOffsetAtCharIndex(int i)
         {
-            return (int)(base.GetBaselineOffsetAtCharIndex(i) * Dpi.Factor.Height);
+            return base.GetBaselineOffsetAtCharIndex(i);
         }
 
         public void Dispose()

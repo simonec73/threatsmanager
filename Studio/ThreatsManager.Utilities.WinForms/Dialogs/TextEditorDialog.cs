@@ -33,7 +33,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             }
             if (_persistentLocation.IsEmpty)
             {
-                _persistentLocation = new Point((int)(100 * Dpi.Factor.Width), (int)(100 * Dpi.Factor.Height));
+                _persistentLocation = new Point(100, 100);
             }
             else
             {
@@ -126,7 +126,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             {
                 _layout.SuspendLayout();
                 _textLayoutControlItem.HeightType = eLayoutSizeType.Absolute;
-                _textLayoutControlItem.Height = Convert.ToInt32(28.0 * Dpi.Factor.Height * _zoom.Value / 100.0f);
+                _textLayoutControlItem.Height = Convert.ToInt32(28.0 * _zoom.Value / 100.0f);
                 _layout.ResumeLayout();
             }
         }

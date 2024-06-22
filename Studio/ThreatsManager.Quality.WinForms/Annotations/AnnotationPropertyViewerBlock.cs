@@ -27,6 +27,10 @@ namespace ThreatsManager.Quality.Annotations
             {
                 _model = child.Model;
             }
+            else if (container is IThreatModel model)
+            {
+                _model = model;
+            }
 
             if (annotation is TopicToBeClarified topicToBeClarified)
             {

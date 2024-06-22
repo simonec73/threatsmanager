@@ -172,7 +172,7 @@ namespace ThreatsManager.DevOps.Panels
                 FontSize = 9,
                 Width = DefaultWidth - 50,
                 TextColor = Color.White,
-                Height = 16 * Dpi.Factor.Height
+                Height = 16
             };
             header.Add(headerText);
 
@@ -181,7 +181,7 @@ namespace ThreatsManager.DevOps.Panels
                 Selectable = false,
                 AutoRescales = false,
                 AutoResizes = false,
-                Size = new SizeF(16 * Dpi.Factor.Width, 16 * Dpi.Factor.Height),
+                Size = new SizeF(16, 16),
                 Image = Properties.Resources.pencil,
                 Visible = false
             };

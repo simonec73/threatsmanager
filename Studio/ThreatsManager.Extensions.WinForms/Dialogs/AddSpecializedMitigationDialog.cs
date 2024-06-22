@@ -44,7 +44,7 @@ namespace ThreatsManager.Extensions.Dialogs
             _mitigation = mitigation;
             _mitigationName.Text = mitigation.Name;
 
-            _templates.ItemHeight = (int)(16 * Dpi.Factor.Height);
+            _templates.ItemHeight = 16;
 
             _mitigation = mitigation;
             var specialized = mitigation.Specialized?.ToArray();

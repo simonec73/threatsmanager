@@ -31,19 +31,19 @@ namespace ThreatsManager.Extensions.Dialogs
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FixDiagram));
             this.panel1 = new System.Windows.Forms.Panel();
+            this._apply = new System.Windows.Forms.Button();
             this._cancel = new System.Windows.Forms.Button();
             this._ok = new System.Windows.Forms.Button();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._resetFlows = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this._adjustText = new System.Windows.Forms.Label();
+            this._adjust = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._adjust = new System.Windows.Forms.TrackBar();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._adjustText = new System.Windows.Forms.Label();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._apply = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._resetFlows = new System.Windows.Forms.Button();
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this.layoutControl1.SuspendLayout();
@@ -62,6 +62,17 @@ namespace ThreatsManager.Extensions.Dialogs
             this.panel1.Size = new System.Drawing.Size(467, 63);
             this.panel1.TabIndex = 3;
             this.panel1.TabStop = true;
+            // 
+            // _apply
+            // 
+            this._apply.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this._apply.Location = new System.Drawing.Point(196, 25);
+            this._apply.Name = "_apply";
+            this._apply.Size = new System.Drawing.Size(75, 23);
+            this._apply.TabIndex = 2;
+            this._apply.Text = "Apply";
+            this._apply.UseVisualStyleBackColor = true;
+            this._apply.Click += new System.EventHandler(this._apply_Click);
             // 
             // _cancel
             // 
@@ -97,6 +108,7 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControl1.Controls.Add(this._adjust);
             this.layoutControl1.Controls.Add(this.label1);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -111,11 +123,54 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControl1.Size = new System.Drawing.Size(467, 173);
             this.layoutControl1.TabIndex = 4;
             // 
+            // _resetFlows
+            // 
+            this._resetFlows.Location = new System.Drawing.Point(4, 140);
+            this._resetFlows.Margin = new System.Windows.Forms.Padding(0);
+            this._resetFlows.Name = "_resetFlows";
+            this._resetFlows.Size = new System.Drawing.Size(459, 23);
+            this._resetFlows.TabIndex = 4;
+            this._resetFlows.Text = "Reset the Flows";
+            this._resetFlows.UseVisualStyleBackColor = true;
+            this._resetFlows.Click += new System.EventHandler(this._resetFlows_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(4, 119);
+            this.label2.Margin = new System.Windows.Forms.Padding(0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(459, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "If the arrows are not correct, you can reset them by clicking the following butto" +
+    "n.";
+            // 
+            // _adjustText
+            // 
+            this._adjustText.AutoSize = true;
+            this._adjustText.Location = new System.Drawing.Point(407, 69);
+            this._adjustText.Margin = new System.Windows.Forms.Padding(0);
+            this._adjustText.Name = "_adjustText";
+            this._adjustText.Size = new System.Drawing.Size(56, 42);
+            this._adjustText.TabIndex = 2;
+            this._adjustText.Text = "100%";
+            // 
+            // _adjust
+            // 
+            this._adjust.Location = new System.Drawing.Point(99, 69);
+            this._adjust.Margin = new System.Windows.Forms.Padding(0);
+            this._adjust.Minimum = 1;
+            this._adjust.Name = "_adjust";
+            this._adjust.Size = new System.Drawing.Size(300, 45);
+            this._adjust.TabIndex = 1;
+            this._adjust.Value = 4;
+            this._adjust.ValueChanged += new System.EventHandler(this._adjust_ValueChanged);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(4, 4);
-            this.label1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(459, 57);
             this.label1.TabIndex = 0;
@@ -132,17 +187,6 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // _adjust
-            // 
-            this._adjust.Location = new System.Drawing.Point(99, 69);
-            this._adjust.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._adjust.Minimum = 1;
-            this._adjust.Name = "_adjust";
-            this._adjust.Size = new System.Drawing.Size(300, 45);
-            this._adjust.TabIndex = 1;
-            this._adjust.Value = 4;
-            this._adjust.ValueChanged += new System.EventHandler(this._adjust_ValueChanged);
-            // 
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._adjust;
@@ -153,16 +197,6 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem1.Width = 99;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // _adjustText
-            // 
-            this._adjustText.AutoSize = true;
-            this._adjustText.Location = new System.Drawing.Point(407, 69);
-            this._adjustText.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._adjustText.Name = "_adjustText";
-            this._adjustText.Size = new System.Drawing.Size(56, 42);
-            this._adjustText.TabIndex = 2;
-            this._adjustText.Text = "100%";
-            // 
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._adjustText;
@@ -172,28 +206,6 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem3.Text = "Label:";
             this.layoutControlItem3.TextVisible = false;
             this.layoutControlItem3.Width = 30;
-            // 
-            // _apply
-            // 
-            this._apply.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this._apply.Location = new System.Drawing.Point(196, 25);
-            this._apply.Name = "_apply";
-            this._apply.Size = new System.Drawing.Size(75, 23);
-            this._apply.TabIndex = 2;
-            this._apply.Text = "Apply";
-            this._apply.UseVisualStyleBackColor = true;
-            this._apply.Click += new System.EventHandler(this._apply_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 119);
-            this.label2.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(459, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "If the arrows are not correct, you can reset them by clicking the following butto" +
-    "n.";
             // 
             // layoutControlItem4
             // 
@@ -206,17 +218,6 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem4.Width = 100;
             this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // _resetFlows
-            // 
-            this._resetFlows.Location = new System.Drawing.Point(4, 140);
-            this._resetFlows.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._resetFlows.Name = "_resetFlows";
-            this._resetFlows.Size = new System.Drawing.Size(459, 23);
-            this._resetFlows.TabIndex = 4;
-            this._resetFlows.Text = "Reset the Flows";
-            this._resetFlows.UseVisualStyleBackColor = true;
-            this._resetFlows.Click += new System.EventHandler(this._resetFlows_Click);
-            // 
             // layoutControlItem5
             // 
             this.layoutControlItem5.Control = this._resetFlows;
@@ -228,8 +229,8 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             // FixDiagram
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(467, 236);
             this.Controls.Add(this.layoutControl1);

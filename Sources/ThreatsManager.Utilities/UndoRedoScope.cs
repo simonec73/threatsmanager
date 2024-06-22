@@ -19,7 +19,11 @@ namespace ThreatsManager.Utilities
         /// <param name="scope"></param>
         public UndoRedoScope(RecordingScope scope)
         {
-            _scope = scope;
+            if (scope != null)
+            {
+                _scope = scope;
+                _scopes.Add(scope);
+            }
         }
 
         /// <summary>

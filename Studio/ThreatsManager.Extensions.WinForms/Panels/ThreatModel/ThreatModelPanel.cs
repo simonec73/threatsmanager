@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
+using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 
 namespace ThreatsManager.Extensions.Panels.ThreatModel
 {
 #pragma warning disable CS0067
     public partial class ThreatModelPanel : UserControl, IShowThreatModelPanel<Form>, IInitializableObject, 
-        IDesktopAlertAwareExtension, IExecutionModeSupport
+        IDesktopAlertAwareExtension, IExecutionModeSupport, ICustomRibbonExtension, IContextAwareExtension
     {
         private readonly Guid _id = Guid.NewGuid();
 

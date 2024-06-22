@@ -157,7 +157,8 @@ namespace ThreatsManager.Quality.Actions
             {
                 schemaManager.AddAnnotation(container, new TopicToBeClarified()
                 {
-                    Text = question.Text
+                    Text = question.Text,
+                    Rationale = question.Rationale
                 });
             }
         }

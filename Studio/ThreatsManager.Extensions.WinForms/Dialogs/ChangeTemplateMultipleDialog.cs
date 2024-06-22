@@ -18,7 +18,7 @@ namespace ThreatsManager.Extensions.Dialogs
         {
             InitializeComponent();
 
-            _templates.ItemHeight = (int)(16 * Dpi.Factor.Height);
+            _templates.ItemHeight = 16;
         }
 
         public ChangeTemplateMultipleDialog(IEnumerable<IExternalInteractor> items) : this()

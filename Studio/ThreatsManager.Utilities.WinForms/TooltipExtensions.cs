@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using DevComponents.DotNetBar;
@@ -88,9 +89,15 @@ namespace ThreatsManager.Utilities.WinForms
                 start = $"[{initial}] ";
             }
 
-            return new SuperTooltipInfo($"{start}{identity.Name}", 
+            var tooltipInfo = new SuperTooltipInfo($"{start}{identity.Name}",
                 footer, body, identity.GetImage(ImageSize.Big), null, eTooltipColor.Office2003);
-        }
 
+            if (string.IsNullOrWhiteSpace(footer))
+            {
+                tooltipInfo.FooterVisible = false;
+            }
+
+            return tooltipInfo;
+        }
     }
 }

@@ -14,6 +14,9 @@ namespace ThreatsManager.Quality.Annotations
         [JsonProperty("text")]
         public string Text { get; set; }
 
+        [JsonProperty("rationale")]
+        public string Rationale { get; set; }
+
         [JsonProperty("rule")]
         [Child]
         public SelectionRule Rule { get; set; }

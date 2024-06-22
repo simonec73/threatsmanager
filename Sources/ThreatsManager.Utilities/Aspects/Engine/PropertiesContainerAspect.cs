@@ -273,7 +273,7 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 11)]
         public bool RemoveProperty(Guid propertyTypeId)
         {
-            bool result = false;
+            var result = false;
 
             var properties = _properties?.Get()?.Where(x => x.PropertyTypeId == propertyTypeId).ToArray();
             if (properties?.Any() ?? false) 
@@ -445,9 +445,9 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 .Select(x => x.SchemaId)
                 .Distinct();
 
+            var model = GetModel();
             if (schemas?.Any() ?? false)
             {
-                var model = GetModel();
                 if (model != null)
                 {
                     foreach (var schemaId in schemas)
@@ -471,7 +471,11 @@ namespace ThreatsManager.Utilities.Aspects.Engine
                 foreach (var property in properties)
                 {
                     if (property != null)
+                    {
+                        if (model != null)
+                            UndoRedoManager.Attach(property, model);
                         property.Changed += OnPropertyChanged;
+                    }
                 }
             }
 

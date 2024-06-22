@@ -109,6 +109,7 @@
             this.layoutControl1.Controls.Add(this._undo);
             this.layoutControl1.Controls.Add(this.label1);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -367,8 +368,8 @@
             // 
             // UndoRedoOperationsDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._close;
             this.ClientSize = new System.Drawing.Size(592, 353);
             this.Controls.Add(this.layoutControl1);

@@ -979,8 +979,7 @@ namespace ThreatsManager.Utilities.WinForms
 
                 if (itemTemplate != null)
                 {
-                    var template = AddHyperlink(infoSection, "Template", itemTemplate,
-                        Dpi.Factor.Width > 1.5 ? itemTemplate.GetImage(ImageSize.Medium) : itemTemplate.GetImage(ImageSize.Small));
+                    var template = AddHyperlink(infoSection, "Template", itemTemplate, itemTemplate.GetImage(ImageSize.Small));
                     _superTooltip.SetSuperTooltip(template, _model.GetSuperTooltipInfo(itemTemplate));
                 }
 
@@ -1172,22 +1171,19 @@ namespace ThreatsManager.Utilities.WinForms
                             var identity = propertyIdentityReference.Value;
 
                             AddSingleLineLabel(section, property.PropertyType.Name,
-                                identity?.Name ?? "<Undefined>",
-                                Dpi.Factor.Width > 1.5
-                                    ? identity?.GetImage(ImageSize.Medium)
-                                    : identity?.GetImage(ImageSize.Small));
+                                identity?.Name ?? "<Undefined>", identity?.GetImage(ImageSize.Small));
                         }
-                        else if (property is IPropertyJsonSerializableObject)
-                        {
-                            if (section == null)
-                            {
-                                section = AddSection(schema.Name);
-                                section.SuspendLayout();
-                            }
-                            // TODO: add control to show this property. For now, it is not shown.
-                            AddSingleLineLabel(section, property.PropertyType.Name,
-                                "<Property is a Json Serializable Object, which is not supported by the Item Editor, yet>");
-                        }
+                        //else if (property is IPropertyJsonSerializableObject)
+                        //{
+                        //    if (section == null)
+                        //    {
+                        //        section = AddSection(schema.Name);
+                        //        section.SuspendLayout();
+                        //    }
+                        //    // TODO: add control to show this property. For now, it is not shown.
+                        //    AddSingleLineLabel(section, property.PropertyType.Name,
+                        //        "<Property is a Json Serializable Object, which is not supported by the Item Editor, yet>");
+                        //}
                         else if (property is IPropertyList propertyList)
                         {
                             if (section == null)
@@ -1196,17 +1192,43 @@ namespace ThreatsManager.Utilities.WinForms
                                 section.SuspendLayout();
                             }
                             AddCombo(section, propertyList, ro);
-                            //AddSingleLineLabel(section, property.PropertyType.Name, property.StringValue);
                         }
-                        else if (property is IPropertyListMulti)
+                        //else if (property is IPropertyListMulti)
+                        //{
+                        //    if (section == null)
+                        //    {
+                        //        section = AddSection(schema.Name);
+                        //        section.SuspendLayout();
+                        //    }
+                        //    // TODO: add control to show this property. For now, it is not shown.
+                        //    AddSingleLineLabel(section, property.PropertyType.Name, property.StringValue);
+                        //}
+                        else if (property is IPropertyUrl propertyUrl)
                         {
                             if (section == null)
                             {
                                 section = AddSection(schema.Name);
                                 section.SuspendLayout();
                             }
-                            // TODO: add control to show this property. For now, it is not shown.
-                            AddSingleLineLabel(section, property.PropertyType.Name, property.StringValue);
+                            AddHyperlink(section, propertyUrl, ro);
+                        }
+                        else if (property is IPropertyUrlList propertyUrlList)
+                        {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
+                            AddHyperlinkList(section, propertyUrlList, ro);
+                        }
+                        else if (property is IPropertyDate propertyDate)
+                        {
+                            if (section == null)
+                            {
+                                section = AddSection(schema.Name);
+                                section.SuspendLayout();
+                            }
+                            AddDate(section, propertyDate, ro);
                         }
                         else
                         {
@@ -1234,7 +1256,7 @@ namespace ThreatsManager.Utilities.WinForms
         {
             var infoSection = AddSection("Threat Events");
             infoSection.SuspendLayout();
-            var listBox = AddListBox(infoSection, string.Empty,
+            var listBox = AddListBox(infoSection, string.Empty, null,
                 container.ThreatEvents?.OrderBy(x => x.Name), AddThreatEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
@@ -1258,7 +1280,7 @@ namespace ThreatsManager.Utilities.WinForms
         {
             var infoSection = AddSection("Vulnerabilities");
             infoSection.SuspendLayout();
-            var listBox = AddListBox(infoSection, string.Empty,
+            var listBox = AddListBox(infoSection, string.Empty, null,
                 container.Vulnerabilities?.OrderBy(x => x.Name), AddVulnerabilityHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
@@ -1316,10 +1338,7 @@ namespace ThreatsManager.Utilities.WinForms
             section.SuspendLayout();
             if (dataFlow.Source != null)
             {
-                var source = AddHyperlink(section, "Source", dataFlow.Source,
-                    Dpi.Factor.Width > 1.5 ? dataFlow.Source.GetImage(ImageSize.Medium) : dataFlow.Source.GetImage(ImageSize.Small));
-                //var source = AddSingleLineLabel(section, "Source", dataFlow.Source.Name,
-                //    Dpi.Factor.Width > 1.5 ? dataFlow.Source.GetImage(ImageSize.Medium) : dataFlow.Source.GetImage(ImageSize.Small));
+                var source = AddHyperlink(section, "Source", dataFlow.Source, dataFlow.Source.GetImage(ImageSize.Small));
                 if (dataFlow.Source is INotifyPropertyChanged notifyPropertyChanged)
                     notifyPropertyChanged.PropertyChanged += OnSourcePropertyChanged;
                 _superTooltip.SetSuperTooltip(source, _model.GetSuperTooltipInfo(dataFlow.Source));
@@ -1327,10 +1346,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             if (dataFlow.Target != null)
             {
-                var target = AddHyperlink(section, "Target", dataFlow.Target,
-                    Dpi.Factor.Width > 1.5 ? dataFlow.Target.GetImage(ImageSize.Medium) : dataFlow.Target.GetImage(ImageSize.Small));
-                //var target = AddSingleLineLabel(section, "Target", dataFlow.Target.Name,
-                //    Dpi.Factor.Width > 1.5 ? dataFlow.Target.GetImage(ImageSize.Medium) : dataFlow.Target.GetImage(ImageSize.Small));
+                var target = AddHyperlink(section, "Target", dataFlow.Target, dataFlow.Target.GetImage(ImageSize.Small));
                 _superTooltip.SetSuperTooltip(target, _model.GetSuperTooltipInfo(dataFlow.Target));
                 if (dataFlow.Target is INotifyPropertyChanged notifyPropertyChanged)
                     notifyPropertyChanged.PropertyChanged += OnTargetPropertyChanged;
@@ -1417,7 +1433,7 @@ namespace ThreatsManager.Utilities.WinForms
             AddSingleLineLabel(section, "Version", model.CurrentVersion?.VersionId ?? "<not defined>", 50);
             AddSingleLineLabel(section, "Version Author", model.CurrentVersion?.VersionAuthor ?? "<not defined>", 50);
             AddSingleLineText(section, "Owner", model.Owner, ChangeOwner, null, _readonly);
-            var contribList = AddList(section, "Contributors", model.Contributors, _readonly);
+            var contribList = AddList(section, "Contributors", null, model.Contributors, _readonly);
             contribList.Tag = new Actions()
             {
                 Created = CreateContributor,
@@ -1425,7 +1441,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Removed = RemoveContributor,
                 Cleared = ClearContributors
             };
-            var assumpList = AddList(section, "Assumptions", model.Assumptions, _readonly);
+            var assumpList = AddList(section, "Assumptions", null, model.Assumptions, _readonly);
             assumpList.Tag = new Actions()
             {
                 Created = CreateAssumption,
@@ -1433,7 +1449,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Removed = RemoveAssumption,
                 Cleared = ClearAssumptions
             };
-            var depList = AddList(section, "Dependencies", model.ExternalDependencies, _readonly);
+            var depList = AddList(section, "Dependencies", null, model.ExternalDependencies, _readonly);
             depList.Tag = new Actions()
             {
                 Created = CreateDependency,
@@ -1461,10 +1477,7 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Threat Event");
             section.SuspendLayout();
             AddHyperlink(section, "Threat Type", threatEvent.ThreatType);
-            var label = AddHyperlink(section, "Associated To", threatEvent.Parent,
-                Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
-            //var label = AddSingleLineLabel(section, "Associated To", threatEvent.Parent.Name,
-            //    Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
+            var label = AddHyperlink(section, "Associated To", threatEvent.Parent, threatEvent.Parent?.GetImage(ImageSize.Small));
             if (threatEvent.Parent is IEntity entity)
             {
                 entity.ImageChanged += OnThreatEventImageChanged;
@@ -1474,7 +1487,7 @@ namespace ThreatsManager.Utilities.WinForms
             AddCombo(section, "Severity", threatEvent.Severity?.Name,
                 threatEvent.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
-            var listBox = AddListBox(section, "Mitigations",
+            var listBox = AddListBox(section, "Mitigations", null,
                 threatEvent.Mitigations, AddThreatEventMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
@@ -1507,12 +1520,9 @@ namespace ThreatsManager.Utilities.WinForms
             var parent = vulnerability.Parent as IIdentity;
             if (parent != null)
             {
-                var label = AddHyperlink(section, "Associated To", parent,
-                    Dpi.Factor.Width > 1.5 ? parent?.GetImage(ImageSize.Medium) : parent?.GetImage(ImageSize.Small));
+                var label = AddHyperlink(section, "Associated To", parent,parent?.GetImage(ImageSize.Small));
                 _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(parent));
             }
-            //var label = AddSingleLineLabel(section, "Associated To", vulnerability.Parent.Name,
-            //    Dpi.Factor.Width > 1.5 ? vulnerability.Parent?.GetImage(ImageSize.Medium) : vulnerability.Parent?.GetImage(ImageSize.Small));
             if (vulnerability.Parent is IEntity entity)
             {
                 entity.ImageChanged += OnVulnerabilityImageChanged;
@@ -1520,7 +1530,7 @@ namespace ThreatsManager.Utilities.WinForms
             AddCombo(section, "Severity", vulnerability.Severity?.Name,
                 vulnerability.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
-            var listBox = AddListBox(section, "Mitigations",
+            var listBox = AddListBox(section, "Mitigations", null,
                 vulnerability.Mitigations, AddVulnerabilityMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
@@ -1552,11 +1562,11 @@ namespace ThreatsManager.Utilities.WinForms
             AddCombo(section, "Severity", threatType.Severity?.Name,
                 threatType.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
-            var listBox = AddListBox(section, "Standard Mitigations",
+            var listBox = AddListBox(section, "Standard Mitigations", null,
                 threatType.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddThreatTypeStandardMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
-            AddListView(section, "Threat Events\napplied to",
+            AddListView(section, "Threat Events\napplied to", null,
                 threatType.Model?.GetThreatEvents(threatType)?.OrderBy(x => x.Parent.Name));
 
             if (_actions?.Any() ?? false)
@@ -1585,11 +1595,11 @@ namespace ThreatsManager.Utilities.WinForms
             AddCombo(section, "Severity", weakness.Severity?.Name,
                 weakness.Model?.Severities?.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name),
                 ChangeSeverity, _readonly);
-            var listBox = AddListBox(section, "Standard Mitigations",
+            var listBox = AddListBox(section, "Standard Mitigations", null,
                 weakness.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddWeaknessStandardMitigationEventHandler, _readonly);
             listBox.DoubleClick += OpenSubItem;
 
-            AddListView(section, "Vulnerabilities\napplied to",
+            AddListView(section, "Vulnerabilities\napplied to", null,
                 weakness.Model?.GetVulnerabilities(weakness)?.OrderBy(x => (x.Parent as IIdentity)?.Name ?? string.Empty));
 
             if (_actions?.Any() ?? false)
@@ -1704,10 +1714,7 @@ namespace ThreatsManager.Utilities.WinForms
             section.SuspendLayout();
             AddHyperlink(section, "Threat Event", threatEvent);
             AddHyperlink(section, "Mitigation", mitigation.Mitigation);
-            var label = AddHyperlink(section, "Associated To", threatEvent.Parent,
-                Dpi.Factor.Width > 1.5 ? threatEvent.Parent?.GetImage(ImageSize.Medium) : threatEvent.Parent?.GetImage(ImageSize.Small));
-            //var label = AddSingleLineLabel(section, "Associated To", mitigation.ThreatEvent.Parent.Name,
-            //    Dpi.Factor.Width > 1.5 ? mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Medium) : mitigation.ThreatEvent?.Parent?.GetImage(ImageSize.Small));
+            var label = AddHyperlink(section, "Associated To", threatEvent.Parent,threatEvent.Parent?.GetImage(ImageSize.Small));
             _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(threatEvent.Parent));
             if (threatEvent.Parent is IEntity entity)
             {
@@ -1743,8 +1750,7 @@ namespace ThreatsManager.Utilities.WinForms
 
             if (mitigation.Vulnerability?.Parent is IIdentity parent)
             {
-                var label = AddSingleLineLabel(section, "Associated To", parent.Name ?? string.Empty,
-                    Dpi.Factor.Width > 1.5 ? parent.GetImage(ImageSize.Medium) : parent.GetImage(ImageSize.Small));
+                var label = AddSingleLineLabel(section, "Associated To", parent.Name ?? string.Empty, parent.GetImage(ImageSize.Small));
                 _superTooltip.SetSuperTooltip(label, _model.GetSuperTooltipInfo(parent));
             }
 
@@ -2732,34 +2738,28 @@ namespace ThreatsManager.Utilities.WinForms
         private LayoutControl AddSection(string name)
         {
             _dynamicLayout.SuspendLayout();
-            var expandablePanel =
-                new ExpandablePanel
+
+            var panel =
+                new GroupPanel
                 {
                     CanvasColor = Color.White,
-                    //ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled,
                     DisabledBackColor = Color.Empty,
-                    HideControlsWhenCollapsed = true,
-                    //Location = new System.Drawing.Point(4, 77),
                     Margin = new System.Windows.Forms.Padding(7),
                     Name = name,
                     Size = new Size(_dynamicLayout.Width - 14, 100),
-                    TitleText = name,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    Text = name,
                     Left = 7,
                     Dock = DockStyle.Top,
-                    TitleHeight = (int) (17 * Dpi.Factor.Height)
                 };
-            expandablePanel.Style.Alignment = StringAlignment.Center;
-            expandablePanel.Style.BackColor1.Color = Color.White;
-            expandablePanel.Style.BackColor2.Color = Color.White;
-            expandablePanel.Style.BorderColor.ColorSchemePart = eColorSchemePart.BarDockedBorder;
-            expandablePanel.Style.ForeColor.ColorSchemePart = eColorSchemePart.ItemText;
-            expandablePanel.TitleStyle.Alignment = StringAlignment.Center;
-            expandablePanel.TitleStyle.BackColor1.Color = Color.White;
-            expandablePanel.TitleStyle.BackColor2.Color = Color.White;
-            expandablePanel.TitleStyle.Border = eBorderType.SingleLine;
-            expandablePanel.TitleStyle.BorderColor.ColorSchemePart = eColorSchemePart.PanelBorder;
-            expandablePanel.TitleStyle.ForeColor.Color = Color.Black;
-            expandablePanel.TitleStyle.UseMnemonic = false;
+            panel.Style.TextAlignment = eStyleTextAlignment.Center;
+            panel.Style.BorderTop = eStyleBorderType.Solid;
+            panel.Style.BorderTopColor = ThreatModelManager.StandardColor;
+            panel.Style.BorderTopColorSchemePart = eColorSchemePart.PanelBorder;
+            panel.Style.BorderTopWidth = 2;
+            panel.Style.MarginTop = 10;
+            panel.Style.BackColor = Color.White;
+            panel.Style.BackColor2 = Color.White;
 
             var innerLayoutControl = new LayoutControl
             {
@@ -2767,91 +2767,111 @@ namespace ThreatsManager.Utilities.WinForms
                 Dock = DockStyle.Fill, 
                 AutoScroll = true
             };
-            expandablePanel.Controls.Add(innerLayoutControl);
+            panel.Controls.Add(innerLayoutControl);
 
-            _dynamicLayout.Controls.Add(expandablePanel);
+            _dynamicLayout.Controls.Add(panel);
             _dynamicLayout.ResumeLayout();
 
             return innerLayoutControl;
         }
 
-        private void FinalizeSection([NotNull] LayoutControl section, bool collapsed = false)
+        private void FinalizeSection([NotNull] LayoutControl section)
         {
-            if (section.Parent is ExpandablePanel panel)
+            if (section.Parent is GroupPanel panel)
             {
-                int height = 0;
+                var height = 0;
 
                 if (section.RootGroup.Items.Count > 0)
                 {
-                    height = panel.TitleHeight;
-
-                    int percentage = 0;
-                    int width = 0;
-                    int previous = 0;
+                    var percentage = 0; // Width percentage that has already been occupied.
+                    var width = 0;      // Absolute width that has already been occupied.
+                    var previous = 0;   // Previous height of the item.
 
                     var items = section.RootGroup.Items.OfType<LayoutControlItem>();
+                    var newLine = false;
                     foreach (var item in items)
                     {
                         if (item.WidthType == eLayoutSizeType.Percent)
                         {
-                            if (item.Width > 100)
+                            if (item.Width > 100 || (item.Width > 95 && width > 0))
                             {
-                                if (previous > 0)
-                                {
-                                    height += previous + section.Margin.Vertical;
-                                    width = 0;
-                                    previous = 0;
-                                }
-                                height += item.Height + section.Margin.Vertical;
-                                percentage = 0;
+                                newLine = true;
                             }
                             else
                             {
+                                // The width is less than 100%.
+
                                 if (percentage == 0)
+                                    // In this case, we have the first item.
                                     previous = item.Height;
 
+                                // Update the percentage.
                                 percentage += item.Width;
 
                                 if (percentage >= 100)
                                 {
-                                    height += previous + section.Margin.Vertical;
-                                    previous = 0;
-                                    percentage = 0;
+                                    newLine = true;
                                 }
                             }
                         }
                         else
                         {
-                            if (width == 0)
-                                previous = item.Height;
-                            
-                            width += item.Width + section.Margin.Horizontal;
-                            if (width > panel.Width)
+                            if (percentage > 95 && item.Width > 10)
                             {
-                                width = item.Width + section.Margin.Horizontal;
+                                newLine = true;
+                            }
+                            else
+                            {
+                                if (width == 0)
+                                    previous = item.Height;
+
+                                width += item.Width + section.Margin.Horizontal;
+                                if (width > panel.Width)
+                                {
+                                    newLine = true;
+                                }
+                            }
+                        }
+
+                        if (newLine)
+                        {
+                            // Forced new line. Height must be increased of the previously calculated height.
+
+                            if (previous > 0)
+                            {
+                                // We must add the previous line height.
                                 height += previous + section.Margin.Vertical;
                                 previous = item.Height;
                             }
+                            else
+                            {
+                                // In this case, we immediately have a new line.
+                                height += item.Height + section.Margin.Vertical; // Note: height is never a percentage.
+                            }
+
+                            // Reset the width.
+                            width = 0;
+                            // Reset the percentage.
+                            percentage = 0;
+                            // Reset the new line flag.
+                            newLine = false;
                         }
                     }
 
-                    if (previous != 0)
+                    if (previous > 0)
                         height += previous + section.Margin.Vertical;
+
+                    if (section.RootGroup.Items.Count == 1)
+                        height += 2 * section.Margin.Vertical;
                 }
 
-                panel.Height = height + (int) (10 * Dpi.Factor.Height);
-
-                // TODO: check collapse, because it does not seem to work (in forms it creates a scroll bar)!
-                //if (collapsed)
-                //{
-                //    panel.Expanded = false;
-                //}
+                panel.Height = height + section.RootGroup.CaptionHeight + section.Margin.Vertical + 30;
             }
         }
 
         private void _dynamicLayout_Resize(object sender, EventArgs e)
         {
-            var panels = _dynamicLayout.Controls.OfType<ExpandablePanel>().ToArray();
+            var panels = _dynamicLayout.Controls.OfType<GroupPanel>().ToArray();
             if (panels.Any())
             {
                 foreach (var panel in panels)
@@ -2861,7 +2881,7 @@ namespace ThreatsManager.Utilities.WinForms
                     {
                         foreach (var section in sections)
                         {
-                            FinalizeSection(section, !panel.Expanded);
+                            FinalizeSection(section);
                         }
                     }
                 }

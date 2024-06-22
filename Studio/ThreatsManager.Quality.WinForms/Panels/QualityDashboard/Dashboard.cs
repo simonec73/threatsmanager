@@ -78,10 +78,10 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
                 for (int i = 0; i < _container.RowStyles.Count; i++)
                 {
                     _container.RowStyles[i].SizeType = SizeType.Absolute;
-                    _container.RowStyles[i].Height = 300 * Dpi.Factor.Height;
+                    _container.RowStyles[i].Height = 300;
                 }
                 for (int j = _container.RowStyles.Count; j < _container.RowCount; j++)
-                    _container.RowStyles.Add(new RowStyle(SizeType.Absolute, 300  * Dpi.Factor.Height));
+                    _container.RowStyles.Add(new RowStyle(SizeType.Absolute, 300));
 
                 Analyze();
             }

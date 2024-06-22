@@ -78,10 +78,12 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // _container
             // 
+            this._container.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this._container.Controls.Add(this._objects);
             this._container.Controls.Add(this._objectType);
             this._container.Controls.Add(this._auto);
             this._container.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._container.ForeColor = System.Drawing.Color.Black;
             this._container.Location = new System.Drawing.Point(0, 0);
             this._container.Name = "_container";
             // 
@@ -154,10 +156,10 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // DevOpsObjectAssociationDialog
+            // DevOpsWorkItemAssociationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(517, 120);
@@ -165,7 +167,7 @@ namespace ThreatsManager.DevOps.Dialogs
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "DevOpsObjectAssociationDialog";
+            this.Name = "DevOpsWorkItemAssociationDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

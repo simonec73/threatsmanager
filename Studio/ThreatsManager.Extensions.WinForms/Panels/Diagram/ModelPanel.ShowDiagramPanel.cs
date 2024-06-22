@@ -46,7 +46,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     _diagram.GroupShapeAdded += OnGroupShapeAdded;
 
                     var dpi = GetDiagramDpi(diagram);
-                    var factor = Dpi.Factor.Height / dpi;
+                    var factor = 1f / dpi;
 
                     _graph.Initialize(_diagram);
 
@@ -83,31 +83,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         _imageSize = ImageSize.Big;
                         break;
                     default:
-                        if (Dpi.Factor.Height >= 8)
-                        {
-                            configuration.DiagramIconSize = 256;
-                            _imageSize = ImageSize.Big;
-                        }
-                        else if (Dpi.Factor.Height >= 4)
-                        {
-                            configuration.DiagramIconSize = 128;
-                            _imageSize = ImageSize.Big;
-                        }
-                        else if (Dpi.Factor.Height >= 3)
-                        {
-                            configuration.DiagramIconSize = 96;
-                            _imageSize = ImageSize.Big;
-                        }
-                        else if (Dpi.Factor.Height >= 2)
-                        {
-                            configuration.DiagramIconSize = 64;
-                            _imageSize = ImageSize.Big;
-                        }
-                        else
-                        {
-                            configuration.DiagramIconSize = 32;
-                            _imageSize = ImageSize.Medium;
-                        }
+                        configuration.DiagramIconSize = 32;
+                        _imageSize = ImageSize.Medium;
                         configuration.Apply();
                         break;
                 }
@@ -218,7 +195,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 var schemaManager = new DiagramPropertySchemaManager(diagram.Model);
                 result = schemaManager.GetDpiFactor(diagram);
                 if (result == 0f)
-                    result = Dpi.Factor.Height;
+                    result = 1f;
             }
 
             return result;
@@ -227,7 +204,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         private void SetDiagramDpi([NotNull] IDiagram diagram)
         {
             if (!UndoRedoManager.IsUndoing && !UndoRedoManager.IsRedoing)
-                diagram.Dpi = (int) (Dpi.Factor.Height * 100);
+                diagram.Dpi = 100;
         }
 
         private void OnModelChildCreated(IIdentity identity)

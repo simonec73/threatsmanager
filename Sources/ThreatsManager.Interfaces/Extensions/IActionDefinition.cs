@@ -39,7 +39,7 @@ namespace ThreatsManager.Interfaces.Extensions
         /// <summary>
         /// Initial status for the action.
         /// </summary>
-        bool Enabled { get; }
+        bool Enabled { get; set; }
 
         /// <summary>
         /// Shortcut for the action.

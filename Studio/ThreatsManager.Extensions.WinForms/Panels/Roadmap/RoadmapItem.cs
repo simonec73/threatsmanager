@@ -293,7 +293,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                 FontSize = 9,
                 Width = DefaultWidth - DefaultMargin,
                 TextColor = Color.White,
-                Height = 16 * Dpi.Factor.Height
+                Height = 16
             };
             header.Add(headerText);
 
@@ -302,7 +302,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                 Selectable = false,
                 AutoRescales = false,
                 AutoResizes = false,
-                Size = new SizeF(16 * Dpi.Factor.Width, 16 * Dpi.Factor.Height),
+                Size = new SizeF(16, 16),
                 Visible = false
             };
             header.Add(img);

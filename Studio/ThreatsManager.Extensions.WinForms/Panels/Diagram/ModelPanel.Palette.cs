@@ -86,7 +86,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
         private PointF CalculatePosition(GoNode node, int index, float width, float height)
         {
-            return new PointF((width - node.Width) / 2f + 20, 10 + index * (height + 10 * Dpi.Factor.Height));
+            return new PointF((width - node.Width) / 2f + 20, 10 + index * (height + 10));
         }
 
         private void GraphOnCreateExternalInteractor(PointF point, GraphGroup graphGroup)

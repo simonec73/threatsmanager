@@ -291,8 +291,8 @@
             // 
             this._saveFile.DefaultExt = "tmt";
             this._saveFile.Filter = "Threat Model Template (*.tmt)|*.tmt";
-            this._saveFile.Title = "Select destination file";
             this._saveFile.RestoreDirectory = true;
+            this._saveFile.Title = "Select destination file";
             // 
             // layoutGroup2
             // 
@@ -370,8 +370,8 @@
             // 
             // ExportSchemaDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(543, 352);

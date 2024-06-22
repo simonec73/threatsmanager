@@ -324,10 +324,10 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             if (sender is ToolStripMenuItem menuItem &&
                 menuItem.Tag is IContextAwareAction action &&
-                menuItem.Owner.Tag is IThreatEvent threatEvent)
+                menuItem.Owner.Tag is PanelItem item)
             {
                 Close();
-                action.Execute(threatEvent);
+                action.Execute(item.Tag);
             }
         }
 

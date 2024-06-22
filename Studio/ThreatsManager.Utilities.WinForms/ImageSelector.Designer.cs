@@ -30,23 +30,23 @@
         {
             this.components = new System.ComponentModel.Container();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._changeSmallImage = new System.Windows.Forms.Button();
+            this._changeMediumImage = new System.Windows.Forms.Button();
+            this._changeBigImage = new System.Windows.Forms.Button();
             this._bigImage = new System.Windows.Forms.PictureBox();
             this._image = new System.Windows.Forms.PictureBox();
             this._smallImage = new System.Windows.Forms.PictureBox();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem7 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem9 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._tooltip = new System.Windows.Forms.ToolTip(this.components);
             this._openImage = new System.Windows.Forms.OpenFileDialog();
-            this._changeBigImage = new System.Windows.Forms.Button();
-            this.layoutControlItem7 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._changeMediumImage = new System.Windows.Forms.Button();
-            this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._changeSmallImage = new System.Windows.Forms.Button();
-            this.layoutControlItem9 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._bigImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._image)).BeginInit();
@@ -77,6 +77,39 @@
             this.layoutControlItem9});
             this.layoutControl1.Size = new System.Drawing.Size(573, 102);
             this.layoutControl1.TabIndex = 0;
+            // 
+            // _changeSmallImage
+            // 
+            this._changeSmallImage.Location = new System.Drawing.Point(382, 76);
+            this._changeSmallImage.Margin = new System.Windows.Forms.Padding(0);
+            this._changeSmallImage.Name = "_changeSmallImage";
+            this._changeSmallImage.Size = new System.Drawing.Size(181, 23);
+            this._changeSmallImage.TabIndex = 5;
+            this._changeSmallImage.Text = "Change Small Image";
+            this._changeSmallImage.UseVisualStyleBackColor = true;
+            this._changeSmallImage.Click += new System.EventHandler(this._changeSmallImage_Click);
+            // 
+            // _changeMediumImage
+            // 
+            this._changeMediumImage.Location = new System.Drawing.Point(193, 76);
+            this._changeMediumImage.Margin = new System.Windows.Forms.Padding(0);
+            this._changeMediumImage.Name = "_changeMediumImage";
+            this._changeMediumImage.Size = new System.Drawing.Size(181, 23);
+            this._changeMediumImage.TabIndex = 4;
+            this._changeMediumImage.Text = "Change Medium Image";
+            this._changeMediumImage.UseVisualStyleBackColor = true;
+            this._changeMediumImage.Click += new System.EventHandler(this._changeMediumImage_Click);
+            // 
+            // _changeBigImage
+            // 
+            this._changeBigImage.Location = new System.Drawing.Point(4, 76);
+            this._changeBigImage.Margin = new System.Windows.Forms.Padding(0);
+            this._changeBigImage.Name = "_changeBigImage";
+            this._changeBigImage.Size = new System.Drawing.Size(181, 23);
+            this._changeBigImage.TabIndex = 3;
+            this._changeBigImage.Text = "Change Big Image";
+            this._changeBigImage.UseVisualStyleBackColor = true;
+            this._changeBigImage.Click += new System.EventHandler(this._changeBigImage_Click);
             // 
             // _bigImage
             // 
@@ -153,6 +186,33 @@
             this.layoutControlItem6.Width = 33;
             this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
+            // layoutControlItem7
+            // 
+            this.layoutControlItem7.Control = this._changeBigImage;
+            this.layoutControlItem7.Height = 31;
+            this.layoutControlItem7.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem7.Name = "layoutControlItem7";
+            this.layoutControlItem7.Width = 33;
+            this.layoutControlItem7.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem8
+            // 
+            this.layoutControlItem8.Control = this._changeMediumImage;
+            this.layoutControlItem8.Height = 31;
+            this.layoutControlItem8.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem8.Name = "layoutControlItem8";
+            this.layoutControlItem8.Width = 33;
+            this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem9
+            // 
+            this.layoutControlItem9.Control = this._changeSmallImage;
+            this.layoutControlItem9.Height = 31;
+            this.layoutControlItem9.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem9.Name = "layoutControlItem9";
+            this.layoutControlItem9.Width = 33;
+            this.layoutControlItem9.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._bigImage;
@@ -188,70 +248,10 @@
             this._openImage.Filter = "PNG file (*.png)|*.png|JPG file (*.jpg)|*.jpg|SVG file (*.svg)|*.svg";
             this._openImage.Title = "Select image";
             // 
-            // _changeBigImage
-            // 
-            this._changeBigImage.Location = new System.Drawing.Point(4, 76);
-            this._changeBigImage.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._changeBigImage.Name = "_changeBigImage";
-            this._changeBigImage.Size = new System.Drawing.Size(181, 23);
-            this._changeBigImage.TabIndex = 3;
-            this._changeBigImage.Text = "Change Big Image";
-            this._changeBigImage.UseVisualStyleBackColor = true;
-            this._changeBigImage.Click += new System.EventHandler(this._changeBigImage_Click);
-            // 
-            // layoutControlItem7
-            // 
-            this.layoutControlItem7.Control = this._changeBigImage;
-            this.layoutControlItem7.Height = 31;
-            this.layoutControlItem7.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem7.Name = "layoutControlItem7";
-            this.layoutControlItem7.Width = 33;
-            this.layoutControlItem7.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // _changeMediumImage
-            // 
-            this._changeMediumImage.Location = new System.Drawing.Point(193, 76);
-            this._changeMediumImage.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._changeMediumImage.Name = "_changeMediumImage";
-            this._changeMediumImage.Size = new System.Drawing.Size(181, 23);
-            this._changeMediumImage.TabIndex = 4;
-            this._changeMediumImage.Text = "Change Medium Image";
-            this._changeMediumImage.UseVisualStyleBackColor = true;
-            this._changeMediumImage.Click += new System.EventHandler(this._changeMediumImage_Click);
-            // 
-            // layoutControlItem8
-            // 
-            this.layoutControlItem8.Control = this._changeMediumImage;
-            this.layoutControlItem8.Height = 31;
-            this.layoutControlItem8.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem8.Name = "layoutControlItem8";
-            this.layoutControlItem8.Width = 33;
-            this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // _changeSmallImage
-            // 
-            this._changeSmallImage.Location = new System.Drawing.Point(382, 76);
-            this._changeSmallImage.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._changeSmallImage.Name = "_changeSmallImage";
-            this._changeSmallImage.Size = new System.Drawing.Size(181, 23);
-            this._changeSmallImage.TabIndex = 5;
-            this._changeSmallImage.Text = "Change Small Image";
-            this._changeSmallImage.UseVisualStyleBackColor = true;
-            this._changeSmallImage.Click += new System.EventHandler(this._changeSmallImage_Click);
-            // 
-            // layoutControlItem9
-            // 
-            this.layoutControlItem9.Control = this._changeSmallImage;
-            this.layoutControlItem9.Height = 31;
-            this.layoutControlItem9.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem9.Name = "layoutControlItem9";
-            this.layoutControlItem9.Width = 33;
-            this.layoutControlItem9.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // ImageSelector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.layoutControl1);
             this.Name = "ImageSelector";
             this.Size = new System.Drawing.Size(573, 102);

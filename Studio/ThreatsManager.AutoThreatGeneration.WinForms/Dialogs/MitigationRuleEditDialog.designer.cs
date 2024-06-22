@@ -145,6 +145,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             this._ruleEditor.Location = new System.Drawing.Point(4, 46);
             this._ruleEditor.Margin = new System.Windows.Forms.Padding(0);
             this._ruleEditor.Name = "_ruleEditor";
+            selectionRule1.ModelId = new System.Guid("00000000-0000-0000-0000-000000000000");
             selectionRule1.Root = null;
             this._ruleEditor.Rule = selectionRule1;
             this._ruleEditor.Size = new System.Drawing.Size(959, 304);
@@ -205,6 +206,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             // 
             this._selectedDataStores.BackgroundStyle.Class = "ListBoxAdv";
             this._selectedDataStores.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._selectedDataStores.CheckStateMember = null;
             this._selectedDataStores.ContainerControlProcessDialogKey = true;
             this._selectedDataStores.DragDropSupport = true;
             this._selectedDataStores.LicenseKey = "PUT_YOUR_LICENSE_HERE";
@@ -223,6 +225,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             // 
             this._selectedProcesses.BackgroundStyle.Class = "ListBoxAdv";
             this._selectedProcesses.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._selectedProcesses.CheckStateMember = null;
             this._selectedProcesses.ContainerControlProcessDialogKey = true;
             this._selectedProcesses.DragDropSupport = true;
             this._selectedProcesses.LicenseKey = "PUT_YOUR_LICENSE_HERE";
@@ -241,6 +244,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             // 
             this._selectedDataFlows.BackgroundStyle.Class = "ListBoxAdv";
             this._selectedDataFlows.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._selectedDataFlows.CheckStateMember = null;
             this._selectedDataFlows.ContainerControlProcessDialogKey = true;
             this._selectedDataFlows.DragDropSupport = true;
             this._selectedDataFlows.LicenseKey = "PUT_YOUR_LICENSE_HERE";
@@ -283,6 +287,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             // 
             this._selectedInteractors.BackgroundStyle.Class = "ListBoxAdv";
             this._selectedInteractors.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._selectedInteractors.CheckStateMember = null;
             this._selectedInteractors.ContainerControlProcessDialogKey = true;
             this._selectedInteractors.DragDropSupport = true;
             this._selectedInteractors.LicenseKey = "PUT_YOUR_LICENSE_HERE";
@@ -433,8 +438,8 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             // 
             // MitigationRuleEditDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(967, 598);

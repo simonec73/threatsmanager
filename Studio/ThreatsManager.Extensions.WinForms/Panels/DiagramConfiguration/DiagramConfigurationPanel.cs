@@ -55,32 +55,8 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
                     _iconSize.Value = (int)IconSize.Size256;
                     break;
                 default:
-                    if (Dpi.Factor.Height >= 8)
-                    {
-                        _configuration.DiagramIconSize = 256;
-                        _iconSize.Value = (int)IconSize.Size256;
-                    }
-                    else if (Dpi.Factor.Height >= 4)
-                    {
-                        _configuration.DiagramIconSize = 128;
-                        _iconSize.Value = (int)IconSize.Size128;
-                    }
-                    else if (Dpi.Factor.Height >= 3)
-                    {
-                        _configuration.DiagramIconSize = 96;
-                        _iconSize.Value = (int)IconSize.Size96;
-                    }
-                    else if (Dpi.Factor.Height >= 2)
-                    {
-                        _configuration.DiagramIconSize = 64;
-                        _iconSize.Value = (int)IconSize.Size64;
-                    }
-                    else
-                    {
-                        _configuration.DiagramIconSize = 32;
-                        _iconSize.Value = (int)IconSize.Size32;
-                    }
-                    _configuration.Apply();
+                    _configuration.DiagramIconSize = 32;
+                    _iconSize.Value = (int)IconSize.Size32;
                     break;
             }
 

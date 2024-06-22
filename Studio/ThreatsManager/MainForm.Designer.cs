@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this._ribbon = new DevComponents.DotNetBar.RibbonControl();
+            this._ribbonPanelHome = new DevComponents.DotNetBar.RibbonPanel();
             this._ribbonPanelHelp = new DevComponents.DotNetBar.RibbonPanel();
             this._ribbonPanelConfigure = new DevComponents.DotNetBar.RibbonPanel();
             this._ribbonPanelReview = new DevComponents.DotNetBar.RibbonPanel();
@@ -44,7 +45,6 @@
             this._closeWindow = new DevComponents.DotNetBar.ButtonItem();
             this._ribbonPanelAnalyze = new DevComponents.DotNetBar.RibbonPanel();
             this._ribbonPanelKnowledgeBase = new DevComponents.DotNetBar.RibbonPanel();
-            this._ribbonPanelHome = new DevComponents.DotNetBar.RibbonPanel();
             this._fileButton = new DevComponents.DotNetBar.ApplicationButton();
             this.itemContainer1 = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainer2 = new DevComponents.DotNetBar.ItemContainer();
@@ -161,6 +161,28 @@
             this._ribbon.TabGroupHeight = 14;
             this._ribbon.TabIndex = 0;
             this._ribbon.Text = "ribbonControl1";
+            // 
+            // _ribbonPanelHome
+            // 
+            this._ribbonPanelHome.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this._ribbonPanelHome.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._ribbonPanelHome.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelHome.Name = "_ribbonPanelHome";
+            this._ribbonPanelHome.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
+            this._ribbonPanelHome.Size = new System.Drawing.Size(1048, 97);
+            // 
+            // 
+            // 
+            this._ribbonPanelHome.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelHome.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this._ribbonPanelHome.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this._ribbonPanelHome.TabIndex = 4;
             // 
             // _ribbonPanelHelp
             // 
@@ -441,28 +463,6 @@
             this._ribbonPanelKnowledgeBase.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._ribbonPanelKnowledgeBase.TabIndex = 5;
             this._ribbonPanelKnowledgeBase.Visible = false;
-            // 
-            // _ribbonPanelHome
-            // 
-            this._ribbonPanelHome.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonPanelHome.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelHome.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelHome.Name = "_ribbonPanelHome";
-            this._ribbonPanelHome.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelHome.Size = new System.Drawing.Size(1048, 97);
-            // 
-            // 
-            // 
-            this._ribbonPanelHome.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelHome.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this._ribbonPanelHome.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._ribbonPanelHome.TabIndex = 4;
             // 
             // _fileButton
             // 
@@ -945,8 +945,8 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1058, 465);
             this.Controls.Add(this._statusBar);
             this.Controls.Add(this._ribbon);

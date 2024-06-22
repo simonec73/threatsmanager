@@ -89,6 +89,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModelPanel));
             this._palettePanel = new System.Windows.Forms.Panel();
             this._tabContainer = new DevComponents.DotNetBar.SuperTabControl();
+            this.superTabControlPanel1 = new DevComponents.DotNetBar.SuperTabControlPanel();
+            this._standardPalette = new ThreatsManager.Extensions.Panels.Diagram.GraphPalette();
+            this._standard = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabControlPanel4 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this._templatesPalette = new ThreatsManager.Extensions.Panels.Diagram.GraphPalette();
             this._templateToolsPanel = new DevComponents.DotNetBar.Layout.LayoutControl();
@@ -101,9 +104,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._templates = new DevComponents.DotNetBar.SuperTabItem();
-            this.superTabControlPanel1 = new DevComponents.DotNetBar.SuperTabControlPanel();
-            this._standardPalette = new ThreatsManager.Extensions.Panels.Diagram.GraphPalette();
-            this._standard = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabControlPanel2 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this._existingPalette = new ThreatsManager.Extensions.Panels.Diagram.GraphPalette();
             this._existingToolsPanel = new DevComponents.DotNetBar.Layout.LayoutControl();
@@ -127,9 +127,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._palettePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._tabContainer)).BeginInit();
             this._tabContainer.SuspendLayout();
+            this.superTabControlPanel1.SuspendLayout();
             this.superTabControlPanel4.SuspendLayout();
             this._templateToolsPanel.SuspendLayout();
-            this.superTabControlPanel1.SuspendLayout();
             this.superTabControlPanel2.SuspendLayout();
             this._existingToolsPanel.SuspendLayout();
             this.SuspendLayout();
@@ -164,9 +164,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._tabContainer.ControlBox.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this._tabContainer.ControlBox.MenuBox,
             this._tabContainer.ControlBox.CloseBox});
-            this._tabContainer.Controls.Add(this.superTabControlPanel4);
             this._tabContainer.Controls.Add(this.superTabControlPanel1);
             this._tabContainer.Controls.Add(this.superTabControlPanel2);
+            this._tabContainer.Controls.Add(this.superTabControlPanel4);
             this._tabContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabContainer.ForeColor = System.Drawing.Color.Black;
             this._tabContainer.Location = new System.Drawing.Point(0, 0);
@@ -184,6 +184,57 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._existing});
             this._tabContainer.TabStyle = DevComponents.DotNetBar.eSuperTabStyle.VisualStudio2008Dock;
             this._tabContainer.TabVerticalSpacing = 2;
+            // 
+            // superTabControlPanel1
+            // 
+            this.superTabControlPanel1.Controls.Add(this._standardPalette);
+            this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.superTabControlPanel1.Location = new System.Drawing.Point(0, 40);
+            this.superTabControlPanel1.Name = "superTabControlPanel1";
+            this.superTabControlPanel1.Size = new System.Drawing.Size(179, 454);
+            this.superTabControlPanel1.TabIndex = 1;
+            this.superTabControlPanel1.TabItem = this._standard;
+            // 
+            // _standardPalette
+            // 
+            this._standardPalette.AllowDelete = false;
+            this._standardPalette.AllowEdit = false;
+            this._standardPalette.AllowInsert = false;
+            this._standardPalette.AllowLink = false;
+            this._standardPalette.AllowMove = false;
+            this._standardPalette.AllowReshape = false;
+            this._standardPalette.AllowResize = false;
+            this._standardPalette.ArrowMoveLarge = 10F;
+            this._standardPalette.ArrowMoveSmall = 1F;
+            this._standardPalette.AutomaticLayout = false;
+            this._standardPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
+            this._standardPalette.BackColor = System.Drawing.Color.White;
+            this._standardPalette.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._standardPalette.GridCellSizeHeight = 58F;
+            this._standardPalette.GridCellSizeWidth = 52F;
+            this._standardPalette.GridOriginX = 20F;
+            this._standardPalette.GridOriginY = 5F;
+            this._standardPalette.HidesSelection = true;
+            this._standardPalette.Location = new System.Drawing.Point(0, 0);
+            this._standardPalette.Name = "_standardPalette";
+            this._standardPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            this._standardPalette.ShowsNegativeCoordinates = false;
+            this._standardPalette.ShowVerticalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Show;
+            this._standardPalette.Size = new System.Drawing.Size(179, 454);
+            this._standardPalette.TabIndex = 0;
+            this._standardPalette.Text = "graphPalette1";
+            this._standardPalette.MouseEnter += new System.EventHandler(this._standardPalette_MouseEnter);
+            // 
+            // _standard
+            // 
+            this._standard.AttachedControl = this.superTabControlPanel1;
+            this._standard.CloseButtonVisible = false;
+            this._standard.GlobalItem = false;
+            this._standard.Image = global::ThreatsManager.Extensions.Properties.Resources.shapes;
+            this._standard.Name = "_standard";
+            this._standard.Text = " ";
+            this._standard.TextAlignment = DevComponents.DotNetBar.eItemAlignment.Near;
+            this._standard.Tooltip = "Basic Objects";
             // 
             // superTabControlPanel4
             // 
@@ -246,7 +297,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             // 
             // _templateRefresh
             // 
-            this._templateRefresh.Image = ThreatsManager.Extensions.Properties.Resources.nav_refresh_small;
+            this._templateRefresh.Image = global::ThreatsManager.Extensions.Properties.Resources.nav_refresh_small;
             this._templateRefresh.Location = new System.Drawing.Point(147, 4);
             this._templateRefresh.Margin = new System.Windows.Forms.Padding(0);
             this._templateRefresh.Name = "_templateRefresh";
@@ -330,57 +381,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._templates.Text = " ";
             this._templates.TextAlignment = DevComponents.DotNetBar.eItemAlignment.Near;
             this._templates.Tooltip = "Item Templates";
-            // 
-            // superTabControlPanel1
-            // 
-            this.superTabControlPanel1.Controls.Add(this._standardPalette);
-            this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel1.Location = new System.Drawing.Point(0, 40);
-            this.superTabControlPanel1.Name = "superTabControlPanel1";
-            this.superTabControlPanel1.Size = new System.Drawing.Size(179, 454);
-            this.superTabControlPanel1.TabIndex = 1;
-            this.superTabControlPanel1.TabItem = this._standard;
-            // 
-            // _standardPalette
-            // 
-            this._standardPalette.AllowDelete = false;
-            this._standardPalette.AllowEdit = false;
-            this._standardPalette.AllowInsert = false;
-            this._standardPalette.AllowLink = false;
-            this._standardPalette.AllowMove = false;
-            this._standardPalette.AllowReshape = false;
-            this._standardPalette.AllowResize = false;
-            this._standardPalette.ArrowMoveLarge = 10F;
-            this._standardPalette.ArrowMoveSmall = 1F;
-            this._standardPalette.AutomaticLayout = false;
-            this._standardPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._standardPalette.BackColor = System.Drawing.Color.White;
-            this._standardPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._standardPalette.GridCellSizeHeight = 58F;
-            this._standardPalette.GridCellSizeWidth = 52F;
-            this._standardPalette.GridOriginX = 20F;
-            this._standardPalette.GridOriginY = 5F;
-            this._standardPalette.HidesSelection = true;
-            this._standardPalette.Location = new System.Drawing.Point(0, 0);
-            this._standardPalette.Name = "_standardPalette";
-            this._standardPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
-            this._standardPalette.ShowsNegativeCoordinates = false;
-            this._standardPalette.ShowVerticalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Show;
-            this._standardPalette.Size = new System.Drawing.Size(179, 454);
-            this._standardPalette.TabIndex = 0;
-            this._standardPalette.Text = "graphPalette1";
-            this._standardPalette.MouseEnter += new System.EventHandler(this._standardPalette_MouseEnter);
-            // 
-            // _standard
-            // 
-            this._standard.AttachedControl = this.superTabControlPanel1;
-            this._standard.CloseButtonVisible = false;
-            this._standard.GlobalItem = false;
-            this._standard.Image = global::ThreatsManager.Extensions.Properties.Resources.shapes;
-            this._standard.Name = "_standard";
-            this._standard.Text = " ";
-            this._standard.TextAlignment = DevComponents.DotNetBar.eItemAlignment.Near;
-            this._standard.Tooltip = "Basic Objects";
             // 
             // superTabControlPanel2
             // 
@@ -531,31 +531,31 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             // 
             // _leftSplitter
             // 
-            this._leftSplitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this._leftSplitter.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._leftSplitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._leftSplitter.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._leftSplitter.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this._leftSplitter.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this._leftSplitter.ExpandableControl = this._palettePanel;
-            this._leftSplitter.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._leftSplitter.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._leftSplitter.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._leftSplitter.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._leftSplitter.ExpandLineColor = System.Drawing.Color.Black;
             this._leftSplitter.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
             this._leftSplitter.ForeColor = System.Drawing.Color.Black;
-            this._leftSplitter.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._leftSplitter.GripDarkColor = System.Drawing.Color.Black;
             this._leftSplitter.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._leftSplitter.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this._leftSplitter.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this._leftSplitter.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this._leftSplitter.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
-            this._leftSplitter.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
+            this._leftSplitter.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199)))));
+            this._leftSplitter.HotBackColor2 = System.Drawing.Color.Empty;
             this._leftSplitter.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
             this._leftSplitter.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
-            this._leftSplitter.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._leftSplitter.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._leftSplitter.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._leftSplitter.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._leftSplitter.HotExpandLineColor = System.Drawing.Color.Black;
             this._leftSplitter.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._leftSplitter.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._leftSplitter.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._leftSplitter.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._leftSplitter.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this._leftSplitter.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this._leftSplitter.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
             this._leftSplitter.Location = new System.Drawing.Point(179, 0);
             this._leftSplitter.Name = "_leftSplitter";
@@ -566,32 +566,32 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             // 
             // _rightSplitter
             // 
-            this._rightSplitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this._rightSplitter.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._rightSplitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._rightSplitter.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._rightSplitter.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this._rightSplitter.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this._rightSplitter.Dock = System.Windows.Forms.DockStyle.Right;
             this._rightSplitter.ExpandableControl = this._properties;
-            this._rightSplitter.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._rightSplitter.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._rightSplitter.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._rightSplitter.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._rightSplitter.ExpandLineColor = System.Drawing.Color.Black;
             this._rightSplitter.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
             this._rightSplitter.ForeColor = System.Drawing.Color.Black;
-            this._rightSplitter.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._rightSplitter.GripDarkColor = System.Drawing.Color.Black;
             this._rightSplitter.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._rightSplitter.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this._rightSplitter.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this._rightSplitter.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this._rightSplitter.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
-            this._rightSplitter.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
+            this._rightSplitter.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199)))));
+            this._rightSplitter.HotBackColor2 = System.Drawing.Color.Empty;
             this._rightSplitter.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
             this._rightSplitter.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
-            this._rightSplitter.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._rightSplitter.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._rightSplitter.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._rightSplitter.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._rightSplitter.HotExpandLineColor = System.Drawing.Color.Black;
             this._rightSplitter.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._rightSplitter.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this._rightSplitter.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this._rightSplitter.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._rightSplitter.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this._rightSplitter.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this._rightSplitter.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
             this._rightSplitter.Location = new System.Drawing.Point(471, 0);
             this._rightSplitter.Name = "_rightSplitter";
@@ -660,8 +660,8 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             // 
             // ModelPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._graph);
             this.Controls.Add(this._leftSplitter);
             this.Controls.Add(this._palettePanel);
@@ -672,9 +672,9 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             this._palettePanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._tabContainer)).EndInit();
             this._tabContainer.ResumeLayout(false);
+            this.superTabControlPanel1.ResumeLayout(false);
             this.superTabControlPanel4.ResumeLayout(false);
             this._templateToolsPanel.ResumeLayout(false);
-            this.superTabControlPanel1.ResumeLayout(false);
             this.superTabControlPanel2.ResumeLayout(false);
             this._existingToolsPanel.ResumeLayout(false);
             this.ResumeLayout(false);

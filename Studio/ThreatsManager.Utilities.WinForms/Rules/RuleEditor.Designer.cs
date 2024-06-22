@@ -57,7 +57,7 @@
             this._decisionTreeValidator = new DevComponents.DotNetBar.Validator.CustomValidator();
             this._highlighter = new DevComponents.DotNetBar.Validator.Highlighter();
             this._styleManager = new DevComponents.DotNetBar.StyleManager(this.components);
-            this._tooltipErrorProvider = new TooltipErrorProvider();
+            this._tooltipErrorProvider = new ThreatsManager.Utilities.WinForms.Rules.TooltipErrorProvider();
             ((System.ComponentModel.ISupportInitialize)(this._decisionTree)).BeginInit();
             this._contextDecisionTree.SuspendLayout();
             this.SuspendLayout();
@@ -345,8 +345,8 @@
             // 
             // RuleEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._decisionTree);
             this.Controls.Add(this._decisionTreeTools);
             this.Name = "RuleEditor";

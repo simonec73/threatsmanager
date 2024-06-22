@@ -78,10 +78,12 @@
             // 
             // layoutControl1
             // 
+            this.layoutControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.layoutControl1.Controls.Add(this._labelNormalization);
             this.layoutControl1.Controls.Add(this._parameters);
             this.layoutControl1.Controls.Add(this._estimators);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -106,7 +108,9 @@
             // 
             // _parameters
             // 
+            this._parameters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this._parameters.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
+            this._parameters.ForeColor = System.Drawing.Color.Black;
             this._parameters.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._parameters.Location = new System.Drawing.Point(4, 50);
             this._parameters.Margin = new System.Windows.Forms.Padding(0);
@@ -183,8 +187,8 @@
             // 
             // ResidualRiskEstimatorConfigurationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(534, 343);

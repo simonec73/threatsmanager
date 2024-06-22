@@ -86,20 +86,18 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             this.panel1.Controls.Add(this._close);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 787);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.panel1.Location = new System.Drawing.Point(0, 394);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1452, 88);
+            this.panel1.Size = new System.Drawing.Size(722, 44);
             this.panel1.TabIndex = 2;
             // 
             // _close
             // 
             this._close.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._close.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._close.Location = new System.Drawing.Point(652, 21);
-            this._close.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._close.Location = new System.Drawing.Point(324, 10);
             this._close.Name = "_close";
-            this._close.Size = new System.Drawing.Size(150, 44);
+            this._close.Size = new System.Drawing.Size(75, 22);
             this._close.TabIndex = 2;
             this._close.Text = "Close";
             this._close.UseVisualStyleBackColor = true;
@@ -130,7 +128,6 @@ namespace ThreatsManager.DevOps.Dialogs
             this._container.Dock = System.Windows.Forms.DockStyle.Fill;
             this._container.ForeColor = System.Drawing.Color.Black;
             this._container.Location = new System.Drawing.Point(0, 0);
-            this._container.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._container.Name = "_container";
             // 
             // 
@@ -140,16 +137,16 @@ namespace ThreatsManager.DevOps.Dialogs
             this._validatorMessageContainer,
             this.layoutGroup1,
             this._initializeGroup});
-            this._container.Size = new System.Drawing.Size(1452, 787);
+            this._container.Size = new System.Drawing.Size(722, 394);
             this._container.TabIndex = 3;
             // 
             // _paramSunday
             // 
             this._paramSunday.AutoSize = true;
-            this._paramSunday.Location = new System.Drawing.Point(1222, 678);
+            this._paramSunday.Location = new System.Drawing.Point(602, 338);
             this._paramSunday.Margin = new System.Windows.Forms.Padding(0);
             this._paramSunday.Name = "_paramSunday";
-            this._paramSunday.Size = new System.Drawing.Size(185, 34);
+            this._paramSunday.Size = new System.Drawing.Size(91, 18);
             this._paramSunday.TabIndex = 18;
             this._paramSunday.Text = "Sunday";
             this._paramSunday.UseVisualStyleBackColor = true;
@@ -157,10 +154,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // _paramSaturday
             // 
             this._paramSaturday.AutoSize = true;
-            this._paramSaturday.Location = new System.Drawing.Point(1021, 678);
+            this._paramSaturday.Location = new System.Drawing.Point(503, 338);
             this._paramSaturday.Margin = new System.Windows.Forms.Padding(0);
             this._paramSaturday.Name = "_paramSaturday";
-            this._paramSaturday.Size = new System.Drawing.Size(185, 34);
+            this._paramSaturday.Size = new System.Drawing.Size(91, 18);
             this._paramSaturday.TabIndex = 17;
             this._paramSaturday.Text = "Saturday";
             this._paramSaturday.UseVisualStyleBackColor = true;
@@ -170,10 +167,10 @@ namespace ThreatsManager.DevOps.Dialogs
             this._paramFriday.AutoSize = true;
             this._paramFriday.Checked = true;
             this._paramFriday.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._paramFriday.Location = new System.Drawing.Point(820, 678);
+            this._paramFriday.Location = new System.Drawing.Point(404, 338);
             this._paramFriday.Margin = new System.Windows.Forms.Padding(0);
             this._paramFriday.Name = "_paramFriday";
-            this._paramFriday.Size = new System.Drawing.Size(185, 34);
+            this._paramFriday.Size = new System.Drawing.Size(91, 18);
             this._paramFriday.TabIndex = 16;
             this._paramFriday.Text = "Friday";
             this._paramFriday.UseVisualStyleBackColor = true;
@@ -183,10 +180,10 @@ namespace ThreatsManager.DevOps.Dialogs
             this._paramThursday.AutoSize = true;
             this._paramThursday.Checked = true;
             this._paramThursday.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._paramThursday.Location = new System.Drawing.Point(619, 678);
+            this._paramThursday.Location = new System.Drawing.Point(305, 338);
             this._paramThursday.Margin = new System.Windows.Forms.Padding(0);
             this._paramThursday.Name = "_paramThursday";
-            this._paramThursday.Size = new System.Drawing.Size(185, 34);
+            this._paramThursday.Size = new System.Drawing.Size(91, 18);
             this._paramThursday.TabIndex = 15;
             this._paramThursday.Text = "Thursday";
             this._paramThursday.UseVisualStyleBackColor = true;
@@ -196,10 +193,10 @@ namespace ThreatsManager.DevOps.Dialogs
             this._paramWednesday.AutoSize = true;
             this._paramWednesday.Checked = true;
             this._paramWednesday.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._paramWednesday.Location = new System.Drawing.Point(418, 678);
+            this._paramWednesday.Location = new System.Drawing.Point(206, 338);
             this._paramWednesday.Margin = new System.Windows.Forms.Padding(0);
             this._paramWednesday.Name = "_paramWednesday";
-            this._paramWednesday.Size = new System.Drawing.Size(185, 34);
+            this._paramWednesday.Size = new System.Drawing.Size(91, 18);
             this._paramWednesday.TabIndex = 14;
             this._paramWednesday.Text = "Wednesday";
             this._paramWednesday.UseVisualStyleBackColor = true;
@@ -209,10 +206,10 @@ namespace ThreatsManager.DevOps.Dialogs
             this._paramTuesday.AutoSize = true;
             this._paramTuesday.Checked = true;
             this._paramTuesday.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._paramTuesday.Location = new System.Drawing.Point(217, 678);
+            this._paramTuesday.Location = new System.Drawing.Point(107, 338);
             this._paramTuesday.Margin = new System.Windows.Forms.Padding(0);
             this._paramTuesday.Name = "_paramTuesday";
-            this._paramTuesday.Size = new System.Drawing.Size(185, 34);
+            this._paramTuesday.Size = new System.Drawing.Size(91, 18);
             this._paramTuesday.TabIndex = 13;
             this._paramTuesday.Text = "Tuesday";
             this._paramTuesday.UseVisualStyleBackColor = true;
@@ -222,20 +219,20 @@ namespace ThreatsManager.DevOps.Dialogs
             this._paramMonday.AutoSize = true;
             this._paramMonday.Checked = true;
             this._paramMonday.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._paramMonday.Location = new System.Drawing.Point(16, 678);
+            this._paramMonday.Location = new System.Drawing.Point(8, 338);
             this._paramMonday.Margin = new System.Windows.Forms.Padding(0);
             this._paramMonday.Name = "_paramMonday";
-            this._paramMonday.Size = new System.Drawing.Size(185, 34);
+            this._paramMonday.Size = new System.Drawing.Size(91, 18);
             this._paramMonday.TabIndex = 12;
             this._paramMonday.Text = "Monday";
             this._paramMonday.UseVisualStyleBackColor = true;
             // 
             // _generate
             // 
-            this._generate.Location = new System.Drawing.Point(16, 726);
+            this._generate.Location = new System.Drawing.Point(8, 362);
             this._generate.Margin = new System.Windows.Forms.Padding(0);
             this._generate.Name = "_generate";
-            this._generate.Size = new System.Drawing.Size(1420, 46);
+            this._generate.Size = new System.Drawing.Size(706, 24);
             this._generate.TabIndex = 19;
             this._generate.Text = "Generate";
             this._generate.UseVisualStyleBackColor = true;
@@ -243,7 +240,7 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // _paramCount
             // 
-            this._paramCount.Location = new System.Drawing.Point(1144, 624);
+            this._paramCount.Location = new System.Drawing.Point(574, 311);
             this._paramCount.Margin = new System.Windows.Forms.Padding(0);
             this._paramCount.Maximum = new decimal(new int[] {
             1000,
@@ -256,7 +253,7 @@ namespace ThreatsManager.DevOps.Dialogs
             0,
             0});
             this._paramCount.Name = "_paramCount";
-            this._paramCount.Size = new System.Drawing.Size(292, 31);
+            this._paramCount.Size = new System.Drawing.Size(140, 20);
             this._paramCount.TabIndex = 11;
             this._paramCount.Value = new decimal(new int[] {
             1,
@@ -266,7 +263,7 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // _paramDuration
             // 
-            this._paramDuration.Location = new System.Drawing.Point(671, 624);
+            this._paramDuration.Location = new System.Drawing.Point(339, 311);
             this._paramDuration.Margin = new System.Windows.Forms.Padding(0);
             this._paramDuration.Maximum = new decimal(new int[] {
             1000,
@@ -279,7 +276,7 @@ namespace ThreatsManager.DevOps.Dialogs
             0,
             0});
             this._paramDuration.Name = "_paramDuration";
-            this._paramDuration.Size = new System.Drawing.Size(290, 31);
+            this._paramDuration.Size = new System.Drawing.Size(138, 20);
             this._paramDuration.TabIndex = 10;
             this._paramDuration.Value = new decimal(new int[] {
             1,
@@ -290,32 +287,32 @@ namespace ThreatsManager.DevOps.Dialogs
             // _paramStartDate
             // 
             this._paramStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this._paramStartDate.Location = new System.Drawing.Point(183, 624);
+            this._paramStartDate.Location = new System.Drawing.Point(97, 311);
             this._paramStartDate.Margin = new System.Windows.Forms.Padding(0);
             this._paramStartDate.MaxDate = new System.DateTime(2199, 12, 31, 0, 0, 0, 0);
             this._paramStartDate.MinDate = new System.DateTime(2020, 1, 1, 0, 0, 0, 0);
             this._paramStartDate.Name = "_paramStartDate";
-            this._paramStartDate.Size = new System.Drawing.Size(305, 31);
+            this._paramStartDate.Size = new System.Drawing.Size(145, 20);
             this._paramStartDate.TabIndex = 9;
             this._paramStartDate.Value = new System.DateTime(2021, 1, 23, 0, 0, 0, 0);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 584);
+            this.label1.Location = new System.Drawing.Point(8, 291);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1420, 26);
+            this.label1.Size = new System.Drawing.Size(706, 14);
             this.label1.TabIndex = 8;
             this.label1.Text = "Initialize the Iterations specifying a few parameters";
             // 
             // _initialize
             // 
             this._initialize.Enabled = false;
-            this._initialize.Location = new System.Drawing.Point(878, 516);
+            this._initialize.Location = new System.Drawing.Point(436, 258);
             this._initialize.Margin = new System.Windows.Forms.Padding(0);
             this._initialize.Name = "_initialize";
-            this._initialize.Size = new System.Drawing.Size(274, 46);
+            this._initialize.Size = new System.Drawing.Size(136, 24);
             this._initialize.TabIndex = 5;
             this._initialize.Text = "Initialize";
             this._initialize.UseVisualStyleBackColor = true;
@@ -326,19 +323,19 @@ namespace ThreatsManager.DevOps.Dialogs
             this._validatorMessage.AutoSize = true;
             this._validatorMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._validatorMessage.ForeColor = System.Drawing.Color.Red;
-            this._validatorMessage.Location = new System.Drawing.Point(8, 476);
+            this._validatorMessage.Location = new System.Drawing.Point(4, 238);
             this._validatorMessage.Margin = new System.Windows.Forms.Padding(0);
             this._validatorMessage.Name = "_validatorMessage";
-            this._validatorMessage.Size = new System.Drawing.Size(1436, 26);
+            this._validatorMessage.Size = new System.Drawing.Size(714, 14);
             this._validatorMessage.TabIndex = 1;
             this._validatorMessage.Text = "Validator message";
             // 
             // _load
             // 
-            this._load.Location = new System.Drawing.Point(1168, 516);
+            this._load.Location = new System.Drawing.Point(580, 258);
             this._load.Margin = new System.Windows.Forms.Padding(0);
             this._load.Name = "_load";
-            this._load.Size = new System.Drawing.Size(276, 46);
+            this._load.Size = new System.Drawing.Size(138, 24);
             this._load.TabIndex = 6;
             this._load.Text = "Auto Load from DevOps";
             this._load.UseVisualStyleBackColor = true;
@@ -346,10 +343,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // _clear
             // 
-            this._clear.Location = new System.Drawing.Point(588, 516);
+            this._clear.Location = new System.Drawing.Point(292, 258);
             this._clear.Margin = new System.Windows.Forms.Padding(0);
             this._clear.Name = "_clear";
-            this._clear.Size = new System.Drawing.Size(274, 46);
+            this._clear.Size = new System.Drawing.Size(136, 24);
             this._clear.TabIndex = 4;
             this._clear.Text = "Clear";
             this._clear.UseVisualStyleBackColor = true;
@@ -357,10 +354,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // _remove
             // 
-            this._remove.Location = new System.Drawing.Point(298, 516);
+            this._remove.Location = new System.Drawing.Point(148, 258);
             this._remove.Margin = new System.Windows.Forms.Padding(0);
             this._remove.Name = "_remove";
-            this._remove.Size = new System.Drawing.Size(274, 46);
+            this._remove.Size = new System.Drawing.Size(136, 24);
             this._remove.TabIndex = 3;
             this._remove.Text = "Remove";
             this._remove.UseVisualStyleBackColor = true;
@@ -368,10 +365,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // _add
             // 
-            this._add.Location = new System.Drawing.Point(8, 516);
+            this._add.Location = new System.Drawing.Point(4, 258);
             this._add.Margin = new System.Windows.Forms.Padding(0);
             this._add.Name = "_add";
-            this._add.Size = new System.Drawing.Size(274, 46);
+            this._add.Size = new System.Drawing.Size(136, 24);
             this._add.TabIndex = 2;
             this._add.Text = "Add";
             this._add.UseVisualStyleBackColor = true;
@@ -383,10 +380,10 @@ namespace ThreatsManager.DevOps.Dialogs
             this._grid.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
             this._grid.ForeColor = System.Drawing.Color.Black;
             this._grid.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._grid.Location = new System.Drawing.Point(8, 37);
+            this._grid.Location = new System.Drawing.Point(4, 20);
             this._grid.Margin = new System.Windows.Forms.Padding(0);
             this._grid.Name = "_grid";
-            this._grid.Size = new System.Drawing.Size(1436, 425);
+            this._grid.Size = new System.Drawing.Size(714, 212);
             this._grid.TabIndex = 0;
             this._grid.Text = "superGridControl1";
             this._validator.SetValidator1(this._grid, this._overlapValidator);
@@ -397,9 +394,9 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControlItem1.Control = this._grid;
             this.layoutControlItem1.Height = 99;
             this.layoutControlItem1.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem1.Text = "Iterations";
             this.layoutControlItem1.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
             this.layoutControlItem1.Width = 100;
@@ -408,10 +405,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // _validatorMessageContainer
             // 
             this._validatorMessageContainer.Control = this._validatorMessage;
-            this._validatorMessageContainer.Height = 40;
-            this._validatorMessageContainer.MinSize = new System.Drawing.Size(128, 34);
+            this._validatorMessageContainer.Height = 20;
+            this._validatorMessageContainer.MinSize = new System.Drawing.Size(64, 17);
             this._validatorMessageContainer.Name = "_validatorMessageContainer";
-            this._validatorMessageContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._validatorMessageContainer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._validatorMessageContainer.Text = "Label:";
             this._validatorMessageContainer.TextVisible = false;
             this._validatorMessageContainer.Visible = false;
@@ -420,14 +417,14 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // layoutGroup1
             // 
-            this.layoutGroup1.Height = 61;
+            this.layoutGroup1.Height = 30;
             this.layoutGroup1.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this._addContainer,
             this._removeContainer,
             this._clearContainer,
             this.layoutControlItem2,
             this._autoLoadContainer});
-            this.layoutGroup1.MinSize = new System.Drawing.Size(240, 61);
+            this.layoutGroup1.MinSize = new System.Drawing.Size(120, 30);
             this.layoutGroup1.Name = "layoutGroup1";
             this.layoutGroup1.Padding = new System.Windows.Forms.Padding(0);
             this.layoutGroup1.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
@@ -437,56 +434,56 @@ namespace ThreatsManager.DevOps.Dialogs
             // _addContainer
             // 
             this._addContainer.Control = this._add;
-            this._addContainer.Height = 60;
-            this._addContainer.MinSize = new System.Drawing.Size(64, 38);
+            this._addContainer.Height = 30;
+            this._addContainer.MinSize = new System.Drawing.Size(32, 19);
             this._addContainer.Name = "_addContainer";
-            this._addContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._addContainer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._addContainer.Width = 20;
             this._addContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // _removeContainer
             // 
             this._removeContainer.Control = this._remove;
-            this._removeContainer.Height = 60;
-            this._removeContainer.MinSize = new System.Drawing.Size(64, 38);
+            this._removeContainer.Height = 30;
+            this._removeContainer.MinSize = new System.Drawing.Size(32, 19);
             this._removeContainer.Name = "_removeContainer";
-            this._removeContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._removeContainer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._removeContainer.Width = 20;
             this._removeContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // _clearContainer
             // 
             this._clearContainer.Control = this._clear;
-            this._clearContainer.Height = 60;
-            this._clearContainer.MinSize = new System.Drawing.Size(64, 38);
+            this._clearContainer.Height = 30;
+            this._clearContainer.MinSize = new System.Drawing.Size(32, 19);
             this._clearContainer.Name = "_clearContainer";
-            this._clearContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._clearContainer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._clearContainer.Width = 20;
             this._clearContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this._initialize;
-            this.layoutControlItem2.Height = 60;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem2.Height = 30;
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem2.Width = 20;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // _autoLoadContainer
             // 
             this._autoLoadContainer.Control = this._load;
-            this._autoLoadContainer.Height = 60;
-            this._autoLoadContainer.MinSize = new System.Drawing.Size(64, 38);
+            this._autoLoadContainer.Height = 30;
+            this._autoLoadContainer.MinSize = new System.Drawing.Size(32, 19);
             this._autoLoadContainer.Name = "_autoLoadContainer";
-            this._autoLoadContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._autoLoadContainer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._autoLoadContainer.Width = 20;
             this._autoLoadContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // _initializeGroup
             // 
-            this._initializeGroup.Height = 212;
+            this._initializeGroup.Height = 106;
             this._initializeGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem3,
             this.layoutControlItem4,
@@ -500,9 +497,9 @@ namespace ThreatsManager.DevOps.Dialogs
             this.layoutControlItem13,
             this.layoutControlItem14,
             this.layoutControlItem7});
-            this._initializeGroup.MinSize = new System.Drawing.Size(240, 61);
+            this._initializeGroup.MinSize = new System.Drawing.Size(120, 30);
             this._initializeGroup.Name = "_initializeGroup";
-            this._initializeGroup.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._initializeGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._initializeGroup.TextPosition = DevComponents.DotNetBar.Layout.eLayoutPosition.Top;
             this._initializeGroup.Visible = false;
             this._initializeGroup.Width = 100;
@@ -511,10 +508,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this.label1;
-            this.layoutControlItem3.Height = 40;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem3.Height = 20;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem3.Text = "Label:";
             this.layoutControlItem3.TextVisible = false;
             this.layoutControlItem3.Width = 100;
@@ -523,10 +520,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // layoutControlItem4
             // 
             this.layoutControlItem4.Control = this._paramStartDate;
-            this.layoutControlItem4.Height = 54;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem4.Height = 27;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem4.Name = "layoutControlItem4";
-            this.layoutControlItem4.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem4.Text = "Start Date";
             this.layoutControlItem4.Width = 34;
             this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -534,10 +531,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // layoutControlItem5
             // 
             this.layoutControlItem5.Control = this._paramDuration;
-            this.layoutControlItem5.Height = 54;
-            this.layoutControlItem5.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem5.Height = 27;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem5.Name = "layoutControlItem5";
-            this.layoutControlItem5.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem5.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem5.Text = "Duration in days";
             this.layoutControlItem5.Width = 33;
             this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -545,10 +542,10 @@ namespace ThreatsManager.DevOps.Dialogs
             // layoutControlItem6
             // 
             this.layoutControlItem6.Control = this._paramCount;
-            this.layoutControlItem6.Height = 54;
-            this.layoutControlItem6.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem6.Height = 27;
+            this.layoutControlItem6.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem6.Name = "layoutControlItem6";
-            this.layoutControlItem6.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem6.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem6.Text = "Iterations Count";
             this.layoutControlItem6.Width = 33;
             this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -556,80 +553,80 @@ namespace ThreatsManager.DevOps.Dialogs
             // layoutControlItem8
             // 
             this.layoutControlItem8.Control = this._paramMonday;
-            this.layoutControlItem8.Height = 48;
-            this.layoutControlItem8.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem8.Height = 24;
+            this.layoutControlItem8.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem8.Name = "layoutControlItem8";
-            this.layoutControlItem8.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem8.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem8.Width = 14;
             this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem9
             // 
             this.layoutControlItem9.Control = this._paramTuesday;
-            this.layoutControlItem9.Height = 48;
-            this.layoutControlItem9.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem9.Height = 24;
+            this.layoutControlItem9.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem9.Name = "layoutControlItem9";
-            this.layoutControlItem9.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem9.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem9.Width = 14;
             this.layoutControlItem9.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem10
             // 
             this.layoutControlItem10.Control = this._paramWednesday;
-            this.layoutControlItem10.Height = 48;
-            this.layoutControlItem10.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem10.Height = 24;
+            this.layoutControlItem10.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem10.Name = "layoutControlItem10";
-            this.layoutControlItem10.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem10.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem10.Width = 14;
             this.layoutControlItem10.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem11
             // 
             this.layoutControlItem11.Control = this._paramThursday;
-            this.layoutControlItem11.Height = 48;
-            this.layoutControlItem11.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem11.Height = 24;
+            this.layoutControlItem11.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem11.Name = "layoutControlItem11";
-            this.layoutControlItem11.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem11.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem11.Width = 14;
             this.layoutControlItem11.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem12
             // 
             this.layoutControlItem12.Control = this._paramFriday;
-            this.layoutControlItem12.Height = 48;
-            this.layoutControlItem12.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem12.Height = 24;
+            this.layoutControlItem12.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem12.Name = "layoutControlItem12";
-            this.layoutControlItem12.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem12.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem12.Width = 14;
             this.layoutControlItem12.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem13
             // 
             this.layoutControlItem13.Control = this._paramSaturday;
-            this.layoutControlItem13.Height = 48;
-            this.layoutControlItem13.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem13.Height = 24;
+            this.layoutControlItem13.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem13.Name = "layoutControlItem13";
-            this.layoutControlItem13.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem13.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem13.Width = 14;
             this.layoutControlItem13.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem14
             // 
             this.layoutControlItem14.Control = this._paramSunday;
-            this.layoutControlItem14.Height = 48;
-            this.layoutControlItem14.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem14.Height = 24;
+            this.layoutControlItem14.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem14.Name = "layoutControlItem14";
-            this.layoutControlItem14.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem14.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem14.Width = 14;
             this.layoutControlItem14.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem7
             // 
             this.layoutControlItem7.Control = this._generate;
-            this.layoutControlItem7.Height = 60;
-            this.layoutControlItem7.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem7.Height = 30;
+            this.layoutControlItem7.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem7.Name = "layoutControlItem7";
-            this.layoutControlItem7.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem7.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem7.Width = 100;
             this.layoutControlItem7.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
@@ -661,14 +658,13 @@ namespace ThreatsManager.DevOps.Dialogs
             // 
             // DevOpsManageIterationsDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._close;
-            this.ClientSize = new System.Drawing.Size(1452, 875);
+            this.ClientSize = new System.Drawing.Size(722, 438);
             this.Controls.Add(this._container);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MinimizeBox = false;
             this.Name = "DevOpsManageIterationsDialog";
             this.ShowIcon = false;
