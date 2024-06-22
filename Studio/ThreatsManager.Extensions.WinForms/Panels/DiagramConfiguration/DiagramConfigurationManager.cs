@@ -40,28 +40,7 @@ namespace ThreatsManager.Extensions.Panels.DiagramConfiguration
 
                 var size = _configuration?.GlobalGet<int>("iconSize");
                 if ((size ?? 0) == 0)
-                {
-                    if (Dpi.Factor.Height >= 8)
-                    {
-                        result = 256;
-                    }
-                    else if (Dpi.Factor.Height >= 4)
-                    {
-                        result = 128;
-                    }
-                    else if (Dpi.Factor.Height >= 3)
-                    {
-                        result = 96;
-                    }
-                    else if (Dpi.Factor.Height >= 2)
-                    {
-                        result = 64;
-                    }
-                    else
-                    {
-                        result = 32;
-                    }
-                }
+                    result = 32;
                 else
                     result = size.Value;
 

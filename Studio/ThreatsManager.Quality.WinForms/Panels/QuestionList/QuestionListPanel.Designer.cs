@@ -20,6 +20,15 @@ namespace ThreatsManager.Quality.Panels.QuestionList
         {
             _grid.CellClick -= _grid_CellClick;
 
+            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
+            if (rows.Any())
+            {
+                foreach (var row in rows)
+                {
+                    RemoveEventSubscriptions(row);
+                }
+            }
+
             var bc = _grid.PrimaryGrid.Columns["AutoGenRule"].EditControl as GridButtonXEditControl;
             if (bc != null)
             {
@@ -27,6 +36,12 @@ namespace ThreatsManager.Quality.Panels.QuestionList
             }
 
             var ddc = _grid.PrimaryGrid.Columns["Question"].EditControl as GridTextBoxDropDownEditControl;
+            if (ddc != null)
+            {
+                ddc.ButtonClearClick -= DdcButtonClearClick;
+            }
+
+            ddc = _grid.PrimaryGrid.Columns["Rationale"].EditControl as GridTextBoxDropDownEditControl;
             if (ddc != null)
             {
                 ddc.ButtonClearClick -= DdcButtonClearClick;
@@ -178,8 +193,8 @@ namespace ThreatsManager.Quality.Panels.QuestionList
             // 
             // QuestionListPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._grid);
             this.Controls.Add(this._topLeftPanel);
             this.Name = "QuestionListPanel";

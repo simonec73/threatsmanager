@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\PostSharp.2024.0.8\build\PostSharp.props" Condition="Exists('packages\PostSharp.2024.0.8\build\PostSharp.props')" />
+  <Import Project="packages\PostSharp.2024.1.4\build\PostSharp.props" Condition="Exists('packages\PostSharp.2024.1.4\build\PostSharp.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
@@ -17,10 +17,14 @@
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -72,20 +76,20 @@
       <HintPath>c:\Program Files (x86)\Keyoti Inc\RapidSpell Desktop .NET v6\.NET4_DLLs\Keyoti.RapidSpell.NET4.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="PostSharp, Version=2024.0.8.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Redist.2024.0.8\lib\net45\PostSharp.dll</HintPath>
+    <Reference Include="PostSharp, Version=2024.1.4.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Redist.2024.1.4\lib\net45\PostSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Aggregation, Version=2024.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Aggregation.Redist.2024.0.8\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Aggregation, Version=2024.1.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Aggregation.Redist.2024.1.4\lib\net45\PostSharp.Patterns.Aggregation.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Common, Version=2024.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Common.Redist.2024.0.8\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Common, Version=2024.1.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Common.Redist.2024.1.4\lib\net47\PostSharp.Patterns.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Model, Version=2024.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Model.Redist.2024.0.8\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Model, Version=2024.1.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Model.Redist.2024.1.4\lib\net45\PostSharp.Patterns.Model.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp.Patterns.Threading, Version=2024.0.8.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>packages\PostSharp.Patterns.Threading.Redist.2024.0.8\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
+    <Reference Include="PostSharp.Patterns.Threading, Version=2024.1.4.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
+      <HintPath>packages\PostSharp.Patterns.Threading.Redist.2024.1.4\lib\net45\PostSharp.Patterns.Threading.dll</HintPath>
     </Reference>
     <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>packages\Svg.3.4.7\lib\net481\Svg.dll</HintPath>
@@ -99,7 +103,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Drawing.Common.8.0.4\lib\net462\System.Drawing.Common.dll</HintPath>
+      <HintPath>packages\System.Drawing.Common.8.0.6\lib\net462\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
@@ -142,11 +146,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckedLink.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CheckedLink.Designer.cs">
+      <DependentUpon>CheckedLink.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\UrlEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\UrlEditorDialog.Designer.cs">
+      <DependentUpon>UrlEditorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\VulnerabilityMitigationSelectionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\VulnerabilityMitigationSelectionDialog.Designer.cs">
       <DependentUpon>VulnerabilityMitigationSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MarkdownEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MarkdownEditor.Designer.cs">
+      <DependentUpon>MarkdownEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Rules\ExitTrustBoundaryTemplateItemContext.cs" />
     <Compile Include="Rules\ExitTrustBoundaryItemContext.cs" />
@@ -321,9 +343,15 @@
     <Compile Include="TooltipExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CheckedLink.resx">
+      <DependentUpon>CheckedLink.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\GenericIdentityCreationDialog.resx">
       <DependentUpon>GenericIdentityCreationDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\UrlEditorDialog.resx">
+      <DependentUpon>UrlEditorDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\VulnerabilityMitigationSelectionDialog.resx">
       <DependentUpon>VulnerabilityMitigationSelectionDialog.cs</DependentUpon>
@@ -379,6 +407,9 @@
     <EmbeddedResource Include="ItemEditor.resx">
       <DependentUpon>ItemEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MarkdownEditor.resx">
+      <DependentUpon>MarkdownEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -395,6 +426,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\arrow_to_small.png" />
   </ItemGroup>
@@ -515,14 +547,19 @@
   <ItemGroup>
     <None Include="Resources\erase_small.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\pencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pencil_small.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\PostSharp.2024.0.8\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.2024.0.8\build\PostSharp.props'))" />
-    <Error Condition="!Exists('packages\PostSharp.2024.0.8\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.2024.0.8\build\PostSharp.targets'))" />
+    <Error Condition="!Exists('packages\PostSharp.2024.1.4\build\PostSharp.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.2024.1.4\build\PostSharp.props'))" />
+    <Error Condition="!Exists('packages\PostSharp.2024.1.4\build\PostSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PostSharp.2024.1.4\build\PostSharp.targets'))" />
   </Target>
-  <Import Project="packages\PostSharp.2024.0.8\build\PostSharp.targets" Condition="Exists('packages\PostSharp.2024.0.8\build\PostSharp.targets')" />
+  <Import Project="packages\PostSharp.2024.1.4\build\PostSharp.targets" Condition="Exists('packages\PostSharp.2024.1.4\build\PostSharp.targets')" />
 </Project>

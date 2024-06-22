@@ -42,12 +42,12 @@
             this.InputBox.TabIndex = 0;
             this.InputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.InputBox_KeyPress);
             // 
-            // SSTextBox
+            // SecureTextBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.InputBox);
-            this.Name = "SSTextBox";
+            this.Name = "SecureTextBox";
             this.Size = new System.Drawing.Size(150, 20);
             this.ResumeLayout(false);
             this.PerformLayout();

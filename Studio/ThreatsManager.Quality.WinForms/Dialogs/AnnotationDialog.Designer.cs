@@ -44,20 +44,18 @@ namespace ThreatsManager.Quality.Dialogs
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 808);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.panel1.Location = new System.Drawing.Point(0, 394);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1600, 92);
+            this.panel1.Size = new System.Drawing.Size(722, 46);
             this.panel1.TabIndex = 2;
             // 
             // _cancel
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(806, 22);
-            this._cancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._cancel.Location = new System.Drawing.Point(364, 11);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(150, 46);
+            this._cancel.Size = new System.Drawing.Size(75, 23);
             this._cancel.TabIndex = 1;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -67,10 +65,9 @@ namespace ThreatsManager.Quality.Dialogs
             // 
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this._ok.Location = new System.Drawing.Point(644, 22);
-            this._ok.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._ok.Location = new System.Drawing.Point(283, 11);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(150, 46);
+            this._ok.Size = new System.Drawing.Size(75, 23);
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
@@ -81,20 +78,19 @@ namespace ThreatsManager.Quality.Dialogs
             this._annotation.BackColor = System.Drawing.Color.White;
             this._annotation.Dock = System.Windows.Forms.DockStyle.Fill;
             this._annotation.Location = new System.Drawing.Point(0, 0);
-            this._annotation.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
+            this._annotation.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._annotation.Name = "_annotation";
-            this._annotation.Size = new System.Drawing.Size(1600, 808);
+            this._annotation.Size = new System.Drawing.Size(722, 394);
             this._annotation.TabIndex = 3;
             // 
             // AnnotationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(1600, 900);
+            this.ClientSize = new System.Drawing.Size(722, 440);
             this.Controls.Add(this._annotation);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MinimizeBox = false;
             this.Name = "AnnotationDialog";
             this.ShowIcon = false;

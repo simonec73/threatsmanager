@@ -27,7 +27,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
             }
             if (_persistentLocation.IsEmpty)
             {
-                _persistentLocation = new Point((int)(100 * Dpi.Factor.Width), (int)(100 * Dpi.Factor.Height));
+                _persistentLocation = new Point(100, 100);
             }
             else
             {

@@ -85,7 +85,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                         Selectable = false,
                         Movable = false,
                         Editable = true,
-                        Position = new PointF(0.0f, -16.0f * Dpi.Factor.Height)
+                        Position = new PointF(0.0f, -16.0f)
                     };
                     _label.AddObserver(this);
                     Add(_label);

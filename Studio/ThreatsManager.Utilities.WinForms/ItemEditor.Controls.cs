@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Controls;
 using DevComponents.DotNetBar.Layout;
 using DevComponents.DotNetBar.SuperGrid;
 using DevComponents.Editors;
+using DevComponents.Editors.DateTimeAdv;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -18,15 +19,12 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities.WinForms.Dialogs;
 using IProperty = ThreatsManager.Interfaces.ObjectModel.Properties.IProperty;
-using MarkupLinkClickEventArgs = DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs;
 using Padding = System.Windows.Forms.Padding;
 
 namespace ThreatsManager.Utilities.WinForms
 {
     public partial class ItemEditor
     {
-        private Dictionary<Control, EventHandler> _changeActions = new Dictionary<Control, EventHandler>();
-
         #region Resource releasing.
         private interface IResourceReleaser
         {
@@ -38,7 +36,9 @@ namespace ThreatsManager.Utilities.WinForms
             private Action<T> _action;
             private T _value;
             private Action<T, EventHandler> _eventHandlerAction;
+            private Action<T, DevComponents.DotNetBar.MarkupLinkClickEventHandler> _markupLinkClickHandlerAction;
             private EventHandler _handler;
+            private DevComponents.DotNetBar.MarkupLinkClickEventHandler _markupLinkClickHandler;
 
             public ResourceReleaser([NotNull] Action<T> action, [NotNull] T value) 
             {
@@ -54,6 +54,14 @@ namespace ThreatsManager.Utilities.WinForms
                 _handler = handler;
             }
 
+            public ResourceReleaser([NotNull] Action<T, DevComponents.DotNetBar.MarkupLinkClickEventHandler> action, 
+                [NotNull] T value, [NotNull] DevComponents.DotNetBar.MarkupLinkClickEventHandler handler)
+            {
+                _markupLinkClickHandlerAction = action;
+                _value = value;
+                _markupLinkClickHandler = handler;
+            }
+
             public void Release()
             {
                 if (_value != null)
@@ -66,19 +74,25 @@ namespace ThreatsManager.Utilities.WinForms
                     {
                         _eventHandlerAction.Invoke(_value, _handler);
                     }
+                    else if (_markupLinkClickHandlerAction != null && _markupLinkClickHandler != null)
+                    {
+                        _markupLinkClickHandlerAction.Invoke(_value, _markupLinkClickHandler);
+                    }
                 }
 
                 _action = null;
                 _value = null;
                 _eventHandlerAction = null;
                 _handler = null;
+                _markupLinkClickHandlerAction = null;
+                _markupLinkClickHandler = null;
             }
         }
 
         private readonly List<IResourceReleaser> _releasers = new List<IResourceReleaser>();
         #endregion
 
-        #region Label.
+        #region Label properties.
         private static Label AddSingleLineLabel([NotNull] LayoutControl container,
             string label, string text, Bitmap image = null)
         {
@@ -88,7 +102,7 @@ namespace ThreatsManager.Utilities.WinForms
         private static Label AddSingleLineLabel([NotNull] LayoutControl container,
             string label, string text, int widthPerc, Bitmap image = null)
         {
-            int height = (int) (21 * Dpi.Factor.Height);
+            int height = 21;
             if (image != null)
             {
                 height = image.Height + 10;
@@ -123,7 +137,7 @@ namespace ThreatsManager.Utilities.WinForms
         private static Label AddLabel([NotNull] LayoutControl container,
             string label, string text, Bitmap image = null)
         {
-            int height = (int) (105 * Dpi.Factor.Height);
+            int height = 105;
             if (image != null)
             {
                 height = image.Height + 10;
@@ -156,11 +170,11 @@ namespace ThreatsManager.Utilities.WinForms
         }
         #endregion
 
-        #region Hyperlink.
+        #region Hyperlink properties.
         private LinkLabel AddHyperlink([NotNull] LayoutControl container,
             string label, IIdentity identity, Bitmap image = null)
         {
-            int height = (int) (25 * Dpi.Factor.Height);
+            int height = 25;
             var text = identity?.Name;
             var padding = 4;
             if (image != null)
@@ -196,21 +210,383 @@ namespace ThreatsManager.Utilities.WinForms
             return control;
         }
 
+        private LinkLabel AddHyperlink([NotNull] LayoutControl container,
+            IPropertyUrl property, bool readOnly)
+        {
+            var text = property?.Label ?? property.Url;
+            var control = new LinkLabel()
+            {
+                Text = text,
+                UseMnemonic = false,
+                Padding = new Padding(4, 0, 4, 0),
+                Tag = property
+            };
+            control.LinkClicked += OnHyperlinkClicked;
+            _releasers.Add(new ResourceReleaser<LinkLabel>(ReleaseLinkClicked, control));
+
+            var percentage = 101;
+            if (!readOnly)
+            {
+                percentage = 99;
+            }
+
+            var item = new LayoutControlItem()
+            {
+                Text = property?.PropertyType?.Name?.Replace("&", "&&") ?? ThreatModelManager.Undefined,
+                Control = control,
+                Height = 34,
+                HeightType = eLayoutSizeType.Absolute,
+                Width = percentage,
+                WidthType = eLayoutSizeType.Percent,
+                Padding = new Padding(4),
+                Tooltip = property?.PropertyType?.Description
+            };
+            container.Controls.Add(control);
+            container.RootGroup.Items.Add(item);
+
+            if (!readOnly)
+            {
+                var editButton = new Button()
+                {
+                    Image = Properties.Resources.pencil_small,
+                    FlatStyle = FlatStyle.Flat,
+                    FlatAppearance = { BorderSize = 0 },
+                    Tag = control
+                };
+                editButton.Click += EditHyperlinkClicked;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, editButton, EditHyperlinkClicked));
+                var editButtonItem = new LayoutControlItem()
+                {
+                    TextVisible = false,
+                    Control = editButton,
+                    Height = 34,
+                    HeightType = eLayoutSizeType.Absolute,
+                    Width = 34,
+                    WidthType = eLayoutSizeType.Absolute,
+                    Tooltip = "Edit the URL"
+                };
+                container.Controls.Add(editButton);
+                container.RootGroup.Items.Add(editButtonItem);
+
+                var clearButton = new Button()
+                {
+                    Image = Properties.Resources.erase_small,
+                    FlatStyle = FlatStyle.Flat,
+                    FlatAppearance = { BorderSize = 0 },
+                    Tag = control
+                };
+                clearButton.Click += ClearHyperlinkClicked;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, clearButton, ClearHyperlinkClicked));
+                var clearButtonItem = new LayoutControlItem()
+                {
+                    TextVisible = false,
+                    Control = clearButton,
+                    Height = 34,
+                    HeightType = eLayoutSizeType.Absolute,
+                    Width = 34,
+                    WidthType = eLayoutSizeType.Absolute,
+                    Tooltip = "Clear the URL"
+                };
+                container.Controls.Add(clearButton);
+                container.RootGroup.Items.Add(clearButtonItem);
+            }
+
+            return control;
+        }
+
         private void OnHyperlinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (sender is LinkLabel linkLabel && linkLabel.Tag is IIdentity identity)
+            if (sender is LinkLabel linkLabel)
             {
-                var dialog = new ItemEditorDialog();
-                dialog.SetExecutionMode(_executionMode);
-                dialog.ReadOnly = ReadOnly;
-                dialog.Item = identity;
-                dialog.ShowDialog(Form.ActiveForm);
+                if (linkLabel.Tag is IIdentity identity)
+                {
+                    var dialog = new ItemEditorDialog();
+                    dialog.SetExecutionMode(_executionMode);
+                    dialog.ReadOnly = ReadOnly;
+                    dialog.Item = identity;
+                    dialog.ShowDialog(Form.ActiveForm);
+                }
+                else if (linkLabel.Tag is IPropertyUrl property)
+                {
+#pragma warning disable SCS0001 // Command injection possible in {1} argument passed to '{0}'
+                    ProcessStartInfo sInfo = new ProcessStartInfo(property.Url);
+                    Process.Start(sInfo);
+#pragma warning restore SCS0001 // Command injection possible in {1} argument passed to '{0}'
+                }
             }
         }
 
         private void ReleaseLinkClicked(LinkLabel control)
         {
             control.LinkClicked -= OnHyperlinkClicked;
+        }
+
+        private void EditHyperlinkClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is LinkLabel linkLabel &&
+                linkLabel.Tag is IPropertyUrl property)
+            {
+                var dialog = new UrlEditorDialog();
+                dialog.Label = property.Label;
+                dialog.Url = property.Url;
+                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Edit hyperlink"))
+                    {
+                        property.Label = dialog.Label;
+                        property.Url = dialog.Url;
+                        scope?.Complete();
+                    }
+
+                    linkLabel.Text = property.Label ?? property.Url;
+                }
+            }
+        }
+
+        private void ClearHyperlinkClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is LinkLabel linkLabel &&
+                linkLabel.Tag is IPropertyUrl property)
+            {
+                if (MessageBox.Show(Form.ActiveForm, $"Do you confirm that you want to clear the hyperlink?",
+                    "Remove Hyperlinks", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Clear hyperlink"))
+                    {
+                        property.StringValue = null;
+
+                        scope?.Complete();
+                    }
+
+                    linkLabel.Text = null;
+                }
+            }
+        }
+        #endregion
+
+        #region Hyperlink list properties.
+        private FlowLayoutPanel AddHyperlinkList([NotNull] LayoutControl container,
+            IPropertyUrlList property, bool readOnly)
+        {
+            var control = new FlowLayoutPanel();
+            control.AutoScroll = true;
+            control.FlowDirection = FlowDirection.TopDown;
+            control.WrapContents = false;
+            control.Tag = property;
+            control.BorderStyle = BorderStyle.FixedSingle;
+
+            var hyperlinks = property?.Values?.ToArray();
+            if (hyperlinks?.Any() ?? false)
+            {
+                foreach (var hyperlink in hyperlinks)
+                {
+                    var checkedLink = new CheckedLink()
+                    {
+                        Text = hyperlink.Label,
+                        Link = hyperlink.Url
+                    };
+                    control.Controls.Add(checkedLink);
+                }
+            }
+
+            var item = new LayoutControlItem()
+            {
+                Text = property?.PropertyType?.Name?.Replace("&", "&&") ?? ThreatModelManager.Undefined,
+                Control = control,
+                Height = 150,
+                HeightType = eLayoutSizeType.Absolute,
+                Width = 100,
+                WidthType = eLayoutSizeType.Percent,
+                Padding = new Padding(4),
+                Tooltip = property?.PropertyType?.Description
+            };
+            container.Controls.Add(control);
+            container.RootGroup.Items.Add(item);
+
+            if (!readOnly)
+            {
+                var addButton = new Button()
+                {
+                    Text = "Add",
+                    Tag = control
+                };
+                addButton.Click += AddHyperlink;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, addButton, AddHyperlink));
+
+                var addButtonItem = new LayoutControlItem()
+                {
+                    Control = addButton,
+                    Height = 35,
+                    HeightType = eLayoutSizeType.Absolute,
+                    Width = 25,
+                    WidthType = eLayoutSizeType.Percent
+                };
+                container.Controls.Add(addButton);
+                container.RootGroup.Items.Add(addButtonItem);
+
+                var editButton = new Button()
+                {
+                    Text = "Edit",
+                    Tag = control
+                };
+                editButton.Click += EditHyperlink;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, editButton, EditHyperlink));
+
+                var editButtonItem = new LayoutControlItem()
+                {
+                    Control = editButton,
+                    Height = 35,
+                    HeightType = eLayoutSizeType.Absolute,
+                    Width = 25,
+                    WidthType = eLayoutSizeType.Percent
+                };
+                container.Controls.Add(editButton);
+                container.RootGroup.Items.Add(editButtonItem);
+
+                var removeButton = new Button()
+                {
+                    Text = "Remove",
+                    Tag = control
+                };
+                removeButton.Click += RemoveHyperlink;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, removeButton, RemoveHyperlink));
+                var removeButtonItem = new LayoutControlItem()
+                {
+                    Control = removeButton,
+                    Height = 35,
+                    HeightType = eLayoutSizeType.Absolute,
+                    Width = 25,
+                    WidthType = eLayoutSizeType.Percent
+                };
+                container.Controls.Add(removeButton);
+                container.RootGroup.Items.Add(removeButtonItem);
+
+                var clearButton = new Button()
+                {
+                    Text = "Clear",
+                    Tag = control
+                };
+                clearButton.Click += ClearHyperlinks;
+                _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, clearButton, ClearHyperlinks));
+                var clearButtonItem = new LayoutControlItem()
+                {
+                    Control = clearButton,
+                    Height = 35,
+                    HeightType = eLayoutSizeType.Absolute,
+                    Width = 25,
+                    WidthType = eLayoutSizeType.Percent
+                };
+                container.Controls.Add(clearButton);
+                container.RootGroup.Items.Add(clearButtonItem);
+            }
+
+            return control;
+        }
+
+        private void AddHyperlink(object sender, EventArgs e)
+        {
+            if (sender is Control control && control.Tag is FlowLayoutPanel panel && panel.Tag is IPropertyUrlList property)
+            {
+                var dialog = new UrlEditorDialog();
+                if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                {
+                    var label = dialog.Label;
+                    var link = dialog.Url;
+
+                    if (!string.IsNullOrEmpty(label) && !string.IsNullOrEmpty(link))
+                    {
+                        var hyperlink = new CheckedLink()
+                        {
+                            Text = label,
+                            Link = link
+                        };
+                        panel.Controls.Add(hyperlink);
+
+                        using (var scope = UndoRedoManager.OpenScope("Add hyperlink"))
+                        {
+                            property.SetUrl(label, link);
+                            scope?.Complete();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void EditHyperlink(object sender, EventArgs e)
+        {
+            if (sender is Control control && control.Tag is FlowLayoutPanel panel && panel.Tag is IPropertyUrlList property)
+            {
+                var hyperlinks = panel.Controls.OfType<CheckedLink>().Where(x => x.Checked).ToList();
+
+                if (hyperlinks.Any())
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Remove hyperlinks"))
+                    {
+                        foreach (var hyperlink in hyperlinks)
+                        {
+                            var dialog = new UrlEditorDialog();
+                            dialog.Label = hyperlink.Text;
+                            dialog.Url = hyperlink.Link;
+
+                            if (dialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+                            {
+                                property.SetUrl(hyperlink.Text, dialog.Label, dialog.Url);
+
+                                hyperlink.Text = dialog.Label;
+                                hyperlink.Link = dialog.Url;
+                            }
+                        }
+
+                        scope?.Complete();
+                    }
+                }
+            }
+        }
+
+        private void RemoveHyperlink(object sender, EventArgs e)
+        {
+            if (sender is Control control && control.Tag is FlowLayoutPanel panel && panel.Tag is IPropertyUrlList property)
+            {
+                var hyperlinks = panel.Controls.OfType<CheckedLink>().Where(x => x.Checked).ToList();
+
+                if (hyperlinks.Any())
+                {
+                    if (MessageBox.Show(Form.ActiveForm, $"You are about to remove {hyperlinks.Count} links. Do you confirm?",
+                        "Remove Hyperlinks", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        using (var scope = UndoRedoManager.OpenScope("Remove hyperlinks"))
+                        {
+                            foreach (var hyperlink in hyperlinks)
+                            {
+                                panel.Controls.Remove(hyperlink);
+
+                                property.DeleteUrl(hyperlink.Text);
+                            }
+
+                            scope?.Complete();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ClearHyperlinks(object sender, EventArgs e)
+        {
+            if (sender is Control control && control.Tag is FlowLayoutPanel panel && panel.Tag is IPropertyUrlList property)
+            {
+                if (MessageBox.Show(Form.ActiveForm, $"You are about to remove every link. Do you confirm?",
+                    "Remove Hyperlinks", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                {
+                    panel.Controls.Clear();
+
+                    using (var scope = UndoRedoManager.OpenScope("Clear hyperlinks"))
+                    {
+                        property.ClearUrls();
+
+                        scope?.Complete();
+                    }
+                }
+            }
         }
         #endregion
 
@@ -242,7 +618,6 @@ namespace ThreatsManager.Utilities.WinForms
                     if (sender is TextBox textBox)
                         changeAction(textBox);
                 }
-                _changeActions.Add(control, handler);
                 control.TextChanged += handler;
                 _releasers.Add(new ResourceReleaser<TextBox>(ReleaseTextChanged, control, handler));
             }
@@ -255,7 +630,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = $"<a href=\"SingleLineText\">{name?.Replace("&", "&&")}</a>",
                 Control = control,
-                Height = (int) (20 * Dpi.Factor.Height),
+                Height = 20,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
@@ -270,7 +645,7 @@ namespace ThreatsManager.Utilities.WinForms
             return control;
         }
 
-        private void OnMarkupLinkClick(object sender, MarkupLinkClickEventArgs e)
+        private void OnMarkupLinkClick(object sender, DevComponents.DotNetBar.Layout.MarkupLinkClickEventArgs e)
         {
             if (sender is LayoutControlItem layoutControlItem)
             {
@@ -345,7 +720,6 @@ namespace ThreatsManager.Utilities.WinForms
                     if (sender is RichTextBox textBox)
                         changeAction(textBox);
                 }
-                _changeActions.Add(control, handler);
                 control.TextChanged += handler;
                 _releasers.Add(new ResourceReleaser<RichTextBox>(ReleaseTextChanged, control, handler));
             }
@@ -420,7 +794,6 @@ namespace ThreatsManager.Utilities.WinForms
                     if (sender is SwitchButton switchButton)
                         changeAction(switchButton.Value);
                 }
-                _changeActions.Add(control, handler);
                 control.ValueChanged += handler;
                 _releasers.Add(new ResourceReleaser<SwitchButton>(ReleaseValueChanged, control, handler));
             }
@@ -433,7 +806,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = 20 + (int)(10 * Dpi.Factor.Height),
+                Height = 30,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 100,
                 WidthType = eLayoutSizeType.Percent,
@@ -459,7 +832,11 @@ namespace ThreatsManager.Utilities.WinForms
             if (sender is SwitchButton switchButton &&
                 switchButton.Tag is IPropertyBool property)
             {
-                property.Value = switchButton.Value;
+                using (var scope = UndoRedoManager.OpenScope("Change boolean value"))
+                {
+                    property.Value = switchButton.Value;
+                    scope?.Complete();
+                }
             }
         }
 
@@ -482,7 +859,6 @@ namespace ThreatsManager.Utilities.WinForms
                     if (sender is IntegerInput integerInput)
                         changeAction(integerInput.Value);
                 }
-                _changeActions.Add(control, handler);
                 control.ValueChanged += handler;
                 _releasers.Add(new ResourceReleaser<IntegerInput>(ReleaseValueChanged, control, handler));
             }
@@ -495,7 +871,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (20 * Dpi.Factor.Height),
+                Height = 20,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 100,
                 WidthType = eLayoutSizeType.Percent,
@@ -544,7 +920,6 @@ namespace ThreatsManager.Utilities.WinForms
                     if (sender is DoubleInput doubleInput)
                         changeAction(Convert.ToDecimal(doubleInput.Value));
                 }
-                _changeActions.Add(control, handler);
                 control.ValueChanged += handler;
                 _releasers.Add(new ResourceReleaser<DoubleInput>(ReleaseValueChanged, control, handler));
             }
@@ -557,9 +932,9 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (20 * Dpi.Factor.Height),
+                Height = 20,
                 HeightType = eLayoutSizeType.Absolute,
-                Width = (int) (125 * Dpi.Factor.Height),
+                Width = 125,
                 WidthType = eLayoutSizeType.Absolute,
                 Tooltip = description
             };
@@ -621,7 +996,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = property?.PropertyType?.Name.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (20 * Dpi.Factor.Height),
+                Height = 20,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
@@ -693,10 +1068,11 @@ namespace ThreatsManager.Utilities.WinForms
                     {
                         Text = listPropertyType.Name.Replace("&", "&&"),
                         Control = control,
-                        Height = (int) (25 * Dpi.Factor.Height),
+                        Height = 25,
                         HeightType = eLayoutSizeType.Absolute,
                         Width = 101,
-                        WidthType = eLayoutSizeType.Percent
+                        WidthType = eLayoutSizeType.Percent,
+                        Tooltip = listPropertyType.Description
                     };
                     container.Controls.Add(control);
                     container.RootGroup.Items.Add(item);
@@ -735,7 +1111,6 @@ namespace ThreatsManager.Utilities.WinForms
                     if (sender is ComboBox comboBox)
                         changeAction((string) control.SelectedItem);
                 }
-                _changeActions.Add(control, handler);
                 control.SelectedIndexChanged += handler;
                 _releasers.Add(new ResourceReleaser<ComboBox>(ReleaseSelectedIndexChanged, control, handler));
             }
@@ -743,7 +1118,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (25 * Dpi.Factor.Height),
+                Height = 25,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent
@@ -762,7 +1137,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region List Box.
         private ListBox AddListBox([NotNull] LayoutControl container,
-            string label, IEnumerable<object> values,
+            string label, string description, IEnumerable<object> values,
             EventHandler addItemEventHandler, bool readOnly)
         {
             var control = new ListBox()
@@ -776,11 +1151,12 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (150 * Dpi.Factor.Height),
+                Height = 150,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
-                Padding = new Padding(4)
+                Padding = new Padding(4),
+                Tooltip = description
             };
             if (string.IsNullOrWhiteSpace(label))
             {
@@ -798,7 +1174,6 @@ namespace ThreatsManager.Utilities.WinForms
                 };
                 if (addItemEventHandler != null)
                 {
-                    _changeActions.Add(addButton, addItemEventHandler);
                     addButton.Click += addItemEventHandler;
                     _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, addButton, addItemEventHandler));
                 }
@@ -806,7 +1181,7 @@ namespace ThreatsManager.Utilities.WinForms
                 var addButtonItem = new LayoutControlItem()
                 {
                     Control = addButton,
-                    Height = 20 + (int) (15 * Dpi.Factor.Height),
+                    Height = 35,
                     HeightType = eLayoutSizeType.Absolute,
                     Width = 33,
                     WidthType = eLayoutSizeType.Percent
@@ -824,7 +1199,7 @@ namespace ThreatsManager.Utilities.WinForms
                 var removeButtonItem = new LayoutControlItem()
                 {
                     Control = removeButton,
-                    Height = 20 + (int) (15 * Dpi.Factor.Height),
+                    Height = 35,
                     HeightType = eLayoutSizeType.Absolute,
                     Width = 33,
                     WidthType = eLayoutSizeType.Percent
@@ -842,7 +1217,7 @@ namespace ThreatsManager.Utilities.WinForms
                 var clearButtonItem = new LayoutControlItem()
                 {
                     Control = clearButton,
-                    Height = 20 + (int) (15 * Dpi.Factor.Height),
+                    Height = 35,
                     HeightType = eLayoutSizeType.Absolute,
                     Width = 33,
                     WidthType = eLayoutSizeType.Percent
@@ -1002,7 +1377,7 @@ namespace ThreatsManager.Utilities.WinForms
 
         #region List View.
         private ListView AddListView([NotNull] LayoutControl container,
-            string label, IEnumerable<IThreatEvent> threatEvents)
+            string label, string description, IEnumerable<IThreatEvent> threatEvents)
         {
             var smallImageList = new ImageList();
             var imageList = new ImageList();
@@ -1041,11 +1416,12 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (150 * Dpi.Factor.Height),
+                Height = 150,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
-                Padding = new Padding(4)
+                Padding = new Padding(4),
+                Tooltip = description
             };
             if (string.IsNullOrWhiteSpace(label))
             {
@@ -1058,7 +1434,7 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private ListView AddListView([NotNull] LayoutControl container,
-            string label, IEnumerable<IVulnerability> vulnerabilities)
+            string label, string description, IEnumerable<IVulnerability> vulnerabilities)
         {
             var smallImageList = new ImageList();
             var imageList = new ImageList();
@@ -1101,11 +1477,12 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int)(150 * Dpi.Factor.Height),
+                Height = 150,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
-                Padding = new Padding(4)
+                Padding = new Padding(4),
+                Tooltip = description
             };
             if (string.IsNullOrWhiteSpace(label))
             {
@@ -1143,7 +1520,8 @@ namespace ThreatsManager.Utilities.WinForms
         #region List properties.
         private SuperGridControl AddList([NotNull] LayoutControl container, IPropertyArray property, bool readOnly)
         {
-            var control = AddList(container, property?.PropertyType?.Name, property?.Value, readOnly);
+            var control = AddList(container, property?.PropertyType?.Name, 
+                property?.PropertyType.Description, property?.Value, readOnly);
             control.Tag = new WinForms.ItemEditor.Actions<IPropertyArray>(property)
             {
                 Created = CreatePropertyArrayItem,
@@ -1264,7 +1642,7 @@ namespace ThreatsManager.Utilities.WinForms
         }
 
         private SuperGridControl AddList([NotNull] LayoutControl container,
-            string label, IEnumerable<string> values, bool readOnly)
+            string label, string description, IEnumerable<string> values, bool readOnly)
         {
             var control = new SuperGridControl();
             control.LicenseKey = "PUT_YOUR_LICENSE_HERE";
@@ -1286,11 +1664,12 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = label?.Replace("&", "&&"),
                 Control = control,
-                Height = (int) (150 * Dpi.Factor.Height),
+                Height = 150,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
-                Padding = new Padding(4)
+                Padding = new Padding(4),
+                Tooltip = description
             };
             container.Controls.Add(control);
             container.RootGroup.Items.Add(controlItem);
@@ -1308,7 +1687,7 @@ namespace ThreatsManager.Utilities.WinForms
                 var addButtonItem = new LayoutControlItem()
                 {
                     Control = addButton,
-                    Height = 20 + (int) (15 * Dpi.Factor.Height),
+                    Height = 35,
                     HeightType = eLayoutSizeType.Absolute,
                     Width = 33,
                     WidthType = eLayoutSizeType.Percent
@@ -1327,7 +1706,7 @@ namespace ThreatsManager.Utilities.WinForms
                 var removeButtonItem = new LayoutControlItem()
                 {
                     Control = removeButton,
-                    Height = 20 + (int) (15 * Dpi.Factor.Height),
+                    Height = 35,
                     HeightType = eLayoutSizeType.Absolute,
                     Width = 33,
                     WidthType = eLayoutSizeType.Percent
@@ -1346,7 +1725,7 @@ namespace ThreatsManager.Utilities.WinForms
                 var clearButtonItem = new LayoutControlItem()
                 {
                     Control = clearButton,
-                    Height = 20 + (int) (15 * Dpi.Factor.Height),
+                    Height = 35,
                     HeightType = eLayoutSizeType.Absolute,
                     Width = 33,
                     WidthType = eLayoutSizeType.Percent
@@ -1462,6 +1841,72 @@ namespace ThreatsManager.Utilities.WinForms
             property.Changed -= PropertyChanged;
         }
         #endregion
+        
+        #region Date properties.
+        private DateTimeInput AddDate([NotNull] LayoutControl container,
+            string label, DateTime value, string description,
+            Action<DateTime> changeAction, bool readOnly)
+        {
+            var control = new DateTimeInput() { 
+                Value = value, 
+                Width = 100, 
+                IsInputReadOnly = readOnly,
+                DateTimeSelectorVisibility = eDateTimeSelectorVisibility.DateSelector
+            };
+            if (changeAction != null)
+            {
+                void handler(object sender, EventArgs args)
+                {
+                    if (sender is DateTimeInput dateInput)
+                        changeAction(dateInput.Value);
+                }
+                control.ValueChanged += handler;
+                _releasers.Add(new ResourceReleaser<DateTimeInput>(ReleaseValueChanged, control, handler));
+            }
+            else
+            {
+                control.ValueChanged += DateTimePropertyChanged;
+                _releasers.Add(new ResourceReleaser<DateTimeInput>(ReleaseValueChanged, control, DateTimePropertyChanged));
+            }
+            var item = new LayoutControlItem()
+            {
+                Text = label?.Replace("&", "&&"),
+                Control = control,
+                Height = 20,
+                HeightType = eLayoutSizeType.Absolute,
+                Width = 100,
+                WidthType = eLayoutSizeType.Percent,
+                Tooltip = description
+            };
+            container.Controls.Add(control);
+            container.RootGroup.Items.Add(item);
+
+            return control;
+        }
+
+        private DateTimeInput AddDate([NotNull] LayoutControl container,
+            IPropertyDate property, bool readOnly)
+        {
+            var control = AddDate(container, property?.PropertyType?.Name, property?.Value ?? DateTime.Now,
+                property?.PropertyType?.Description, null, readOnly);
+            control.Tag = property;
+            return control;
+        }
+
+        private static void DateTimePropertyChanged(object sender, EventArgs e)
+        {
+            if (sender is DateTimeInput control &&
+                control.Tag is IPropertyDate property)
+            {
+                property.Value = control.Value;
+            }
+        }
+
+        private void ReleaseValueChanged(DateTimeInput control, EventHandler handler)
+        {
+            control.ValueChanged -= handler;
+        }
+        #endregion
 
         #region Property Viewer.
         private void AddPropertyViewerBlocks([NotNull] LayoutControl container, 
@@ -1517,8 +1962,7 @@ namespace ThreatsManager.Utilities.WinForms
             var picture = image;
             if (image != null)
             {
-                picture = new Bitmap(image, (int) (32 * Dpi.Factor.Width),
-                    (int) (32 * Dpi.Factor.Height));
+                picture = new Bitmap(image, 32, 32);
             }
 
             var result = new Button()
@@ -1534,7 +1978,6 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     clickAction(result);
                 }
-                _changeActions.Add(result, handler);
                 result.Click += handler;
                 _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, result, handler));
             }
@@ -1548,9 +1991,9 @@ namespace ThreatsManager.Utilities.WinForms
                 Text = label?.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
-                Height = (int) (48 * Dpi.Factor.Height),
+                Height = 48,
                 HeightType = eLayoutSizeType.Absolute,
-                Width = (int) (48 * Dpi.Factor.Width),
+                Width = 48,
                 WidthType = eLayoutSizeType.Absolute
             };
             _superTooltip.SetSuperTooltip(result, new SuperTooltipInfo()
@@ -1575,7 +2018,6 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     clickAction(result);
                 }
-                _changeActions.Add(result, handler);
                 result.Click += handler;
                 _releasers.Add(new ResourceReleaser<Button>(ReleaseClick, result, handler));
             }
@@ -1589,7 +2031,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Text = label?.Replace("&", "&&"),
                 TextVisible = false,
                 Control = result,
-                Height = (int) (36 * Dpi.Factor.Height),
+                Height = 36,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
@@ -1639,7 +2081,6 @@ namespace ThreatsManager.Utilities.WinForms
                 {
                     changeAction(result);
                 }
-                _changeActions.Add(result, handler);
                 result.ValueChanged += handler;
                 _releasers.Add(new ResourceReleaser<DateTimePicker>(ReleaseValueChanged, result, handler));
             }

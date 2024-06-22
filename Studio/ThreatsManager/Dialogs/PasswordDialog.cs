@@ -23,7 +23,7 @@ namespace ThreatsManager.Dialogs
                 _layoutQuality.Visible = value;
                 _passwordRepeatValidator.Enabled = value;
 
-                Height = (int) ((value ? 220 : 140) * Dpi.Factor.Height);
+                Height = value ? 220 : 140;
             }
         }
 

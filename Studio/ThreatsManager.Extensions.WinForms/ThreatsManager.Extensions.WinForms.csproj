@@ -15,10 +15,14 @@
     <AssemblyName>ThreatsManager.Extensions.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -477,6 +481,13 @@
       <DependentUpon>MitigationStatusChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Panels\ThreatEventList\ThreatEventListFilter.cs" />
+    <Compile Include="Panels\ThreatModel\ThreatModelPanel.CustomRibbonExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ThreatModel\ThreatModelPanelFactory.ContextAwareExtension.cs" />
+    <Compile Include="Panels\ThreatModel\ThreatModelPanel.ContextAwareExtension.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Panels\WeaknessList\WeaknessListFilter.cs" />
     <Compile Include="Panels\WeaknessList\WeaknessListPanel.ContextAwareExtension.cs">
       <SubType>UserControl</SubType>
@@ -1514,28 +1525,28 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2420.47</Version>
+      <Version>1.0.2535.41</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="PostSharp">
-      <Version>2024.0.8</Version>
+      <Version>2024.1.4</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>2024.0.8</Version>
+      <Version>2024.1.4</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>2024.0.8</Version>
+      <Version>2024.1.4</Version>
     </PackageReference>
     <PackageReference Include="Svg">
       <Version>3.4.7</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.DocIO.WinForms">
-      <Version>25.1.38</Version>
+      <Version>26.1.35</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.XlsIO.WinForms">
-      <Version>25.1.38</Version>
+      <Version>26.1.35</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

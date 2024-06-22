@@ -134,10 +134,10 @@
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 636);
-            this.panel1.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.panel1.Location = new System.Drawing.Point(0, 509);
+            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1074, 68);
+            this.panel1.Size = new System.Drawing.Size(859, 54);
             this.panel1.TabIndex = 2;
             this.panel1.TabStop = true;
             // 
@@ -145,10 +145,10 @@
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(544, 20);
-            this._cancel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this._cancel.Location = new System.Drawing.Point(435, 16);
+            this._cancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(94, 29);
+            this._cancel.Size = new System.Drawing.Size(75, 23);
             this._cancel.TabIndex = 1;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -157,10 +157,10 @@
             // 
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this._ok.Location = new System.Drawing.Point(435, 20);
-            this._ok.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this._ok.Location = new System.Drawing.Point(348, 16);
+            this._ok.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(94, 29);
+            this._ok.Size = new System.Drawing.Size(75, 23);
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
@@ -188,7 +188,6 @@
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -210,15 +209,15 @@
             this.layoutControlItem9,
             this.layoutControlItem10,
             this.layoutControlItem4});
-            this.layoutControl1.Size = new System.Drawing.Size(1074, 636);
+            this.layoutControl1.Size = new System.Drawing.Size(859, 509);
             this.layoutControl1.TabIndex = 3;
             // 
             // _showAdded
             // 
-            this._showAdded.Location = new System.Drawing.Point(5, 70);
+            this._showAdded.Location = new System.Drawing.Point(4, 56);
             this._showAdded.Margin = new System.Windows.Forms.Padding(0);
             this._showAdded.Name = "_showAdded";
-            this._showAdded.Size = new System.Drawing.Size(258, 29);
+            this._showAdded.Size = new System.Drawing.Size(206, 23);
             this._showAdded.TabIndex = 3;
             this._showAdded.Text = "Show only Added";
             this._showAdded.UseVisualStyleBackColor = true;
@@ -226,10 +225,10 @@
             // 
             // _uncheckAll
             // 
-            this._uncheckAll.Location = new System.Drawing.Point(809, 597);
+            this._uncheckAll.Location = new System.Drawing.Point(646, 478);
             this._uncheckAll.Margin = new System.Windows.Forms.Padding(0);
             this._uncheckAll.Name = "_uncheckAll";
-            this._uncheckAll.Size = new System.Drawing.Size(260, 29);
+            this._uncheckAll.Size = new System.Drawing.Size(209, 23);
             this._uncheckAll.TabIndex = 15;
             this._uncheckAll.Text = "Uncheck All";
             this._uncheckAll.UseVisualStyleBackColor = true;
@@ -237,10 +236,10 @@
             // 
             // _checkAll
             // 
-            this._checkAll.Location = new System.Drawing.Point(809, 558);
+            this._checkAll.Location = new System.Drawing.Point(646, 447);
             this._checkAll.Margin = new System.Windows.Forms.Padding(0);
             this._checkAll.Name = "_checkAll";
-            this._checkAll.Size = new System.Drawing.Size(260, 29);
+            this._checkAll.Size = new System.Drawing.Size(209, 23);
             this._checkAll.TabIndex = 11;
             this._checkAll.Text = "Check All";
             this._checkAll.UseVisualStyleBackColor = true;
@@ -279,13 +278,13 @@
             this._tabContainer.Controls.Add(this.superTabControlPanel3);
             this._tabContainer.Controls.Add(this.superTabControlPanel2);
             this._tabContainer.ForeColor = System.Drawing.Color.Black;
-            this._tabContainer.Location = new System.Drawing.Point(5, 109);
+            this._tabContainer.Location = new System.Drawing.Point(4, 87);
             this._tabContainer.Margin = new System.Windows.Forms.Padding(0);
             this._tabContainer.Name = "_tabContainer";
             this._tabContainer.ReorderTabsEnabled = false;
             this._tabContainer.SelectedTabFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this._tabContainer.SelectedTabIndex = 0;
-            this._tabContainer.Size = new System.Drawing.Size(1064, 439);
+            this._tabContainer.Size = new System.Drawing.Size(851, 352);
             this._tabContainer.TabFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._tabContainer.TabIndex = 7;
             this._tabContainer.Tabs.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -309,10 +308,9 @@
             // 
             this.superTabControlPanel1.Controls.Add(this._gridExternalInteractors);
             this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel1.Location = new System.Drawing.Point(0, 28);
-            this.superTabControlPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel1.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel1.Name = "superTabControlPanel1";
-            this.superTabControlPanel1.Size = new System.Drawing.Size(1064, 411);
+            this.superTabControlPanel1.Size = new System.Drawing.Size(851, 329);
             this.superTabControlPanel1.TabIndex = 1;
             this.superTabControlPanel1.TabItem = this._tabExternalInteractors;
             // 
@@ -324,9 +322,8 @@
             this._gridExternalInteractors.ForeColor = System.Drawing.Color.Black;
             this._gridExternalInteractors.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridExternalInteractors.Location = new System.Drawing.Point(0, 0);
-            this._gridExternalInteractors.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridExternalInteractors.Name = "_gridExternalInteractors";
-            this._gridExternalInteractors.Size = new System.Drawing.Size(1064, 411);
+            this._gridExternalInteractors.Size = new System.Drawing.Size(851, 329);
             this._gridExternalInteractors.TabIndex = 1;
             this._gridExternalInteractors.Text = "superGridControl1";
             // 
@@ -341,10 +338,9 @@
             // 
             this.superTabControlPanel9.Controls.Add(this._gridItemTemplates);
             this.superTabControlPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel9.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel9.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel9.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel9.Name = "superTabControlPanel9";
-            this.superTabControlPanel9.Size = new System.Drawing.Size(1064, 411);
+            this.superTabControlPanel9.Size = new System.Drawing.Size(851, 329);
             this.superTabControlPanel9.TabIndex = 0;
             this.superTabControlPanel9.TabItem = this._tabItemTemplates;
             // 
@@ -356,9 +352,8 @@
             this._gridItemTemplates.ForeColor = System.Drawing.Color.Black;
             this._gridItemTemplates.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridItemTemplates.Location = new System.Drawing.Point(0, 0);
-            this._gridItemTemplates.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridItemTemplates.Name = "_gridItemTemplates";
-            this._gridItemTemplates.Size = new System.Drawing.Size(1064, 411);
+            this._gridItemTemplates.Size = new System.Drawing.Size(851, 329);
             this._gridItemTemplates.TabIndex = 1;
             this._gridItemTemplates.Text = "superGridControl1";
             // 
@@ -373,10 +368,9 @@
             // 
             this.superTabControlPanel13.Controls.Add(this._gridStrengths);
             this.superTabControlPanel13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel13.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel13.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel13.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel13.Name = "superTabControlPanel13";
-            this.superTabControlPanel13.Size = new System.Drawing.Size(1064, 478);
+            this.superTabControlPanel13.Size = new System.Drawing.Size(851, 382);
             this.superTabControlPanel13.TabIndex = 4;
             this.superTabControlPanel13.TabItem = this._tabStrengths;
             // 
@@ -388,9 +382,8 @@
             this._gridStrengths.ForeColor = System.Drawing.Color.Black;
             this._gridStrengths.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridStrengths.Location = new System.Drawing.Point(0, 0);
-            this._gridStrengths.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridStrengths.Name = "_gridStrengths";
-            this._gridStrengths.Size = new System.Drawing.Size(1064, 478);
+            this._gridStrengths.Size = new System.Drawing.Size(851, 382);
             this._gridStrengths.TabIndex = 1;
             this._gridStrengths.Text = "superGridControl1";
             // 
@@ -405,10 +398,9 @@
             // 
             this.superTabControlPanel12.Controls.Add(this._gridSeverities);
             this.superTabControlPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel12.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel12.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel12.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel12.Name = "superTabControlPanel12";
-            this.superTabControlPanel12.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel12.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel12.TabIndex = 3;
             this.superTabControlPanel12.TabItem = this._tabSeverities;
             // 
@@ -420,9 +412,8 @@
             this._gridSeverities.ForeColor = System.Drawing.Color.Black;
             this._gridSeverities.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridSeverities.Location = new System.Drawing.Point(0, 0);
-            this._gridSeverities.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridSeverities.Name = "_gridSeverities";
-            this._gridSeverities.Size = new System.Drawing.Size(1064, 516);
+            this._gridSeverities.Size = new System.Drawing.Size(851, 413);
             this._gridSeverities.TabIndex = 1;
             this._gridSeverities.Text = "superGridControl1";
             // 
@@ -437,10 +428,9 @@
             // 
             this.superTabControlPanel11.Controls.Add(this._gridThreatActors);
             this.superTabControlPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel11.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel11.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel11.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel11.Name = "superTabControlPanel11";
-            this.superTabControlPanel11.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel11.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel11.TabIndex = 2;
             this.superTabControlPanel11.TabItem = this._tabThreatActors;
             // 
@@ -452,9 +442,8 @@
             this._gridThreatActors.ForeColor = System.Drawing.Color.Black;
             this._gridThreatActors.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridThreatActors.Location = new System.Drawing.Point(0, 0);
-            this._gridThreatActors.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridThreatActors.Name = "_gridThreatActors";
-            this._gridThreatActors.Size = new System.Drawing.Size(1064, 516);
+            this._gridThreatActors.Size = new System.Drawing.Size(851, 413);
             this._gridThreatActors.TabIndex = 1;
             this._gridThreatActors.Text = "superGridControl1";
             // 
@@ -469,10 +458,9 @@
             // 
             this.superTabControlPanel10.Controls.Add(this._gridPropertySchemas);
             this.superTabControlPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel10.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel10.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel10.Name = "superTabControlPanel10";
-            this.superTabControlPanel10.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel10.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel10.TabIndex = 0;
             this.superTabControlPanel10.TabItem = this._tabPropertySchemas;
             // 
@@ -484,9 +472,8 @@
             this._gridPropertySchemas.ForeColor = System.Drawing.Color.Black;
             this._gridPropertySchemas.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridPropertySchemas.Location = new System.Drawing.Point(0, 0);
-            this._gridPropertySchemas.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridPropertySchemas.Name = "_gridPropertySchemas";
-            this._gridPropertySchemas.Size = new System.Drawing.Size(1064, 516);
+            this._gridPropertySchemas.Size = new System.Drawing.Size(851, 413);
             this._gridPropertySchemas.TabIndex = 1;
             this._gridPropertySchemas.Text = "superGridControl1";
             // 
@@ -501,10 +488,9 @@
             // 
             this.superTabControlPanel8.Controls.Add(this._gridMitigations);
             this.superTabControlPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel8.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel8.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel8.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel8.Name = "superTabControlPanel8";
-            this.superTabControlPanel8.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel8.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel8.TabIndex = 0;
             this.superTabControlPanel8.TabItem = this._tabMitigations;
             // 
@@ -516,9 +502,8 @@
             this._gridMitigations.ForeColor = System.Drawing.Color.Black;
             this._gridMitigations.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridMitigations.Location = new System.Drawing.Point(0, 0);
-            this._gridMitigations.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridMitigations.Name = "_gridMitigations";
-            this._gridMitigations.Size = new System.Drawing.Size(1064, 516);
+            this._gridMitigations.Size = new System.Drawing.Size(851, 413);
             this._gridMitigations.TabIndex = 1;
             this._gridMitigations.Text = "superGridControl1";
             // 
@@ -533,10 +518,9 @@
             // 
             this.superTabControlPanel7.Controls.Add(this._gridThreatTypes);
             this.superTabControlPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel7.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel7.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel7.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel7.Name = "superTabControlPanel7";
-            this.superTabControlPanel7.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel7.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel7.TabIndex = 0;
             this.superTabControlPanel7.TabItem = this._tabThreatTypes;
             // 
@@ -548,9 +532,8 @@
             this._gridThreatTypes.ForeColor = System.Drawing.Color.Black;
             this._gridThreatTypes.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridThreatTypes.Location = new System.Drawing.Point(0, 0);
-            this._gridThreatTypes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridThreatTypes.Name = "_gridThreatTypes";
-            this._gridThreatTypes.Size = new System.Drawing.Size(1064, 516);
+            this._gridThreatTypes.Size = new System.Drawing.Size(851, 413);
             this._gridThreatTypes.TabIndex = 1;
             this._gridThreatTypes.Text = "superGridControl1";
             // 
@@ -565,10 +548,9 @@
             // 
             this.superTabControlPanel14.Controls.Add(this._gridWeaknesses);
             this.superTabControlPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel14.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel14.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel14.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel14.Name = "superTabControlPanel14";
-            this.superTabControlPanel14.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel14.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel14.TabIndex = 0;
             this.superTabControlPanel14.TabItem = this._tabWeaknesses;
             // 
@@ -580,9 +562,8 @@
             this._gridWeaknesses.ForeColor = System.Drawing.Color.Black;
             this._gridWeaknesses.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridWeaknesses.Location = new System.Drawing.Point(0, 0);
-            this._gridWeaknesses.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridWeaknesses.Name = "_gridWeaknesses";
-            this._gridWeaknesses.Size = new System.Drawing.Size(1064, 516);
+            this._gridWeaknesses.Size = new System.Drawing.Size(851, 413);
             this._gridWeaknesses.TabIndex = 1;
             this._gridWeaknesses.Text = "superGridControl1";
             // 
@@ -597,10 +578,9 @@
             // 
             this.superTabControlPanel6.Controls.Add(this._gridDiagrams);
             this.superTabControlPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel6.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel6.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel6.Name = "superTabControlPanel6";
-            this.superTabControlPanel6.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel6.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel6.TabIndex = 0;
             this.superTabControlPanel6.TabItem = this._tabDiagrams;
             // 
@@ -612,9 +592,8 @@
             this._gridDiagrams.ForeColor = System.Drawing.Color.Black;
             this._gridDiagrams.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridDiagrams.Location = new System.Drawing.Point(0, 0);
-            this._gridDiagrams.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridDiagrams.Name = "_gridDiagrams";
-            this._gridDiagrams.Size = new System.Drawing.Size(1064, 516);
+            this._gridDiagrams.Size = new System.Drawing.Size(851, 413);
             this._gridDiagrams.TabIndex = 1;
             this._gridDiagrams.Text = "superGridControl1";
             // 
@@ -629,10 +608,9 @@
             // 
             this.superTabControlPanel5.Controls.Add(this._gridTrustBoundaries);
             this.superTabControlPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel5.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel5.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel5.Name = "superTabControlPanel5";
-            this.superTabControlPanel5.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel5.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel5.TabIndex = 0;
             this.superTabControlPanel5.TabItem = this._tabTrustBoundaries;
             // 
@@ -644,9 +622,8 @@
             this._gridTrustBoundaries.ForeColor = System.Drawing.Color.Black;
             this._gridTrustBoundaries.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridTrustBoundaries.Location = new System.Drawing.Point(0, 0);
-            this._gridTrustBoundaries.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridTrustBoundaries.Name = "_gridTrustBoundaries";
-            this._gridTrustBoundaries.Size = new System.Drawing.Size(1064, 516);
+            this._gridTrustBoundaries.Size = new System.Drawing.Size(851, 413);
             this._gridTrustBoundaries.TabIndex = 1;
             this._gridTrustBoundaries.Text = "superGridControl1";
             // 
@@ -661,10 +638,9 @@
             // 
             this.superTabControlPanel4.Controls.Add(this._gridFlows);
             this.superTabControlPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel4.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel4.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel4.Name = "superTabControlPanel4";
-            this.superTabControlPanel4.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel4.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel4.TabIndex = 0;
             this.superTabControlPanel4.TabItem = this._tabFlows;
             // 
@@ -676,9 +652,8 @@
             this._gridFlows.ForeColor = System.Drawing.Color.Black;
             this._gridFlows.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridFlows.Location = new System.Drawing.Point(0, 0);
-            this._gridFlows.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridFlows.Name = "_gridFlows";
-            this._gridFlows.Size = new System.Drawing.Size(1064, 516);
+            this._gridFlows.Size = new System.Drawing.Size(851, 413);
             this._gridFlows.TabIndex = 1;
             this._gridFlows.Text = "superGridControl1";
             // 
@@ -693,10 +668,9 @@
             // 
             this.superTabControlPanel3.Controls.Add(this._gridDataStores);
             this.superTabControlPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel3.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel3.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel3.Name = "superTabControlPanel3";
-            this.superTabControlPanel3.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel3.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel3.TabIndex = 0;
             this.superTabControlPanel3.TabItem = this._tabDataStores;
             // 
@@ -708,9 +682,8 @@
             this._gridDataStores.ForeColor = System.Drawing.Color.Black;
             this._gridDataStores.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridDataStores.Location = new System.Drawing.Point(0, 0);
-            this._gridDataStores.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridDataStores.Name = "_gridDataStores";
-            this._gridDataStores.Size = new System.Drawing.Size(1064, 516);
+            this._gridDataStores.Size = new System.Drawing.Size(851, 413);
             this._gridDataStores.TabIndex = 1;
             this._gridDataStores.Text = "superGridControl1";
             // 
@@ -725,10 +698,9 @@
             // 
             this.superTabControlPanel2.Controls.Add(this._gridProcesses);
             this.superTabControlPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel2.Location = new System.Drawing.Point(0, 29);
-            this.superTabControlPanel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.superTabControlPanel2.Location = new System.Drawing.Point(0, 23);
             this.superTabControlPanel2.Name = "superTabControlPanel2";
-            this.superTabControlPanel2.Size = new System.Drawing.Size(1064, 516);
+            this.superTabControlPanel2.Size = new System.Drawing.Size(851, 413);
             this.superTabControlPanel2.TabIndex = 0;
             this.superTabControlPanel2.TabItem = this._tabProcesses;
             // 
@@ -740,9 +712,8 @@
             this._gridProcesses.ForeColor = System.Drawing.Color.Black;
             this._gridProcesses.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridProcesses.Location = new System.Drawing.Point(0, 0);
-            this._gridProcesses.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._gridProcesses.Name = "_gridProcesses";
-            this._gridProcesses.Size = new System.Drawing.Size(1064, 516);
+            this._gridProcesses.Size = new System.Drawing.Size(851, 413);
             this._gridProcesses.TabIndex = 0;
             this._gridProcesses.Text = "superGridControl1";
             // 
@@ -756,19 +727,19 @@
             // _sourceFile
             // 
             this._sourceFile.AutoSize = true;
-            this._sourceFile.Location = new System.Drawing.Point(55, 5);
+            this._sourceFile.Location = new System.Drawing.Point(47, 4);
             this._sourceFile.Margin = new System.Windows.Forms.Padding(0);
             this._sourceFile.Name = "_sourceFile";
-            this._sourceFile.Size = new System.Drawing.Size(1014, 16);
+            this._sourceFile.Size = new System.Drawing.Size(808, 13);
             this._sourceFile.TabIndex = 0;
             this._sourceFile.Text = "label1";
             // 
             // _checkAdded
             // 
-            this._checkAdded.Location = new System.Drawing.Point(5, 558);
+            this._checkAdded.Location = new System.Drawing.Point(4, 447);
             this._checkAdded.Margin = new System.Windows.Forms.Padding(0);
             this._checkAdded.Name = "_checkAdded";
-            this._checkAdded.Size = new System.Drawing.Size(258, 29);
+            this._checkAdded.Size = new System.Drawing.Size(206, 23);
             this._checkAdded.TabIndex = 8;
             this._checkAdded.Text = "Check Added";
             this._checkAdded.UseVisualStyleBackColor = true;
@@ -776,10 +747,10 @@
             // 
             // _checkChanged
             // 
-            this._checkChanged.Location = new System.Drawing.Point(273, 558);
+            this._checkChanged.Location = new System.Drawing.Point(218, 447);
             this._checkChanged.Margin = new System.Windows.Forms.Padding(0);
             this._checkChanged.Name = "_checkChanged";
-            this._checkChanged.Size = new System.Drawing.Size(258, 29);
+            this._checkChanged.Size = new System.Drawing.Size(206, 23);
             this._checkChanged.TabIndex = 9;
             this._checkChanged.Text = "Check Changed";
             this._checkChanged.UseVisualStyleBackColor = true;
@@ -787,10 +758,10 @@
             // 
             // _checkRemoved
             // 
-            this._checkRemoved.Location = new System.Drawing.Point(541, 558);
+            this._checkRemoved.Location = new System.Drawing.Point(432, 447);
             this._checkRemoved.Margin = new System.Windows.Forms.Padding(0);
             this._checkRemoved.Name = "_checkRemoved";
-            this._checkRemoved.Size = new System.Drawing.Size(258, 29);
+            this._checkRemoved.Size = new System.Drawing.Size(206, 23);
             this._checkRemoved.TabIndex = 10;
             this._checkRemoved.Text = "Check Removed";
             this._checkRemoved.UseVisualStyleBackColor = true;
@@ -798,10 +769,10 @@
             // 
             // _uncheckAdded
             // 
-            this._uncheckAdded.Location = new System.Drawing.Point(5, 597);
+            this._uncheckAdded.Location = new System.Drawing.Point(4, 478);
             this._uncheckAdded.Margin = new System.Windows.Forms.Padding(0);
             this._uncheckAdded.Name = "_uncheckAdded";
-            this._uncheckAdded.Size = new System.Drawing.Size(258, 29);
+            this._uncheckAdded.Size = new System.Drawing.Size(206, 23);
             this._uncheckAdded.TabIndex = 12;
             this._uncheckAdded.Text = "Uncheck Added";
             this._uncheckAdded.UseVisualStyleBackColor = true;
@@ -809,10 +780,10 @@
             // 
             // _uncheckChanged
             // 
-            this._uncheckChanged.Location = new System.Drawing.Point(273, 597);
+            this._uncheckChanged.Location = new System.Drawing.Point(218, 478);
             this._uncheckChanged.Margin = new System.Windows.Forms.Padding(0);
             this._uncheckChanged.Name = "_uncheckChanged";
-            this._uncheckChanged.Size = new System.Drawing.Size(258, 29);
+            this._uncheckChanged.Size = new System.Drawing.Size(206, 23);
             this._uncheckChanged.TabIndex = 13;
             this._uncheckChanged.Text = "Uncheck Changed";
             this._uncheckChanged.UseVisualStyleBackColor = true;
@@ -820,10 +791,10 @@
             // 
             // _uncheckRemoved
             // 
-            this._uncheckRemoved.Location = new System.Drawing.Point(541, 597);
+            this._uncheckRemoved.Location = new System.Drawing.Point(432, 478);
             this._uncheckRemoved.Margin = new System.Windows.Forms.Padding(0);
             this._uncheckRemoved.Name = "_uncheckRemoved";
-            this._uncheckRemoved.Size = new System.Drawing.Size(258, 29);
+            this._uncheckRemoved.Size = new System.Drawing.Size(206, 23);
             this._uncheckRemoved.TabIndex = 14;
             this._uncheckRemoved.Text = "Uncheck Removed";
             this._uncheckRemoved.UseVisualStyleBackColor = true;
@@ -831,10 +802,10 @@
             // 
             // _applyFilter
             // 
-            this._applyFilter.Location = new System.Drawing.Point(975, 31);
+            this._applyFilter.Location = new System.Drawing.Point(780, 25);
             this._applyFilter.Margin = new System.Windows.Forms.Padding(0);
             this._applyFilter.Name = "_applyFilter";
-            this._applyFilter.Size = new System.Drawing.Size(94, 29);
+            this._applyFilter.Size = new System.Drawing.Size(75, 23);
             this._applyFilter.TabIndex = 2;
             this._applyFilter.Text = "Apply";
             this._applyFilter.UseVisualStyleBackColor = true;
@@ -842,10 +813,10 @@
             // 
             // _showChanged
             // 
-            this._showChanged.Location = new System.Drawing.Point(273, 70);
+            this._showChanged.Location = new System.Drawing.Point(218, 56);
             this._showChanged.Margin = new System.Windows.Forms.Padding(0);
             this._showChanged.Name = "_showChanged";
-            this._showChanged.Size = new System.Drawing.Size(258, 29);
+            this._showChanged.Size = new System.Drawing.Size(206, 23);
             this._showChanged.TabIndex = 4;
             this._showChanged.Text = "Show only Changed";
             this._showChanged.UseVisualStyleBackColor = true;
@@ -853,10 +824,10 @@
             // 
             // _showRemoved
             // 
-            this._showRemoved.Location = new System.Drawing.Point(541, 70);
+            this._showRemoved.Location = new System.Drawing.Point(432, 56);
             this._showRemoved.Margin = new System.Windows.Forms.Padding(0);
             this._showRemoved.Name = "_showRemoved";
-            this._showRemoved.Size = new System.Drawing.Size(258, 29);
+            this._showRemoved.Size = new System.Drawing.Size(206, 23);
             this._showRemoved.TabIndex = 5;
             this._showRemoved.Text = "Show only Removed";
             this._showRemoved.UseVisualStyleBackColor = true;
@@ -864,10 +835,10 @@
             // 
             // _showAll
             // 
-            this._showAll.Location = new System.Drawing.Point(809, 70);
+            this._showAll.Location = new System.Drawing.Point(646, 56);
             this._showAll.Margin = new System.Windows.Forms.Padding(0);
             this._showAll.Name = "_showAll";
-            this._showAll.Size = new System.Drawing.Size(260, 29);
+            this._showAll.Size = new System.Drawing.Size(209, 23);
             this._showAll.TabIndex = 6;
             this._showAll.Text = "Show All";
             this._showAll.UseVisualStyleBackColor = true;
@@ -885,21 +856,20 @@
             this._filter.ButtonCustom.Visible = true;
             this._filter.DisabledBackColor = System.Drawing.Color.White;
             this._filter.ForeColor = System.Drawing.Color.Black;
-            this._filter.Location = new System.Drawing.Point(55, 31);
+            this._filter.Location = new System.Drawing.Point(47, 25);
             this._filter.Margin = new System.Windows.Forms.Padding(0);
             this._filter.Name = "_filter";
             this._filter.PreventEnterBeep = true;
-            this._filter.Size = new System.Drawing.Size(910, 22);
+            this._filter.Size = new System.Drawing.Size(725, 20);
             this._filter.TabIndex = 1;
             this._filter.ButtonCustomClick += new System.EventHandler(this._filter_ButtonCustomClick);
             // 
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._sourceFile;
-            this.layoutControlItem1.Height = 26;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(80, 22);
+            this.layoutControlItem1.Height = 21;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem1.Text = "Source";
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -907,10 +877,9 @@
             // layoutControlItem11
             // 
             this.layoutControlItem11.Control = this._filter;
-            this.layoutControlItem11.Height = 35;
-            this.layoutControlItem11.MinSize = new System.Drawing.Size(150, 0);
+            this.layoutControlItem11.Height = 28;
+            this.layoutControlItem11.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem11.Name = "layoutControlItem11";
-            this.layoutControlItem11.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem11.Text = "Filter";
             this.layoutControlItem11.Width = 99;
             this.layoutControlItem11.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -918,49 +887,44 @@
             // layoutControlItem12
             // 
             this.layoutControlItem12.Control = this._applyFilter;
-            this.layoutControlItem12.Height = 39;
-            this.layoutControlItem12.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem12.Height = 31;
+            this.layoutControlItem12.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem12.Name = "layoutControlItem12";
-            this.layoutControlItem12.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.layoutControlItem12.Width = 104;
+            this.layoutControlItem12.Width = 83;
             // 
             // layoutControlItem13
             // 
             this.layoutControlItem13.Control = this._showAdded;
-            this.layoutControlItem13.Height = 39;
-            this.layoutControlItem13.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem13.Height = 31;
+            this.layoutControlItem13.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem13.Name = "layoutControlItem13";
-            this.layoutControlItem13.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem13.Width = 25;
             this.layoutControlItem13.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem14
             // 
             this.layoutControlItem14.Control = this._showChanged;
-            this.layoutControlItem14.Height = 39;
-            this.layoutControlItem14.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem14.Height = 31;
+            this.layoutControlItem14.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem14.Name = "layoutControlItem14";
-            this.layoutControlItem14.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem14.Width = 25;
             this.layoutControlItem14.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem16
             // 
             this.layoutControlItem16.Control = this._showRemoved;
-            this.layoutControlItem16.Height = 39;
-            this.layoutControlItem16.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem16.Height = 31;
+            this.layoutControlItem16.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem16.Name = "layoutControlItem16";
-            this.layoutControlItem16.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem16.Width = 25;
             this.layoutControlItem16.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem17
             // 
             this.layoutControlItem17.Control = this._showAll;
-            this.layoutControlItem17.Height = 39;
-            this.layoutControlItem17.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem17.Height = 31;
+            this.layoutControlItem17.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem17.Name = "layoutControlItem17";
-            this.layoutControlItem17.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem17.Width = 25;
             this.layoutControlItem17.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
@@ -969,9 +933,8 @@
             this.layoutControlItem2.Control = this._tabContainer;
             this.layoutControlItem2.Height = 99;
             this.layoutControlItem2.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(80, 22);
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem2.Text = "Label:";
             this.layoutControlItem2.TextVisible = false;
             this.layoutControlItem2.Width = 100;
@@ -980,80 +943,72 @@
             // layoutControlItem5
             // 
             this.layoutControlItem5.Control = this._checkAdded;
-            this.layoutControlItem5.Height = 39;
-            this.layoutControlItem5.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem5.Height = 31;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem5.Name = "layoutControlItem5";
-            this.layoutControlItem5.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem5.Width = 25;
             this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem6
             // 
             this.layoutControlItem6.Control = this._checkChanged;
-            this.layoutControlItem6.Height = 39;
-            this.layoutControlItem6.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem6.Height = 31;
+            this.layoutControlItem6.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem6.Name = "layoutControlItem6";
-            this.layoutControlItem6.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem6.Width = 25;
             this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem7
             // 
             this.layoutControlItem7.Control = this._checkRemoved;
-            this.layoutControlItem7.Height = 39;
-            this.layoutControlItem7.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem7.Height = 31;
+            this.layoutControlItem7.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem7.Name = "layoutControlItem7";
-            this.layoutControlItem7.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem7.Width = 25;
             this.layoutControlItem7.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._checkAll;
-            this.layoutControlItem3.Height = 39;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem3.Height = 31;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem3.Width = 25;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem8
             // 
             this.layoutControlItem8.Control = this._uncheckAdded;
-            this.layoutControlItem8.Height = 39;
-            this.layoutControlItem8.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem8.Height = 31;
+            this.layoutControlItem8.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem8.Name = "layoutControlItem8";
-            this.layoutControlItem8.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem8.Width = 25;
             this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem9
             // 
             this.layoutControlItem9.Control = this._uncheckChanged;
-            this.layoutControlItem9.Height = 39;
-            this.layoutControlItem9.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem9.Height = 31;
+            this.layoutControlItem9.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem9.Name = "layoutControlItem9";
-            this.layoutControlItem9.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem9.Width = 25;
             this.layoutControlItem9.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem10
             // 
             this.layoutControlItem10.Control = this._uncheckRemoved;
-            this.layoutControlItem10.Height = 39;
-            this.layoutControlItem10.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem10.Height = 31;
+            this.layoutControlItem10.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem10.Name = "layoutControlItem10";
-            this.layoutControlItem10.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem10.Width = 25;
             this.layoutControlItem10.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem4
             // 
             this.layoutControlItem4.Control = this._uncheckAll;
-            this.layoutControlItem4.Height = 39;
-            this.layoutControlItem4.MinSize = new System.Drawing.Size(40, 25);
+            this.layoutControlItem4.Height = 31;
+            this.layoutControlItem4.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem4.Name = "layoutControlItem4";
-            this.layoutControlItem4.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.layoutControlItem4.Width = 25;
             this.layoutControlItem4.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
@@ -1073,14 +1028,13 @@
             // 
             // MergeDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(1074, 704);
+            this.ClientSize = new System.Drawing.Size(859, 563);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MinimizeBox = false;
             this.Name = "MergeDialog";
             this.ShowIcon = false;

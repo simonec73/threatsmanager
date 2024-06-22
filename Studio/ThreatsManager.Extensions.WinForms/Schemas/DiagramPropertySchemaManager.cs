@@ -156,7 +156,7 @@ namespace ThreatsManager.Extensions.Schemas
                     if ((diagram.GetProperty(propertyType) ??
                          diagram.AddProperty(propertyType, null)) is IPropertyDecimal property)
                     {
-                        property.Value = Convert.ToDecimal(Dpi.Factor.Height);
+                        property.Value = 1;
                         scope?.Complete();
                     }
                 }

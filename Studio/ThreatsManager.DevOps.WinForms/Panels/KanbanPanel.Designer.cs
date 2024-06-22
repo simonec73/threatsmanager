@@ -34,26 +34,26 @@ namespace ThreatsManager.DevOps.Panels
             this.components = new System.ComponentModel.Container();
             this._container = new System.Windows.Forms.TableLayoutPanel();
             this._sixth = new DevComponents.DotNetBar.ExpandablePanel();
+            this._sixthPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this._fifth = new DevComponents.DotNetBar.ExpandablePanel();
+            this._fifthPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this._fourth = new DevComponents.DotNetBar.ExpandablePanel();
+            this._fourthPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this._third = new DevComponents.DotNetBar.ExpandablePanel();
+            this._thirdPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this._second = new DevComponents.DotNetBar.ExpandablePanel();
+            this._secondPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this._first = new DevComponents.DotNetBar.ExpandablePanel();
+            this._firstPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this._splitter = new DevComponents.DotNetBar.ExpandableSplitter();
             this._bottomPanel = new System.Windows.Forms.Panel();
-            this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
-            this._itemDetails = new ThreatsManager.Utilities.WinForms.ItemEditor();
             this._grid = new DevComponents.DotNetBar.SuperGrid.SuperGridControl();
-            this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
-            this._tooltipTimer = new System.Windows.Forms.Timer(this.components);
-            this._sixthPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
-            this._fifthPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
-            this._fourthPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
-            this._thirdPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
-            this._secondPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
-            this._firstPalette = new ThreatsManager.DevOps.Panels.KanbanPalette();
             this.expandableSplitter2 = new DevComponents.DotNetBar.ExpandableSplitter();
             this._comments = new ThreatsManager.DevOps.Panels.CommentsPanel();
+            this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
+            this._itemDetails = new ThreatsManager.Utilities.WinForms.ItemEditor();
+            this._superTooltip = new DevComponents.DotNetBar.SuperTooltip();
+            this._tooltipTimer = new System.Windows.Forms.Timer(this.components);
             this._container.SuspendLayout();
             this._sixth.SuspendLayout();
             this._fifth.SuspendLayout();
@@ -115,6 +115,36 @@ namespace ThreatsManager.DevOps.Panels
             this._sixth.TitleText = "Sixth";
             this._sixth.ExpandedChanged += new DevComponents.DotNetBar.ExpandChangeEventHandler(this._sixth_ExpandedChanged);
             // 
+            // _sixthPalette
+            // 
+            this._sixthPalette.AllowDelete = false;
+            this._sixthPalette.AllowEdit = false;
+            this._sixthPalette.AllowInsert = false;
+            this._sixthPalette.AllowLink = false;
+            this._sixthPalette.AllowMove = false;
+            this._sixthPalette.AllowReshape = false;
+            this._sixthPalette.AllowResize = false;
+            this._sixthPalette.ArrowMoveLarge = 10F;
+            this._sixthPalette.ArrowMoveSmall = 1F;
+            this._sixthPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
+            this._sixthPalette.BackColor = System.Drawing.Color.White;
+            this._sixthPalette.ContainerId = 5;
+            this._sixthPalette.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._sixthPalette.DragsRealtime = true;
+            this._sixthPalette.GridCellSizeHeight = 58F;
+            this._sixthPalette.GridCellSizeWidth = 52F;
+            this._sixthPalette.GridOriginX = 20F;
+            this._sixthPalette.GridOriginY = 5F;
+            this._sixthPalette.HidesSelection = true;
+            this._sixthPalette.Location = new System.Drawing.Point(0, 26);
+            this._sixthPalette.Name = "_sixthPalette";
+            this._sixthPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            this._sixthPalette.ShowsNegativeCoordinates = false;
+            this._sixthPalette.Size = new System.Drawing.Size(157, 176);
+            this._sixthPalette.TabIndex = 4;
+            this._sixthPalette.Text = "roadmapPalette5";
+            this._sixthPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
+            // 
             // _fifth
             // 
             this._fifth.CanvasColor = System.Drawing.SystemColors.Control;
@@ -141,6 +171,36 @@ namespace ThreatsManager.DevOps.Panels
             this._fifth.TitleStyle.GradientAngle = 90;
             this._fifth.TitleText = "Fifth";
             this._fifth.ExpandedChanged += new DevComponents.DotNetBar.ExpandChangeEventHandler(this._fifth_ExpandedChanged);
+            // 
+            // _fifthPalette
+            // 
+            this._fifthPalette.AllowDelete = false;
+            this._fifthPalette.AllowEdit = false;
+            this._fifthPalette.AllowInsert = false;
+            this._fifthPalette.AllowLink = false;
+            this._fifthPalette.AllowMove = false;
+            this._fifthPalette.AllowReshape = false;
+            this._fifthPalette.AllowResize = false;
+            this._fifthPalette.ArrowMoveLarge = 10F;
+            this._fifthPalette.ArrowMoveSmall = 1F;
+            this._fifthPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
+            this._fifthPalette.BackColor = System.Drawing.Color.White;
+            this._fifthPalette.ContainerId = 4;
+            this._fifthPalette.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._fifthPalette.DragsRealtime = true;
+            this._fifthPalette.GridCellSizeHeight = 58F;
+            this._fifthPalette.GridCellSizeWidth = 52F;
+            this._fifthPalette.GridOriginX = 20F;
+            this._fifthPalette.GridOriginY = 5F;
+            this._fifthPalette.HidesSelection = true;
+            this._fifthPalette.Location = new System.Drawing.Point(0, 26);
+            this._fifthPalette.Name = "_fifthPalette";
+            this._fifthPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            this._fifthPalette.ShowsNegativeCoordinates = false;
+            this._fifthPalette.Size = new System.Drawing.Size(152, 176);
+            this._fifthPalette.TabIndex = 4;
+            this._fifthPalette.Text = "roadmapPalette5";
+            this._fifthPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
             // 
             // _fourth
             // 
@@ -169,6 +229,36 @@ namespace ThreatsManager.DevOps.Panels
             this._fourth.TitleText = "Fourth";
             this._fourth.ExpandedChanged += new DevComponents.DotNetBar.ExpandChangeEventHandler(this._fourth_ExpandedChanged);
             // 
+            // _fourthPalette
+            // 
+            this._fourthPalette.AllowDelete = false;
+            this._fourthPalette.AllowEdit = false;
+            this._fourthPalette.AllowInsert = false;
+            this._fourthPalette.AllowLink = false;
+            this._fourthPalette.AllowMove = false;
+            this._fourthPalette.AllowReshape = false;
+            this._fourthPalette.AllowResize = false;
+            this._fourthPalette.ArrowMoveLarge = 10F;
+            this._fourthPalette.ArrowMoveSmall = 1F;
+            this._fourthPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
+            this._fourthPalette.BackColor = System.Drawing.Color.White;
+            this._fourthPalette.ContainerId = 3;
+            this._fourthPalette.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._fourthPalette.DragsRealtime = true;
+            this._fourthPalette.GridCellSizeHeight = 58F;
+            this._fourthPalette.GridCellSizeWidth = 52F;
+            this._fourthPalette.GridOriginX = 20F;
+            this._fourthPalette.GridOriginY = 5F;
+            this._fourthPalette.HidesSelection = true;
+            this._fourthPalette.Location = new System.Drawing.Point(0, 26);
+            this._fourthPalette.Name = "_fourthPalette";
+            this._fourthPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            this._fourthPalette.ShowsNegativeCoordinates = false;
+            this._fourthPalette.Size = new System.Drawing.Size(152, 176);
+            this._fourthPalette.TabIndex = 4;
+            this._fourthPalette.Text = "roadmapPalette4";
+            this._fourthPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
+            // 
             // _third
             // 
             this._third.CanvasColor = System.Drawing.SystemColors.Control;
@@ -195,6 +285,36 @@ namespace ThreatsManager.DevOps.Panels
             this._third.TitleStyle.GradientAngle = 90;
             this._third.TitleText = "Third";
             this._third.ExpandedChanged += new DevComponents.DotNetBar.ExpandChangeEventHandler(this._third_ExpandedChanged);
+            // 
+            // _thirdPalette
+            // 
+            this._thirdPalette.AllowDelete = false;
+            this._thirdPalette.AllowEdit = false;
+            this._thirdPalette.AllowInsert = false;
+            this._thirdPalette.AllowLink = false;
+            this._thirdPalette.AllowMove = false;
+            this._thirdPalette.AllowReshape = false;
+            this._thirdPalette.AllowResize = false;
+            this._thirdPalette.ArrowMoveLarge = 10F;
+            this._thirdPalette.ArrowMoveSmall = 1F;
+            this._thirdPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
+            this._thirdPalette.BackColor = System.Drawing.Color.White;
+            this._thirdPalette.ContainerId = 2;
+            this._thirdPalette.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._thirdPalette.DragsRealtime = true;
+            this._thirdPalette.GridCellSizeHeight = 58F;
+            this._thirdPalette.GridCellSizeWidth = 52F;
+            this._thirdPalette.GridOriginX = 20F;
+            this._thirdPalette.GridOriginY = 5F;
+            this._thirdPalette.HidesSelection = true;
+            this._thirdPalette.Location = new System.Drawing.Point(0, 26);
+            this._thirdPalette.Name = "_thirdPalette";
+            this._thirdPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            this._thirdPalette.ShowsNegativeCoordinates = false;
+            this._thirdPalette.Size = new System.Drawing.Size(152, 176);
+            this._thirdPalette.TabIndex = 4;
+            this._thirdPalette.Text = "roadmapPalette3";
+            this._thirdPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
             // 
             // _second
             // 
@@ -223,6 +343,36 @@ namespace ThreatsManager.DevOps.Panels
             this._second.TitleText = "Second";
             this._second.ExpandedChanged += new DevComponents.DotNetBar.ExpandChangeEventHandler(this._second_ExpandedChanged);
             // 
+            // _secondPalette
+            // 
+            this._secondPalette.AllowDelete = false;
+            this._secondPalette.AllowEdit = false;
+            this._secondPalette.AllowInsert = false;
+            this._secondPalette.AllowLink = false;
+            this._secondPalette.AllowMove = false;
+            this._secondPalette.AllowReshape = false;
+            this._secondPalette.AllowResize = false;
+            this._secondPalette.ArrowMoveLarge = 10F;
+            this._secondPalette.ArrowMoveSmall = 1F;
+            this._secondPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
+            this._secondPalette.BackColor = System.Drawing.Color.White;
+            this._secondPalette.ContainerId = 1;
+            this._secondPalette.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._secondPalette.DragsRealtime = true;
+            this._secondPalette.GridCellSizeHeight = 58F;
+            this._secondPalette.GridCellSizeWidth = 52F;
+            this._secondPalette.GridOriginX = 20F;
+            this._secondPalette.GridOriginY = 5F;
+            this._secondPalette.HidesSelection = true;
+            this._secondPalette.Location = new System.Drawing.Point(0, 26);
+            this._secondPalette.Name = "_secondPalette";
+            this._secondPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
+            this._secondPalette.ShowsNegativeCoordinates = false;
+            this._secondPalette.Size = new System.Drawing.Size(152, 176);
+            this._secondPalette.TabIndex = 4;
+            this._secondPalette.Text = "roadmapPalette2";
+            this._secondPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
+            // 
             // _first
             // 
             this._first.CanvasColor = System.Drawing.SystemColors.Control;
@@ -250,267 +400,6 @@ namespace ThreatsManager.DevOps.Panels
             this._first.TitleText = "First";
             this._first.ExpandedChanged += new DevComponents.DotNetBar.ExpandChangeEventHandler(this._first_ExpandedChanged);
             // 
-            // _splitter
-            // 
-            this._splitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this._splitter.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this._splitter.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._splitter.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
-            this._splitter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this._splitter.ExpandableControl = this._bottomPanel;
-            this._splitter.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this._splitter.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._splitter.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this._splitter.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._splitter.ForeColor = System.Drawing.Color.Black;
-            this._splitter.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this._splitter.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._splitter.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this._splitter.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this._splitter.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
-            this._splitter.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
-            this._splitter.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
-            this._splitter.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
-            this._splitter.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this._splitter.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._splitter.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this._splitter.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this._splitter.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this._splitter.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this._splitter.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this._splitter.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this._splitter.Location = new System.Drawing.Point(0, 208);
-            this._splitter.Name = "_splitter";
-            this._splitter.Size = new System.Drawing.Size(953, 6);
-            this._splitter.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
-            this._splitter.TabIndex = 1;
-            this._splitter.TabStop = false;
-            // 
-            // _bottomPanel
-            // 
-            this._bottomPanel.BackColor = System.Drawing.Color.White;
-            this._bottomPanel.Controls.Add(this._grid);
-            this._bottomPanel.Controls.Add(this.expandableSplitter2);
-            this._bottomPanel.Controls.Add(this._comments);
-            this._bottomPanel.Controls.Add(this.expandableSplitter1);
-            this._bottomPanel.Controls.Add(this._itemDetails);
-            this._bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this._bottomPanel.Location = new System.Drawing.Point(0, 214);
-            this._bottomPanel.Margin = new System.Windows.Forms.Padding(0);
-            this._bottomPanel.Name = "_bottomPanel";
-            this._bottomPanel.Size = new System.Drawing.Size(953, 380);
-            this._bottomPanel.TabIndex = 0;
-            // 
-            // expandableSplitter1
-            // 
-            this.expandableSplitter1.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this.expandableSplitter1.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter1.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
-            this.expandableSplitter1.ExpandableControl = this._itemDetails;
-            this.expandableSplitter1.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this.expandableSplitter1.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter1.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.expandableSplitter1.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this.expandableSplitter1.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.expandableSplitter1.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this.expandableSplitter1.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this.expandableSplitter1.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this.expandableSplitter1.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
-            this.expandableSplitter1.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
-            this.expandableSplitter1.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
-            this.expandableSplitter1.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
-            this.expandableSplitter1.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this.expandableSplitter1.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter1.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.expandableSplitter1.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this.expandableSplitter1.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
-            this.expandableSplitter1.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter1.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
-            this.expandableSplitter1.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this.expandableSplitter1.Location = new System.Drawing.Point(438, 0);
-            this.expandableSplitter1.Name = "expandableSplitter1";
-            this.expandableSplitter1.Size = new System.Drawing.Size(6, 380);
-            this.expandableSplitter1.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
-            this.expandableSplitter1.TabIndex = 1;
-            this.expandableSplitter1.TabStop = false;
-            // 
-            // _itemDetails
-            // 
-            this._itemDetails.BackColor = System.Drawing.Color.White;
-            this._itemDetails.Dock = System.Windows.Forms.DockStyle.Left;
-            this._itemDetails.Item = null;
-            this._itemDetails.Location = new System.Drawing.Point(0, 0);
-            this._itemDetails.Name = "_itemDetails";
-            this._itemDetails.ReadOnly = false;
-            this._itemDetails.Size = new System.Drawing.Size(438, 380);
-            this._itemDetails.TabIndex = 0;
-            // 
-            // _grid
-            // 
-            this._grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._grid.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
-            this._grid.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._grid.Location = new System.Drawing.Point(444, 0);
-            this._grid.Name = "_grid";
-            this._grid.Size = new System.Drawing.Size(37, 380);
-            this._grid.TabIndex = 2;
-            this._grid.Text = "superGridControl1";
-            // 
-            // _superTooltip
-            // 
-            this._superTooltip.DefaultTooltipSettings = new DevComponents.DotNetBar.SuperTooltipInfo("", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray);
-            this._superTooltip.DelayTooltipHideDuration = 250;
-            this._superTooltip.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            // 
-            // _tooltipTimer
-            // 
-            this._tooltipTimer.Interval = 1000;
-            // 
-            // _sixthPalette
-            // 
-            this._sixthPalette.AllowDelete = false;
-            this._sixthPalette.AllowEdit = false;
-            this._sixthPalette.AllowInsert = false;
-            this._sixthPalette.AllowLink = false;
-            this._sixthPalette.AllowMove = false;
-            this._sixthPalette.AllowReshape = false;
-            this._sixthPalette.AllowResize = false;
-            this._sixthPalette.ArrowMoveLarge = 10F;
-            this._sixthPalette.ArrowMoveSmall = 1F;
-            this._sixthPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._sixthPalette.BackColor = System.Drawing.Color.White;
-            this._sixthPalette.ContainerId = 5;
-            this._sixthPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._sixthPalette.DragsRealtime = true;
-            this._sixthPalette.GridCellSizeHeight = 58F;
-            this._sixthPalette.GridCellSizeWidth = 52F;
-            this._sixthPalette.GridOriginX = 20F;
-            this._sixthPalette.GridOriginY = 5F;
-            this._sixthPalette.HidesSelection = true;
-            this._sixthPalette.Location = new System.Drawing.Point(0, 26);
-            this._sixthPalette.Name = "_sixthPalette";
-            this._sixthPalette.ShowsNegativeCoordinates = false;
-            this._sixthPalette.Size = new System.Drawing.Size(157, 176);
-            this._sixthPalette.TabIndex = 4;
-            this._sixthPalette.Text = "roadmapPalette5";
-            this._sixthPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
-            // 
-            // _fifthPalette
-            // 
-            this._fifthPalette.AllowDelete = false;
-            this._fifthPalette.AllowEdit = false;
-            this._fifthPalette.AllowInsert = false;
-            this._fifthPalette.AllowLink = false;
-            this._fifthPalette.AllowMove = false;
-            this._fifthPalette.AllowReshape = false;
-            this._fifthPalette.AllowResize = false;
-            this._fifthPalette.ArrowMoveLarge = 10F;
-            this._fifthPalette.ArrowMoveSmall = 1F;
-            this._fifthPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._fifthPalette.BackColor = System.Drawing.Color.White;
-            this._fifthPalette.ContainerId = 4;
-            this._fifthPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._fifthPalette.DragsRealtime = true;
-            this._fifthPalette.GridCellSizeHeight = 58F;
-            this._fifthPalette.GridCellSizeWidth = 52F;
-            this._fifthPalette.GridOriginX = 20F;
-            this._fifthPalette.GridOriginY = 5F;
-            this._fifthPalette.HidesSelection = true;
-            this._fifthPalette.Location = new System.Drawing.Point(0, 26);
-            this._fifthPalette.Name = "_fifthPalette";
-            this._fifthPalette.ShowsNegativeCoordinates = false;
-            this._fifthPalette.Size = new System.Drawing.Size(152, 176);
-            this._fifthPalette.TabIndex = 4;
-            this._fifthPalette.Text = "roadmapPalette5";
-            this._fifthPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
-            // 
-            // _fourthPalette
-            // 
-            this._fourthPalette.AllowDelete = false;
-            this._fourthPalette.AllowEdit = false;
-            this._fourthPalette.AllowInsert = false;
-            this._fourthPalette.AllowLink = false;
-            this._fourthPalette.AllowMove = false;
-            this._fourthPalette.AllowReshape = false;
-            this._fourthPalette.AllowResize = false;
-            this._fourthPalette.ArrowMoveLarge = 10F;
-            this._fourthPalette.ArrowMoveSmall = 1F;
-            this._fourthPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._fourthPalette.BackColor = System.Drawing.Color.White;
-            this._fourthPalette.ContainerId = 3;
-            this._fourthPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._fourthPalette.DragsRealtime = true;
-            this._fourthPalette.GridCellSizeHeight = 58F;
-            this._fourthPalette.GridCellSizeWidth = 52F;
-            this._fourthPalette.GridOriginX = 20F;
-            this._fourthPalette.GridOriginY = 5F;
-            this._fourthPalette.HidesSelection = true;
-            this._fourthPalette.Location = new System.Drawing.Point(0, 26);
-            this._fourthPalette.Name = "_fourthPalette";
-            this._fourthPalette.ShowsNegativeCoordinates = false;
-            this._fourthPalette.Size = new System.Drawing.Size(152, 176);
-            this._fourthPalette.TabIndex = 4;
-            this._fourthPalette.Text = "roadmapPalette4";
-            this._fourthPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
-            // 
-            // _thirdPalette
-            // 
-            this._thirdPalette.AllowDelete = false;
-            this._thirdPalette.AllowEdit = false;
-            this._thirdPalette.AllowInsert = false;
-            this._thirdPalette.AllowLink = false;
-            this._thirdPalette.AllowMove = false;
-            this._thirdPalette.AllowReshape = false;
-            this._thirdPalette.AllowResize = false;
-            this._thirdPalette.ArrowMoveLarge = 10F;
-            this._thirdPalette.ArrowMoveSmall = 1F;
-            this._thirdPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._thirdPalette.BackColor = System.Drawing.Color.White;
-            this._thirdPalette.ContainerId = 2;
-            this._thirdPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._thirdPalette.DragsRealtime = true;
-            this._thirdPalette.GridCellSizeHeight = 58F;
-            this._thirdPalette.GridCellSizeWidth = 52F;
-            this._thirdPalette.GridOriginX = 20F;
-            this._thirdPalette.GridOriginY = 5F;
-            this._thirdPalette.HidesSelection = true;
-            this._thirdPalette.Location = new System.Drawing.Point(0, 26);
-            this._thirdPalette.Name = "_thirdPalette";
-            this._thirdPalette.ShowsNegativeCoordinates = false;
-            this._thirdPalette.Size = new System.Drawing.Size(152, 176);
-            this._thirdPalette.TabIndex = 4;
-            this._thirdPalette.Text = "roadmapPalette3";
-            this._thirdPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
-            // 
-            // _secondPalette
-            // 
-            this._secondPalette.AllowDelete = false;
-            this._secondPalette.AllowEdit = false;
-            this._secondPalette.AllowInsert = false;
-            this._secondPalette.AllowLink = false;
-            this._secondPalette.AllowMove = false;
-            this._secondPalette.AllowReshape = false;
-            this._secondPalette.AllowResize = false;
-            this._secondPalette.ArrowMoveLarge = 10F;
-            this._secondPalette.ArrowMoveSmall = 1F;
-            this._secondPalette.AutoScrollRegion = new System.Drawing.Size(0, 0);
-            this._secondPalette.BackColor = System.Drawing.Color.White;
-            this._secondPalette.ContainerId = 1;
-            this._secondPalette.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._secondPalette.DragsRealtime = true;
-            this._secondPalette.GridCellSizeHeight = 58F;
-            this._secondPalette.GridCellSizeWidth = 52F;
-            this._secondPalette.GridOriginX = 20F;
-            this._secondPalette.GridOriginY = 5F;
-            this._secondPalette.HidesSelection = true;
-            this._secondPalette.Location = new System.Drawing.Point(0, 26);
-            this._secondPalette.Name = "_secondPalette";
-            this._secondPalette.ShowsNegativeCoordinates = false;
-            this._secondPalette.Size = new System.Drawing.Size(152, 176);
-            this._secondPalette.TabIndex = 4;
-            this._secondPalette.Text = "roadmapPalette2";
-            this._secondPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
-            // 
             // _firstPalette
             // 
             this._firstPalette.AllowDelete = false;
@@ -534,38 +423,105 @@ namespace ThreatsManager.DevOps.Panels
             this._firstPalette.HidesSelection = true;
             this._firstPalette.Location = new System.Drawing.Point(0, 26);
             this._firstPalette.Name = "_firstPalette";
+            this._firstPalette.ShowHorizontalScrollBar = Northwoods.Go.GoViewScrollBarVisibility.Hide;
             this._firstPalette.ShowsNegativeCoordinates = false;
             this._firstPalette.Size = new System.Drawing.Size(152, 176);
             this._firstPalette.TabIndex = 4;
             this._firstPalette.Text = "roadmapPalette1";
             this._firstPalette.ObjectSingleClicked += new Northwoods.Go.GoObjectEventHandler(this.ObjectSingleClicked);
             // 
+            // _splitter
+            // 
+            this._splitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._splitter.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this._splitter.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this._splitter.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this._splitter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this._splitter.ExpandableControl = this._bottomPanel;
+            this._splitter.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this._splitter.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this._splitter.ExpandLineColor = System.Drawing.Color.Black;
+            this._splitter.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this._splitter.ForeColor = System.Drawing.Color.Black;
+            this._splitter.GripDarkColor = System.Drawing.Color.Black;
+            this._splitter.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this._splitter.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this._splitter.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this._splitter.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199)))));
+            this._splitter.HotBackColor2 = System.Drawing.Color.Empty;
+            this._splitter.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
+            this._splitter.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
+            this._splitter.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this._splitter.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this._splitter.HotExpandLineColor = System.Drawing.Color.Black;
+            this._splitter.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this._splitter.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this._splitter.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this._splitter.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this._splitter.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this._splitter.Location = new System.Drawing.Point(0, 208);
+            this._splitter.Name = "_splitter";
+            this._splitter.Size = new System.Drawing.Size(953, 6);
+            this._splitter.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
+            this._splitter.TabIndex = 1;
+            this._splitter.TabStop = false;
+            // 
+            // _bottomPanel
+            // 
+            this._bottomPanel.BackColor = System.Drawing.Color.White;
+            this._bottomPanel.Controls.Add(this._grid);
+            this._bottomPanel.Controls.Add(this.expandableSplitter2);
+            this._bottomPanel.Controls.Add(this._comments);
+            this._bottomPanel.Controls.Add(this.expandableSplitter1);
+            this._bottomPanel.Controls.Add(this._itemDetails);
+            this._bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this._bottomPanel.Location = new System.Drawing.Point(0, 214);
+            this._bottomPanel.Margin = new System.Windows.Forms.Padding(0);
+            this._bottomPanel.Name = "_bottomPanel";
+            this._bottomPanel.Size = new System.Drawing.Size(953, 380);
+            this._bottomPanel.TabIndex = 0;
+            // 
+            // _grid
+            // 
+            this._grid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._grid.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
+            this._grid.ForeColor = System.Drawing.Color.Black;
+            this._grid.LicenseKey = "PUT_YOUR_LICENSE_HERE";
+            this._grid.Location = new System.Drawing.Point(444, 0);
+            this._grid.Name = "_grid";
+            this._grid.Size = new System.Drawing.Size(37, 380);
+            this._grid.TabIndex = 2;
+            this._grid.Text = "superGridControl1";
+            // 
             // expandableSplitter2
             // 
-            this.expandableSplitter2.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.expandableSplitter2.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.expandableSplitter2.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this.expandableSplitter2.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this.expandableSplitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.expandableSplitter2.ExpandableControl = this._comments;
-            this.expandableSplitter2.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.expandableSplitter2.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter2.ExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter2.ExpandLineColor = System.Drawing.Color.Black;
             this.expandableSplitter2.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this.expandableSplitter2.GripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter2.ForeColor = System.Drawing.Color.Black;
+            this.expandableSplitter2.GripDarkColor = System.Drawing.Color.Black;
             this.expandableSplitter2.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this.expandableSplitter2.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this.expandableSplitter2.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this.expandableSplitter2.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
-            this.expandableSplitter2.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(151)))), ((int)(((byte)(61)))));
-            this.expandableSplitter2.HotBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(184)))), ((int)(((byte)(94)))));
+            this.expandableSplitter2.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199)))));
+            this.expandableSplitter2.HotBackColor2 = System.Drawing.Color.Empty;
             this.expandableSplitter2.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
             this.expandableSplitter2.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
-            this.expandableSplitter2.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.expandableSplitter2.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter2.HotExpandLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.expandableSplitter2.HotExpandLineColor = System.Drawing.Color.Black;
             this.expandableSplitter2.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
-            this.expandableSplitter2.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(101)))), ((int)(((byte)(147)))), ((int)(((byte)(207)))));
+            this.expandableSplitter2.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.expandableSplitter2.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.expandableSplitter2.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(239)))), ((int)(((byte)(255)))));
+            this.expandableSplitter2.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this.expandableSplitter2.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
             this.expandableSplitter2.Location = new System.Drawing.Point(481, 0);
             this.expandableSplitter2.Name = "expandableSplitter2";
@@ -583,10 +539,66 @@ namespace ThreatsManager.DevOps.Panels
             this._comments.Size = new System.Drawing.Size(466, 380);
             this._comments.TabIndex = 3;
             // 
+            // expandableSplitter1
+            // 
+            this.expandableSplitter1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.expandableSplitter1.BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.expandableSplitter1.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this.expandableSplitter1.ExpandableControl = this._itemDetails;
+            this.expandableSplitter1.ExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.expandableSplitter1.ExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.ExpandLineColor = System.Drawing.Color.Black;
+            this.expandableSplitter1.ExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter1.ForeColor = System.Drawing.Color.Black;
+            this.expandableSplitter1.GripDarkColor = System.Drawing.Color.Black;
+            this.expandableSplitter1.GripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter1.GripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this.expandableSplitter1.GripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this.expandableSplitter1.HotBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199)))));
+            this.expandableSplitter1.HotBackColor2 = System.Drawing.Color.Empty;
+            this.expandableSplitter1.HotBackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground2;
+            this.expandableSplitter1.HotBackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemPressedBackground;
+            this.expandableSplitter1.HotExpandFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.expandableSplitter1.HotExpandFillColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.HotExpandLineColor = System.Drawing.Color.Black;
+            this.expandableSplitter1.HotExpandLineColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.ItemText;
+            this.expandableSplitter1.HotGripDarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.expandableSplitter1.HotGripDarkColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.expandableSplitter1.HotGripLightColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this.expandableSplitter1.HotGripLightColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.BarBackground;
+            this.expandableSplitter1.Location = new System.Drawing.Point(438, 0);
+            this.expandableSplitter1.Name = "expandableSplitter1";
+            this.expandableSplitter1.Size = new System.Drawing.Size(6, 380);
+            this.expandableSplitter1.Style = DevComponents.DotNetBar.eSplitterStyle.Office2007;
+            this.expandableSplitter1.TabIndex = 1;
+            this.expandableSplitter1.TabStop = false;
+            // 
+            // _itemDetails
+            // 
+            this._itemDetails.BackColor = System.Drawing.Color.White;
+            this._itemDetails.Dock = System.Windows.Forms.DockStyle.Left;
+            this._itemDetails.Item = null;
+            this._itemDetails.Location = new System.Drawing.Point(0, 0);
+            this._itemDetails.Name = "_itemDetails";
+            this._itemDetails.ReadOnly = false;
+            this._itemDetails.Size = new System.Drawing.Size(438, 380);
+            this._itemDetails.TabIndex = 0;
+            // 
+            // _superTooltip
+            // 
+            this._superTooltip.DefaultTooltipSettings = new DevComponents.DotNetBar.SuperTooltipInfo("", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray);
+            this._superTooltip.DelayTooltipHideDuration = 250;
+            this._superTooltip.LicenseKey = "PUT_YOUR_LICENSE_HERE";
+            // 
+            // _tooltipTimer
+            // 
+            this._tooltipTimer.Interval = 1000;
+            // 
             // KanbanPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._container);
             this.Controls.Add(this._splitter);
             this.Controls.Add(this._bottomPanel);

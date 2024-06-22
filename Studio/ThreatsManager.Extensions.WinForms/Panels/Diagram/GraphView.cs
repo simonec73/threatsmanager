@@ -106,7 +106,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
             var location = group.Location;
             float centerX = location.X;
-            float centerY = location.Y + group.Label.Height / 2f - 8.0f * Dpi.Factor.Height;
+            float centerY = location.Y + group.Label.Height / 2f - 8.0f;
 
             if (centerX != shape.Position.X || centerY != shape.Position.Y)
             {
@@ -801,50 +801,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Selection.Clear();
             Selection.AddRange(selection);
             return result;
-        }
-
-        public Metafile ToMetafile()
-        {
-            var selection = Selection;
-            SelectAll();
-            RectangleF bounds = GoDocument.ComputeBounds(Selection, this);
-
-            Graphics gbm = CreateGraphics();
-            IntPtr bufdc = gbm.GetHdc();
-            MemoryStream str = new MemoryStream();
-            Metafile mf = new Metafile(str, bufdc, bounds, MetafileFrameUnit.Pixel, EmfType.EmfPlusDual);
-
-            Graphics gmf = Graphics.FromImage(mf);
-            gmf.PageUnit = GraphicsUnit.Pixel;
-            gmf.SmoothingMode = this.SmoothingMode;
-            gmf.TextRenderingHint = this.TextRenderingHint;
-            gmf.InterpolationMode = this.InterpolationMode;
-            gmf.CompositingQuality = this.CompositingQuality;
-            gmf.PixelOffsetMode = this.PixelOffsetMode;
-
-            RectangleF b = bounds;
-            b.Inflate(1, 1);
-            PaintPaperColor(gmf, b);
-
-            foreach (GoObject obj in Selection)
-            {
-                if (!obj.CanView())
-                    continue;
-                obj.Paint(gmf, this);
-            }
-
-            gmf.Dispose();
-
-            gbm.ReleaseHdc(bufdc);
-            gbm.Dispose();
-            mf.Dispose();
-
-            byte[] data = str.GetBuffer();
-
-            Selection.Clear();
-            Selection.AddRange(selection);
-
-            return new Metafile(new MemoryStream(data, false));
         }
         #endregion
 

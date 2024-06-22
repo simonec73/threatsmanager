@@ -8,12 +8,6 @@ namespace ThreatsManager.Dialogs
         public FeedbackDialog()
         {
             InitializeComponent();
-
-            if (Dpi.Factor.Width >= 1.5)
-            {
-                _smile.Image = Properties.Resources.emoticon_smile_big;
-                _frown.Image = Properties.Resources.emoticon_frown_big;
-            }
         }
 
         public bool Smile => _smile.Checked;

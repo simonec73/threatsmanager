@@ -6,6 +6,7 @@ using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.SuperGrid;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Interfaces;
+using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
@@ -20,6 +21,7 @@ namespace ThreatsManager.Extensions.Dialogs
         private IThreatEvent _threatEvent;
         private IWeakness _weakness;
         private IVulnerability _vulnerability;
+        private GridCell _lastMouseOverCell;
 
         public AssociateMitigationsDialog()
         {
@@ -50,6 +52,7 @@ namespace ThreatsManager.Extensions.Dialogs
                     row.Tag = mitigation;
                     row.Checked = existingMitigation != null;
                     _grid.PrimaryGrid.Rows.Add(row);
+                    AddSuperTooltipProvider(mitigation, row[0]);
                 }
             }
         }
@@ -78,6 +81,7 @@ namespace ThreatsManager.Extensions.Dialogs
                     row.Tag = mitigation;
                     row.Checked = existingMitigation != null;
                     _grid.PrimaryGrid.Rows.Add(row);
+                    AddSuperTooltipProvider(mitigation, row[0]);
                 }
             }
         }
@@ -105,6 +109,7 @@ namespace ThreatsManager.Extensions.Dialogs
                     row.Tag = mitigation;
                     row.Checked = existingMitigation != null;
                     _grid.PrimaryGrid.Rows.Add(row);
+                    AddSuperTooltipProvider(mitigation, row[0]);
                 }
             }
         }
@@ -133,6 +138,7 @@ namespace ThreatsManager.Extensions.Dialogs
                     row.Tag = mitigation;
                     row.Checked = existingMitigation != null;
                     _grid.PrimaryGrid.Rows.Add(row);
+                    AddSuperTooltipProvider(mitigation, row[0]);
                 }
             }
         }
@@ -200,7 +206,7 @@ namespace ThreatsManager.Extensions.Dialogs
         private void InitializeItem(IIdentity item)
         {
             string text = item.Name;
-            int height = (int)(21 * Dpi.Factor.Height);
+            int height = 21;
             var image = item.GetImage(ImageSize.Small);
             if (image != null)
             {
@@ -240,6 +246,57 @@ namespace ThreatsManager.Extensions.Dialogs
                     }
                 }
             }
+        }
+
+        private void _filter_ButtonCustomClick(object sender, EventArgs e)
+        {
+            _filter.Text = string.Empty;
+        }
+
+        private void _apply_Click(object sender, EventArgs e)
+        {
+            var rows = _grid.PrimaryGrid.Rows.OfType<GridRow>().ToArray();
+            if (rows.Any())
+            {
+                foreach (var row in rows)
+                {
+                    if (row.Tag is IMitigation mitigation)
+                    {
+                        row.Visible = IsSelected(mitigation, _filter.Text);
+                    }
+                }
+            }
+        }
+
+        private bool IsSelected([NotNull] IMitigation item, string filter)
+        {
+            bool result;
+
+            if (string.IsNullOrWhiteSpace(filter))
+                result = true;
+            else
+            {
+                result = (!string.IsNullOrWhiteSpace(item.Name) &&
+                              item.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                             (!string.IsNullOrWhiteSpace(item.Description) &&
+                              item.Description.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (!result && (item.Properties?.Any() ?? false))
+                {
+                    var properties = item.Properties.ToArray();
+                    foreach (var property in properties)
+                    {
+                        var stringValue = property.StringValue;
+                        if ((!string.IsNullOrWhiteSpace(stringValue) &&
+                             stringValue.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         private bool IsAssigned([NotNull] IMitigation mitigation)
@@ -316,5 +373,71 @@ namespace ThreatsManager.Extensions.Dialogs
                 _vulnerability.RemoveMitigation(mitigation.Id);
             }
         }
+
+        #region Tooltip Management.
+        private void AddSuperTooltipProvider([NotNull] IIdentity identity, [NotNull] GridCell cell)
+        {
+            var provider = new GridCellSuperTooltipProvider(cell);
+            cell.Tag = provider;
+            _superTooltip.SetSuperTooltip(provider, _model.GetSuperTooltipInfo(identity));
+        }
+
+        private void RemoveSuperTooltipProvider([NotNull] GridCell cell)
+        {
+            if (cell.Tag is GridCellSuperTooltipProvider provider)
+            {
+                _superTooltip.SetSuperTooltip(provider, null);
+            }
+        }
+
+        private void _tooltipTimer_Tick(object sender, EventArgs e)
+        {
+            _tooltipTimer.Stop();
+            ShowCellTooltip();
+        }
+
+        private void ShowCellTooltip()
+        {
+            if (_lastMouseOverCell?.Tag is GridCellSuperTooltipProvider provider)
+            {
+                provider.Show();
+            }
+        }
+
+        private void HideTooltip()
+        {
+            if (_lastMouseOverCell?.Tag is GridCellSuperTooltipProvider provider)
+            {
+                provider.Hide();
+                _lastMouseOverCell = null;
+            }
+        }
+
+        private void _grid_CellMouseMove(object sender, GridCellMouseEventArgs e)
+        {
+            if (e.GridCell != _lastMouseOverCell && e.GridCell.Tag is GridCellSuperTooltipProvider provider)
+            {
+                //HideTooltip();
+                _lastMouseOverCell = e.GridCell;
+                _tooltipTimer.Start();
+            }
+        }
+
+        private void _grid_CellMouseDown(object sender, GridCellMouseEventArgs e)
+        {
+            HideTooltip();
+        }
+
+        private void _grid_CellMouseLeave(object sender, GridCellEventArgs e)
+        {
+            //HideTooltip();
+            _tooltipTimer.Stop();
+        }
+
+        private void _superTooltip_MarkupLinkClick(object sender, MarkupLinkClickEventArgs e)
+        {
+
+        }
+        #endregion
     }
 }

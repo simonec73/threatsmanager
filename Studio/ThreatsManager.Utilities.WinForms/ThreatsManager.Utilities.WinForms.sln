@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.Utilities.WinForms", "ThreatsManager.Utilities.WinForms.csproj", "{8DA52FE7-E3E4-44BB-85E5-E81A26108155}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperlinkListTest", "..\..\..\Test\HyperlinkListTest\HyperlinkListTest.csproj", "{105658F9-ED8E-409E-B0DE-ACD87F6C34F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8DA52FE7-E3E4-44BB-85E5-E81A26108155}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DA52FE7-E3E4-44BB-85E5-E81A26108155}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DA52FE7-E3E4-44BB-85E5-E81A26108155}.Release|Any CPU.Build.0 = Release|Any CPU
+		{105658F9-ED8E-409E-B0DE-ACD87F6C34F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{105658F9-ED8E-409E-B0DE-ACD87F6C34F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{105658F9-ED8E-409E-B0DE-ACD87F6C34F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{105658F9-ED8E-409E-B0DE-ACD87F6C34F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

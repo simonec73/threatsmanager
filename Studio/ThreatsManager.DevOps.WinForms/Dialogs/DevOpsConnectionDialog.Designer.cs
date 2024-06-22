@@ -32,16 +32,16 @@
             this._ok = new System.Windows.Forms.Button();
             this._cancel = new System.Windows.Forms.Button();
             this._layout = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._accessToken = new System.Windows.Forms.TextBox();
             this._loadProjects = new System.Windows.Forms.Button();
             this._projectList = new System.Windows.Forms.ListBox();
             this._serverUrl = new System.Windows.Forms.TextBox();
             this._factories = new System.Windows.Forms.ComboBox();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._accessToken = new System.Windows.Forms.TextBox();
-            this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this._layout.SuspendLayout();
             this.SuspendLayout();
@@ -103,6 +103,16 @@
             this.layoutControlItem3});
             this._layout.Size = new System.Drawing.Size(438, 366);
             this._layout.TabIndex = 1;
+            // 
+            // _accessToken
+            // 
+            this._accessToken.Location = new System.Drawing.Point(107, 61);
+            this._accessToken.Margin = new System.Windows.Forms.Padding(0);
+            this._accessToken.Name = "_accessToken";
+            this._accessToken.Size = new System.Drawing.Size(244, 20);
+            this._accessToken.TabIndex = 2;
+            this._accessToken.UseSystemPasswordChar = true;
+            this._accessToken.TextChanged += new System.EventHandler(this._accessToken_TextChanged);
             // 
             // _loadProjects
             // 
@@ -166,6 +176,16 @@
             this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
+            // layoutControlItem5
+            // 
+            this.layoutControlItem5.Control = this._accessToken;
+            this.layoutControlItem5.Height = 28;
+            this.layoutControlItem5.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Text = "Access Token";
+            this.layoutControlItem5.Width = 99;
+            this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
             // layoutControlItem4
             // 
             this.layoutControlItem4.Control = this._loadProjects;
@@ -186,30 +206,10 @@
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // _accessToken
-            // 
-            this._accessToken.Location = new System.Drawing.Point(107, 61);
-            this._accessToken.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._accessToken.Name = "_accessToken";
-            this._accessToken.Size = new System.Drawing.Size(244, 20);
-            this._accessToken.TabIndex = 2;
-            this._accessToken.UseSystemPasswordChar = true;
-            this._accessToken.TextChanged += new System.EventHandler(this._accessToken_TextChanged);
-            // 
-            // layoutControlItem5
-            // 
-            this.layoutControlItem5.Control = this._accessToken;
-            this.layoutControlItem5.Height = 28;
-            this.layoutControlItem5.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem5.Name = "layoutControlItem5";
-            this.layoutControlItem5.Text = "Access Token";
-            this.layoutControlItem5.Width = 99;
-            this.layoutControlItem5.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // DevOpsConnectionDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(438, 412);

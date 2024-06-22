@@ -39,7 +39,9 @@
             this._tag = new System.Windows.Forms.TextBox();
             this._itemTypes = new System.Windows.Forms.ComboBox();
             this._parents = new System.Windows.Forms.ComboBox();
+            this._parentItemType = new System.Windows.Forms.Label();
             this.layoutControlItem1 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem2 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem3 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem4 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
@@ -47,8 +49,6 @@
             this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem7 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._tooltip = new System.Windows.Forms.ToolTip(this.components);
-            this._parentItemType = new System.Windows.Forms.Label();
-            this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this.layoutControl1.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +75,7 @@
             // 
             // layoutControl1
             // 
+            this.layoutControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.layoutControl1.Controls.Add(this._remove);
             this.layoutControl1.Controls.Add(this._add);
             this.layoutControl1.Controls.Add(this._gridFields);
@@ -84,6 +85,7 @@
             this.layoutControl1.Controls.Add(this._parents);
             this.layoutControl1.Controls.Add(this._parentItemType);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -125,7 +127,9 @@
             // 
             // _gridFields
             // 
+            this._gridFields.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this._gridFields.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
+            this._gridFields.ForeColor = System.Drawing.Color.Black;
             this._gridFields.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridFields.Location = new System.Drawing.Point(4, 282);
             this._gridFields.Margin = new System.Windows.Forms.Padding(0);
@@ -135,7 +139,9 @@
             // 
             // _gridStates
             // 
+            this._gridStates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this._gridStates.FilterExprColors.SysFunction = System.Drawing.Color.DarkRed;
+            this._gridStates.ForeColor = System.Drawing.Color.Black;
             this._gridStates.LicenseKey = "PUT_YOUR_LICENSE_HERE";
             this._gridStates.Location = new System.Drawing.Point(4, 128);
             this._gridStates.Margin = new System.Windows.Forms.Padding(0);
@@ -178,6 +184,15 @@
             this._parents.TextUpdate += new System.EventHandler(this.OnComboBoxTextUpdate);
             this._parents.KeyDown += new System.Windows.Forms.KeyEventHandler(this._parents_KeyDown);
             // 
+            // _parentItemType
+            // 
+            this._parentItemType.AutoSize = true;
+            this._parentItemType.Location = new System.Drawing.Point(98, 33);
+            this._parentItemType.Margin = new System.Windows.Forms.Padding(0);
+            this._parentItemType.Name = "_parentItemType";
+            this._parentItemType.Size = new System.Drawing.Size(399, 13);
+            this._parentItemType.TabIndex = 1;
+            // 
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._parents;
@@ -188,6 +203,16 @@
             this.layoutControlItem1.Tooltip = "Parent node for the items to be created.";
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem8
+            // 
+            this.layoutControlItem8.Control = this._parentItemType;
+            this.layoutControlItem8.Height = 21;
+            this.layoutControlItem8.MinSize = new System.Drawing.Size(64, 18);
+            this.layoutControlItem8.Name = "layoutControlItem8";
+            this.layoutControlItem8.Text = "Parent Item Type";
+            this.layoutControlItem8.Width = 100;
+            this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem2
             // 
@@ -250,29 +275,10 @@
             this.layoutControlItem7.Name = "layoutControlItem7";
             this.layoutControlItem7.Width = 83;
             // 
-            // _parentItemType
-            // 
-            this._parentItemType.AutoSize = true;
-            this._parentItemType.Location = new System.Drawing.Point(98, 33);
-            this._parentItemType.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._parentItemType.Name = "_parentItemType";
-            this._parentItemType.Size = new System.Drawing.Size(399, 13);
-            this._parentItemType.TabIndex = 1;
-            // 
-            // layoutControlItem8
-            // 
-            this.layoutControlItem8.Control = this._parentItemType;
-            this.layoutControlItem8.Height = 21;
-            this.layoutControlItem8.MinSize = new System.Drawing.Size(64, 18);
-            this.layoutControlItem8.Name = "layoutControlItem8";
-            this.layoutControlItem8.Text = "Parent Item Type";
-            this.layoutControlItem8.Width = 100;
-            this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // DevOpsConfigurationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._close;
             this.ClientSize = new System.Drawing.Size(501, 492);

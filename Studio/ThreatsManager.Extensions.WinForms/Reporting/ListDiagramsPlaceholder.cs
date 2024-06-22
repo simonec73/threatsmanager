@@ -56,7 +56,7 @@ namespace ThreatsManager.Extensions.Reporting
                         {
                             var panel = new ModelPanel();
                             panel.SetDiagram(diagram);
-                            var imageRow = new ImageRow("Diagram", panel.GetMetafile(), $"The '{diagram.Name}' scenario.");
+                            var imageRow = new ImageRow("Diagram", panel.GetBitmap(), $"The '{diagram.Name}' scenario.");
                             var textRow = new TextRow("Description", diagram.Description);
 
                             list.Add(new ListItem(diagram.ToString(), diagram.Id, new ItemRow[] { imageRow, textRow }));

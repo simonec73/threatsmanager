@@ -11,7 +11,8 @@ using ThreatsManager.Utilities;
 namespace ThreatsManager.Extensions.Panels.ThreatModel
 {
     [Extension("245F5E56-2BE9-4482-B2C2-FDFEC46A997F", "Threat Model Properties", 20, ExecutionMode.Simplified)]
-    public partial class ThreatModelPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
+    public partial class ThreatModelPanelFactory : IPanelFactory<Form>, IMainRibbonExtension,
+        IContextAwareExtension, IPanelFactoryActionsRequestor
     {
         #region IPanelFactory implementation.
         /// <summary>
@@ -22,6 +23,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatModel
         public IPanel<Form> Create(IIdentity identity, out IActionDefinition action)
         {
             var result = new ThreatModelPanel();
+            if (_actions != null)
+                result.SetContextAwareActions(_actions);
             action = new ActionDefinition(result.Id, "ThreatModelList", "Threat Model\nProperties", Resources.threat_model_big,
                 Resources.threat_model);
 
@@ -31,6 +34,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatModel
         public IPanel<Form> Create([NotNull] IActionDefinition action)
         {
             var result = new ThreatModelPanel();
+            if (_actions != null)
+                result.SetContextAwareActions(_actions);
             return result;
         }
         #endregion

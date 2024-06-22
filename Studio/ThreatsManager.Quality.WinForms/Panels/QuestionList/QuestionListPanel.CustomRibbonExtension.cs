@@ -78,7 +78,7 @@ namespace ThreatsManager.Quality.Panels.QuestionList
                             "Remove Question", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.OK)
                         {
                             _schemaManager.RemoveQuestion(question2);
-                            _currentRow.Cells[0].PropertyChanged -= OnQuestionCellChanged;
+                            RemoveEventSubscriptions(_currentRow);
                             _grid.PrimaryGrid.Rows.Remove(_currentRow);
                             _currentRow = null;
                             ChangeCustomActionStatus?.Invoke("RemoveQuestion", false);

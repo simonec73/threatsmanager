@@ -93,6 +93,7 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             this._ruleEditor.Location = new System.Drawing.Point(4, 4);
             this._ruleEditor.Margin = new System.Windows.Forms.Padding(0);
             this._ruleEditor.Name = "_ruleEditor";
+            selectionRule1.ModelId = new System.Guid("00000000-0000-0000-0000-000000000000");
             selectionRule1.Root = null;
             this._ruleEditor.Rule = selectionRule1;
             this._ruleEditor.Size = new System.Drawing.Size(959, 544);
@@ -133,8 +134,8 @@ namespace ThreatsManager.AutoThreatGeneration.Dialogs
             // 
             // RuleFilterDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(967, 598);

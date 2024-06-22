@@ -33,7 +33,7 @@ namespace ThreatsManager.Extensions.Dialogs
                 if (container is IIdentity identity)
                 {
                     string text = identity.Name;
-                    int height = (int)(21 * Dpi.Factor.Height);
+                    int height = 21;
                     var image = identity.GetImage(ImageSize.Small);
                     if (image != null)
                     {

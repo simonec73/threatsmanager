@@ -76,8 +76,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     image = Properties.Resources.note_text_big;
                 }
 
-                button.Image = new Bitmap(image, (int) (32 * Dpi.Factor.Width),
-                    (int) (32 * Dpi.Factor.Height));
+                button.Image = new Bitmap(image, 32, 32);
             }
         }
 
@@ -432,7 +431,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
         {
             if (index < 0)
             {
-                _imageList.Images.Add(item.GetImage(Dpi.Factor.Height >= 1.5 ? ImageSize.Medium : ImageSize.Small));
+                _imageList.Images.Add(item.GetImage(ImageSize.Small));
                 index = _imageList.Images.Count - 1;
             }
 
@@ -481,8 +480,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
             {
                 var button = new Button()
                 {
-                    Image = new Bitmap(image, (int) (32 * Dpi.Factor.Width),
-                        (int) (32 * Dpi.Factor.Height)),
+                    Image = new Bitmap(image, 32, 32),
                     Enabled = true,
                     FlatStyle = FlatStyle.Flat,
                     FlatAppearance = {BorderSize = 0},
@@ -494,9 +492,9 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     Text = string.Empty,
                     TextVisible = false,
                     Control = button,
-                    Height = (int) (54 * Dpi.Factor.Height),
+                    Height = 54,
                     HeightType = eLayoutSizeType.Absolute,
-                    Width = (int) (54 * Dpi.Factor.Width),
+                    Width = 54,
                     WidthType = eLayoutSizeType.Absolute
                 };
                 if (tooltip != null)

@@ -62,7 +62,7 @@ namespace ThreatsManager
             PanelContainerForm.InstanceTextChanged += OnPanelContainerFormTextChanged;
 
             _ribbonHeight = _ribbon.Height;
-            _title.PaddingBottom = (int) (_title.PaddingBottom * Dpi.Factor.Height);
+            _title.PaddingBottom = _title.PaddingBottom;
 
             DocumentLocker.OwnershipObtained += OwnershipObtained;
             DocumentLocker.OwnershipRequested += OwnershipRequested;
@@ -140,7 +140,7 @@ namespace ThreatsManager
                         _controlMinimize.Visible = false;
                         _controlExit.Visible = false;
                         _title.Visible = false;
-                        _ribbon.Height = _ribbonHeight + (int)(30 * Dpi.Factor.Width);
+                        _ribbon.Height = _ribbonHeight + 30;
                         break;
                     case FormWindowState.Maximized:
                         _ribbon.CaptionVisible = false;
@@ -805,7 +805,6 @@ namespace ThreatsManager
                 AlertPosition = eAlertPosition.BottomRight,
                 AutoCloseTimeOut = 10
             };
-            //alert.DefaultAlertSize = Dpi.Size(800, 128);
             if (warning)
             {
                 alert.BackColor = ColorScheme.GetColor(0xCA5010);
@@ -906,7 +905,7 @@ namespace ThreatsManager
                 _oldCaption = titleText;
                 _title.Text = titleText;
                 _title.Visible = !string.IsNullOrWhiteSpace(titleText);
-                _title.Width = (int) ((TextRenderer.MeasureText(titleText, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight + 20) / Dpi.Factor.Width);
+                _title.Width = TextRenderer.MeasureText(titleText, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight + 20;
                 _ribbon.Refresh();
             }
 
@@ -922,7 +921,7 @@ namespace ThreatsManager
         private bool CheckCaptionWidth(string caption)
         {
             var width = TextRenderer.MeasureText(caption, _title.Font).Width + _title.PaddingLeft + _title.PaddingRight + 20;
-            var maxWidth = this.Width - 1000 * Dpi.Factor.Width;
+            var maxWidth = this.Width - 1000;
 
             return width <= maxWidth;
         }

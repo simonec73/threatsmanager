@@ -33,8 +33,6 @@ namespace ThreatsManager.Extensions.Dialogs
         public ImportTemplateDialog()
         {
             InitializeComponent();
-            if (Dpi.Factor.Height >= 2)
-                _wizard.HeaderImage = Resources.astrologer_huge;
         }
 
         public ImportTemplateDialog([NotNull] IThreatModel model) : this()

@@ -92,6 +92,12 @@ namespace ThreatsManager.Quality.Annotations
                         _answered.Checked = topicToBeClarified.Answered;
                         if (topicToBeClarified.Answers?.Any() ?? false)
                             AddAnswers(topicToBeClarified.Answers);
+                        if (!string.IsNullOrWhiteSpace(topicToBeClarified.Rationale))
+                        {
+                            _rationale.Text = topicToBeClarified.Rationale;
+                            _tooltip.SetToolTip(_rationale, topicToBeClarified.Rationale);
+                            _rationaleContainer.Visible = true;
+                        }
 
                         _askedByContainer.Visible = true;
                         _askedOnContainer.Visible = true;

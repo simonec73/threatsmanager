@@ -77,9 +77,11 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             // layoutControl1
             // 
+            this.layoutControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.layoutControl1.Controls.Add(this._status);
             this.layoutControl1.Controls.Add(this._mitigationName);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -134,8 +136,8 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             // SelectStatusDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(482, 122);

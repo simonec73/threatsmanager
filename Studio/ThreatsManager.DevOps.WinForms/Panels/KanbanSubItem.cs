@@ -19,7 +19,7 @@ namespace ThreatsManager.DevOps.Panels
                 Selectable = false,
                 AutoRescales = false,
                 AutoResizes = false,
-                Size = new SizeF(16 * Dpi.Factor.Width, 16 * Dpi.Factor.Height)
+                Size = new SizeF(16, 16)
             };
             Add(img);
             var t = new GoText

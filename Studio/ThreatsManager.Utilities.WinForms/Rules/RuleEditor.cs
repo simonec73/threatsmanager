@@ -22,11 +22,11 @@ namespace ThreatsManager.Utilities.WinForms.Rules
         {
             InitializeComponent();
 
-            _colName.Width.Absolute = (int) (200 * Dpi.Factor.Width);
-            _colNamespace.Width.Absolute = (int) (125 * Dpi.Factor.Width);
-            _colSchema.Width.Absolute = (int)(125 * Dpi.Factor.Width);
-            _colOperator.Width.Absolute = (int)(100 * Dpi.Factor.Width);
-            _colValue.Width.Absolute = (int)(150 * Dpi.Factor.Width);
+            _colName.Width.Absolute = 200;
+            _colNamespace.Width.Absolute = 125;
+            _colSchema.Width.Absolute = 125;
+            _colOperator.Width.Absolute = 100;
+            _colValue.Width.Absolute = 150;
 
             _tooltipErrorProvider.Caption = Resources.TooltipCaptionErrorDecisionTree;
             _validator.CustomErrorProvider = _tooltipErrorProvider;

@@ -58,10 +58,9 @@ namespace ThreatsManager.Extensions.Dialogs
             this.panel1.Controls.Add(this._cancel);
             this.panel1.Controls.Add(this._ok);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 714);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6);
+            this.panel1.Location = new System.Drawing.Point(0, 357);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1534, 92);
+            this.panel1.Size = new System.Drawing.Size(722, 46);
             this.panel1.TabIndex = 3;
             this.panel1.TabStop = true;
             // 
@@ -69,10 +68,9 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancel.Location = new System.Drawing.Point(772, 25);
-            this._cancel.Margin = new System.Windows.Forms.Padding(6);
+            this._cancel.Location = new System.Drawing.Point(364, 12);
             this._cancel.Name = "_cancel";
-            this._cancel.Size = new System.Drawing.Size(150, 44);
+            this._cancel.Size = new System.Drawing.Size(75, 22);
             this._cancel.TabIndex = 1;
             this._cancel.Text = "Cancel";
             this._cancel.UseVisualStyleBackColor = true;
@@ -81,10 +79,9 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this._ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this._ok.Location = new System.Drawing.Point(610, 25);
-            this._ok.Margin = new System.Windows.Forms.Padding(6);
+            this._ok.Location = new System.Drawing.Point(283, 12);
             this._ok.Name = "_ok";
-            this._ok.Size = new System.Drawing.Size(150, 44);
+            this._ok.Size = new System.Drawing.Size(75, 22);
             this._ok.TabIndex = 0;
             this._ok.Text = "OK";
             this._ok.UseVisualStyleBackColor = true;
@@ -100,7 +97,6 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -110,15 +106,15 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem2,
             this._mainContainer,
             this.layoutControlItem3});
-            this.layoutControl1.Size = new System.Drawing.Size(1534, 714);
+            this.layoutControl1.Size = new System.Drawing.Size(722, 357);
             this.layoutControl1.TabIndex = 4;
             // 
             // _clear
             // 
-            this._clear.Location = new System.Drawing.Point(1338, 670);
+            this._clear.Location = new System.Drawing.Point(624, 335);
             this._clear.Margin = new System.Windows.Forms.Padding(0);
             this._clear.Name = "_clear";
-            this._clear.Size = new System.Drawing.Size(192, 40);
+            this._clear.Size = new System.Drawing.Size(96, 20);
             this._clear.TabIndex = 3;
             this._clear.Text = "Clear All";
             this._clear.UseVisualStyleBackColor = true;
@@ -129,10 +125,10 @@ namespace ThreatsManager.Extensions.Dialogs
             this._main.AutoSize = true;
             this._main.Checked = true;
             this._main.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._main.Location = new System.Drawing.Point(8, 673);
+            this._main.Location = new System.Drawing.Point(4, 336);
             this._main.Margin = new System.Windows.Forms.Padding(0);
             this._main.Name = "_main";
-            this._main.Size = new System.Drawing.Size(1318, 34);
+            this._main.Size = new System.Drawing.Size(614, 18);
             this._main.TabIndex = 2;
             this._main.Text = "Mark the Reference Mitigation as Main for the whole set of associated Mitigations" +
     ".";
@@ -146,10 +142,10 @@ namespace ThreatsManager.Extensions.Dialogs
             this._grid.ForeColor = System.Drawing.Color.Black;
             this._grid.HScrollBarVisible = false;
             this._grid.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._grid.Location = new System.Drawing.Point(234, 53);
+            this._grid.Location = new System.Drawing.Point(124, 26);
             this._grid.Margin = new System.Windows.Forms.Padding(0);
             this._grid.Name = "_grid";
-            this._grid.Size = new System.Drawing.Size(1292, 606);
+            this._grid.Size = new System.Drawing.Size(594, 304);
             this._grid.TabIndex = 1;
             this._grid.Text = "superGridControl1";
             // 
@@ -157,20 +153,20 @@ namespace ThreatsManager.Extensions.Dialogs
             // 
             this._mitigationName.AutoSize = true;
             this._mitigationName.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this._mitigationName.Location = new System.Drawing.Point(234, 7);
+            this._mitigationName.Location = new System.Drawing.Point(124, 3);
             this._mitigationName.Margin = new System.Windows.Forms.Padding(0);
             this._mitigationName.Name = "_mitigationName";
-            this._mitigationName.Size = new System.Drawing.Size(1292, 32);
+            this._mitigationName.Size = new System.Drawing.Size(594, 17);
             this._mitigationName.TabIndex = 0;
             this._mitigationName.Text = "Mitigation Name";
             // 
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._mitigationName;
-            this.layoutControlItem1.Height = 46;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem1.Height = 23;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem1.Text = "Reference Mitigation";
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -180,9 +176,9 @@ namespace ThreatsManager.Extensions.Dialogs
             this.layoutControlItem2.Control = this._grid;
             this.layoutControlItem2.Height = 100;
             this.layoutControlItem2.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem2.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem2.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem2.Text = "Associated Mitigations";
             this.layoutControlItem2.Width = 100;
             this.layoutControlItem2.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -190,31 +186,31 @@ namespace ThreatsManager.Extensions.Dialogs
             // _mainContainer
             // 
             this._mainContainer.Control = this._main;
-            this._mainContainer.Height = 48;
-            this._mainContainer.MinSize = new System.Drawing.Size(64, 38);
+            this._mainContainer.Height = 24;
+            this._mainContainer.MinSize = new System.Drawing.Size(32, 19);
             this._mainContainer.Name = "_mainContainer";
-            this._mainContainer.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this._mainContainer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this._mainContainer.Width = 99;
             this._mainContainer.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this._clear;
-            this.layoutControlItem3.Height = 31;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem3.Height = 16;
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(16, 10);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Width = 200;
+            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.layoutControlItem3.Width = 100;
             // 
             // ManageMitigationsRelationshipsDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this._cancel;
-            this.ClientSize = new System.Drawing.Size(1534, 806);
+            this.ClientSize = new System.Drawing.Size(722, 403);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ManageMitigationsRelationshipsDialog";

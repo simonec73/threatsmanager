@@ -41,13 +41,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             Curviness = 10.0f;
             Orthogonal = false;
             ToArrow = true;
-            ToArrowWidth = 6.5f * Dpi.Factor.Width;
+            ToArrowWidth = 6.5f;
             Reshapable = true;
             Selectable = true;
             DragsNode = false;
             Relinkable = false;
             AutoRescales = false;
-            PenWidth = 1.5f * Dpi.Factor.Width;
+            PenWidth = 1.5f;
 
             var textControl = new GraphText(this);
             textControl.Movable = false;

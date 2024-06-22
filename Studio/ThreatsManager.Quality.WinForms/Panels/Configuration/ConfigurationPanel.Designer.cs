@@ -45,23 +45,22 @@ namespace ThreatsManager.Quality.Panels.Configuration
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
             // 
             this.layoutControl1.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem1});
-            this.layoutControl1.Size = new System.Drawing.Size(1366, 896);
+            this.layoutControl1.Size = new System.Drawing.Size(683, 448);
             this.layoutControl1.TabIndex = 0;
             // 
             // _enableCalculatedSeveritySupport
             // 
             this._enableCalculatedSeveritySupport.AutoSize = true;
-            this._enableCalculatedSeveritySupport.Location = new System.Drawing.Point(8, 7);
+            this._enableCalculatedSeveritySupport.Location = new System.Drawing.Point(4, 3);
             this._enableCalculatedSeveritySupport.Margin = new System.Windows.Forms.Padding(0);
             this._enableCalculatedSeveritySupport.Name = "_enableCalculatedSeveritySupport";
-            this._enableCalculatedSeveritySupport.Size = new System.Drawing.Size(1350, 34);
+            this._enableCalculatedSeveritySupport.Size = new System.Drawing.Size(675, 18);
             this._enableCalculatedSeveritySupport.TabIndex = 0;
             this._enableCalculatedSeveritySupport.Text = "Enable support for Calculated Severity";
             this._tooltip.SetToolTip(this._enableCalculatedSeveritySupport, resources.GetString("_enableCalculatedSeveritySupport.ToolTip"));
@@ -71,21 +70,20 @@ namespace ThreatsManager.Quality.Panels.Configuration
             // layoutControlItem1
             // 
             this.layoutControlItem1.Control = this._enableCalculatedSeveritySupport;
-            this.layoutControlItem1.Height = 48;
-            this.layoutControlItem1.MinSize = new System.Drawing.Size(64, 38);
+            this.layoutControlItem1.Height = 24;
+            this.layoutControlItem1.MinSize = new System.Drawing.Size(32, 19);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem1.Width = 100;
             this.layoutControlItem1.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
             // ConfigurationPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.layoutControl1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "ConfigurationPanel";
-            this.Size = new System.Drawing.Size(1366, 896);
+            this.Size = new System.Drawing.Size(683, 448);
             this.layoutControl1.ResumeLayout(false);
             this.layoutControl1.PerformLayout();
             this.ResumeLayout(false);

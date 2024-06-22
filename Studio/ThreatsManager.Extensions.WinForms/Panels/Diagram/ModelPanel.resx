@@ -118,30 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="_threats.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAABV0RVh0Q29w
-        eXJpZ2h0AEluY29ycyBHbWJIsRQEjwAABBJJREFUWEe9l0uMVEUUQAcDLAggnyXDZ+VnGBKQ7qFnZIGz
-        IZCghoUZ3SIJkIBgWKkQQlwRl0YhIDuIaFyQEIWFGj4uCCggny1MaHBDCISEoATxnOetB6/7vZk2mfEm
-        J133U3Vv16tXVa+rTG4ur0241V/vgXfgYzgA38NvcB3uwkN4HNjWpu8C/AD2+QQco+dmozYhhq+W2/31
-        iQRvBgd6OgImfQAmFdvaymITw/ABTIx0RcExE05C6uA/2QvbYS0sg3kwtfl6ve3f/NFodDXxRUwf2Me+
-        +8CZS+OehlnR7V+Jf34qAi7DsnCNmTCmRf0eOSzi2UygbAmHyV8M85iLY0MqYmtmbA7UXXDpmY/5P28V
-        ctQj141sYdJ4NQwXImbchVxpTfSo+Jqo7A1/x0KfRRJqx0KfLyPnkIrvucr28I8qxJr4EDiQq/ywtnCP
-        KsR+CObcobI/lLXhrxRiXoaUeEGYtS+AVMgrYa4UYt4Gcx5UcddSGXUBErMHzsNHMC3M2qeF7Rx8FuZK
-        ISYtxOMqaUHMC3+lEGMBLto1cAJMKrbfBGeokwK6wZwXVdIrODX8lUKMBWRTHK+ve/1O2+F/CTopYAqY
-        c1jFvfxx2fbaKsTlBSi0h+C9UDsu4PqKxcb+BfdseJI9CF+lRCcX7ECYygpowFehjijE3YdHNjzF7oa9
-        TSLxKjgOn8J34CE1H7ICOIQ8gL6AI7AbXNirYohSwX8HnoxYAPZBMPFOyM8I2kvBQs4GJl4Sbv3TwfVh
-        IYNhLgj2vIDKR4Dd5D/B+zApzB676R9fhWvwOXSH236TYB3Y90SYC4I9fwTZInSqWwX7UXAwC/gRNoKJ
-        v4HXIHsE4Ix8CxayAYxd3+yvTeb3aAxXEOx/QrYIs9fQy0T4cnm+M20L+RpWh0lb6yJcDUdMHKbCGEnw
-        F15Dbz6lGxG2Qmf0//waorcVgC1tRJdUvGyqtG3F2I7BjFDVWwvYBJtDVS8UQHsGHAs1F2w1MGe2FXt7
-        VWk7jLCtAFfyLnCwrADw+bsOXA8+d5+/g2YFgLH28c+9EcPlgu0tMGd2GI16HONbCRZyBX4GE88Nt36n
-        1EL0+WaYeGXZwlbwFY7jdCHZF/5KIcZ9IU/cKvgsZLAqcRJiChcSP0BU/s8rmUe6OXvTVnsjDH0RM25C
-        DtfK3zB8a6D+QjL6xWIBXpmnZ8ZxEMeGS5FrW5gzhx8mfiykImrhGjNhTHfLlPwMm1HxEw3jbEhFiM/J
-        U88V6x3Oa1R3s1GfEl0KEo/SHW5OxNrHvi64XyGN+wvMjm5FweFMbAU/JFOHMrxMeJh4ooltbWWxCcfc
-        BvmhVim3+/u8bvXCu7ADDoIno1PoQPfgETwJbGvTZ4yx9rGv2/VCP/lj+Oekq+sfymiVnqhOUnoAAAAA
-        SUVORK5CYII=
-</value>
-  </data>
   <data name="comboItem1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAABV0RVh0Q29w

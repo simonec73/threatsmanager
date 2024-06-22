@@ -32,6 +32,7 @@
             this._ok = new System.Windows.Forms.Button();
             this._cancel = new System.Windows.Forms.Button();
             this.layoutControl1 = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._schema = new System.Windows.Forms.Label();
             this._properties = new System.Windows.Forms.ComboBox();
             this._property = new System.Windows.Forms.RadioButton();
             this._priority = new System.Windows.Forms.RadioButton();
@@ -46,7 +47,6 @@
             this.layoutControlItem5 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem6 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem7 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._schema = new System.Windows.Forms.Label();
             this.layoutControlItem8 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.panel1.SuspendLayout();
             this.layoutControl1.SuspendLayout();
@@ -87,6 +87,7 @@
             // 
             // layoutControl1
             // 
+            this.layoutControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.layoutControl1.Controls.Add(this._schema);
             this.layoutControl1.Controls.Add(this._properties);
             this.layoutControl1.Controls.Add(this._property);
@@ -96,6 +97,7 @@
             this.layoutControl1.Controls.Add(this._id);
             this.layoutControl1.Controls.Add(this._fields);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
             this.layoutControl1.Name = "layoutControl1";
             // 
@@ -112,6 +114,15 @@
             this.layoutControlItem8});
             this.layoutControl1.Size = new System.Drawing.Size(551, 178);
             this.layoutControl1.TabIndex = 2;
+            // 
+            // _schema
+            // 
+            this._schema.AutoSize = true;
+            this._schema.Location = new System.Drawing.Point(353, 108);
+            this._schema.Margin = new System.Windows.Forms.Padding(0);
+            this._schema.Name = "_schema";
+            this._schema.Size = new System.Drawing.Size(194, 21);
+            this._schema.TabIndex = 7;
             // 
             // _properties
             // 
@@ -266,15 +277,6 @@
             this.layoutControlItem7.Width = 50;
             this.layoutControlItem7.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
             // 
-            // _schema
-            // 
-            this._schema.AutoSize = true;
-            this._schema.Location = new System.Drawing.Point(353, 108);
-            this._schema.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this._schema.Name = "_schema";
-            this._schema.Size = new System.Drawing.Size(194, 21);
-            this._schema.TabIndex = 7;
-            // 
             // layoutControlItem8
             // 
             this.layoutControlItem8.Control = this._schema;
@@ -287,8 +289,8 @@
             // 
             // FieldAssociationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(551, 224);
             this.Controls.Add(this.layoutControl1);

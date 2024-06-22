@@ -145,7 +145,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
             else
             {
-                _container.ColumnStyles[0].Width = 30 * Dpi.Factor.Width;
+                _container.ColumnStyles[0].Width = 30;
                 _container.ColumnStyles[0].SizeType = SizeType.Absolute;
             }
         }
@@ -159,7 +159,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
             else
             {
-                _container.ColumnStyles[1].Width = 30 * Dpi.Factor.Width;
+                _container.ColumnStyles[1].Width = 30;
                 _container.ColumnStyles[1].SizeType = SizeType.Absolute;
             }
         }
@@ -173,7 +173,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
             else
             {
-                _container.ColumnStyles[2].Width = 30 * Dpi.Factor.Width;
+                _container.ColumnStyles[2].Width = 30;
                 _container.ColumnStyles[2].SizeType = SizeType.Absolute;
             }
         }
@@ -187,7 +187,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
             else
             {
-                _container.ColumnStyles[3].Width = 30 * Dpi.Factor.Width;
+                _container.ColumnStyles[3].Width = 30;
                 _container.ColumnStyles[3].SizeType = SizeType.Absolute;
             }
         }
@@ -201,7 +201,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
             else
             {
-                _container.ColumnStyles[4].Width = 30 * Dpi.Factor.Width;
+                _container.ColumnStyles[4].Width = 30;
                 _container.ColumnStyles[4].SizeType = SizeType.Absolute;
             }
         }

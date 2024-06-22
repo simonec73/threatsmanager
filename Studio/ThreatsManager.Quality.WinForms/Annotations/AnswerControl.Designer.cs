@@ -71,7 +71,6 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.ForeColor = System.Drawing.Color.Black;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.layoutControl1.Name = "layoutControl1";
             // 
             // 
@@ -81,26 +80,26 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControlItem6,
             this.layoutControlItem7,
             this.layoutControlItem8});
-            this.layoutControl1.Size = new System.Drawing.Size(1044, 615);
+            this.layoutControl1.Size = new System.Drawing.Size(522, 308);
             this.layoutControl1.TabIndex = 0;
             // 
             // _text
             // 
             this._text.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this._text.Location = new System.Drawing.Point(152, 7);
+            this._text.Location = new System.Drawing.Point(81, 3);
             this._text.Margin = new System.Windows.Forms.Padding(0);
             this._text.Name = "_text";
-            this._text.Size = new System.Drawing.Size(884, 487);
+            this._text.Size = new System.Drawing.Size(437, 245);
             this._text.TabIndex = 0;
             this._text.Text = "";
             this._text.TextChanged += new System.EventHandler(this._text_TextChanged);
             // 
             // _answeredBy
             // 
-            this._answeredBy.Location = new System.Drawing.Point(152, 508);
+            this._answeredBy.Location = new System.Drawing.Point(81, 254);
             this._answeredBy.Margin = new System.Windows.Forms.Padding(0);
             this._answeredBy.Name = "_answeredBy";
-            this._answeredBy.Size = new System.Drawing.Size(884, 31);
+            this._answeredBy.Size = new System.Drawing.Size(437, 20);
             this._answeredBy.TabIndex = 1;
             this._answeredBy.TextChanged += new System.EventHandler(this._answeredBy_TextChanged);
             // 
@@ -116,7 +115,7 @@ namespace ThreatsManager.Quality.Annotations
             this._answeredOn.ButtonDropDown.Shortcut = DevComponents.DotNetBar.eShortcut.AltDown;
             this._answeredOn.ButtonDropDown.Visible = true;
             this._answeredOn.IsPopupCalendarOpen = false;
-            this._answeredOn.Location = new System.Drawing.Point(152, 562);
+            this._answeredOn.Location = new System.Drawing.Point(81, 281);
             this._answeredOn.Margin = new System.Windows.Forms.Padding(0);
             // 
             // 
@@ -147,7 +146,7 @@ namespace ThreatsManager.Quality.Annotations
             this._answeredOn.MonthCalendar.NavigationBackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this._answeredOn.MonthCalendar.TodayButtonVisible = true;
             this._answeredOn.Name = "_answeredOn";
-            this._answeredOn.Size = new System.Drawing.Size(248, 31);
+            this._answeredOn.Size = new System.Drawing.Size(119, 20);
             this._answeredOn.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._answeredOn.TabIndex = 2;
             this._answeredOn.ValueChanged += new System.EventHandler(this._answeredOn_ValueChanged);
@@ -167,10 +166,10 @@ namespace ThreatsManager.Quality.Annotations
             this._answeredVia.ButtonCustom2.Visible = true;
             this._answeredVia.DisabledBackColor = System.Drawing.Color.White;
             this._answeredVia.ForeColor = System.Drawing.Color.Black;
-            this._answeredVia.Location = new System.Drawing.Point(560, 562);
+            this._answeredVia.Location = new System.Drawing.Point(285, 281);
             this._answeredVia.Margin = new System.Windows.Forms.Padding(0);
             this._answeredVia.Name = "_answeredVia";
-            this._answeredVia.Size = new System.Drawing.Size(476, 31);
+            this._answeredVia.Size = new System.Drawing.Size(233, 20);
             this._answeredVia.TabIndex = 3;
             this._answeredVia.ButtonCustomClick += new System.EventHandler(this._answeredVia_ButtonCustomClick);
             this._answeredVia.ButtonCustom2Click += new System.EventHandler(this._answeredVia_ButtonCustom2Click);
@@ -181,9 +180,9 @@ namespace ThreatsManager.Quality.Annotations
             this.layoutControlItem3.Control = this._text;
             this.layoutControlItem3.Height = 99;
             this.layoutControlItem3.HeightType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            this.layoutControlItem3.MinSize = new System.Drawing.Size(240, 0);
+            this.layoutControlItem3.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem3.Text = "<a href=\"Text\">Text</a>";
             this.layoutControlItem3.Width = 100;
             this.layoutControlItem3.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -192,10 +191,10 @@ namespace ThreatsManager.Quality.Annotations
             // layoutControlItem6
             // 
             this.layoutControlItem6.Control = this._answeredBy;
-            this.layoutControlItem6.Height = 54;
-            this.layoutControlItem6.MinSize = new System.Drawing.Size(240, 0);
+            this.layoutControlItem6.Height = 27;
+            this.layoutControlItem6.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem6.Name = "layoutControlItem6";
-            this.layoutControlItem6.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem6.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem6.Text = "Answered By";
             this.layoutControlItem6.Width = 100;
             this.layoutControlItem6.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -203,20 +202,20 @@ namespace ThreatsManager.Quality.Annotations
             // layoutControlItem7
             // 
             this.layoutControlItem7.Control = this._answeredOn;
-            this.layoutControlItem7.Height = 54;
-            this.layoutControlItem7.MinSize = new System.Drawing.Size(128, 34);
+            this.layoutControlItem7.Height = 27;
+            this.layoutControlItem7.MinSize = new System.Drawing.Size(64, 17);
             this.layoutControlItem7.Name = "layoutControlItem7";
-            this.layoutControlItem7.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem7.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem7.Text = "Answered On";
-            this.layoutControlItem7.Width = 408;
+            this.layoutControlItem7.Width = 204;
             // 
             // layoutControlItem8
             // 
             this.layoutControlItem8.Control = this._answeredVia;
-            this.layoutControlItem8.Height = 54;
-            this.layoutControlItem8.MinSize = new System.Drawing.Size(240, 0);
+            this.layoutControlItem8.Height = 27;
+            this.layoutControlItem8.MinSize = new System.Drawing.Size(120, 0);
             this.layoutControlItem8.Name = "layoutControlItem8";
-            this.layoutControlItem8.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.layoutControlItem8.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.layoutControlItem8.Text = "Answered Via";
             this.layoutControlItem8.Width = 100;
             this.layoutControlItem8.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
@@ -310,13 +309,12 @@ namespace ThreatsManager.Quality.Annotations
             // 
             // AnswerControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.layoutControl1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "AnswerControl";
-            this.Size = new System.Drawing.Size(1044, 615);
+            this.Size = new System.Drawing.Size(522, 308);
             this.layoutControl1.ResumeLayout(false);
             this.layoutControl1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._answeredOn)).EndInit();

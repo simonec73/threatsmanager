@@ -34,8 +34,6 @@ namespace ThreatsManager.Extensions.Dialogs
         public ExportKnowledgeBaseDialog()
         {
             InitializeComponent();
-            if (Dpi.Factor.Height >= 2)
-                _wizard.HeaderImage = Properties.Resources.astrologer_huge;
 
             try
             {

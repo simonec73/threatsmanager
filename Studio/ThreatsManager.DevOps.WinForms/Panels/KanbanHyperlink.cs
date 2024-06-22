@@ -69,7 +69,7 @@ namespace ThreatsManager.DevOps.Panels
             img.Selectable = false;
             img.AutoRescales = false;
             img.AutoResizes = false;
-            img.Size = new SizeF(16 * Dpi.Factor.Width, 16 * Dpi.Factor.Height);
+            img.Size = new SizeF(16, 16);
             Add(img);
             GoText t = new GoText();
             t.FontSize = 9;
@@ -84,7 +84,7 @@ namespace ThreatsManager.DevOps.Panels
             GoControl host = new GoControl();
             host.Selectable = false;
             host.ControlType = typeof(HyperlinkControl);
-            host.Height = 16 * Dpi.Factor.Height;
+            host.Height = 16;
             Add(host);
         }
 

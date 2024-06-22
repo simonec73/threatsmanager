@@ -31,18 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsForm));
             this._sideNav = new DevComponents.DotNetBar.Controls.SideNav();
-            this.sideNavPanel1 = new DevComponents.DotNetBar.Controls.SideNavPanel();
-            this._panelOtherSettings = new DevComponents.DotNetBar.Layout.LayoutControl();
-            this._disableHelp = new System.Windows.Forms.CheckBox();
-            this._disableTelemetry = new System.Windows.Forms.CheckBox();
-            this._browseUserDictionary = new System.Windows.Forms.Button();
-            this._userDictionary = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.layoutControlItem24 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem25 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem26 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this._layoutTelemetryPolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
-            this.layoutControlItem27 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._panelExtensions = new DevComponents.DotNetBar.Controls.SideNavPanel();
             this._layoutExtensions = new DevComponents.DotNetBar.Layout.LayoutControl();
             this.label5 = new System.Windows.Forms.Label();
@@ -90,6 +78,20 @@
             this.layoutControlItem28 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._layoutExecutionModePolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem13 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.sideNavPanel1 = new DevComponents.DotNetBar.Controls.SideNavPanel();
+            this._panelOtherSettings = new DevComponents.DotNetBar.Layout.LayoutControl();
+            this._disableHelp = new System.Windows.Forms.CheckBox();
+            this._disableTelemetry = new System.Windows.Forms.CheckBox();
+            this._browseUserDictionary = new System.Windows.Forms.Button();
+            this._userDictionary = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.layoutControlItem24 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem25 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem26 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._layoutTelemetryPolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this.layoutControlItem27 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+            this._layoutHelpPolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._panelSmartSave = new DevComponents.DotNetBar.Controls.SideNavPanel();
             this._layoutSmartSave = new DevComponents.DotNetBar.Layout.LayoutControl();
             this.label4 = new System.Windows.Forms.Label();
@@ -116,13 +118,11 @@
             this.layoutControlItem14 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem21 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._userDictFile = new System.Windows.Forms.SaveFileDialog();
-            this.label10 = new System.Windows.Forms.Label();
-            this._layoutHelpPolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._sideNav.SuspendLayout();
-            this.sideNavPanel1.SuspendLayout();
-            this._panelOtherSettings.SuspendLayout();
             this._panelExtensions.SuspendLayout();
             this._layoutExtensions.SuspendLayout();
+            this.sideNavPanel1.SuspendLayout();
+            this._panelOtherSettings.SuspendLayout();
             this._panelSmartSave.SuspendLayout();
             this._layoutSmartSave.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._smartSaveInstances)).BeginInit();
@@ -152,152 +152,13 @@
             this._sideNav.Size = new System.Drawing.Size(868, 516);
             this._sideNav.TabIndex = 0;
             // 
-            // sideNavPanel1
-            // 
-            this.sideNavPanel1.Controls.Add(this._panelOtherSettings);
-            this.sideNavPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sideNavPanel1.Location = new System.Drawing.Point(122, 31);
-            this.sideNavPanel1.Name = "sideNavPanel1";
-            this.sideNavPanel1.Size = new System.Drawing.Size(745, 484);
-            this.sideNavPanel1.TabIndex = 32;
-            this.sideNavPanel1.Visible = false;
-            // 
-            // _panelOtherSettings
-            // 
-            this._panelOtherSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this._panelOtherSettings.Controls.Add(this._disableHelp);
-            this._panelOtherSettings.Controls.Add(this._disableTelemetry);
-            this._panelOtherSettings.Controls.Add(this._browseUserDictionary);
-            this._panelOtherSettings.Controls.Add(this._userDictionary);
-            this._panelOtherSettings.Controls.Add(this.label9);
-            this._panelOtherSettings.Controls.Add(this.label10);
-            this._panelOtherSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._panelOtherSettings.ForeColor = System.Drawing.Color.Black;
-            this._panelOtherSettings.Location = new System.Drawing.Point(0, 0);
-            this._panelOtherSettings.Name = "_panelOtherSettings";
-            // 
-            // 
-            // 
-            this._panelOtherSettings.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
-            this.layoutControlItem24,
-            this.layoutControlItem25,
-            this.layoutControlItem26,
-            this._layoutTelemetryPolicy,
-            this.layoutControlItem27,
-            this._layoutHelpPolicy});
-            this._panelOtherSettings.Size = new System.Drawing.Size(745, 484);
-            this._panelOtherSettings.TabIndex = 0;
-            // 
-            // _disableHelp
-            // 
-            this._disableHelp.AutoSize = true;
-            this._disableHelp.Location = new System.Drawing.Point(4, 64);
-            this._disableHelp.Margin = new System.Windows.Forms.Padding(0);
-            this._disableHelp.Name = "_disableHelp";
-            this._disableHelp.Size = new System.Drawing.Size(646, 21);
-            this._disableHelp.TabIndex = 4;
-            this._disableHelp.Text = "Disable Help and Troubleshooting pages (requires restart)";
-            this._tooltip.SetToolTip(this._disableHelp, resources.GetString("_disableHelp.ToolTip"));
-            this._disableHelp.UseVisualStyleBackColor = true;
-            // 
-            // _disableTelemetry
-            // 
-            this._disableTelemetry.AutoSize = true;
-            this._disableTelemetry.Location = new System.Drawing.Point(4, 35);
-            this._disableTelemetry.Margin = new System.Windows.Forms.Padding(0);
-            this._disableTelemetry.Name = "_disableTelemetry";
-            this._disableTelemetry.Size = new System.Drawing.Size(646, 21);
-            this._disableTelemetry.TabIndex = 2;
-            this._disableTelemetry.Text = "Disable Telemetry (requires restart)";
-            this._disableTelemetry.UseVisualStyleBackColor = true;
-            this._disableTelemetry.CheckedChanged += new System.EventHandler(this._disableTelemetry_CheckedChanged);
-            // 
-            // _browseUserDictionary
-            // 
-            this._browseUserDictionary.Location = new System.Drawing.Point(666, 4);
-            this._browseUserDictionary.Margin = new System.Windows.Forms.Padding(0);
-            this._browseUserDictionary.Name = "_browseUserDictionary";
-            this._browseUserDictionary.Size = new System.Drawing.Size(75, 23);
-            this._browseUserDictionary.TabIndex = 1;
-            this._browseUserDictionary.Text = "Browse";
-            this._browseUserDictionary.UseVisualStyleBackColor = true;
-            this._browseUserDictionary.Click += new System.EventHandler(this._browseUserDictionary_Click);
-            // 
-            // _userDictionary
-            // 
-            this._userDictionary.Location = new System.Drawing.Point(89, 4);
-            this._userDictionary.Margin = new System.Windows.Forms.Padding(0);
-            this._userDictionary.Name = "_userDictionary";
-            this._userDictionary.ReadOnly = true;
-            this._userDictionary.Size = new System.Drawing.Size(569, 20);
-            this._userDictionary.TabIndex = 0;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.ForeColor = System.Drawing.Color.Red;
-            this.label9.Location = new System.Drawing.Point(658, 35);
-            this.label9.Margin = new System.Windows.Forms.Padding(0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(83, 21);
-            this.label9.TabIndex = 3;
-            this.label9.Text = "Policy Applied";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // layoutControlItem24
-            // 
-            this.layoutControlItem24.Control = this._userDictionary;
-            this.layoutControlItem24.Height = 28;
-            this.layoutControlItem24.MinSize = new System.Drawing.Size(120, 0);
-            this.layoutControlItem24.Name = "layoutControlItem24";
-            this.layoutControlItem24.Text = "User Dictionary";
-            this.layoutControlItem24.Width = 99;
-            this.layoutControlItem24.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // layoutControlItem25
-            // 
-            this.layoutControlItem25.Control = this._browseUserDictionary;
-            this.layoutControlItem25.Height = 31;
-            this.layoutControlItem25.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem25.Name = "layoutControlItem25";
-            this.layoutControlItem25.Width = 83;
-            // 
-            // layoutControlItem26
-            // 
-            this.layoutControlItem26.Control = this._disableTelemetry;
-            this.layoutControlItem26.Height = 25;
-            this.layoutControlItem26.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem26.Name = "layoutControlItem26";
-            this.layoutControlItem26.Width = 99;
-            this.layoutControlItem26.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
-            // _layoutTelemetryPolicy
-            // 
-            this._layoutTelemetryPolicy.Control = this.label9;
-            this._layoutTelemetryPolicy.Height = 29;
-            this._layoutTelemetryPolicy.MinSize = new System.Drawing.Size(64, 18);
-            this._layoutTelemetryPolicy.Name = "_layoutTelemetryPolicy";
-            this._layoutTelemetryPolicy.Text = "Label:";
-            this._layoutTelemetryPolicy.TextVisible = false;
-            this._layoutTelemetryPolicy.Visible = false;
-            this._layoutTelemetryPolicy.Width = 91;
-            // 
-            // layoutControlItem27
-            // 
-            this.layoutControlItem27.Control = this._disableHelp;
-            this.layoutControlItem27.Height = 25;
-            this.layoutControlItem27.MinSize = new System.Drawing.Size(32, 20);
-            this.layoutControlItem27.Name = "layoutControlItem27";
-            this.layoutControlItem27.Width = 99;
-            this.layoutControlItem27.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
-            // 
             // _panelExtensions
             // 
             this._panelExtensions.Controls.Add(this._layoutExtensions);
             this._panelExtensions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._panelExtensions.Location = new System.Drawing.Point(122, 31);
+            this._panelExtensions.Location = new System.Drawing.Point(118, 31);
             this._panelExtensions.Name = "_panelExtensions";
-            this._panelExtensions.Size = new System.Drawing.Size(745, 484);
+            this._panelExtensions.Size = new System.Drawing.Size(749, 484);
             this._panelExtensions.TabIndex = 24;
             // 
             // _layoutExtensions
@@ -344,14 +205,14 @@
             this.layoutControlItem28,
             this._layoutExecutionModePolicy,
             this.layoutControlItem13});
-            this._layoutExtensions.Size = new System.Drawing.Size(745, 484);
+            this._layoutExtensions.Size = new System.Drawing.Size(749, 484);
             this._layoutExtensions.TabIndex = 0;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.Red;
-            this.label5.Location = new System.Drawing.Point(659, 97);
+            this.label5.Location = new System.Drawing.Point(663, 97);
             this.label5.Margin = new System.Windows.Forms.Padding(0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(81, 21);
@@ -366,14 +227,14 @@
             this._executionMode.Location = new System.Drawing.Point(104, 429);
             this._executionMode.Margin = new System.Windows.Forms.Padding(0);
             this._executionMode.Name = "_executionMode";
-            this._executionMode.Size = new System.Drawing.Size(546, 21);
+            this._executionMode.Size = new System.Drawing.Size(550, 21);
             this._executionMode.TabIndex = 21;
             this._executionMode.SelectedIndexChanged += new System.EventHandler(this._executionMode_SelectedIndexChanged);
             // 
             // _addStandardCertificate
             // 
             this._addStandardCertificate.Enabled = false;
-            this._addStandardCertificate.Location = new System.Drawing.Point(663, 346);
+            this._addStandardCertificate.Location = new System.Drawing.Point(667, 346);
             this._addStandardCertificate.Margin = new System.Windows.Forms.Padding(0);
             this._addStandardCertificate.Name = "_addStandardCertificate";
             this._addStandardCertificate.Size = new System.Drawing.Size(75, 23);
@@ -385,7 +246,7 @@
             // _addStandardPrefix
             // 
             this._addStandardPrefix.Enabled = false;
-            this._addStandardPrefix.Location = new System.Drawing.Point(663, 203);
+            this._addStandardPrefix.Location = new System.Drawing.Point(667, 203);
             this._addStandardPrefix.Margin = new System.Windows.Forms.Padding(0);
             this._addStandardPrefix.Name = "_addStandardPrefix";
             this._addStandardPrefix.Size = new System.Drawing.Size(75, 23);
@@ -403,12 +264,12 @@
             this._folders.Margin = new System.Windows.Forms.Padding(0);
             this._folders.Name = "_folders";
             this._folders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this._folders.Size = new System.Drawing.Size(547, 108);
+            this._folders.Size = new System.Drawing.Size(551, 108);
             this._folders.TabIndex = 0;
             // 
             // _removeFolder
             // 
-            this._removeFolder.Location = new System.Drawing.Point(663, 70);
+            this._removeFolder.Location = new System.Drawing.Point(667, 70);
             this._removeFolder.Margin = new System.Windows.Forms.Padding(0);
             this._removeFolder.Name = "_removeFolder";
             this._removeFolder.Size = new System.Drawing.Size(75, 23);
@@ -419,7 +280,7 @@
             // 
             // _addFolder
             // 
-            this._addFolder.Location = new System.Drawing.Point(663, 8);
+            this._addFolder.Location = new System.Drawing.Point(667, 8);
             this._addFolder.Margin = new System.Windows.Forms.Padding(0);
             this._addFolder.Name = "_addFolder";
             this._addFolder.Size = new System.Drawing.Size(75, 23);
@@ -435,7 +296,7 @@
             this.label2.Location = new System.Drawing.Point(4, 122);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(737, 13);
+            this.label2.Size = new System.Drawing.Size(741, 13);
             this.label2.TabIndex = 6;
             this.label2.Text = "Validation Rules";
             // 
@@ -446,7 +307,7 @@
             this._validationPrefix.Location = new System.Drawing.Point(4, 143);
             this._validationPrefix.Margin = new System.Windows.Forms.Padding(0);
             this._validationPrefix.Name = "_validationPrefix";
-            this._validationPrefix.Size = new System.Drawing.Size(737, 17);
+            this._validationPrefix.Size = new System.Drawing.Size(741, 17);
             this._validationPrefix.TabIndex = 7;
             this._validationPrefix.Text = "Assembly must start with one of those prefixes";
             this._validationPrefix.UseVisualStyleBackColor = false;
@@ -462,13 +323,13 @@
             this._prefixes.Margin = new System.Windows.Forms.Padding(0);
             this._prefixes.Name = "_prefixes";
             this._prefixes.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this._prefixes.Size = new System.Drawing.Size(626, 108);
+            this._prefixes.Size = new System.Drawing.Size(630, 108);
             this._prefixes.TabIndex = 8;
             // 
             // _addPrefix
             // 
             this._addPrefix.Enabled = false;
-            this._addPrefix.Location = new System.Drawing.Point(663, 172);
+            this._addPrefix.Location = new System.Drawing.Point(667, 172);
             this._addPrefix.Margin = new System.Windows.Forms.Padding(0);
             this._addPrefix.Name = "_addPrefix";
             this._addPrefix.Size = new System.Drawing.Size(75, 23);
@@ -480,7 +341,7 @@
             // _removePrefix
             // 
             this._removePrefix.Enabled = false;
-            this._removePrefix.Location = new System.Drawing.Point(663, 234);
+            this._removePrefix.Location = new System.Drawing.Point(667, 234);
             this._removePrefix.Margin = new System.Windows.Forms.Padding(0);
             this._removePrefix.Name = "_removePrefix";
             this._removePrefix.Size = new System.Drawing.Size(75, 23);
@@ -496,7 +357,7 @@
             this._validationCertificates.Location = new System.Drawing.Point(4, 286);
             this._validationCertificates.Margin = new System.Windows.Forms.Padding(0);
             this._validationCertificates.Name = "_validationCertificates";
-            this._validationCertificates.Size = new System.Drawing.Size(737, 17);
+            this._validationCertificates.Size = new System.Drawing.Size(741, 17);
             this._validationCertificates.TabIndex = 14;
             this._validationCertificates.Text = "Assembly must be signed with one of those certificates";
             this._validationCertificates.UseVisualStyleBackColor = false;
@@ -512,13 +373,13 @@
             this._certificates.Margin = new System.Windows.Forms.Padding(0);
             this._certificates.Name = "_certificates";
             this._certificates.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this._certificates.Size = new System.Drawing.Size(626, 108);
+            this._certificates.Size = new System.Drawing.Size(630, 108);
             this._certificates.TabIndex = 15;
             // 
             // _addCertificate
             // 
             this._addCertificate.Enabled = false;
-            this._addCertificate.Location = new System.Drawing.Point(663, 315);
+            this._addCertificate.Location = new System.Drawing.Point(667, 315);
             this._addCertificate.Margin = new System.Windows.Forms.Padding(0);
             this._addCertificate.Name = "_addCertificate";
             this._addCertificate.Size = new System.Drawing.Size(75, 23);
@@ -530,7 +391,7 @@
             // _removeCertificate
             // 
             this._removeCertificate.Enabled = false;
-            this._removeCertificate.Location = new System.Drawing.Point(663, 377);
+            this._removeCertificate.Location = new System.Drawing.Point(667, 377);
             this._removeCertificate.Margin = new System.Windows.Forms.Padding(0);
             this._removeCertificate.Name = "_removeCertificate";
             this._removeCertificate.Size = new System.Drawing.Size(75, 23);
@@ -547,14 +408,14 @@
             this.label3.Location = new System.Drawing.Point(4, 458);
             this.label3.Margin = new System.Windows.Forms.Padding(0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(737, 16);
+            this.label3.Size = new System.Drawing.Size(741, 16);
             this.label3.TabIndex = 23;
             this.label3.Text = "Please note that the changes to the Extensions configuration will be applied only" +
     " after a restart of Threats Manager Studio.";
             // 
             // _addStandardFolder
             // 
-            this._addStandardFolder.Location = new System.Drawing.Point(663, 39);
+            this._addStandardFolder.Location = new System.Drawing.Point(667, 39);
             this._addStandardFolder.Margin = new System.Windows.Forms.Padding(0);
             this._addStandardFolder.Name = "_addStandardFolder";
             this._addStandardFolder.Size = new System.Drawing.Size(75, 23);
@@ -567,7 +428,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.ForeColor = System.Drawing.Color.Red;
-            this.label6.Location = new System.Drawing.Point(663, 265);
+            this.label6.Location = new System.Drawing.Point(667, 265);
             this.label6.Margin = new System.Windows.Forms.Padding(0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(73, 13);
@@ -579,7 +440,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.ForeColor = System.Drawing.Color.Red;
-            this.label7.Location = new System.Drawing.Point(663, 408);
+            this.label7.Location = new System.Drawing.Point(667, 408);
             this.label7.Margin = new System.Windows.Forms.Padding(0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(73, 13);
@@ -591,7 +452,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.ForeColor = System.Drawing.Color.Red;
-            this.label8.Location = new System.Drawing.Point(658, 429);
+            this.label8.Location = new System.Drawing.Point(662, 429);
             this.label8.Margin = new System.Windows.Forms.Padding(0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(83, 21);
@@ -843,6 +704,168 @@
             this.layoutControlItem13.TextVisible = false;
             this.layoutControlItem13.Width = 100;
             this.layoutControlItem13.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // sideNavPanel1
+            // 
+            this.sideNavPanel1.Controls.Add(this._panelOtherSettings);
+            this.sideNavPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sideNavPanel1.Location = new System.Drawing.Point(122, 31);
+            this.sideNavPanel1.Name = "sideNavPanel1";
+            this.sideNavPanel1.Size = new System.Drawing.Size(745, 484);
+            this.sideNavPanel1.TabIndex = 32;
+            this.sideNavPanel1.Visible = false;
+            // 
+            // _panelOtherSettings
+            // 
+            this._panelOtherSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this._panelOtherSettings.Controls.Add(this._disableHelp);
+            this._panelOtherSettings.Controls.Add(this._disableTelemetry);
+            this._panelOtherSettings.Controls.Add(this._browseUserDictionary);
+            this._panelOtherSettings.Controls.Add(this._userDictionary);
+            this._panelOtherSettings.Controls.Add(this.label9);
+            this._panelOtherSettings.Controls.Add(this.label10);
+            this._panelOtherSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._panelOtherSettings.ForeColor = System.Drawing.Color.Black;
+            this._panelOtherSettings.Location = new System.Drawing.Point(0, 0);
+            this._panelOtherSettings.Name = "_panelOtherSettings";
+            // 
+            // 
+            // 
+            this._panelOtherSettings.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
+            this.layoutControlItem24,
+            this.layoutControlItem25,
+            this.layoutControlItem26,
+            this._layoutTelemetryPolicy,
+            this.layoutControlItem27,
+            this._layoutHelpPolicy});
+            this._panelOtherSettings.Size = new System.Drawing.Size(745, 484);
+            this._panelOtherSettings.TabIndex = 0;
+            // 
+            // _disableHelp
+            // 
+            this._disableHelp.AutoSize = true;
+            this._disableHelp.Location = new System.Drawing.Point(4, 64);
+            this._disableHelp.Margin = new System.Windows.Forms.Padding(0);
+            this._disableHelp.Name = "_disableHelp";
+            this._disableHelp.Size = new System.Drawing.Size(646, 21);
+            this._disableHelp.TabIndex = 4;
+            this._disableHelp.Text = "Disable Help and Troubleshooting pages (requires restart)";
+            this._tooltip.SetToolTip(this._disableHelp, resources.GetString("_disableHelp.ToolTip"));
+            this._disableHelp.UseVisualStyleBackColor = true;
+            // 
+            // _disableTelemetry
+            // 
+            this._disableTelemetry.AutoSize = true;
+            this._disableTelemetry.Location = new System.Drawing.Point(4, 35);
+            this._disableTelemetry.Margin = new System.Windows.Forms.Padding(0);
+            this._disableTelemetry.Name = "_disableTelemetry";
+            this._disableTelemetry.Size = new System.Drawing.Size(646, 21);
+            this._disableTelemetry.TabIndex = 2;
+            this._disableTelemetry.Text = "Disable Telemetry (requires restart)";
+            this._disableTelemetry.UseVisualStyleBackColor = true;
+            this._disableTelemetry.CheckedChanged += new System.EventHandler(this._disableTelemetry_CheckedChanged);
+            // 
+            // _browseUserDictionary
+            // 
+            this._browseUserDictionary.Location = new System.Drawing.Point(666, 4);
+            this._browseUserDictionary.Margin = new System.Windows.Forms.Padding(0);
+            this._browseUserDictionary.Name = "_browseUserDictionary";
+            this._browseUserDictionary.Size = new System.Drawing.Size(75, 23);
+            this._browseUserDictionary.TabIndex = 1;
+            this._browseUserDictionary.Text = "Browse";
+            this._browseUserDictionary.UseVisualStyleBackColor = true;
+            this._browseUserDictionary.Click += new System.EventHandler(this._browseUserDictionary_Click);
+            // 
+            // _userDictionary
+            // 
+            this._userDictionary.Location = new System.Drawing.Point(89, 4);
+            this._userDictionary.Margin = new System.Windows.Forms.Padding(0);
+            this._userDictionary.Name = "_userDictionary";
+            this._userDictionary.ReadOnly = true;
+            this._userDictionary.Size = new System.Drawing.Size(569, 20);
+            this._userDictionary.TabIndex = 0;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.ForeColor = System.Drawing.Color.Red;
+            this.label9.Location = new System.Drawing.Point(658, 35);
+            this.label9.Margin = new System.Windows.Forms.Padding(0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(83, 21);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "Policy Applied";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.ForeColor = System.Drawing.Color.Red;
+            this.label10.Location = new System.Drawing.Point(658, 64);
+            this.label10.Margin = new System.Windows.Forms.Padding(0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(83, 21);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Policy Applied";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // layoutControlItem24
+            // 
+            this.layoutControlItem24.Control = this._userDictionary;
+            this.layoutControlItem24.Height = 28;
+            this.layoutControlItem24.MinSize = new System.Drawing.Size(120, 0);
+            this.layoutControlItem24.Name = "layoutControlItem24";
+            this.layoutControlItem24.Text = "User Dictionary";
+            this.layoutControlItem24.Width = 99;
+            this.layoutControlItem24.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // layoutControlItem25
+            // 
+            this.layoutControlItem25.Control = this._browseUserDictionary;
+            this.layoutControlItem25.Height = 31;
+            this.layoutControlItem25.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem25.Name = "layoutControlItem25";
+            this.layoutControlItem25.Width = 83;
+            // 
+            // layoutControlItem26
+            // 
+            this.layoutControlItem26.Control = this._disableTelemetry;
+            this.layoutControlItem26.Height = 25;
+            this.layoutControlItem26.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem26.Name = "layoutControlItem26";
+            this.layoutControlItem26.Width = 99;
+            this.layoutControlItem26.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _layoutTelemetryPolicy
+            // 
+            this._layoutTelemetryPolicy.Control = this.label9;
+            this._layoutTelemetryPolicy.Height = 29;
+            this._layoutTelemetryPolicy.MinSize = new System.Drawing.Size(64, 18);
+            this._layoutTelemetryPolicy.Name = "_layoutTelemetryPolicy";
+            this._layoutTelemetryPolicy.Text = "Label:";
+            this._layoutTelemetryPolicy.TextVisible = false;
+            this._layoutTelemetryPolicy.Visible = false;
+            this._layoutTelemetryPolicy.Width = 91;
+            // 
+            // layoutControlItem27
+            // 
+            this.layoutControlItem27.Control = this._disableHelp;
+            this.layoutControlItem27.Height = 25;
+            this.layoutControlItem27.MinSize = new System.Drawing.Size(32, 20);
+            this.layoutControlItem27.Name = "layoutControlItem27";
+            this.layoutControlItem27.Width = 99;
+            this.layoutControlItem27.WidthType = DevComponents.DotNetBar.Layout.eLayoutSizeType.Percent;
+            // 
+            // _layoutHelpPolicy
+            // 
+            this._layoutHelpPolicy.Control = this.label10;
+            this._layoutHelpPolicy.Height = 29;
+            this._layoutHelpPolicy.MinSize = new System.Drawing.Size(64, 18);
+            this._layoutHelpPolicy.Name = "_layoutHelpPolicy";
+            this._layoutHelpPolicy.Text = "Label:";
+            this._layoutHelpPolicy.TextVisible = false;
+            this._layoutHelpPolicy.Visible = false;
+            this._layoutHelpPolicy.Width = 91;
             // 
             // _panelSmartSave
             // 
@@ -1098,33 +1121,10 @@
             this._userDictFile.RestoreDirectory = true;
             this._userDictFile.Title = "User Dictionary File";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.ForeColor = System.Drawing.Color.Red;
-            this.label10.Location = new System.Drawing.Point(658, 64);
-            this.label10.Margin = new System.Windows.Forms.Padding(0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(83, 21);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "Policy Applied";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // _layoutHelpPolicy
-            // 
-            this._layoutHelpPolicy.Control = this.label10;
-            this._layoutHelpPolicy.Height = 29;
-            this._layoutHelpPolicy.MinSize = new System.Drawing.Size(64, 18);
-            this._layoutHelpPolicy.Name = "_layoutHelpPolicy";
-            this._layoutHelpPolicy.Text = "Label:";
-            this._layoutHelpPolicy.TextVisible = false;
-            this._layoutHelpPolicy.Visible = false;
-            this._layoutHelpPolicy.Width = 91;
-            // 
             // OptionsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancel;
             this.ClientSize = new System.Drawing.Size(868, 554);
             this.ControlBox = false;
@@ -1142,12 +1142,12 @@
             this.Load += new System.EventHandler(this.OptionsForm_Load);
             this._sideNav.ResumeLayout(false);
             this._sideNav.PerformLayout();
-            this.sideNavPanel1.ResumeLayout(false);
-            this._panelOtherSettings.ResumeLayout(false);
-            this._panelOtherSettings.PerformLayout();
             this._panelExtensions.ResumeLayout(false);
             this._layoutExtensions.ResumeLayout(false);
             this._layoutExtensions.PerformLayout();
+            this.sideNavPanel1.ResumeLayout(false);
+            this._panelOtherSettings.ResumeLayout(false);
+            this._panelOtherSettings.PerformLayout();
             this._panelSmartSave.ResumeLayout(false);
             this._layoutSmartSave.ResumeLayout(false);
             this._layoutSmartSave.PerformLayout();

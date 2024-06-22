@@ -41,36 +41,21 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             _properties.OpenDiagram += OpenDiagram;
 
             _existingToolsPanel.SuspendLayout();
-            _existingTypes.Height = (int) (20 * Dpi.Factor.Height);
-            _existingTypes.ItemHeight = (int) (20 * Dpi.Factor.Height);
+            _existingTypes.Height = 20;
+            _existingTypes.ItemHeight = 20;
             _existingToolsPanel.ResumeLayout();
             _templateToolsPanel.SuspendLayout();
-            _templateTypes.Height = (int) (20 * Dpi.Factor.Height);
-            _templateTypes.ItemHeight = (int) (20 * Dpi.Factor.Height);
+            _templateTypes.Height = 20;
+            _templateTypes.ItemHeight = 20;
             _templateToolsPanel.ResumeLayout();
-
-            if (Dpi.Factor.Height >= 1.5)
-            {
-                _existingExternalInteractor.Image = Resources.external;
-                _existingProcess.Image = Resources.process;
-                _existingDataStore.Image = Resources.storage;
-                _existingTrustBoundary.Image = Resources.trust_boundary;
-                _templateExternalInteractor.Image = Resources.external;
-                _templateProcess.Image = Resources.process;
-                _templateDataStore.Image = Resources.storage;
-                _templateTrustBoundary.Image = Resources.trust_boundary;
-            }
-            else
-            {
-                _existingExternalInteractor.Image = Resources.external_small;
-                _existingProcess.Image = Resources.process_small;
-                _existingDataStore.Image = Resources.storage_small;
-                _existingTrustBoundary.Image = Resources.trust_boundary_small;
-                _templateExternalInteractor.Image = Resources.external_small;
-                _templateProcess.Image = Resources.process_small;
-                _templateDataStore.Image = Resources.storage_small;
-                _templateTrustBoundary.Image = Resources.trust_boundary_small;
-            }
+            _existingExternalInteractor.Image = Resources.external_small;
+            _existingProcess.Image = Resources.process_small;
+            _existingDataStore.Image = Resources.storage_small;
+            _existingTrustBoundary.Image = Resources.trust_boundary_small;
+            _templateExternalInteractor.Image = Resources.external_small;
+            _templateProcess.Image = Resources.process_small;
+            _templateDataStore.Image = Resources.storage_small;
+            _templateTrustBoundary.Image = Resources.trust_boundary_small;
 
             InitializeStandardPalette();
             InitializeTemplatesPalette();
@@ -93,7 +78,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             if (diagram == null)
                 this.ParentForm?.Close();
             else
-                SetDiagram(Dpi.Factor.Width);
+                SetDiagram(1f);
         }
 
         private void AdjustDpiFactor(object obj)
@@ -227,11 +212,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         internal Bitmap GetBitmap()
         {
             return _graph.ToBitmap();
-        }
-
-        internal Image GetMetafile()
-        {
-            return _graph.ToMetafile();
         }
 
         private void OpenDiagram(Guid diagramId)

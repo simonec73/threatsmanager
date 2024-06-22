@@ -27,8 +27,7 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
         {
             InitializeComponent();
 
-            _header.Image = Dpi.Factor.Width >= 1.5 ? Properties.Resources.emoticon_smile :
-                Properties.Resources.emoticon_smile_small;
+            _header.Image = Properties.Resources.emoticon_smile_small;
         }
 
         public CheckPanel([NotNull] IQualityAnalyzer analyzer) : this()
@@ -49,8 +48,7 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
         public void ShowValue()
         {
             _grid.PrimaryGrid.Rows.Clear();
-            _header.Image = Dpi.Factor.Width >= 1.5 ? Properties.Resources.emoticon_smile :
-                Properties.Resources.emoticon_smile_small;
+            _header.Image = Properties.Resources.emoticon_smile_small;
             _gauge.LinearScales[0].Pointers[0].Value = _min;
             _gauge.LinearScales[0].Pointers[0].Tooltip = _min.ToString("F1");
         }
@@ -70,32 +68,20 @@ namespace ThreatsManager.Quality.Panels.QualityDashboard
             if (_redToGreen)
             {
                 if (value <= _intermediate1)
-                    _header.Image = Dpi.Factor.Width >= 1.5
-                        ? Properties.Resources.emoticon_frown
-                        : Properties.Resources.emoticon_frown_small;
+                    _header.Image = Properties.Resources.emoticon_frown_small;
                 else if (!Double.IsNaN(_intermediate2) && value <= _intermediate2)
-                    _header.Image = Dpi.Factor.Width >= 1.5
-                        ? Properties.Resources.emoticon_straight_face
-                        : Properties.Resources.emoticon_straight_face_small;
+                    _header.Image = Properties.Resources.emoticon_straight_face_small;
                 else
-                    _header.Image = Dpi.Factor.Width >= 1.5
-                        ? Properties.Resources.emoticon_smile
-                        : Properties.Resources.emoticon_smile_small;
+                    _header.Image = Properties.Resources.emoticon_smile_small;
             }
             else
             {
                 if (value < _intermediate1)
-                    _header.Image = Dpi.Factor.Width >= 1.5
-                        ? Properties.Resources.emoticon_smile
-                        : Properties.Resources.emoticon_smile_small;
+                    _header.Image = Properties.Resources.emoticon_smile_small;
                 else if (!Double.IsNaN(_intermediate2) && value < _intermediate2)
-                    _header.Image = Dpi.Factor.Width >= 1.5
-                        ? Properties.Resources.emoticon_straight_face
-                        : Properties.Resources.emoticon_straight_face_small;
+                    _header.Image = Properties.Resources.emoticon_straight_face_small;
                 else
-                    _header.Image = Dpi.Factor.Width >= 1.5
-                        ? Properties.Resources.emoticon_frown
-                        : Properties.Resources.emoticon_frown_small;
+                    _header.Image = Properties.Resources.emoticon_frown_small;
             }
 
             var list = items?.ToArray();

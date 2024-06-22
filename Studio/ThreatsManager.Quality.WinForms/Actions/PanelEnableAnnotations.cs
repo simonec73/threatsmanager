@@ -57,8 +57,9 @@ namespace ThreatsManager.Quality.Actions
 
             if (model != null)
             {
-                result = true;
                 var schemaManager = new AnnotationsPropertySchemaManager(model);
+
+                result = true;
 
                 using (var scope = UndoRedoManager.OpenScope("Enable Annotations on multiple objects"))
                 {
@@ -76,6 +77,31 @@ namespace ThreatsManager.Quality.Actions
 
                     if (result)
                         scope?.Complete();
+                }
+            }
+            else
+            {
+                model = containers?.OfType<IThreatModel>().FirstOrDefault();
+                if (model != null)
+                {
+                    using (var scope = UndoRedoManager.OpenScope("Enable Annotations on Models"))
+                    {
+                        var sm = new AnnotationsPropertySchemaManager(model);
+
+                        result = true;
+
+                        try
+                        {
+                            sm.EnableAnnotations(model);
+                        }
+                        catch
+                        {
+                            result = false;
+                        }
+
+                        if (result)
+                            scope?.Complete();
+                    }
                 }
             }
 

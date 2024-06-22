@@ -13,6 +13,7 @@ namespace ThreatsManager.Extensions
         public DiagramActionDefinition(Guid id)
         {
             Id = id;
+            Enabled = true;
         }
 
         public void Initialize([PostSharp.Patterns.Contracts.NotNull] IDiagram diagram)
@@ -27,7 +28,7 @@ namespace ThreatsManager.Extensions
         public string Label => _diagram?.Name;
         public Bitmap Icon => Resources.model;
         public Bitmap SmallIcon => Resources.model_small;
-        public bool Enabled => true;
+        public bool Enabled { get; set; }
         public object Tag => _diagram;
         public Shortcut Shortcut => Shortcut.None;
         public string Tooltip => "Show the selected Diagram.";

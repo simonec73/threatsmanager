@@ -24,7 +24,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         {
             var result = base.CreateResizeHandle(handleid) as GoHandle;
             if (handleid != 0)
-                result.Size = new SizeF(6 * Dpi.Factor.Width, 6 * Dpi.Factor.Height);
+                result.Size = new SizeF(6, 6);
 
             return result;
         }
