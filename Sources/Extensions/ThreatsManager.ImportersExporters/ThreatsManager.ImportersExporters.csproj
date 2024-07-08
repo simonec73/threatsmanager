@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net481</TargetFrameworks>
+    <Description>Threats Manager Importers and Exporters library.</Description>
+    <AssemblyVersion>2.2.4.0</AssemblyVersion>
+    <Authors>Simone Curzi</Authors>
+    <Company>Simone Curzi</Company>
+    <Product>Threats Manager Platform</Product>
+    <Copyright>Copyright © Simone Curzi, 2018-2024. All Rights Reserved.</Copyright>
+    <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
+    <FileVersion>2.2.4.0</FileVersion>
+    <Version>2.2.4</Version>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
+    <NoWarn>$(NoWarn);NU1505</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\ThreatsManager.Engine\PostSharp.license" Link="PostSharp.license" />
+    <None Include="..\..\ThreatsManager.Engine\ThreatsManager.snk" Link="ThreatsManager.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PostSharp" Version="2024.1.4" />
+    <PackageReference Include="PostSharp.Patterns.Common" Version="2024.1.4" />
+    <PackageReference Include="Svg" Version="3.4.7" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="26.1.35" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ThreatsManager.Interfaces\ThreatsManager.Interfaces.csproj" />
+    <ProjectReference Include="..\..\ThreatsManager.Utilities\ThreatsManager.Utilities.csproj" />
+    <ProjectReference Include="..\ThreatsManager.AutoGenRules\ThreatsManager.AutoGenRules.csproj" />
+    <ProjectReference Include="..\ThreatsManager.AutoThreatGeneration\ThreatsManager.AutoThreatGeneration.csproj" />
+  </ItemGroup>
+  
+</Project>

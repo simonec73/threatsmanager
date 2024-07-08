@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.Mitre", "Thr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.QuantitativeRisk", "ThreatsManager.QuantitativeRisk\ThreatsManager.QuantitativeRisk.csproj", "{4E741278-7437-4A5E-850B-BB08AD5569A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.AIAssistant", "ThreatsManager.AIAssistant\ThreatsManager.AIAssistant.csproj", "{7E09402D-889A-4332-9A66-DA96DFE092D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreatsManager.AIAssistant", "ThreatsManager.AIAssistant\ThreatsManager.AIAssistant.csproj", "{7E09402D-889A-4332-9A66-DA96DFE092D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatsManager.ImportersExporters", "ThreatsManager.ImportersExporters\ThreatsManager.ImportersExporters.csproj", "{6A39FFCE-A85F-4A6E-B954-AEDD12ADFDAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E09402D-889A-4332-9A66-DA96DFE092D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A39FFCE-A85F-4A6E-B954-AEDD12ADFDAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A39FFCE-A85F-4A6E-B954-AEDD12ADFDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A39FFCE-A85F-4A6E-B954-AEDD12ADFDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A39FFCE-A85F-4A6E-B954-AEDD12ADFDAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
