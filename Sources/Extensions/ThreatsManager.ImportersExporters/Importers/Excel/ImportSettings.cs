@@ -57,18 +57,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         public List<SheetSettings> Sheets { get; set; }
 
         /// <summary>
-        /// File containing the import rules.
-        /// </summary>
-        [JsonProperty("ruleFile")]
-        public string RuleFile { get; set; }
-
-        /// <summary>
-        /// Sheets contained in the Rule File.
-        /// </summary>
-        [JsonProperty("ruleSheets")]
-        public List<RuleSheetSettings> RuleFileSheets { get; set; }
-
-        /// <summary>
         /// Json file containing the additional details required to import the Item KnowledgeBases.
         /// </summary>
         /// <remarks>It is a path relative to the location of the import settings file.</remarks>
