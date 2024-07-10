@@ -36,21 +36,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         [JsonProperty("isKey")]
         public bool IsKey { get; set; }
 
-        /// <summary>
-        /// Flag indicating if the column indicates a specifier that can be used to generate specific names.
-        /// </summary>
-        /// <remarks>We should have up to 1 specifier columns. If more than one is defined, only the first will be considered.</remarks>
-        [JsonProperty("isSpecifier")]
-        public bool IsSpecifier { get; set; }
-
         [JsonProperty("mapping")]
         public Dictionary<string, string> Mapping { get; set; }
-
-        /// <summary>
-        /// Allows to automatically create an artifact from the Column value.
-        /// </summary>
-        /// <remarks>Each unique value of the column will create a single artifact.</remarks>
-        [JsonProperty("artifact")]
-        public ArtifactSettings Artifact { get; set; }
     }
 }

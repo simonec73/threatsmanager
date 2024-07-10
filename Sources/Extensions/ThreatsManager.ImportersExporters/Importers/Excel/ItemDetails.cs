@@ -11,9 +11,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("alias")]
-        public string Alias { get; set; }
-
         [JsonProperty("desc")]
         public string Description { get; set; }
 

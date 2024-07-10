@@ -60,7 +60,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         /// Json file containing the additional details required to import the Item KnowledgeBases.
         /// </summary>
         /// <remarks>It is a path relative to the location of the import settings file.</remarks>
-        [JsonProperty("ruleItems")]
-        public string ItemTemplateRules { get; set; }
+        [JsonProperty("itemTemplates")]
+        public string ItemTemplates { get; set; }
     }
 }

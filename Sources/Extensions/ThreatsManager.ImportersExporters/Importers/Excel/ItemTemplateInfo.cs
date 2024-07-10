@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ThreatsManager.ImportersExporters.Importers.Excel
 {
-    public class ArtifactInfo
+    public class ItemTemplateInfo
     {
         public string Name { get; set; }
 

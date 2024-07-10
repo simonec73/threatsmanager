@@ -58,6 +58,13 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         public string LevelPropertyName { get; set; }
 
         /// <summary>
+        /// Name of the Target Item Template associated with the object.
+        /// </summary>
+        /// <remarks>If not defined, no Item Template will be created.</remarks>
+        [JsonProperty("targetItem")]
+        public string TargetItem { get; set; }
+
+        /// <summary>
         /// List of the columns to be imported.
         /// </summary>
         [JsonProperty("columns")]

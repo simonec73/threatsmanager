@@ -24,10 +24,9 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         private ImportSettings _settings;
         private string _path;
         private Dictionary<string, IItemTemplate> _itemTemplates = new Dictionary<string, IItemTemplate>();
-        private Dictionary<string, string> _aliases;
         private IEnumerable<ItemDetails> _itemDetails;
 
-        public event Func<string, ArtifactInfo> GetArtifactInfo;
+        public event Func<string, ItemTemplateInfo> GetItemTemplateInfo;
 
         #region Constructors.
         public Importer([NotNull] IThreatModel model, [Required] string settingsFile) : this(model)
@@ -43,8 +42,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         #endregion
 
         #region Public members.
-        public bool Import([Required] string fileName, Dictionary<string, string> aliases = null, 
-            IEnumerable<ParameterValue> parameterValues = null)
+        public bool Import([Required] string fileName, IEnumerable<ParameterValue> parameterValues = null)
         {
             bool result = false;
 
@@ -59,7 +57,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                     if (parameterValues?.Any() ?? false)
                         ParameterManager.Initialize(_settings.Parameters, parameterValues);
 
-                    _aliases = aliases;
                     result = ImportExcelFile(fileName);
 
                     if (result)
@@ -92,14 +89,10 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                     var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(x.Name, itemName) == 0);
                     if (itemDetails != null)
                     {
-                        if (!string.IsNullOrWhiteSpace(itemDetails.Alias))
-                            itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemDetails.Alias, x.Name) == 0);
-
                         var entityTemplates = _model.EntityTemplates?.ToArray();
                         var flowTemplates = _model.FlowTemplates?.ToArray();
                         var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
-                        CreateArtifact(ArtifactType.ItemTemplate, itemName, entityTemplates, flowTemplates, trustBoundaryTemplates);
-                        result = CreateAdditionalControls(itemName, itemDetails, HitPolicy.Replace);
+                        result = CreateItemTemplate(itemName, entityTemplates, flowTemplates, trustBoundaryTemplates) != null;
                     }
                 }
                 finally
@@ -119,14 +112,10 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(x.Name, itemName) == 0);
             if (itemDetails != null)
             {
-                if (!string.IsNullOrWhiteSpace(itemDetails.Alias))
-                    itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemDetails.Alias, x.Name) == 0);
-
                 var entityTemplates = _model.EntityTemplates?.ToArray();
                 var flowTemplates = _model.FlowTemplates?.ToArray();
                 var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
-                CreateArtifact(ArtifactType.ItemTemplate, itemName, entityTemplates, flowTemplates, trustBoundaryTemplates);
-                result = CreateAdditionalControls(itemName, itemDetails, HitPolicy.Replace);
+                result = CreateItemTemplate(itemName, entityTemplates, flowTemplates, trustBoundaryTemplates) != null;
             }
 
             return result;
@@ -298,7 +287,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             var result = false;
 
             _itemDetails = ImportItemMapping()?.Items?.ToArray();
-            CreateArtifacts(sheet, worksheet);
 
             switch (sheet.ObjectType)
             {
@@ -323,14 +311,14 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         }
         #endregion
 
-        #region Artifacts management.
+        #region Item Templates management.
         private ItemMappingSettings ImportItemMapping()
         {
             ItemMappingSettings result = null;
 
-            if (!string.IsNullOrWhiteSpace(_settings.ItemTemplateRules))
+            if (!string.IsNullOrWhiteSpace(_settings.ItemTemplates))
             {
-                var fullPath = Path.Combine(_path, _settings.ItemTemplateRules);
+                var fullPath = Path.Combine(_path, _settings.ItemTemplates);
 
                 if (File.Exists(fullPath))
                 {
@@ -356,134 +344,29 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             return result;
         }
 
-        private void CreateArtifacts([NotNull] SheetSettings sheet, [NotNull] IWorksheet worksheet)
-        {
-            var columns = sheet.Columns?
-                .Where(x => (x.Artifact?.ArtifactType ?? ArtifactType.Undefined) != ArtifactType.Undefined)
-                .ToArray();
-            if (columns?.Any() ?? false)
-            {
-                foreach (var column in columns)
-                {
-                    CreateArtifacts(column, sheet, worksheet);
-                }
-            }
-            else
-            {
-                var specifier = GetCalculatedName(sheet, out var artifactType);
-                if (!string.IsNullOrWhiteSpace(specifier))
-                {
-                    CreateArtifact(artifactType, specifier,
-                       _model.EntityTemplates?.ToArray(),
-                       _model.FlowTemplates?.ToArray(),
-                       _model.TrustBoundaryTemplates?.ToArray());
-                }
-            }
-        }
-
-        private void CreateArtifacts([NotNull] ColumnSettings column, [NotNull] SheetSettings sheet, [NotNull] IWorksheet worksheet)
-        {
-            var uniqueValues = GetUniqueValues(column, sheet, worksheet);
-
-            if (uniqueValues?.Any() ?? false)
-            {
-                var entityTemplates = _model.EntityTemplates?.ToArray();
-                var flowTemplates = _model.FlowTemplates?.ToArray();
-                var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
-
-                foreach (var value in uniqueValues)
-                {
-                    CreateArtifact(column.Artifact.ArtifactType, value, entityTemplates, flowTemplates, trustBoundaryTemplates);
-                }
-            }
-        }
-
-        private void CreateArtifact(ArtifactType artifactType, [Required] string serviceName,
-            IEnumerable<IEntityTemplate> entityTemplates, IEnumerable<IFlowTemplate> flowTemplates, 
-            IEnumerable<ITrustBoundaryTemplate> trustBoundaryTemplates)
-        {
-            var name = serviceName;
-            if (_aliases?.ContainsKey(serviceName) ?? false)
-                name = _aliases[serviceName];
-
-            var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(name, x.Name) == 0);
-            string iconPath = null;
-            if (itemDetails != null)
-            {
-                if (!string.IsNullOrWhiteSpace(itemDetails.Alias))
-                    itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemDetails.Alias, x.Name) == 0);
-
-                if (!string.IsNullOrWhiteSpace(itemDetails.Icon))
-                    iconPath = Path.Combine(_path, Path.Combine(Path.GetDirectoryName(_settings.ItemTemplateRules), itemDetails.Icon));
-            }
-
-            switch (artifactType)
-            {
-                case ArtifactType.ItemTemplate:
-                    if (itemDetails != null)
-                    {
-                        var itemTemplates = GetItemTemplates(itemDetails.ItemType,
-                            entityTemplates, flowTemplates, trustBoundaryTemplates);
-                        AddEntity(name, itemDetails.Name, itemDetails.Description, itemDetails.ItemType,
-                            itemTemplates, itemDetails.Properties, iconPath);
-                    }
-                    else
-                    {
-                        var artifactInfo = GetArtifactInfo?.Invoke(name);
-                        if (artifactInfo != null)
-                        {
-                            var itemTemplates = GetItemTemplates(artifactInfo.ItemType,
-                                entityTemplates, flowTemplates, trustBoundaryTemplates);
-                            AddEntity(name, artifactInfo.Name, artifactInfo.Description, 
-                                artifactInfo.ItemType, itemTemplates);
-                        }
-                    }
-                    break;
-                case ArtifactType.ExternalInteractorTemplate:
-                    AddEntity(name, name, null, ItemType.ExternalInteractor,
-                        entityTemplates.Where(x => x.EntityType == EntityType.ExternalInteractor));
-                    break;
-                case ArtifactType.ProcessTemplate:
-                    AddEntity(name, name, null, ItemType.Process,
-                        entityTemplates.Where(x => x.EntityType == EntityType.Process));
-                    break;
-                case ArtifactType.DataStoreTemplate:
-                    AddEntity(name, name, null, ItemType.DataStore,
-                        entityTemplates.Where(x => x.EntityType == EntityType.DataStore));
-                    break;
-                case ArtifactType.FlowTemplate:
-                    AddEntity(name, name, null, ItemType.Flow, flowTemplates);
-                    break;
-                case ArtifactType.TrustBoundaryTemplate:
-                    AddEntity(name, name, null, ItemType.Flow, trustBoundaryTemplates);
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-        private IItemTemplate GetArtifact([NotNull] SheetSettings sheet, [NotNull] IWorksheet worksheet, int row)
+        private IItemTemplate GetItemTemplate([NotNull] SheetSettings sheet)
         {
             IItemTemplate result = null;
 
-            var artifactSettings = sheet.Columns?.
-                FirstOrDefault(x => (x.Artifact?.ArtifactType ?? ArtifactType.Undefined) != ArtifactType.Undefined);
+            var targetItem = ParameterManager.Instance.ApplyParameters(sheet.TargetItem);
 
-            if (artifactSettings != null)
+            if (targetItem != null)
             {
-                var key = GetValue(worksheet, row, artifactSettings);
-                if (_itemTemplates.TryGetValue(key, out var itemTemplate))
+                if (_itemTemplates.TryGetValue(targetItem, out var itemTemplate))
                 {
                     result = itemTemplate;
+                }
+                else
+                {
+                    CreateItemTemplate(targetItem, _model.EntityTemplates, _model.FlowTemplates, _model.TrustBoundaryTemplates);
                 }
             }
 
             return result;
         }
 
-        private IEnumerable<IItemTemplate> GetItemTemplates(ItemType itemType, 
-            IEnumerable<IEntityTemplate> entityTemplates, 
+        private IEnumerable<IItemTemplate> GetItemTemplates(ItemType itemType,
+            IEnumerable<IEntityTemplate> entityTemplates,
             IEnumerable<IFlowTemplate> flowTemplates,
             IEnumerable<ITrustBoundaryTemplate> trustBoundaryTemplates)
         {
@@ -514,16 +397,57 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             return result;
         }
 
-        private void AddEntity([Required] string key, [Required] string name, string description, 
+
+        private IItemTemplate CreateItemTemplate([Required] string serviceName,
+            IEnumerable<IEntityTemplate> entityTemplates, IEnumerable<IFlowTemplate> flowTemplates, 
+            IEnumerable<ITrustBoundaryTemplate> trustBoundaryTemplates)
+        {
+            IItemTemplate result = null;
+
+            var name = serviceName;
+
+            var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(name, x.Name) == 0);
+            string iconPath = null;
+            if (itemDetails != null)
+            {
+                if (!string.IsNullOrWhiteSpace(itemDetails.Icon))
+                    iconPath = Path.Combine(_path, 
+                        Path.Combine(Path.GetDirectoryName(_settings.ItemTemplates), itemDetails.Icon));
+            }
+
+            if (itemDetails != null)
+            {
+                var itemTemplates = GetItemTemplates(itemDetails.ItemType,
+                    entityTemplates, flowTemplates, trustBoundaryTemplates);
+                result = AddItemTemplate(name, itemDetails.Name, itemDetails.Description, itemDetails.ItemType,
+                    itemTemplates, itemDetails.Properties, iconPath);
+                CreateAdditionalControls(name, itemDetails);
+            }
+            else
+            {
+                var itemTemplateInfo = GetItemTemplateInfo?.Invoke(name);
+                if (itemTemplateInfo != null)
+                {
+                    var itemTemplates = GetItemTemplates(itemTemplateInfo.ItemType,
+                        entityTemplates, flowTemplates, trustBoundaryTemplates);
+                    result = AddItemTemplate(name, itemTemplateInfo.Name, itemTemplateInfo.Description, 
+                        itemTemplateInfo.ItemType, itemTemplates);
+                }
+            }
+
+            return result;
+        }
+
+        private IItemTemplate AddItemTemplate([Required] string key, [Required] string name, string description, 
             ItemType itemType, IEnumerable<IItemTemplate> itemTemplates, 
             IEnumerable<Property> properties = null, string iconFile = null)
         {
+            IItemTemplate result = null;
+
             var existing = itemTemplates?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
 
             if (existing == null)
             {
-                IItemTemplate itemTemplate;
-
                 Bitmap smallImage = null;
                 Bitmap mediumImage = null;
                 Bitmap largeImage = null;
@@ -537,31 +461,31 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                 switch (itemType)
                 {
                     case ItemType.ExternalInteractor:
-                        itemTemplate = _model.AddEntityTemplate(name, description, 
+                        result = _model.AddEntityTemplate(name, description, 
                             largeImage, mediumImage, smallImage, EntityType.ExternalInteractor);
                         break;
                     case ItemType.Process:
-                        itemTemplate = _model.AddEntityTemplate(name, description,
+                        result = _model.AddEntityTemplate(name, description,
                             largeImage, mediumImage, smallImage, EntityType.Process);
                         break;
                     case ItemType.DataStore:
-                        itemTemplate = _model.AddEntityTemplate(name, description,
+                        result = _model.AddEntityTemplate(name, description,
                             largeImage, mediumImage, smallImage, EntityType.DataStore);
                         break;
                     case ItemType.Flow:
-                        itemTemplate = _model.AddFlowTemplate(name, description);
+                        result = _model.AddFlowTemplate(name, description);
                         break;
                     case ItemType.TrustBoundary:
-                        itemTemplate = _model.AddTrustBoundaryTemplate(name, description);
+                        result = _model.AddTrustBoundaryTemplate(name, description);
                         break;
                     default:
-                        itemTemplate = null;
+                        result = null;
                         break;
                 }
 
-                if (itemTemplate != null)
+                if (result != null)
                 {
-                    _itemTemplates.Add(key, itemTemplate);
+                    _itemTemplates.Add(key, result);
 
                     var ps = properties?.ToArray();
                     if (ps?.Any() ?? false)
@@ -570,11 +494,47 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                         {
                             var propertyType = _model.GetSchema(p.Schema, p.Namespace)?.GetPropertyType(p.Name);
                             if (propertyType != null)
-                                itemTemplate.AddProperty(propertyType, p.Value);
+                                result.AddProperty(propertyType, p.Value);
                         }
                     }
                 }
             }
+
+            return result;
+        }
+
+        private bool CreateAdditionalControls([Required] string serviceName, [NotNull] ItemDetails itemDetails)
+        {
+            bool result = false;
+
+            var controls = itemDetails.AdditionalControls?.ToArray();
+            if (controls?.Any() ?? false)
+            {
+                foreach (var control in controls)
+                {
+                    var existing =
+                        _model.Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, control.Name) == 0);
+
+                    if (existing != null)
+                    {
+                        existing.Description = control.Description;
+                        existing.ControlType = control.ControlType;
+                        LoadProperties(existing, serviceName, control.Properties);
+                        result = true;
+                    }
+                    else
+                    {
+                        var mitigation = _model.AddMitigation(control.Name);
+                        mitigation.Description = control.Description;
+                        mitigation.ControlType = control.ControlType;
+                        LoadProperties(mitigation, serviceName, control.Properties);
+
+                        result = true;
+                    }
+                }
+            }
+
+            return result;
         }
 
         private IEnumerable<string> GetUniqueValues([NotNull] ColumnSettings column, 
@@ -885,6 +845,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                                 {
                                     var threatType = _model.AddThreatType(name, severity);
                                     threatType.Description = description;
+                                    AddLevelInfo(threatType, sheet);
                                     LoadProperties(sheet, worksheet, row, threatType);
                                     result = true;
                                 }
@@ -937,20 +898,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                             {
                                 if (CheckFilter(sheet, worksheet, row))
                                 {
-                                    bool skip = false;
-
-                                    var specifierSettings = columns.FirstOrDefault(x => x.IsSpecifier);
-                                    string specifier = null;
-                                    if (specifierSettings != null)
-                                    {
-                                        specifier = GetValue(worksheet, row, specifierSettings);
-                                        if (specifier != null)
-                                        {
-                                            if (_aliases?.ContainsKey(specifier) ?? false)
-                                                specifier = _aliases[specifier];
-                                        }
-                                    }
-
                                     var key = GetKey(sheet, worksheet, row);
 
                                     string description = null;
@@ -978,6 +925,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                                     {
                                         var mitigation = _model.AddMitigation(name);
                                         mitigation.Description = description;
+                                        AddLevelInfo(mitigation, sheet);
                                         LoadProperties(sheet, worksheet, row, mitigation);
                                         LoadCalculatedColumns(sheet, mitigation, workbooks, key);
                                         result = true;
@@ -987,21 +935,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
 
                             row++;
                         } while (true);
-
-                        if (_itemTemplates?.Any() ?? false)
-                        {
-                            foreach (var itemTemplatePair in _itemTemplates)
-                            {
-                                var itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemTemplatePair.Key, x.Name) == 0);
-                                if (itemDetails != null)
-                                {
-                                    if (!string.IsNullOrWhiteSpace(itemDetails.Alias))
-                                        itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemDetails.Alias, x.Name) == 0);
-
-                                    result = CreateAdditionalControls(itemTemplatePair.Key, itemDetails, sheet.HitPolicy);
-                                }
-                            }
-                        }
                     }
                     finally
                     {
@@ -1098,6 +1031,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                                     else
                                     {
                                         var threatTypeMitigation = tt.AddMitigation(m, strength);
+                                        AddLevelInfo(threatTypeMitigation, sheet);
                                         result = true;
                                     }
                                 }
@@ -1181,6 +1115,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                                         GetMappedValue(worksheet, row, entityTypeSettings), out var entityType))
                                     {
                                         var entityTemplate = _model.AddEntityTemplate(name, description, entityType);
+                                        AddLevelInfo(entityTemplate, sheet);
                                         LoadProperties(sheet, worksheet, row, entityTemplate);
                                         result = true;
                                     }
@@ -1206,125 +1141,74 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                 int row = sheet.FirstRow;
                 var nameSettings = columns.FirstOrDefault(x => x.FieldType == FieldType.Name);
                 var descSettings = columns.FirstOrDefault(x => x.FieldType == FieldType.Description);
+                var keySettings = columns.FirstOrDefault(x => x.IsKey || x.FieldType == FieldType.Key);
+                var mitigations = _model.Mitigations?.ToArray();
+                var itemTemplate = GetItemTemplate(sheet);
 
-                if (row > 0 && nameSettings != null && nameSettings.Index > 0)
+                if (row > 0 && itemTemplate != null && 
+                    keySettings != null && keySettings.Index > 0 && 
+                    (mitigations?.Any() ?? false))
                 {
                     if (sheet.ForceClear)
                     {
-                        var mitigations = _model.Mitigations?.ToArray();
-                        if (mitigations?.Any() ?? false)
+                        foreach (var mitigation in mitigations)
                         {
-                            foreach (var mitigation in mitigations)
+                            var specializedMitigations = mitigation.Specialized?.ToArray();
+                            if (specializedMitigations?.Any() ?? false)
                             {
-                                var specializedMitigations = mitigation.Specialized?.ToArray();
-                                if (specializedMitigations?.Any() ?? false)
+                                foreach (var specialized in specializedMitigations)
                                 {
-                                    foreach (var specialized in specializedMitigations)
-                                    {
-                                        mitigation.RemoveSpecializedMitigation(specialized.TargetId);
-                                    }
+                                    mitigation.RemoveSpecializedMitigation(specialized.TargetId);
                                 }
                             }
                         }
                     }
 
-                    Dictionary<string, IWorkbook> workbooks = new Dictionary<string, IWorkbook>();
-
-                    try
+                    var schema = _model.GetSchema(keySettings.SchemaName, keySettings.SchemaNamespace);
+                    if (schema != null)
                     {
-                        do
+                        var propertyType = schema.GetPropertyType(keySettings.PropertyName);
+
+                        if (propertyType != null)
                         {
-                            var name = GetMappedValue(worksheet, row, nameSettings);
-                            if (string.IsNullOrWhiteSpace(name))
-                                break;
-                            else
+                            do
                             {
                                 if (CheckFilter(sheet, worksheet, row))
                                 {
-                                    bool skip = false;
-
-                                    var specifierSettings = columns.FirstOrDefault(x => x.IsSpecifier);
-                                    string specifier = null;
-                                    if (specifierSettings != null)
-                                    {
-                                        specifier = GetValue(worksheet, row, specifierSettings);
-                                        if (specifier != null)
-                                        {
-                                            if (_aliases?.ContainsKey(specifier) ?? false)
-                                                specifier = _aliases[specifier];
-                                        }
-                                    }
-
                                     var key = GetKey(sheet, worksheet, row);
-
-                                    if (!skip)
+                                    if (!string.IsNullOrWhiteSpace(key))
                                     {
-                                        string description = null;
-                                        if (descSettings != null && descSettings.Index > 0)
-                                            description = GetValue(worksheet, row, descSettings);
+                                        var mitigation = mitigations
+                                            .FirstOrDefault(x => string.CompareOrdinal(x.GetProperty(propertyType)?.StringValue, key) == 0);
 
-                                        var existing =
-                                            _model.Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0);
-
-                                        if (existing != null && sheet.HitPolicy != HitPolicy.Add)
+                                        if (mitigation != null)
                                         {
-                                            switch (sheet.HitPolicy)
-                                            {
-                                                case HitPolicy.Skip:
-                                                    break;
-                                                case HitPolicy.Replace:
-                                                    existing.Description = description;
-                                                    LoadProperties(sheet, worksheet, row, existing);
-                                                    LoadCalculatedColumns(sheet, existing, workbooks, key);
-                                                    result = true;
-                                                    break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            var mitigation = _model.AddMitigation(name);
-                                            mitigation.Description = description;
-                                            LoadProperties(sheet, worksheet, row, mitigation);
-                                            LoadCalculatedColumns(sheet, mitigation, workbooks, key);
-
-                                            result = true;
+                                            var name = GetValue(worksheet, row, nameSettings);
+                                            var description = GetValue(worksheet, row, descSettings);
+                                            mitigation.AddSpecializedMitigation(itemTemplate, name, description);
                                         }
                                     }
                                 }
-                            }
 
-                            row++;
-                        } while (true);
-
-                        if (_itemTemplates?.Any() ?? false)
-                        {
-                            foreach (var itemTemplatePair in _itemTemplates)
-                            {
-                                var itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemTemplatePair.Key, x.Name) == 0);
-                                if (itemDetails != null)
-                                {
-                                    if (!string.IsNullOrWhiteSpace(itemDetails.Alias))
-                                        itemDetails = _itemDetails.FirstOrDefault(x => string.CompareOrdinal(itemDetails.Alias, x.Name) == 0);
-
-                                    result = CreateAdditionalControls(itemTemplatePair.Key, itemDetails, sheet.HitPolicy);
-                                }
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        if (workbooks.Any())
-                        {
-                            foreach (var workbook in workbooks)
-                            {
-                                workbook.Value.Close();
-                            }
+                                row++;
+                            } while (true);
                         }
                     }
                 }
             }
 
             return result;
+        }
+
+        private void AddLevelInfo([NotNull] IPropertiesContainer container, [NotNull] SheetSettings sheet)
+        {
+            if (!string.IsNullOrWhiteSpace(sheet.LevelPropertyName) &&
+                !string.IsNullOrWhiteSpace(sheet.LevelSchemaName) &&
+                !string.IsNullOrWhiteSpace(sheet.LevelSchemaNamespace) &&
+                !string.IsNullOrWhiteSpace(_settings?.Level))
+            {
+                AddProperty(container, sheet.LevelSchemaName, sheet.LevelSchemaNamespace, sheet.LevelPropertyName, _settings.Level);
+            }
         }
 
         private void LoadProperties([NotNull] SheetSettings sheet, [NotNull] IWorksheet worksheet,
@@ -1458,32 +1342,6 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             }
         }
 
-        private string GetCalculatedName([NotNull] SheetSettings sheet, out ArtifactType artifactType)
-        {
-            string result = null;
-            artifactType = ArtifactType.Undefined;
-
-            var calculatedColumns = sheet.Calculate?.ToArray();
-            if (calculatedColumns?.Any() ?? false)
-            {
-                foreach (var col in calculatedColumns)
-                {
-                    if (col.Source == SourceType.Parameter && col.Specifier)
-                    {
-                        var value = ParameterManager.Instance.ApplyParameters(col.Value);
-                        if (value != null)
-                            result = value;
-                        if (col.Artifact != null)
-                            artifactType = col.Artifact.ArtifactType;
-
-                        break;
-                    }
-                }
-            }
-
-            return result;
-        }
-
         private bool CheckFilter([NotNull] SheetSettings sheet, [NotNull] IWorksheet worksheet, int row)
         {
             bool result = !sheet.DefaultExclude;
@@ -1563,52 +1421,11 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         {
             string result = null;
 
-            var column = sheet.Columns?.FirstOrDefault(x => x.IsKey);
+            var column = sheet.Columns?.FirstOrDefault(x => x.IsKey || x.FieldType == FieldType.Key);
             if (column == null)
                 EventsDispatcher.RaiseEvent("ShowWarning", "The IsKey flag is missing. Please configure IsKey for at least a column for the imported Excel file.");
             else
                 result = GetMappedValue(worksheet, row, column);
-
-            return result;
-        }
-
-        private bool CreateAdditionalControls([Required] string serviceName, [NotNull] ItemDetails itemDetails, HitPolicy hitPolicy)
-        {
-            bool result = false;
-
-            var controls = itemDetails.AdditionalControls?.ToArray();
-            if (controls?.Any() ?? false)
-            {
-                foreach (var control in controls)
-                {
-                    var existing =
-                        _model.Mitigations?.FirstOrDefault(x => string.CompareOrdinal(x.Name, control.Name) == 0);
-
-                    if (existing != null && hitPolicy != HitPolicy.Add)
-                    {
-                        switch (hitPolicy)
-                        {
-                            case HitPolicy.Skip:
-                                break;
-                            case HitPolicy.Replace:
-                                existing.Description = control.Description;
-                                existing.ControlType = control.ControlType;
-                                LoadProperties(existing, serviceName, control.Properties);
-                                result = true;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        var mitigation = _model.AddMitigation(control.Name);
-                        mitigation.Description = control.Description;
-                        mitigation.ControlType = control.ControlType;
-                        LoadProperties(mitigation, serviceName, control.Properties);
-
-                        result = true;
-                    }
-                }
-            }
 
             return result;
         }
