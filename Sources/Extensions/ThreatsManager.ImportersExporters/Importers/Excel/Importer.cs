@@ -165,7 +165,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                 using (var fileStream = File.OpenRead(fileName))
                 {
                     workbook = excel.Workbooks.Open(fileStream,
-                        ExcelParseOptions.DoNotParseCharts | ExcelParseOptions.DoNotParsePivotTable, true, null);
+                        ExcelParseOptions.DoNotParseCharts | ExcelParseOptions.DoNotParsePivotTable);
                 }
 
                 if (!_settings.StrictValidation || Validate(workbook))
@@ -305,6 +305,281 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                 case ObjectType.SpecializedMitigation:
                     result = LoadSpecializedMitigations(sheet, worksheet);
                     break;
+            }
+
+            RemoveMitigations(sheet);
+            AssignControlType(sheet);
+            AssignDefaultControlType(sheet);
+            MapThreatTypesWithMitigations(sheet);
+
+            return result;
+        }
+
+        private void RemoveMitigations([NotNull] SheetSettings sheet)
+        {
+            var identifiers = sheet.MitigationsToBeRemoved?.Identifiers?.ToArray();
+            if (identifiers?.Any() ?? false)
+            {
+                IPropertyType mPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.MitigationsToBeRemoved.SchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.MitigationsToBeRemoved.SchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.MitigationsToBeRemoved.PropertyName))
+                {
+                    mPropertyType = _model.GetSchema(sheet.MitigationsToBeRemoved.SchemaName,
+                        sheet.MitigationsToBeRemoved.SchemaNamespace)?
+                        .GetPropertyType(sheet.MitigationsToBeRemoved.PropertyName);
+                }
+
+                IPropertyType levelPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.MitigationsToBeRemoved.LevelSchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.MitigationsToBeRemoved.LevelSchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.MitigationsToBeRemoved.LevelPropertyName))
+                {
+                    levelPropertyType = _model.GetSchema(sheet.MitigationsToBeRemoved.LevelSchemaName,
+                        sheet.MitigationsToBeRemoved.LevelSchemaNamespace)?
+                        .GetPropertyType(sheet.MitigationsToBeRemoved.LevelPropertyName);
+                }
+
+                foreach (var identifier in identifiers)
+                {
+                    var mitigation = GetMitigation(identifier, mPropertyType, levelPropertyType);
+                    if (mitigation != null)
+                        _model.RemoveMitigation(mitigation.Id);
+                }
+            }
+        }
+
+        private void AssignControlType([NotNull] SheetSettings sheet)
+        {
+            var associations = sheet.ControlTypeAssociations?.Associations?.ToArray();
+            if (associations?.Any() ?? false)
+            {
+                IPropertyType mPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.ControlTypeAssociations.MitigationSchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.ControlTypeAssociations.MitigationSchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.ControlTypeAssociations.MitigationPropertyName))
+                {
+                    mPropertyType = _model.GetSchema(sheet.ControlTypeAssociations.MitigationSchemaName,
+                        sheet.ControlTypeAssociations.MitigationSchemaNamespace)?
+                        .GetPropertyType(sheet.ControlTypeAssociations.MitigationPropertyName);
+                }
+
+                IPropertyType levelPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.ControlTypeAssociations.LevelSchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.ControlTypeAssociations.LevelSchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.ControlTypeAssociations.LevelPropertyName))
+                {
+                    levelPropertyType = _model.GetSchema(sheet.ControlTypeAssociations.LevelSchemaName,
+                        sheet.ControlTypeAssociations.LevelSchemaNamespace)?
+                        .GetPropertyType(sheet.ControlTypeAssociations.LevelPropertyName);
+                }
+
+                foreach (var association in associations)
+                {
+                    var mitigation = GetMitigation(association.Identifier, mPropertyType, levelPropertyType);
+                    if (mitigation != null)
+                        mitigation.ControlType = association.ControlType;
+                }
+            }
+        }
+
+        private void AssignDefaultControlType([NotNull] SheetSettings sheet)
+        {
+            var controlType = sheet.ControlTypeAssociations?.Default ?? SecurityControlType.Unknown;
+            if (controlType != SecurityControlType.Unknown)
+            {
+                var mitigations = _model.Mitigations?
+                        .Where(x => x.ControlType == SecurityControlType.Unknown).ToArray();
+                if (mitigations?.Any() ?? false)
+                {
+                    foreach (var mitigation in mitigations)
+                    {
+                        mitigation.ControlType = controlType;
+                    }
+                }
+            }
+        }
+
+        private void MapThreatTypesWithMitigations([NotNull] SheetSettings sheet)
+        {
+            var mappings = sheet.ThreatTypeMitigationMappings?.Mappings?.ToArray();
+            if (mappings?.Any() ?? false)
+            {
+                IPropertyType ttPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.ThreatTypeSchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.ThreatTypeSchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.ThreatTypePropertyName))
+                {
+                    ttPropertyType = _model.GetSchema(sheet.ThreatTypeMitigationMappings.ThreatTypeSchemaName,
+                        sheet.ThreatTypeMitigationMappings.ThreatTypeSchemaNamespace)?
+                        .GetPropertyType(sheet.ThreatTypeMitigationMappings.ThreatTypePropertyName);
+                }
+
+                IPropertyType mPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.MitigationSchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.MitigationSchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.MitigationPropertyName))
+                {
+                    mPropertyType = _model.GetSchema(sheet.ThreatTypeMitigationMappings.MitigationSchemaName,
+                        sheet.ThreatTypeMitigationMappings.MitigationSchemaNamespace)?
+                        .GetPropertyType(sheet.ThreatTypeMitigationMappings.MitigationPropertyName);
+                }
+
+                IPropertyType levelPropertyType = null;
+                if (!string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.LevelSchemaName) &&
+                    !string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.LevelSchemaNamespace) &&
+                    !string.IsNullOrWhiteSpace(sheet.ThreatTypeMitigationMappings.LevelPropertyName))
+                {
+                    levelPropertyType = _model.GetSchema(sheet.ThreatTypeMitigationMappings.LevelSchemaName,
+                        sheet.ThreatTypeMitigationMappings.LevelSchemaNamespace)?
+                        .GetPropertyType(sheet.ThreatTypeMitigationMappings.LevelPropertyName);
+                }
+
+                foreach (var mapping in mappings)
+                {
+                    DoMapping(mapping, ttPropertyType, mPropertyType, levelPropertyType);
+                }
+            }
+        }
+
+        private void DoMapping([NotNull] ThreatTypeMitigationMapping mapping, IPropertyType ttPropertyType,
+            IPropertyType mPropertyType, IPropertyType levelPropertyType)
+        {
+            if (string.IsNullOrWhiteSpace(mapping.BulkThreats))
+            {
+                if (string.IsNullOrWhiteSpace(mapping.BulkMitigation))
+                {
+                    var threatType = GetThreatType(mapping, ttPropertyType);
+                    var mitigation = GetMitigation(mapping.MitigationIdentifier, mPropertyType, levelPropertyType);
+                    var strength = _model.GetStrength((int) mapping.Strength);
+                    CreateMapping(threatType, mitigation, strength);
+                }
+                else
+                {
+                    var threatType = GetThreatType(mapping, ttPropertyType);
+                    var list = SplitBulkList(mapping.BulkMitigation);
+                    IEnumerable<IMitigation> mitigations;
+                    if (levelPropertyType == null)
+                    {
+                        mitigations = _model.Mitigations?.ToArray();
+                    }
+                    else
+                    {
+                        mitigations = _model.Mitigations?
+                            .Where(x => string.CompareOrdinal(x.GetProperty(levelPropertyType)?.StringValue, _settings.Level) == 0)
+                            .ToArray();
+                    }
+
+                    if ((list?.Any() ?? false) && (mitigations?.Any() ?? false))
+                    {
+                        foreach (var item in list)
+                        {
+                            var mitigation = mitigations.FirstOrDefault(x => string.CompareOrdinal(x.Name, item.Key) == 0);
+                            if (threatType != null)
+                            {
+                                CreateMapping(threatType, mitigation, item.Value);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var mitigation = GetMitigation(mapping.MitigationIdentifier, mPropertyType, levelPropertyType);
+                var list = SplitBulkList(mapping.BulkThreats);
+                var threatTypes = _model.ThreatTypes?.ToArray();
+                if ((list?.Any() ?? false) && (threatTypes?.Any() ?? false))
+                {
+                    foreach (var item in list)
+                    {
+                        var threatType = threatTypes.FirstOrDefault(x => string.CompareOrdinal(x.Name, item.Key) == 0);
+                        if (threatType != null)
+                        {
+                            CreateMapping(threatType, mitigation, item.Value);
+                        }
+                    }
+                }
+            }
+         }
+
+        private void CreateMapping(IThreatType threatType, IMitigation mitigation, IStrength strength)
+        {
+            if (threatType != null && mitigation != null)
+            {
+                threatType.AddMitigation(mitigation, strength);
+            }
+        }
+
+        private IThreatType GetThreatType([NotNull] ThreatTypeMitigationMapping mapping, 
+            IPropertyType ttPropertyType)
+        {
+            IThreatType threatType = null;
+            if (ttPropertyType == null)
+            {
+                threatType = _model?.ThreatTypes?
+                    .FirstOrDefault(x => string.CompareOrdinal(x.Name, mapping.ThreatTypeIdentifier) == 0);
+            }
+            else
+            {
+                threatType = _model.ThreatTypes?
+                    .FirstOrDefault(x => string.CompareOrdinal(x.GetProperty(ttPropertyType)?.StringValue, mapping.ThreatTypeIdentifier) == 0);
+            }
+
+            return threatType;
+        }
+
+        private IMitigation GetMitigation(string identifier, 
+            IPropertyType mPropertyType, IPropertyType levelPropertyType)
+        {
+            IMitigation mitigation = null;
+            if (mPropertyType == null)
+            {
+                mitigation = _model?.Mitigations?
+                    .FirstOrDefault(x => string.CompareOrdinal(x.Name, identifier) == 0);
+            }
+            else
+            {
+                if (levelPropertyType == null)
+                {
+                    mitigation = _model.Mitigations?
+                        .FirstOrDefault(x => string.CompareOrdinal(x.GetProperty(mPropertyType)?.StringValue, identifier) == 0);
+                }
+                else
+                {
+                    mitigation = _model.Mitigations?
+                        .FirstOrDefault(x => string.CompareOrdinal(x.GetProperty(mPropertyType)?.StringValue, identifier) == 0 &&
+                                             string.CompareOrdinal(x.GetProperty(levelPropertyType)?.StringValue, _settings.Level) == 0);
+                }
+            }
+
+            return mitigation;
+        }
+
+        private IEnumerable<KeyValuePair<string, IStrength>> SplitBulkList(string bulkList)
+        {
+            IEnumerable<KeyValuePair<string, IStrength>> result = null;
+
+            if (!string.IsNullOrWhiteSpace(bulkList))
+            {
+                var lines = bulkList.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Any())
+                {
+                    var list = new List<KeyValuePair<string, IStrength>>();
+                    foreach (var line in lines)
+                    {
+                        var match = Regex.Match(line, @"^(?<name>.+)\s+\((?<strength>.+)\)$");
+                        if (match.Success)
+                        {
+                            var name = match.Groups["name"].Value;
+                            var strength = _model.Strengths.FirstOrDefault(x => string.CompareOrdinal(x.Name, match.Groups["strength"].Value) == 0);
+                            if (strength != null)
+                                list.Add(new KeyValuePair<string, IStrength>(name, strength));
+                        }
+                    }
+
+                    if (list.Any())
+                        result = list.AsReadOnly();
+                }
             }
 
             return result;
@@ -1291,8 +1566,7 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
                                     using (var fileStream = File.OpenRead(excelFile))
                                     {
                                         workbook = _engine.Excel.Workbooks.Open(fileStream,
-                                            ExcelParseOptions.DoNotParseCharts | ExcelParseOptions.DoNotParsePivotTable,
-                                            false, null);
+                                            ExcelParseOptions.DoNotParseCharts | ExcelParseOptions.DoNotParsePivotTable);
                                     }
                                     workbooks.Add(fileName, workbook);
                                 }

@@ -85,5 +85,23 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
         /// </summary>
         [JsonProperty("calculate")]
         public List<CalculateSettings> Calculate { get; set; }
+
+        /// <summary>
+        /// Control Type Associations.
+        /// </summary>
+        [JsonProperty("controlTypes")]
+        public ControlTypeAssociationsDefinition ControlTypeAssociations { get; set; } 
+
+        /// <summary>
+        /// Mappings used to link threat types to mitigations.
+        /// </summary>
+        [JsonProperty("threatTypeMitigations")]
+        public ThreatTypeMitigationMappingsDefinition ThreatTypeMitigationMappings { get; set; }
+
+        /// <summary>
+        /// List of mitigations to be removed.
+        /// </summary>
+        [JsonProperty("removedMitigations")]
+        public ItemsToBeRemovedDefinition MitigationsToBeRemoved { get; set; }
     }
 }
