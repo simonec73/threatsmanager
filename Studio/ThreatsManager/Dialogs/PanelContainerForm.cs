@@ -23,6 +23,7 @@ namespace ThreatsManager.Dialogs
         public static event Action<PanelContainerForm> InstanceCreated;
         public static event Action<PanelContainerForm> InstanceClosed;
         public static event Action<PanelContainerForm> InstanceTextChanged;
+        public static event Action<PanelContainerForm> InstanceActivated;
 
         public string FormId { get; set; }
 
@@ -144,6 +145,11 @@ namespace ThreatsManager.Dialogs
         private void PanelContainerForm_Load(object sender, EventArgs e)
         {
             InstanceCreated?.Invoke(this);
+        }
+
+        private void PanelContainerForm_Activated(object sender, EventArgs e)
+        {
+            InstanceActivated?.Invoke(this);
         }
     }
 }

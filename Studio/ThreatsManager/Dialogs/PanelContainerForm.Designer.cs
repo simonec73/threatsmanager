@@ -70,9 +70,10 @@ namespace ThreatsManager.Dialogs
             // _ribbonMerge
             // 
             this._ribbonMerge.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this._ribbonMerge.Location = new System.Drawing.Point(33, 12);
+            this._ribbonMerge.Location = new System.Drawing.Point(66, 23);
+            this._ribbonMerge.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this._ribbonMerge.Name = "_ribbonMerge";
-            this._ribbonMerge.Size = new System.Drawing.Size(647, 100);
+            this._ribbonMerge.Size = new System.Drawing.Size(1294, 192);
             // 
             // 
             // 
@@ -95,15 +96,17 @@ namespace ThreatsManager.Dialogs
             // 
             // PanelContainerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(727, 518);
+            this.ClientSize = new System.Drawing.Size(1454, 996);
             this.Controls.Add(this._ribbonMerge);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "PanelContainerForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "PanelContainerForm";
+            this.Activated += new System.EventHandler(this.PanelContainerForm_Activated);
             this.Load += new System.EventHandler(this.PanelContainerForm_Load);
             this.TextChanged += new System.EventHandler(this.PanelContainerForm_TextChanged);
             this.ResumeLayout(false);

@@ -110,7 +110,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 if (_existingMitigation.SelectedItem is IMitigation mitigation &&
                     _strengthExisting.SelectedItem != null)
                 {
-                    using (var scope = UndoRedoManager.OpenScope("ASsociate existing Mitigation"))
+                    using (var scope = UndoRedoManager.OpenScope("Associate existing Mitigation"))
                     {
                         _mitigation = _threatType.AddMitigation(mitigation, _strengthExisting.SelectedItem as IStrength);
                         scope?.Complete();

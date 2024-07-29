@@ -60,6 +60,7 @@ namespace ThreatsManager
             PanelContainerForm.InstanceCreated += OnPanelContainerFormCreated;
             PanelContainerForm.InstanceClosed += OnPanelContainerFormClosed;
             PanelContainerForm.InstanceTextChanged += OnPanelContainerFormTextChanged;
+            PanelContainerForm.InstanceActivated += OnPanelContainerFormActivated;
 
             _ribbonHeight = _ribbon.Height;
             _title.PaddingBottom = _title.PaddingBottom;
@@ -98,6 +99,9 @@ namespace ThreatsManager
             ConfigureTimer();
 
             KnownTypesBinder.TypeNotFound += OnTypeNotFound;
+
+            EventsDispatcher.Register("ShowMessage", ShowMessage);
+            EventsDispatcher.Register("ShowWarning", ShowWarning);
 
             UndoRedoManager.DirtyChanged += UndoRedoManager_DirtyChanged;
             UndoRedoManager.ErrorRaised += UndoRedoManager_ErrorRaised;
@@ -183,6 +187,22 @@ namespace ThreatsManager
             }
 
             _jumpListManager.Refresh();
+        }
+
+        private void ShowMessage(object item)
+        {
+            if (item is string message)
+            {
+                ShowDesktopAlert(message);
+            }
+        }
+
+        private void ShowWarning(object item)
+        {
+            if (item is string message)
+            {
+                ShowDesktopAlert(message, true);
+            }
         }
         #endregion
 
@@ -505,7 +525,14 @@ namespace ThreatsManager
 
         private void _closeCurrentWindow_Click(object sender, EventArgs e)
         {
-            ActiveMdiChild?.Close();
+            var form = ActiveMdiChild as PanelContainerForm;
+            if (form != null)
+            {
+                form.Close();
+                var tabItem = _panels.Tabs.OfType<TabItem>().FirstOrDefault(x => x.Tag == form);
+                if (tabItem != null)
+                    _panels.Tabs.Remove(tabItem);
+            }
         }
 
         private void _closeAllWindows_Click(object sender, EventArgs e)
@@ -515,6 +542,8 @@ namespace ThreatsManager
             {
                 form.Close();
             }
+            _panels.Tabs.Clear();
+            _panels.Refresh();
         }
 
         private void _controlMinimize_Click(object sender, EventArgs e)
@@ -936,5 +965,21 @@ namespace ThreatsManager
             }
         }
         #endregion
+
+        private void _panels_TabMouseClick(object sender, MouseEventArgs e)
+        {
+            if (sender is TabItem tabItem && tabItem.Tag is PanelContainerForm form)
+            {
+                form.Activate();
+            }
+        }
+
+        private void _panels_TabItemClose(object sender, TabStripActionEventArgs e)
+        {
+            if (e.TabItem?.Tag is PanelContainerForm form)
+            {
+                form.Close();
+            }
+        }
     }
 }

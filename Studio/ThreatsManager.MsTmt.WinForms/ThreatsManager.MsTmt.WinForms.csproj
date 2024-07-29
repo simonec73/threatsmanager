@@ -138,7 +138,7 @@
     <Compile Include="Dialogs\ThreatAssignmentDialog.Designer.cs">
       <DependentUpon>ThreatAssignmentDialog.cs</DependentUpon>
     </Compile>
-    <None Include="ExtensionsContainer.cs" />
+    <Compile Include="ExtensionsContainer.cs" />
     <Compile Include="Extensions\ImportDocument.cs" />
     <Compile Include="Extensions\ImportStatus.cs" />
     <Compile Include="Extensions\MergeEntities.cs" />

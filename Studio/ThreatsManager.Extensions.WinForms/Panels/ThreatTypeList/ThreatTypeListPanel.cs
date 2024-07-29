@@ -252,6 +252,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                     }
 
                     UpdateMitigationLevel(threatType, row);
+                    _properties.Item = null;
+                    _properties.Item = threatType;
                 }
             }
         }
@@ -275,6 +277,8 @@ namespace ThreatsManager.Extensions.Panels.ThreatTypeList
                         row.Rows.Remove(panel);
 
                     UpdateMitigationLevel(threatType, row);
+                    _properties.Item = null;
+                    _properties.Item = threatType;
                 }
             }
         }

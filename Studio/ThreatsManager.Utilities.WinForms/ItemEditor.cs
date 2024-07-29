@@ -1244,7 +1244,7 @@ namespace ThreatsManager.Utilities.WinForms
 
                     if (section != null)
                     {
-                        FinalizeSection(section);
+                        //FinalizeSection(section);
 
                         section.ResumeLayout();
                     }
@@ -1354,7 +1354,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             AddCombo(section, "Flow Type", dataFlow.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
                 ChangeFlowType, _readonly);
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1380,7 +1380,7 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Entity Template");
             section.SuspendLayout();
             AddSingleLineLabel(section, "Entity Type", entityTemplate.EntityType.GetEnumLabel());
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1393,7 +1393,7 @@ namespace ThreatsManager.Utilities.WinForms
             section.SuspendLayout();
             AddCombo(section, "Flow Type", flowTemplate.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
                 ChangeFlowType, _readonly);
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1458,7 +1458,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Cleared = ClearDependencies
             };
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             model.ContributorAdded += ContributorAdded;
@@ -1500,7 +1500,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             threatEvent.ThreatEventMitigationAdded += ThreatEventMitigationAdded;
@@ -1543,7 +1543,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             vulnerability.VulnerabilityMitigationAdded += VulnerabilityMitigationAdded;
@@ -1578,7 +1578,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             threatType.ThreatTypeMitigationAdded += ThreatTypeMitigationAdded;
@@ -1611,7 +1611,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             weakness.WeaknessMitigationAdded += WeaknessMitigationAdded;
@@ -1633,7 +1633,7 @@ namespace ThreatsManager.Utilities.WinForms
                 scenario.Model?.ThreatActors?.Select(x => x.Name),
                 ChangeActor, _readonly);
             AddText(section, "Motivation", scenario.Motivation, ChangeMotivation, null, _readonly);
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1645,7 +1645,7 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Threat Actor");
             section.SuspendLayout();
             AddSingleLineLabel(section, "Actor Type", threatActor.ActorType.GetEnumLabel());
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1660,7 +1660,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Enum.GetValues(typeof(SecurityControlType)).OfType<SecurityControlType>().Select(x => x.GetEnumLabel()),
                 SecurityControlTypeChanged, _readonly);
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1680,7 +1680,7 @@ namespace ThreatsManager.Utilities.WinForms
                 _model.Strengths.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name).ToArray(),
                 ThreatTypeStrengthChanged, _readonly);
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1700,7 +1700,7 @@ namespace ThreatsManager.Utilities.WinForms
                 _model.Strengths.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name).ToArray(),
                 ThreatTypeStrengthChanged, _readonly);
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1731,7 +1731,7 @@ namespace ThreatsManager.Utilities.WinForms
                 MitigationStatusChanged, _readonly);
             AddText(section, "Directives", mitigation.Directives, ChangeDirectives, null, _readonly);
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             if (mitigation.ThreatEvent.Parent is INotifyPropertyChanged notifyPropertyChanged)
@@ -1769,7 +1769,7 @@ namespace ThreatsManager.Utilities.WinForms
                 MitigationStatusChanged, _readonly);
             AddText(section, "Directives", mitigation.Directives, ChangeDirectives, null, _readonly);
 
-            FinalizeSection(section);
+            //FinalizeSection(section);
             section.ResumeLayout();
 
             if (mitigation.Vulnerability.Parent is INotifyPropertyChanged notifyPropertyChanged)
@@ -2841,7 +2841,13 @@ namespace ThreatsManager.Utilities.WinForms
                             {
                                 // We must add the previous line height.
                                 height += previous + section.Margin.Vertical;
-                                previous = item.Height;
+
+                                if (percentage > 0)
+                                {
+                                    height += item.Height + section.Margin.Vertical; // Note: height is never a percentage.
+                                }
+
+                                previous = 0;
                             }
                             else
                             {
@@ -2863,9 +2869,11 @@ namespace ThreatsManager.Utilities.WinForms
 
                     if (section.RootGroup.Items.Count == 1)
                         height += 2 * section.Margin.Vertical;
+                    else
+                        height += 30;
                 }
 
-                panel.Height = height + section.RootGroup.CaptionHeight + section.Margin.Vertical + 30;
+                panel.Height = height + section.RootGroup.CaptionHeight + section.Margin.Vertical;
             }
         }
 

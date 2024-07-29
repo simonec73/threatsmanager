@@ -155,6 +155,7 @@
             this._wizard.HeaderCaptionFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this._wizard.HeaderDescriptionFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._wizard.HeaderDescriptionIndent = 16;
+            this._wizard.HeaderImage = global::ThreatsManager.Extensions.Properties.Resources.astrologer_big;
             this._wizard.HeaderImageSize = new System.Drawing.Size(64, 64);
             // 
             // 

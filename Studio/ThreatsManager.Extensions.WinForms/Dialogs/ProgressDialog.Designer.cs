@@ -1,4 +1,4 @@
-﻿namespace ThreatsManager.Extensions.Panels.Word
+﻿namespace ThreatsManager.Extensions.Dialogs
 {
     partial class ProgressDialog
     {
@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this._label = new System.Windows.Forms.Label();
             this._progress = new DevComponents.DotNetBar.Controls.ProgressBarX();
             this.SuspendLayout();
             // 
-            // label1
+            // _label
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 11);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(290, 20);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Export Word Report(s) is in progress...";
+            this._label.AutoSize = true;
+            this._label.Location = new System.Drawing.Point(24, 18);
+            this._label.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this._label.Name = "_label";
+            this._label.Size = new System.Drawing.Size(203, 25);
+            this._label.TabIndex = 0;
+            this._label.Text = "Action in progress...";
             // 
             // _progress
             // 
@@ -50,25 +50,25 @@
             // 
             // 
             this._progress.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this._progress.Location = new System.Drawing.Point(19, 45);
-            this._progress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._progress.Location = new System.Drawing.Point(30, 72);
+            this._progress.Margin = new System.Windows.Forms.Padding(6);
             this._progress.Name = "_progress";
-            this._progress.Size = new System.Drawing.Size(535, 29);
+            this._progress.Size = new System.Drawing.Size(856, 46);
             this._progress.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._progress.TabIndex = 1;
             this._progress.Text = "progressBarX1";
             // 
             // ProgressDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(569, 89);
+            this.ClientSize = new System.Drawing.Size(910, 142);
             this.ControlBox = false;
             this.Controls.Add(this._progress);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this._label);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProgressDialog";
@@ -83,7 +83,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label _label;
         private DevComponents.DotNetBar.Controls.ProgressBarX _progress;
     }
 }

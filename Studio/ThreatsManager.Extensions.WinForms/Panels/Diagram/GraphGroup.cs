@@ -92,7 +92,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
 
                     _warningMarker = new WarningMarker()
                     {
-                        Position = new PointF(10.0f, 10.0f),
+                        Position = new PointF(10.0f, 10.0f)
                     };
                     Add(_warningMarker);
 
@@ -318,6 +318,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             {
                 if (obj == Border) continue;
                 if (obj == Label) continue;
+                if (obj is WarningMarker) continue;
                 if (obj is GraphPaletteItemNode) continue;
                 if (first)
                 {
@@ -359,7 +360,6 @@ namespace ThreatsManager.Extensions.Panels.Diagram
         public void LayoutChildren()
         {
             GoObject border = Border;
-            GoObject label = Label;
 
             // compute the minimum rectangle needed to enclose the children except for the Border
             RectangleF rect = ComputeBorder();
@@ -374,14 +374,13 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                     var location = Location;
                     _shape.Position = new PointF(location.X, location.Y);
 
-                    if (label != null)
-                    {
-                        Label.SetSpotLocation(BottomLeft, new PointF(rect.X, rect.Y - 2));
-                    }
-
                     scope?.Complete();
                 }
             }
+
+            var bounds = _border.Bounds;
+            _label.SetSpotLocation(BottomLeft, new PointF(bounds.X, bounds.Y - 2f));
+            _warningMarker.SetSpotLocation(TopLeft, new PointF(bounds.X + 10f, bounds.Y + 10f));
         }
 
         public bool AllowDragInOut => true;

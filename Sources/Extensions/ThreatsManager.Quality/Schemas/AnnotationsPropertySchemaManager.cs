@@ -68,6 +68,8 @@ namespace ThreatsManager.Quality.Schemas
             return result;
         }
 
+        public bool AnnotationsEnabled => _model.GetSchema(Annotations, Resources.DefaultNamespace) != null;
+
         public bool AreAnnotationsEnabled([NotNull] IPropertiesContainer container)
         {
             bool result = false;

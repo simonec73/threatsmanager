@@ -290,7 +290,7 @@ namespace ThreatsManager.Utilities
                                 break;
                         }
 
-                        if (result != null)
+                        if (result != null && existingTemplate != null)
                         {
                             result.Description = existingTemplate.Description;
                             result.BigImage = existingTemplate.GetImage(ImageSize.Big);

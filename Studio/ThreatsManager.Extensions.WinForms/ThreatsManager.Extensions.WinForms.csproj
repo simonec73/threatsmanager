@@ -142,6 +142,7 @@
     <Compile Include="..\ThreatsManager\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Actions\ImportKnowledgeBases.cs" />
     <Compile Include="Actions\ManageComplementaryMitigations.cs" />
     <Compile Include="Actions\ManageAlternativeMitigations.cs" />
     <Compile Include="Actions\AddMissingFlows.cs" />
@@ -723,10 +724,10 @@
     <Compile Include="Panels\ThreatTypeList\ThreatTypeListPanel.Designer.cs">
       <DependentUpon>ThreatTypeListPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Panels\Word\ProgressDialog.cs">
+    <Compile Include="Dialogs\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Panels\Word\ProgressDialog.Designer.cs">
+    <Compile Include="Dialogs\ProgressDialog.Designer.cs">
       <DependentUpon>ProgressDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Panels\Word\WordReportingPanel.cs">
@@ -891,6 +892,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ImportTemplateDialog.resx">
       <DependentUpon>ImportTemplateDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ExportTemplateDialog.resx">
       <DependentUpon>ExportTemplateDialog.cs</DependentUpon>
@@ -1030,7 +1032,7 @@
     <EmbeddedResource Include="Panels\ThreatTypeList\ThreatTypeListPanel.resx">
       <DependentUpon>ThreatTypeListPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Panels\Word\ProgressDialog.resx">
+    <EmbeddedResource Include="Dialogs\ProgressDialog.resx">
       <DependentUpon>ProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Panels\Word\WordReportingPanel.resx">

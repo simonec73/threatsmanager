@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using Newtonsoft.Json.Linq;
+using System.Reflection.Emit;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -113,24 +114,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             get
             {
-                IEnumerable<IUrl> result = null;
-
-                var lines = _value?.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                if (lines != null)
-                {
-                    var list = new List<IUrl>();
-                    foreach (var line in lines)
-                    {
-                        var url = new UrlItem(line);
-                        if (url.IsValid)
-                            list.Add(url);
-                    }
-
-                    if (list.Any())
-                        result = list;
-                }
-
-                return result;
+                return _value?.SplitUrlDefinitions();
             }
         }
 
@@ -154,16 +138,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             if (ReadOnly)
                 throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
-            var values = Values?.ToList() ?? new List<IUrl>();
-            var urlItem = values.FirstOrDefault(x => string.CompareOrdinal(x.Label, label) == 0);
-            if (urlItem != null)
-                urlItem.Url = url;
-            else
-            {
-                values.Add(new UrlItem(label, url));
-            }
-
-            var stringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+            var stringValue = _value?.SetUrlDefinition(label, url);
             if (string.CompareOrdinal(stringValue, _value) != 0)
             {
                 _value = stringValue;
@@ -171,24 +146,12 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             }
         }
 
-        public void SetUrl([Required] string originalLabel, [Required] string newLabel, [Required] string url)
+        public void SetUrl([Required] string oldLabel, [Required] string newLabel, [Required] string url)
         {
             if (ReadOnly)
                 throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
-            var values = Values?.ToList() ?? new List<IUrl>();
-            var urlItem = values.FirstOrDefault(x => string.CompareOrdinal(x.Label, originalLabel) == 0);
-            if (urlItem != null)
-            {
-                urlItem.Label = newLabel;
-                urlItem.Url = url;
-            }
-            else
-            {
-                values.Add(new UrlItem(newLabel, url));
-            }
-
-            var stringValue = values.Select(x => x.ToString()).Aggregate((x, y) => $"{x}\r\n{y}");
+            var stringValue = _value?.SetUrlDefinition(oldLabel, newLabel, url);
             if (string.CompareOrdinal(stringValue, _value) != 0)
             {
                 _value = stringValue;
@@ -201,16 +164,11 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             if (ReadOnly)
                 throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
-            bool result = false;
-
-            var values = Values?.ToList();
-            var found = values?.Any(x => string.CompareOrdinal(x.Label, label) == 0) ?? false;
-            if (found)
+            string newValue = null;
+            var result = _value?.DeleteUrlDefinition(label, out newValue) ?? false;
+            if (result)
             {
-                _value = values
-                    .Select(x => string.CompareOrdinal(x.Label, label) != 0 ? null : x.ToString())
-                    .Aggregate((x, y) => $"{x}\r\n{y}");
-                result = true;
+                _value = newValue;
                 InvokeChanged();
             }
 
