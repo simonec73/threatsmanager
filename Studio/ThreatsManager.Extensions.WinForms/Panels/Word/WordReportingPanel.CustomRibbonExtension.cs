@@ -11,6 +11,7 @@ using ThreatsManager.Utilities.Aspects;
 using ThreatsManager.Icons;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
 using ThreatsManager.Extensions.Schemas;
+using ThreatsManager.Extensions.Dialogs;
 
 namespace ThreatsManager.Extensions.Panels.Word
 {
@@ -199,6 +200,7 @@ namespace ThreatsManager.Extensions.Panels.Word
         private void ShowProgress()
         {
             _progress = new ProgressDialog();
+            _progress.Label = "Export Word Report(s) is in progress...";
             _progress.Show(Form.ActiveForm);
         }
 

@@ -20,6 +20,7 @@ using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using MS.WindowsAPICodePack.Internal;
 
 namespace ThreatsManager
 {
@@ -812,6 +813,8 @@ namespace ThreatsManager
 
             if (panel is UserControl control)
             {
+                SuspendLayout();
+
                 result = new PanelContainerForm
                 {
                     Name = action.Id.ToString("N"), 
@@ -910,6 +913,8 @@ namespace ThreatsManager
                 result.Panel = panel;
                 DisplayChild(result);
                 control.Visible = true;
+
+                ResumeLayout();
             }
 
             return result;
@@ -1068,6 +1073,21 @@ namespace ThreatsManager
             };
             button.Click += OnWindowButtonClicked;
             _windows.SubItems.Add(button);
+
+            _panels.SelectedTabIndex = _panels.Tabs.Add(new TabItem()
+            {
+                Text = form.Text?.Replace("\n", " "),
+                Tag = form
+            });
+            if (!_panels.Visible)
+            {
+                _panels.Visible = true;
+                _statusBar.SendToBack();
+            }
+            else
+            {
+                _panels.Refresh();
+            }
         }
 
         private void OnWindowButtonClicked(object sender, EventArgs e)
@@ -1111,6 +1131,13 @@ namespace ThreatsManager
                 }
             }
 
+            var tabItem = _panels.Tabs.OfType<TabItem>()
+                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
+            if (tabItem != null)
+            {
+                _panels.Tabs.Remove(tabItem);
+            }
+
             GcCollect();
         }
 
@@ -1122,6 +1149,13 @@ namespace ThreatsManager
             {
                 button.Text = form.Text;
             }
+
+            var tabItem = _panels.Tabs.OfType<TabItem>()
+                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
+            if (tabItem != null)
+            {
+                tabItem.Text = form.Text?.Replace("\n", " ");
+            }
         }
 
         [Background]
@@ -1130,6 +1164,16 @@ namespace ThreatsManager
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
+        }
+
+        private void OnPanelContainerFormActivated(PanelContainerForm form)
+        {
+            var tabItem = _panels.Tabs.OfType<TabItem>()
+                .FirstOrDefault(x => x.Tag is PanelContainerForm pcForm && pcForm == form);
+            if (tabItem != null)
+            {
+                _panels.SelectedTab = tabItem;
+            }
         }
         #endregion
 

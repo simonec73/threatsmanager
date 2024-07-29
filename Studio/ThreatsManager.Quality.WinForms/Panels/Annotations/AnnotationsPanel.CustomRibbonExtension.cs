@@ -63,33 +63,33 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         new ActionDefinition(Id, "RemoveAllNotes", "Remove All Notes",
                             Properties.Resources.note_text_big_sponge,
                             Properties.Resources.note_text_sponge_small,
-                            true, Shortcut.None),
+                            false, Shortcut.None),
                         new ActionDefinition(Id, "RemoveAllTopics", "Remove All Topics to be Clarified",
                             Properties.Resources.speech_balloon_question_big_sponge,
                             Properties.Resources.speech_balloon_question_sponge_small,
-                            true, Shortcut.None),
+                            false, Shortcut.None),
                         new ActionDefinition(Id, "RemoveAllHighlights", "Remove All Highlights",
                             Properties.Resources.marker_big_sponge,
                             Properties.Resources.marker_sponge_small,
-                            true, Shortcut.None),
+                            false, Shortcut.None),
                     }),
                     new CommandsBarDefinition("Set", "Set", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "SetOpenTopics", "Set Open Topics",
                             Properties.Resources.note_text_big_clock,
                             Properties.Resources.note_text_clock,
-                            true, Shortcut.None),
+                            false, Shortcut.None),
                     }),
                     new CommandsBarDefinition("Filter", "Filter", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "ShowOpenTopics", "Open Topics Only",
                             Properties.Resources.speech_balloon_question_big,
                             Properties.Resources.speech_balloon_question,
-                            true, Shortcut.None),
+                            false, Shortcut.None),
                         new ActionDefinition(Id, "ShowHighlights", "Highlights Only",
                             Properties.Resources.marker_big,
                             Properties.Resources.marker,
-                            true, Shortcut.None),
+                            false, Shortcut.None),
                         new ActionDefinition(Id, "ShowAll", "Show All",
                             Properties.Resources.question_and_answer_big,
                             Properties.Resources.question_and_answer,
@@ -99,16 +99,19 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     {
                         new ActionDefinition(Id, "ExportOpen", "Export Open Topics",
                             Properties.Resources.xlsx_big,
-                            Properties.Resources.xlsx),
+                            Properties.Resources.xlsx,
+                            false, Shortcut.None),
                         new ActionDefinition(Id, "ExportAll", "Export All Annotations",
                             Properties.Resources.xlsx_big,
-                            Properties.Resources.xlsx),
+                            Properties.Resources.xlsx,
+                            false, Shortcut.None),
                     }),
                     new CommandsBarDefinition("Import", "Import", new IActionDefinition[]
                     {
                         new ActionDefinition(Id, "Import", "Import Annotations",
                             Properties.Resources.xlsx_big,
-                            Properties.Resources.xlsx),
+                            Properties.Resources.xlsx,
+                            false, Shortcut.None),
                     }),
                     new CommandsBarDefinition("Refresh", "Refresh", new IActionDefinition[]
                     {
@@ -126,8 +129,6 @@ namespace ThreatsManager.Quality.Panels.Annotations
         [InitializationRequired]
         public void ExecuteCustomAction([NotNull] IActionDefinition action)
         {
-            var schemaManager = new AnnotationsPropertySchemaManager(_model);
-
             _right.SuspendLayout();
 
             switch (action.Name)
@@ -136,7 +137,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     if (_selected != null)
                     {
                         var notes = new Annotation();
-                        schemaManager.AddAnnotation(_selected, notes);
+                        _schemaManager.AddAnnotation(_selected, notes);
                         AddButton(notes);
                     }
                     break;
@@ -144,7 +145,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     if (_selected != null)
                     {
                         var topic = new TopicToBeClarified();
-                        schemaManager.AddAnnotation(_selected, topic);
+                        _schemaManager.AddAnnotation(_selected, topic);
                         AddButton(topic);
                     }
                     break;
@@ -152,7 +153,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                     if (_selected != null)
                     {
                         var high = new Highlight();
-                        schemaManager.AddAnnotation(_selected, high);
+                        _schemaManager.AddAnnotation(_selected, high);
                         AddButton(high);
                     }
                     break;
@@ -162,7 +163,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                             "Remove Notes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
-                        schemaManager.RemoveAnnotation(_selected, annotation);
+                        _schemaManager.RemoveAnnotation(_selected, annotation);
                         _annotation.Annotation = null;
                         RemoveButton(annotation);
                     }
@@ -173,7 +174,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                         "Remove Topic", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
-                        schemaManager.RemoveAnnotation(_selected, toBeClarified);
+                        _schemaManager.RemoveAnnotation(_selected, toBeClarified);
                         _annotation.Annotation = null;
                         RemoveButton(toBeClarified);
                     }
@@ -184,7 +185,7 @@ namespace ThreatsManager.Quality.Panels.Annotations
                             "Remove Highlight", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button2) == DialogResult.OK)
                     {
-                        schemaManager.RemoveAnnotation(_selected, highlight);
+                        _schemaManager.RemoveAnnotation(_selected, highlight);
                         _annotation.Annotation = null;
                         RemoveButton(highlight);
                     }

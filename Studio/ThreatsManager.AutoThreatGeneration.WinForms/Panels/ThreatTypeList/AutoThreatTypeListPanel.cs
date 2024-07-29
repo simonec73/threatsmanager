@@ -199,6 +199,7 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                 threatType.HasTop(),
                 rule ? "Edit Rule" : "Create Rule");
             ((INotifyPropertyChanged) threatType).PropertyChanged += OnThreatTypePropertyChanged;
+            threatType.PropertyAdded += OnThreatTypePropertyCreated;
             threatType.PropertyValueChanged += OnThreatTypePropertyValueChanged;
             row.Tag = threatType;
             UpdateMitigationLevel(threatType, row);
@@ -273,6 +274,8 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                     }
 
                     UpdateMitigationLevel(threatType, row);
+                    _properties.Item = null;
+                    _properties.Item = threatType;
                 }
             }
         }
@@ -296,7 +299,20 @@ namespace ThreatsManager.AutoThreatGeneration.Panels.ThreatTypeList
                         row.Rows.Remove(panel);
 
                     UpdateMitigationLevel(threatType, row);
+                    _properties.Item = null;
+                    _properties.Item = threatType;
                 }
+            }
+        }
+
+        private void OnThreatTypePropertyCreated(IPropertiesContainer container, IProperty property)
+        {
+            if (container is IThreatType threatType && property is IPropertyJsonSerializableObject jsonProperty &&
+                jsonProperty.Value is SelectionRule selectionRule)
+            {
+                var row = GetRow(threatType);
+                if (row != null)
+                    row.Cells["AutoGenRule"].Value = selectionRule.Root != null ? "Edit Rule" : "Create Rule";
             }
         }
 

@@ -90,6 +90,7 @@
             this._autosaveTimer = new System.Windows.Forms.Timer(this.components);
             this._styleManager = new DevComponents.DotNetBar.StyleManager(this.components);
             this._selectFolder = new System.Windows.Forms.FolderBrowserDialog();
+            this._panels = new DevComponents.DotNetBar.TabStrip();
             this._ribbon.SuspendLayout();
             this._ribbonPanelView.SuspendLayout();
             this.SuspendLayout();
@@ -136,12 +137,12 @@
             this._controlExit});
             this._ribbon.KeyTipsFont = new System.Drawing.Font("Tahoma", 7F);
             this._ribbon.Location = new System.Drawing.Point(5, 1);
-            this._ribbon.Margin = new System.Windows.Forms.Padding(2);
+            this._ribbon.Margin = new System.Windows.Forms.Padding(4);
             this._ribbon.MdiSystemItemVisible = false;
             this._ribbon.Name = "_ribbon";
             this._ribbon.QuickToolbarItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.qatCustomizeItem1});
-            this._ribbon.Size = new System.Drawing.Size(1048, 140);
+            this._ribbon.Size = new System.Drawing.Size(2054, 269);
             this._ribbon.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbon.SystemText.MaximizeRibbonText = "&Maximize the Ribbon";
             this._ribbon.SystemText.MinimizeRibbonText = "Mi&nimize the Ribbon";
@@ -166,10 +167,11 @@
             // 
             this._ribbonPanelHome.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelHome.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelHome.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelHome.Location = new System.Drawing.Point(0, 57);
+            this._ribbonPanelHome.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelHome.Name = "_ribbonPanelHome";
-            this._ribbonPanelHome.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelHome.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelHome.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelHome.Size = new System.Drawing.Size(2054, 212);
             // 
             // 
             // 
@@ -188,10 +190,11 @@
             // 
             this._ribbonPanelHelp.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelHelp.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelHelp.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelHelp.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelHelp.Name = "_ribbonPanelHelp";
-            this._ribbonPanelHelp.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelHelp.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelHelp.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelHelp.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -211,10 +214,11 @@
             // 
             this._ribbonPanelConfigure.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelConfigure.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelConfigure.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelConfigure.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelConfigure.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelConfigure.Name = "_ribbonPanelConfigure";
-            this._ribbonPanelConfigure.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelConfigure.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelConfigure.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelConfigure.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -234,10 +238,11 @@
             // 
             this._ribbonPanelReview.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelReview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelReview.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelReview.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelReview.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelReview.Name = "_ribbonPanelReview";
-            this._ribbonPanelReview.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelReview.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelReview.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelReview.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -257,10 +262,11 @@
             // 
             this._ribbonPanelIntegrate.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelIntegrate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelIntegrate.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelIntegrate.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelIntegrate.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelIntegrate.Name = "_ribbonPanelIntegrate";
-            this._ribbonPanelIntegrate.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelIntegrate.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelIntegrate.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelIntegrate.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -280,10 +286,11 @@
             // 
             this._ribbonPanelExport.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelExport.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelExport.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelExport.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelExport.Name = "_ribbonPanelExport";
-            this._ribbonPanelExport.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelExport.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelExport.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelExport.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -303,10 +310,11 @@
             // 
             this._ribbonPanelImport.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelImport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelImport.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelImport.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelImport.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelImport.Name = "_ribbonPanelImport";
-            this._ribbonPanelImport.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelImport.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelImport.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelImport.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -327,11 +335,11 @@
             this._ribbonPanelView.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelView.Controls.Add(this._viewWindow);
             this._ribbonPanelView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelView.Location = new System.Drawing.Point(0, 43);
-            this._ribbonPanelView.Margin = new System.Windows.Forms.Padding(2);
+            this._ribbonPanelView.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelView.Margin = new System.Windows.Forms.Padding(4);
             this._ribbonPanelView.Name = "_ribbonPanelView";
-            this._ribbonPanelView.Padding = new System.Windows.Forms.Padding(2, 0, 2, 2);
-            this._ribbonPanelView.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelView.Padding = new System.Windows.Forms.Padding(4, 0, 4, 2);
+            this._ribbonPanelView.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -366,10 +374,11 @@
             this._closeWindows,
             this._closeWindow});
             this._viewWindow.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._viewWindow.Location = new System.Drawing.Point(2, 0);
+            this._viewWindow.Location = new System.Drawing.Point(4, 0);
+            this._viewWindow.Margin = new System.Windows.Forms.Padding(6);
             this._viewWindow.Name = "_viewWindow";
             this._viewWindow.OverflowButtonImage = global::ThreatsManager.Properties.Resources.cabinet;
-            this._viewWindow.Size = new System.Drawing.Size(162, 95);
+            this._viewWindow.Size = new System.Drawing.Size(324, 185);
             this._viewWindow.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._viewWindow.TabIndex = 0;
             this._viewWindow.Text = "Windows";
@@ -422,10 +431,11 @@
             // 
             this._ribbonPanelAnalyze.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelAnalyze.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelAnalyze.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelAnalyze.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelAnalyze.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelAnalyze.Name = "_ribbonPanelAnalyze";
-            this._ribbonPanelAnalyze.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelAnalyze.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelAnalyze.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelAnalyze.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -445,10 +455,11 @@
             // 
             this._ribbonPanelKnowledgeBase.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this._ribbonPanelKnowledgeBase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._ribbonPanelKnowledgeBase.Location = new System.Drawing.Point(0, 43);
+            this._ribbonPanelKnowledgeBase.Location = new System.Drawing.Point(0, 83);
+            this._ribbonPanelKnowledgeBase.Margin = new System.Windows.Forms.Padding(6);
             this._ribbonPanelKnowledgeBase.Name = "_ribbonPanelKnowledgeBase";
-            this._ribbonPanelKnowledgeBase.Padding = new System.Windows.Forms.Padding(3, 0, 3, 2);
-            this._ribbonPanelKnowledgeBase.Size = new System.Drawing.Size(1048, 97);
+            this._ribbonPanelKnowledgeBase.Padding = new System.Windows.Forms.Padding(6, 0, 6, 2);
+            this._ribbonPanelKnowledgeBase.Size = new System.Drawing.Size(2096, 187);
             // 
             // 
             // 
@@ -898,11 +909,11 @@
             this._addStatusInfoProvider,
             this._lockRequest});
             this._statusBar.LicenseKey = "PUT_YOUR_LICENSE_HERE";
-            this._statusBar.Location = new System.Drawing.Point(5, 441);
-            this._statusBar.Margin = new System.Windows.Forms.Padding(6);
+            this._statusBar.Location = new System.Drawing.Point(5, 714);
+            this._statusBar.Margin = new System.Windows.Forms.Padding(12);
             this._statusBar.Name = "_statusBar";
-            this._statusBar.Size = new System.Drawing.Size(1048, 22);
-            this._statusBar.TabIndex = 1;
+            this._statusBar.Size = new System.Drawing.Size(2054, 42);
+            this._statusBar.TabIndex = 5;
             this._statusBar.Text = "metroStatusBar1";
             // 
             // _addStatusInfoProvider
@@ -943,16 +954,55 @@
             // 
             this._selectFolder.Description = "Select the folder where to create the copy of the Threat Model";
             // 
+            // _panels
+            // 
+            this._panels.AutoSelectAttachedControl = true;
+            this._panels.CanReorderTabs = true;
+            this._panels.CloseButtonOnTabsVisible = true;
+            this._panels.CloseButtonPosition = DevComponents.DotNetBar.eTabCloseButtonPosition.Right;
+            this._panels.CloseButtonVisible = false;
+            this._panels.ColorScheme.TabItemBackgroundColorBlend.AddRange(new DevComponents.DotNetBar.BackgroundColorBlend[] {
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0.45F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0.45F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 1F)});
+            this._panels.ColorScheme.TabItemHotBackgroundColorBlend.AddRange(new DevComponents.DotNetBar.BackgroundColorBlend[] {
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(144)))), ((int)(((byte)(229))))), 0F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0.45F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0.45F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 1F)});
+            this._panels.ColorScheme.TabItemSelectedBackground = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199)))));
+            this._panels.ColorScheme.TabItemSelectedBackgroundColorBlend.AddRange(new DevComponents.DotNetBar.BackgroundColorBlend[] {
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(115)))), ((int)(((byte)(199))))), 0F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0.45F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 0.45F),
+            new DevComponents.DotNetBar.BackgroundColorBlend(System.Drawing.Color.Empty, 1F)});
+            this._panels.ColorScheme.TabItemSelectedBorder = System.Drawing.Color.Black;
+            this._panels.ColorScheme.TabItemSelectedText = System.Drawing.Color.White;
+            this._panels.ColorScheme.TabPanelBorder = System.Drawing.Color.White;
+            this._panels.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this._panels.ForeColor = System.Drawing.Color.Black;
+            this._panels.Location = new System.Drawing.Point(5, 674);
+            this._panels.Name = "_panels";
+            this._panels.SelectedTab = null;
+            this._panels.Size = new System.Drawing.Size(2054, 40);
+            this._panels.Style = DevComponents.DotNetBar.eTabStripStyle.Metro;
+            this._panels.TabAlignment = DevComponents.DotNetBar.eTabStripAlignment.Top;
+            this._panels.TabIndex = 3;
+            this._panels.TabItemClose += new DevComponents.DotNetBar.TabStrip.UserActionEventHandler(this._panels_TabItemClose);
+            this._panels.TabMouseClick += new System.Windows.Forms.MouseEventHandler(this._panels_TabMouseClick);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1058, 465);
+            this.ClientSize = new System.Drawing.Size(2064, 758);
+            this.Controls.Add(this._panels);
             this.Controls.Add(this._statusBar);
             this.Controls.Add(this._ribbon);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Text = "Threats Manager Platform";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -1030,5 +1080,6 @@
         private DevComponents.DotNetBar.LabelItem _lockRequest;
         private DevComponents.DotNetBar.ButtonItem _undo;
         private DevComponents.DotNetBar.ButtonItem _redo;
+        private DevComponents.DotNetBar.TabStrip _panels;
     }
 }

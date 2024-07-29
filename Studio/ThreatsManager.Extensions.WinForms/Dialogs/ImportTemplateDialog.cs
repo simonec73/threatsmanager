@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using PostSharp.Patterns.Contracts;
+using ThreatsManager.Engine;
 using ThreatsManager.Extensions.Properties;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Interfaces.Extensions;
@@ -33,6 +34,8 @@ namespace ThreatsManager.Extensions.Dialogs
         public ImportTemplateDialog()
         {
             InitializeComponent();
+            _wizard.HeaderImage = Resources.astrologer_big;
+            _wizard.HeaderImageSize = new System.Drawing.Size(64, 64);
         }
 
         public ImportTemplateDialog([NotNull] IThreatModel model) : this()
@@ -151,12 +154,20 @@ namespace ThreatsManager.Extensions.Dialogs
 
         private void _browse_Click(object sender, EventArgs e)
         {
-            if (_openFile.ShowDialog(ActiveForm) == DialogResult.OK)
+            var kbManagers = ExtensionUtils.GetExtensions<IKnowledgeBaseManager>()?
+                .Where(x => x.SupportedLocations.HasFlag(LocationType.FileSystem)).ToArray();
+
+            if (kbManagers?.Any() ?? false)
             {
-                _fileName.Text = _openFile.FileName;
-                Application.DoEvents();
-                LoadTemplate(_openFile.FileName);
-                _pageFile.NextButtonEnabled = eWizardButtonState.Auto;
+                _openFile.Filter = kbManagers.GetFilter();
+
+                if (_openFile.ShowDialog(this) == DialogResult.OK)
+                {
+                    _fileName.Text = _openFile.FileName;
+                    Application.DoEvents();
+                    LoadTemplate(_openFile.FileName);
+                    _pageFile.NextButtonEnabled = eWizardButtonState.Auto;
+                }
             }
         }
 
