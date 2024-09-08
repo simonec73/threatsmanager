@@ -54,17 +54,23 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             {
                 try
                 {
-                    if (parameterValues?.Any() ?? false)
-                        ParameterManager.Initialize(_settings.Parameters, parameterValues);
+                    using (var scope = UndoRedoManager.OpenScope("Import Excel File"))
+                    {
+                        if (parameterValues?.Any() ?? false)
+                            ParameterManager.Initialize(_settings.Parameters, parameterValues);
 
-                    result = ImportExcelFile(fileName);
+                        result = ImportExcelFile(fileName);
 
-                    if (result)
-                        UpdateDescription();
+                        if (result)
+                            UpdateDescription();
+
+                        scope?.Complete();
+                    }
                 }
                 finally
                 {
-                    ParameterManager.Release();
+                    if (parameterValues?.Any() ?? false)
+                        ParameterManager.Release();
                 }
             }
             else
@@ -83,21 +89,28 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             {
                 try
                 {
-                    ParameterManager.Initialize(_settings.Parameters, parameterValues);
-
-                    _itemDetails = ImportItemMapping()?.Items;
-                    var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(x.Name, itemName) == 0);
-                    if (itemDetails != null)
+                    using (var scope = UndoRedoManager.OpenScope("Import item"))
                     {
-                        var entityTemplates = _model.EntityTemplates?.ToArray();
-                        var flowTemplates = _model.FlowTemplates?.ToArray();
-                        var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
-                        result = CreateItemTemplate(itemName, entityTemplates, flowTemplates, trustBoundaryTemplates) != null;
+                        if (parameterValues?.Any() ?? false)
+                            ParameterManager.Initialize(_settings.Parameters, parameterValues);
+
+                        _itemDetails = ImportItemMapping()?.Items;
+                        var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(x.Name, itemName) == 0);
+                        if (itemDetails != null)
+                        {
+                            var entityTemplates = _model.EntityTemplates?.ToArray();
+                            var flowTemplates = _model.FlowTemplates?.ToArray();
+                            var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
+                            result = CreateItemTemplate(itemName, entityTemplates, flowTemplates, trustBoundaryTemplates) != null;
+
+                            scope?.Complete();
+                        }
                     }
                 }
                 finally
                 {
-                    ParameterManager.Release();
+                    if (parameterValues?.Any() ?? false)
+                        ParameterManager.Release();
                 }
             }
 
@@ -112,10 +125,15 @@ namespace ThreatsManager.ImportersExporters.Importers.Excel
             var itemDetails = _itemDetails?.FirstOrDefault(x => string.CompareOrdinal(x.Name, itemName) == 0);
             if (itemDetails != null)
             {
-                var entityTemplates = _model.EntityTemplates?.ToArray();
-                var flowTemplates = _model.FlowTemplates?.ToArray();
-                var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
-                result = CreateItemTemplate(itemName, entityTemplates, flowTemplates, trustBoundaryTemplates) != null;
+                using (var scope = UndoRedoManager.OpenScope("Import item"))
+                {
+                    var entityTemplates = _model.EntityTemplates?.ToArray();
+                    var flowTemplates = _model.FlowTemplates?.ToArray();
+                    var trustBoundaryTemplates = _model.TrustBoundaryTemplates?.ToArray();
+                    result = CreateItemTemplate(itemName, entityTemplates, flowTemplates, trustBoundaryTemplates) != null;
+
+                    scope?.Complete();
+                }
             }
 
             return result;
