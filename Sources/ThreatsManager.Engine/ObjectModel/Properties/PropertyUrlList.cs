@@ -138,7 +138,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             if (ReadOnly)
                 throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
-            var stringValue = _value?.SetUrlDefinition(label, url);
+            var stringValue = _value.SetUrlDefinition(label, url);
             if (string.CompareOrdinal(stringValue, _value) != 0)
             {
                 _value = stringValue;
@@ -151,7 +151,7 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
             if (ReadOnly)
                 throw new ReadOnlyPropertyException(PropertyType?.Name ?? ThreatModelManager.Unknown);
 
-            var stringValue = _value?.SetUrlDefinition(oldLabel, newLabel, url);
+            var stringValue = _value.SetUrlDefinition(oldLabel, newLabel, url);
             if (string.CompareOrdinal(stringValue, _value) != 0)
             {
                 _value = stringValue;
