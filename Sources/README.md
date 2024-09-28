@@ -6,15 +6,14 @@ Those libraries are often referred as the "Core libraries" or simply as "Core", 
 Folder Extensions contains also the code for logic implemented for some Extensions. The logic stored here is designed to be adopted for building solutions on multiple platforms, and represents the main logic implemented for the various Extensions built as part of the Windows Desktop experience of the Threats Manager Platform, which will be published soon.
 The said Windows Desktop experience is available as Open Source, with the same license of all the rest of the sources (MIT). You may not be able to build Threats Manager Studio and its accompanying Extensions, though, because they are based on various commercial components which cannot be delivered as part of this distribution. In any case, you can freely download them from their [main web site](https://threatsmanager.com). Threats Manager Studio and its optional Extension Libraries can be used on all contexts and for all purposes for free, under a very permissive license. 
 
-**Now it supports both .NET 4.7.2 and .NET Core 3.1!**
+**Now it supports .NET 4.8.1**
 
 ## How to Build
 
-The code has been thought to be opened with Visual Studio 2019. The Community Edition would be enough.
+The code has been thought to be opened with Visual Studio 2022. The Community Edition would be enough.
 You need also to install the following prerequisites:
 
-- .Net Core SDK 3.1.404 or later from <https://dotnet.microsoft.com/download/dotnet-core/3.1>.
-- PostSharp Tools for Visual Studio **v6.9.11** (<https://www.postsharp.net/downloads/postsharp-6.9/v6.9.11>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
+- PostSharp Tools for Visual Studio **v2024.1.4** (<https://www.postsharp.net/downloads/postsharp/postsharp-2024.1/v2024.1.4>) with any License. The Community License can be obtained from <https://www.postsharp.net/download>.
 
 ### PostSharp
 
