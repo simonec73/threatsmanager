@@ -40,7 +40,7 @@ namespace ThreatsManager.Extensions.Actions
             if (shape is IEntityShape entityShape && shape is IThreatModelChild child)
             {
                 var diagram = child.Model?.Diagrams?
-                    .FirstOrDefault(x => x.Entities.Contains(entityShape));
+                    .FirstOrDefault(x => x.Entities?.Contains(entityShape) ?? false);
                 if (diagram != null)
                 {
                     using (var scope = UndoRedoManager.OpenScope("Add missing Flows"))

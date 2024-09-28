@@ -42,14 +42,17 @@ namespace ThreatsManager.Extensions.Panels.Diagram
                 {
                     _iconSize = configuration.DiagramMarkerSize;
                     var extensionId = configuration.MarkerExtension;
-                    var factory = ExtensionUtils.GetExtension<IMarkerProviderFactory>(extensionId);
-                    _markerProvider = factory?.Create(referenceObj);
-
-                    if (_markerProvider != null)
+                    if (!string.IsNullOrWhiteSpace(extensionId))
                     {
-                        _markerProvider.StatusUpdated += MarkerStatusUpdated;
-                        Image = _markerProvider.GetIcon(_iconSize);
-                        Visible = _markerProvider.Visible;
+                        var factory = ExtensionUtils.GetExtension<IMarkerProviderFactory>(extensionId);
+                        _markerProvider = factory?.Create(referenceObj);
+
+                        if (_markerProvider != null)
+                        {
+                            _markerProvider.StatusUpdated += MarkerStatusUpdated;
+                            Image = _markerProvider.GetIcon(_iconSize);
+                            Visible = _markerProvider.Visible;
+                        }
                     }
                 }
             }

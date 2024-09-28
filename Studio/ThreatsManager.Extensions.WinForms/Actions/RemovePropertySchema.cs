@@ -119,6 +119,7 @@ namespace ThreatsManager.Extensions.Actions
 
                                 scope?.Complete();
                                 result = true;
+                                EventsDispatcher.RaiseEvent("ItemChanged", container);
                             }
                         }
                     }

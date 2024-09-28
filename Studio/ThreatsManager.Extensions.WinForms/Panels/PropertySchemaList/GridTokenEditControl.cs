@@ -131,7 +131,7 @@ namespace ThreatsManager.Extensions.Panels.PropertySchemaList
                     _valueChanged = value;
 
                     if (value)
-                        EditorCell.SetEditorDirty(this);
+                        EditorCell?.SetEditorDirty(this);
                 }
             }
         }

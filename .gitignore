@@ -361,3 +361,4 @@ FodyWeavers.xsd
 
 # Threats Manager specific folders
 /KnowledgeBases/Build/
+!Nuget/*.nupkg

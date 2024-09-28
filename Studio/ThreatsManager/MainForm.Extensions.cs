@@ -330,19 +330,26 @@ namespace ThreatsManager
         [Background]
         private void UpdateFormsList()
         {
-            foreach (var keyvalue in _mainRibbonExtensions)
+            try
             {
-                var buttons = GetButtons(keyvalue.Value);
-                foreach (var button in buttons)
+                foreach (var keyvalue in _mainRibbonExtensions)
                 {
-                    if (button.Tag is IActionDefinition action &&
-                        string.CompareOrdinal(keyvalue.Value.PanelsListRibbonAction, action.Name) == 0)
+                    var buttons = GetButtons(keyvalue.Value);
+                    foreach (var button in buttons)
                     {
-                        AppendFormsList(keyvalue.Value, button);
-                        if (button.SubItems.Count > 0)
-                            button.Enabled = true;
+                        if (button.Tag is IActionDefinition action &&
+                            string.CompareOrdinal(keyvalue.Value.PanelsListRibbonAction, action.Name) == 0)
+                        {
+                            AppendFormsList(keyvalue.Value, button);
+                            if (button.SubItems.Count > 0)
+                                button.Enabled = true;
+                        }
                     }
                 }
+            }
+            catch
+            {
+                // Ignore eventual errors. They might be due to synchronization issues.
             }
 
             RibbonRefresh();
