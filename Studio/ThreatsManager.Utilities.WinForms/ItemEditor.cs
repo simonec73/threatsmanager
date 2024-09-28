@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
@@ -1244,7 +1243,7 @@ namespace ThreatsManager.Utilities.WinForms
 
                     if (section != null)
                     {
-                        //FinalizeSection(section);
+                        FinalizeSection(section);
 
                         section.ResumeLayout();
                     }
@@ -1354,7 +1353,7 @@ namespace ThreatsManager.Utilities.WinForms
             }
             AddCombo(section, "Flow Type", dataFlow.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
                 ChangeFlowType, _readonly);
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1380,7 +1379,7 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Entity Template");
             section.SuspendLayout();
             AddSingleLineLabel(section, "Entity Type", entityTemplate.EntityType.GetEnumLabel());
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1393,7 +1392,7 @@ namespace ThreatsManager.Utilities.WinForms
             section.SuspendLayout();
             AddCombo(section, "Flow Type", flowTemplate.FlowType.GetEnumLabel(), EnumExtensions.GetEnumLabels<FlowType>(),
                 ChangeFlowType, _readonly);
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1458,7 +1457,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Cleared = ClearDependencies
             };
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             model.ContributorAdded += ContributorAdded;
@@ -1500,7 +1499,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             threatEvent.ThreatEventMitigationAdded += ThreatEventMitigationAdded;
@@ -1543,7 +1542,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             vulnerability.VulnerabilityMitigationAdded += VulnerabilityMitigationAdded;
@@ -1564,7 +1563,8 @@ namespace ThreatsManager.Utilities.WinForms
                 ChangeSeverity, _readonly);
             var listBox = AddListBox(section, "Standard Mitigations", null,
                 threatType.Mitigations?.OrderBy(x => x.Mitigation?.Name), AddThreatTypeStandardMitigationEventHandler, _readonly);
-            listBox.DoubleClick += OpenSubItem;
+            if (listBox != null)
+                listBox.DoubleClick += OpenSubItem;
 
             AddListView(section, "Threat Events\napplied to", null,
                 threatType.Model?.GetThreatEvents(threatType)?.OrderBy(x => x.Parent.Name));
@@ -1574,11 +1574,13 @@ namespace ThreatsManager.Utilities.WinForms
                 _threatTypeMitigationMenuDefinition = new MenuDefinition(_actions, Scope.ThreatTypeMitigation);
                 _threatTypeMitigationMenuDefinition.MenuClicked += OnThreatTypeMitigationMenuClicked;
                 var menu = _threatTypeMitigationMenuDefinition.CreateMenu();
-                menu.Opening += OnThreatTypeMitigationMenuOpening;
-                listBox.ContextMenuStrip = menu;
+                if (menu != null)
+                    menu.Opening += OnThreatTypeMitigationMenuOpening;
+                if (listBox != null)
+                    listBox.ContextMenuStrip = menu;
             }
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             threatType.ThreatTypeMitigationAdded += ThreatTypeMitigationAdded;
@@ -1611,7 +1613,7 @@ namespace ThreatsManager.Utilities.WinForms
                 listBox.ContextMenuStrip = menu;
             }
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             weakness.WeaknessMitigationAdded += WeaknessMitigationAdded;
@@ -1633,7 +1635,7 @@ namespace ThreatsManager.Utilities.WinForms
                 scenario.Model?.ThreatActors?.Select(x => x.Name),
                 ChangeActor, _readonly);
             AddText(section, "Motivation", scenario.Motivation, ChangeMotivation, null, _readonly);
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1645,7 +1647,7 @@ namespace ThreatsManager.Utilities.WinForms
             var section = AddSection("Threat Actor");
             section.SuspendLayout();
             AddSingleLineLabel(section, "Actor Type", threatActor.ActorType.GetEnumLabel());
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1660,7 +1662,7 @@ namespace ThreatsManager.Utilities.WinForms
                 Enum.GetValues(typeof(SecurityControlType)).OfType<SecurityControlType>().Select(x => x.GetEnumLabel()),
                 SecurityControlTypeChanged, _readonly);
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1680,7 +1682,7 @@ namespace ThreatsManager.Utilities.WinForms
                 _model.Strengths.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name).ToArray(),
                 ThreatTypeStrengthChanged, _readonly);
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1700,7 +1702,7 @@ namespace ThreatsManager.Utilities.WinForms
                 _model.Strengths.Where(x => x.Visible).OrderByDescending(x => x.Id).Select(x => x.Name).ToArray(),
                 ThreatTypeStrengthChanged, _readonly);
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
         }
 
@@ -1731,7 +1733,7 @@ namespace ThreatsManager.Utilities.WinForms
                 MitigationStatusChanged, _readonly);
             AddText(section, "Directives", mitigation.Directives, ChangeDirectives, null, _readonly);
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             if (mitigation.ThreatEvent.Parent is INotifyPropertyChanged notifyPropertyChanged)
@@ -1769,7 +1771,7 @@ namespace ThreatsManager.Utilities.WinForms
                 MitigationStatusChanged, _readonly);
             AddText(section, "Directives", mitigation.Directives, ChangeDirectives, null, _readonly);
 
-            //FinalizeSection(section);
+            FinalizeSection(section);
             section.ResumeLayout();
 
             if (mitigation.Vulnerability.Parent is INotifyPropertyChanged notifyPropertyChanged)
@@ -2868,12 +2870,14 @@ namespace ThreatsManager.Utilities.WinForms
                         height += previous + section.Margin.Vertical;
 
                     if (section.RootGroup.Items.Count == 1)
-                        height += 2 * section.Margin.Vertical;
+                        height += 3 * section.Margin.Vertical;
                     else
                         height += 30;
                 }
 
-                panel.Height = height + section.RootGroup.CaptionHeight + section.Margin.Vertical;
+                var newHeight = height + section.RootGroup.CaptionHeight + section.Margin.Vertical;
+                if (newHeight != panel.Height)
+                    panel.Height = newHeight;
             }
         }
 

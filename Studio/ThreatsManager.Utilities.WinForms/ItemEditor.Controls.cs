@@ -630,7 +630,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = $"<a href=\"SingleLineText\">{name?.Replace("&", "&&")}</a>",
                 Control = control,
-                Height = 20,
+                Height = 24,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,
@@ -975,7 +975,8 @@ namespace ThreatsManager.Utilities.WinForms
             var control = new TokenEditor()
             {
                 Tag = property,
-                ReadOnly = readOnly
+                ReadOnly = readOnly,
+                AutoSizeHeight = false
             };
             control.EditTextBox.KeyPress += OnKeywordsKeyPress;
             _releasers.Add(new ResourceReleaser<TokenEditor>(ReleaseKeyPress, control));
@@ -996,7 +997,7 @@ namespace ThreatsManager.Utilities.WinForms
             {
                 Text = property?.PropertyType?.Name.Replace("&", "&&"),
                 Control = control,
-                Height = 20,
+                Height = 34,
                 HeightType = eLayoutSizeType.Absolute,
                 Width = 101,
                 WidthType = eLayoutSizeType.Percent,

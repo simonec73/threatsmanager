@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using PostSharp.Patterns.Contracts;
@@ -94,6 +95,7 @@ namespace ThreatsManager.Extensions.Actions
                 if (result)
                 {
                     scope?.Complete();
+                    EventsDispatcher.RaiseEvent("ItemChanged", identity);
                     ShowMessage?.Invoke("Mitigation added successfully.");
                 }
             }
