@@ -1,0 +1,226 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://openvex.dev/docs/public/vex-dd7f7ee2390b929be772625ea2ace0b9c4929b8f33606057ea8f80eb2b0ae1f7",
+  "author": "Unknown Author",
+  "timestamp": "2024-10-04T15:38:48.289018+02:00",
+  "last_updated": "2024-10-04T15:38:48.719411+02:00",
+  "version": 18,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2024-21319"
+      },
+      "timestamp": "2024-10-04T15:38:48.289018+02:00",
+      "products": [
+        {
+          "@id": "pkg:nuget/Microsoft.IdentityModel.JsonWebTokens@6.30.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-21319"
+      },
+      "timestamp": "2024-10-04T15:38:48.317586+02:00",
+      "products": [
+        {
+          "@id": "pkg:nuget/System.IdentityModel.Tokens.Jwt@6.30.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.343646+02:00",
+      "products": [
+        {
+          "@id": "pkg:golang/github.com/Azure/azure-sdk-for-go/sdk/azidentity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.370211+02:00",
+      "products": [
+        {
+          "@id": "pkg:maven/com.azure/azure-identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.39488+02:00",
+      "products": [
+        {
+          "@id": "pkg:maven/com.microsoft.azure/msal4j@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.420599+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/@azure/identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.445034+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/@azure/msal-node@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.471101+02:00",
+      "products": [
+        {
+          "@id": "pkg:nuget/Azure.Identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.495062+02:00",
+      "products": [
+        {
+          "@id": "pkg:nuget/Microsoft.Identity.Client@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-27086"
+      },
+      "timestamp": "2024-10-04T15:38:48.519123+02:00",
+      "products": [
+        {
+          "@id": "pkg:pypi/azure-identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.545617+02:00",
+      "products": [
+        {
+          "@id": "pkg:golang/github.com/Azure/azure-sdk-for-go/sdk/azidentity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.570363+02:00",
+      "products": [
+        {
+          "@id": "pkg:maven/com.azure/azure-identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.595247+02:00",
+      "products": [
+        {
+          "@id": "pkg:maven/com.microsoft.azure/msal4j@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.620281+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/@azure/identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.64446+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/@azure/msal-node@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.670095+02:00",
+      "products": [
+        {
+          "@id": "pkg:nuget/Azure.Identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.694088+02:00",
+      "products": [
+        {
+          "@id": "pkg:nuget/Microsoft.Identity.Client@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-35255"
+      },
+      "timestamp": "2024-10-04T15:38:48.719416+02:00",
+      "products": [
+        {
+          "@id": "pkg:pypi/azure-identity@4.54.1"
+        }
+      ],
+      "status": "under_investigation"
+    }
+  ]
+}
