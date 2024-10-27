@@ -186,7 +186,16 @@ namespace ThreatsManager.Utilities
                 System.Threading.Thread.Sleep(100);
             }
 
-            RecordingServices.DefaultRecorder.Clear();
+            try
+            {
+                RecordingServices.DefaultRecorder.Clear();
+            }
+            catch (NotSupportedException)
+            {
+                // This is most probably "Clear inside atomic operation is not supported".
+                // We should ignore. Worst case, there is something in the Undo/Redo stack.
+            }
+
             ResetDirty();
         }
 
