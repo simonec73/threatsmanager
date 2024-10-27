@@ -51,6 +51,12 @@ namespace ThreatsManager.Utilities
                     _scopes.Remove(_scope);
                     _scope.Dispose();
                 }
+                catch (InvalidOperationException)
+                {
+                    // Ignore eventual invalid operation exceptions:
+                    // a typical situation is when you cannot detach an object
+                    // because it is currently not being followed by any Recorder.
+                }
                 catch (NotSupportedException)
                 {
                     // Ignore eventual not supported exceptions.
