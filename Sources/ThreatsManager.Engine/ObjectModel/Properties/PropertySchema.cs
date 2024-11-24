@@ -158,6 +158,9 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
 
         public void Add([NotNull] IPropertyType propertyType)
         {
+            if (propertyType.Model?.Id != _modelId)
+                throw new ArgumentException("Property Type is not associated to the Threat Model.", nameof(propertyType));
+
             if (_propertyTypes == null)
                 _propertyTypes = new AdvisableCollection<IPropertyType>();
 

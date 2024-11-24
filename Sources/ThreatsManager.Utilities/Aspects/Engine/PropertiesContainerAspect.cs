@@ -170,6 +170,23 @@ namespace ThreatsManager.Utilities.Aspects.Engine
         }
 
         /// <summary>
+        /// Implementation of method Add.
+        /// </summary>
+        /// <param name="property">Property to be added.</param>
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 5)]
+        public void Add(IProperty property)
+        {
+            var properties = _properties?.Get();
+            if (properties == null)
+            {
+                properties = new AdvisableCollection<IProperty>();
+                _properties?.Set(properties);
+            }
+
+            properties.Add(property);
+        }
+
+        /// <summary>
         /// Implementation of method AddProperty.
         /// </summary>
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail, LinesOfCodeAvoided = 20)]

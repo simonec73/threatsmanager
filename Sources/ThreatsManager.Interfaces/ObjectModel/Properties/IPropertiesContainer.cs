@@ -56,6 +56,12 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         IProperty GetProperty(IPropertyType propertyType);
 
         /// <summary>
+        /// Adds the Property passed as argument to the container.
+        /// </summary>
+        /// <param name="property">Property to be added to the container.</param>
+        void Add(IProperty property);
+
+        /// <summary>
         /// Add a property to the list.
         /// </summary>
         /// <param name="propertyType">Type of property to be added.</param>

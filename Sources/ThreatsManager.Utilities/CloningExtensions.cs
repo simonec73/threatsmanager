@@ -44,12 +44,14 @@ namespace ThreatsManager.Utilities
                                     {
                                         var propertyTarget = target.GetProperty(propertyType);
                                         if (propertyTarget == null)
-                                            propertyTarget = target.AddProperty(propertyType, property.StringValue);
+                                            propertyTarget = property.Clone(target);
                                         else
+                                        {
                                             propertyTarget.StringValue = property.StringValue;
 
-                                        if (propertyTarget != null && sourceModel.Id != model.Id)
-                                            propertyTarget.SetSourceInfo(model);
+                                            if (propertyTarget != null && sourceModel.Id != model.Id)
+                                                propertyTarget.SetSourceInfo(model);
+                                        }
                                     }
                                 }
                             }

@@ -78,6 +78,10 @@ namespace ThreatsManager.Engine.ObjectModel.Diagrams
         {
         }
 
+        public void Add(IProperty property)
+        {
+        }
+
         public IEntityShape GetEntityShape(Guid entityId)
         {
             return null;
