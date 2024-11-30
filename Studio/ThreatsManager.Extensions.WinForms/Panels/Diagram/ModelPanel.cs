@@ -78,7 +78,11 @@ namespace ThreatsManager.Extensions.Panels.Diagram
             if (diagram == null)
                 this.ParentForm?.Close();
             else
+            {
+                var position = _graph.DocPosition;
                 SetDiagram(1f);
+                _graph.DocPosition = position;
+            }
         }
 
         private void AdjustDpiFactor(object obj)

@@ -66,7 +66,7 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 using (var scope = UndoRedoManager.OpenScope("Add Threat Type"))
                 {
                     _threatType = _model.AddThreatType(_name.Text, _severity.SelectedItem as ISeverity);
-                    if (!string.IsNullOrWhiteSpace(_description.Text))
+                    if (!string.IsNullOrWhiteSpace(_description.Text) && _threatType != null)
                         _threatType.Description = _description.Text;
                     scope?.Complete();
                 }
