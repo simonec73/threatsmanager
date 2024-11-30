@@ -1,4 +1,5 @@
 ﻿using System;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Interfaces.ObjectModel.Properties
 {
@@ -39,5 +40,12 @@ namespace ThreatsManager.Interfaces.ObjectModel.Properties
         /// </summary>
         /// <remarks>Changing the value of a ReadOnly property raises a ReadOnlyPropertyException.</remarks>
         bool ReadOnly { get; set; }
+
+        /// <summary>
+        /// Creates a duplicate of the current Property and attaches it to the Container passed as argument.
+        /// </summary>
+        /// <param name="container">Destination container.</param>
+        /// <returns>Freshly created Property.</returns>
+        IProperty Clone(IPropertiesContainer container);
     }
 }

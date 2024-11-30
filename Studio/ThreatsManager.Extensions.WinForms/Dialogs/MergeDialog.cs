@@ -350,33 +350,59 @@ namespace ThreatsManager.Extensions.Dialogs
         #endregion
 
         #region Comparison.
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int memcmp(IntPtr b1, IntPtr b2, UIntPtr count);
+        //[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+        //private static extern int memcmp(IntPtr b1, IntPtr b2, UIntPtr count);
 
-        private static bool Compare(Bitmap b1, Bitmap b2)
+        private static bool Compare(Bitmap bmp1, Bitmap bmp2)
         {
-            if ((b1 == null) != (b2 == null)) return false;
-            if (b1 == null && b2 == null) return true;
-            if (b1.Size != b2.Size) return false;
+            //if ((b1 == null) != (b2 == null)) return false;
+            //if (b1 == null && b2 == null) return true;
+            //if (b1.Size != b2.Size) return false;
 
-            var bd1 = b1.LockBits(new Rectangle(new Point(0, 0), b1.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            var bd2 = b2.LockBits(new Rectangle(new Point(0, 0), b2.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            //var bd1 = b1.LockBits(new Rectangle(new Point(0, 0), b1.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            //var bd2 = b2.LockBits(new Rectangle(new Point(0, 0), b2.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            try
+            //try
+            //{
+            //    IntPtr bd1scan0 = bd1.Scan0;
+            //    IntPtr bd2scan0 = bd2.Scan0;
+
+            //    int stride = bd1.Stride;
+            //    int len = stride * b1.Height;
+
+            //    return memcmp(bd1scan0, bd2scan0, new UIntPtr((uint)len)) == 0;
+            //}
+            //finally
+            //{
+            //    b1?.UnlockBits(bd1);
+            //    b2?.UnlockBits(bd2);
+            //}
+
+            var result = true;
+
+            if (bmp1.Width == bmp2.Width && bmp1.Height == bmp2.Height)
             {
-                IntPtr bd1scan0 = bd1.Scan0;
-                IntPtr bd2scan0 = bd2.Scan0;
+                for (int y = 0; y < bmp1.Height; y++)
+                {
+                    for (int x = 0; x < bmp1.Width; x++)
+                    {
+                        if (bmp1.GetPixel(x, y) != bmp2.GetPixel(x, y))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
 
-                int stride = bd1.Stride;
-                int len = stride * b1.Height;
-
-                return memcmp(bd1scan0, bd2scan0, new UIntPtr((uint)len)) == 0;
+                    if (!result)
+                        break;
+                }
             }
-            finally
+            else
             {
-                b1?.UnlockBits(bd1);
-                b2?.UnlockBits(bd2);
+                result = false;
             }
+
+            return result;
         }
 
         private IEnumerable<ComparedObject> Compare(IEnumerable<IEntity> sources, IEnumerable<IEntity> targets)
@@ -1472,14 +1498,43 @@ namespace ThreatsManager.Extensions.Dialogs
                 if (source.Properties.Count() == (target.Properties?.Count() ?? 0))
                 {
                     var properties = source.Properties.ToArray();
+                    IThreatModel sourceModel = source as IThreatModel;
+                    if (sourceModel == null && source is IThreatModelChild sourceTMChild)
+                    {
+                        sourceModel = sourceTMChild.Model;
+                    }
+                    IThreatModel targetModel = target as IThreatModel;
+                    if (targetModel == null && target is IThreatModelChild targetTMChild)
+                    {
+                        targetModel = targetTMChild.Model;
+                    }
                     result = true;
+
                     foreach (var property in properties)
                     {
                         var targetProperty =
                             target.Properties?.FirstOrDefault(x => x.PropertyTypeId == property.PropertyTypeId);
+                        if (targetProperty == null)
+                        {
+                            var schemaId = property.PropertyType?.SchemaId;
+                            if (schemaId != null)
+                            {
+                                var schema = sourceModel?.GetSchema(schemaId.Value);
+                                if (schema != null)
+                                {
+                                    var targetSchema = targetModel?.GetSchema(schema.Name, schema.Namespace);
+                                    var targetPropertyType = targetSchema?.GetPropertyType(property.PropertyType.Name);
+                                    if (targetPropertyType != null)
+                                    {
+                                        targetProperty = target.GetProperty(targetPropertyType);
+                                    }
+                                }
+                            }
+                        }
 
                         if ((targetProperty == null) ||
-                            string.CompareOrdinal(property.StringValue, targetProperty.StringValue) != 0)
+                            string.CompareOrdinal(property.StringValue?.Replace(sourceModel.Id.ToString("D"), targetModel.Id.ToString("D")), 
+                                targetProperty.StringValue) != 0)
                         {
                             result = false;
                             break;

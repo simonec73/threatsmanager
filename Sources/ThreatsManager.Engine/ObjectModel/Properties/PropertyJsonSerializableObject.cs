@@ -11,6 +11,9 @@ using ThreatsManager.Interfaces.ObjectModel.Properties;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects.Engine;
 using ThreatsManager.Utilities.Exceptions;
+using Newtonsoft.Json.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -177,6 +180,61 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected void InvokeChanged()
         {
             Changed?.Invoke(this);
+        }
+
+        public IProperty Clone(IPropertiesContainer container)
+        {
+            IProperty result = null;
+
+            IThreatModel model = container as IThreatModel;
+            if (model == null && container is IThreatModelChild child)
+                model = child.Model;
+
+            var propertyTypeId = Guid.Empty;
+            if (model != null)
+            {
+                var propertyType = model.GetPropertyType(_propertyTypeId);
+                if (propertyType != null)
+                {
+                    var schema = model.GetSchema(propertyType.SchemaId);
+                    if (schema != null)
+                    {
+                        var containerSchema = model.GetSchema(schema.Name, schema.Namespace);
+                        if (containerSchema != null)
+                        {
+                            var containerPropertyType = containerSchema.GetPropertyType(propertyType.Name) as IJsonSerializableObjectPropertyType;
+                            if (containerPropertyType != null)
+                                propertyTypeId = containerPropertyType.Id;
+                        }
+                    }
+                }
+            }
+
+            if (propertyTypeId != Guid.Empty)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Clone Property Json Serializable Object"))
+                {
+                    var property = new PropertyJsonSerializableObject()
+                    {
+                        _id = Id,
+                        _propertyTypeId = propertyTypeId,
+                        _model = model,
+                        _modelId = model.Id,
+                        _readOnly = _readOnly
+                    };
+                    container.Add(property);
+                    property.Value = Value;
+                    result = property;                    
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+                    UndoRedoManager.Attach(result, model);
+
+                    scope?.Complete();
+                }
+            }
+
+            return result;
         }
         #endregion
     }

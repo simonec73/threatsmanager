@@ -68,6 +68,10 @@ namespace ThreatsManager.Engine.ObjectModel.Entities
             return null;
         }
 
+        public void Add(IProperty property)
+        {
+        }
+
         public IProperty AddProperty(IPropertyType propertyType, string value)
         {
             return null;

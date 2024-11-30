@@ -144,18 +144,23 @@ namespace ThreatsManager
 
                     var latest = packageManager.GetLatest(locationType, location, out var dateTime);
 
-                    if (locationType == LocationType.FileSystem)
+                    if (!string.IsNullOrWhiteSpace(latest))
                     {
-                        var output = await AcquireLockAsync(location, latest);
-                        var outcome = output?.Outcome ?? OpenOutcome.KO;
-                        if (outcome == OpenOutcome.OK)
-                        {
-                            location = output.Location;
-                            latest = output.Latest;
-                        }
-                        else
-                        {
-                            return outcome;
+                        switch (locationType)
+                        { 
+                            case LocationType.FileSystem:
+                                var output = await AcquireLockAsync(location, latest);
+                                var outcome = output?.Outcome ?? OpenOutcome.KO;
+                                if (outcome == OpenOutcome.OK)
+                                {
+                                    location = output.Location;
+                                    latest = output.Latest;
+                                }
+                                else
+                                {
+                                    return outcome;
+                                }
+                                break;
                         }
                     }
 

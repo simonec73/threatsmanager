@@ -15,6 +15,9 @@ using ThreatsManager.Utilities.Exceptions;
 using PostSharp.Patterns.Collections;
 using ThreatsManager.Interfaces;
 using System.Runtime.Serialization;
+using Newtonsoft.Json.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace ThreatsManager.Engine.ObjectModel.Properties
 {
@@ -167,6 +170,60 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         protected void InvokeChanged()
         {
             Changed?.Invoke(this);
+        }
+
+        public IProperty Clone(IPropertiesContainer container)
+        {
+            IProperty result = null;
+
+            IThreatModel model = container as IThreatModel;
+            if (model == null && container is IThreatModelChild child)
+                model = child.Model;
+
+            var propertyTypeId = Guid.Empty;
+            if (model != null)
+            {
+                var propertyType = model.GetPropertyType(_propertyTypeId);
+                if (propertyType != null)
+                {
+                    var schema = model.GetSchema(propertyType.SchemaId);
+                    if (schema != null)
+                    {
+                        var containerSchema = model.GetSchema(schema.Name, schema.Namespace);
+                        if (containerSchema != null)
+                        {
+                            var containerPropertyType = containerSchema.GetPropertyType(propertyType.Name) as ITokensPropertyType;
+                            if (containerPropertyType != null)
+                                propertyTypeId = containerPropertyType.Id;
+                        }
+                    }
+                }
+            }
+
+            if (propertyTypeId != Guid.Empty)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Clone Property Tokens"))
+                {
+                    result = new PropertyTokens()
+                    {
+                        _id = Id,
+                        _propertyTypeId = propertyTypeId,
+                        _model = model,
+                        _modelId = model.Id,
+                        StringValue = StringValue,
+                        _readOnly = _readOnly
+                    };
+                    container.Add(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+                    UndoRedoManager.Attach(result, model);
+
+                    scope?.Complete();
+                }
+            }
+
+            return result;
         }
         #endregion
 

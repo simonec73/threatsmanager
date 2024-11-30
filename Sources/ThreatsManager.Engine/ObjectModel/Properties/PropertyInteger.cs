@@ -134,6 +134,60 @@ namespace ThreatsManager.Engine.ObjectModel.Properties
         {
             Changed?.Invoke(this);
         }
+
+        public IProperty Clone(IPropertiesContainer container)
+        {
+            IProperty result = null;
+
+            IThreatModel model = container as IThreatModel;
+            if (model == null && container is IThreatModelChild child)
+                model = child.Model;
+
+            var propertyTypeId = Guid.Empty;
+            if (model != null)
+            {
+                var propertyType = model.GetPropertyType(_propertyTypeId);
+                if (propertyType != null)
+                {
+                    var schema = model.GetSchema(propertyType.SchemaId);
+                    if (schema != null)
+                    {
+                        var containerSchema = model.GetSchema(schema.Name, schema.Namespace);
+                        if (containerSchema != null)
+                        {
+                            var containerPropertyType = containerSchema.GetPropertyType(propertyType.Name) as IIntegerPropertyType;
+                            if (containerPropertyType != null)
+                                propertyTypeId = containerPropertyType.Id;
+                        }
+                    }
+                }
+            }
+
+            if (propertyTypeId != Guid.Empty)
+            {
+                using (var scope = UndoRedoManager.OpenScope("Clone Property Integer"))
+                {
+                    result = new PropertyInteger()
+                    {
+                        _id = Id,
+                        _propertyTypeId = propertyTypeId,
+                        _model = model,
+                        _modelId = model.Id,
+                        _value = _value,
+                        _readOnly = _readOnly
+                    };
+                    container.Add(result);
+
+                    if (model.Id != _modelId)
+                        result.SetSourceInfo(Model);
+                    UndoRedoManager.Attach(result, model);
+
+                    scope?.Complete();
+                }
+            }
+
+            return result;
+        }
         #endregion
     }
 }

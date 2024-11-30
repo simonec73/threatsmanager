@@ -1527,28 +1527,28 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2739.15</Version>
+      <Version>1.0.2849.39</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="PostSharp">
-      <Version>2024.1.5</Version>
+      <Version>2024.1.6</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>2024.1.5</Version>
+      <Version>2024.1.6</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Threading.Redist">
-      <Version>2024.1.5</Version>
+      <Version>2024.1.6</Version>
     </PackageReference>
     <PackageReference Include="Svg">
       <Version>3.4.7</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.DocIO.WinForms">
-      <Version>26.2.13</Version>
+      <Version>27.1.56</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.XlsIO.WinForms">
-      <Version>26.2.13</Version>
+      <Version>27.1.56</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
