@@ -34,8 +34,8 @@
   <ItemGroup>
     <PackageReference Include="PostSharp" Version="2024.1.6" />
     <PackageReference Include="PostSharp.Patterns.Common" Version="2024.1.6" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
