@@ -88,7 +88,6 @@ namespace ThreatsManager
             _mergeIndex = _ribbon.Items.IndexOf(_title);
 
             await OpenInitialFile();
-            UpdateFormsList();
 
             LoadStatusInfoProviders();
 
@@ -187,6 +186,8 @@ namespace ThreatsManager
             }
 
             _jumpListManager.Refresh();
+
+            UpdateFormsList();
         }
 
         private void ShowMessage(object item)
