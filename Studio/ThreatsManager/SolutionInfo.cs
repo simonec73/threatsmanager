@@ -5,7 +5,7 @@
 // associated with an assembly.
 [assembly: AssemblyCompany("Simone Curzi")]
 [assembly: AssemblyProduct("Threats Manager Studio")]
-[assembly: AssemblyCopyright("Copyright © Simone Curzi, 2018-2024. All Rights Reserved.")]
+[assembly: AssemblyCopyright("Copyright © Simone Curzi, 2018-2025. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 
 // Version information for an assembly consists of the following four values:
