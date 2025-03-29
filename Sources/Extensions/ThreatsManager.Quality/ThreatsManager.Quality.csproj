@@ -3,15 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>net481</TargetFrameworks>
     <Description>Threats Manager Platform Quality library.</Description>
-    <AssemblyVersion>2.2.6.0</AssemblyVersion>
+    <AssemblyVersion>2.2.7.0</AssemblyVersion>
     <Authors>Simone Curzi</Authors>
     <Company>Simone Curzi</Company>
     <Product>Threats Manager Platform</Product>
-    <Copyright>Copyright © Simone Curzi, 2018-2024. All Rights Reserved.</Copyright>
+    <Copyright>Copyright © Simone Curzi, 2018-2025. All Rights Reserved.</Copyright>
     <PackageProjectUrl>https://www.nuget.org/packages/ThreatsManager.Engine/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simonec73/threatsmanager</RepositoryUrl>
-    <FileVersion>2.2.6.0</FileVersion>
-    <Version>2.2.6</Version>
+    <FileVersion>2.2.7.0</FileVersion>
+    <Version>2.2.7</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\ThreatsManager.Engine\ThreatsManager.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);NU1505</NoWarn>

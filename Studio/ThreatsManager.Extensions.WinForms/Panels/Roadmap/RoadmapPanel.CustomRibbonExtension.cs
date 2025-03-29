@@ -13,6 +13,9 @@ using ThreatsManager.Interfaces.Extensions.Actions;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.Aspects;
 using Shortcut = ThreatsManager.Interfaces.Extensions.Shortcut;
+using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
+using System.Text;
+using ThreatsManager.Interfaces.ObjectModel.Entities;
 
 namespace ThreatsManager.Extensions.Panels.Roadmap
 {
@@ -102,6 +105,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
 
             try
             {
+                bool embedAffectedObjects;
+
                 switch (action.Name)
                 {
                     case "ConfigureEstimator":
@@ -122,6 +127,8 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         }
                         break;
                     case "ExportCsv":
+                        embedAffectedObjects = AskForEmbedConfirmation();                        
+                            
                         var saveFileDialog = new SaveFileDialog()
                         {
                             AddExtension = true,
@@ -136,10 +143,12 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         };
                         if (saveFileDialog.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            ExportCsv(saveFileDialog.FileName);
+                            ExportCsv(saveFileDialog.FileName, embedAffectedObjects);
                         }
                         break;
                     case "ExportShortCsv":
+                        embedAffectedObjects = AskForEmbedConfirmation();
+
                         var saveFileDialogShort = new SaveFileDialog()
                         {
                             AddExtension = true,
@@ -154,10 +163,12 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         };
                         if (saveFileDialogShort.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            ExportCsv(saveFileDialogShort.FileName, RoadmapStatus.ShortTerm);
+                            ExportCsv(saveFileDialogShort.FileName, embedAffectedObjects, RoadmapStatus.ShortTerm);
                         }
                         break;
                     case "ExportMidCsv":
+                        embedAffectedObjects = AskForEmbedConfirmation();
+
                         var saveFileDialogMid = new SaveFileDialog()
                         {
                             AddExtension = true,
@@ -172,10 +183,12 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         };
                         if (saveFileDialogMid.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            ExportCsv(saveFileDialogMid.FileName, RoadmapStatus.MidTerm);
+                            ExportCsv(saveFileDialogMid.FileName, embedAffectedObjects, RoadmapStatus.MidTerm);
                         }
                         break;
                     case "ExportLongCsv":
+                        embedAffectedObjects = AskForEmbedConfirmation();
+
                         var saveFileDialogLong = new SaveFileDialog()
                         {
                             AddExtension = true,
@@ -190,7 +203,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                         };
                         if (saveFileDialogLong.ShowDialog(Form.ActiveForm) == DialogResult.OK)
                         {
-                            ExportCsv(saveFileDialogLong.FileName, RoadmapStatus.LongTerm);
+                            ExportCsv(saveFileDialogLong.FileName, embedAffectedObjects, RoadmapStatus.LongTerm);
                         }
                         break;
                     case "Refresh":
@@ -226,7 +239,23 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
             }
         }
 
-        private void ExportCsv([Required] string fileName, RoadmapStatus requiredStatus = RoadmapStatus.NotAssessed)
+        private bool AskForEmbedConfirmation()
+        {
+            bool result = false;
+
+            if (MessageBox.Show(Form.ActiveForm,
+                            "Do you want to embed the affected objects?",
+                            "Export for Azure DevOps",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        private void ExportCsv([Required] string fileName, bool embedAffectedObjects, RoadmapStatus requiredStatus = RoadmapStatus.NotAssessed)
         {
             var mitigations = _model?.GetUniqueMitigations()?.OrderBy(x => x.Name).ToArray();
 
@@ -243,6 +272,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                     foreach (var mitigation in mitigations)
                     {
                         var status = mitigation.GetStatus();
+                        var description = GetMitigationDescription(mitigation, embedAffectedObjects);
 
                         switch (requiredStatus)
                         {
@@ -251,7 +281,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                                 {
                                     engine.AddRow(page, new[]
                                     {
-                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                        "Task", mitigation.Name, TextToHtml(description), "To Do", ((int)status).ToString()
                                     });
                                 }
                                 break;
@@ -260,7 +290,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                                 {
                                     engine.AddRow(page, new[]
                                     {
-                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                        "Task", mitigation.Name, TextToHtml(description), "To Do", ((int)status).ToString()
                                     });
                                 }
                                 break;
@@ -269,7 +299,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                                 {
                                     engine.AddRow(page, new[]
                                     {
-                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                        "Task", mitigation.Name, TextToHtml(description), "To Do", ((int)status).ToString()
                                     });
                                 }
                                 break;
@@ -278,7 +308,7 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                                 {
                                     engine.AddRow(page, new[]
                                     {
-                                        "Task", mitigation.Name, TextToHtml(mitigation.Description), "To Do", ((int)status).ToString()
+                                        "Task", mitigation.Name, TextToHtml(description), "To Do", ((int)status).ToString()
                                     });
                                 }
                                 break;
@@ -297,6 +327,47 @@ namespace ThreatsManager.Extensions.Panels.Roadmap
                 }
             }
 
+        }
+
+        private string GetMitigationDescription(IMitigation mitigation, bool embedAffectedObjects)
+        {
+            string result = null;
+
+            if (embedAffectedObjects)
+            {
+                var threatEventMitigations = _model.GetThreatEventMitigations(mitigation);
+                if (threatEventMitigations?.Any() ?? false)
+                {
+                    var builder = new StringBuilder();
+                    builder.AppendLine(mitigation.Description);
+                    foreach (var threatEventMitigation in threatEventMitigations)
+                    {
+                        var affectedObject = threatEventMitigation?.ThreatEvent?.Parent;
+                        if (affectedObject != null)
+                        {
+                            if (affectedObject is IEntity entity && entity.Template != null)
+                            {
+                                builder.AppendLine($"- [{entity.Template.Name}] {entity.Name}");
+                            }
+                            else
+                            {
+                                builder.AppendLine($"- [{affectedObject.GetIdentityTypeName()}] {affectedObject.Name}");
+                            }                            
+                        }
+                    }
+                    result = builder.ToString();
+                }
+                else
+                {
+                    result = mitigation.Description;
+                }
+            }
+            else
+            {
+                result = mitigation.Description;
+            }
+
+            return result;
         }
 
         private string TextToHtml(string text)
