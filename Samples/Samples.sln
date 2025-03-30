@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWinFormExtensions", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleThreatModelAnalyzer", "SimpleThreatModelAnalyzer\SimpleThreatModelAnalyzer.csproj", "{02557E72-71EE-493B-9A7B-21BC743BAF22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleThreatModelGenerator", "SampleThreatModelGenerator\SampleThreatModelGenerator.csproj", "{716D8BC8-8F05-4C21-B024-8F2BA25AACA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{02557E72-71EE-493B-9A7B-21BC743BAF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02557E72-71EE-493B-9A7B-21BC743BAF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02557E72-71EE-493B-9A7B-21BC743BAF22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{716D8BC8-8F05-4C21-B024-8F2BA25AACA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{716D8BC8-8F05-4C21-B024-8F2BA25AACA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{716D8BC8-8F05-4C21-B024-8F2BA25AACA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{716D8BC8-8F05-4C21-B024-8F2BA25AACA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
