@@ -95,6 +95,7 @@ namespace ThreatsManager.Dialogs
             _smartSaveAutosave.Value = config.SmartSaveInterval;
             _userDictionary.Text = config.UserDictionary;
 
+#if LEGACY
             var telemetryPolicy = new TelemetryPolicy();
             if (telemetryPolicy.IsDefined && !(telemetryPolicy.Telemetry ?? false))
             {
@@ -122,6 +123,7 @@ namespace ThreatsManager.Dialogs
             {
                 _disableHelp.Checked = config.DisableHelp;
             }
+#endif
 
             _loading = false;
         }
@@ -181,7 +183,9 @@ namespace ThreatsManager.Dialogs
             config.SmartSaveCount = (int) _smartSaveInstances.Value;
             config.SmartSaveInterval = (int) _smartSaveAutosave.Value;
             config.UserDictionary = _userDictionary.Text;
+#if LEGACY
             config.DisableHelp = _disableHelp.Checked;
+#endif
             config.CurrentConfiguration.Save();
 
             Manager.Instance.Configuration.Folders = _folders.Items.OfType<string>();
@@ -189,7 +193,9 @@ namespace ThreatsManager.Dialogs
             Manager.Instance.Configuration.Certificates = _validationCertificates.Checked ? 
                 _certificates.Items.OfType<CertificateConfig>() : null;
 
+#if LEGACY
             Application.UserAppDataRegistry?.SetValue("Consent", !_disableTelemetry.Checked);
+#endif
 
             foreach (Control sideNavControl in _sideNav.Controls)
             {
@@ -334,6 +340,7 @@ namespace ThreatsManager.Dialogs
             }
         }
 
+#if LEGACY
         private void _disableTelemetry_CheckedChanged(object sender, EventArgs e)
         {
             if (!_loading && !_disableTelemetry.Checked && 
@@ -347,8 +354,8 @@ namespace ThreatsManager.Dialogs
                     _disableTelemetry.Checked = true;
                 }
             }
-
         }
+#endif
 
         private void _executionMode_SelectedIndexChanged(object sender, EventArgs e)
         {

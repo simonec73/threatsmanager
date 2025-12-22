@@ -76,7 +76,9 @@
             this._closeAllWindows = new DevComponents.DotNetBar.ButtonItem();
             this._undo = new DevComponents.DotNetBar.ButtonItem();
             this._redo = new DevComponents.DotNetBar.ButtonItem();
+#if LEGACY
             this._feedback = new DevComponents.DotNetBar.ButtonItem();
+#endif
             this._controlMinimize = new DevComponents.DotNetBar.ButtonItem();
             this._controlMaximize = new DevComponents.DotNetBar.ButtonItem();
             this._controlExit = new DevComponents.DotNetBar.ButtonItem();
@@ -131,7 +133,9 @@
             this._closeAllWindows,
             this._undo,
             this._redo,
-            this._feedback,
+#if LEGACY
+                this._feedback,
+#endif
             this._controlMinimize,
             this._controlMaximize,
             this._controlExit});
@@ -841,6 +845,7 @@
             this._redo.Text = "Redo";
             this._redo.Tooltip = "Redo";
             this._redo.Click += new System.EventHandler(this._redo_Click);
+#if LEGACY
             // 
             // _feedback
             // 
@@ -852,6 +857,7 @@
             this._feedback.Text = "Feedback";
             this._feedback.Tooltip = "Provide feedback";
             this._feedback.Click += new System.EventHandler(this._feedback_Click);
+#endif
             // 
             // _controlMinimize
             // 
@@ -1018,7 +1024,7 @@
 
         }
 
-        #endregion
+#endregion
 
         private DevComponents.DotNetBar.RibbonControl _ribbon;
         private DevComponents.DotNetBar.RibbonPanel _ribbonPanelView;
@@ -1073,7 +1079,9 @@
         private DevComponents.DotNetBar.RibbonPanel _ribbonPanelConfigure;
         private DevComponents.DotNetBar.RibbonTabItem _ribbonTabConfigure;
         private DevComponents.DotNetBar.ButtonItem _addStatusInfoProvider;
+#if LEGACY
         private DevComponents.DotNetBar.ButtonItem _feedback;
+#endif
         private DevComponents.DotNetBar.RibbonPanel _ribbonPanelIntegrate;
         private DevComponents.DotNetBar.RibbonTabItem _ribbonTabIntegrate;
         private System.Windows.Forms.FolderBrowserDialog _selectFolder;

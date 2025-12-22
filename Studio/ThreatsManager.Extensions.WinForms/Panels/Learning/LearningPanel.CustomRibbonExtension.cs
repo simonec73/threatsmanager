@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !PORTABLE && LEGACY
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,7 +16,6 @@ using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
-#if !PORTABLE
 #pragma warning disable CS0067
     public partial class LearningPanel
     {
@@ -135,5 +135,5 @@ namespace ThreatsManager.Extensions.Panels.Learning
             }
         }
     }
-#endif
 }
+#endif

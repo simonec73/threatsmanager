@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using Exceptionless.Configuration;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -17,7 +16,5 @@ using Exceptionless.Configuration;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5A1C45C2-307C-45BB-BDFF-F8936B4B5D4B")]
-
-[assembly: Exceptionless("PUT_YOUR_API_KEY_HERE")]
 
 //[assembly: WeakEvent]

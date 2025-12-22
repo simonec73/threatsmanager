@@ -9,7 +9,7 @@ using ThreatsManager.Utilities;
 
 namespace ThreatsManager.Extensions.Panels.Troubleshooting
 {
-#if !PORTABLE
+#if !PORTABLE && LEGACY
     [Extension("C12DAFC1-763F-46E6-8222-46393B6DE3E8", "Troubleshooting Panel", 35, ExecutionMode.Business)]
     public partial class TroubleshootingPanelFactory : IPanelFactory<Form>, IMainRibbonExtension, IPanelFactoryActionsRequestor
     {

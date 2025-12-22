@@ -1,5 +1,4 @@
 ﻿using DevComponents.DotNetBar;
-using Exceptionless;
 using PostSharp.Patterns.Contracts;
 using PostSharp.Patterns.Threading;
 using System;
@@ -195,7 +194,9 @@ namespace ThreatsManager
                 }
                 catch (ThreatModelOpeningFailureException exc)
                 {
+#if LEGACY
                     exc.ToExceptionless().Submit();
+#endif
                     model = null;
                     using (var dialog = new ErrorDialog
                     {
@@ -277,7 +278,9 @@ namespace ThreatsManager
                 catch (Exception e)
                 {
                     ShowDesktopAlert($"An exception occurred loading the Threat Model:\n{e.Message}", true);
+#if LEGACY
                     e.ToExceptionless().Submit();
+#endif
                     model = null;
                     messageRaised = true;
                 }
@@ -341,7 +344,9 @@ namespace ThreatsManager
             catch (Exception e)
             {
                 ShowDesktopAlert($"An exception occurred importing the Knowledge Base:\n{e.Message}", true);
+#if LEGACY
                 e.ToExceptionless().Submit();
+#endif
             }
 
             return result;
@@ -424,7 +429,7 @@ namespace ThreatsManager
                 model.RemoveGroup(curr.Id);
             }
         }
-        #endregion
+#endregion
 
         #region Save.
         private void EmergencySave()
@@ -544,7 +549,9 @@ namespace ThreatsManager
             }
             catch (Exception e)
             {
+#if LEGACY
                 e.ToExceptionless().Submit();
+#endif
             }
 
             if (result)
@@ -593,7 +600,7 @@ namespace ThreatsManager
                 }
             }
         }
-        #endregion
+#endregion
 
         #region File Lock.
         private async Task<AcquireLockOutput> AcquireLockAsync(string location, string latest)

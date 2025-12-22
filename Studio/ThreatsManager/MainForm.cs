@@ -8,24 +8,19 @@ using System.Reflection;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.DotNetBar.Controls;
-using Exceptionless;
-using Exceptionless.Models.Collections;
 using ThreatsManager.Dialogs;
 using PostSharp.Patterns.Threading;
 using ThreatsManager.Engine;
 using ThreatsManager.Engine.Config;
 using ThreatsManager.Interfaces.Extensions;
-using ThreatsManager.Interfaces.Extensions.Panels;
 using ThreatsManager.Interfaces.ObjectModel;
 using ThreatsManager.Properties;
 using ThreatsManager.Utilities;
 using DevComponents.DotNetBar.Metro.ColorTables;
-using Exceptionless.Logging;
 using ThreatsManager.Interfaces;
 using ThreatsManager.Utilities.WinForms;
 using PostSharp.Patterns.Recording;
 using ThreatsManager.Policies;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace ThreatsManager
 {
@@ -74,7 +69,7 @@ namespace ThreatsManager
         {
             Text = Resources.Title;
 
-            InitializeTelemetry();
+            //InitializeTelemetry();
             InitializeConfiguration();
 
             #region Resource Guard.
@@ -93,7 +88,7 @@ namespace ThreatsManager
 
             LoadKnownDocuments();
 
-            CheckUpdateAvailability();
+            //CheckUpdateAvailability();
 
             ConfigureTimer();
 
@@ -232,6 +227,7 @@ namespace ThreatsManager
         #endregion
 
         #region Initializations.
+#if LEGACY
         private void InitializeTelemetry()
         {
             bool disableTelemetry = true;
@@ -276,16 +272,17 @@ namespace ThreatsManager
                 ExceptionlessClient.Default.Configuration.ReadFromAttributes();
 #if LOGGING
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-        var logFile = Path.Combine(Program.Folder, "tms_exceptionless.log");
+                var logFile = Path.Combine(Program.Folder, "tms_exceptionless.log");
 #pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
                 
-        ExceptionlessClient.Default.Configuration.UseFileLogger(logFile);
+                ExceptionlessClient.Default.Configuration.UseFileLogger(logFile);
 #endif
                 ExceptionlessClient.Default.Register(false);
                 ExceptionlessClient.Default.SubmittingEvent += OnSubmittingEvent;
                 ExceptionlessClient.Default.Configuration.Settings.Changed += OnExceptionlessSettingsChanged;
             }
         }
+#endif
 
         private void InitializeConfiguration()
         {
@@ -390,6 +387,7 @@ namespace ThreatsManager
         #endregion
 
         #region Exceptionless.
+#if LEGACY
         [Dispatched(true)]
         private void OnSubmittingEvent(object sender, EventSubmittingEventArgs e)
         {
@@ -422,7 +420,6 @@ namespace ThreatsManager
                 exception.ToExceptionless().AddTags("Handled").Submit();
             }
         }
-
         private void OnExceptionlessSettingsChanged(object sender, ChangedEventArgs<KeyValuePair<string, string>> e)
         {
             if (string.CompareOrdinal(e.Item.Key, LatestVersion) == 0)
@@ -470,6 +467,7 @@ namespace ThreatsManager
 
             return result;
         }
+#endif
         #endregion
 
         #region Standard Ribbon buttons.
@@ -505,6 +503,7 @@ namespace ThreatsManager
             }
         }
 
+#if LEGACY
         private void _feedback_Click(object sender, EventArgs e)
         {
             using (var dialog = new FeedbackDialog())
@@ -523,6 +522,7 @@ namespace ThreatsManager
                 }
             }
         }
+#endif
 
         private void _closeCurrentWindow_Click(object sender, EventArgs e)
         {
@@ -600,7 +600,7 @@ namespace ThreatsManager
         {
             UndoRedoManager.Redo();
         }
-        #endregion
+#endregion
 
         #region Buttons: File.
         private void _new_Click(object sender, EventArgs e)

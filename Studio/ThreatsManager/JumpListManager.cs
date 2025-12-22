@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Exceptionless;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using PostSharp.Patterns.Contracts;
 
@@ -61,7 +60,9 @@ namespace ThreatsManager
             }
             catch (Exception e)
             {
+#if LEGACY
                 e.ToExceptionless().AddTags("Handled").Submit();
+#endif
             }
         }
 
@@ -76,7 +77,7 @@ namespace ThreatsManager
             get => _jumpList.KnownCategoryToDisplay == JumpListKnownCategoryType.Frequent;
             set => _jumpList.KnownCategoryToDisplay = value ? JumpListKnownCategoryType.Frequent : JumpListKnownCategoryType.Neither;
         }
-        #endregion
+#endregion
 
         #region Private auxiliary member functions.
         private Microsoft.WindowsAPICodePack.Shell.IconReference? CreateIconReference(string iconPath, int iconNumber)
