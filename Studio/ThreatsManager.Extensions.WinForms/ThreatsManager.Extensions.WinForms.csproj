@@ -417,12 +417,8 @@
     <Compile Include="Panels\DataStoreList\DataStoreListFilter.cs" />
     <Compile Include="Panels\Diagram\AssociatedDiagramMarker.cs" />
     <Compile Include="Panels\ExternalInteractorList\ExternalInteractorListFilter.cs" />
-    <Compile Include="Panels\Learning\LearningPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Panels\Learning\LearningPanel.CustomRibbonExtension.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Panels\Learning\LearningPanel.cs" />
+    <Compile Include="Panels\Learning\LearningPanel.CustomRibbonExtension.cs" />
     <Compile Include="Panels\Learning\LearningPanel.Designer.cs">
       <DependentUpon>LearningPanel.cs</DependentUpon>
     </Compile>
@@ -518,12 +514,8 @@
     </Compile>
     <Compile Include="Panels\PropertySchemaList\ListProvider.cs" />
     <Compile Include="Panels\ThreatTypeList\ThreatTypeListFilter.cs" />
-    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.CustomRibbonExtension.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.cs" />
+    <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.CustomRibbonExtension.cs" />
     <Compile Include="Panels\Troubleshooting\TroubleshootingPanel.Designer.cs">
       <DependentUpon>TroubleshootingPanel.cs</DependentUpon>
     </Compile>
@@ -1526,11 +1518,8 @@
     <Content Include="Resources\import_huge.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.3124.44</Version>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
+      <Version>13.0.4</Version>
     </PackageReference>
     <PackageReference Include="PostSharp">
       <Version>2024.1.6</Version>

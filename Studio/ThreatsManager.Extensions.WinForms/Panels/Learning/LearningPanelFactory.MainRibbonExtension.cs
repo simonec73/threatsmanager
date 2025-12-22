@@ -10,7 +10,7 @@ using ThreatsManager.Utilities.Policies;
 
 namespace ThreatsManager.Extensions.Panels.Learning
 {
-#if !PORTABLE
+#if !PORTABLE && LEGACY
 #pragma warning disable CS0067
     public partial class LearningPanelFactory
     {

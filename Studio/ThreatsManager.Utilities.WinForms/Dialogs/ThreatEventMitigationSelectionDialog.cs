@@ -256,9 +256,14 @@ namespace ThreatsManager.Utilities.WinForms.Dialogs
                 comboBox.DroppedDown = true;
                 comboBox.IntegralHeight = true;
                 comboBox.SelectedIndex = -1;
-                comboBox.Text = filter;
-                comboBox.SelectionStart = filter.Length;
-                comboBox.SelectionLength = 0;
+                if (filter == null)
+                    comboBox.Text = null;
+                else
+                {
+                    comboBox.Text = filter;
+                    comboBox.SelectionStart = filter.Length;
+                    comboBox.SelectionLength = 0;
+                }
             }
         }
 

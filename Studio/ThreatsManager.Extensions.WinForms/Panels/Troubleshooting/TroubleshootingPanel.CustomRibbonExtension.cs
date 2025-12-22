@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !PORTABLE && LEGACY
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -10,7 +11,6 @@ using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Extensions.Panels.Troubleshooting
 {
-#if !PORTABLE
 #pragma warning disable CS0067
     public partial class TroubleshootingPanel
     {
@@ -61,5 +61,5 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
             }
         }
     }
-#endif
 }
+#endif

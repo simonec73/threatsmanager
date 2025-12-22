@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !PORTABLE && LEGACY
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,6 @@ using ThreatsManager.Utilities.Help;
 
 namespace ThreatsManager.Extensions.Panels.Troubleshooting
 {
-#if !PORTABLE
     public partial class TroubleshootingPanel : UserControl, IStaticPanel<Form>, ICustomRibbonExtension, IDesktopAlertAwareExtension
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -95,5 +95,5 @@ namespace ThreatsManager.Extensions.Panels.Troubleshooting
             }
         }
     }
-#endif
 }
+#endif

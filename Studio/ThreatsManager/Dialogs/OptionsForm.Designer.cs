@@ -80,18 +80,24 @@
             this.layoutControlItem13 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.sideNavPanel1 = new DevComponents.DotNetBar.Controls.SideNavPanel();
             this._panelOtherSettings = new DevComponents.DotNetBar.Layout.LayoutControl();
+#if LEGACY
             this._disableHelp = new System.Windows.Forms.CheckBox();
             this._disableTelemetry = new System.Windows.Forms.CheckBox();
+#endif
             this._browseUserDictionary = new System.Windows.Forms.Button();
             this._userDictionary = new System.Windows.Forms.TextBox();
+#if LEGACY
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+#endif
             this.layoutControlItem24 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem25 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+#if LEGACY
             this.layoutControlItem26 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._layoutTelemetryPolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this.layoutControlItem27 = new DevComponents.DotNetBar.Layout.LayoutControlItem();
             this._layoutHelpPolicy = new DevComponents.DotNetBar.Layout.LayoutControlItem();
+#endif
             this._panelSmartSave = new DevComponents.DotNetBar.Controls.SideNavPanel();
             this._layoutSmartSave = new DevComponents.DotNetBar.Layout.LayoutControl();
             this.label4 = new System.Windows.Forms.Label();
@@ -718,12 +724,16 @@
             // _panelOtherSettings
             // 
             this._panelOtherSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+#if LEGACY
             this._panelOtherSettings.Controls.Add(this._disableHelp);
             this._panelOtherSettings.Controls.Add(this._disableTelemetry);
+#endif
             this._panelOtherSettings.Controls.Add(this._browseUserDictionary);
             this._panelOtherSettings.Controls.Add(this._userDictionary);
+#if LEGACY
             this._panelOtherSettings.Controls.Add(this.label9);
             this._panelOtherSettings.Controls.Add(this.label10);
+#endif
             this._panelOtherSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this._panelOtherSettings.ForeColor = System.Drawing.Color.Black;
             this._panelOtherSettings.Location = new System.Drawing.Point(0, 0);
@@ -733,13 +743,17 @@
             // 
             this._panelOtherSettings.RootGroup.Items.AddRange(new DevComponents.DotNetBar.Layout.LayoutItemBase[] {
             this.layoutControlItem24,
-            this.layoutControlItem25,
+            this.layoutControlItem25
+#if LEGACY
             this.layoutControlItem26,
             this._layoutTelemetryPolicy,
             this.layoutControlItem27,
-            this._layoutHelpPolicy});
+            this._layoutHelpPolicy
+#endif
+            });
             this._panelOtherSettings.Size = new System.Drawing.Size(745, 484);
             this._panelOtherSettings.TabIndex = 0;
+#if LEGACY
             // 
             // _disableHelp
             // 
@@ -764,6 +778,7 @@
             this._disableTelemetry.Text = "Disable Telemetry (requires restart)";
             this._disableTelemetry.UseVisualStyleBackColor = true;
             this._disableTelemetry.CheckedChanged += new System.EventHandler(this._disableTelemetry_CheckedChanged);
+#endif
             // 
             // _browseUserDictionary
             // 
@@ -784,6 +799,7 @@
             this._userDictionary.ReadOnly = true;
             this._userDictionary.Size = new System.Drawing.Size(569, 20);
             this._userDictionary.TabIndex = 0;
+#if LEGACY
             // 
             // label9
             // 
@@ -808,6 +824,7 @@
             this.label10.TabIndex = 6;
             this.label10.Text = "Policy Applied";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+#endif
             // 
             // layoutControlItem24
             // 
@@ -826,6 +843,7 @@
             this.layoutControlItem25.MinSize = new System.Drawing.Size(32, 20);
             this.layoutControlItem25.Name = "layoutControlItem25";
             this.layoutControlItem25.Width = 83;
+#if LEGACY
             // 
             // layoutControlItem26
             // 
@@ -866,6 +884,7 @@
             this._layoutHelpPolicy.TextVisible = false;
             this._layoutHelpPolicy.Visible = false;
             this._layoutHelpPolicy.Width = 91;
+#endif
             // 
             // _panelSmartSave
             // 
@@ -1158,7 +1177,7 @@
 
         }
 
-        #endregion
+#endregion
 
         private DevComponents.DotNetBar.Controls.SideNav _sideNav;
         private DevComponents.DotNetBar.Controls.SideNavItem _sideMenu;
@@ -1230,12 +1249,16 @@
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem24;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem25;
         private System.Windows.Forms.SaveFileDialog _userDictFile;
+#if LEGACY
         private System.Windows.Forms.CheckBox _disableTelemetry;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem26;
+#endif
         private System.Windows.Forms.ComboBox _executionMode;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem28;
+#if LEGACY
         private System.Windows.Forms.CheckBox _disableHelp;
         private DevComponents.DotNetBar.Layout.LayoutControlItem layoutControlItem27;
+#endif
         private System.Windows.Forms.Label label5;
         private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutFoldersPolicy;
         private System.Windows.Forms.Label label6;
@@ -1244,9 +1267,11 @@
         private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutCertificatesPolicy;
         private System.Windows.Forms.Label label8;
         private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutExecutionModePolicy;
+#if LEGACY
         private System.Windows.Forms.Label label9;
         private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutTelemetryPolicy;
         private System.Windows.Forms.Label label10;
         private DevComponents.DotNetBar.Layout.LayoutControlItem _layoutHelpPolicy;
+#endif
     }
 }

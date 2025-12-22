@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
-using Exceptionless;
 using PostSharp.Patterns.Contracts;
 using ThreatsManager.Engine;
 using ThreatsManager.Interfaces.Extensions;
@@ -18,9 +17,7 @@ using ThreatsManager.Interfaces.ObjectModel.Diagrams;
 using ThreatsManager.Interfaces.ObjectModel.ThreatsMitigations;
 using ThreatsManager.Utilities;
 using ThreatsManager.Utilities.WinForms;
-using System.ComponentModel.Composition.Hosting;
 using System.IO;
-using MS.WindowsAPICodePack.Internal;
 
 namespace ThreatsManager
 {
@@ -493,7 +490,9 @@ namespace ThreatsManager
 
             if (!found)
             {
+#if LEGACY
                 ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
+#endif
                 var panel = factory.Create(identity, out IActionDefinition action);
                 var form = CreateForm(factory, panel, action, formId, identity);
                 form.Closed += OnFormClosed;
@@ -670,7 +669,7 @@ namespace ThreatsManager
                 }
             }
         }
-        #endregion
+#endregion
 
         #region Ribbon creation and management.
         [Dispatched]
@@ -720,14 +719,18 @@ namespace ThreatsManager
                 {
                     if (_mainRibbonExtensions.TryGetValue(actionDefinition.Id, out var extension))
                     {
+#if LEGACY
                         ExceptionlessClient.Default.CreateFeatureUsage(extension.GetExtensionLabel()).Submit();
+#endif
                         try
                         {
                             extension.ExecuteRibbonAction(_model, actionDefinition);
                         }
                         catch (Exception exc)
                         {
+#if LEGACY
                             exc.ToExceptionless().Submit();
+#endif
                         }
                     }
                     else
@@ -739,7 +742,9 @@ namespace ThreatsManager
                             if (_mainRibbonExtensions.TryGetValue(parentId, out var parentExtension) &&
                                 parentExtension is IPanelFactory<Form> factory)
                             {
+#if LEGACY
                                 ExceptionlessClient.Default.CreateFeatureUsage(factory.GetExtensionLabel()).Submit();
+#endif
                                 var panel = factory.Create(actionDefinition);
                                 if (actionDefinition.Tag is IIdentity identity)
                                     CreateForm(factory, panel, actionDefinition, GetFormId(factory, identity), identity);
@@ -753,7 +758,7 @@ namespace ThreatsManager
                 }                   
             }
         }
-        #endregion
+#endregion
 
         #region Forms management.
         private PanelContainerForm FindForm([NotNull] IActionDefinition actionDefinition)

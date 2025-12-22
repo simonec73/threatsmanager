@@ -9,7 +9,7 @@ namespace ThreatsManager.Extensions.Panels.Diagram
     {
         private void AddLink([NotNull] ILink link, float dpiFactor = 1.0f)
         {
-            if (!_links.ContainsKey(link.AssociatedId))
+            if (!_links.ContainsKey(link.AssociatedId) && link.DataFlow != null)
             {
                 var from = GetEntity(link.DataFlow.Source);
                 var to = GetEntity(link.DataFlow.Target);

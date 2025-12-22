@@ -1,6 +1,6 @@
-﻿namespace ThreatsManager.Extensions.Panels.Learning
+﻿#if !PORTABLE && LEGACY
+namespace ThreatsManager.Extensions.Panels.Learning
 {
-#if !PORTABLE
     partial class LearningPanel
     {
         /// <summary> 
@@ -136,5 +136,5 @@
         private DevComponents.DotNetBar.ExpandableSplitter expandableSplitter1;
         private Microsoft.Web.WebView2.WinForms.WebView2 _browser;
     }
-#endif
 }
+#endif
